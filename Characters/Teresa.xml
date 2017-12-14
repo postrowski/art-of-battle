@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<Character Gender="Female" Name="Teresa" Race="Human">
+  <Attributes DEX="1" HT="-1" IQ="0" NIM="2" SOC="4" STR="-1" TOU="0"/>
+  <Equipment Armor="Elven Chain">
+    <Hand Name="right hand">Bow, Shortbow</Hand>
+    <Hand Name="left hand"/>
+    <Belt>Spear</Belt>
+    <Belt>Small Shield</Belt>
+  </Equipment>
+  <Skills>
+    <Skill Level="5" Name="Bow"/>
+    <Skill Level="5" Name="Spear"/>
+    <Skill Level="4" Name="Shield"/>
+  </Skills>
+  <Advantages>
+    <Advantage Level="6" Name="Wealth"/>
+    <Advantage Level="2" Name="Divine Power"/>
+    <Advantage Level="4" Name="Divine Aff. - Aphrodite"/>
+    <Advantage Level="2" Name="Sense of Duty"/>
+  </Advantages>
+</Character>

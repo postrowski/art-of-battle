@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<Character Name="wolf-large" Race="Wolf">
+  <Attributes DEX="2" HT="2" IQ="-3" NIM="1" SOC="0" STR="2" TOU="1"/>
+  <Equipment Armor="No Armor">
+    <Hand Name="right hand"/>
+    <Hand Name="left hand"/>
+  </Equipment></Character>

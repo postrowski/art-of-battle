@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<Arena Name="Actions4" height="28" width="20">
+  <columns>
+    <col id="0">11:11:11:11:11:11:2:2:1:1:11:11:11:11:</col>
+    <col id="1">11:7:7:7:7:2:2:2:1:1:1:1:1:11:</col>
+    <col id="2">11:7:7:11:11:2:2:2:1:1:1:1:1:1:</col>
+    <col id="3">11:7:11:11:7:2:1:1:1:1:1:1:1:1:</col>
+    <col id="4">11:7:11:11:7:2:1:1:1:11:11:1:1:1:</col>
+    <col id="5">11:7:7:7:2:1:1:1:11:11:1:1:1:1:</col>
+    <col id="6">11:7:7:1:1:1:1:1:1:1:1:1:1:1:</col>
+    <col id="7">11:1:1:1:1:4:4:4:4:1:1:11:1:1:</col>
+    <col id="8">11:1:1:1:1:4:5:5:5:4:4:11:4:4:</col>
+    <col id="9">1:1:1:1:4:5:6:6:5:4:4:4:4:3:</col>
+    <col id="10">1:1:1:1:4:5:6:6:6:5:4:4:3:3:</col>
+    <col id="11">1:1:1:1:4:5:6:6:5:4:3:3:3:3:</col>
+    <col id="12">1:1:1:1:1:4:5:5:4:4:3:3:2:2:</col>
+    <col id="13">1:1:8:8:1:4:4:4:4:3:2:2:2:2:</col>
+    <col id="14">1:1:8:10:8:1:2:2:3:3:2:2:2:2:</col>
+    <col id="15">1:1:8:8:1:1:2:2:2:2:2:2:2:2:</col>
+    <col id="16">1:1:1:1:1:8:8:1:2:2:2:2:2:2:</col>
+    <col id="17">1:1:1:1:8:10:8:1:8:8:1:1:2:2:</col>
+    <col id="18">1:1:1:1:1:8:8:1:8:10:8:1:1:2:</col>
+    <col id="19">1:1:1:1:1:1:1:1:8:8:1:1:1:2:</col>
+  </columns>
+  
+  <teams count="3" maxCombatantsPerTeam="6">
+    <team id="0">
+      <combatant AI="Norm" charName="Archer200" id="0" startX="7" startY="5"/>
+      <combatant AI="Off" charName=" " id="1"/>
+      <combatant AI="Off" charName=" " id="2"/>
+      <combatant AI="Off" charName=" " id="3"/>
+      <combatant AI="Off" charName=" " id="4"/>
+      <combatant AI="Off" charName=" " id="5"/>
+    </team>
+    <team id="1">
+      <combatant AI="Norm" charName="Knight" id="0" startX="4" startY="24"/>
+      <combatant AI="Off" charName=" " id="1"/>
+      <combatant AI="Off" charName=" " id="2"/>
+      <combatant AI="Off" charName=" " id="3"/>
+      <combatant AI="Off" charName=" " id="4"/>
+      <combatant AI="Off" charName=" " id="5"/>
+    </team>
+    <team id="2">
+      <combatant AI="Norm" charName="Martock" id="0" startX="14" startY="24"/>
+      <combatant AI="Norm" charName="Morrak" id="1" startX="17" startY="5"/>
+      <combatant AI="Off" charName=" " id="2"/>
+      <combatant AI="Off" charName=" " id="3"/>
+      <combatant AI="Off" charName=" " id="4"/>
+      <combatant AI="Off" charName=" " id="5"/>
+    </team>
+  </teams>
+
+  <triggers>
+  </triggers>
+
+  <items>
+  </items>
+</Arena>

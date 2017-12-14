@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="Ahnook" Race="Half-Elf">
+  <Attributes DEX="5" HT="0" IQ="1" NIM="4" SOC="1" STR="3" TOU="-1"/>
+  <Equipment Armor="Heavy Leather">
+    <Hand Name="right hand">Bow, Longbow</Hand>
+    <Hand Name="left hand"/>
+    <Belt>Katana</Belt>
+    <Belt>Potion:Increase Strength</Belt>
+  </Equipment>
+  <Skills>
+    <Skill Level="6" Name="Bow"/>
+    <Skill Level="4" Name="2-Handed Sword"/>
+    <Skill Level="1" Name="Karate"/>
+  </Skills>
+  <Advantages>
+    <Advantage Level="5" Name="Wealth"/>
+    <Advantage Level="0" Name="Bad Temper"/>
+  </Advantages>
+</Character>

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="Morrak" Race="Orc">
+  <Attributes DEX="4" HT="2" IQ="-3" NIM="2" SOC="-2" STR="4" TOU="2"/>
+  <Equipment Armor="Banded Mail">
+    <Hand Name="right hand">Pick-Axe</Hand>
+    <Hand Name="left hand">Medium Shield</Hand>
+  </Equipment>
+  <Skills>
+    <Skill Level="6" Name="Axe/Mace"/>
+    <Skill Level="6" Name="Shield"/>
+    <Skill Level="2" Name="Knife"/>
+    <Skill Level="1" Name="Brawling"/>
+  </Skills>
+  <Advantages>
+    <Advantage Level="7" Name="Wealth"/>
+    <Advantage Level="0" Name="Compulsive Liar"/>
+  </Advantages>
+</Character>

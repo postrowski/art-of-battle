@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="Mitrax" Race="Orc">
+  <Attributes DEX="3" HT="4" IQ="-3" NIM="2" SOC="-2" STR="4" TOU="1"/>
+  <Equipment Armor="Light Plate">
+    <Hand Name="right hand">War Hammer</Hand>
+    <Hand Name="left hand"/>
+  </Equipment>
+  <Skills>
+    <Skill Level="7" Name="2-Handed Axe/Mace"/>
+    <Skill Level="4" Name="Knife"/>
+  </Skills>
+  <Advantages>
+    <Advantage Level="7" Name="Wealth"/>
+  </Advantages>
+</Character>

@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="Merlin" Race="Human">
+  <Attributes DEX="4" HT="-1" IQ="7" NIM="4" SOC="0" STR="0" TOU="1"/>
+  <Equipment Armor="Leather">
+    <Hand Name="right hand">Quarterstaff</Hand>
+    <Hand Name="left hand"/>
+  </Equipment>
+  <Skills>
+    <Skill Level="6" Name="Quarterstaff"/>
+    <Skill Level="4" Name="Throwing"/>
+    <Skill Level="4" Name="Shield"/>
+    <Skill Level="1" Name="Brawling"/>
+  </Skills>
+  <Spells>
+    <Spell Level="2" Name="Block Spell"/>
+    <Spell Level="2" Name="Block Attack"/>
+    <Spell Level="1" Name="Magic Shield"/>
+    <Spell Level="2" Name="Lightning"/>
+    <Spell Level="2" Name="Magic Missile"/>
+    <Spell Level="2" Name="Shocking Grasp"/>
+    <Spell Level="1" Name="Speed"/>
+    <Spell Level="1" Name="Control Mind"/>
+    <Spell Level="1" Name="Flight"/>
+    <Spell Level="1" Name="Levitate"/>
+    <Spell Level="2" Name="Create Force"/>
+    <Spell Level="2" Name="Create Electricity"/>
+    <Spell Level="2" Name="Control Charge"/>
+    <Spell Level="1" Name="Block Thought"/>
+    <Spell Level="2" Name="Throw Spell"/>
+    <Spell Level="1" Name="Suggestion"/>
+    <Spell Level="2" Name="Create Earth"/>
+    <Spell Level="1" Name="Push"/>
+    <Spell Level="2" Name="Affect Area"/>
+    <Spell Level="1" Name="Control Time"/>
+    <Spell Level="1" Name="Spider Web"/>
+    <Spell Level="2" Name="Glue"/>
+    <Spell Level="1" Name="Create Rope"/>
+  </Spells>
+  <Colleges>
+    <College Level="6" Name="Protection"/>
+    <College Level="2" Name="Enchantment"/>
+    <College Level="6" Name="Energy"/>
+    <College Level="5" Name="Earth"/>
+    <College Level="2" Name="Divination"/>
+    <College Level="2" Name="Air"/>
+    <College Level="5" Name="Conjuration"/>
+    <College Level="3" Name="Evocation"/>
+  </Colleges>
+  <Advantages>
+    <Advantage Level="4" Name="Magical Aptitude"/>
+    <Advantage Level="0" Name="Honest"/>
+    <Advantage Level="1" Name="Hero points"/>
+    <Advantage Level="2" Name="Wealth"/>
+  </Advantages>
+</Character>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project xcmbt with Jar-in-Jar Loader">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <target name="create_run_jar">
+        <jar destfile="C:/Users/Paul/workspace/xcmbt/Combat.jar">
+            <manifest>
+                <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
+                <attribute name="Rsrc-Main-Class" value="ostrowski.combat.client.CombatClient"/>
+                <attribute name="Class-Path" value="."/>
+                <attribute name="Rsrc-Class-Path" value="./ lwjgl.jar lwjgl_util.jar swt.jar jinput.jar swt.jar junit.jar org.hamcrest.core_1.3.0.v201303031735.jar AppleJavaExtensions.jar junit-4.9.jar lwjgl_test.jar lwjgl_util_applet.jar lwjgl-debug.jar lzma.jar resolver.jar xml-apis.jar serializer.jar swt-debug.jar"/>
+            </manifest>
+            <zipfileset src="jar-in-jar-loader.zip"/>
+            <fileset dir="C:/Users/Paul/workspace/xcmbt/target/classes"/>
+            <fileset dir="C:/Users/Paul/workspace/xcmbt/target/test-classes"/>
+            <fileset dir="C:/Users/Paul/workspace/Animation Controller/bin"/>
+            <zipfileset dir="C:\64bit" includes="lwjgl.jar"/>
+            <zipfileset dir="C:\64bit" includes="lwjgl_util.jar"/>
+            <zipfileset dir="C:\64bit" includes="swt.jar"/>
+            <zipfileset dir="C:\64bit" includes="jinput.jar"/>
+            <fileset dir="C:/Users/Paul/workspace/Util/bin"/>
+            <zipfileset dir="C:\Users\Paul\workspace\Util" includes="swt.jar"/>
+            <zipfileset dir="C:\eclipse\plugins\org.junit_4.11.0.v201303080030" includes="junit.jar"/>
+            <zipfileset dir="C:\eclipse\plugins" includes="org.hamcrest.core_1.3.0.v201303031735.jar"/>
+            <zipfileset dir="C:\64bit" includes="AppleJavaExtensions.jar"/>
+            <zipfileset dir="C:\64bit" includes="junit-4.9.jar"/>
+            <zipfileset dir="C:\64bit" includes="lwjgl_test.jar"/>
+            <zipfileset dir="C:\64bit" includes="lwjgl_util_applet.jar"/>
+            <zipfileset dir="C:\64bit" includes="lwjgl-debug.jar"/>
+            <zipfileset dir="C:\64bit" includes="lzma.jar"/>
+            <zipfileset dir="C:\64bit" includes="resolver.jar"/>
+            <zipfileset dir="C:\64bit" includes="xml-apis.jar"/>
+            <zipfileset dir="C:\64bit" includes="serializer.jar"/>
+            <zipfileset dir="C:\64bit" includes="swt-debug.jar"/>
+        </jar>
+    </target>
+</project>

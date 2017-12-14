@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="Charon" Race="Elf">
+  <Attributes DEX="6" HT="-1" IQ="5" NIM="4" SOC="1" STR="5" TOU="2"/>
+  <Equipment Armor="Elven Chain">
+    <Hand Name="right hand">Bow, Longbow</Hand>
+    <Hand Name="left hand"/>
+    <Belt>Quarterstaff</Belt>
+  </Equipment>
+  <Skills>
+    <Skill Level="8" Name="Quarterstaff"/>
+    <Skill Level="8" Name="Bow"/>
+    <Skill Level="3" Name="Brawling"/>
+  </Skills>
+  <Spells>
+    <Spell Level="2" Name="Reverse Missile"/>
+    <Spell Level="2" Name="Detect Object"/>
+    <Spell Level="1" Name="Magic Shield"/>
+    <Spell Level="1" Name="Missile Shield"/>
+    <Spell Level="1" Name="Create Earth"/>
+    <Spell Level="2" Name="Push"/>
+    <Spell Level="2" Name="Create Force"/>
+  </Spells>
+  <Colleges>
+    <College Level="2" Name="Earth"/>
+    <College Level="2" Name="Protection"/>
+    <College Level="2" Name="Energy"/>
+    <College Level="2" Name="Evocation"/>
+    <College Level="0" Name="Divination"/>
+  </Colleges>
+  <Advantages>
+    <Advantage Level="4" Name="Wealth"/>
+    <Advantage Level="0" Name="Compulsive Liar"/>
+    <Advantage Level="1" Name="Hero points"/>
+  </Advantages>
+</Character>

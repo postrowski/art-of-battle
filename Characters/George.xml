@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="George" Race="Human">
+  <Attributes DEX="3" HT="0" IQ="-1" NIM="2" SOC="-1" STR="3" TOU="0"/>
+  <Equipment Armor="Leather">
+    <Hand Name="right hand">Two-Handed Sword</Hand>
+    <Hand Name="left hand"/>
+    <Belt>Knife</Belt>
+  </Equipment>
+  <Skills>
+    <Skill Level="5" Name="2-Handed Sword"/>
+    <Skill Level="3" Name="Boxing"/>
+    <Skill Level="2" Name="Knife"/>
+    <Skill Level="1" Name="Throwing"/>
+  </Skills>
+  <Advantages>
+    <Advantage Level="4" Name="Wealth"/>
+    <Advantage Level="0" Name="Compulsive Liar"/>
+  </Advantages>
+</Character>

@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="Apprentice" Race="Elf">
+  <Attributes DEX="3" HT="-1" IQ="5" NIM="3" SOC="0" STR="-1" TOU="-2"/>
+  <Equipment Armor="Leather">
+    <Hand Name="right hand">Quarterstaff</Hand>
+    <Hand Name="left hand"/>
+  </Equipment>
+  <Skills>
+    <Skill Level="4" Name="Quarterstaff"/>
+    <Skill Level="4" Name="Throwing"/>
+    <Skill Level="2" Name="Brawling"/>
+  </Skills>
+  <Spells>
+    <Spell Level="2" Name="Fireball"/>
+    <Spell Level="2" Name="Flame Jet"/>
+    <Spell Level="2" Name="Flaming Weapon"/>
+    <Spell Level="1" Name="Flaming Missile Weapon"/>
+    <Spell Level="2" Name="Control Temperature"/>
+    <Spell Level="2" Name="Create Fire"/>
+    <Spell Level="2" Name="Control Fire"/>
+    <Spell Level="2" Name="Throw Spell"/>
+  </Spells>
+  <Colleges>
+    <College Level="4" Name="Fire"/>
+    <College Level="4" Name="Conjuration"/>
+    <College Level="2" Name="Evocation"/>
+  </Colleges>
+  <Advantages>
+    <Advantage Level="2" Name="Magical Aptitude"/>
+    <Advantage Level="1" Name="Wealth"/>
+    <Advantage Level="0" Name="Bad Temper"/>
+    <Advantage Level="2" Name="Appearance"/>
+  </Advantages>
+</Character>

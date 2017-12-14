@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="MixedMartialArtist200" Race="Human">
+  <Attributes DEX="2" HT="-1" IQ="-2" NIM="6" SOC="-1" STR="4" TOU="1"/>
+  <Equipment Armor="Chain Mail">
+    <Hand Name="right hand"/>
+    <Hand Name="left hand"/>
+  </Equipment>
+  <Skills>
+    <Skill Level="6" Name="Karate"/>
+    <Skill Level="6" Name="Wrestling"/>
+  </Skills>
+  <Advantages>
+    <Advantage Level="3" Name="Wealth"/>
+  </Advantages>
+</Character>

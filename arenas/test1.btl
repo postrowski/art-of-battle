@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ArenaSave Name="Actions" PseudoRandomNumberSeed="861" PseudoRandomNumberUseCount="614">
+  <Battle phaseCount="2" roundCount="2" turnCount="3"/>
+  <CurrentMap>
+    <Arena Name="Actions" height="28" hideViewFromLocalPlayers="true" level="0" width="20">
+      <uniqueIds>
+        <id index="0" uniqueID="1"/>
+        <id index="1" uniqueID="3"/>
+      </uniqueIds>
+      <rows>
+        <row id="0">11:0:11:0:11:2:11:3:11:3:1:3:1:3:1:3:1:3:1:3:</row>
+        <row id="1">11:1:11:1:11:3:11:3:1:3:1:3:1:3:1:3:1:3:1:3:</row>
+        <row id="2">11:1:7:1:7:3:7:3:1:3:1:3:1:3:1:3:1:3:1:3:</row>
+        <row id="3">7:1:7:1:7:3:1:3:1:3:1:3:1:3:1:3:1:3:1:3:</row>
+        <row id="4">11:1:7:0:11:3:7:3:1:3:1:3:1:3:8:3:1:3:1:3:</row>
+        <row id="5">7:0:11:0:7:3:1:3:1:3:1:3:8:3:8:3:1:3:1:3:</row>
+        <row id="6">11:2:11:0:11:3:1:3:1:3:1:3:1:3:10:3:1:3:1:3:</row>
+        <row id="7">7:0:11:3:7:3:1:3:1:3:1:3:8:3:8:3:1:3:1:3:</row>
+        <row id="8">11:2:11:3:7:3:1:3:1:3:4:3:1:3:8:3:1:3:1:3:</row>
+        <row id="9">7:3:7:3:2:3:1:3:4:3:4:3:1:3:1:3:8:3:1:3:</row>
+        <row id="10">11:3:2:3:2:3:1:3:4:3:5:3:4:3:1:3:8:3:8:3:</row>
+        <row id="11">2:3:2:3:1:3:4:3:5:3:5:3:4:3:1:3:10:3:1:3:</row>
+        <row id="12">2:3:2:3:1:3:1:3:5:3:6:3:5:3:2:3:8:3:8:3:</row>
+        <row id="13">2:3:1:3:1:3:4:3:6:3:6:3:4:3:2:3:8:3:1:3:</row>
+        <row id="14">2:3:2:3:1:3:1:3:5:3:6:3:5:3:2:3:1:3:1:3:</row>
+        <row id="15">2:3:1:3:1:3:4:3:6:3:6:3:4:3:2:3:1:3:1:3:</row>
+        <row id="16">1:3:1:3:1:3:1:3:5:3:6:3:4:3:3:3:2:3:8:3:</row>
+        <row id="17">1:3:1:1:11:3:4:3:5:3:5:3:4:3:2:3:8:3:8:3:</row>
+        <row id="18">1:3:1:1:11:1:1:3:4:3:5:3:4:3:3:3:2:3:10:3:</row>
+        <row id="19">1:3:1:1:11:3:1:3:4:3:4:3:3:3:2:3:8:3:8:3:</row>
+        <row id="20">11:3:1:3:11:2:1:3:4:3:4:3:3:3:2:3:2:3:8:3:</row>
+        <row id="21">1:3:1:2:1:3:1:3:4:1:3:3:2:3:2:3:1:3:1:3:</row>
+        <row id="22">11:3:1:2:1:2:1:3:11:3:4:1:3:3:2:3:2:3:1:3:</row>
+        <row id="23">1:3:1:2:1:3:11:3:4:1:3:1:2:3:2:3:1:3:1:3:</row>
+        <row id="24">11:3:1:2:1:3:1:3:4:3:3:3:2:3:2:3:2:3:1:3:</row>
+        <row id="25">1:2:1:3:1:3:1:2:4:3:3:3:2:3:2:3:2:3:1:3:</row>
+        <row id="26">11:2:1:2:1:3:1:3:4:3:3:3:2:3:2:3:2:3:2:3:</row>
+        <row id="27">11:2:1:3:1:3:1:2:3:3:3:3:2:3:2:3:2:3:2:3:</row>
+      </rows>
+      
+      <teams count="4" maxCombatantsPerTeam="15">
+        <team id="0">
+          <combatant AI="Local" charName="joe" id="0" startX="13" startY="1"/>
+          <combatant AI="Off" charName=" " id="1"/>
+          <combatant AI="Off" charName=" " id="2"/>
+          <combatant AI="Off" charName=" " id="3"/>
+          <combatant AI="Off" charName=" " id="4"/>
+          <combatant AI="Off" charName=" " id="5"/>
+          <combatant AI="Off" charName=" " id="6"/>
+          <combatant AI="Off" charName="" id="7"/>
+          <combatant AI="Off" charName="" id="8"/>
+          <combatant AI="Off" charName="" id="9"/>
+          <combatant AI="Off" charName="" id="10"/>
+          <combatant AI="Off" charName="" id="11"/>
+          <combatant AI="Off" charName="" id="12"/>
+          <combatant AI="Off" charName="" id="13"/>
+          <combatant AI="Off" charName="" id="14"/>
+        </team>
+        <team id="1">
+          <combatant AI="Local" charName="kyoto" id="0" startX="6" startY="24"/>
+          <combatant AI="Off" charName=" " id="1"/>
+          <combatant AI="Off" charName=" " id="2"/>
+          <combatant AI="Off" charName=" " id="3"/>
+          <combatant AI="Off" charName=" " id="4"/>
+          <combatant AI="Off" charName=" " id="5"/>
+          <combatant AI="Off" charName=" " id="6"/>
+          <combatant AI="Off" charName="" id="7"/>
+          <combatant AI="Off" charName="" id="8"/>
+          <combatant AI="Off" charName="" id="9"/>
+          <combatant AI="Off" charName="" id="10"/>
+          <combatant AI="Off" charName="" id="11"/>
+          <combatant AI="Off" charName="" id="12"/>
+          <combatant AI="Off" charName="" id="13"/>
+          <combatant AI="Off" charName="" id="14"/>
+        </team>
+        <team id="2">
+          <combatant AI="Norm" charName="Martock" id="0"/>
+          <combatant AI="Norm" charName="Morrak" id="1"/>
+          <combatant AI="Off" charName=" " id="2"/>
+          <combatant AI="Off" charName=" " id="3"/>
+          <combatant AI="Off" charName=" " id="4"/>
+          <combatant AI="Off" charName=" " id="5"/>
+          <combatant AI="Off" charName=" " id="6"/>
+          <combatant AI="Off" charName="" id="7"/>
+          <combatant AI="Off" charName="" id="8"/>
+          <combatant AI="Off" charName="" id="9"/>
+          <combatant AI="Off" charName="" id="10"/>
+          <combatant AI="Off" charName="" id="11"/>
+          <combatant AI="Off" charName="" id="12"/>
+          <combatant AI="Off" charName="" id="13"/>
+          <combatant AI="Off" charName="" id="14"/>
+        </team>
+        <team id="3">
+          <combatant AI="Off" charName="" id="0"/>
+          <combatant AI="Off" charName="" id="1"/>
+          <combatant AI="Off" charName="" id="2"/>
+          <combatant AI="Off" charName="" id="3"/>
+          <combatant AI="Off" charName="" id="4"/>
+          <combatant AI="Off" charName="" id="5"/>
+          <combatant AI="Off" charName="" id="6"/>
+          <combatant AI="Off" charName="" id="7"/>
+          <combatant AI="Off" charName="" id="8"/>
+          <combatant AI="Off" charName="" id="9"/>
+          <combatant AI="Off" charName="" id="10"/>
+          <combatant AI="Off" charName="" id="11"/>
+          <combatant AI="Off" charName="" id="12"/>
+          <combatant AI="Off" charName="" id="13"/>
+          <combatant AI="Off" charName="" id="14"/>
+        </team>
+      </teams>
+    
+      <triggers>
+      </triggers>
+    
+      <items>
+      </items>
+    </Arena>
+  </CurrentMap>
+  <StoredMaps/>
+  <localCharacters>
+    <Character Gender="Male" Name="Joe" Race="Human" UniqueID="1">
+      <Attributes DEX="3" HT="0" IQ="-1" NIM="0" SOC="0" STR="1" TOU="0"/>
+      <Equipment Armor="Heavy Leather">
+        <Hand Name="right hand">Rapier</Hand>
+        <Hand Name="left hand">Medium Shield</Hand>
+      </Equipment>
+      <Skills>
+        <Skill Level="1" Name="Throwing"/>
+        <Skill Level="6" Name="Fencing"/>
+        <Skill Level="3" Name="Aikido"/>
+        <Skill Level="5" Name="Shield"/>
+      </Skills>
+      <Advantages>
+        <Advantage LevelName="$2,000" Name="Wealth"/>
+      </Advantages>
+    
+      <Condition actionsAvailable="4" actionsSpentThisRound="0" attackedThisRound="false" collapsed="false" defenseOptionsTakenThisRound="0" finalDefensiveActionsAvailable="0" hasMovedThisRound="false" initiative="4" isAlive="true" isConscious="true" mageSpellPointsAvailable="0" mageSpellPointsMax="0" maxActionsPerRound="3" moveComplete="false" movedLastAction="false" movementAvailableEachRound="4" movementAvailableThisRound="4" movingEvasively="false" priestSpellPointsAvailable="0" priestSpellPointsMax="0">
+        <Orientation position="5">
+          <Location coordX="9" coordY="7" facing="4"/>
+        </Orientation>
+        <Wounds/>
+      </Condition>
+      <limbs>
+        <Limb actionsNeededToReady="0" attackStyle="0" attackedThisRound="false" defenseStyle="0" id="10" name="right hand" preparedState="0"/>
+        <Limb actionsNeededToReady="0" attackStyle="0" id="5" name="left leg"/>
+        <Limb actionsNeededToReady="0" attackStyle="0" id="4" name="right leg"/>
+        <Limb actionsNeededToReady="0" attackStyle="0" attackedThisRound="false" defenseStyle="0" id="11" name="left hand" preparedState="0"/>
+        <Limb actionsNeededToReady="0" attackStyle="0" id="0" name="head"/>
+      </limbs>
+      
+      <activeData aiType="" aimDuration="0" eyeCount="2" hasInitiativeAndActionsEverBeenInitialized="true" headCount="1" isBerserking="false" legCount="2" targetID="3" teamID="0" wingCount="0"/>
+      <currentSpell/>
+      <activeSpells/>
+    </Character>
+    <Character Gender="Male" Name="Kyoto" Race="Human" UniqueID="3">
+      <Attributes DEX="2" HT="0" IQ="0" NIM="4" SOC="0" STR="2" TOU="1"/>
+      <Equipment Armor="Heavy Leather">
+        <Hand Name="right hand"/>
+        <Hand Name="left hand"/>
+      </Equipment>
+      <Skills>
+        <Skill Level="6" Name="Aikido"/>
+        <Skill Level="5" Name="Boxing"/>
+      </Skills>
+      <Advantages>
+        <Advantage LevelName="$500" Name="Wealth"/>
+        <Advantage LevelName="" Name="Honest"/>
+        <Advantage LevelName="+2" Name="Magic Resistance"/>
+      </Advantages>
+    
+      <Condition actionsAvailable="5" actionsSpentThisRound="0" attackedThisRound="false" collapsed="false" defenseOptionsTakenThisRound="0" finalDefensiveActionsAvailable="0" hasMovedThisRound="false" initiative="6" isAlive="true" isConscious="true" mageSpellPointsAvailable="0" mageSpellPointsMax="0" maxActionsPerRound="3" moveComplete="false" movedLastAction="false" movementAvailableEachRound="4" movementAvailableThisRound="4" movingEvasively="false" priestSpellPointsAvailable="0" priestSpellPointsMax="0">
+        <Orientation position="5">
+          <Location coordX="7" coordY="9" facing="1"/>
+        </Orientation>
+        <Wounds/>
+      </Condition>
+      <limbs>
+        <Limb actionsNeededToReady="0" attackStyle="1" attackedThisRound="false" defenseStyle="3" id="10" name="right hand" preparedState="0"/>
+        <Limb actionsNeededToReady="0" attackStyle="0" id="5" name="left leg"/>
+        <Limb actionsNeededToReady="0" attackStyle="0" id="4" name="right leg"/>
+        <Limb actionsNeededToReady="0" attackStyle="1" attackedThisRound="false" defenseStyle="3" id="11" name="left hand" preparedState="0"/>
+        <Limb actionsNeededToReady="0" attackStyle="0" id="0" name="head"/>
+      </limbs>
+      
+      <activeData aiType="" aimDuration="0" eyeCount="2" hasInitiativeAndActionsEverBeenInitialized="true" headCount="1" isBerserking="false" legCount="2" targetID="1" teamID="1" wingCount="0"/>
+      <currentSpell/>
+      <activeSpells/>
+    </Character>
+  </localCharacters>
+  <remoteCharacters>
+  </remoteCharacters>
+  <aiCharacters>
+  </aiCharacters>
+  </ArenaSave>

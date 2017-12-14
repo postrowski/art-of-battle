@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="Bruce Lee" Race="Human">
+  <Attributes DEX="6" HT="0" IQ="0" NIM="6" SOC="0" STR="5" TOU="3"/>
+  <Equipment Armor="Leather">
+    <Hand Name="right hand"/>
+    <Hand Name="left hand"/>
+  </Equipment>
+  <Skills>
+    <Skill Level="10" Name="Karate"/>
+    <Skill Level="8" Name="Aikido"/>
+    <Skill Level="3" Name="Quarterstaff"/>
+    <Skill Level="2" Name="Nun chucks"/>
+  </Skills>
+  <Advantages>
+    <Advantage Level="2" Name="Wealth"/>
+    <Advantage Level="1" Name="Hero points"/>
+  </Advantages>
+</Character>

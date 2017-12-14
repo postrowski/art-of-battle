@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="Grollup" Race="Kobold">
+  <Attributes DEX="2" HT="3" IQ="-5" NIM="0" SOC="-3" STR="2" TOU="0"/>
+  <Equipment Armor="Leather">
+    <Hand Name="right hand">Mace</Hand>
+    <Hand Name="left hand">Medium Shield</Hand>
+  </Equipment>
+  <Skills>
+    <Skill Level="5" Name="Axe/Mace"/>
+    <Skill Level="5" Name="Shield"/>
+    <Skill Level="2" Name="Brawling"/>
+  </Skills>
+  <Advantages>
+    <Advantage Level="5" Name="Wealth"/>
+  </Advantages>
+</Character>

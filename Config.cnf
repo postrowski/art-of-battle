@@ -1,0 +1,9 @@
+spellTnAffectedByMa = true
+useSimpleDamage = false
+useSimpleDice = false
+useExtendedDice = false
+useBellCurveDice = true
+useComplexTOUDice = true
+use3DMap = false
+showChit = false
+serverPort = 1777

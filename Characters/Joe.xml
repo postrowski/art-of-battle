@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="Joe" Race="Human">
+  <Attributes DEX="3" HT="0" IQ="-1" NIM="0" SOC="0" STR="1" TOU="0"/>
+  <Equipment Armor="Heavy Leather">
+    <Hand Name="right hand">Rapier</Hand>
+    <Hand Name="left hand">Medium Shield</Hand>
+  </Equipment>
+  <Skills>
+    <Skill Level="6" Name="Fencing"/>
+    <Skill Level="5" Name="Shield"/>
+    <Skill Level="3" Name="Aikido"/>
+    <Skill Level="1" Name="Throwing"/>
+  </Skills>
+  <Advantages>
+    <Advantage Level="4" Name="Wealth"/>
+  </Advantages>
+</Character>

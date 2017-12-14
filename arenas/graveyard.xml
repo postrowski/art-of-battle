@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Arena Name="Graveyard" height="60" hideViewFromLocalPlayers="true" level="0" width="43">
+  <rows>
+    <row id="0">1:1:8:8:1:1:8:8:1:1:8:8:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="1">8:1:8:1:8:1:8:1:8:1:8:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="2">8:8:1:1:8:8:1:1:8:8:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="3">10:1:1:1:10:1:1:1:10:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="4">8:8:1:1:8:8:1:1:8:8:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="5">8:1:8:1:8:1:8:1:8:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="6">1:1:8:8:1:1:8:8:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="7">1:1:10:1:1:1:10:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="8">1:1:8:8:1:1:8:8:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="9">8:1:8:1:8:1:8:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="10">8:8:1:1:8:8:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="11">10:1:1:1:10:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="12">8:8:1:1:8:8:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="13">8:1:8:1:8:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="14">1:1:8:8:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="15">1:1:10:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="16">1:1:8:8:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="17">8:1:8:1:1:1:1:1:1:1:1:1:1:32769:1:1:1:1:1:1:1:</row>
+    <row id="18">8:8:1:1:1:1:1:1:1:1:1:1:1:131074:1:1:1:1:1050625:1:1:1:</row>
+    <row id="19">10:1:1:1:1:1:1:1:1:1:1:1:2:1:1:1:1:1050625:2195457:1:1:</row>
+    <row id="20">8:8:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1050625:262656:32769:1:1:</row>
+    <row id="21">8:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1050625:262656:196608:1:1:</row>
+    <row id="22">1:1:1:1:1:1:1:1:1:1:1:32769:1:1:32769:1:1:295424:0:98305:1:1:</row>
+    <row id="23">1:1:1:1:1:1:1:1:1:1:131074:1:1:131074:1:1:196865:0:131072:32769:1:</row>
+    <row id="24">1:1:1:1:1:1:1:1:1:1:2:1:1:2:1:1:1:100352:0:196608:1:1:</row>
+    <row id="25">1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:131073:0:0:98305:1:</row>
+    <row id="26">1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:16897:0:131072:32769:1:</row>
+    <row id="27">1:1:1:1:1:1:1:1:32769:1:1:32769:1:1:32769:1:1:102400:0:1261568:1:</row>
+    <row id="28">8:1:1:1:1:1:1:1:131074:1:1:131074:1:1:131074:1:1:131073:32768:1050624:4097:1:</row>
+    <row id="29">8:1:1:1:1:1:1:2:1:1:2:1:1:2:1:1:1:196609:1050624:262657:1:</row>
+    <row id="30">10:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1148928:262657:1:1:</row>
+    <row id="31">8:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:131073:262657:1:1:</row>
+    <row id="32">8:1:1:1:1:1:1:1:1:32769:1:1:32769:1:1:32769:1:1:513:1:1:1:</row>
+    <row id="33">1:1:1:1:1:1:1:1:131074:1:1:131074:1:1:131074:1:1:1:1:1:1:</row>
+    <row id="34">1:8:1:1:1:1:1:1:2:1:1:2:1:1:2:1:1:1:1:1:1:1:</row>
+    <row id="35">8:8:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="36">1:10:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="37">8:8:1:1:1:1:1:1:1:32769:1:1:32769:1:1:32769:1:1:1:1:1:</row>
+    <row id="38">1:8:1:1:1:1:1:1:1:131074:1:1:131074:1:1:131074:1:1:1:1:1:1:</row>
+    <row id="39">1:1:1:1:1:1:1:1:2:1:1:2:1:1:2:1:1:1:1:1:1:</row>
+    <row id="40">8:1:8:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="41">8:8:8:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="42">10:1:10:1:1:1:1:1:1:1:32769:1:1:32769:1:1:32769:1:1:1:1:1:</row>
+    <row id="43">8:8:8:1:1:1:1:1:1:131074:1:1:131074:1:1:131074:1:1:1:1:1:</row>
+    <row id="44">8:1:8:1:1:1:1:1:1:2:1:1:2:1:1:2:1:1:1:1:1:1:</row>
+    <row id="45">1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="46">1:8:1:8:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="47">8:8:8:8:1:1:1:1:1:1:32769:1:1:32769:1:1:1:1:1:1:1:</row>
+    <row id="48">1:10:1:10:1:1:1:1:1:1:131074:1:1:131074:1:1:1:1:1:1:1:1:</row>
+    <row id="49">8:8:8:8:1:1:1:1:1:2:1:1:2:1:1:1:1:1:1:1:1:</row>
+    <row id="50">1:8:1:8:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="51">1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:8:1:</row>
+    <row id="52">8:1:8:1:8:1:1:1:1:1:1:32769:1:1:1:1:1:1:1:8:8:1:</row>
+    <row id="53">8:8:8:8:8:1:1:1:1:1:131074:1:1:1:1:1:1:1:1:10:1:</row>
+    <row id="54">10:1:10:1:10:1:1:1:1:1:2:1:1:1:1:1:1:1:1:8:8:1:</row>
+    <row id="55">8:8:8:8:8:1:1:1:1:1:1:1:1:1:1:1:1:8:1:8:1:</row>
+    <row id="56">8:1:8:1:8:1:1:1:1:1:1:1:1:1:1:1:1:8:8:1:1:1:</row>
+    <row id="57">1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:10:1:1:1:</row>
+    <row id="58">1:8:1:8:1:8:1:1:1:1:1:1:1:1:1:1:1:8:8:1:1:1:</row>
+    <row id="59">8:8:8:8:8:1:1:1:1:1:1:1:1:1:1:1:1:8:1:1:1:</row>
+  </rows>
+  
+  <teams count="4" maxCombatantsPerTeam="15">
+    <team id="0">
+      <combatant AI="Norm" charName="Bruce Lee" id="0" startX="3" startY="23"/>
+      <combatant AI="Norm" charName="Conan" id="1" startX="3" startY="27"/>
+      <combatant AI="Norm" charName="HighPriest of Thor" id="2" startX="1" startY="23"/>
+      <combatant AI="Norm" charName="SwordMaster" id="3" startX="1" startY="27"/>
+      <combatant AI="Off" charName=" " id="4"/>
+      <combatant AI="Off" charName=" " id="5"/>
+      <combatant AI="Off" charName=" " id="6"/>
+      <combatant AI="Off" charName="" id="7"/>
+      <combatant AI="Off" charName="" id="8"/>
+      <combatant AI="Off" charName="" id="9"/>
+      <combatant AI="Off" charName="" id="10"/>
+      <combatant AI="Off" charName="" id="11"/>
+      <combatant AI="Off" charName="" id="12"/>
+      <combatant AI="Off" charName="" id="13"/>
+      <combatant AI="Off" charName="" id="14"/>
+    </team>
+    <team id="1">
+      <combatant AI="Local" charName="? Skeleton 250 " id="0" startX="21" startY="29"/>
+      <combatant AI="Local" charName="? Skeleton 250" id="1" startX="23" startY="39"/>
+      <combatant AI="Local" charName="? Zombie 250" id="2" startX="16" startY="34"/>
+      <combatant AI="Local" charName="? Zombie 250" id="3" startX="17" startY="39"/>
+      <combatant AI="Local" charName="? Skeleton 250" id="4" startX="20" startY="54"/>
+      <combatant AI="Local" charName="? Zombie 250 " id="5" startX="27" startY="29"/>
+      <combatant AI="Local" charName="Merlin" id="6" startX="36" startY="24"/>
+      <combatant AI="Off" charName="" id="7"/>
+      <combatant AI="Off" charName="" id="8"/>
+      <combatant AI="Off" charName="" id="9"/>
+      <combatant AI="Off" charName="" id="10"/>
+      <combatant AI="Off" charName="" id="11"/>
+      <combatant AI="Off" charName="" id="12"/>
+      <combatant AI="Off" charName="" id="13"/>
+      <combatant AI="Off" charName="" id="14"/>
+    </team>
+    <team id="2">
+      <combatant AI="Off" charName=" " id="0"/>
+      <combatant AI="Off" charName=" " id="1"/>
+      <combatant AI="Off" charName=" " id="2"/>
+      <combatant AI="Off" charName=" " id="3"/>
+      <combatant AI="Off" charName=" " id="4"/>
+      <combatant AI="Off" charName=" " id="5"/>
+      <combatant AI="Off" charName=" " id="6"/>
+      <combatant AI="Off" charName="" id="7"/>
+      <combatant AI="Off" charName="" id="8"/>
+      <combatant AI="Off" charName="" id="9"/>
+      <combatant AI="Off" charName="" id="10"/>
+      <combatant AI="Off" charName="" id="11"/>
+      <combatant AI="Off" charName="" id="12"/>
+      <combatant AI="Off" charName="" id="13"/>
+      <combatant AI="Off" charName="" id="14"/>
+    </team>
+    <team id="3">
+      <combatant AI="Off" charName="" id="0"/>
+      <combatant AI="Off" charName="" id="1"/>
+      <combatant AI="Off" charName="" id="2"/>
+      <combatant AI="Off" charName="" id="3"/>
+      <combatant AI="Off" charName="" id="4"/>
+      <combatant AI="Off" charName="" id="5"/>
+      <combatant AI="Off" charName="" id="6"/>
+      <combatant AI="Off" charName="" id="7"/>
+      <combatant AI="Off" charName="" id="8"/>
+      <combatant AI="Off" charName="" id="9"/>
+      <combatant AI="Off" charName="" id="10"/>
+      <combatant AI="Off" charName="" id="11"/>
+      <combatant AI="Off" charName="" id="12"/>
+      <combatant AI="Off" charName="" id="13"/>
+      <combatant AI="Off" charName="" id="14"/>
+    </team>
+  </teams>
+
+  <triggers>
+  </triggers>
+
+  <items>
+  </items>
+</Arena>

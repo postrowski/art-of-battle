@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Arena Name="Castle Gate" height="100" hideViewFromLocalPlayers="true" level="0" width="78">
+  <rows>
+    <row id="0">0:0:4160:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:131328:70:6:5:4:2:2:1:1:</row>
+    <row id="1">0:131328:0:2048:2048:2048:2048:2048:2048:2048:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:164171:6:5:4:1:2:2:1:1:</row>
+    <row id="2">0:0:4160:16384:3072:3072:3072:3072:3072:3072:32768:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:131328:70:6:5:4:2:2:1:1:</row>
+    <row id="3">0:131328:0:5696:1536:1536:1536:1536:1536:132864:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:164171:6:6:4:1:2:2:1:1:</row>
+    <row id="4">0:0:4160:131328:512:512:512:512:512:512:4160:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:131328:11:6:5:4:2:2:1:1:</row>
+    <row id="5">0:131328:0:4160:0:0:0:0:0:131328:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:75:0:6:4:1:2:2:1:1:</row>
+    <row id="6">0:0:4160:131328:0:0:0:0:0:0:4160:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:131072:0:11:5:4:2:2:1:1:</row>
+    <row id="7">0:131328:0:4160:0:0:0:0:0:131328:0:0:0:0:0:0:0:0:0:0:2048:2048:2048:2048:2048:2048:2048:2048:2048:2048:0:0:6:4:1:2:2:1:1:</row>
+    <row id="8">0:0:4160:131328:0:0:0:0:0:0:4160:0:0:0:0:0:0:0:0:0:1050624:3072:3072:3072:3072:3072:3072:3072:3072:3072:2059:0:0:5:4:2:2:1:1:</row>
+    <row id="9">0:131328:0:4160:0:0:0:0:0:131072:0:0:0:0:0:0:0:0:0:16384:3595:3595:3595:3595:3595:3595:3595:3595:3595:3595:0:0:6:4:1:2:2:1:8:</row>
+    <row id="10">0:0:4160:131328:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:3595:3595:3595:3595:3595:3595:3595:3595:3595:3595:3595:0:11:5:4:2:2:1:8:</row>
+    <row id="11">0:131328:0:4160:0:0:0:0:0:16384:0:0:0:0:0:0:0:0:0:2:1542:1542:1542:1542:1542:1542:1542:1542:1542:1542:0:0:6:4:1:2:2:8:8:</row>
+    <row id="12">0:0:4160:131328:0:0:0:0:0:0:4160:0:0:0:0:0:0:0:1050624:2:514:518:518:518:518:518:518:518:518:518:6:11:6:5:4:2:2:1:8:</row>
+    <row id="13">0:131328:0:4160:0:0:0:0:0:131328:0:0:0:0:0:0:0:1050624:32834:2:6:6:6:6:6:6:6:6:6:6:6:6:5:4:2:2:2:8:1:</row>
+    <row id="14">0:0:4160:131328:0:0:0:0:0:0:4160:0:0:0:0:0:0:1050624:1313291:2:2:6:6:6:6:6:6:6:6:6:6:6:5:4:2:2:2:1:8:</row>
+    <row id="15">0:131328:0:4160:0:0:0:0:0:131328:0:0:0:0:0:0:1050624:1313291:4098:2:5:5:5:5:5:5:5:5:5:5:5:5:4:2:2:2:2:8:1:</row>
+    <row id="16">0:0:4160:131328:0:0:0:0:0:0:4160:0:0:0:0:0:1050624:1313291:262658:2:2:5:5:5:5:5:5:5:5:5:5:5:4:2:2:2:2:1:8:</row>
+    <row id="17">0:131328:0:4160:0:0:0:0:0:1181952:0:0:0:0:2048:1050624:1312779:264710:2:2:5:5:5:5:5:5:5:5:5:5:5:4:2:2:2:2:1:1:1:</row>
+    <row id="18">0:0:4160:131328:0:0:0:0:0:1050624:4096:0:0:0:1050624:3072:1312779:262662:2:2:2:4:4:4:4:4:4:4:4:4:4:4:2:2:2:2:1:2129921:1:</row>
+    <row id="19">0:131328:0:4160:0:0:0:0:1050624:262656:0:0:0:1050624:262155:1050635:262150:5:2:2:4:4:4:4:4:4:4:4:4:4:4:2:2:2:2:1:32779:2129921:1:</row>
+    <row id="20">0:0:4160:131328:0:0:0:0:1050624:262656:0:0:0:1050624:1312779:1050635:262150:6:2:2:2:4:4:4:4:4:4:4:4:4:4:2:2:2:2:1:0:32779:1:</row>
+    <row id="21">0:131328:0:4160:0:0:0:1050624:262656:0:0:0:1050624:1312779:1030:262150:6:5:2:2:1:1:1:1:1:1:1:1:1:1:2:2:2:2:5:11:8519680:163851:1:</row>
+    <row id="22">0:0:4160:131328:0:0:0:1050624:262656:0:0:0:1050624:1312779:262150:518:6:5:2:2:2:1:1:1:1:1:1:1:1:1:2:2:2:2:5:5:0:8519936:32833:</row>
+    <row id="23">0:1048832:0:4160:0:0:1050624:262656:0:0:2048:1050624:1312779:262150:6:6:5:4:2:2:1:1:1:1:1:1:1:1:1:2:2:2:2:5:5:0:0:32779:5:</row>
+    <row id="24">0:1048576:4160:131328:0:0:1050624:262656:0:0:1050624:3072:1312779:262150:6:5:5:4:2:2:2:1:1:1:1:1:1:1:1:2:2:2:2:4:5:5:0:131328:32837:</row>
+    <row id="25">1048576:1314820:0:4096:0:1050624:262656:0:0:1050624:264203:1312779:262150:6:5:5:4:1:2:2:1:1:1:1:1:1:1:1:2:2:2:2:1:4:5:11:0:32779:5:</row>
+    <row id="26">0:282692:4160:0:0:1050624:262656:0:0:1050624:1312779:1050635:262150:6:5:5:4:1:2:2:2:1:1:1:1:1:1:1:2:2:2:2:1:1:4:5:0:0:5:</row>
+    <row id="27">131339:397632:0:32768:1050624:262656:0:0:1050624:1312779:1030:262150:6:5:5:4:1:1:2:2:1:1:1:1:1:1:1:2:2:2:2:1:1:1:4:5:11:5:5:</row>
+    <row id="28">11:135492:4160:131328:1050624:262656:0:0:1050624:1312779:262150:518:6:5:5:4:1:1:2:2:2:1:1:1:1:1:1:2:2:2:2:1:1:1:4:5:5:5:5:</row>
+    <row id="29">131339:135488:0:1054784:262656:0:2048:1050624:1312779:262150:6:6:5:4:4:1:1:1:2:2:1:1:1:1:1:1:2:2:2:2:1:1:1:1:4:5:5:5:4:</row>
+    <row id="30">11:135492:4160:131328:262656:0:1050624:3072:1312779:262150:6:6:5:4:4:1:1:1:2:2:2:1:1:1:1:1:2:2:2:2:1:1:1:1:1:4:5:5:4:</row>
+    <row id="31">131339:135488:0:262656:0:1050624:264203:1312779:262150:6:6:5:4:4:1:1:1:1:2:2:1:1:1:1:1:2:2:2:2:1:1:1:1:1:1:4:5:4:1:</row>
+    <row id="32">11:135492:4160:0:0:1050624:1312779:1050635:262150:6:6:5:4:4:1:1:1:1:2:2:2:1:1:1:1:2:2:2:2:1:1:1:1:1:1:1:4:4:1:</row>
+    <row id="33">139531:135488:0:0:1050624:1312779:1030:262150:6:5:5:4:4:1:1:1:1:1:2:2:1:1:1:1:2:2:2:2:1:1:1:1:1:1:1:1:4:1:1:</row>
+    <row id="34">11:135428:4160:0:1050624:1312779:262150:518:6:5:5:4:4:1:1:1:1:1:2:2:2:1:1:1:2:2:2:2:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="35">12292:135488:0:1050624:1312779:262150:6:6:5:5:4:4:1:1:1:1:1:1:2:2:1:1:1:2:2:2:2:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="36">24587:131332:4160:1050624:1312779:262150:6:6:5:5:4:4:1:1:1:1:1:1:2:2:2:1:1:2:2:2:2:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="37">4100:135488:16384:1312779:262150:6:6:5:5:4:4:1:1:1:1:1:1:1:2:2:1:1:2:2:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="38">12292:131332:4160:262155:264198:6:6:5:5:4:4:1:1:1:1:1:1:1:2:2:2:1:2:2:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="39">4:4363:131072:11:6:6:5:5:4:4:1:1:1:1:1:1:1:1:2:2:1:2:2:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="40">4164:24580:4160:8519680:6:6:5:5:4:4:1:1:1:1:1:1:1:1:2:2:2:2:2:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="41">16388:267:0:0:6:5:5:4:4:1:1:1:1:1:1:1:1:1:2:2:2:2:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="42">4164:12299:4160:0:6:5:5:4:4:1:1:1:1:1:1:1:1:1:2:2:2:2:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="43">24580:267:0:11:5:5:4:4:1:1:1:1:1:1:1:1:1:1:2:2:2:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="44">20548:11:4096:0:6:5:4:4:1:1:1:1:1:1:1:1:1:1:2:2:2:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="45">12299:6:11:6:5:4:4:1:1:1:1:1:1:1:1:1:1:1:2:2:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="46">20804:11:6:6:5:4:4:1:1:1:1:1:1:1:1:1:1:1:2:2:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="47">32843:6:6:5:4:4:1:1:1:1:1:1:1:1:1:1:1:1:2:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="48">20804:6:5:5:4:4:1:1:1:1:1:1:1:1:1:1:1:1:2:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="49">49227:5:5:4:4:1:1:1:1:1:1:1:1:1:1:1:1:1:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="50">20804:5:5:4:4:1:1:1:1:1:1:1:1:1:1:1:1:1:2:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="51">32843:5:4:4:1:1:1:1:1:1:1:1:1:1:1:1:1:1:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:8:</row>
+    <row id="52">4164:5:4:4:1:1:1:1:1:1:1:1:1:1:1:1:1:1:2:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:8:</row>
+    <row id="53">4:4:4:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:8:9:</row>
+    <row id="54">11:4:4:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:2:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:9:</row>
+    <row id="55">4:4:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:9:9:</row>
+    <row id="56">11:4:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:2:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:8:8:</row>
+    <row id="57">1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:8:8:</row>
+    <row id="58">11:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:2:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="59">1:8:1:1:1:8:1:1:1:1:1:1:1:1:1:1:1:1:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="60">11:8:8:1:1:8:8:1:1:1:1:1:1:1:1:1:1:1:2:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="61">1:10:1:1:1:10:1:1:1:1:1:1:1:1:1:1:1:1:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="62">11:8:8:1:1:8:8:1:1:1:1:1:1:1:1:1:1:1:2:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="63">1:8:1:1:1:8:1:1:1:1:1:1:1:1:1:1:1:1:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="64">11:1:1:8:1:1:1:1:1:1:1:1:1:1:1:1:1:1:2:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:8:1:1:1:</row>
+    <row id="65">1:1:8:8:1:1:1:1:1:1:1:1:1:1:1:1:1:1:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="66">11:8:1:10:1:1:1:1:1:1:1:1:1:1:1:1:1:1:2:2:2:1:1:1:1:1:1:1:8:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="67">1:8:8:8:1:1:1:1:1:1:1:1:1:1:1:1:1:1:2:2:1:1:1:1:1:1:1:8:8:1:1:1:1:1:8:1:1:1:1:</row>
+    <row id="68">11:1:1:8:1:1:1:1:1:1:1:1:1:1:1:1:1:1:2:2:2:1:1:1:1:1:1:1:8:1:1:1:1:1:8:9:1:1:8:</row>
+    <row id="69">1:9:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:9:8:1:8:8:</row>
+    <row id="70">11:1:1:1:1:1:1:1:1:1:8:1:1:1:1:1:1:1:2:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:8:8:1:1:10:</row>
+    <row id="71">1:9:1:1:1:1:1:1:1:8:8:1:1:1:1:1:1:1:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:8:8:</row>
+    <row id="72">11:1:1:1:1:1:8:8:1:1:10:1:1:1:1:1:1:1:2:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:8:</row>
+    <row id="73">1:1:1:1:9:8:8:1:1:8:8:1:1:1:1:1:1:1:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:8:1:1:1:1:</row>
+    <row id="74">11:1:1:1:9:9:8:8:1:1:8:1:1:1:1:1:1:1:2:2:2:1:1:8:1:1:1:1:1:1:1:1:1:1:8:8:1:1:1:</row>
+    <row id="75">1:1:1:1:8:9:1:1:1:1:1:1:1:1:1:1:1:1:2:2:1:1:8:8:1:1:1:1:1:1:1:1:1:1:10:1:1:1:1:</row>
+    <row id="76">11:1:1:1:8:9:1:1:1:1:1:1:1:1:1:1:1:1:2:2:2:1:8:8:1:1:1:1:1:1:1:1:8:1:8:8:1:1:1:</row>
+    <row id="77">8:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:2:2:1:1:9:1:1:1:1:1:1:1:8:1:8:1:8:1:8:1:1:</row>
+    <row id="78">11:8:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:2:2:2:1:8:1:1:1:1:1:1:1:8:8:8:8:8:1:8:8:1:</row>
+    <row id="79">10:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:2:2:1:1:1:1:1:8:1:1:1:1:10:8:8:8:1:1:10:1:1:</row>
+    <row id="80">11:8:1:1:8:1:1:1:1:1:1:1:1:1:1:1:1:1:2:2:2:1:1:1:1:8:8:1:1:1:8:8:9:9:9:1:8:8:1:</row>
+    <row id="81">8:1:1:8:8:1:1:1:8:1:1:1:8:1:1:1:1:1:2:2:1:1:1:8:1:10:1:1:1:1:8:8:9:9:1:1:8:1:1:</row>
+    <row id="82">11:1:1:1:10:1:1:1:8:8:1:1:8:8:1:1:1:1:2:2:2:1:1:8:8:8:8:1:1:1:1:1:9:1:1:1:1:1:1:</row>
+    <row id="83">1:8:1:8:8:1:1:1:10:1:1:1:10:1:1:1:1:1:2:2:1:1:1:10:1:8:1:1:1:1:1:9:1:1:1:1:1:1:1:</row>
+    <row id="84">11:1:8:1:8:1:1:1:8:8:1:1:8:8:1:1:1:1:2:2:2:1:1:8:8:1:1:1:8:1:1:8:1:8:1:8:1:1:8:</row>
+    <row id="85">1:9:8:1:1:1:1:1:8:1:1:1:8:1:1:1:1:1:2:2:1:1:1:8:1:1:1:8:8:1:1:9:8:8:1:8:1:8:8:</row>
+    <row id="86">11:11:9:8:1:1:1:1:8:1:1:1:1:1:1:1:1:1:2:2:2:1:8:1:1:1:1:1:10:1:1:8:1:10:1:8:8:1:10:</row>
+    <row id="87">1:11:9:1:1:1:1:1:1:1:8:1:1:1:1:8:1:1:2:2:1:8:8:1:1:8:1:8:8:1:1:1:8:8:1:10:1:8:8:</row>
+    <row id="88">11:1:11:8:1:1:1:1:1:1:8:8:1:1:1:8:8:1:2:2:2:1:10:1:1:8:8:1:8:1:1:1:1:8:1:8:8:1:8:</row>
+    <row id="89">11:1:11:1:1:8:8:1:1:1:10:1:1:1:1:10:1:1:2:2:1:8:8:1:1:10:1:1:1:1:8:1:1:1:1:8:1:1:1:</row>
+    <row id="90">11:1:1:9:1:1:8:8:8:1:8:8:1:1:1:8:8:1:2:2:2:1:8:1:1:8:8:1:1:1:8:8:1:1:1:1:1:1:1:</row>
+    <row id="91">11:1:11:8:1:8:9:8:8:1:8:1:1:8:1:8:1:1:2:2:1:1:1:8:1:8:1:8:1:1:10:1:1:1:1:1:1:1:1:</row>
+    <row id="92">11:1:1:10:1:1:1:9:1:1:1:1:1:8:8:1:1:1:2:2:2:1:1:8:8:1:1:8:8:1:8:8:1:1:8:1:1:8:1:</row>
+    <row id="93">1:1:11:8:1:1:1:9:1:1:1:1:1:10:1:1:1:1:2:2:1:1:1:10:1:1:1:10:1:1:8:1:1:8:8:1:8:8:1:</row>
+    <row id="94">11:1:1:11:1:1:1:1:1:1:1:1:1:8:8:1:1:1:2:2:2:1:1:8:8:1:1:8:8:1:1:1:1:1:10:1:1:10:1:</row>
+    <row id="95">1:1:11:11:1:1:1:1:1:11:1:1:1:8:1:1:1:1:2:2:1:1:1:8:1:1:1:8:1:1:1:1:1:8:8:1:8:8:1:</row>
+    <row id="96">11:1:1:11:11:11:1:1:1:11:1:1:1:1:1:1:1:1:2:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:8:1:1:8:1:</row>
+    <row id="97">11:11:11:11:11:11:11:1:1:11:1:1:1:1:1:1:1:1:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="98">11:11:11:11:11:11:11:11:1:11:1:1:1:1:1:1:1:1:2:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="99">11:11:11:11:11:11:11:11:1:1:1:1:1:1:1:1:1:1:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+  </rows>
+  
+  <teams count="4" maxCombatantsPerTeam="15">
+    <team id="0">
+      <combatant AI="Off" charName="" id="0"/>
+      <combatant AI="Off" charName="" id="1"/>
+      <combatant AI="Off" charName="" id="2"/>
+      <combatant AI="Off" charName="" id="3"/>
+      <combatant AI="Off" charName=" " id="4"/>
+      <combatant AI="Off" charName=" " id="5"/>
+      <combatant AI="Off" charName=" " id="6"/>
+      <combatant AI="Off" charName="" id="7"/>
+      <combatant AI="Off" charName="" id="8"/>
+      <combatant AI="Off" charName="" id="9"/>
+      <combatant AI="Off" charName="" id="10"/>
+      <combatant AI="Off" charName="" id="11"/>
+      <combatant AI="Off" charName="" id="12"/>
+      <combatant AI="Off" charName="" id="13"/>
+      <combatant AI="Off" charName="" id="14"/>
+    </team>
+    <team id="1">
+      <combatant AI="Norm" charName="? 100 Orc Bow, Shortbow" id="0" startX="6" startY="44"/>
+      <combatant AI="Norm" charName="? 100 Orc Crossbow" id="1" startX="61" startY="11"/>
+      <combatant AI="Norm" charName="? 150 Orc" id="2" startX="36" startY="16"/>
+      <combatant AI="Norm" charName="? 200 Orc &quot;Potion:Major Healing&quot; &quot;Potion:Complete Healing&quot; " id="3" startX="68" startY="16"/>
+      <combatant AI="Norm" charName="? 150 Orc" id="4" startX="40" startY="16"/>
+      <combatant AI="Norm" charName="? 100 Orc Bow, shortbow" id="5" startX="72" startY="26"/>
+      <combatant AI="Off" charName=" " id="6"/>
+      <combatant AI="Off" charName="" id="7"/>
+      <combatant AI="Off" charName="" id="8"/>
+      <combatant AI="Off" charName="" id="9"/>
+      <combatant AI="Off" charName="" id="10"/>
+      <combatant AI="Off" charName="" id="11"/>
+      <combatant AI="Off" charName="" id="12"/>
+      <combatant AI="Off" charName="" id="13"/>
+      <combatant AI="Off" charName="" id="14"/>
+    </team>
+    <team id="2">
+      <combatant AI="Off" charName=" " id="0"/>
+      <combatant AI="Off" charName=" " id="1"/>
+      <combatant AI="Off" charName=" " id="2"/>
+      <combatant AI="Off" charName=" " id="3"/>
+      <combatant AI="Off" charName=" " id="4"/>
+      <combatant AI="Off" charName=" " id="5"/>
+      <combatant AI="Off" charName=" " id="6"/>
+      <combatant AI="Off" charName="" id="7"/>
+      <combatant AI="Off" charName="" id="8"/>
+      <combatant AI="Off" charName="" id="9"/>
+      <combatant AI="Off" charName="" id="10"/>
+      <combatant AI="Off" charName="" id="11"/>
+      <combatant AI="Off" charName="" id="12"/>
+      <combatant AI="Off" charName="" id="13"/>
+      <combatant AI="Off" charName="" id="14"/>
+    </team>
+    <team id="3">
+      <combatant AI="Off" charName="" id="0"/>
+      <combatant AI="Off" charName="" id="1"/>
+      <combatant AI="Off" charName="" id="2"/>
+      <combatant AI="Off" charName="" id="3"/>
+      <combatant AI="Off" charName="" id="4"/>
+      <combatant AI="Off" charName="" id="5"/>
+      <combatant AI="Off" charName="" id="6"/>
+      <combatant AI="Off" charName="" id="7"/>
+      <combatant AI="Off" charName="" id="8"/>
+      <combatant AI="Off" charName="" id="9"/>
+      <combatant AI="Off" charName="" id="10"/>
+      <combatant AI="Off" charName="" id="11"/>
+      <combatant AI="Off" charName="" id="12"/>
+      <combatant AI="Off" charName="" id="13"/>
+      <combatant AI="Off" charName="" id="14"/>
+    </team>
+  </teams>
+
+  <triggers>
+    <trigger enabled="true" name="see grate" onlyAffectsPlayers="true" requiresEntireTeam="false">
+      <location x="9" y="63"/>
+      <location x="8" y="64"/>
+      <location x="7" y="65"/>
+      <location x="3" y="67"/>
+      <location x="2" y="66"/>
+      <location x="1" y="67"/>
+      <location x="12" y="58"/>
+      <location x="13" y="57"/>
+      <location x="14" y="56"/>
+      <location x="14" y="54"/>
+      <location x="15" y="53"/>
+      <location x="15" y="51"/>
+      <location x="15" y="49"/>
+      <location x="16" y="48"/>
+      <location x="16" y="46"/>
+      <location x="17" y="45"/>
+      <location x="17" y="43"/>
+      <location x="18" y="42"/>
+      <location x="19" y="41"/>
+      <location x="19" y="39"/>
+      <location x="19" y="37"/>
+      <location x="19" y="35"/>
+      <location x="11" y="59"/>
+      <location x="10" y="60"/>
+      <location x="10" y="62"/>
+      <location x="6" y="64"/>
+      <location x="5" y="65"/>
+      <location x="4" y="66"/>
+      <event data="To the west, along the water-line, you see a grate that has a broken bar. You suspect it might lead to the sewers for the castle." name="message" type="Public Message"/>
+      <event data="" name="single shot" type="Disable This Trigger"/>
+    </trigger>
+    <trigger enabled="true" name="more orcs" onlyAffectsPlayers="true" requiresEntireTeam="false">
+      <location x="53" y="21"/>
+      <location x="54" y="22"/>
+      <location x="54" y="24"/>
+      <location x="55" y="25"/>
+      <location x="55" y="27"/>
+      <location x="56" y="28"/>
+      <location x="56" y="30"/>
+      <location x="53" y="19"/>
+      <location x="53" y="17"/>
+      <location x="53" y="15"/>
+      <location x="53" y="13"/>
+      <location x="53" y="11"/>
+      <location x="57" y="31"/>
+      <location x="58" y="32"/>
+      <location x="59" y="33"/>
+      <location x="60" y="34"/>
+      <location x="61" y="35"/>
+      <location x="62" y="36"/>
+      <location x="63" y="37"/>
+      <location x="64" y="38"/>
+      <location x="65" y="39"/>
+      <location x="66" y="40"/>
+      <location x="67" y="41"/>
+      <location x="68" y="42"/>
+      <location x="69" y="43"/>
+      <location x="70" y="44"/>
+      <location x="71" y="45"/>
+      <location x="72" y="46"/>
+      <location x="73" y="47"/>
+      <location x="74" y="48"/>
+      <location x="75" y="49"/>
+      <location x="76" y="50"/>
+      <location x="77" y="51"/>
+      <event data="" name="single shot" type="Disable Named Trigger"/>
+      <event data="? Orc 100" name="new orc1" type="Enter Character">
+        <location x="70" y="0"/>
+      </event>
+      <event data="? Orc 150" name="new orc2" type="Enter Character">
+        <location x="70" y="2"/>
+      </event>
+      <event data="? Orc 150" name="new orc3" type="Enter Character">
+        <location x="72" y="0"/>
+      </event>
+      <event data="? Orc 175" name="new orc4" type="Enter Character">
+        <location x="72" y="2"/>
+      </event>
+      <event data="? Orc 200" name="new orc5" type="Enter Character">
+        <location x="71" y="1"/>
+      </event>
+      <event data="? Orc 200" name="new orc6" type="Enter Character">
+        <location x="73" y="1"/>
+      </event>
+      <event data="? Orc 150" name="new orc7" type="Enter Character">
+        <location x="71" y="3"/>
+      </event>
+      <event data="? Orc 200" name="new orc8" type="Enter Character">
+        <location x="73" y="3"/>
+      </event>
+      <event data="? Orc 150" name="new orc9" type="Enter Character">
+        <location x="70" y="4"/>
+      </event>
+      <event data="? Orc 150" name="nec orc10" type="Enter Character">
+        <location x="72" y="4"/>
+      </event>
+      <event data="You hear the clammer of a squad of Orcs opproach from the east road." name="You hear orcs" type="Public Message"/>
+    </trigger>
+    <trigger enabled="true" name="move back" onlyAffectsPlayers="false" requiresEntireTeam="false">
+      <location x="2" y="30"/>
+      <event data="" name="move back" type="Teleport">
+        <location x="2" y="32"/>
+      </event>
+      <event data="It's too dark to see down that tunnel. You decide you should wait for your eyes to adjust, and to wait for the rest of your party." name="New Event" type="Private Message"/>
+    </trigger>
+    <trigger enabled="true" name="Enter Castle Main" onlyAffectsPlayers="true" requiresEntireTeam="false">
+      <location x="37" y="11"/>
+      <location x="38" y="10"/>
+      <location x="39" y="9"/>
+      <location x="77" y="7"/>
+      <location x="76" y="8"/>
+      <location x="75" y="7"/>
+      <location x="74" y="8"/>
+      <location x="73" y="7"/>
+      <location x="72" y="8"/>
+      <location x="71" y="7"/>
+      <location x="70" y="8"/>
+      <location x="69" y="7"/>
+      <location x="68" y="8"/>
+      <location x="67" y="7"/>
+      <location x="66" y="6"/>
+      <location x="65" y="5"/>
+      <location x="60" y="6"/>
+      <location x="63" y="5"/>
+      <event data="" name="single shot" type="Disable This Trigger"/>
+      <event data="Castle Main" name="New Map" type="New Map">
+        <location x="37" y="59"/>
+        <location x="38" y="58"/>
+        <location x="39" y="57"/>
+        <location x="37" y="61"/>
+        <location x="38" y="60"/>
+        <location x="39" y="59"/>
+        <location x="36" y="60"/>
+      </event>
+    </trigger>
+    <trigger enabled="true" name="Enter Castle Sewer" onlyAffectsPlayers="true" requiresEntireTeam="true">
+      <location x="0" y="44"/>
+      <location x="0" y="42"/>
+      <location x="0" y="40"/>
+      <location x="1" y="41"/>
+      <location x="1" y="39"/>
+      <location x="1" y="37"/>
+      <location x="2" y="38"/>
+      <location x="2" y="36"/>
+      <location x="2" y="34"/>
+      <location x="2" y="32"/>
+      <event data="" name="single shot" type="Disable This Trigger"/>
+      <event data="Castle Sewers" name="New Map" type="New Map">
+        <location x="1" y="91"/>
+        <location x="1" y="89"/>
+        <location x="2" y="86"/>
+        <location x="2" y="88"/>
+        <location x="0" y="90"/>
+        <location x="0" y="92"/>
+      </event>
+    </trigger>
+    <trigger enabled="true" name="orc warning" onlyAffectsPlayers="true" requiresEntireTeam="false">
+      <location x="54" y="36"/>
+      <location x="55" y="37"/>
+      <location x="56" y="38"/>
+      <location x="57" y="39"/>
+      <location x="58" y="40"/>
+      <location x="59" y="41"/>
+      <location x="60" y="42"/>
+      <location x="61" y="43"/>
+      <location x="62" y="44"/>
+      <location x="63" y="45"/>
+      <location x="64" y="46"/>
+      <location x="65" y="47"/>
+      <location x="66" y="48"/>
+      <location x="67" y="49"/>
+      <location x="68" y="50"/>
+      <location x="69" y="51"/>
+      <location x="70" y="52"/>
+      <location x="71" y="53"/>
+      <location x="72" y="54"/>
+      <location x="73" y="55"/>
+      <location x="74" y="56"/>
+      <location x="75" y="57"/>
+      <location x="76" y="58"/>
+      <location x="77" y="59"/>
+      <location x="53" y="35"/>
+      <location x="53" y="33"/>
+      <location x="52" y="32"/>
+      <location x="52" y="30"/>
+      <location x="51" y="29"/>
+      <location x="51" y="27"/>
+      <location x="51" y="25"/>
+      <location x="51" y="23"/>
+      <location x="51" y="21"/>
+      <location x="51" y="19"/>
+      <location x="51" y="17"/>
+      <location x="51" y="15"/>
+      <location x="51" y="13"/>
+      <location x="51" y="11"/>
+      <event data="" name="single shot" type="Disable This Trigger"/>
+      <event data="Through the gate to the northeast, you hear the sounds of a large squad of Orcs rallying around the corner. Perhaps you should avoid that direction." name="warning message" type="Public Message"/>
+    </trigger>
+    <trigger enabled="true" name="New Trigger" onlyAffectsPlayers="true" requiresEntireTeam="false">
+      <event data="null" name="single shot" type="Disable This Trigger"/>
+    </trigger>
+  </triggers>
+
+  <items>
+    <door col="0" key="" orient="16384" row="52" state="1"/>
+    <door col="4" key="" orient="2097152" row="44" state="1"/>
+    <door col="6" key="" orient="256" row="26" state="2"/>
+    <door col="6" key="" orient="1048576" row="44" state="1"/>
+    <door col="7" key="" orient="256" row="41" state="1"/>
+    <door col="20" key="" orient="64" row="10" state="2"/>
+    <door col="37" key="main gate" orient="262144" row="13" state="3"/>
+    <door col="38" key="main gate" orient="262144" row="12" state="1"/>
+    <door col="39" key="main gate" orient="262144" row="11" state="3"/>
+    <door col="61" key="" orient="2097152" row="11" state="1"/>
+    <door col="63" key="" orient="8388608" row="5" state="1"/>
+    <door col="63" key="" orient="1048576" row="11" state="1"/>
+    <door col="64" key="" orient="256" row="8" state="1"/>
+    <door col="71" key="" orient="64" row="23" state="1"/>
+    <door col="72" key="" orient="262144" row="20" state="1"/>
+    <door col="72" key="" orient="2097152" row="26" state="1"/>
+    <door col="74" key="" orient="1048576" row="26" state="1"/>
+  </items>
+</Arena>

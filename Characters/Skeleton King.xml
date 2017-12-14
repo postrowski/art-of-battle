@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="Skeleton King" Race="Skeleton">
+  <Attributes DEX="4" HT="-2" IQ="-5" NIM="5" SOC="-4" STR="2" TOU="0"/>
+  <Equipment Armor="Dwarven Mithril">
+    <Hand Name="right hand">Longsword, Fine</Hand>
+    <Hand Name="left hand">Medium Shield</Hand>
+  </Equipment>
+  <Skills>
+    <Skill Level="8" Name="Sword"/>
+    <Skill Level="6" Name="Shield"/>
+    <Skill Level="0" Name="Brawling"/>
+  </Skills>
+  <Advantages>
+    <Advantage Level="9" Name="Wealth"/>
+    <Advantage Level="1" Name="Hero points"/>
+    <Advantage Level="2" Name="Vision"/>
+    <Advantage Level="0" Name="Intolerant"/>
+  </Advantages>
+</Character>

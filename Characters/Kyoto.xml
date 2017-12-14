@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="Kyoto" Race="Human">
+  <Attributes DEX="2" HT="0" IQ="0" NIM="4" SOC="0" STR="2" TOU="1"/>
+  <Equipment Armor="Heavy Leather">
+    <Hand Name="right hand"/>
+    <Hand Name="left hand"/>
+  </Equipment>
+  <Skills>
+    <Skill Level="6" Name="Aikido"/>
+    <Skill Level="5" Name="Boxing"/>
+  </Skills>
+  <Advantages>
+    <Advantage Level="2" Name="Wealth"/>
+    <Advantage Level="0" Name="Honest"/>
+    <Advantage Level="1" Name="Magic Resistance"/>
+  </Advantages>
+</Character>

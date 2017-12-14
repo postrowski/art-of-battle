@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="Evil Priest" Race="Human">
+  <Attributes DEX="2" HT="1" IQ="0" NIM="2" SOC="4" STR="3" TOU="2"/>
+  <Equipment Armor="Scale Mail">
+    <Hand Name="right hand">Sabre</Hand>
+    <Hand Name="left hand">Large Shield</Hand>
+  </Equipment>
+  <Skills>
+    <Skill Level="8" Name="Fencing"/>
+    <Skill Level="6" Name="Shield"/>
+    <Skill Level="2" Name="Brawling"/>
+  </Skills>
+  <Advantages>
+    <Advantage Level="5" Name="Wealth"/>
+    <Advantage Level="4" Name="Divine Power"/>
+    <Advantage Level="6" Name="Divine Aff. - Hades"/>
+    <Advantage Level="0" Name="Megalomaniac"/>
+  </Advantages>
+</Character>

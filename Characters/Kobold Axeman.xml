@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="Kobold Axeman" Race="Kobold">
+  <Attributes DEX="4" HT="0" IQ="-5" NIM="0" SOC="-3" STR="1" TOU="-1"/>
+  <Equipment Armor="Chain Mail">
+    <Hand Name="right hand">Axe</Hand>
+    <Hand Name="left hand">Large Shield</Hand>
+    <Belt>Knife</Belt>
+  </Equipment>
+  <Skills>
+    <Skill Level="6" Name="Axe/Mace"/>
+    <Skill Level="5" Name="Shield"/>
+    <Skill Level="1" Name="Knife"/>
+  </Skills>
+  <Advantages>
+    <Advantage Level="6" Name="Wealth"/>
+  </Advantages>
+</Character>

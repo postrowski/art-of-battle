@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Character Gender="Male" Name="Grawl" Race="Half-Ogre">
+  <Attributes DEX="2" HT="0" IQ="-2" NIM="-2" SOC="-3" STR="5" TOU="2"/>
+  <Equipment Armor="Plate Mail">
+    <Hand Name="right hand">Broadsword</Hand>
+    <Hand Name="left hand">Large Shield</Hand>
+    <Belt>Potion:Healing</Belt>
+    <Belt>Potion:Minor Healing</Belt>
+  </Equipment>
+  <Skills>
+    <Skill Level="5" Name="Shield"/>
+    <Skill Level="2" Name="Brawling"/>
+    <Skill Level="6" Name="Sword"/>
+  </Skills>
+  <Advantages>
+    <Advantage LevelName="$10,000" Name="Wealth"/>
+  </Advantages>
+</Character>

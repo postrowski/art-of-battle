@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="Samurai" Race="Human">
+  <Attributes DEX="6" HT="2" IQ="0" NIM="4" SOC="1" STR="4" TOU="4"/>
+  <Equipment Armor="Samurai">
+    <Hand Name="right hand">Bow, Longbow</Hand>
+    <Hand Name="left hand"/>
+    <Belt>Katana, Fine</Belt>
+    <Belt>Knife</Belt>
+    <Belt>Potion:Complete Healing</Belt>
+    <Belt>Potion:Speed</Belt>
+  </Equipment>
+  <Skills>
+    <Skill Level="10" Name="2-Handed Sword"/>
+    <Skill Level="6" Name="Karate"/>
+    <Skill Level="8" Name="Aikido"/>
+    <Skill Level="3" Name="Bow"/>
+    <Skill Level="2" Name="Riding"/>
+    <Skill Level="1" Name="Knife"/>
+  </Skills>
+  <Advantages>
+    <Advantage Level="8" Name="Wealth"/>
+    <Advantage Level="0" Name="Honest"/>
+    <Advantage Level="1" Name="Hero points"/>
+    <Advantage Level="0" Name="Phobia"/>
+    <Advantage Level="0" Name="Code of Conduct"/>
+    <Advantage Level="1" Name="Sense of Duty"/>
+  </Advantages>
+</Character>

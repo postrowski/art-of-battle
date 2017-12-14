@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Ninja 400" Race="Human">
+  <Attributes DEX="5" HT="3" IQ="1" NIM="6" SOC="0" STR="4" TOU="2"/>
+  <Equipment Armor="Cloth Armor">
+    <Hand Name="right hand">Throwing Star</Hand>
+    <Hand Name="left hand"/>
+    <Belt>Three Part Staff</Belt>
+    <Belt>Throwing Star</Belt>
+    <Belt>Throwing Star</Belt>
+    <Belt>Throwing Star</Belt>
+  </Equipment>
+  <Skills>
+    <Skill Level="6" Name="Throwing"/>
+    <Skill Level="8" Name="Aikido"/>
+    <Skill Level="6" Name="Nun chucks"/>
+    <Skill Level="6" Name="Karate"/>
+  </Skills>
+  <Advantages>
+    <Advantage Level="2" Name="Wealth"/>
+    <Advantage Level="1" Name="Sense of Duty"/>
+    <Advantage Level="4" Name="Quirks"/>
+  </Advantages>
+</Character>

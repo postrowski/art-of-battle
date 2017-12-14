@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="MountedKnight" Race="Human">
+  <Attributes DEX="4" HT="1" IQ="-2" NIM="1" SOC="1" STR="3" TOU="4"/>
+  <Equipment Armor="Plate Mail">
+    <Hand Name="right hand">Longsword</Hand>
+    <Hand Name="left hand">Tower Shield</Hand>
+    <Belt>Lance</Belt>
+    <Belt>Potion:Increase Dexterity</Belt>
+  </Equipment>
+  <Skills>
+    <Skill Level="6" Name="Shield"/>
+    <Skill Level="6" Name="Sword"/>
+    <Skill Level="3" Name="Knife"/>
+    <Skill Level="3" Name="Brawling"/>
+    <Skill Level="5" Name="Jousting"/>
+    <Skill Level="5" Name="Riding"/>
+  </Skills>
+  <Advantages>
+    <Advantage Level="7" Name="Wealth"/>
+    <Advantage Level="0" Name="Honest"/>
+  </Advantages>
+</Character>

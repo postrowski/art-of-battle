@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<Character Name="Brindle" Race="Hobbit">
+  <Attributes DEX="3" HT="2" IQ="0" NIM="0" SOC="0" STR="1" TOU="-2"/>
+  <Equipment Armor="Leather">
+    <Hand Name="right hand">Staff Sling</Hand>
+    <Hand Name="left hand"/>
+    <Belt>Rapier</Belt>
+  </Equipment>
+  <Skills>
+    <Skill Level="6" Name="Staff Sling"/>
+    <Skill Level="5" Name="Fencing"/>
+    <Skill Level="2" Name="Brawling"/>
+  </Skills></Character>

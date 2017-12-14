@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<Character Name="wolf-small" Race="Wolf">
+  <Attributes DEX="3" HT="-1" IQ="-3" NIM="2" SOC="0" STR="-1" TOU="0"/>
+  <Equipment Armor="No Armor">
+ </Equipment>
+  <Skills>
+    <Skill Level="5" Name="Brawling"/>
+  </Skills></Character>

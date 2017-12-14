@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="Minotaur" Race="Minotaur">
+  <Attributes DEX="5" HT="4" IQ="-3" NIM="6" SOC="-4" STR="5" TOU="2"/>
+  <Equipment Armor="Heavy Leather">
+    <Hand Name="right hand">Great Axe</Hand>
+    <Hand Name="left hand"/>
+    <Belt>Potion:Minor Healing</Belt>
+    <Belt>Knife</Belt>
+  </Equipment>
+  <Skills>
+    <Skill Level="7" Name="2-Handed Axe/Mace"/>
+    <Skill Level="6" Name="Brawling"/>
+    <Skill Level="3" Name="Knife"/>
+  </Skills>
+  <Advantages>
+    <Advantage Level="5" Name="Wealth"/>
+    <Advantage Level="1" Name="Hero points"/>
+  </Advantages>
+</Character>

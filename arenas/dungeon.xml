@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Arena Name="dungeon" height="130" hideViewFromLocalPlayers="true" level="0" width="85">
+  <rows>
+    <row id="0">11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:</row>
+    <row id="1">11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:</row>
+    <row id="2">11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:</row>
+    <row id="3">11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:</row>
+    <row id="4">11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:2:11:11:11:11:11:11:11:11:11:11:11:11:</row>
+    <row id="5">11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:2:2:2:11:11:11:11:11:11:11:11:11:11:11:</row>
+    <row id="6">11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:2:2:2:11:11:11:11:11:11:11:11:11:11:11:</row>
+    <row id="7">11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:2:2:2:2:11:11:11:11:11:11:11:11:11:11:</row>
+    <row id="8">11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:2:2:2:2:11:11:11:11:11:11:11:11:11:11:11:</row>
+    <row id="9">11:11:11:11:11:11:11:11:11:11:11:11:2:2:11:11:11:11:11:11:11:11:11:11:11:11:11:2:2:2:2:2:11:11:11:11:11:11:11:11:11:11:</row>
+    <row id="10">11:11:11:11:11:11:11:11:11:11:11:11:2:2:2:11:11:11:11:11:11:11:11:11:11:11:11:11:2:2:2:2:2:11:11:11:11:11:11:11:11:11:11:</row>
+    <row id="11">11:11:11:11:11:11:11:11:11:11:2:2:2:2:2:11:11:11:11:11:11:11:11:11:11:11:11:2:2:2:2:2:2:11:11:11:11:11:11:11:11:11:</row>
+    <row id="12">11:11:11:11:11:11:11:11:11:11:11:2:2:2:2:11:11:11:11:11:11:11:11:11:11:11:11:2:2:2:2:2:2:2:11:11:11:11:11:11:11:11:11:</row>
+    <row id="13">11:11:11:11:11:11:11:11:11:11:2:2:2:2:2:11:11:11:11:11:11:11:11:11:11:11:11:2:2:2:2:2:2:11:11:11:11:11:11:11:11:11:</row>
+    <row id="14">11:11:11:11:11:11:11:11:11:11:2:2:2:2:2:2:11:11:11:11:11:11:11:11:11:11:11:2:2:2:2:2:2:2:11:11:11:11:11:11:11:11:11:</row>
+    <row id="15">11:11:11:11:11:11:11:11:11:11:2:2:2:2:2:11:11:11:11:11:11:11:11:11:11:11:11:2:2:2:2:2:2:11:11:11:11:11:11:11:11:11:</row>
+    <row id="16">11:11:11:11:11:11:11:11:11:11:2:2:2:2:2:2:11:11:11:11:11:11:11:11:11:11:11:2:2:2:2:2:2:2:11:11:11:11:11:11:11:11:11:</row>
+    <row id="17">11:11:11:11:11:11:11:11:11:2:2:2:2:2:2:11:11:11:11:2:11:11:11:11:11:11:2:2:2:2:2:2:2:2:11:11:11:11:11:11:11:11:</row>
+    <row id="18">11:11:11:11:11:11:11:11:11:11:2:2:2:2:2:2:11:2:11:2:2:11:11:11:11:11:2:2:2:2:2:2:2:2:2:11:11:11:11:11:11:11:11:</row>
+    <row id="19">11:11:11:11:11:11:11:11:11:2:2:2:2:2:2:2:2:2:2:2:2:11:11:11:11:11:2:2:2:2:2:2:2:2:2:11:11:11:11:11:11:11:</row>
+    <row id="20">11:11:11:11:11:11:11:11:11:2:2:2:2:2:2:2:2:2:2:2:2:11:11:11:11:11:2:2:2:2:2:2:2:11:2:11:11:11:2:2:11:11:11:</row>
+    <row id="21">11:11:11:11:11:11:11:11:2:2:2:2:2:2:2:2:2:2:2:11:2:2:11:11:11:11:2:2:2:2:2:2:11:11:2:11:11:2:2:2:2:11:</row>
+    <row id="22">11:11:11:11:11:11:11:11:2:2:2:2:2:2:2:2:2:11:2:11:2:2:11:11:11:11:2:2:2:2:2:2:2:11:11:2:11:11:2:2:2:2:11:</row>
+    <row id="23">11:11:11:11:11:11:11:11:2:2:2:2:2:2:2:11:11:11:11:11:2:2:11:11:11:2:2:2:2:2:2:2:11:11:2:11:11:2:2:2:2:11:</row>
+    <row id="24">11:11:11:11:11:11:11:11:2:2:2:2:2:2:2:2:11:11:11:11:11:2:2:11:11:11:2:2:2:2:2:2:11:11:11:2:11:2:2:2:2:2:11:</row>
+    <row id="25">11:11:11:11:11:11:11:11:2:2:2:2:2:2:2:11:11:11:11:11:11:2:2:11:11:2:2:2:2:2:2:11:11:11:11:2:11:2:2:2:2:11:</row>
+    <row id="26">11:11:11:11:11:11:11:11:2:2:2:2:2:2:2:2:11:11:11:11:11:2:2:2:2:2:2:2:2:2:2:2:11:11:11:2:11:2:2:2:2:2:11:</row>
+    <row id="27">11:11:11:11:11:11:11:11:2:2:2:2:2:2:2:11:11:11:11:11:11:2:2:2:2:2:2:2:2:2:2:11:11:11:11:2:2:2:2:2:2:11:</row>
+    <row id="28">11:11:11:11:11:11:11:11:2:2:2:2:2:2:2:11:11:11:11:11:11:11:11:2:2:2:2:2:2:2:2:11:11:11:11:11:2:2:2:2:2:2:11:</row>
+    <row id="29">11:11:2:2:11:11:11:11:2:2:2:11:2:2:2:11:11:11:11:11:11:11:11:2:2:2:2:2:2:2:2:11:11:11:11:2:2:2:2:2:2:2:</row>
+    <row id="30">11:11:2:2:2:11:11:11:11:2:2:2:11:2:2:2:11:11:11:11:11:11:11:11:2:2:2:2:2:2:2:11:11:11:11:11:2:2:2:2:2:2:11:</row>
+    <row id="31">11:11:2:2:2:11:11:11:2:2:2:11:2:2:11:2:11:11:11:11:11:11:11:11:2:2:2:2:2:2:11:11:11:11:11:11:2:2:2:2:2:2:</row>
+    <row id="32">11:11:2:2:2:2:11:11:11:2:2:2:11:2:2:11:2:11:11:11:11:11:11:11:2:2:2:2:2:2:11:11:11:11:11:11:2:2:2:2:2:2:11:</row>
+    <row id="33">11:2:2:2:2:11:11:11:11:2:2:2:2:2:11:11:11:11:11:11:11:11:11:11:2:2:2:2:2:2:11:11:11:11:11:2:2:2:2:2:2:2:</row>
+    <row id="34">11:11:2:2:2:2:11:11:11:11:2:2:2:2:2:11:2:11:11:11:11:11:11:11:2:2:2:2:2:2:11:11:11:11:11:11:2:2:2:2:2:4:4:</row>
+    <row id="35">11:2:2:2:2:2:11:11:11:11:2:2:2:11:2:11:11:11:11:11:11:11:11:11:2:2:2:11:2:2:11:11:11:11:11:2:2:2:2:4:4:4:</row>
+    <row id="36">11:11:2:2:2:2:11:11:11:11:11:2:2:11:2:11:2:11:11:11:11:11:11:11:2:2:2:11:2:2:11:11:11:11:11:2:2:2:2:4:4:4:5:</row>
+    <row id="37">11:11:2:2:2:2:11:11:11:11:11:2:2:11:2:11:2:11:11:11:11:11:11:2:2:2:11:11:2:2:11:11:11:11:11:2:2:2:2:4:4:5:</row>
+    <row id="38">11:11:2:2:2:2:2:11:11:11:11:11:2:11:11:11:11:11:11:11:11:11:11:11:2:2:2:11:2:2:2:11:11:11:11:2:2:2:2:4:4:5:5:</row>
+    <row id="39">11:11:2:2:2:2:11:11:11:11:11:2:11:11:2:11:2:11:11:11:11:11:11:11:2:2:11:2:2:2:2:11:11:11:11:2:2:2:4:4:4:5:</row>
+    <row id="40">2:11:11:2:2:2:2:11:11:11:11:2:2:11:11:11:11:2:11:11:11:11:11:11:2:2:11:11:2:2:2:11:11:11:11:2:2:2:2:4:4:5:5:</row>
+    <row id="41">2:11:2:2:2:2:11:11:11:11:2:2:11:11:2:11:11:11:11:11:11:11:11:11:2:2:11:2:2:2:2:11:11:11:11:2:2:2:4:4:5:5:</row>
+    <row id="42">2:11:11:2:11:2:2:11:11:11:2:2:2:11:2:2:11:2:11:11:11:11:11:11:2:2:2:2:2:2:2:2:11:11:11:2:2:2:2:4:4:5:11:</row>
+    <row id="43">2:11:2:2:11:2:11:11:11:11:2:11:11:11:2:11:11:11:11:11:11:11:11:2:2:2:2:2:2:2:2:11:11:11:11:2:2:2:4:4:5:11:</row>
+    <row id="44">2:11:11:2:11:2:2:11:11:11:2:11:11:11:2:2:11:2:11:11:11:11:11:2:2:2:2:2:2:2:2:2:11:11:11:2:2:2:2:4:5:5:11:</row>
+    <row id="45">2:11:2:2:11:2:11:11:11:11:2:11:11:11:2:2:2:11:11:11:11:11:11:2:2:2:2:2:2:2:2:11:11:11:11:2:2:2:4:5:5:11:</row>
+    <row id="46">2:2:11:2:11:11:11:11:11:11:2:11:11:11:2:11:2:11:11:11:11:11:11:2:2:2:2:2:2:2:2:2:11:11:11:11:2:2:4:5:5:11:11:</row>
+    <row id="47">2:11:11:2:11:11:11:11:11:11:2:2:11:11:2:11:2:11:11:11:11:11:11:2:2:2:2:2:2:2:2:11:11:11:11:11:2:2:4:5:11:11:</row>
+    <row id="48">2:2:11:2:2:11:11:11:11:11:2:2:2:11:11:11:11:11:11:11:11:11:11:11:2:2:2:2:2:2:2:2:11:11:11:11:2:2:4:5:6:0:11:</row>
+    <row id="49">2:2:11:2:11:11:11:11:11:11:2:2:2:11:2:11:2:11:11:11:11:11:11:11:2:2:2:2:2:2:2:11:11:11:11:11:2:2:5:6:11:11:</row>
+    <row id="50">2:2:2:11:2:11:11:11:11:11:11:2:2:11:2:11:2:11:11:11:11:11:11:11:2:2:2:2:2:2:2:2:11:11:11:11:11:2:4:5:11:0:11:</row>
+    <row id="51">2:2:2:2:11:11:11:11:11:11:11:11:2:11:11:2:11:11:11:11:11:11:11:11:2:2:2:2:2:2:2:11:11:11:11:11:11:11:5:6:11:11:</row>
+    <row id="52">1:2:2:2:11:11:11:11:11:11:11:11:2:11:2:2:11:11:11:11:11:11:11:11:11:2:11:2:2:2:2:11:11:11:11:11:11:11:11:6:11:0:11:</row>
+    <row id="53">1:2:2:2:11:11:11:11:11:11:11:11:2:2:11:11:11:11:11:11:11:11:11:11:2:2:11:2:2:2:2:11:11:11:11:11:11:11:5:11:11:11:</row>
+    <row id="54">1:1:2:2:2:11:11:11:11:11:11:11:2:2:11:2:11:11:11:11:11:11:11:11:11:2:11:11:11:11:11:11:11:11:11:11:11:11:2:6:11:0:11:</row>
+    <row id="55">1:2:2:2:2:11:11:11:11:11:11:2:2:11:2:11:11:11:11:11:11:11:11:11:2:11:11:11:11:11:11:11:11:11:11:11:11:11:5:11:0:0:</row>
+    <row id="56">1:1:2:2:2:11:11:11:11:11:11:11:2:2:2:11:11:11:11:11:11:11:11:11:2:2:11:11:11:11:11:11:11:11:11:11:11:11:2:11:0:0:11:</row>
+    <row id="57">1:1:2:2:2:11:11:11:11:11:11:2:2:2:11:11:11:11:11:11:11:11:11:11:2:11:11:11:11:11:11:11:11:11:11:11:11:2:5:11:0:0:</row>
+    <row id="58">1:1:2:2:2:2:11:11:11:11:11:11:2:11:11:11:11:11:11:11:11:11:11:11:2:11:11:11:11:11:11:11:11:11:11:11:11:11:5:11:0:0:11:</row>
+    <row id="59">1:1:2:2:2:11:11:11:11:11:11:2:2:11:11:11:11:11:11:11:11:11:11:2:2:11:11:11:11:11:11:11:11:11:11:11:11:2:6:0:0:0:</row>
+    <row id="60">1:1:1:2:2:2:11:11:11:11:11:2:2:11:11:11:11:11:11:11:11:11:11:11:2:11:11:11:11:11:11:11:11:11:11:11:11:2:5:11:0:0:11:</row>
+    <row id="61">1:1:2:2:2:2:2:11:11:11:2:2:11:11:11:11:11:11:11:11:11:11:11:2:11:11:11:11:11:11:11:11:11:11:11:11:6:5:11:0:0:0:</row>
+    <row id="62">1:1:1:2:2:2:2:2:2:2:2:2:11:11:11:11:11:11:11:11:11:11:11:2:2:11:11:11:11:11:11:11:11:11:11:11:6:5:6:0:0:0:11:</row>
+    <row id="63">1:1:2:2:2:2:2:2:2:2:2:2:11:11:11:11:11:11:11:11:11:11:11:2:11:11:11:11:11:11:11:11:11:11:11:6:5:6:11:0:0:0:</row>
+    <row id="64">1:1:1:2:2:2:2:2:2:2:2:2:11:11:11:11:11:11:11:11:11:11:11:2:11:11:11:11:11:11:11:11:11:11:11:11:5:2:11:5:0:0:11:</row>
+    <row id="65">1:1:2:2:2:11:11:2:2:2:2:11:11:11:11:11:11:11:11:11:11:11:2:2:11:11:11:11:11:11:11:11:11:11:11:6:2:2:11:4:0:0:</row>
+    <row id="66">1:1:1:2:2:2:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:2:11:11:11:11:11:11:11:11:11:11:11:6:5:11:11:5:4:0:11:</row>
+    <row id="67">1:1:2:2:2:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:2:11:11:11:11:11:11:11:11:11:11:11:11:6:2:4:4:4:0:11:</row>
+    <row id="68">1:1:2:2:2:2:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:2:2:11:11:11:11:11:11:11:11:11:11:11:11:5:11:2:5:4:0:11:</row>
+    <row id="69">1:1:2:2:2:11:11:11:11:11:11:11:11:11:11:11:11:11:11:2:11:11:2:2:11:11:11:11:11:11:11:11:11:11:11:6:2:11:11:4:0:11:</row>
+    <row id="70">1:1:2:2:2:11:11:11:11:11:11:11:11:11:11:11:11:11:11:2:2:11:2:2:11:11:11:11:11:11:11:11:11:11:11:11:5:2:11:5:4:0:11:</row>
+    <row id="71">1:2:2:2:2:11:11:11:11:11:11:11:11:11:11:11:11:11:11:2:11:2:2:2:2:2:11:11:2:11:11:11:11:11:11:11:5:2:11:4:0:11:</row>
+    <row id="72">1:1:2:2:2:11:11:11:11:11:11:11:11:11:11:11:11:11:11:2:11:2:2:2:2:2:2:2:2:2:11:11:11:11:11:11:11:4:11:5:4:0:11:</row>
+    <row id="73">1:2:2:2:11:11:11:11:11:11:11:11:11:11:11:11:11:11:2:2:11:2:2:2:2:2:2:2:2:2:11:11:11:11:11:11:6:2:11:4:0:0:</row>
+    <row id="74">1:2:2:2:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:2:2:2:2:2:2:2:2:2:2:2:2:11:11:11:11:11:11:5:2:5:4:0:11:</row>
+    <row id="75">1:2:2:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:2:2:2:2:2:2:2:2:2:2:2:2:11:11:11:11:11:11:11:4:11:5:4:0:</row>
+    <row id="76">1:2:2:2:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:2:2:2:2:2:2:2:2:2:2:2:2:11:11:11:11:11:11:6:2:11:4:0:11:</row>
+    <row id="77">2:2:2:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:2:2:2:2:2:2:2:2:2:2:2:2:11:11:11:11:11:11:11:5:2:5:4:0:</row>
+    <row id="78">2:2:2:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:2:2:2:2:2:2:2:2:2:2:2:2:11:11:11:11:11:11:11:4:11:5:0:11:</row>
+    <row id="79">2:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:2:2:2:2:2:2:2:2:2:2:2:2:11:11:11:11:11:11:11:6:2:11:4:0:</row>
+    <row id="80">2:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:2:2:2:2:2:2:2:2:2:2:2:2:11:11:11:11:11:11:11:5:2:5:4:11:</row>
+    <row id="81">2:11:11:11:1536:1536:1536:1536:1536:1536:1536:1536:1536:1536:132864:11:11:11:11:2:2:2:2:2:2:2:2:2:2:2:11:11:11:11:11:11:11:6:4:11:4:0:</row>
+    <row id="82">11:11:11:11:4672:512:512:512:512:512:512:512:512:512:512:11:11:11:11:2:2:2:2:2:2:2:2:2:2:11:11:11:11:11:11:11:11:11:6:2:11:4:11:</row>
+    <row id="83">11:11:11:11:0:0:0:0:0:0:0:0:0:0:16640:11:11:11:2:2:2:2:2:2:2:2:2:2:11:2:11:11:11:11:11:11:11:11:5:2:4:4:</row>
+    <row id="84">11:2:11:11:4160:0:0:0:0:0:0:0:0:0:0:11:11:11:11:2:2:2:2:2:2:2:2:2:11:2:2:11:11:11:11:11:11:11:6:5:11:4:11:</row>
+    <row id="85">11:2:11:11:0:0:0:0:0:0:0:0:0:0:16640:11:11:11:2:2:2:2:2:2:2:2:2:11:11:2:11:11:11:11:11:11:11:11:6:2:11:4:</row>
+    <row id="86">11:11:2:11:4160:0:0:0:0:0:0:0:0:0:0:11:11:11:11:2:2:2:2:2:2:2:2:2:2:2:11:11:11:11:11:11:11:11:11:5:11:11:11:</row>
+    <row id="87">11:11:11:11:0:0:0:0:0:0:0:0:0:0:16640:11:11:11:2:2:2:2:2:2:2:2:2:11:2:11:11:11:11:11:11:11:11:11:6:2:11:11:</row>
+    <row id="88">11:11:11:2:4160:0:0:0:0:0:0:0:0:0:0:11:11:11:11:2:2:2:2:2:2:2:2:11:2:11:11:11:11:11:11:11:11:11:11:5:6:11:11:</row>
+    <row id="89">11:11:2:11:0:0:0:0:0:0:0:0:0:0:16640:11:11:11:11:2:2:11:2:11:2:2:11:2:11:11:11:11:11:11:11:11:11:11:11:2:6:11:</row>
+    <row id="90">11:11:11:2:4160:0:0:0:0:0:0:0:0:0:0:11:11:11:11:2:2:2:11:2:11:2:2:11:11:11:11:11:11:11:11:11:11:11:11:5:6:11:11:</row>
+    <row id="91">11:11:11:2:0:0:0:0:0:0:0:0:0:0:16640:11:11:11:11:2:2:11:2:11:2:11:11:11:11:11:11:11:11:11:11:11:11:11:11:2:6:11:</row>
+    <row id="92">11:11:11:11:0:0:0:0:0:0:0:0:0:0:0:11:11:11:11:11:2:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:5:6:11:11:</row>
+    <row id="93">11:11:11:11:0:0:0:0:0:0:0:0:0:0:131072:11:11:11:11:2:2:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:4:11:11:</row>
+    <row id="94">11:11:11:11:4160:0:0:0:0:0:0:0:0:0:0:8389120:11:11:11:11:2:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:5:11:11:11:</row>
+    <row id="95">11:11:11:11:0:0:0:0:0:0:0:0:0:0:0:8389120:11:11:11:11:2:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:5:11:11:</row>
+    <row id="96">11:11:11:1026:4096:0:0:0:0:0:0:0:0:0:0:2048:8389120:11:11:11:11:11:11:11:11:11:11:11:11:5696:1536:1536:1536:1536:1536:1536:1536:1536:1536:11:11:11:11:</row>
+    <row id="97">11:11:11:512:0:0:0:0:0:0:0:0:0:0:16384:2099200:8389120:11:11:11:2:11:11:11:11:11:11:11:11:512:512:512:512:512:512:512:512:512:4:5:11:11:</row>
+    <row id="98">11:11:11:2:0:0:0:0:0:0:0:0:0:0:0:11:2099200:8389120:11:11:2:11:11:11:11:11:11:11:11:4160:0:0:0:0:0:0:0:0:0:5:11:11:11:</row>
+    <row id="99">11:11:2:0:0:0:0:0:0:0:0:0:0:0:16640:11:2099200:8389120:11:11:11:11:11:11:11:11:11:11:11:0:0:0:0:0:0:0:0:0:4:5:11:11:</row>
+    <row id="100">11:11:11:2:0:0:0:0:0:0:0:0:0:0:0:11:11:2099200:8389120:11:2:11:11:11:11:11:11:11:11:4160:0:0:0:0:0:0:0:0:4:5:11:11:11:</row>
+    <row id="101">11:11:2:2048:0:0:0:0:0:0:0:0:0:0:16640:11:11:2099200:8389120:11:2:11:11:11:11:11:11:11:11:0:0:0:0:0:0:0:0:4:4:5:6:11:</row>
+    <row id="102">11:11:11:1026:32768:0:0:0:0:0:0:0:0:0:0:11:11:11:2099200:8389120:2:8389122:11:11:11:11:11:11:11:4160:0:0:0:0:0:0:0:0:4:4:6:6:11:</row>
+    <row id="103">11:11:11:11:0:0:0:0:0:0:0:0:0:0:16640:11:11:11:2099200:2:11:8389120:11:11:11:11:11:11:11:0:0:0:0:0:0:0:0:4:4:5:6:6:</row>
+    <row id="104">11:11:11:11:4160:0:0:0:0:0:0:0:0:0:0:11:11:11:11:2099202:2:2099200:8389120:11:11:11:11:11:11:4160:0:0:0:0:0:0:0:4:4:5:5:6:11:</row>
+    <row id="105">11:11:11:11:0:0:0:0:0:0:0:0:0:0:16640:11:11:11:11:2:11:2099200:8389120:11:11:11:2:11:11:0:0:0:0:0:0:0:0:4:4:5:6:6:</row>
+    <row id="106">11:11:11:11:4160:0:0:0:0:0:0:0:0:0:0:11:11:11:11:11:11:11:2099200:8389120:11:11:11:11:11:4160:0:0:0:0:0:0:0:4:4:5:5:6:11:</row>
+    <row id="107">11:11:11:11:0:0:0:0:0:0:0:0:0:0:16640:11:11:11:11:2:11:11:2099200:8389120:11:11:2:11:11:0:0:0:0:0:0:0:0:4:5:5:6:6:</row>
+    <row id="108">11:11:11:11:4160:0:0:0:0:0:0:0:0:0:0:11:11:11:11:2:11:11:11:2099200:8389120:11:11:11:11:4160:0:0:0:0:0:0:0:4:4:5:6:6:11:</row>
+    <row id="109">11:11:11:11:0:0:0:0:0:0:0:0:0:0:16640:11:11:11:11:11:11:11:11:2099200:8389120:11:2:11:11:0:0:0:0:0:0:0:4:4:5:5:6:6:</row>
+    <row id="110">11:11:11:11:4160:0:0:0:0:0:0:0:0:0:0:11:11:11:11:2:11:11:11:11:2099200:8389120:2:8389120:11:4160:0:0:0:0:0:0:0:4:4:5:5:6:11:</row>
+    <row id="111">11:11:11:11:0:0:0:0:0:0:0:0:0:0:16640:11:11:11:2:11:11:11:11:11:2099200:0:0:8389120:11:0:0:0:0:0:0:0:0:4:4:5:6:6:</row>
+    <row id="112">11:11:11:11:4160:0:0:0:0:0:0:0:0:0:0:11:11:11:11:11:11:11:11:11:11:2099200:2:2099200:8389120:4096:0:0:0:0:0:0:0:4:4:5:5:6:11:</row>
+    <row id="113">11:11:11:11:0:0:0:0:0:0:0:0:0:0:16640:11:11:11:2:11:11:11:11:11:11:0:11:2099200:512:0:0:0:0:0:0:0:0:4:4:5:6:6:</row>
+    <row id="114">11:11:11:11:4160:0:0:0:0:0:0:0:0:0:0:11:11:11:11:11:11:11:11:11:11:11:2:11:2099200:0:0:0:0:0:0:0:0:4:4:5:5:6:11:</row>
+    <row id="115">11:11:11:11:0:0:0:0:0:0:0:0:0:0:16640:11:11:11:11:11:11:11:11:11:11:2:11:11:2099200:0:0:0:0:0:0:0:0:4:4:5:5:6:</row>
+    <row id="116">11:11:11:11:6208:2048:2048:2048:2048:2048:2048:2048:2048:2048:2048:11:11:11:11:11:11:11:11:11:11:11:2:11:11:32768:0:0:0:0:0:0:0:0:4:5:5:6:11:</row>
+    <row id="117">11:11:11:11:3072:3072:3072:3072:3072:3072:3072:3072:3072:3072:19712:11:11:11:11:11:11:11:11:11:11:2:11:11:11:0:0:0:0:0:0:0:0:4:4:5:6:6:</row>
+    <row id="118">11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:2:11:11:11:4160:0:0:0:0:0:0:0:0:4:4:5:6:11:</row>
+    <row id="119">11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:2:11:11:11:0:0:0:0:0:0:0:0:4:4:5:5:6:</row>
+    <row id="120">11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:2:11:11:11:4160:0:0:0:0:0:0:0:0:4:4:5:5:11:</row>
+    <row id="121">11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:0:0:0:0:0:0:0:0:4:4:4:5:6:</row>
+    <row id="122">11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:2:11:11:11:4160:0:0:0:0:0:0:4:4:4:4:5:5:11:</row>
+    <row id="123">11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:2:11:11:11:11:2048:2048:2048:2048:2048:2048:2052:2052:2052:2052:4:5:11:</row>
+    <row id="124">11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:2:11:11:11:35904:3072:3072:3072:3072:3072:3076:3076:3076:3076:3076:3077:5:11:</row>
+    <row id="125">11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:2:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:</row>
+    <row id="126">11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:</row>
+    <row id="127">11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:</row>
+    <row id="128">11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:</row>
+    <row id="129">11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:</row>
+  </rows>
+  
+  <teams count="4" maxCombatantsPerTeam="15">
+    <team id="0">
+      <combatant AI="Local" charName="300 fighter" id="0" startX="1" startY="57"/>
+      <combatant AI="Local" charName="300 priest" id="1" startX="1" startY="61"/>
+      <combatant AI="Local" charName="300 Mage" id="2" startX="1" startY="65"/>
+      <combatant AI="Local" charName="300 archer" id="3" startX="1" startY="69"/>
+      <combatant AI="Off" charName=" " id="4"/>
+      <combatant AI="Off" charName=" " id="5"/>
+      <combatant AI="Off" charName=" " id="6"/>
+      <combatant AI="Off" charName="" id="7"/>
+      <combatant AI="Off" charName="" id="8"/>
+      <combatant AI="Off" charName="" id="9"/>
+      <combatant AI="Off" charName="" id="10"/>
+      <combatant AI="Off" charName="" id="11"/>
+      <combatant AI="Off" charName="" id="12"/>
+      <combatant AI="Off" charName="" id="13"/>
+      <combatant AI="Off" charName="" id="14"/>
+    </team>
+    <team id="1">
+      <combatant AI="God" charName="? 75 Wolf" id="0" startX="7" startY="31"/>
+      <combatant AI="God" charName="? 85 Wolf" id="1" startX="10" startY="38"/>
+      <combatant AI="God" charName="? 95 Wolf" id="2" startX="5" startY="33"/>
+      <combatant AI="God" charName="? 105 Wolf" id="3" startX="8" startY="34"/>
+      <combatant AI="God" charName="? 115 Wolf" id="4" startX="4" startY="30"/>
+      <combatant AI="God" charName="? 125 Wolf" id="5" startX="12" startY="42"/>
+      <combatant AI="Off" charName=" " id="6"/>
+      <combatant AI="Off" charName="" id="7"/>
+      <combatant AI="Off" charName="" id="8"/>
+      <combatant AI="Off" charName="" id="9"/>
+      <combatant AI="Off" charName="" id="10"/>
+      <combatant AI="Off" charName="" id="11"/>
+      <combatant AI="Off" charName="" id="12"/>
+      <combatant AI="Off" charName="" id="13"/>
+      <combatant AI="Off" charName="" id="14"/>
+    </team>
+    <team id="2">
+      <combatant AI="Off" charName=" " id="0"/>
+      <combatant AI="Off" charName=" " id="1"/>
+      <combatant AI="Off" charName=" " id="2"/>
+      <combatant AI="Off" charName=" " id="3"/>
+      <combatant AI="Off" charName=" " id="4"/>
+      <combatant AI="Off" charName=" " id="5"/>
+      <combatant AI="Off" charName=" " id="6"/>
+      <combatant AI="Off" charName="" id="7"/>
+      <combatant AI="Off" charName="" id="8"/>
+      <combatant AI="Off" charName="" id="9"/>
+      <combatant AI="Off" charName="" id="10"/>
+      <combatant AI="Off" charName="" id="11"/>
+      <combatant AI="Off" charName="" id="12"/>
+      <combatant AI="Off" charName="" id="13"/>
+      <combatant AI="Off" charName="" id="14"/>
+    </team>
+    <team id="3">
+      <combatant AI="Off" charName="" id="0"/>
+      <combatant AI="Off" charName="" id="1"/>
+      <combatant AI="Off" charName="" id="2"/>
+      <combatant AI="Off" charName="" id="3"/>
+      <combatant AI="Off" charName="" id="4"/>
+      <combatant AI="Off" charName="" id="5"/>
+      <combatant AI="Off" charName="" id="6"/>
+      <combatant AI="Off" charName="" id="7"/>
+      <combatant AI="Off" charName="" id="8"/>
+      <combatant AI="Off" charName="" id="9"/>
+      <combatant AI="Off" charName="" id="10"/>
+      <combatant AI="Off" charName="" id="11"/>
+      <combatant AI="Off" charName="" id="12"/>
+      <combatant AI="Off" charName="" id="13"/>
+      <combatant AI="Off" charName="" id="14"/>
+    </team>
+  </teams>
+
+  <triggers>
+    <trigger enabled="true" name="Add Sturges" onlyAffectsPlayers="true" requiresEntireTeam="false">
+      <location x="20" y="44"/>
+      <location x="21" y="43"/>
+      <location x="29" y="41"/>
+      <location x="34" y="40"/>
+      <event data="" name="single shot" type="Disable This Trigger"/>
+      <event data="? -50 Sturge God" name="Sturge 12" type="Enter Character">
+        <location x="17" y="31"/>
+        <location x="32" y="36"/>
+      </event>
+      <event data="? -50 Sturge God" name="Sturge 1" type="Enter Character">
+        <location x="18" y="18"/>
+      </event>
+      <event data="? -50 Sturge God" name="Sturge 2" type="Enter Character">
+        <location x="18" y="20"/>
+      </event>
+      <event data="? -50 Sturge God" name="Sturge 3" type="Enter Character">
+        <location x="20" y="14"/>
+      </event>
+      <event data="? -50 Sturge God" name="Sturge 4" type="Enter Character">
+        <location x="30" y="16"/>
+      </event>
+      <event data="? -50 Sturge God" name="Sturge 5" type="Enter Character">
+        <location x="25" y="9"/>
+      </event>
+      <event data="? -50 Sturge God" name="Sturge 6" type="Enter Character">
+        <location x="24" y="20"/>
+      </event>
+      <event data="? -50 Sturge God" name="Sturge 7" type="Enter Character">
+        <location x="27" y="27"/>
+      </event>
+      <event data="? -50 Sturge God" name="Sturge 8" type="Enter Character">
+        <location x="25" y="37"/>
+      </event>
+      <event data="? -50 Sturge God" name="Sturge 9" type="Enter Character">
+        <location x="21" y="25"/>
+      </event>
+      <event data="? -50 Sturge God" name="Sturge 10" type="Enter Character">
+        <location x="39" y="19"/>
+      </event>
+      <event data="? -50 Sturge God" name="Sturge 11" type="Enter Character">
+        <location x="49" y="29"/>
+      </event>
+      <event data="? -50 Sturge God" name="Sturge 13" type="Enter Character">
+        <location x="28" y="36"/>
+      </event>
+      <event data="? -50 Sturge God" name="Sturge 14" type="Enter Character">
+        <location x="28" y="20"/>
+      </event>
+    </trigger>
+    <trigger enabled="true" name="Add spiders" onlyAffectsPlayers="true" requiresEntireTeam="false">
+      <location x="46" y="26"/>
+      <location x="46" y="28"/>
+      <event data="" name="single shot" type="Disable This Trigger"/>
+      <event data="? 275 Giant-Spider" name="Enter Spider 275" type="Enter Character">
+        <location x="55" y="9"/>
+      </event>
+      <event data="? 350 Giant-Spider" name="Enter Spider 350" type="Enter Character">
+        <location x="38" y="86"/>
+      </event>
+      <event data="? 300 Giant-Spider" name="Enter Spider 300" type="Enter Character">
+        <location x="61" y="45"/>
+      </event>
+    </trigger>
+    <trigger enabled="true" name="Add Kobolds" onlyAffectsPlayers="true" requiresEntireTeam="false">
+      <location x="33" y="99"/>
+      <location x="33" y="97"/>
+      <event data="" name="single shot" type="Disable This Trigger"/>
+      <event data="? Kobold 90" name="Kobold 90" type="Enter Character">
+        <location x="13" y="105"/>
+      </event>
+      <event data="? Kobold 75" name="Kobold 75" type="Enter Character">
+        <location x="22" y="88"/>
+      </event>
+      <event data="? kobold 65" name="kobold 65" type="Enter Character">
+        <location x="22" y="92"/>
+      </event>
+      <event data="? Kobold 60" name="Kobold 60" type="Enter Character">
+        <location x="16" y="92"/>
+      </event>
+      <event data="? kobold 55" name="Kobold 55" type="Enter Character">
+        <location x="25" y="95"/>
+      </event>
+      <event data="? Kobold 50 Bow, Shortbow" name="Kobold 50 bow" type="Enter Character">
+        <location x="11" y="91"/>
+      </event>
+      <event data="? Kobold 45" name="Kobold 45" type="Enter Character">
+        <location x="28" y="90"/>
+      </event>
+      <event data="? Kobold 40" name="Kobold 40" type="Enter Character">
+        <location x="20" y="100"/>
+      </event>
+      <event data="? Kobold 35" name="Kobold 35" type="Enter Character">
+        <location x="27" y="107"/>
+      </event>
+      <event data="? Kobold 30 sling" name="Kobold 30 sling" type="Enter Character">
+        <location x="15" y="113"/>
+      </event>
+      <event data="? Kobold 25" name="Kobold 25" type="Enter Character">
+        <location x="22" y="108"/>
+      </event>
+      <event data="As you approach the end of the hallway, you see a set of large ornate metal doors,\n       which are partially open because the hinges are not completely attached. Through the crack between\n       the doors, you see a pile of trash, which seems to been piled up from the other side of the door.\n       The trash looks small enough that you could probably force the door open if you wanted to." name="message" type="Public Message"/>
+    </trigger>
+    <trigger enabled="true" name="Add Crocodiles" onlyAffectsPlayers="true" requiresEntireTeam="false">
+      <location x="70" y="24"/>
+      <location x="58" y="106"/>
+      <location x="60" y="108"/>
+      <location x="59" y="107"/>
+      <location x="61" y="109"/>
+      <location x="62" y="110"/>
+      <location x="63" y="123"/>
+      <location x="63" y="121"/>
+      <location x="63" y="119"/>
+      <location x="63" y="117"/>
+      <location x="63" y="115"/>
+      <location x="63" y="113"/>
+      <location x="63" y="111"/>
+      <event data="" name="single shot" type="Disable This Trigger"/>
+      <event data="? 400 Crocodile" name="Add Croc 400" type="Enter Character">
+        <location x="80" y="108"/>
+      </event>
+      <event data="? 375 Crocodile" name="Add Croc 375" type="Enter Character">
+        <location x="82" y="38"/>
+      </event>
+      <event data="? 425 Crocodile" name="Add Croc 425" type="Enter Character">
+        <location x="78" y="46"/>
+      </event>
+      <event data="? 600 Crocodile, Large God" name="Add Large Crocodile 600" type="Enter Character">
+        <location x="79" y="89"/>
+      </event>
+      <event data="? Crocodile 380" name="Add Croc 380" type="Enter Character">
+        <location x="81" y="115"/>
+      </event>
+    </trigger>
+    <trigger enabled="true" name="Enter Temple" onlyAffectsPlayers="true" requiresEntireTeam="false">
+      <location x="77" y="67"/>
+      <event data="" name="single shot" type="Disable This Trigger"/>
+      <event data="You enter the remains of an ancient temple.\n        The east half of this room has collapsed, destroying a large shrine that once stood in the middle of the room.\n         Dim light filters down from small cracks high in the ceiling, the fissure in the wall through which you entered\n          has allowed the water to enter to west side of this sanctum, causing the ground to sink. Along the south, west,\n           and north wall, you can make out intricate murals and finely-crafted statues of hideous monsters and demons,\n            dragging souls of the damned into hell.\n             The south side of the room has several cages and shackles, partially destroyed over the countless years left to rust.\n              The bones of two helpless victims lay in a pile on the floor where they died.\n               The north side of the room contains the main alter, with shackles on each side of it.\n                Through the dust and debris, you can still see the red stain of the blood spilled on the alter,\n                 and a rusty sacrificial dagger lays nearby on the ground.\n                  Further to the north, against the wall is an open doorway leading to stairs going down.\n                   Between the alter and the doorway, carved into the stone floor is a large pentagram, inset with a brighter color of stone.\n                    Unlike the rest of the room, the pentagram has stood the test of time, and remains undamaged." name="message" type="Public Message"/>
+    </trigger>
+    <trigger enabled="true" name="Enter Hallway" onlyAffectsPlayers="true" requiresEntireTeam="false">
+      <location x="40" y="100"/>
+      <event data="" name="single shot" type="Disable This Trigger"/>
+      <event data="As you enter this crack, you notice parts of the floor on each side of you are polished marble,\n        but are now covered in dirt. Once, a long time ago, this must have been an impressive hallway,\n         but has now been split in two by an earthquake, or some other cataclysmic event." name="message" type="Public Message"/>
+    </trigger>
+    <trigger enabled="true" name="Enter entrance room" onlyAffectsPlayers="true" requiresEntireTeam="false">
+      <location x="30" y="94"/>
+      <location x="30" y="96"/>
+      <event data="" name="single shot" type="Disable This Trigger"/>
+      <event data="As you enter this room, you see that it was once a grand entry room.\n        The Kobolds all around the room have taken this room over, and made it their lair.\n         In the center of the room, the have made a fire pit, and on the south side of the room,\n         you see pile of blankets they probably sleep on. Broken furniture and rotted drapes are\n         scattered all about the room.  At the far end of the room is a large archway that has collapsed.\n         A small hole to the side of the archway has natural light coming through.\n         The hole seems too small for a human to fit through, but a kobold could squeeze through easily." name="Message" type="Public Message"/>
+    </trigger>
+    <trigger enabled="true" name="Enter Dinning Hall" onlyAffectsPlayers="true" requiresEntireTeam="false">
+      <location x="57" y="113"/>
+      <location x="57" y="115"/>
+      <event data="" name="single shot" type="Disable This Trigger"/>
+      <event data="This room appears to have once been a great dining hall.\n        The center of the room is covered in various-sized wood pieces that have long since rotted away to brittle sawdust.\n         Under some of the dust and debris, you can see some remnants of china and silverware.\n          The wall at the far end of the room has collapsed, and water has filled that side of the room.\n           You think you see some movement in the water ahead." name="Message" type="Public Message"/>
+    </trigger>
+    <trigger enabled="true" name="Closer inspection" onlyAffectsPlayers="true" requiresEntireTeam="false">
+      <location x="78" y="62"/>
+      <location x="79" y="63"/>
+      <location x="80" y="64"/>
+      <location x="81" y="65"/>
+      <location x="82" y="66"/>
+      <event data="" name="single shot" type="Disable This Trigger"/>
+      <event data="Upon closer inspection, you notice that some of the blood stain on the alter is not covered in the dust as the rest of the room is.\n        Furthermore, the candles at the five points of the pentagram give off a slight odor, indicating that they have recently been used and are still fresh.\n         The dust and dirt on the floor within the pentagram has several scuff marks and footprints in it, with one trail of\n          boot prints and one set of hoof prints exiting the pentagram, leading into the doorway." name="message" type="Public Message"/>
+    </trigger>
+    <trigger enabled="true" name="New Map" onlyAffectsPlayers="true" requiresEntireTeam="false">
+      <location x="82" y="52"/>
+      <location x="82" y="50"/>
+      <location x="82" y="48"/>
+      <event data="" name="single shot" type="Disable This Trigger"/>
+      <event data="Dungeon2" name="Down to level 2" type="New Map">
+        <location x="20" y="118"/>
+        <location x="20" y="116"/>
+        <location x="20" y="114"/>
+        <location x="20" y="112"/>
+        <location x="19" y="115"/>
+        <location x="19" y="113"/>
+        <location x="21" y="115"/>
+        <location x="21" y="113"/>
+      </event>
+    </trigger>
+  </triggers>
+
+  <items>
+    <item col="7" name="Archway" raceBase="Human" row="99"/>
+    <item col="16" name="Fire pit" raceBase="Human" row="96"/>
+    <item col="20" name="blankets" raceBase="Human" row="114"/>
+    <item col="23" name="blankets" raceBase="Human" row="111"/>
+    <item col="25" name="blankets" raceBase="Human" row="115"/>
+    <item col="29" name="trash" raceBase="Human" row="95"/>
+    <door col="30" key="" orient="VERT_CENTER" row="94" state="2"/>
+    <door col="30" key="" orient="VERT_CENTER" row="96" state="2"/>
+    <item col="79" name="Dagger" raceBase="Human" row="61"/>
+    <item col="79" name="shackles" raceBase="Human" row="77"/>
+    <item col="80" name="Alter" raceBase="Human" row="60"/>
+    <item col="80" name="Cage" raceBase="Human" row="80"/>
+    <item col="81" name="Pentagram" raceBase="Human" row="57"/>
+    <item col="81" name="Cage" raceBase="Human" row="83"/>
+    <item col="82" name="Stairs" raceBase="Human" row="50"/>
+    <item col="82" name="Down" raceBase="Human" row="50"/>
+    <item col="83" name="Shrine" raceBase="Human" row="69"/>
+    <item col="83" name="shackles" raceBase="Human" row="81"/>
+    <item col="83" name="Bones" raceBase="Human" row="81"/>
+    <item col="83" name="Cage" raceBase="Human" row="85"/>
+    <item col="83" name="Bones" raceBase="Human" row="85"/>
+  </items>
+</Arena>

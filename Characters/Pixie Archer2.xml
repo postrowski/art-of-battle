@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="Pixie Archer2" Race="Fairy">
+  <Attributes DEX="6" HT="-2" IQ="2" NIM="2" SOC="1" STR="3" TOU="-4"/>
+  <Equipment Armor="Chain Mail">
+    <Hand Name="right hand">Bow, Longbow</Hand>
+    <Hand Name="left hand"/>
+  </Equipment>
+  <Skills>
+    <Skill Level="5" Name="Bow"/>
+  </Skills>
+  <Spells>
+    <Spell Level="1" Name="Flaming Weapon"/>
+    <Spell Level="2" Name="Control Temperature"/>
+    <Spell Level="1" Name="Control Fire"/>
+    <Spell Level="2" Name="Create Fire"/>
+    <Spell Level="2" Name="Flame Jet"/>
+    <Spell Level="2" Name="Throw Spell"/>
+  </Spells>
+  <Colleges>
+    <College Level="2" Name="Fire"/>
+    <College Level="2" Name="Conjuration"/>
+  </Colleges>
+  <Advantages>
+    <Advantage Level="2" Name="Wealth"/>
+    <Advantage Level="0" Name="Phobia"/>
+  </Advantages>
+</Character>

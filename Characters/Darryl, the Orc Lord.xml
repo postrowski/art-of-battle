@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Character Gender="Male" Name="Darryl, the Orc Lord" Race="Orc">
+  <Attributes DEX="4" HT="2" IQ="-3" NIM="2" SOC="-3" STR="7" TOU="2"/>
+  <Equipment Armor="Dwarven Scale">
+    <Hand Name="right hand">Shortsword</Hand>
+    <Hand Name="left hand">Shortsword</Hand>
+    <Belt>Knife</Belt>
+    <Belt>Potion:Healing</Belt>
+  </Equipment>
+  <Skills>
+    <Skill Level="9" Name="Sword"/>
+    <Skill Level="1" Name="Brawling"/>
+    <Skill Level="3" Name="Knife"/>
+  </Skills>
+  <Advantages>
+    <Advantage LevelName="$100000" Name="Wealth"/>
+    <Advantage LevelName="" Name="Ambidextrous"/>
+    <Advantage LevelName="" Name="Greedy"/>
+    <Advantage LevelName="Fair Fighter" Name="Code of Conduct"/>
+    <Advantage LevelName="Viscount" Name="Rank: Social (m)"/>
+  </Advantages>
+</Character>

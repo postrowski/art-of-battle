@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="Kobold Spearman" Race="Kobold">
+  <Attributes DEX="3" HT="2" IQ="-3" NIM="0" SOC="-3" STR="0" TOU="1"/>
+  <Equipment Armor="Leather">
+    <Hand Name="right hand">Javelin</Hand>
+    <Hand Name="left hand"/>
+    <Belt>Spear</Belt>
+  </Equipment>
+  <Skills>
+    <Skill Level="5" Name="Spear"/>
+    <Skill Level="4" Name="Throwing"/>
+    <Skill Level="1" Name="Brawling"/>
+  </Skills>
+  <Advantages>
+    <Advantage Level="4" Name="Wealth"/>
+  </Advantages>
+</Character>

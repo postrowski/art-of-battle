@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="Troll" Race="Troll">
+  <Attributes DEX="3" HT="7" IQ="-2" NIM="0" SOC="-5" STR="5" TOU="2"/>
+  <Equipment Armor="Leather">
+    <Hand Name="right hand">Morning Star</Hand>
+    <Hand Name="left hand">Small Shield</Hand>
+  </Equipment>
+  <Skills>
+    <Skill Level="4" Name="Flail"/>
+    <Skill Level="3" Name="Shield"/>
+    <Skill Level="2" Name="Brawling"/>
+  </Skills>
+  <Advantages>
+    <Advantage Level="5" Name="Wealth"/>
+    <Advantage Level="0" Name="Berserker"/>
+    <Advantage Level="0" Name="Delusional"/>
+  </Advantages>
+</Character>

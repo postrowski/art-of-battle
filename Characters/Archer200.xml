@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="Archer200" Race="Human">
+  <Attributes DEX="6" HT="1" IQ="0" NIM="2" SOC="-1" STR="2" TOU="0"/>
+  <Equipment Armor="Leather">
+    <Hand Name="right hand">Bow, Longbow</Hand>
+    <Hand Name="left hand"/>
+    <Belt>Shortsword</Belt>
+  </Equipment>
+  <Skills>
+    <Skill Level="7" Name="Bow"/>
+    <Skill Level="4" Name="Sword"/>
+    <Skill Level="2" Name="Brawling"/>
+  </Skills>
+  <Advantages>
+    <Advantage Level="4" Name="Wealth"/>
+  </Advantages>
+</Character>

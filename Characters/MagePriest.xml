@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<Character Gender="Female" Name="MagePriest" Race="Elf">
+  <Attributes DEX="1" HT="-2" IQ="4" NIM="2" SOC="5" STR="-5" TOU="-3"/>
+  <Equipment Armor="Chain Mail">
+    <Hand Name="right hand">Quarterstaff</Hand>
+    <Hand Name="left hand"/>
+  </Equipment>
+  <Skills>
+    <Skill Level="4" Name="Quarterstaff"/>
+  </Skills>
+  <Spells>
+    <Spell Level="1" Name="Flame Jet"/>
+    <Spell Level="1" Name="Throw Spell"/>
+    <Spell Level="1" Name="Control Temperature"/>
+    <Spell Level="1" Name="Create Fire"/>
+  </Spells>
+  <Colleges>
+    <College Level="3" Name="Conjuration"/>
+    <College Level="3" Name="Fire"/>
+  </Colleges>
+  <Advantages>
+    <Advantage Level="3" Name="Magical Aptitude"/>
+    <Advantage Level="1" Name="Wealth"/>
+    <Advantage Level="4" Name="Divine Aff. - Aphrodite"/>
+    <Advantage Level="2" Name="Divine Power"/>
+    <Advantage Level="0" Name="Compulsive Liar"/>
+    <Advantage Level="0" Name="Delusional"/>
+    <Advantage Level="0" Name="Phobia"/>
+  </Advantages>
+</Character>

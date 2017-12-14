@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="Pixie Spearman" Race="Fairy">
+  <Attributes DEX="5" HT="-2" IQ="2" NIM="3" SOC="2" STR="2" TOU="-4"/>
+  <Equipment Armor="Heavy Leather">
+    <Hand Name="right hand">Javelin</Hand>
+    <Hand Name="left hand">Large Shield</Hand>
+    <Belt>Spear</Belt>
+    <Belt>Javelin</Belt>
+    <Belt>Javelin</Belt>
+  </Equipment>
+  <Skills>
+    <Skill Level="3" Name="Throwing"/>
+    <Skill Level="4" Name="Spear"/>
+  </Skills>
+  <Spells>
+    <Spell Level="1" Name="Slow"/>
+    <Spell Level="1" Name="Speed"/>
+    <Spell Level="1" Name="Affect Area"/>
+    <Spell Level="1" Name="Control Time"/>
+    <Spell Level="1" Name="Armor"/>
+    <Spell Level="1" Name="Harden"/>
+  </Spells>
+  <Colleges>
+    <College Level="3" Name="Energy"/>
+    <College Level="3" Name="Protection"/>
+    <College Level="3" Name="Conjuration"/>
+    <College Level="3" Name="Evocation"/>
+  </Colleges>
+  <Advantages>
+    <Advantage Level="2" Name="Wealth"/>
+    <Advantage Level="0" Name="Phobia"/>
+  </Advantages>
+</Character>

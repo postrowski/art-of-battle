@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="Druid Fawn" Race="Fawn">
+  <Attributes DEX="1" HT="0" IQ="0" NIM="4" SOC="2" STR="1" TOU="-1"/>
+  <Equipment Armor="Heavy Leather">
+    <Hand Name="right hand">Quarterstaff</Hand>
+    <Hand Name="left hand"/>
+  </Equipment>
+  <Skills>
+    <Skill Level="6" Name="Quarterstaff"/>
+    <Skill Level="4" Name="Brawling"/>
+  </Skills>
+  <Advantages>
+    <Advantage Level="5" Name="Wealth"/>
+    <Advantage Level="3" Name="Divine Power"/>
+    <Advantage Level="4" Name="Divine Aff. - Druid"/>
+    <Advantage Level="0" Name="Intolerant"/>
+    <Advantage Level="5" Name="Vision"/>
+  </Advantages>
+</Character>

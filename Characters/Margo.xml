@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<Character Gender="Female" Name="Margo" Race="Elf">
+  <Attributes DEX="2" HT="-1" IQ="5" NIM="4" SOC="3" STR="-3" TOU="-1"/>
+  <Equipment Armor="Cloth Armor">
+    <Hand Name="right hand">Quarterstaff</Hand>
+    <Hand Name="left hand"/>
+  </Equipment>
+  <Skills>
+    <Skill Level="4" Name="Quarterstaff"/>
+  </Skills>
+  <Spells>
+    <Spell Level="2" Name="Control Mind"/>
+    <Spell Level="2" Name="Block Thought"/>
+    <Spell Level="2" Name="Suggestion"/>
+    <Spell Level="2" Name="Cause Wound"/>
+    <Spell Level="2" Name="Create Force"/>
+    <Spell Level="2" Name="Cause Pain"/>
+    <Spell Level="2" Name="Push"/>
+    <Spell Level="2" Name="Block Attack"/>
+    <Spell Level="1" Name="Armor"/>
+    <Spell Level="1" Name="Harden"/>
+    <Spell Level="1" Name="Strength"/>
+  </Spells>
+  <Colleges>
+    <College Level="2" Name="Divination"/>
+    <College Level="2" Name="Enchantment"/>
+    <College Level="3" Name="Energy"/>
+    <College Level="2" Name="Necromancy"/>
+    <College Level="3" Name="Protection"/>
+  </Colleges>
+  <Advantages>
+    <Advantage Level="1" Name="Wealth"/>
+    <Advantage Level="2" Name="Magical Aptitude"/>
+    <Advantage Level="0" Name="Delusional"/>
+    <Advantage Level="0" Name="Compulsive Liar"/>
+  </Advantages>
+</Character>

@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<Character Gender="Female" Name="Tinkerbell" Race="Fairy">
+  <Attributes DEX="2" HT="-3" IQ="2" NIM="2" SOC="3" STR="-2" TOU="-4"/>
+  <Equipment Armor="Banded Mail">
+    <Hand Name="right hand">Spear</Hand>
+    <Hand Name="left hand"/>
+    <Belt>Large Shield</Belt>
+  </Equipment>
+  <Skills>
+    <Skill Level="4" Name="Spear"/>
+    <Skill Level="4" Name="Shield"/>
+    <Skill Level="5" Name="Throwing"/>
+  </Skills>
+  <Spells>
+    <Spell Level="2" Name="Lightning"/>
+    <Spell Level="2" Name="Throw Spell"/>
+    <Spell Level="2" Name="Control Charge"/>
+    <Spell Level="2" Name="Create Electricity"/>
+    <Spell Level="1" Name="Control Mind"/>
+    <Spell Level="1" Name="Suggestion"/>
+    <Spell Level="1" Name="Block Thought"/>
+    <Spell Level="1" Name="Blur"/>
+    <Spell Level="1" Name="Control Light"/>
+  </Spells>
+  <Colleges>
+    <College Level="4" Name="Energy"/>
+    <College Level="3" Name="Enchantment"/>
+    <College Level="3" Name="Divination"/>
+    <College Level="3" Name="Protection"/>
+    <College Level="3" Name="Illusion"/>
+    <College Level="4" Name="Conjuration"/>
+  </Colleges>
+  <Advantages>
+    <Advantage Level="3" Name="Wealth"/>
+  </Advantages>
+</Character>

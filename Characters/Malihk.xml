@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="Malihk" Race="Human">
+  <Attributes DEX="0" HT="-2" IQ="5" NIM="5" SOC="-2" STR="0" TOU="-1"/>
+  <Equipment Armor="Cloth">
+    <Hand Name="right hand">Quarterstaff</Hand>
+    <Hand Name="left hand"/>
+  </Equipment>
+  <Skills>
+    <Skill Level="4" Name="Quarterstaff"/>
+    <Skill Level="3" Name="Shield"/>
+    <Skill Level="1" Name="Aikido"/>
+  </Skills>
+  <Spells>
+    <Spell Level="2" Name="Magic Missile"/>
+    <Spell Level="2" Name="Create Earth"/>
+    <Spell Level="2" Name="Create Force"/>
+    <Spell Level="2" Name="Throw Spell"/>
+    <Spell Level="1" Name="Missile Shield"/>
+    <Spell Level="1" Name="Push"/>
+    <Spell Level="1" Name="Detect Object"/>
+    <Spell Level="1" Name="Magic Shield"/>
+    <Spell Level="2" Name="Block Attack"/>
+  </Spells>
+  <Colleges>
+    <College Level="3" Name="Conjuration"/>
+    <College Level="3" Name="Earth"/>
+    <College Level="3" Name="Energy"/>
+    <College Level="3" Name="Protection"/>
+    <College Level="2" Name="Divination"/>
+  </Colleges>
+  <Advantages>
+    <Advantage Level="1" Name="Wealth"/>
+    <Advantage Level="0" Name="Honest"/>
+    <Advantage Level="3" Name="Magical Aptitude"/>
+  </Advantages>
+</Character>

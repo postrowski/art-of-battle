@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<jardesc>
+    <jar path="xcmbt/Combat.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/xcmbt/Combat.jardesc" exportErrors="false" exportWarnings="true" includeDirectoryEntries="true" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="false" mainClassHandleIdentifier="=xcmbt/src\/main\/java&lt;ostrowski.combat.server{CombatServer.java[CombatServer" manifestLocation="/xcmbt/Manifest.mf" manifestVersion="1.0" reuseManifest="true" saveManifest="true" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="true" exportOutputFolder="false">
+        <javaElement handleIdentifier="=xcmbt/src\/main\/java"/>
+        <file path="/xcmbt/server.sh"/>
+        <file path="/xcmbt/Manifest.mf"/>
+        <folder path="/xcmbt/src"/>
+        <file path="/xcmbt/.classpath"/>
+        <folder path="/xcmbt/arenas"/>
+        <file path="/xcmbt/server.bat"/>
+        <file path="/xcmbt/Config.cnf"/>
+        <file path="/xcmbt/.project"/>
+        <folder path="/xcmbt/junit"/>
+        <file path="/xcmbt/client.bat"/>
+        <folder path="/xcmbt/target/classes"/>
+        <javaElement handleIdentifier="=xcmbt/src\/main\/resources"/>
+        <folder path="/xcmbt/Characters"/>
+        <javaElement handleIdentifier="=xcmbt/src\/test\/java"/>
+        <file path="/xcmbt/client.sh"/>
+    </selectedElements>
+</jardesc>

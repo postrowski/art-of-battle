@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="300 Mage" Race="Elf">
+  <Attributes DEX="3" HT="-1" IQ="5" NIM="3" SOC="1" STR="2" TOU="-1"/>
+  <Equipment Armor="Heavy Leather">
+    <Hand Name="right hand">Quarterstaff</Hand>
+    <Hand Name="left hand"/>
+  </Equipment>
+  <Skills>
+    <Skill Level="6" Name="Quarterstaff"/>
+    <Skill Level="3" Name="Throwing"/>
+    <Skill Level="2" Name="Brawling"/>
+  </Skills>
+  <Spells>
+    <Spell Level="2" Name="Lightning"/>
+    <Spell Level="2" Name="Control Charge"/>
+    <Spell Level="2" Name="Throw Spell"/>
+    <Spell Level="2" Name="Create Electricity"/>
+    <Spell Level="1" Name="Shocking Grasp"/>
+    <Spell Level="1" Name="Push"/>
+    <Spell Level="1" Name="Create Force"/>
+    <Spell Level="1" Name="Speed"/>
+    <Spell Level="1" Name="Affect Area"/>
+    <Spell Level="1" Name="Control Time"/>
+    <Spell Level="1" Name="Ice Daggers"/>
+    <Spell Level="1" Name="Create Water"/>
+    <Spell Level="1" Name="Control Temperature"/>
+    <Spell Level="1" Name="Water Jet"/>
+  </Spells>
+  <Colleges>
+    <College Level="2" Name="Conjuration"/>
+    <College Level="2" Name="Energy"/>
+    <College Level="2" Name="Evocation"/>
+    <College Level="2" Name="Protection"/>
+    <College Level="2" Name="Fire"/>
+    <College Level="2" Name="Water"/>
+  </Colleges>
+  <Advantages>
+    <Advantage Level="4" Name="Magical Aptitude"/>
+    <Advantage Level="1" Name="Wealth"/>
+    <Advantage Level="1" Name="Hero points"/>
+    <Advantage Level="2" Name="Phobia"/>
+  </Advantages>
+</Character>

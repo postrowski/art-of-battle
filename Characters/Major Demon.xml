@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="Major Demon" Race="Demon, Major">
+  <Attributes DEX="5" HT="2" IQ="4" NIM="6" SOC="5" STR="7" TOU="4"/>
+  <Equipment Armor="Thick Scales">
+    <Hand Name="right hand">Flail</Hand>
+    <Hand Name="left hand"/>
+  </Equipment>
+  <Skills>
+    <Skill Level="9" Name="Brawling"/>
+    <Skill Level="10" Name="Flail"/>
+  </Skills>
+  <Advantages>
+    <Advantage Level="1" Name="Wealth"/>
+  </Advantages>
+</Character>

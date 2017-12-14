@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<Character Gender="Female" Name="TaoPriestess" Race="Half-Elf">
+  <Attributes DEX="2" HT="-1" IQ="0" NIM="2" SOC="4" STR="0" TOU="-1"/>
+  <Equipment Armor="Leather">
+    <Hand Name="right hand"/>
+    <Hand Name="left hand"/>
+  </Equipment>
+  <Skills>
+    <Skill Level="6" Name="Brawling"/>
+    <Skill Level="5" Name="Aikido"/>
+    <Skill Level="1" Name="Throwing"/>
+  </Skills>
+  <Advantages>
+    <Advantage Level="2" Name="Wealth"/>
+    <Advantage Level="3" Name="Divine Power"/>
+    <Advantage Level="4" Name="Divine Aff. - Tao"/>
+    <Advantage Level="0" Name="Honest"/>
+    <Advantage Level="2" Name="Vision"/>
+  </Advantages>
+</Character>

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="300 priest" Race="Elf">
+  <Attributes DEX="3" HT="-2" IQ="2" NIM="2" SOC="4" STR="0" TOU="-1"/>
+  <Equipment Armor="Elven Chain">
+    <Hand Name="right hand">Longsword</Hand>
+    <Hand Name="left hand">Tower Shield</Hand>
+  </Equipment>
+  <Skills>
+    <Skill Level="4" Name="Sword"/>
+    <Skill Level="6" Name="Shield"/>
+    <Skill Level="1" Name="Brawling"/>
+  </Skills>
+  <Advantages>
+    <Advantage Level="4" Name="Wealth"/>
+    <Advantage Level="1" Name="Hero points"/>
+    <Advantage Level="4" Name="Divine Aff. - Thor"/>
+    <Advantage Level="3" Name="Divine Power"/>
+  </Advantages>
+</Character>

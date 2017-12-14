@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="Drammel" Race="Half-Orc">
+  <Attributes DEX="1" HT="1" IQ="4" NIM="3" SOC="-3" STR="1" TOU="1"/>
+  <Equipment Armor="Leather">
+    <Hand Name="right hand">Quarterstaff</Hand>
+    <Hand Name="left hand"/>
+  </Equipment>
+  <Skills>
+    <Skill Level="6" Name="Quarterstaff"/>
+    <Skill Level="4" Name="Brawling"/>
+  </Skills>
+  <Spells>
+    <Spell Level="1" Name="Ice Daggers"/>
+    <Spell Level="1" Name="Water Jet"/>
+    <Spell Level="1" Name="Flame Jet"/>
+    <Spell Level="1" Name="Shocking Grasp"/>
+    <Spell Level="1" Name="Slow"/>
+    <Spell Level="1" Name="Speed"/>
+    <Spell Level="1" Name="Armor"/>
+    <Spell Level="1" Name="Flaming Weapon"/>
+    <Spell Level="1" Name="Create Force"/>
+    <Spell Level="1" Name="Throw Spell"/>
+    <Spell Level="1" Name="Create Water"/>
+    <Spell Level="1" Name="Control Temperature"/>
+    <Spell Level="1" Name="Control Charge"/>
+    <Spell Level="1" Name="Create Electricity"/>
+    <Spell Level="1" Name="Affect Area"/>
+    <Spell Level="1" Name="Control Time"/>
+    <Spell Level="1" Name="Harden"/>
+    <Spell Level="1" Name="Create Fire"/>
+    <Spell Level="1" Name="Control Fire"/>
+  </Spells>
+  <Colleges>
+    <College Level="3" Name="Conjuration"/>
+    <College Level="3" Name="Energy"/>
+    <College Level="3" Name="Fire"/>
+    <College Level="3" Name="Water"/>
+    <College Level="3" Name="Evocation"/>
+    <College Level="3" Name="Protection"/>
+  </Colleges>
+  <Advantages>
+    <Advantage Level="2" Name="Wealth"/>
+    <Advantage Level="3" Name="Magical Aptitude"/>
+    <Advantage Level="0" Name="Delusional"/>
+    <Advantage Level="0" Name="Compulsive Liar"/>
+  </Advantages>
+</Character>

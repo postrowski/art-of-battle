@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="Archer" Race="Elf">
+  <Attributes DEX="7" HT="4" IQ="2" NIM="6" SOC="0" STR="4" TOU="3"/>
+  <Equipment Armor="Heavy Leather">
+    <Hand Name="right hand">Bow, Longbow</Hand>
+    <Hand Name="left hand"/>
+    <Belt>Bastard Sword</Belt>
+  </Equipment>
+  <Skills>
+    <Skill Level="7" Name="Bow"/>
+    <Skill Level="6" Name="2-Handed Sword"/>
+    <Skill Level="3" Name="Brawling"/>
+    <Skill Level="2" Name="Knife"/>
+  </Skills>
+  <Spells>
+    <Spell Level="1" Name="Flaming Missile Weapon"/>
+    <Spell Level="1" Name="Create Fire"/>
+    <Spell Level="1" Name="Control Fire"/>
+    <Spell Level="1" Name="Throw Spell"/>
+    <Spell Level="1" Name="Control Temperature"/>
+    <Spell Level="1" Name="Create Force"/>
+    <Spell Level="1" Name="Control Charge"/>
+    <Spell Level="1" Name="Create Electricity"/>
+    <Spell Level="1" Name="Flaming Weapon"/>
+  </Spells>
+  <Colleges>
+    <College Level="1" Name="Conjuration"/>
+    <College Level="1" Name="Fire"/>
+    <College Level="1" Name="Air"/>
+    <College Level="1" Name="Energy"/>
+  </Colleges>
+  <Advantages>
+    <Advantage Level="1" Name="Hero points"/>
+    <Advantage Level="3" Name="Wealth"/>
+  </Advantages>
+</Character>

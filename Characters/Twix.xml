@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="Twix" Race="Fairy">
+  <Attributes DEX="3" HT="-2" IQ="2" NIM="4" SOC="1" STR="1" TOU="-2"/>
+  <Equipment Armor="Cloth">
+    <Hand Name="right hand">Spear</Hand>
+    <Hand Name="left hand"/>
+    <Belt>Large Shield</Belt>
+  </Equipment>
+  <Skills>
+    <Skill Level="4" Name="Spear"/>
+    <Skill Level="3" Name="Shield"/>
+    <Skill Level="3" Name="Throwing"/>
+  </Skills>
+  <Spells>
+    <Spell Level="1" Name="Fireball"/>
+    <Spell Level="2" Name="Flame Jet"/>
+    <Spell Level="2" Name="Throw Spell"/>
+    <Spell Level="1" Name="Flaming Missile Weapon"/>
+    <Spell Level="2" Name="Control Fire"/>
+    <Spell Level="2" Name="Create Fire"/>
+    <Spell Level="2" Name="Control Temperature"/>
+    <Spell Level="1" Name="Flaming Weapon"/>
+  </Spells>
+  <Colleges>
+    <College Level="4" Name="Fire"/>
+    <College Level="4" Name="Conjuration"/>
+  </Colleges>
+  <Advantages>
+    <Advantage Level="1" Name="Wealth"/>
+    <Advantage Level="3" Name="Magical Aptitude"/>
+    <Advantage Level="0" Name="Greedy"/>
+    <Advantage Level="0" Name="Compulsive Liar"/>
+  </Advantages>
+</Character>

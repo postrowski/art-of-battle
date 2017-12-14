@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" output="target/classes" path="src/main/java"/>
+	<classpathentry kind="src" output="target/classes" path="src/main/resources"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
+	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Animation Controller"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Util"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/64bit/jinput.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/64bit/junit-4.9.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/64bit/lwjgl.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/64bit/lwjgl_util.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/swt/swt.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/swt/swt-debug.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

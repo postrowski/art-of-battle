@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<Character Name="Cave Bear" Race="Cave-Bear">
+  <Attributes DEX="2" HT="0" IQ="-4" NIM="1" SOC="0" STR="1" TOU="2"/>
+  <Equipment Armor="No Armor">
+    <Hand Name="right hand"/>
+    <Hand Name="left hand"/>
+  </Equipment>
+  <Skills>
+    <Skill Level="6" Name="Brawling"/>
+  </Skills></Character>

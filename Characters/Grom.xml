@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="Grom" Race="Dwarf">
+  <Attributes DEX="3" HT="2" IQ="-1" NIM="4" SOC="-2" STR="5" TOU="2"/>
+  <Equipment Armor="Heavy Leather">
+    <Hand Name="right hand">Great Axe</Hand>
+    <Hand Name="left hand"/>
+    <Belt>Knife</Belt>
+    <Belt>Potion:Minor Healing</Belt>
+  </Equipment>
+  <Skills>
+    <Skill Level="6" Name="2-Handed Axe/Mace"/>
+    <Skill Level="3" Name="Knife"/>
+  </Skills>
+  <Advantages>
+    <Advantage Level="0" Name="Berserker"/>
+    <Advantage Level="3" Name="Wealth"/>
+  </Advantages>
+</Character>

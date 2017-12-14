@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="PriestOfThor" Race="Human">
+  <Attributes DEX="2" HT="-1" IQ="-1" NIM="0" SOC="3" STR="2" TOU="1"/>
+  <Equipment Armor="Plate Mail">
+    <Hand Name="right hand">Mace</Hand>
+    <Hand Name="left hand"/>
+  </Equipment>
+  <Skills>
+    <Skill Level="5" Name="Axe/Mace"/>
+    <Skill Level="5" Name="Shield"/>
+    <Skill Level="1" Name="Brawling"/>
+  </Skills>
+  <Advantages>
+    <Advantage Level="6" Name="Wealth"/>
+    <Advantage Level="2" Name="Divine Power"/>
+    <Advantage Level="4" Name="Divine Aff. - Thor"/>
+    <Advantage Level="0" Name="Honest"/>
+  </Advantages>
+</Character>

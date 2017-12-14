@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="HighPriest of Thor" Race="Human">
+  <Attributes DEX="4" HT="0" IQ="0" NIM="2" SOC="5" STR="4" TOU="3"/>
+  <Equipment Armor="Light Plate">
+    <Hand Name="right hand">Bastard Sword</Hand>
+    <Hand Name="left hand"/>
+  </Equipment>
+  <Skills>
+    <Skill Level="7" Name="Sword"/>
+    <Skill Level="6" Name="Shield"/>
+  </Skills>
+  <Advantages>
+    <Advantage Level="6" Name="Wealth"/>
+    <Advantage Level="4" Name="Divine Power"/>
+    <Advantage Level="8" Name="Divine Aff. - Thor"/>
+    <Advantage Level="1" Name="Hero points"/>
+    <Advantage Level="0" Name="Honest"/>
+  </Advantages>
+</Character>

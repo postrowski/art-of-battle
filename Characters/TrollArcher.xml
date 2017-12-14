@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="TrollArcher" Race="Troll">
+  <Attributes DEX="3" HT="3" IQ="-3" NIM="0" SOC="-4" STR="3" TOU="2"/>
+  <Equipment Armor="Chain Mail">
+    <Hand Name="right hand">Bow, Shortbow</Hand>
+    <Hand Name="left hand"/>
+    <Belt>Flail</Belt>
+    <Belt>Knife</Belt>
+  </Equipment>
+  <Skills>
+    <Skill Level="6" Name="Bow"/>
+    <Skill Level="5" Name="Flail"/>
+    <Skill Level="1" Name="Brawling"/>
+    <Skill Level="1" Name="Knife"/>
+  </Skills>
+  <Advantages>
+    <Advantage Level="6" Name="Wealth"/>
+  </Advantages>
+</Character>

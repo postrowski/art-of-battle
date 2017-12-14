@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<Arena Name="Bridge2" height="28" hideViewFromLocalPlayers="true" width="25">
+  <rows>
+    <row id="0">1:1:1:1:8:8:1:1:1:1:11:11:11:</row>
+    <row id="1">8:1:1:1:10:1:1:1:1:11:11:11:</row>
+    <row id="2">8:8:1:8:8:8:11:11:1:11:2:2:11:</row>
+    <row id="3">10:1:8:8:8:1:11:11:1:2:2:2:</row>
+    <row id="4">8:8:1:10:1:1:1:11:1:11:2:2:11:</row>
+    <row id="5">8:1:8:8:1:1:1:1:11:2:2:2:</row>
+    <row id="6">1:1:1:8:1:1:1:1:11:2:2:2:11:</row>
+    <row id="7">1:1:1:1:1:1:1:11:2:2:2:2:</row>
+    <row id="8">1:1:1:1:1:1:11:11:11:2:2:2:11:</row>
+    <row id="9">1:1:1:1:1:11:11:11:2:2:2:2:</row>
+    <row id="10">1:1:1:1:1:11:11:2:2:2:2:2:11:</row>
+    <row id="11">1:1:1:1:11:2:2:11:11:2:2:2:</row>
+    <row id="12">1:1:1:1:11:2:2:2:2:2:2:11:11:</row>
+    <row id="13">1:2:2:2:2:2:2:2:11:11:11:11:</row>
+    <row id="14">2:2:2:2:2:2:2:2:2:2:11:2:11:</row>
+    <row id="15">2:2:2:2:2:2:2:2:11:11:2:2:</row>
+    <row id="16">2:2:2:2:2:2:2:2:11:2:2:2:11:</row>
+    <row id="17">2:2:2:2:2:11:11:11:2:11:2:2:</row>
+    <row id="18">2:2:1:1:11:2:11:11:2:11:2:11:11:</row>
+    <row id="19">8:1:1:1:2:2:2:2:2:2:2:2:</row>
+    <row id="20">8:8:1:1:11:2:2:2:2:11:2:11:11:</row>
+    <row id="21">10:1:8:1:2:2:11:2:2:11:2:2:</row>
+    <row id="22">8:8:8:8:11:2:11:11:2:2:11:11:11:</row>
+    <row id="23">8:1:10:1:11:11:2:11:2:2:11:2:</row>
+    <row id="24">1:1:8:8:1:2:2:2:2:2:2:2:11:</row>
+    <row id="25">1:1:8:1:11:2:11:2:2:2:2:2:</row>
+    <row id="26">1:1:1:1:1:11:11:11:11:11:11:11:11:</row>
+    <row id="27">1:1:1:1:11:11:11:11:11:11:11:11:</row>
+  </rows>
+  
+  <teams count="3" maxCombatantsPerTeam="7">
+    <team id="0">
+      <combatant AI="Off" charName="" id="0"/>
+      <combatant AI="Off" charName=" " id="1"/>
+      <combatant AI="Off" charName=" " id="2"/>
+      <combatant AI="Off" charName=" " id="3"/>
+      <combatant AI="Off" charName=" " id="4"/>
+      <combatant AI="Off" charName=" " id="5"/>
+      <combatant AI="Off" charName="" id="6"/>
+    </team>
+    <team id="1">
+      <combatant AI="Off" charName="" id="0"/>
+      <combatant AI="Off" charName=" " id="1"/>
+      <combatant AI="Off" charName=" " id="2"/>
+      <combatant AI="Off" charName=" " id="3"/>
+      <combatant AI="Off" charName=" " id="4"/>
+      <combatant AI="Off" charName=" " id="5"/>
+      <combatant AI="Off" charName="" id="6"/>
+    </team>
+    <team id="2">
+      <combatant AI="Norm" charName="? 800 Cave-Bear" id="0" startX="21" startY="7"/>
+      <combatant AI="Off" charName="" id="1"/>
+      <combatant AI="Off" charName=" " id="2"/>
+      <combatant AI="Off" charName=" " id="3"/>
+      <combatant AI="Off" charName=" " id="4"/>
+      <combatant AI="Off" charName=" " id="5"/>
+      <combatant AI="Off" charName="" id="6"/>
+    </team>
+  </teams>
+
+  <triggers>
+    <trigger enabled="true" name="return" onlyAffectsPlayers="true" requiresEntireTeam="true">
+      <location x="0" y="14"/>
+      <location x="0" y="16"/>
+      <location x="0" y="18"/>
+      <event data="" name="single shot" type="Disable This Trigger"/>
+      <event data="Bridge" name="Bridge" type="New Map">
+        <location x="24" y="14"/>
+        <location x="24" y="16"/>
+        <location x="24" y="18"/>
+      </event>
+    </trigger>
+  </triggers>
+
+  <items>
+  </items>
+</Arena>

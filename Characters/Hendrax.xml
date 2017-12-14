@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="Hendrax" Race="Centaur">
+  <Attributes DEX="3" HT="-2" IQ="-2" NIM="0" SOC="0" STR="2" TOU="0"/>
+  <Equipment Armor="Banded Mail">
+    <Hand Name="right hand">Pick-Axe</Hand>
+    <Hand Name="left hand">Medium Shield</Hand>
+  </Equipment>
+  <Skills>
+    <Skill Level="6" Name="Axe/Mace"/>
+    <Skill Level="5" Name="Shield"/>
+  </Skills>
+  <Advantages>
+    <Advantage Level="0" Name="Honest"/>
+    <Advantage Level="0" Name="Berserker"/>
+    <Advantage Level="5" Name="Wealth"/>
+  </Advantages>
+</Character>

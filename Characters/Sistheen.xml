@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="Sistheen" Race="LizardMan">
+  <Attributes DEX="2" HT="3" IQ="-3" NIM="0" SOC="-2" STR="5" TOU="3"/>
+  <Equipment Armor="Scale Mail">
+    <Hand Name="right hand">Mace</Hand>
+    <Hand Name="left hand">Medium Shield</Hand>
+    <Belt>Potion:Healing</Belt>
+    <Belt>Potion:Minor Healing</Belt>
+  </Equipment>
+  <Skills>
+    <Skill Level="5" Name="Brawling"/>
+    <Skill Level="6" Name="Axe/Mace"/>
+    <Skill Level="5" Name="Shield"/>
+    <Skill Level="1" Name="Wrestling"/>
+  </Skills>
+  <Advantages>
+    <Advantage Level="7" Name="Wealth"/>
+    <Advantage Level="0" Name="Bad Temper"/>
+  </Advantages>
+</Character>

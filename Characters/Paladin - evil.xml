@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="Paladin - evil" Race="Human">
+  <Attributes DEX="2" HT="-1" IQ="-1" NIM="0" SOC="3" STR="1" TOU="1"/>
+  <Equipment Armor="Light Plate">
+    <Hand Name="right hand">Rapier</Hand>
+    <Hand Name="left hand">Tower Shield</Hand>
+  </Equipment>
+  <Skills>
+    <Skill Level="6" Name="Fencing"/>
+    <Skill Level="5" Name="Shield"/>
+  </Skills>
+  <Advantages>
+    <Advantage Level="6" Name="Wealth"/>
+    <Advantage Level="4" Name="Divine Aff. - Hades"/>
+    <Advantage Level="3" Name="Divine Power"/>
+    <Advantage Level="0" Name="Megalomaniac"/>
+    <Advantage Level="0" Name="Delusional"/>
+    <Advantage Level="0" Name="Bad Temper"/>
+  </Advantages>
+</Character>

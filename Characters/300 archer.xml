@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="300 archer" Race="Elf">
+  <Attributes DEX="5" HT="-1" IQ="1" NIM="6" SOC="1" STR="3" TOU="-1"/>
+  <Equipment Armor="Elven Chain">
+    <Hand Name="right hand">Bow, Longbow</Hand>
+    <Hand Name="left hand"/>
+    <Belt>Rapier</Belt>
+  </Equipment>
+  <Skills>
+    <Skill Level="7" Name="Bow"/>
+    <Skill Level="4" Name="Fencing"/>
+    <Skill Level="1" Name="Boxing"/>
+  </Skills>
+  <Advantages>
+    <Advantage Level="4" Name="Wealth"/>
+    <Advantage Level="1" Name="Hero points"/>
+  </Advantages>
+</Character>

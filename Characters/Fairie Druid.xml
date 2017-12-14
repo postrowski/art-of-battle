@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<Character Gender="Male" Name="Fairie Druid" Race="Fairy">
+  <Attributes DEX="2" HT="-2" IQ="1" NIM="5" SOC="5" STR="-1" TOU="-2"/>
+  <Equipment Armor="Leather">
+    <Hand Name="right hand">Spear</Hand>
+    <Hand Name="left hand">Medium Shield</Hand>
+  </Equipment>
+  <Skills>
+    <Skill Level="4" Name="Spear"/>
+    <Skill Level="3" Name="Shield"/>
+    <Skill Level="3" Name="Throwing"/>
+  </Skills>
+  <Advantages>
+    <Advantage Level="1" Name="Wealth"/>
+    <Advantage Level="6" Name="Divine Aff. - Druid"/>
+    <Advantage Level="4" Name="Divine Power"/>
+    <Advantage Level="2" Name="Phobia"/>
+  </Advantages>
+</Character>
