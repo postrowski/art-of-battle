@@ -5,10 +5,11 @@
 package ostrowski.combat.common.spells.mage;
 
 import ostrowski.combat.common.Character;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.Spell;
 import ostrowski.combat.server.Arena;
 
-public class SpellLevitate extends ExpiringMageSpell
+public class SpellLevitate extends ExpiringMageSpell implements ICastInBattle
 {
    public static final String NAME = "Levitate";
    public SpellLevitate() {
@@ -44,11 +45,6 @@ public class SpellLevitate extends ExpiringMageSpell
 
    @Override
    public boolean isBeneficial() {
-      return true;
-   }
-
-   @Override
-   public Boolean isCastInBattle() {
       return true;
    }
 

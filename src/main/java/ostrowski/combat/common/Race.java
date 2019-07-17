@@ -583,7 +583,7 @@ public class Race implements Cloneable, Enums
       sb.append("<div style=\"overflow:scroll;overflow-x:hidden; border-width:0px; border-bottom:1px; border-style:solid;\" onscroll=\"OnScrollDiv(this)\" id=\"DivMainContent\" >\n");
       Table table = new Table();
       table.setID("TblRaces").setAttribute("width", "100%");
-    TableRow tr = new TableRow();
+      TableRow tr = new TableRow(-1);
       tr.addHeader(new TableHeader("Race<br/>Name").setRowSpan(2));
       tr.addHeader(new TableHeader("Gender").setRowSpan(2));
       tr.addHeader(new TableHeader("Point<br/>Cost").setRowSpan(2));

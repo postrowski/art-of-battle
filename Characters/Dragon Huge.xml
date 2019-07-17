@@ -1,6 +1,5 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="Dragon Huge" Race="Dragon, Huge">
-  <Attributes DEX="5" HT="2" IQ="6" NIM="6" SOC="6" STR="1" TOU="5"/>
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Dragon Huge" Race="Dragon, Huge">
+  <Attributes DEX="5" HT="1" IQ="5" NIM="6" SOC="5" STR="1" TOU="5"/>
   <Equipment Armor="Thick Scales">
   </Equipment>
   <Skills>
@@ -16,7 +15,7 @@
     <Spell Level="2" Name="Immobilize"/>
     <Spell Level="2" Name="Weaken"/>
     <Spell Level="2" Name="Suggestion"/>
-    <Spell Level="2" Name="Reverse missile"/>
+    <Spell Level="2" Name="Reverse Missile"/>
     <Spell Level="2" Name="Detect Object"/>
     <Spell Level="2" Name="Control Light"/>
     <Spell Level="2" Name="Control Mind"/>
@@ -33,6 +32,6 @@
     <College Level="3" Name="Air"/>
   </Colleges>
   <Advantages>
-    <Advantage Level="0" Name="Wealth"/>
+    <Advantage LevelName="$0" Name="Wealth"/>
   </Advantages>
 </Character>

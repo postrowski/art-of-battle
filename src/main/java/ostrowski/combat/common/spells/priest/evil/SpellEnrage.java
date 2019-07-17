@@ -4,11 +4,12 @@ import ostrowski.combat.common.Advantage;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.DiceSet;
 import ostrowski.combat.common.enums.Attribute;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.priest.IPriestGroup;
 import ostrowski.combat.common.spells.priest.ResistedPriestSpell;
 import ostrowski.combat.server.Arena;
 
-public class SpellEnrage extends ResistedPriestSpell
+public class SpellEnrage extends ResistedPriestSpell implements ICastInBattle
 {
    public static final String NAME = "Enrage";
    public SpellEnrage() {
@@ -47,10 +48,7 @@ public class SpellEnrage extends ResistedPriestSpell
              " If the subject has either a 'Bad Temper' or a 'Berserker' disadvantage, they suffer a -2 penalty to their resistance roll (-4 if they have both disadvantages)." +
              " The berserking state will last for 3 turns for every point by which they fail their resistance roll.";
    }
-   @Override
-   public Boolean isCastInBattle() {
-      return true;
-   }
+
    @Override
    public void applyEffects(Arena arena) {
       if (_castingEffectiveness >= 0) {

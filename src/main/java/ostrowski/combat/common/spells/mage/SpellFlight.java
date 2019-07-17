@@ -7,10 +7,11 @@ package ostrowski.combat.common.spells.mage;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.html.Table;
 import ostrowski.combat.common.html.TableRow;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.Spell;
 import ostrowski.combat.server.Arena;
 
-public class SpellFlight extends ExpiringMageSpell
+public class SpellFlight extends ExpiringMageSpell implements ICastInBattle
 {
    public static final String NAME = "Flight";
    public SpellFlight() {
@@ -67,11 +68,6 @@ public class SpellFlight extends ExpiringMageSpell
 
    @Override
    public boolean isBeneficial() {
-      return true;
-   }
-
-   @Override
-   public Boolean isCastInBattle() {
       return true;
    }
 

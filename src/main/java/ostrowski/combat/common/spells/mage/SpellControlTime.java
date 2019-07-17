@@ -23,4 +23,8 @@ public class SpellControlTime extends AreaMageSpell
               "The rate change depends on the power put into the spell, and size of the area being affected.";
    }
 
+   @Override
+   public byte getRadiusOfAffect() {
+      return getPower();
+   }
 }

@@ -7,12 +7,13 @@ import ostrowski.DebugBreak;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.IHolder;
 import ostrowski.combat.common.Rules;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.IRangedSpell;
 import ostrowski.combat.protocol.request.RequestAction;
 import ostrowski.combat.protocol.request.RequestGrapplingHoldMaintain;
 import ostrowski.combat.server.Arena;
 
-public class SpellSpiderWeb extends MageSpell implements IHolder, IRangedSpell
+public class SpellSpiderWeb extends MageSpell implements IHolder, IRangedSpell, ICastInBattle
 {
    public byte                _holdReductionAmount = 0;
    public static final String NAME                 = "Spider Web";
@@ -73,14 +74,9 @@ public class SpellSpiderWeb extends MageSpell implements IHolder, IRangedSpell
    }
 
    @Override
-   public Boolean isCastInBattle() {
-      return true;
-   }
-
-   @Override
    public void applyEffects(Arena arena) {
       if (_excessSuccess >= 0) {
-         getTarget().setHoldLevel(this, new Byte(getHoldingLevel()));
+         getTarget().setHoldLevel(this, Byte.valueOf(getHoldingLevel()));
       }
    }
 
@@ -110,7 +106,7 @@ public class SpellSpiderWeb extends MageSpell implements IHolder, IRangedSpell
    public Byte getHoldingLevel() {
       byte casterSize = _caster == null ? 0 : _caster.getRace().getBuildModifier();
       byte targetSize = _target == null ? 0 : _target.getRace().getBuildModifier();
-      return new Byte((byte) (((((getPower() * 2) + (byte)(_excessSuccess/2)) - _holdReductionAmount) + casterSize) - targetSize));
+      return Byte.valueOf((byte) (((((getPower() * 2) + (byte)(_excessSuccess/2)) - _holdReductionAmount) + casterSize) - targetSize));
    }
 
    public boolean reduceHoldingLevel(byte reductionAmount) {

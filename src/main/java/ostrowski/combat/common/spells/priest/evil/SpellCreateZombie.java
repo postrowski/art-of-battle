@@ -7,12 +7,13 @@ import ostrowski.combat.common.enums.Attribute;
 import ostrowski.combat.common.html.Table;
 import ostrowski.combat.common.html.TableData;
 import ostrowski.combat.common.html.TableRow;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.priest.IPriestGroup;
 import ostrowski.combat.common.spells.priest.PriestSpell;
 import ostrowski.combat.common.wounds.Wound;
 import ostrowski.combat.server.Arena;
 
-public class SpellCreateZombie extends PriestSpell
+public class SpellCreateZombie extends PriestSpell implements ICastInBattle
 {
    public static final String NAME = "Create Zombie";
    public SpellCreateZombie() {
@@ -67,6 +68,7 @@ public class SpellCreateZombie extends PriestSpell
          case 5: return "6 months";
          case 6: return "3 years";
          case 7: return "15 years";
+         case 8: return "permanent";
       }
       return "";
    }
@@ -75,10 +77,7 @@ public class SpellCreateZombie extends PriestSpell
    public TargetType getTargetType() {
       return TargetType.TARGET_DEAD;
    }
-   @Override
-   public Boolean isCastInBattle() {
-      return true;
-   }
+
    @Override
    public void applyEffects(Arena arena) {
       if ((_target != null) && (!_target.getCondition().isAlive())) {

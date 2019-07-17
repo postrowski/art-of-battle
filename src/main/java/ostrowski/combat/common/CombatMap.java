@@ -35,6 +35,7 @@ import ostrowski.combat.common.enums.Facing;
 import ostrowski.combat.common.enums.TerrainType;
 import ostrowski.combat.common.enums.TerrainWall;
 import ostrowski.combat.common.orientations.Orientation;
+import ostrowski.combat.common.spells.IAreaSpell;
 import ostrowski.combat.common.spells.mage.SpellSpiderWeb;
 import ostrowski.combat.common.things.Door;
 import ostrowski.combat.common.things.DoorState;
@@ -50,6 +51,7 @@ import ostrowski.combat.protocol.request.RequestActionType;
 import ostrowski.combat.server.ArenaCoordinates;
 import ostrowski.combat.server.ArenaLocation;
 import ostrowski.combat.server.ArenaTrigger;
+import ostrowski.combat.server.Battle;
 import ostrowski.combat.server.BattleTerminatedException;
 import ostrowski.combat.server.ClientProxy;
 import ostrowski.combat.server.CombatServer;
@@ -218,7 +220,11 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
                removed = true;
             }
          }
+         for (IAreaSpell spell : loc.getActiveSpells()) {
+            spell.affectCharacterOnExit(character);
+         }
       }
+
       return removed;
    }
    public void addCharacter(Character character) {
@@ -226,6 +232,9 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       for (ArenaLocation loc : locs) {
          if (loc != null) {
             loc.addThing(character);
+         }
+         for (IAreaSpell spell : loc.getActiveSpells()) {
+            spell.affectCharacterOnEntry(character);
          }
       }
    }
@@ -497,6 +506,9 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
    public boolean setStockCharacter(String stockCombatantName, String ai, byte team, byte cur) {
       if ((team < _teamCount) && (cur < _maxCombatantsPerTeam)) {
          _stockCharName[team][cur] = stockCombatantName;
+         if (ai.startsWith("AI - ")) {
+            ai = ai.replace("AI - ", "");
+         }
          _stockAiName[team][cur] = ai;
          return true;
       }
@@ -723,11 +735,12 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
             if (!st.hasMoreElements()) {
                return false;
             }
-            _stockAiName[team][cur] = st.nextToken();
+            String ai = st.nextToken();
             if (!st.hasMoreElements()) {
                return false;
             }
-            _stockCharName[team][cur] = st.nextToken();
+            String charName = st.nextToken();
+            setStockCharacter(charName, ai, team, cur);
          }
       }
       return true;
@@ -802,7 +815,6 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
                }
                writeToStream(_stockAiName[team][combatant],   out);
                writeToStream(_stockCharName[team][combatant], out);
-
             }
          }
       } catch (IOException e) {
@@ -828,15 +840,16 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
          _startPoints = new ArenaLocation[_teamCount][_maxCombatantsPerTeam];
          _stockAiName = new String[_teamCount][_maxCombatantsPerTeam];
          _stockCharName = new String[_teamCount][_maxCombatantsPerTeam];
-         for (int team = 0 ; team<_teamCount ; team++) {
-            for (int combatant = 0 ; combatant<_maxCombatantsPerTeam ; combatant++) {
+         for (byte team = 0 ; team<_teamCount ; team++) {
+            for (byte combatant = 0 ; combatant<_maxCombatantsPerTeam ; combatant++) {
                short x = in.readShort();
                short y = in.readShort();
                if ((x != -1) && (y != -1)) {
                   _startPoints[team][combatant]   = getLocation(x, y);
                }
-               _stockAiName[team][combatant]   = readString(in);
-               _stockCharName[team][combatant] = readString(in);
+               String ai       = readString(in);
+               String charName = readString(in);
+               setStockCharacter(charName, ai, team, combatant);
             }
          }
       } catch (IOException e) {
@@ -919,15 +932,23 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       ArenaLocation headLoc = getLocation(fromOrientation.getHeadCoordinates());
       for (ArenaLocation toLoc : getLocations(toOrientation.getCoordinates())) {
          toLoc = _locations[toLoc._x][toLoc._y];
-         if (!considerFacing || isFacing(fromOrientation, toLoc)) {
-            if (hasLineOfSight(headLoc, toLoc, blockedByAnyStandingCharacter)) {
-               if (markAsKnownByCharacterUniqueID != -1) {
-                  if (!toLoc.isKnownBy(markAsKnownByCharacterUniqueID)) {
-                     toLoc.setVisible(true, this, headLoc, markAsKnownByCharacterUniqueID, true/*basedOnFacing*/);
-                  }
+         if (canSeeLocation(fromOrientation, headLoc, toLoc, considerFacing, blockedByAnyStandingCharacter, markAsKnownByCharacterUniqueID)) {
+            return true;
+         }
+      }
+      return false;
+   }
+   public boolean canSeeLocation(Orientation fromOrientation, ArenaLocation headLoc, ArenaLocation toLoc,
+                                  boolean considerFacing, boolean blockedByAnyStandingCharacter,
+                                  int markAsKnownByCharacterUniqueID) {
+      if (!considerFacing || isFacing(fromOrientation, toLoc)) {
+         if (hasLineOfSight(headLoc, toLoc, blockedByAnyStandingCharacter)) {
+            if (markAsKnownByCharacterUniqueID != -1) {
+               if (!toLoc.isKnownBy(markAsKnownByCharacterUniqueID)) {
+                  toLoc.setVisible(true, this, headLoc, markAsKnownByCharacterUniqueID, true/*basedOnFacing*/);
                }
-               return true;
             }
+            return true;
          }
       }
       return false;
@@ -1559,6 +1580,9 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
                          }
                       }
                    }
+                   for (IAreaSpell spell : newLoc.getActiveSpells()) {
+                      spell.affectCharacterOnEntry(newCharacter);
+                   }
                 }
              }
           }
@@ -1604,6 +1628,9 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
                 if (charInHex._uniqueID == newCharacter._uniqueID) {
                    if (!newCharLocs.contains(_locations[col][row])) {
                       _locations[col][row].remove(charInHex);
+                      for (IAreaSpell spell : _locations[col][row].getActiveSpells()) {
+                         spell.affectCharacterOnExit(newCharacter);
+                      }
                    }
                 }
              }
@@ -1618,7 +1645,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
          for (byte cur=0 ; cur<_startPoints[team].length ; cur++) {
             if (_startPoints[team][cur] != null) {
                if (_startPoints[team][cur].getCharacters().size() == 0) {
-                  teams.add(new Byte(team));
+                  teams.add(Byte.valueOf(team));
                   // This break exits the cur for loop, putting us back into the team for loop
                   break;
                }
@@ -2738,6 +2765,32 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
    }
    public void setHideViewFromLocalPlayers(boolean hideViewFromLocalPlayers) {
       _hideViewFromLocalPlayers = hideViewFromLocalPlayers;
+   }
+
+   public void onNewRound(Battle battle) {
+      for (short col=0 ; col<_sizeX ; col++) {
+         for (short row=(short)(col%2) ; row<_sizeY; row+=2) {
+            ArrayList<Character> characters = _locations[col][row].getCharacters();
+            for (Character charInHex : characters) {
+               for (IAreaSpell spell : _locations[col][row].getActiveSpells()) {
+                  spell.affectCharacterOnRoundStart(charInHex);
+               }
+            }
+         }
+      }
+   }
+
+   public void onEndRound(Battle battle) {
+      for (short col=0 ; col<_sizeX ; col++) {
+         for (short row=(short)(col%2) ; row<_sizeY; row+=2) {
+            ArrayList<Character> characters = _locations[col][row].getCharacters();
+            for (Character charInHex : characters) {
+               for (IAreaSpell spell : _locations[col][row].getActiveSpells()) {
+                  spell.affectCharacterOnRoundEnd(charInHex);
+               }
+            }
+         }
+      }
    }
 
 }

@@ -4,11 +4,12 @@ import ostrowski.combat.common.Advantage;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.DiceSet;
 import ostrowski.combat.common.enums.Attribute;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.IRangedSpell;
 import ostrowski.combat.common.spells.priest.IPriestGroup;
 import ostrowski.combat.common.spells.priest.ResistedPriestSpell;
 
-public class SpellMassFear extends ResistedPriestSpell implements IRangedSpell
+public class SpellMassFear extends ResistedPriestSpell implements IRangedSpell, ICastInBattle
 {
    public static final String NAME = "Mass Fear";
 
@@ -81,10 +82,6 @@ public class SpellMassFear extends ResistedPriestSpell implements IRangedSpell
    @Override
    public boolean isBeneficial() {
       return false;
-   }
-   @Override
-   public Boolean isCastInBattle() {
-      return true;
    }
 
    @Override

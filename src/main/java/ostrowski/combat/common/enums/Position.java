@@ -39,4 +39,7 @@ public enum Position {
    public static Position getByValue(byte val) {
       return MAP_TO_POSITIONS.get(val);
    }
+   public String getName() {
+      return this.name;
+   }
 }

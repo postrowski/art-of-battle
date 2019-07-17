@@ -3,6 +3,7 @@
  */
 package ostrowski.combat.common.spells.mage;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -222,6 +223,7 @@ public class MageSpell extends Spell implements Enums
       _spellsList.add(new SpellThrowSpell());
       _spellsList.add(new SpellTrip());
       _spellsList.add(new SpellWaterJet());
+      _spellsList.add(new SpellWallOfFire());
       _spellsList.add(new SpellWeaken());
       _spellsList.add(new SpellWind());
    }
@@ -242,7 +244,7 @@ public class MageSpell extends Spell implements Enums
          StringBuilder misssingSpellProblems = new StringBuilder();
          for (Class<MageSpell> prerequisiteSpellClass : spell._prerequisiteSpells) {
             try {
-               MageSpell prerequisiteSpell = prerequisiteSpellClass.newInstance();
+               MageSpell prerequisiteSpell = prerequisiteSpellClass.getDeclaredConstructor().newInstance();
                //  1) Each spell that requires another spell, also requires the colleges used by the other spell(s)
                for (MageCollege prerequisiteSpellsColleges : prerequisiteSpell._prerequisiteColleges) {
                   boolean collegeFound = false;
@@ -262,10 +264,7 @@ public class MageSpell extends Spell implements Enums
                      misssingCollegeProblems.append(prerequisiteSpellsColleges.getName());
                   }
                }
-            } catch (InstantiationException e) {
-               e.printStackTrace();
-               DebugBreak.debugBreak();
-            } catch (IllegalAccessException e) {
+            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
                e.printStackTrace();
                DebugBreak.debugBreak();
             }
@@ -273,7 +272,7 @@ public class MageSpell extends Spell implements Enums
          // 2) Each spell that requires another spell, also requires the spells required by the first spell
          for (Class<MageSpell> prerequisiteSpellClassI : spell._prerequisiteSpells) {
             try {
-               MageSpell prerequisiteSpell = prerequisiteSpellClassI.newInstance();
+               MageSpell prerequisiteSpell = prerequisiteSpellClassI.getDeclaredConstructor().newInstance();
                for (Class<MageSpell> prereqPrereqSpellClass : prerequisiteSpell._prerequisiteSpells) {
                   boolean spellFound = false;
                   for (Class<MageSpell> prerequisiteSpellClassJ : spell._prerequisiteSpells) {
@@ -292,9 +291,7 @@ public class MageSpell extends Spell implements Enums
                      misssingSpellProblems.append(prerequisiteSpell.getName());
                   }
                }
-            } catch (InstantiationException e) {
-               e.printStackTrace();
-            } catch (IllegalAccessException e) {
+            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
                e.printStackTrace();
             }
          }
@@ -420,20 +417,18 @@ public class MageSpell extends Spell implements Enums
       byte penalty = 0;
       // If this spell is known (level >0), then all prerequisite spells must also already be known.
       if (_level == 0) {
-         // Spell is not known, so penalty is 4.
+         // Spell is not known (level 0 means 'familiar'), so penalty is 4.
          penalty = 4;
          // check for other required spells that may also not be known
          for (Class<MageSpell> prereqSpellClass : _prerequisiteSpells) {
             try {
-               MageSpell prereqSpell = prereqSpellClass.newInstance();
+               MageSpell prereqSpell = prereqSpellClass.getDeclaredConstructor().newInstance();
                byte knownSpellLevel = character.getSpellLevel(prereqSpell.getName());
                if (knownSpellLevel == 0) {
                   // For every unknown prerequisite spell, assess another 2 point penalty
                   penalty += 2;
                }
-            } catch (InstantiationException e) {
-               e.printStackTrace();
-            } catch (IllegalAccessException e) {
+            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
                e.printStackTrace();
             }
          }
@@ -636,16 +631,14 @@ public class MageSpell extends Spell implements Enums
             for (Class< ? extends MageSpell> prereq2 : _prerequisiteSpells) {
                if (prereq != prereq2) {
                   try {
-                     MageSpell spell2 = prereq2.newInstance();
+                     MageSpell spell2 = prereq2.getDeclaredConstructor().newInstance();
                      for (Class< ? extends MageSpell> prereq3 : spell2._prerequisiteSpells) {
                         if (prereq == prereq3) {
                            skip = true;
                            break;
                         }
                      }
-                  } catch (InstantiationException e) {
-                     e.printStackTrace();
-                  } catch (IllegalAccessException e) {
+                  } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
                      e.printStackTrace();
                   }
                }
@@ -656,14 +649,12 @@ public class MageSpell extends Spell implements Enums
             if (skip) {
                continue;
             }
-            MageSpell spell = prereq.newInstance();
+            MageSpell spell = prereq.getDeclaredConstructor().newInstance();
             if (spellCount++ > 0) {
                sb.append(", ");
             }
             sb.append(spell.getName());
-         } catch (InstantiationException e) {
-            e.printStackTrace();
-         } catch (IllegalAccessException e) {
+         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
             e.printStackTrace();
          }
       }

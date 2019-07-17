@@ -3,6 +3,7 @@ package ostrowski.combat.common.orientations;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -54,12 +55,15 @@ public abstract class Orientation extends SerializableObject implements Enums, C
    @Override
    public Object clone() {
       try {
-         Orientation dup = this.getClass().newInstance();
+         Orientation dup = this.getClass().getDeclaredConstructor().newInstance();
          dup.copyDataFrom(this);
          return dup;
-      } catch (InstantiationException e) {
-         e.printStackTrace();
-      } catch (IllegalAccessException e) {
+      } catch (InstantiationException |
+               IllegalAccessException |
+               IllegalArgumentException |
+               InvocationTargetException |
+               NoSuchMethodException |
+               SecurityException e) {
          e.printStackTrace();
       }
       DebugBreak.debugBreak();
@@ -186,7 +190,7 @@ public abstract class Orientation extends SerializableObject implements Enums, C
          DebugBreak.debugBreak();
       }
       newFacings.add(facing);
-      newFacingTwists.add(new Byte((byte)0));
+      newFacingTwists.add(Byte.valueOf((byte)0));
 
       for (Limb limb : limbs) {
          boolean locValid = false;
@@ -199,7 +203,7 @@ public abstract class Orientation extends SerializableObject implements Enums, C
                   }
                   newLocs.add(limbLoc);
                   newFacings.add(facing.turn(twist));
-                  newFacingTwists.add(new Byte(twist));
+                  newFacingTwists.add(Byte.valueOf(twist));
                }
                // if this location is already in the list of locations, its a valid location.
                locValid = true;

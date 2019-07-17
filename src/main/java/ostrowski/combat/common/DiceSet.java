@@ -29,7 +29,7 @@ public class DiceSet extends SerializableObject implements Enums
       return _diceCount.get(type);
    }
 
-   private final HashMap<DieType, Integer> _diceCount         = new HashMap<DieType, Integer>() {
+   private final HashMap<DieType, Integer> _diceCount         = new HashMap<>() {
      {
         for (DieType dieType : DieType.values()) {
            put(dieType, 0);
@@ -486,7 +486,7 @@ public class DiceSet extends SerializableObject implements Enums
                chance += 1;
             }
          }
-         results = new Double(chance / dice);
+         results = Double.valueOf(chance / dice);
          _map.put(key, results);
       }
       return results.doubleValue();

@@ -3,11 +3,12 @@ package ostrowski.combat.common.spells.priest;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.DiceSet;
 import ostrowski.combat.common.enums.Attribute;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.IRangedSpell;
 import ostrowski.combat.common.wounds.Wound;
 import ostrowski.combat.server.Arena;
 
-public abstract class SpellBanish extends ResistedPriestSpell implements IRangedSpell
+public abstract class SpellBanish extends ResistedPriestSpell implements IRangedSpell, ICastInBattle
 {
    private int _painAmount;
 
@@ -54,12 +55,6 @@ public abstract class SpellBanish extends ResistedPriestSpell implements IRanged
 
    @Override
    public boolean affectsMultipleTargets() {
-      return true;
-   }
-
-
-   @Override
-   public Boolean isCastInBattle() {
       return true;
    }
 

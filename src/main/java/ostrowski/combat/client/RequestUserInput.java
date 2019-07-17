@@ -205,7 +205,7 @@ public class RequestUserInput extends Dialog implements KeyListener, FocusListen
                               _buttons[k].setSelection(k == index);
                            }
                         }
-                        _result = new Integer(index);
+                        _result = Integer.valueOf(index);
                      }
                      focusGained();
 
@@ -332,7 +332,7 @@ public class RequestUserInput extends Dialog implements KeyListener, FocusListen
                _buttons[defaultIndex].setSelection(true);
             }
             if (_result == null) {
-               _result = new Integer(defaultIndex);
+               _result = Integer.valueOf(defaultIndex);
             }
          }
          else {
@@ -414,7 +414,7 @@ public class RequestUserInput extends Dialog implements KeyListener, FocusListen
             }
             if (optionIds[i] == SyncRequest.OPT_CANCEL_ACTION) {
                _req.setAnswerByOptionIndex(i);
-               _result = new Integer(i);
+               _result = Integer.valueOf(i);
             }
          }
       }
@@ -452,7 +452,7 @@ public class RequestUserInput extends Dialog implements KeyListener, FocusListen
             if (optionIds[i] == answerId) {
                _buttons[i].setSelection(true);
                _req.setAnswerByOptionIndex(i);
-               _result = new Integer(i);
+               _result = Integer.valueOf(i);
             }
             else {
                _buttons[i].setSelection(false);

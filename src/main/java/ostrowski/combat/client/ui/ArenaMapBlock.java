@@ -19,6 +19,7 @@ import ostrowski.combat.common.MapWidget2D;
 import ostrowski.combat.common.MapWidget3D;
 import ostrowski.combat.common.orientations.Orientation;
 import ostrowski.combat.protocol.MapVisibility;
+import ostrowski.combat.protocol.request.RequestLocation;
 import ostrowski.combat.protocol.request.RequestMovement;
 import ostrowski.combat.server.ArenaLocation;
 import ostrowski.combat.server.CombatServer;
@@ -68,6 +69,9 @@ public class ArenaMapBlock extends Helper
    }
    public void requestMovement(RequestMovement locationMovement) {
       _map.requestMovement(locationMovement);
+   }
+   public void requestLocation(RequestLocation locationMovement) {
+      _map.requestLocation(locationMovement);
    }
    public void endHexSelection() {
       _map.endHexSelection();

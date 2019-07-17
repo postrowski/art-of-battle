@@ -6,6 +6,7 @@ import ostrowski.combat.common.Rules;
 import ostrowski.combat.common.enums.Attribute;
 import ostrowski.combat.common.enums.DamageType;
 import ostrowski.combat.common.enums.DieType;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.IMissileSpell;
 import ostrowski.combat.common.spells.priest.elemental.SpellBreatheFire;
 import ostrowski.combat.common.things.MissileWeapon;
@@ -13,7 +14,7 @@ import ostrowski.combat.common.weaponStyles.WeaponStyleAttackRanged;
 import ostrowski.combat.protocol.request.RequestAction;
 import ostrowski.combat.server.Battle;
 
-public abstract class PriestMissileSpell extends PriestSpell implements IMissileSpell
+public abstract class PriestMissileSpell extends PriestSpell implements IMissileSpell, ICastInBattle
 {
    DieType _damageDiceType;
    short _rangeBase;
@@ -95,10 +96,6 @@ public abstract class PriestMissileSpell extends PriestSpell implements IMissile
 
    @Override
    public boolean isDefendable() {
-      return true;
-   }
-   @Override
-   public Boolean isCastInBattle() {
       return true;
    }
 

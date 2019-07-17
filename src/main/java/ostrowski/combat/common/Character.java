@@ -788,6 +788,14 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       return -1;
    }
 
+   public byte getAdjustedWeaponSkill(LimbType limb, int attackStyle, boolean isGrapple, boolean isCounterAttack, boolean accountForHandPenalty, boolean adjustForHolds) {
+      WeaponStyleAttack style = getWeaponStyle(limb, attackStyle, isGrapple, isCounterAttack);
+      if (style != null) {
+         return getAdjustedSkillLevel(style, false, accountForHandPenalty ? limb : null, true/*sizeAdjust*/, true/*adjustForEncumbrance*/, adjustForHolds);
+      }
+      return -1;
+   }
+
    private WeaponStyleAttack getWeaponStyle(LimbType limb, int attackStyle, boolean isGrapple, boolean isCounterAttack) {
       if (_limbs.containsKey(limb)) {
          Weapon weap = _limbs.get(limb).getWeapon(this);
@@ -849,6 +857,18 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       return skillLevel;
    }
 
+   public byte getAdjustedSkillLevel(WeaponStyle attackMode, boolean adjustForPain, LimbType useHand,
+                             boolean sizeAdjust, boolean adjustForEncumbrance, boolean adjustForHolds) {
+      byte skillLevel = getAdjustedSkillLevel(attackMode.getSkillType(), useHand, sizeAdjust, adjustForEncumbrance, adjustForHolds);
+      if (adjustForPain) {
+         if (useHand != null) {
+            skillLevel -= _limbs.get(useHand).getWoundPenalty();
+         }
+         skillLevel -= _condition.getWoundsAndPainPenalty();
+      }
+      return skillLevel;
+   }
+
    public Skill getSkill(SkillType skillType) {
       return _skillsList.get(skillType);
    }
@@ -857,6 +877,31 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       Skill skill = _skillsList.get(skillType);
       if (skill != null) {
          byte skillLevel = skill.getLevel();
+         if (useLimb != null) {
+            skillLevel -= getHandPenalties(useLimb, skillType);
+         }
+         if (sizeAdjust && (skill.isAdjustedForSize())) {
+            skillLevel += _race.getBonusToHit();
+         }
+         if (adjustForEncumbrance) {
+            skillLevel -= skill.getPenaltyForEncumbranceLevel(Rules.getEncumbranceLevel(this));
+         }
+         if (adjustForHolds) {
+            for (Byte hold : _heldPenalties.values()) {
+               skillLevel -= hold.byteValue();
+            }
+         }
+         if (skillLevel < 0) {
+            return 0;
+         }
+         return skillLevel;
+      }
+      return 0;
+   }
+   public byte getAdjustedSkillLevel(SkillType skillType, LimbType useLimb, boolean sizeAdjust, boolean adjustForEncumbrance, boolean adjustForHolds) {
+      Skill skill = _skillsList.get(skillType);
+      if (skill != null) {
+         byte skillLevel = Rules.getAdjustedSkillLevel(skill.getLevel(), getAttributeLevel(skill.getAttributeBase()));
          if (useLimb != null) {
             skillLevel -= getHandPenalties(useLimb, skillType);
          }
@@ -1139,7 +1184,8 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                    && ((_currentSpell.getTargetType() == TargetType.TARGET_OTHER_FIGHTING)
                        || (_currentSpell.getTargetType() == TargetType.TARGET_ANIMAL_FIGHTING)
                        || (_currentSpell.getTargetType() == TargetType.TARGET_OTHER_EVIL_FIGHTING)
-                       || (_currentSpell.getTargetType() == TargetType.TARGET_OTHER_GOOD_FIGHTING) || (_currentSpell.getTargetType() == TargetType.TARGET_UNDEAD))) {
+                       || (_currentSpell.getTargetType() == TargetType.TARGET_OTHER_GOOD_FIGHTING)
+                       || (_currentSpell.getTargetType() == TargetType.TARGET_UNDEAD))) {
                   if (target == null) {
                      sb.append("\nAll of your selected targets are currently out of range, or not visible this round.");
                   }
@@ -2932,7 +2978,6 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                                                            isGrapple ? weap._grapplingStyles : weap._attackStyles;
 
             boolean canUseTwohanded = false;
-            byte strength = getAttributeLevel(Attribute.Strength);
             // if no shield, always try to use weapon in a 2-handed style
             Limb otherLimb = _limbs.get(parentAction.getLimb().getPairedType());
             if ((otherLimb != null) && (otherLimb._limbType != parentAction.getLimb())) {
@@ -2956,6 +3001,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
             boolean singleSpeed = true;
             int curSpeed = -1;
             byte lowestSpeed = 127;
+            byte strength = getAttributeLevel(Attribute.Strength);
             for (WeaponStyleAttack style : styles) {
                byte styleSpeed = style.getSpeed(strength);
                if (styleSpeed < lowestSpeed) {
@@ -3209,6 +3255,8 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
 
    public HashMap<RANGE, HashMap<DefenseOption, Byte>> getDefenseOptionsBase(DamageType damType, boolean isGrappleAttack, boolean includeWoundPenalty, boolean includePosition, boolean computePdOnly) {
       byte attributeNim = getAttributeLevel(Attribute.Nimbleness);
+      byte dodge = Rules.getDodgeLevel(attributeNim);
+      byte retreat = Rules.getRetreatLevel(attributeNim);
       HashMap<RANGE, HashMap<DefenseOption, Byte>> defBase = new HashMap<>();
       for (RANGE range : RANGE.values()) {
          defBase.put(range, new HashMap<>());
@@ -3323,8 +3371,6 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          byte rangeAdjustmentToPD = Rules.getRangeDefenseAdjustmentToPD(range);
          byte rangeAdjustmentPerAction = Rules.getRangeDefenseAdjustmentPerAction(range);
          if (!computePdOnly) {
-            byte dodge = Rules.getDodgeLevel(attributeNim);
-            byte retreat = Rules.getRetreatLevel(attributeNim);
             if (includeWoundPenalty) {
                if (_condition.getPenaltyMove() < 0) {
                   dodge = 0;
@@ -3806,7 +3852,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    public void setTarget(int targetsUniqueID) {
       _targetID = targetsUniqueID;
       // re-order the list, moving the new target to the top of the list.
-      if (_orderedTargetIds.remove(new Integer(targetsUniqueID))) {
+      if (_orderedTargetIds.remove(Integer.valueOf(targetsUniqueID))) {
          _orderedTargetIds.add(0, targetsUniqueID);
       }
    }
@@ -6036,7 +6082,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    private final HashMap<IHolder, Byte> _heldPenalties    = new HashMap<>();
    private Character                _holdTarget = null;
 
-   public static Comparator<? super Character> nameComparator = new Comparator<Character> () {
+   public static Comparator<? super Character> nameComparator = new Comparator<> () {
       @Override
       public int compare(Character char1, Character char2) {
          return char1.getName().compareTo(char2.getName());

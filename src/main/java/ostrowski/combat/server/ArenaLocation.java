@@ -23,6 +23,8 @@ import ostrowski.combat.common.enums.Enums;
 import ostrowski.combat.common.enums.Facing;
 import ostrowski.combat.common.enums.TerrainType;
 import ostrowski.combat.common.enums.TerrainWall;
+import ostrowski.combat.common.spells.IAreaSpell;
+import ostrowski.combat.common.spells.Spell;
 import ostrowski.combat.common.things.Door;
 import ostrowski.combat.common.things.Limb;
 import ostrowski.combat.common.things.LimbType;
@@ -46,19 +48,20 @@ import ostrowski.util.SemaphoreAutoTracker;
 
 public class ArenaLocation extends ArenaCoordinates implements IMonitorableObject, Enums, ISingularSerializableObject
 {
-   public    Semaphore            _lock_this               = new Semaphore("AreanLocation_lock_this", CombatSemaphore.CLASS_ARENALOCATION_this);
-   private   TerrainType              _terrain                 = TerrainType.FLOOR;
-   private   long                 _data                    = _terrain.value;
-   private   ArrayList<Object>    _things                  = new ArrayList<>();
-   private   ArrayList<Door>      _doors                   = new ArrayList<>();
-   private   boolean              _visible                 = true;
-   private   HashSet<Integer>     _viewedBy                = new HashSet<>();
-   public    ArenaLocation        _visibleFrom             = null;
-   private   String               _label                   = null;
-   transient MonitoredObject      _monitoredProxy          = null;
-   private   boolean              _selectable              = true;
+   public    Semaphore             _lock_this               = new Semaphore("AreanLocation_lock_this", CombatSemaphore.CLASS_ARENALOCATION_this);
+   private   TerrainType           _terrain                 = TerrainType.FLOOR;
+   private   long                  _data                    = _terrain.value;
+   private   ArrayList<Object>     _things                  = new ArrayList<>();
+   private   ArrayList<Door>       _doors                   = new ArrayList<>();
+   private   ArrayList<IAreaSpell> _activeSpells            = new ArrayList<>();
+   private   boolean               _visible                 = true;
+   private   HashSet<Integer>      _viewedBy                = new HashSet<>();
+   public    ArenaLocation         _visibleFrom             = null;
+   private   String                _label                   = null;
+   transient MonitoredObject       _monitoredProxy          = null;
+   private   boolean               _selectable              = true;
 
-   public static final String     PICKUP                   = "pickup ";
+   public static final String      PICKUP                   = "pickup ";
    // implementing the ISingularSerializableObject interface allows this class to
    // have only one ArenaLocation object for any given location (based on _x & _y),
    // even as ArenaLocation objects are read in.
@@ -92,6 +95,25 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
       notifyWatchers(origLoc, this, changeNotif, null/*skipList*/, null/*diag*/);
    }
    public long getData() { return _data; }
+
+   public void addSpell(IAreaSpell spell) {
+      _activeSpells.add(spell);
+      // Affect the characters in the location
+      for (Character chr : getCharacters()) {
+         spell.affectCharacterOnActivation(chr);
+      }
+   }
+   public List<IAreaSpell> getActiveSpells() {
+      ArrayList<IAreaSpell> activeSpells = new ArrayList<>();
+      // Check for any spells that have expired
+      for (IAreaSpell spell : _activeSpells) {
+         if (((Spell)spell).getDuration() != 0) {
+            activeSpells.add(spell);
+         }
+      }
+      _activeSpells = activeSpells;
+      return activeSpells;
+   }
 
    @Override
    public Object clone() {
@@ -935,7 +957,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
          _visibleFrom = null;
       }
       if (_visible && (viewerID >= 0)) {
-         _viewedBy.add(new Integer(viewerID));
+         _viewedBy.add(Integer.valueOf(viewerID));
       }
       return visibilityChanged;
    }
@@ -943,10 +965,10 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
       return _visible;
    }
    public boolean isKnownBy(int viewerID) {
-      return (_viewedBy.contains(new Integer(viewerID)));
+      return (_viewedBy.contains(Integer.valueOf(viewerID)));
    }
    public boolean setKnownBy(int viewerID, boolean isKnown) {
-      Integer intVal = new Integer(viewerID);
+      Integer intVal = Integer.valueOf(viewerID);
       if (isKnown) {
          if (_viewedBy.contains(intVal)) {
             return false;

@@ -34,12 +34,14 @@ import ostrowski.combat.common.enums.Enums;
 import ostrowski.combat.common.enums.Facing;
 import ostrowski.combat.common.enums.TerrainWall;
 import ostrowski.combat.common.orientations.Orientation;
+import ostrowski.combat.common.spells.IAreaSpell;
 import ostrowski.combat.common.things.Door;
 import ostrowski.combat.common.things.Hand;
 import ostrowski.combat.common.things.Leg;
 import ostrowski.combat.common.things.Limb;
 import ostrowski.combat.common.things.Thing;
 import ostrowski.combat.common.things.Wing;
+import ostrowski.combat.protocol.request.RequestLocation;
 import ostrowski.combat.server.ArenaCoordinates;
 import ostrowski.combat.server.ArenaEvent;
 import ostrowski.combat.server.ArenaLocation;
@@ -67,6 +69,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
    private static Cursor    _currentCursor           = null;
    private static Cursor    _fillCursor              = null;
    private static Cursor    _brushCursor             = null;
+   private static Cursor    _wallCursor              = null;
    private static Cursor    _handOpenCursor          = null;
    private static Cursor    _handClosedCursor        = null;
 
@@ -104,12 +107,13 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
    public MapWidget2D(Composite parent) {
       _canvas = new Canvas(parent, SWT.BORDER);
 
-      ZOOM_CONTROL_IMAGE = new Image(parent.getDisplay(), ZOOM_CONTROL_IMAGE_DATA);
+      ZOOM_CONTROL_IMAGE    = new Image(parent.getDisplay(), ZOOM_CONTROL_IMAGE_DATA);
 
-      _fillCursor       = new Cursor(parent.getDisplay(), getImageData("/res/paintBucket.png"), 0, 0);
-      _brushCursor      = new Cursor(parent.getDisplay(), getImageData("/res/paintBrush.png"),  0, 0);
-      _handOpenCursor   = new Cursor(parent.getDisplay(), getImageData("/res/handOpen.png"),    0, 0);
-      _handClosedCursor = new Cursor(parent.getDisplay(), getImageData("/res/handClosed.png"),  0, 0);
+      _fillCursor       = new Cursor(parent.getDisplay(), getImageData("/res/paintBucket.png"),    0, 28);
+      _brushCursor      = new Cursor(parent.getDisplay(), getImageData("/res/paintBrush.png"),     0, 19);
+      _wallCursor       = new Cursor(parent.getDisplay(), getImageData("/res/paintBrushWall.png"), 0, 19);
+      _handOpenCursor   = new Cursor(parent.getDisplay(), getImageData("/res/handOpen.png"),       10, 10);
+      _handClosedCursor = new Cursor(parent.getDisplay(), getImageData("/res/handClosed.png"),     10, 10);
 
       _canvas.addListener(SWT.Paint, this);
       _canvas.addListener(SWT.MouseDown, this);
@@ -389,10 +393,11 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       // Don't do else if, because there is another MouseDown & MouseUp handler later:
       if (event.type == SWT.MouseEnter) {
          switch (_mapMode) {
-            case DRAG:  _currentCursor = _handOpenCursor; break;
-            case FILL:  _currentCursor = _fillCursor;     break;
-            case PAINT: _currentCursor = _brushCursor;    break;
-            case LINE:  _currentCursor = null;            break;
+            case DRAG:          _currentCursor = _handOpenCursor; break;
+            case FILL:          _currentCursor = _fillCursor;     break;
+            case PAINT_TERRAIN: _currentCursor = _brushCursor;    break;
+            case PAINT_WALL:    _currentCursor = _wallCursor;     break;
+            case LINE:          _currentCursor = null;            break;
          }
          if ((event.widget.getDisplay() != null) && (event.widget.getDisplay().getActiveShell() != null)) {
             event.widget.getDisplay().getActiveShell().setCursor(_currentCursor);
@@ -502,6 +507,10 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
                maxX = Math.max(maxX, bounds[X_LARGEST]);
                maxY = Math.max(maxY, bounds[Y_LARGEST]);
             }
+            for (IMapListener listener : _listeners) {
+               listener.onMouseMove(_mouseOverLocation, event, angle, distance);
+            }
+
             if (orientationChanged) {
                if (oldOrientations != null) {
                   for (Orientation oldOrientation : oldOrientations) {
@@ -721,7 +730,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       drawHex(loc, gc, display, _sizePerHex, 0/*offsetX*/, 0/*offsetY*/, _left/*offsetCol*/, _top/*offsetRow*/,
               isMouseOver, _selfID, _targetID, _selfTeam, hexSelectable, isVisible, isKnown, 90/*borderFade*/,
               _routeMap, _path, _mouseOverOrientations, completionOrientations, cancelOrientations,
-              _mouseOverCharacter, triggers, events, showKnownButNotVisibleChars, cachedColorsMap,  cachedPatternMap);
+              _mouseOverCharacter, _locationRequest, triggers, events, showKnownButNotVisibleChars, cachedColorsMap,  cachedPatternMap);
    }
 
    public static void drawHex(ArenaLocation loc, GC gc, Display display, int sizePerHex,
@@ -731,7 +740,8 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
               (short) 0/*offsetRow*/, false/*isMouseOver*/, -1/*selfID*/, -1/*targetID*/,
               (byte) -1/*selfTeam*/, true/*hexSelectable*/, true/*isVisible*/, true/*isKnown*/, 50,
               null/*routeMap*/, null/*path*/, null/*selectionOrientation*/,
-              null/*completionOrientations*/, null/*cancelOrientations*/, null/*_mouseOverCharacter*/,
+              null/*completionOrientations*/, null/*cancelOrientations*/,
+              null/*_mouseOverCharacter*/, null/*locationRequest*/,
               null/*triggers*/, null/*events*/, false/*showKnownButNotVisibleChars*/, null/*cachedColorsMap*/,
               null/*cachedPatternMap*/, 0/*rotation*/);
    }
@@ -742,7 +752,8 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
               (short) 0/*offsetRow*/, false/*isMouseOver*/, -1/*selfID*/, -1/*targetID*/,
               (byte) -1/*selfTeam*/, true/*hexSelectable*/, true/*isVisible*/, true/*isKnown*/, 50,
               null/*routeMap*/, null/*path*/, null/*selectionOrientation*/,
-              null/*completionOrientations*/, null/*cancelOrientations*/, null/*_mouseOverCharacter*/,
+              null/*completionOrientations*/, null/*cancelOrientations*/,
+              null/*_mouseOverCharacter*/, null/*locationRequest*/,
               null/*triggers*/, null/*events*/, false/*showKnownButNotVisibleChars*/, null/*cachedColorsMap*/,
               null/*cachedPatternMap*/, rotation);
    }
@@ -757,6 +768,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
                                List<Orientation> completionOrientations,
                                List<Orientation> cancelOrientations,
                                Character mouseOverCharacter,
+                               RequestLocation locationRequest,
                                ArrayList<ArenaTrigger> triggers,
                                ArrayList<ArenaEvent> events,
                                boolean showKnownButNotVisibleChars,
@@ -773,6 +785,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
               completionOrientations,
               cancelOrientations,
               mouseOverCharacter,
+              locationRequest,
               triggers,
               events,
               showKnownButNotVisibleChars,
@@ -791,6 +804,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
                                List<Orientation> completionOrientations,
                                List<Orientation> cancelOrientations,
                                Character mouseOverCharacter,
+                               RequestLocation locationRequest,
                                ArrayList<ArenaTrigger> triggers,
                                ArrayList<ArenaEvent> events,
                                boolean showKnownButNotVisibleChars,
@@ -1013,25 +1027,38 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       }
       int futureBackground = 0xE0E0E0;
       int futureForeground = 0x404040;
-      if ((selectionOrientations != null) && (selectionOrientations.size() > 0) && isMouseOver && (mouseOverCharacter != null)){
-         Orientation selectionOrientation = selectionOrientations.get(0);
-//         completionOrientations = new ArrayList<Orientation>();
-//         completionOrientations.add(mouseOverCharacter.getOrientation());
-         boolean drawCheckMark = (completionOrientations != null) && completionOrientations.contains(selectionOrientation);
-         boolean drawCancelMark = (cancelOrientations != null) && cancelOrientations.contains(selectionOrientation);
-         if (drawCheckMark || drawCancelMark) {
-            if (selectionOrientation.isInLocation(loc)) {
-               selectionOrientation.drawCharacter(gc, display, bounds, loc, background, foreground, mouseOverCharacter);
+      if ((selectionOrientations != null)
+               && (selectionOrientations.size() > 0)
+               && isMouseOver
+               && (mouseOverCharacter != null)) {
+         if (mouseOverCharacter != null) {
+            Orientation selectionOrientation = selectionOrientations.get(0);
+//            completionOrientations = new ArrayList<Orientation>();
+//            completionOrientations.add(mouseOverCharacter.getOrientation());
+            boolean drawCheckMark = (completionOrientations != null) && completionOrientations.contains(selectionOrientation);
+            boolean drawCancelMark = (cancelOrientations != null) && cancelOrientations.contains(selectionOrientation);
+            if (drawCheckMark || drawCancelMark) {
+               if (selectionOrientation.isInLocation(loc)) {
+                  selectionOrientation.drawCharacter(gc, display, bounds, loc, background, foreground, mouseOverCharacter);
+               }
+               if (drawCheckMark) {
+                  drawCheckMark(gc, display, bounds);
+               }
+               else {
+                  drawCancelMark(gc, display, bounds);
+               }
+            } else {
+               if (selectionOrientation.isInLocation(loc)) {
+                  selectionOrientation.drawCharacter(gc, display, bounds, loc, futureBackground, futureForeground, mouseOverCharacter);
+               }
             }
-            if (drawCheckMark) {
-               drawCheckMark(gc, display, bounds);
-            }
-            else {
-               drawCancelMark(gc, display, bounds);
-            }
-         } else {
-            if (selectionOrientation.isInLocation(loc)) {
-               selectionOrientation.drawCharacter(gc, display, bounds, loc, futureBackground, futureForeground, mouseOverCharacter);
+         }
+      }
+      else if (isMouseOver && (locationRequest != null)) {
+         for (ArenaCoordinates answerLoc : locationRequest.getSelectableCoordinates()) {
+            if (answerLoc.sameCoordinates(loc)) {
+               drawImageOnHex(loc, bounds, gc, display, locationRequest.getCursorResourceName());
+               break;
             }
          }
       }
@@ -1279,16 +1306,6 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
          return;
       }
 
-      ArrayList<Door> doors = new ArrayList<>();
-      doors.addAll(loc.getDoors());
-      long walls = loc.getWalls();
-      if ((walls == 0) && (doors.size() == 0)) {
-         // no walls or doors in this hex.
-         return;
-      }
-      Color oldBg = gc.getBackground();
-      Color oldFg = gc.getForeground();
-
       int[] hexBounds = getHexDimensions((short) (loc._x - offsetCol),
                                          (short) (loc._y - offsetRow), sizePerHex, offsetX, offsetY, true/*cacheResults*/, rotation);
       /*
@@ -1298,6 +1315,19 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
        *   1     5     y = high
        *    2 3 4      y = highest
        */
+
+      ArrayList<Door> doors = new ArrayList<>();
+      doors.addAll(loc.getDoors());
+      long walls = loc.getWalls();
+      if ((walls == 0) && (doors.size() == 0)) {
+         // no walls or doors in this hex.
+         // But there might be spells to draw:
+         drawSpells(loc, hexBounds, gc, display);
+         return;
+      }
+      Color oldBg = gc.getBackground();
+      Color oldFg = gc.getForeground();
+
       if (walls != 0) {
          // When selfID == -1, we are drawing the wall buttons.
          // In this case, we never want to draw the hidden area 'behind' a wall.
@@ -1363,8 +1393,50 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       for (Door door : doors) {
          drawDoor(hexBounds, gc, door._orientation.startPoint, door._orientation.endPoint, door._orientation.thickness, door.isOpen());
       }
+      drawSpells(loc, hexBounds, gc, display);
       gc.setBackground(oldBg);
       gc.setForeground(oldFg);
+   }
+
+   private static void drawImageOnHex(ArenaLocation loc, int[] hexBounds,
+                                      GC gc, Display display, String imageResourceName) {
+      if (imageResourceName != null) {
+         int x1 = getPoint(hexBounds, 10,  true/*getXValue*/);
+         int y1 = getPoint(hexBounds, 10, false/*getXValue*/);
+         int x2 = getPoint(hexBounds,  4,  true/*getXValue*/);
+         int y2 = getPoint(hexBounds,  4, false/*getXValue*/);
+         /*
+          *   10 9 8      y = lowest
+          *  11     7     y = low
+          *  0       6    y = middle
+          *   1     5     y = high
+          *    2 3 4      y = highest
+          */
+         ImageData imageData = getImageDataResourceByName(imageResourceName);
+         gc.drawImage(getImageResourceByName(imageResourceName, display),
+                      0/*srcX*/, 0/*srcY*/, imageData.width/*srcWidth*/, imageData.height/*srcHeight*/,
+                      x1/*dstX*/, y1/*dstY*/, (x2-x1)/*dstWidth*/, (y2-y1)/*dstHeight*/);
+      }
+   }
+   private static void drawSpells(ArenaLocation loc, int[] hexBounds, GC gc, Display display) {
+      for (IAreaSpell spell : loc.getActiveSpells()) {
+         drawImageOnHex(loc, hexBounds, gc, display, spell.getImageResourceName());
+      }
+   }
+
+   private static final HashMap<String, ImageData> imageDataByName = new HashMap<>();
+   private static final HashMap<String, Image>     imageByName     = new HashMap<>();
+   private static ImageData getImageDataResourceByName(String name) {
+      if (imageDataByName.get(name) == null) {
+         imageDataByName.put(name, getImageData(name));
+      }
+      return imageDataByName.get(name);
+   }
+   private static Image getImageResourceByName(String name, Display display) {
+      if (imageByName.get(name) == null) {
+         imageByName.put(name, new Image(display, getImageDataResourceByName(name)));
+      }
+      return imageByName.get(name);
    }
 
    private static int computeFillPoint(HashMap<Facing, Boolean> visPerDirection, TerrainWall wall) {
@@ -1567,9 +1639,9 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
          direction = 11;
       }
       for (int point = pointA; point != pointB; point = (point + direction) % 12) {
-         points.add(new Integer(point));
+         points.add(Integer.valueOf(point));
       }
-      points.add(new Integer(pointB));
+      points.add(Integer.valueOf(pointB));
       int[] shadowBounds = new int[points.size() * 2];
       int i = 0;
       for (Integer point : points) {

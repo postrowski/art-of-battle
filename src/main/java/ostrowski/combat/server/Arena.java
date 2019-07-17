@@ -22,6 +22,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.ToolTip;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -36,6 +37,7 @@ import ostrowski.DebugBreak;
 import ostrowski.combat.client.MessageDialog;
 import ostrowski.combat.client.RequestUserInput;
 import ostrowski.combat.client.ui.AutoRunBlock;
+import ostrowski.combat.client.ui.CharInfoBlock;
 import ostrowski.combat.common.AI;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.CharacterGenerator;
@@ -48,6 +50,7 @@ import ostrowski.combat.common.enums.Enums;
 import ostrowski.combat.common.enums.Facing;
 import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.orientations.Orientation;
+import ostrowski.combat.common.spells.IAreaSpell;
 import ostrowski.combat.common.things.Limb;
 import ostrowski.combat.common.things.LimbType;
 import ostrowski.combat.common.things.Shield;
@@ -153,7 +156,7 @@ public class Arena implements Enums, IMapListener
       Integer currentDupCount = _registeredNames.get(newCombatantsName);
       boolean nameChanged = false;
       if (currentDupCount == null) {
-         _registeredNames.put(newCombatantsName, new Integer(1));
+         _registeredNames.put(newCombatantsName, Integer.valueOf(1));
       }
       else {
          if (currentDupCount == 1) {
@@ -166,7 +169,7 @@ public class Arena implements Enums, IMapListener
             }
          }
          int curCount = currentDupCount.intValue() + 1;
-         _registeredNames.put(newCombatantsName, new Integer(curCount));
+         _registeredNames.put(newCombatantsName, Integer.valueOf(curCount));
          combatant.setName(newCombatantsName + "-" + curCount);
          nameChanged = true;
       }
@@ -190,16 +193,18 @@ public class Arena implements Enums, IMapListener
       else {
          combatant._uniqueID = ClientProxy.getNextServerID();
          String aiEngineStr = _combatMap.getStockAIName(team)[combatantIndexOnTeam];
-         if (aiEngineStr.equalsIgnoreCase("Local")) {
+         AI_Type aiType = AI_Type.getByString(aiEngineStr);
+         if (aiType == null) {
+            if (!aiEngineStr.equalsIgnoreCase("Local")) {
+               DebugBreak.debugBreak("Can't find AI for " + aiEngineStr);
+               // Assume 'Local' for now...
+            }
             _localCombatants.add(combatant);
          }
          else {
-            if (aiEngineStr.startsWith("AI - ")) {
-               aiEngineStr = aiEngineStr.replaceAll("AI - ", "");
-            }
-            AI ai = new AI(combatant, AI_Type.getByString(aiEngineStr));
+            AI ai = new AI(combatant, aiType);
             _mapCombatantToAI.put(combatant, ai);
-            if (ai.getAiType() == AI_Type.GOD) {
+            if (aiType == AI_Type.GOD) {
                _combatMap.setAllLocationsAsKnownBy(combatant);
             }
          }
@@ -338,7 +343,7 @@ public class Arena implements Enums, IMapListener
                   boolean sameTeam = (otherCombatant._teamID == combatant._teamID);
                   if ((!sameTeam) || (combatant._teamID == TEAM_INDEPENDENT)) {
                      targetPriorities.add(otherCombatant);
-                     targetPriorityIDs.add(new Integer(otherCombatant._uniqueID));
+                     targetPriorityIDs.add(Integer.valueOf(otherCombatant._uniqueID));
                   }
                }
             }
@@ -611,8 +616,8 @@ public class Arena implements Enums, IMapListener
                if (req instanceof RequestLocation) {
                   RequestLocation reqLoc = (RequestLocation) req;
                   // selectHex does its own redraw(), so we avoid calling that before calling selectHex
-                  _server._map.setSelectableHexes(reqLoc.getSelectableCoordinates());
-                  // continue hiding the hexes that the player can't see until they clink on a valid movement location.
+                  _server._map.requestLocation(reqLoc);
+                  // continue hiding the hexes that the player can't see until they click on a valid movement location.
                   if (_recordedActions != null) {
                      _recordedActions.add(req);
                      _playbackIndex++;
@@ -990,6 +995,9 @@ public class Arena implements Enums, IMapListener
                      moverMustStop = true;
                   }
                }
+            }
+            for (IAreaSpell spell : destLocation.getActiveSpells()) {
+               spell.affectCharacterOnEntry(mover);
             }
             if (moverMustStop) {
                mover.setMoveComplete();
@@ -1835,9 +1843,37 @@ public class Arena implements Enums, IMapListener
    public void onMouseDrag(ArenaLocation loc, Event event, double angleFromCenter, double normalizedDistFromCenter)
    {
    }
+   ArenaLocation _currentMouseLoc = null;
+   ToolTip _popupMessage = null;
    @Override
    public void onMouseMove(ArenaLocation loc, Event event, double angleFromCenter, double normalizedDistFromCenter)
    {
+      if (_currentMouseLoc != loc) {
+         Rules.diag("onMouseMove (" + event.x + "," + event.y + ")");
+         _currentMouseLoc = loc;
+         if (_popupMessage == null) {
+            _popupMessage = new ToolTip(event.display.getActiveShell(), SWT.NONE);
+         }
+         else {
+            _popupMessage.setVisible(false);
+         }
+
+         if ((loc != null) && !loc.isEmpty()) {
+            _popupMessage.setLocation(Display.getCurrent().getCursorLocation().x,
+                                      Display.getCurrent().getCursorLocation().y);
+            _popupMessage.setVisible(true);
+            _currentMouseLoc = loc;
+            StringBuilder sb = new StringBuilder();
+            boolean first = true;
+            for (Character ch : loc.getCharacters()) {
+               if (!first) {
+                  sb.append("\n------------\n");
+               }
+               sb.append(CharInfoBlock.getToolTipSummary(ch));
+            }
+            _popupMessage.setMessage(sb.toString());
+         }
+      }
    }
    @Override
    public void onMouseDown(ArenaLocation loc, Event event, double angleFromCenter, double normalizedDistFromCenter)
@@ -1866,6 +1902,17 @@ public class Arena implements Enums, IMapListener
                      // If it's a valid location, then this will return true.
                      if (moveReq.setOrientation(loc, angleFromCenter, normalizedDistFromCenter)) {
                         completeMove(syncReq);
+                        return;
+                     }
+                  }
+                  if (syncReq instanceof RequestLocation) {
+                     RequestLocation locReq = (RequestLocation) syncReq;
+                     // fill in the location into the request, and send it back.
+                     // If it's a valid location, then this will return true.
+                     if (locReq.setAnswer(loc._x, loc._y)) {
+                        stopWaitingForResponse(syncReq);
+                        _server._map.endHexSelection();
+                        _locationRequests.remove(syncReq);
                         return;
                      }
                   }
@@ -2004,7 +2051,7 @@ public class Arena implements Enums, IMapListener
             localCharactersList.appendChild(arenaDoc.createTextNode(newLine + "  "));
             localCharactersList.appendChild(localChar.getXmlObject(arenaDoc, true/*includeConditionData*/, newLine + "  "));
             if (localChar.stillFighting()) {
-               uniqueIDs.add(new Integer(localChar._uniqueID));
+               uniqueIDs.add(Integer.valueOf(localChar._uniqueID));
             }
          }
          localCharactersList.appendChild(arenaDoc.createTextNode(newLine));
@@ -2012,7 +2059,7 @@ public class Arena implements Enums, IMapListener
             remoteCharactersList.appendChild(arenaDoc.createTextNode(newLine + "  "));
             remoteCharactersList.appendChild(remoteChar.getXmlObject(arenaDoc, true/*includeConditionData*/, newLine + "  "));
             if (remoteChar.stillFighting()) {
-               uniqueIDs.add(new Integer(remoteChar._uniqueID));
+               uniqueIDs.add(Integer.valueOf(remoteChar._uniqueID));
             }
          }
          remoteCharactersList.appendChild(arenaDoc.createTextNode(newLine));
@@ -2024,7 +2071,7 @@ public class Arena implements Enums, IMapListener
                   aiCharXml.setAttribute("aiType", _mapCombatantToAI.get(aiChar).getAiType().name);
                   aiCharactersList.appendChild(aiCharXml);
                   if (aiChar.stillFighting()) {
-                     uniqueIDs.add(new Integer(aiChar._uniqueID));
+                     uniqueIDs.add(Integer.valueOf(aiChar._uniqueID));
                   }
                }
             }

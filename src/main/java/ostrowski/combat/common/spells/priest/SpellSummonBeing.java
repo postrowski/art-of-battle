@@ -6,13 +6,14 @@ import ostrowski.combat.common.Race;
 import ostrowski.combat.common.Race.Gender;
 import ostrowski.combat.common.enums.AI_Type;
 import ostrowski.combat.common.enums.Facing;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.Spell;
 import ostrowski.combat.common.spells.priest.offensive.SpellSummonChampion;
 import ostrowski.combat.server.Arena;
 import ostrowski.combat.server.ArenaLocation;
 import ostrowski.combat.server.CombatServer;
 
-public abstract class SpellSummonBeing extends ExpiringPriestSpell
+public abstract class SpellSummonBeing extends ExpiringPriestSpell implements ICastInBattle
 {
    public SpellSummonBeing() {};
    public SpellSummonBeing(String subClassName, Class<? extends IPriestGroup> group, int affinity) {
@@ -43,10 +44,6 @@ public abstract class SpellSummonBeing extends ExpiringPriestSpell
       return sb.toString();
    }
 
-   @Override
-   public Boolean isCastInBattle() {
-      return true;
-   }
    @Override
    public void applyEffects(Arena arena) {
       int pointTotal = getBaseCharPoints() + (getPower() * getCharPointsPerPowerPoint());

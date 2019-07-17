@@ -41,6 +41,7 @@ import ostrowski.combat.protocol.MessageText;
 import ostrowski.combat.protocol.ServerStatus;
 import ostrowski.combat.protocol.TargetPriorities;
 import ostrowski.combat.protocol.request.RequestAttackStyle;
+import ostrowski.combat.protocol.request.RequestLocation;
 import ostrowski.combat.protocol.request.RequestMovement;
 import ostrowski.combat.server.ArenaLocation;
 import ostrowski.combat.server.Configuration;
@@ -399,13 +400,21 @@ public class CharacterDisplay implements Enums, ModifyListener, IMapListener //,
                return;
             }
          }
+         if (syncReq instanceof RequestLocation) {
+            RequestLocation locReq = (RequestLocation) syncReq;
+            if (locReq.setAnswer(loc._x, loc._y)) {
+               _serverConnection.sendObject(syncReq, "server");
+               _pendingRequests.remove(syncReq);
+               _arenaMapBlock.endHexSelection();
+               return;
+            }
+         }
       }
       // If this didn't match the first _pendingRequest, maybe they are changing targets
       // A click on a character means 'target this character'.
       ArrayList<Character> characters = loc.getCharacters();
-      // TODO: what about area spells? targeting empty locations should be allowed.
       for (Character target : characters) {
-         // never target yourself.
+         // Never target yourself.
          // TODO: what about healing spells? targeting yourself should be allowed for this.
          if (!target.getName().equals(_charWidget._character.getName())) {
             _charInfoBlock.updateTargetFromCharacter(target);
@@ -433,6 +442,11 @@ public class CharacterDisplay implements Enums, ModifyListener, IMapListener //,
    public void requestMovement(RequestMovement moveRequest) {
       _pendingRequests.add(moveRequest);
       _arenaMapBlock.requestMovement(moveRequest);
+   }
+
+   public void requestLocation(RequestLocation locRequest) {
+      _pendingRequests.add(locRequest);
+      _arenaMapBlock.requestLocation(locRequest);
    }
 
    public boolean requestAttackStyle(RequestAttackStyle styleRequest) {

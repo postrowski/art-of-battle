@@ -8,7 +8,7 @@ public enum DieType {
    public int getSides() {
       return SIDES.get(this);
    }
-   private static final HashMap<DieType, Integer> SIDES = new HashMap<DieType, Integer> () {
+   private static final HashMap<DieType, Integer> SIDES = new HashMap<> () {
       private static final long serialVersionUID = 1L;
       {
          put(DieType.D1, 1);

@@ -5,11 +5,12 @@ import ostrowski.combat.common.enums.Attribute;
 import ostrowski.combat.common.html.Table;
 import ostrowski.combat.common.html.TableData;
 import ostrowski.combat.common.html.TableRow;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.priest.IPriestGroup;
 import ostrowski.combat.common.spells.priest.ResistedPriestSpell;
 import ostrowski.combat.server.Arena;
 
-public class SpellParalyze extends ResistedPriestSpell
+public class SpellParalyze extends ResistedPriestSpell implements ICastInBattle
 {
    public static final String NAME = "Paralyze";
    public SpellParalyze() {
@@ -48,10 +49,6 @@ public class SpellParalyze extends ResistedPriestSpell
       return "";
    }
 
-   @Override
-   public Boolean isCastInBattle() {
-      return true;
-   }
    @Override
    public void applyEffects(Arena arena) {
    }

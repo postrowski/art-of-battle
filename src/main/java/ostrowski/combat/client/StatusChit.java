@@ -439,7 +439,7 @@ class TextWheel {
    public static void fillArc(GC gc, int centerX, int centerY, int radius, int centerAngle, int angleWidth) {
       int startAngle = centerAngle - (angleWidth/2);
       gc.fillArc(centerX - radius/*x-topleft*/, centerY - radius/*y-topleft*/, radius * 2/*width*/, radius * 2/*height*/, startAngle, angleWidth);
-      gc.drawArc(centerX - radius/*x-topleft*/, centerY - radius/*y-topleft*/, radius * 2/*width*/, radius * 2/*height*/, startAngle, angleWidth);
+      gc.drawArc(centerX - radius/*x-topleft*/, centerY - radius/*y-topleft*/, (radius * 2/*width*/), (radius * 2/*height*/), startAngle, angleWidth);
    }
 
    public static Region getRectRegion() {

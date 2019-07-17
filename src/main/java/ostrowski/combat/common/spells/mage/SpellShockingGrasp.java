@@ -8,12 +8,13 @@ import ostrowski.combat.common.Character;
 import ostrowski.combat.common.DiceSet;
 import ostrowski.combat.common.SpecialDamage;
 import ostrowski.combat.common.enums.DamageType;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.things.Weapon;
 import ostrowski.combat.common.wounds.Wound;
 import ostrowski.combat.common.wounds.WoundChart;
 import ostrowski.combat.server.Arena;
 
-public class SpellShockingGrasp extends ExpiringMageSpell
+public class SpellShockingGrasp extends ExpiringMageSpell implements ICastInBattle
 {
    public static final String NAME = "Shocking Grasp";
    public SpellShockingGrasp() {
@@ -44,10 +45,6 @@ public class SpellShockingGrasp extends ExpiringMageSpell
       return new DiceSet(0/*d1*/,0/*d4*/,power/*d6*/,0/*d8*/,0/*d10*/,0/*d12*/,0/*d20*/, 0/*dBell*/, 1.0);
    }
 
-   @Override
-   public Boolean isCastInBattle() {
-      return true;
-   }
    @Override
    public String describeSpell() {
       StringBuilder sb = new StringBuilder();

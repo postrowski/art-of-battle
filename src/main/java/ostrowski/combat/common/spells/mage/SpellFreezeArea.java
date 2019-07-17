@@ -24,4 +24,10 @@ public class SpellFreezeArea extends MageSpell
               " The size of the area is dependent upon the power put into the spell.";
    }
 
+   @Override
+   public TargetType getTargetType() {
+      return TargetType.TARGET_AREA;
+   }
+
+
 }

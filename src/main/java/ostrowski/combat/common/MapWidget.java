@@ -22,6 +22,7 @@ import ostrowski.combat.common.enums.TerrainWall;
 import ostrowski.combat.common.orientations.Orientation;
 import ostrowski.combat.common.things.Thing;
 import ostrowski.combat.protocol.MapVisibility;
+import ostrowski.combat.protocol.request.RequestLocation;
 import ostrowski.combat.protocol.request.RequestMovement;
 import ostrowski.combat.server.ArenaCoordinates;
 import ostrowski.combat.server.ArenaEvent;
@@ -119,6 +120,7 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
    protected ArenaLocation                                 _selfLoc               = null;
    protected int                                           _targetID;
    protected RequestMovement                               _movementRequest       = null;
+   protected RequestLocation                               _locationRequest       = null;
    protected ArrayList<ArenaLocation>                      _selectableHexes       = null;
    protected boolean                                       _isDragable            = true;
    protected List<Orientation>                             _mouseOverOrientations = new ArrayList<>();
@@ -273,14 +275,17 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
    @Override
    public void requestMovement(RequestMovement locationMovement) {
       _combatMap.setAllHexesSelectable(false);
-      _selectableHexes  = _combatMap.getLocations(locationMovement.getFutureCoordinates());
-      for (ArenaLocation selectableHex : _selectableHexes) {
-         selectableHex.setSelectable(true);
-      }
-
+      setSelectableHexes(locationMovement.getFutureCoordinates());
       _movementRequest  = locationMovement;
       _mouseOverCharacter = getCombatMap().getCombatantByUniqueID(locationMovement.getActorID());
-      redraw();
+   }
+
+   @Override
+   public void requestLocation(RequestLocation locationMovement) {
+      _combatMap.setAllHexesSelectable(false);
+      _locationRequest  = locationMovement;
+      setSelectableHexes(locationMovement.getSelectableCoordinates());
+      // setup a cursor of a the spell effect
    }
 
    @Override
@@ -296,14 +301,17 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
    @Override
    public void endHexSelection()
    {
-      if ((_selectableHexes    != null) ||
-          (_movementRequest    != null) ||
-          (_mouseOverCharacter != null)) {
+      if ((_selectableHexes             != null) ||
+          (_movementRequest             != null) ||
+          (_locationRequest             != null) ||
+          (_mouseOverCharacter          != null)
+          ) {
 
          _combatMap.setAllHexesSelectable(true);
-         _selectableHexes    = null;
-         _movementRequest    = null;
-         _mouseOverCharacter = null;
+         _selectableHexes             = null;
+         _movementRequest             = null;
+         _locationRequest             = null;
+         _mouseOverCharacter          = null;
          redraw();
       }
    }
@@ -548,6 +556,9 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
 
       if (request instanceof RequestMovement) {
          requestMovement((RequestMovement) request);
+      }
+      else if (request instanceof RequestLocation) {
+         requestLocation((RequestLocation) request);
       }
       recomputeVisibility(actingCharacter, null/*diag*/);
       centerOnSelf();

@@ -107,7 +107,7 @@ public class Shield extends Thing {
       StringBuilder sb = new StringBuilder();
       sb.append("<H4>Shield data:</H4>");
       Table table = new Table();
-      TableRow tr = new TableRow();
+      TableRow tr = new TableRow(-1);
       tr.addHeader("Shield<br/>Name");
       tr.addHeader("Passive<br/>Defense");
       tr.addHeader("Barrier<br/>Value");
@@ -115,8 +115,9 @@ public class Shield extends Thing {
       tr.addHeader("Weight");
       table.addRow(tr);
       List<Shield> humanShield = getShieldListForRace(Race.getRace(Race.NAME_Human, Gender.MALE));
+      int row = 0;
       for (Shield shield : humanShield) {
-         tr = new TableRow();
+         tr = new TableRow(row++);
          tr.addHeader(shield.getName());
          tr.addTD(shield.getPassiveDefense());
          tr.addTD(shield.getDamage());

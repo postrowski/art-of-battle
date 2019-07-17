@@ -2,10 +2,11 @@ package ostrowski.combat.common.spells.priest.evil;
 
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.DiceSet;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.priest.ExpiringPriestSpell;
 import ostrowski.combat.common.spells.priest.IPriestGroup;
 
-public class SpellCurse extends ExpiringPriestSpell
+public class SpellCurse extends ExpiringPriestSpell implements ICastInBattle
 {
    public static final String NAME = "Curse";
    public SpellCurse() {
@@ -67,10 +68,6 @@ public class SpellCurse extends ExpiringPriestSpell
    @Override
    public boolean isBeneficial() {
       return false;
-   }
-   @Override
-   public Boolean isCastInBattle() {
-      return true;
    }
 
 }

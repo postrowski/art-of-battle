@@ -6,6 +6,7 @@ package ostrowski.combat.protocol.request;
 
 import java.util.List;
 
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.Spell;
 import ostrowski.combat.common.spells.mage.MageSpell;
 import ostrowski.protocol.SyncRequest;
@@ -38,7 +39,7 @@ public class RequestSpellSelection extends SyncRequest
                newColumn = true;
             }
          }
-         else if (spell.isCastInBattle()) {
+         else if (spell instanceof ICastInBattle) {
             String name;
             byte incantationTime = spell.getIncantationTime();
             if (incantationTime == 0) {

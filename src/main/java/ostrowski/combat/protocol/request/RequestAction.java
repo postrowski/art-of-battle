@@ -13,12 +13,14 @@ import java.util.List;
 
 import ostrowski.DebugBreak;
 import ostrowski.combat.common.Character;
+import ostrowski.combat.common.CombatMap;
 import ostrowski.combat.common.DiceSet;
 import ostrowski.combat.common.enums.Attribute;
 import ostrowski.combat.common.enums.DamageType;
 import ostrowski.combat.common.enums.Enums;
 import ostrowski.combat.common.enums.Position;
 import ostrowski.combat.common.orientations.Orientation;
+import ostrowski.combat.common.spells.IAreaSpell;
 import ostrowski.combat.common.spells.IMissileSpell;
 import ostrowski.combat.common.spells.IRangedSpell;
 import ostrowski.combat.common.spells.Spell;
@@ -32,6 +34,8 @@ import ostrowski.combat.common.things.Weapon;
 import ostrowski.combat.common.weaponStyles.WeaponStyleAttack;
 import ostrowski.combat.common.weaponStyles.WeaponStyleAttackRanged;
 import ostrowski.combat.server.Arena;
+import ostrowski.combat.server.ArenaCoordinates;
+import ostrowski.combat.server.ArenaLocation;
 import ostrowski.protocol.IRequestOption;
 import ostrowski.protocol.SyncRequest;
 import ostrowski.util.SemaphoreAutoLocker;
@@ -43,6 +47,7 @@ public class RequestAction extends SyncRequest implements Enums
    public RequestPosition              _positionRequest           = null;
    public RequestAttackStyle           _styleRequest              = null;
    public RequestMovement              _movementRequest           = null;
+   public RequestLocation              _locationSelection         = null;
    public RequestEquipment             _equipmentRequest          = null;
    public RequestTarget                _targetPriorities          = null;
    public RequestSpellTypeSelection    _spellTypeSelectionRequest = null;
@@ -321,7 +326,36 @@ public class RequestAction extends SyncRequest implements Enums
          }
       }
       else if (isCompleteSpell()) {
-         if (_spell.requiresTargetToCast()) {
+         if (_spell.getTargetType() == TargetType.TARGET_AREA) {
+            if (_locationSelection == null) {
+               _locationSelection = new RequestLocation(((IAreaSpell)_spell).getImageResourceName());
+               ArenaCoordinates actorCoords = actor.getOrientation().getHeadCoordinates();
+               CombatMap map = arena.getCombatMap();
+               ArenaLocation curLoc = map.getLocation(actorCoords);
+               ArrayList<ArenaCoordinates> visibleLocationsInRange = new ArrayList<>();
+               short maxRange = _spell.getMaxRange(actor);
+               short minRange = _spell.getMinRange(actor);
+               for (short col = 0 ; col<map.getSizeX() ; col++) {
+                  for (short row = (short) (col%2) ; row<map.getSizeY() ; row += 2) {
+                     ArenaCoordinates mapLoc = map.getLocationQuick(col, row);
+                     if (mapLoc != null) {
+                        ArenaLocation curMapLoc = map.getLocation(mapLoc);
+                        short dist = ArenaCoordinates.getDistance(mapLoc, curLoc);
+                        if ((dist <= maxRange) && (dist >= minRange)) {
+                           if (map.canSeeLocation(actor.getOrientation(), curLoc, curMapLoc,
+                                                  true/*considerFacing*/, false/*blockedByAnyStandingCharacter*/,
+                                                  -1/*markAsKnownByCharacterUniqueID*/)) {
+                              visibleLocationsInRange.add(mapLoc);
+                           }
+                        }
+                     }
+                  }
+               }
+               _locationSelection.setCoordinates(visibleLocationsInRange);
+            }
+            nextReq = _locationSelection;
+         }
+         else if (_spell.requiresTargetToCast()) {
             if (_targetSelection == null) {
                _targetSelection = new RequestSingleTargetSelection(actor, _spell, arena, this);
             }

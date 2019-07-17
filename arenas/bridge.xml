@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Arena Name="Bridge" height="34" hideViewFromLocalPlayers="true" level="0" width="29">
+<?xml version="1.0" encoding="UTF-8"?><Arena Name="Bridge" height="34" hideViewFromLocalPlayers="true" level="0" width="29">
   <rows>
     <row id="0">2:2:1:1:1:1:3:4:4:1:1:1:1:1:1:</row>
     <row id="1">2:1:1:1:1:1:3:6:1:1:1:1:1:1:</row>
@@ -39,9 +38,9 @@
   
   <teams count="4" maxCombatantsPerTeam="15">
     <team id="0">
-      <combatant AI="Norm" charName="? 100 wolf" id="0" startX="8" startY="12"/>
-      <combatant AI="Norm" charName="? 100 wolf" id="1" startX="10" startY="6"/>
-      <combatant AI="Norm" charName="? 200 Orc" id="2" startX="7" startY="19"/>
+      <combatant AI="Simple" charName="? 100 wolf" id="0" startX="8" startY="12"/>
+      <combatant AI="Simple" charName="? 100 wolf" id="1" startX="10" startY="6"/>
+      <combatant AI="God" charName="? 255 Orc" id="2" startX="7" startY="19"/>
       <combatant AI="Off" charName=" " id="3"/>
       <combatant AI="Off" charName=" " id="4"/>
       <combatant AI="Off" charName=" " id="5"/>

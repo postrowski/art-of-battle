@@ -124,20 +124,8 @@ public class SkillsBlock extends Helper implements Enums, ModifyListener, IUIBlo
          Skill skillFound = null;
          for (Skill skill : skills) {
             if (skill.getName().equals(_skillType[i].getText())) {
-               int adjustedLevel = skill.getLevel();
-               _skillLevel[i].setSelection(adjustedLevel);
-               if (skill.isAdjustedForSize()) {
-                  adjustedLevel += bonusToHit;
-               }
-               if (skill.isAdjustedForEncumbrance()) {
-                  if (character != null) {
-                     adjustedLevel -= Rules.getEncumbranceLevel(character);
-                  }
-               }
-               Attribute attribute = skill.getAttributeBase();
-               if (attribute != null) {
-                  adjustedLevel += character.getAttributeLevel(attribute);
-               }
+               _skillLevel[i].setSelection(skill.getLevel());
+               int adjustedLevel = Rules.getAdjustedSkillLevel(skill, character);
 
                _skillLevelAdj[i].setText("[" + adjustedLevel + "]");
                _skillCost[i].setText("(" + String.valueOf(Rules.getSkillCost(skill.getLevel())) + ")");
@@ -157,16 +145,9 @@ public class SkillsBlock extends Helper implements Enums, ModifyListener, IUIBlo
          }
       }
       for (Skill skill : skills) {
-         int adjustedLevel = skill.getLevel();
          _skillType[nextInsertIndex].setText(skill.getName());
-         _skillLevel[nextInsertIndex].setSelection(adjustedLevel);
-         if (skill.isAdjustedForSize()) {
-            adjustedLevel += bonusToHit;
-         }
-         Attribute attribute = skill.getAttributeBase();
-         if (attribute != null) {
-            adjustedLevel += character.getAttributeLevel(attribute);
-         }
+         _skillLevel[nextInsertIndex].setSelection(skill.getLevel());
+         int adjustedLevel = Rules.getAdjustedSkillLevel(skill, character);
 
          _skillLevelAdj[nextInsertIndex].setText("[" + adjustedLevel + "]");
          _skillCost[nextInsertIndex].setText("(" + String.valueOf(Rules.getSkillCost(skill.getLevel())) + ")");

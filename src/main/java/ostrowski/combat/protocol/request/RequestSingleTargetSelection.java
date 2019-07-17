@@ -126,7 +126,7 @@ public class RequestSingleTargetSelection extends SyncRequest implements Enums
          }
       }
       // sort the list of target based upon the distance from the caster:
-      Comparator< ? super Character> sortOnDistance = new Comparator<Character>() {
+      Comparator< ? super Character> sortOnDistance = new Comparator<>() {
          @Override
          public int compare(Character o1, Character o2) {
             short dist1 = Arena.getMinDistance(requestor, o1);

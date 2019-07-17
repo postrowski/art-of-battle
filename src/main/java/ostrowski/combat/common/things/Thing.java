@@ -254,7 +254,7 @@ public abstract class Thing extends SerializableObject implements Cloneable, Enu
       return true;
    }
 
-   public static final Comparator<Thing> comparatorByWeightHighToLow = new Comparator<Thing>() {
+   public static final Comparator<Thing> comparatorByWeightHighToLow = new Comparator<>() {
       @Override
       public int compare(Thing o1, Thing o2) {
          // sort highest to lowest by multiplying by -1
@@ -262,7 +262,7 @@ public abstract class Thing extends SerializableObject implements Cloneable, Enu
       }
    };
 
-   public static final Comparator<Thing> comparatorByCostHighToLow = new Comparator<Thing>() {
+   public static final Comparator<Thing> comparatorByCostHighToLow = new Comparator<>() {
       @Override
       public int compare(Thing o1, Thing o2) {
          // sort highest to lowest by multiplying by -1

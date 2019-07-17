@@ -7,10 +7,11 @@ package ostrowski.combat.common.spells.mage;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.enums.Attribute;
 import ostrowski.combat.common.enums.DamageType;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.wounds.Wound;
 import ostrowski.combat.server.Arena;
 
-public class SpellResistPain extends MageSpell
+public class SpellResistPain extends MageSpell implements ICastInBattle
 {
    public static final String NAME = "Resist Pain";
    public SpellResistPain() {
@@ -28,10 +29,6 @@ public class SpellResistPain extends MageSpell
    @Override
    public String describeSpell() {
       return "The '" + getName() + "' spell increases the subject's TOU by an amount equal to the power put into the spell.";
-   }
-   @Override
-   public Boolean isCastInBattle() {
-      return true;
    }
    @Override
    public void applyEffects(Arena arena) {

@@ -8,12 +8,13 @@ import ostrowski.combat.common.Character;
 import ostrowski.combat.common.SpecialDamage;
 import ostrowski.combat.common.html.Table;
 import ostrowski.combat.common.html.TableRow;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.priest.ExpiringPriestSpell;
 import ostrowski.combat.common.spells.priest.IPriestGroup;
 import ostrowski.combat.common.wounds.Wound;
 import ostrowski.combat.server.Arena;
 
-public class SpellIncreaseDamage extends ExpiringPriestSpell
+public class SpellIncreaseDamage extends ExpiringPriestSpell implements ICastInBattle
 {
    public static final String NAME = "Increase Damage";
    public SpellIncreaseDamage() {
@@ -58,10 +59,6 @@ public class SpellIncreaseDamage extends ExpiringPriestSpell
       }
       sb.append(table.toString());
       return sb.toString();
-   }
-   @Override
-   public Boolean isCastInBattle() {
-      return true;
    }
    @Override
    public void applyEffects(Arena arena) {

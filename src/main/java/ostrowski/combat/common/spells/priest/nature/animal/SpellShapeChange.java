@@ -10,13 +10,14 @@ import ostrowski.combat.common.enums.Attribute;
 import ostrowski.combat.common.enums.Facing;
 import ostrowski.combat.common.html.Table;
 import ostrowski.combat.common.html.TableRow;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.priest.ExpiringPriestSpell;
 import ostrowski.combat.common.spells.priest.IPriestGroup;
 import ostrowski.combat.common.things.Armor;
 import ostrowski.combat.server.Arena;
 import ostrowski.combat.server.ArenaLocation;
 
-public abstract class SpellShapeChange extends ExpiringPriestSpell
+public abstract class SpellShapeChange extends ExpiringPriestSpell implements ICastInBattle
 {
    private Race previousRace = null;
    private Armor previousArmor = null;
@@ -50,10 +51,6 @@ public abstract class SpellShapeChange extends ExpiringPriestSpell
       }
       sb.append(table.toString());
       return sb.toString();
-   }
-   @Override
-   public Boolean isCastInBattle() {
-      return true;
    }
 
 

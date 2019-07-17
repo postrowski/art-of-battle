@@ -5,5 +5,5 @@ useExtendedDice = false
 useBellCurveDice = true
 useComplexTOUDice = true
 use3DMap = false
-showChit = false
+showChit = true
 serverPort = 1777

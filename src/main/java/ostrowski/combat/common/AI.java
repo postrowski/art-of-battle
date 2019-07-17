@@ -21,6 +21,8 @@ import ostrowski.combat.common.enums.Facing;
 import ostrowski.combat.common.enums.Position;
 import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.orientations.Orientation;
+import ostrowski.combat.common.spells.IAreaSpell;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.IExpiringSpell;
 import ostrowski.combat.common.spells.IInstantaneousSpell;
 import ostrowski.combat.common.spells.IMissileSpell;
@@ -103,7 +105,7 @@ public class AI implements Enums
          }
       }
 
-      Integer selfID = new Integer(_self._uniqueID);
+      Integer selfID = Integer.valueOf(_self._uniqueID);
       Character newSelf = ServerConnection._charactersMap.get(selfID);
       if (newSelf != null) {
          _self = newSelf;
@@ -124,8 +126,6 @@ public class AI implements Enums
                   if (requestAttackStyle((RequestAttackStyle) req)) {
                      return true;
                   }
-               }
-               else if (req instanceof RequestLocation) {
                }
                else if (req instanceof RequestSingleTargetSelection) {
                   if (requestSingleTargetSelection((RequestSingleTargetSelection) req, map, display)) {
@@ -171,6 +171,41 @@ public class AI implements Enums
                   if (requestMovement((RequestMovement) req, arena, map, display, target, allowRanged)) {
                      return true;
                   }
+               }
+               else if (req instanceof RequestLocation) {
+                  // TODO: how do we target a location?
+                  // Probably an AreaSpell being completed
+                  RequestLocation reqLoc = (RequestLocation)req;
+                  Spell currentSpell = _self.getCurrentSpell(false/*eraseCurrentSpell*/);
+                  if (currentSpell instanceof IAreaSpell) {
+                     byte radius = ((IAreaSpell) currentSpell).getRadiusOfAffect();
+                     List<ArenaCoordinates> friendLocations = new ArrayList<>();
+                     List<ArenaCoordinates> enemyLocations = new ArrayList<>();
+                     for (Character character : map.getCombatants()) {
+                        if (character.isEnemy(_self)) {
+                           enemyLocations.addAll(character.getCoordinates());
+                        }
+                        else {
+                           friendLocations.addAll(character.getCoordinates());
+                        }
+                     }
+
+                     ArenaCoordinates bestCoord = null;
+                     int bestScore = 0;
+                     for (ArenaCoordinates coord : reqLoc.getSelectableCoordinates()) {
+                        // Weight a friend as being 5 times more important to avoid than an enemy to hit.
+                        int score =      scoreLocation(map, coord, radius, enemyLocations)
+                                  - (5 * scoreLocation(map, coord, radius, friendLocations));
+                        if (score > bestScore) {
+                           bestCoord = coord;
+                           bestScore = score;
+                        }
+                     }
+                     if (bestCoord != null) {
+                        return reqLoc.setAnswer(bestCoord._x, bestCoord._y);
+                     }
+                  }
+                  return false;
                }
                else if (req instanceof RequestDefense) {
                   RequestDefense reqSimple = null;
@@ -238,7 +273,7 @@ public class AI implements Enums
          }
          if (inObj instanceof Character) {
             Character newChar = (Character) inObj;
-            Integer uniqueID = new Integer(newChar._uniqueID);
+            Integer uniqueID = Integer.valueOf(newChar._uniqueID);
             if (uniqueID == _self._uniqueID) {
                _self.copyData(newChar);
             }
@@ -254,14 +289,14 @@ public class AI implements Enums
             }
             if (newChar._uniqueID != _self._uniqueID) {
                if ((_aiType== AI_Type.GOD) ||  map.canSee(newChar, _self, false/*considerFacing*/, false/*blockedByAnyStandingCharacter*/)) {
-                  HashMap<Integer, ArrayList<ArenaLocation>> myVisibilityMap = _mapToMapOfLocations.get(new Integer(_self._uniqueID));
+                  HashMap<Integer, ArrayList<ArenaLocation>> myVisibilityMap = _mapToMapOfLocations.get(Integer.valueOf(_self._uniqueID));
                   if (myVisibilityMap == null) {
                      myVisibilityMap = new HashMap<Integer, ArrayList<ArenaLocation>>();
-                     _mapToMapOfLocations.put(new Integer(_self._uniqueID), myVisibilityMap);
+                     _mapToMapOfLocations.put(Integer.valueOf(_self._uniqueID), myVisibilityMap);
                   }
                   //Rules.diag("AI character " + _self.getName() + " sees " + newChar.getName() + " at " + newChar.getHeadCoordinates());
                   ArrayList<ArenaLocation> locs = map.getLocations(newChar);
-                  myVisibilityMap.put(new Integer(newChar._uniqueID), locs);
+                  myVisibilityMap.put(Integer.valueOf(newChar._uniqueID), locs);
                   for (ArenaLocation loc : locs) {
                      loc.setKnownBy(_self._uniqueID, true);
                   }
@@ -282,9 +317,28 @@ public class AI implements Enums
       return false;
    }
 
+   private static int scoreLocation(CombatMap map, ArenaCoordinates coord,
+                                    byte radius, List<ArenaCoordinates> locations) {
+      int score = 0;
+      for (ArenaCoordinates enemyCoord : locations) {
+         short dist = ArenaCoordinates.getDistance(enemyCoord, coord);
+         if (dist <= radius) {
+            score += ((radius - dist) + 1);
+         }
+      }
+      return score;
+   }
 
    private boolean requestSingleTargetSelection(RequestSingleTargetSelection req, CombatMap map, CharacterDisplay display) {
       Character bestTarget = null;
+      List<Integer> validTargets = new ArrayList<>();
+      int[] optionIds = req.getOptionIDs();
+      boolean[] enabled = req.getEnableds();
+      for (int index = 0 ; index < optionIds.length ; index++) {
+         if (enabled[index]) {
+            validTargets.add(optionIds[index]);
+         }
+      }
       Spell currentSpell = _self.getCurrentSpell(false/*eraseCurrentSpell*/);
       if (currentSpell != null) {
          if (currentSpell.isBeneficial()) {
@@ -297,19 +351,28 @@ public class AI implements Enums
                   }
                }
             }
+            // If we couldn't target ourselves, target any ally
+            for (Character character : map.getCombatants()) {
+               if (validTargets.contains(character._uniqueID)) {
+                  if (!_self.isEnemy(character)) {
+                     if (currentSpell.canTarget(_self, character) == null) {
+                        if (currentSpell.getActiveSpellIncompatibleWith(character) == null) {
+                           ArrayList<Integer> priorities = _self.getOrderedTargetPriorites();
+                           priorities.add(0, character._uniqueID);
+                           // if we cancel, we'll get an infinite loop:
+                           //priorities.add(SyncRequest.OPT_CANCEL_ACTION);
+                           return selectAnswer(req, priorities);
+                        }
+                     }
+                  }
+               }
+            }
          }
          else {
             double bestChanceOfSuccess = 0;
             byte currentPain = _self.getPainPenalty(true/*accountForBersking*/);
             byte actionsUsed = _self.getActionsAvailableThisRound(false/*usedForDefenseOnly*/);
-            boolean[] enabled = req.getEnableds();
-            int[] optionIds = req.getOptionIDs();
-            List<Integer> validTargets = new ArrayList<>();
-            for (int index = 0 ; index < optionIds.length ; index++) {
-               if (enabled[index]) {
-                  validTargets.add(optionIds[index]);
-               }
-            }
+
             for (Character character : map.getCombatants()) {
                if (validTargets.contains(character._uniqueID)) {
                   if (_self.isEnemy(character)) {
@@ -499,7 +562,7 @@ public class AI implements Enums
       }
       outList.add(maxWound);
       outList.add(woundCount);
-      outList.add(new Integer(crippledLimb ? 1 : 0));
+      outList.add(Integer.valueOf(crippledLimb ? 1 : 0));
    }
    public boolean findPotionIndexToUse(SyncRequest action, Character target,
                                        ArrayList<RequestActionOption> requestEquipmentPriorities) {
@@ -1076,7 +1139,7 @@ public class AI implements Enums
       Spell currentSpell = _self.getCurrentSpell(false/*eraseCurrentSpell*/);
       if (currentSpell != null) {
          traceSb.append(", currentSpell=").append(currentSpell.getName());
-         if (!currentSpell.requiresTargetToCast() || (target != null)) {
+         if (!currentSpell.requiresTargetToCast() || (target != null) || (currentSpell instanceof IAreaSpell)) {
             if (currentSpell instanceof MageSpell) {
                byte desiredPower = desiredPowerForSpell(currentSpell);
                if (!currentSpell.isInate() && (currentSpell.getPower() < desiredPower)) {
@@ -1120,12 +1183,23 @@ public class AI implements Enums
                            }
                         }
                      }
+                     // This may be fixed now, the 'if (target == null)' was incorrectly 'if (target != null)', which
+                     // would have caused tooFar to always be set to true, when we have a target:
+                     //// TODO: Till I figure out how to move better, don't consider the tooFar flag,
+                     //// because it causes the AI to move 0 hexes
+                     tooFar = false;
                   }
-                  // This may be fixed now, the 'if (target == null)' was incorrectly 'if (target != null)', which
-                  // would have caused tooFar to always be set to true, when we have a target:
-                  //// TODO: Till I figure out how to move better, don't consider the tooFar flag,
-                  //// because it causes the AI to move 0 hexes
-                  tooFar = false;
+                  if (currentSpell instanceof IAreaSpell) {
+                     IAreaSpell areaSpell = (IAreaSpell) currentSpell;
+                     if (target == null) {
+                        tooFar = true;
+                     }
+                     else {
+                        int maxDist = areaSpell.getRadiusOfAffect() + currentSpell.getMaxRange(_self);
+                        short curDist = ArenaCoordinates.getDistance(_self.getHeadCoordinates(), target.getHeadCoordinates());
+                        tooFar = curDist > maxDist;
+                     }
+                  }
                   if (tooFar) {
                      traceSb.append(", tooFar");
                      // we could be too far, or too close. If we are too far, move in
@@ -2651,7 +2725,7 @@ public class AI implements Enums
       // Break the allies down into two groups: those that know where enemies are, and those that don't.
       for (Character ally : allies) {
          // Does this ally know where an enemy is?
-         HashMap<Integer, ArrayList<ArenaLocation>> allysVisibilityMap = _mapToMapOfLocations.get(new Integer(ally._uniqueID));
+         HashMap<Integer, ArrayList<ArenaLocation>> allysVisibilityMap = _mapToMapOfLocations.get(Integer.valueOf(ally._uniqueID));
          if (allysVisibilityMap != null) {
             boolean knowsAboutAnEnemy = false;
             for (Character enemy : enemies) {
@@ -2850,7 +2924,7 @@ public class AI implements Enums
             }
          }
       }
-      bestActualTNPerAction.put(0, new Integer(pd));
+      bestActualTNPerAction.put(0, Integer.valueOf(pd));
       int bestDefAction = 0;
       int extraSkillRequired = 0;
       // only care about damage that cause a wound:
@@ -3174,7 +3248,7 @@ public class AI implements Enums
       }
 
       //      // put a marker in
-      //      priorities.add(new Integer(-1234));
+      //      priorities.add(Integer.valueOf(-1234));
 
       //      // If our pain penalty is too high, we won't be attacking anyway, so retreat
       //      if (prefereRetreat) {
@@ -3183,44 +3257,44 @@ public class AI implements Enums
       //         switch (defenseActions) {
       //            case 7:
       //               if (primaryDef == DefenseOption.DEF_MAGIC_1) {
-      //                  priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_5));
-      //                  if (secondaryDef == DefenseOption.DEF_RIGHT) priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_4 | DefenseOption.DEF_RIGHT));
-      //                  if (secondaryDef == DefenseOption.DEF_LEFT) priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_4 | DefenseOption.DEF_LEFT));
+      //                  priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_5));
+      //                  if (secondaryDef == DefenseOption.DEF_RIGHT) priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_4 | DefenseOption.DEF_RIGHT));
+      //                  if (secondaryDef == DefenseOption.DEF_LEFT) priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_4 | DefenseOption.DEF_LEFT));
       //               }
-      //               priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_RIGHT | DefenseOption.DEF_LEFT | DefenseOption.DEF_MAGIC_3));
+      //               priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_RIGHT | DefenseOption.DEF_LEFT | DefenseOption.DEF_MAGIC_3));
       //            case 6:
       //               if (primaryDef == DefenseOption.DEF_MAGIC_1) {
-      //                  priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_4));
-      //                  if (secondaryDef == DefenseOption.DEF_RIGHT) priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_3 | DefenseOption.DEF_RIGHT));
-      //                  if (secondaryDef == DefenseOption.DEF_LEFT) priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_3 | DefenseOption.DEF_LEFT));
+      //                  priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_4));
+      //                  if (secondaryDef == DefenseOption.DEF_RIGHT) priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_3 | DefenseOption.DEF_RIGHT));
+      //                  if (secondaryDef == DefenseOption.DEF_LEFT) priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_3 | DefenseOption.DEF_LEFT));
       //               }
-      //               priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_RIGHT | DefenseOption.DEF_LEFT | DefenseOption.DEF_MAGIC_2));
+      //               priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_RIGHT | DefenseOption.DEF_LEFT | DefenseOption.DEF_MAGIC_2));
       //            case 5:
       //               if (primaryDef == DefenseOption.DEF_MAGIC_1) {
-      //                  priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_3));
-      //                  if (secondaryDef == DefenseOption.DEF_RIGHT) priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_2 | DefenseOption.DEF_RIGHT));
-      //                  if (secondaryDef == DefenseOption.DEF_LEFT) priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_2 | DefenseOption.DEF_LEFT));
+      //                  priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_3));
+      //                  if (secondaryDef == DefenseOption.DEF_RIGHT) priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_2 | DefenseOption.DEF_RIGHT));
+      //                  if (secondaryDef == DefenseOption.DEF_LEFT) priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_2 | DefenseOption.DEF_LEFT));
       //               }
-      //               priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_RIGHT | DefenseOption.DEF_LEFT | DefenseOption.DEF_MAGIC_1));
+      //               priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_RIGHT | DefenseOption.DEF_LEFT | DefenseOption.DEF_MAGIC_1));
       //            case 4:
       //               if (primaryDef == DefenseOption.DEF_MAGIC_1) {
-      //                  priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_2));
-      //                  if (secondaryDef == DefenseOption.DEF_RIGHT) priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_1 | DefenseOption.DEF_RIGHT));
-      //                  if (secondaryDef == DefenseOption.DEF_LEFT) priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_1 | DefenseOption.DEF_LEFT));
+      //                  priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_2));
+      //                  if (secondaryDef == DefenseOption.DEF_RIGHT) priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_1 | DefenseOption.DEF_RIGHT));
+      //                  if (secondaryDef == DefenseOption.DEF_LEFT) priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_1 | DefenseOption.DEF_LEFT));
       //               }
-      //               priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_RIGHT | DefenseOption.DEF_LEFT));
+      //               priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_RIGHT | DefenseOption.DEF_LEFT));
       //            case 3:
-      //               if (primaryDef == DefenseOption.DEF_MAGIC_1) priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_1));
-      //               if (primaryDef == DefenseOption.DEF_RIGHT) priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_RIGHT));
-      //               if (primaryDef == DefenseOption.DEF_LEFT) priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_LEFT));
-      //               if (secondaryDef == DefenseOption.DEF_MAGIC_1) priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_1));
-      //               if (secondaryDef == DefenseOption.DEF_RIGHT) priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_RIGHT));
-      //               if (secondaryDef == DefenseOption.DEF_LEFT) priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_LEFT));
-      //               priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_RIGHT));
-      //               priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_LEFT));
-      //               priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_1));
+      //               if (primaryDef == DefenseOption.DEF_MAGIC_1) priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_1));
+      //               if (primaryDef == DefenseOption.DEF_RIGHT) priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_RIGHT));
+      //               if (primaryDef == DefenseOption.DEF_LEFT) priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_LEFT));
+      //               if (secondaryDef == DefenseOption.DEF_MAGIC_1) priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_1));
+      //               if (secondaryDef == DefenseOption.DEF_RIGHT) priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_RIGHT));
+      //               if (secondaryDef == DefenseOption.DEF_LEFT) priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_LEFT));
+      //               priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_RIGHT));
+      //               priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_LEFT));
+      //               priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_1));
       //            case 2:
-      //               priorities.add(new Integer(DefenseOption.DEF_RETREAT));
+      //               priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT));
       //         }
       //         // fall into the next switch, which will re-add the same entries, but that doesn't matter
       //         // because if they are available, they will be picked up from this order first.
@@ -3234,89 +3308,89 @@ public class AI implements Enums
       //      switch (defenseActions) {
       //         case 4:
       //            if (primaryDef == DefenseOption.DEF_RIGHT) {
-      //               if (secondaryDef == DefenseOption.DEF_MAGIC_1) priorities.add(new Integer(DefenseOption.DEF_MAGIC_3 | DefenseOption.DEF_RIGHT));
-      //               if (secondaryDef == DefenseOption.DEF_DODGE) priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_RIGHT | DefenseOption.DEF_MAGIC_1));
-      //               if (secondaryDef == DefenseOption.DEF_LEFT)  priorities.add(new Integer(DefenseOption.DEF_DODGE | DefenseOption.DEF_LEFT | DefenseOption.DEF_RIGHT | DefenseOption.DEF_MAGIC_1));
+      //               if (secondaryDef == DefenseOption.DEF_MAGIC_1) priorities.add(Integer.valueOf(DefenseOption.DEF_MAGIC_3 | DefenseOption.DEF_RIGHT));
+      //               if (secondaryDef == DefenseOption.DEF_DODGE) priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_RIGHT | DefenseOption.DEF_MAGIC_1));
+      //               if (secondaryDef == DefenseOption.DEF_LEFT)  priorities.add(Integer.valueOf(DefenseOption.DEF_DODGE | DefenseOption.DEF_LEFT | DefenseOption.DEF_RIGHT | DefenseOption.DEF_MAGIC_1));
       //            }
       //            else if (primaryDef == DefenseOption.DEF_LEFT) {
-      //               if (secondaryDef == DefenseOption.DEF_MAGIC_1) priorities.add(new Integer(DefenseOption.DEF_MAGIC_3 | DefenseOption.DEF_LEFT));
-      //               if (secondaryDef == DefenseOption.DEF_DODGE) priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_LEFT | DefenseOption.DEF_MAGIC_1));
-      //               if (secondaryDef == DefenseOption.DEF_RIGHT) priorities.add(new Integer(DefenseOption.DEF_DODGE | DefenseOption.DEF_LEFT | DefenseOption.DEF_RIGHT | DefenseOption.DEF_MAGIC_1));
+      //               if (secondaryDef == DefenseOption.DEF_MAGIC_1) priorities.add(Integer.valueOf(DefenseOption.DEF_MAGIC_3 | DefenseOption.DEF_LEFT));
+      //               if (secondaryDef == DefenseOption.DEF_DODGE) priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_LEFT | DefenseOption.DEF_MAGIC_1));
+      //               if (secondaryDef == DefenseOption.DEF_RIGHT) priorities.add(Integer.valueOf(DefenseOption.DEF_DODGE | DefenseOption.DEF_LEFT | DefenseOption.DEF_RIGHT | DefenseOption.DEF_MAGIC_1));
       //            }
       //            else if (primaryDef == DefenseOption.DEF_DODGE) {
-      //               if (secondaryDef == DefenseOption.DEF_MAGIC_1) priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_2));
-      //               if (secondaryDef == DefenseOption.DEF_RIGHT) priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_RIGHT | DefenseOption.DEF_MAGIC_1));
-      //               if (secondaryDef == DefenseOption.DEF_LEFT)  priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_LEFT | DefenseOption.DEF_MAGIC_1));
+      //               if (secondaryDef == DefenseOption.DEF_MAGIC_1) priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_2));
+      //               if (secondaryDef == DefenseOption.DEF_RIGHT) priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_RIGHT | DefenseOption.DEF_MAGIC_1));
+      //               if (secondaryDef == DefenseOption.DEF_LEFT)  priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_LEFT | DefenseOption.DEF_MAGIC_1));
       //            }
       //            else if (primaryDef == DefenseOption.DEF_MAGIC_1) {
-      //               priorities.add(new Integer(DefenseOption.DEF_MAGIC_4));
-      //               if (secondaryDef == DefenseOption.DEF_DODGE) priorities.add(new Integer(DefenseOption.DEF_DODGE | DefenseOption.DEF_MAGIC_3));
-      //               if (secondaryDef == DefenseOption.DEF_RIGHT) priorities.add(new Integer(DefenseOption.DEF_MAGIC_3 | DefenseOption.DEF_RIGHT));
-      //               if (secondaryDef == DefenseOption.DEF_LEFT)  priorities.add(new Integer(DefenseOption.DEF_MAGIC_3 | DefenseOption.DEF_LEFT));
+      //               priorities.add(Integer.valueOf(DefenseOption.DEF_MAGIC_4));
+      //               if (secondaryDef == DefenseOption.DEF_DODGE) priorities.add(Integer.valueOf(DefenseOption.DEF_DODGE | DefenseOption.DEF_MAGIC_3));
+      //               if (secondaryDef == DefenseOption.DEF_RIGHT) priorities.add(Integer.valueOf(DefenseOption.DEF_MAGIC_3 | DefenseOption.DEF_RIGHT));
+      //               if (secondaryDef == DefenseOption.DEF_LEFT)  priorities.add(Integer.valueOf(DefenseOption.DEF_MAGIC_3 | DefenseOption.DEF_LEFT));
       //            }
-      //            priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_LEFT | DefenseOption.DEF_RIGHT | DefenseOption.DEF_MAGIC_2));
-      //            priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_LEFT | DefenseOption.DEF_RIGHT | DefenseOption.DEF_MAGIC_1));
-      //            priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_LEFT | DefenseOption.DEF_RIGHT));
+      //            priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_LEFT | DefenseOption.DEF_RIGHT | DefenseOption.DEF_MAGIC_2));
+      //            priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_LEFT | DefenseOption.DEF_RIGHT | DefenseOption.DEF_MAGIC_1));
+      //            priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_LEFT | DefenseOption.DEF_RIGHT));
       //         case 3:
       //            if (primaryDef == DefenseOption.DEF_RIGHT) {
-      //               if (secondaryDef == DefenseOption.DEF_MAGIC_1) priorities.add(new Integer(DefenseOption.DEF_MAGIC_2 | DefenseOption.DEF_RIGHT));
-      //               if (secondaryDef == DefenseOption.DEF_DODGE) priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_RIGHT));
-      //               if (secondaryDef == DefenseOption.DEF_LEFT)  priorities.add(new Integer(DefenseOption.DEF_DODGE | DefenseOption.DEF_LEFT | DefenseOption.DEF_RIGHT));
+      //               if (secondaryDef == DefenseOption.DEF_MAGIC_1) priorities.add(Integer.valueOf(DefenseOption.DEF_MAGIC_2 | DefenseOption.DEF_RIGHT));
+      //               if (secondaryDef == DefenseOption.DEF_DODGE) priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_RIGHT));
+      //               if (secondaryDef == DefenseOption.DEF_LEFT)  priorities.add(Integer.valueOf(DefenseOption.DEF_DODGE | DefenseOption.DEF_LEFT | DefenseOption.DEF_RIGHT));
       //            }
       //            else if (primaryDef == DefenseOption.DEF_LEFT) {
-      //               if (secondaryDef == DefenseOption.DEF_MAGIC_1) priorities.add(new Integer(DefenseOption.DEF_MAGIC_2 | DefenseOption.DEF_LEFT));
-      //               if (secondaryDef == DefenseOption.DEF_DODGE) priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_LEFT));
-      //               if (secondaryDef == DefenseOption.DEF_RIGHT) priorities.add(new Integer(DefenseOption.DEF_DODGE | DefenseOption.DEF_LEFT | DefenseOption.DEF_RIGHT));
+      //               if (secondaryDef == DefenseOption.DEF_MAGIC_1) priorities.add(Integer.valueOf(DefenseOption.DEF_MAGIC_2 | DefenseOption.DEF_LEFT));
+      //               if (secondaryDef == DefenseOption.DEF_DODGE) priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_LEFT));
+      //               if (secondaryDef == DefenseOption.DEF_RIGHT) priorities.add(Integer.valueOf(DefenseOption.DEF_DODGE | DefenseOption.DEF_LEFT | DefenseOption.DEF_RIGHT));
       //            }
       //            else if (primaryDef == DefenseOption.DEF_DODGE) {
-      //               if (secondaryDef == DefenseOption.DEF_MAGIC_1) priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_1));
-      //               if (secondaryDef == DefenseOption.DEF_RIGHT) priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_RIGHT));
-      //               if (secondaryDef == DefenseOption.DEF_LEFT)  priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_LEFT));
-      //               if (secondaryDef == DefenseOption.DEF_DODGE) priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_1));
-      //               if (secondaryDef == DefenseOption.DEF_DODGE) priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_LEFT));
-      //               if (secondaryDef == DefenseOption.DEF_DODGE) priorities.add(new Integer(DefenseOption.DEF_RETREAT | DefenseOption.DEF_RIGHT));
+      //               if (secondaryDef == DefenseOption.DEF_MAGIC_1) priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_1));
+      //               if (secondaryDef == DefenseOption.DEF_RIGHT) priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_RIGHT));
+      //               if (secondaryDef == DefenseOption.DEF_LEFT)  priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_LEFT));
+      //               if (secondaryDef == DefenseOption.DEF_DODGE) priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_MAGIC_1));
+      //               if (secondaryDef == DefenseOption.DEF_DODGE) priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_LEFT));
+      //               if (secondaryDef == DefenseOption.DEF_DODGE) priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT | DefenseOption.DEF_RIGHT));
       //            }
       //            else if (primaryDef == DefenseOption.DEF_MAGIC_1) {
-      //               if (secondaryDef == DefenseOption.DEF_MAGIC_1) priorities.add(new Integer(DefenseOption.DEF_MAGIC_3));
-      //               if (secondaryDef == DefenseOption.DEF_DODGE) priorities.add(new Integer(DefenseOption.DEF_DODGE | DefenseOption.DEF_MAGIC_2));
-      //               if (secondaryDef == DefenseOption.DEF_RIGHT) priorities.add(new Integer(DefenseOption.DEF_MAGIC_2 | DefenseOption.DEF_RIGHT));
-      //               if (secondaryDef == DefenseOption.DEF_LEFT)  priorities.add(new Integer(DefenseOption.DEF_MAGIC_2 | DefenseOption.DEF_LEFT));
+      //               if (secondaryDef == DefenseOption.DEF_MAGIC_1) priorities.add(Integer.valueOf(DefenseOption.DEF_MAGIC_3));
+      //               if (secondaryDef == DefenseOption.DEF_DODGE) priorities.add(Integer.valueOf(DefenseOption.DEF_DODGE | DefenseOption.DEF_MAGIC_2));
+      //               if (secondaryDef == DefenseOption.DEF_RIGHT) priorities.add(Integer.valueOf(DefenseOption.DEF_MAGIC_2 | DefenseOption.DEF_RIGHT));
+      //               if (secondaryDef == DefenseOption.DEF_LEFT)  priorities.add(Integer.valueOf(DefenseOption.DEF_MAGIC_2 | DefenseOption.DEF_LEFT));
       //            }
       //         case 2:
       //            if (primaryDef == DefenseOption.DEF_RIGHT) {
-      //               if (secondaryDef == DefenseOption.DEF_MAGIC_1) priorities.add(new Integer(DefenseOption.DEF_MAGIC_1 | DefenseOption.DEF_RIGHT));
-      //               if (secondaryDef == DefenseOption.DEF_DODGE) priorities.add(new Integer(DefenseOption.DEF_DODGE | DefenseOption.DEF_RIGHT));
-      //               if (secondaryDef == DefenseOption.DEF_LEFT)  priorities.add(new Integer(DefenseOption.DEF_LEFT | DefenseOption.DEF_RIGHT));
+      //               if (secondaryDef == DefenseOption.DEF_MAGIC_1) priorities.add(Integer.valueOf(DefenseOption.DEF_MAGIC_1 | DefenseOption.DEF_RIGHT));
+      //               if (secondaryDef == DefenseOption.DEF_DODGE) priorities.add(Integer.valueOf(DefenseOption.DEF_DODGE | DefenseOption.DEF_RIGHT));
+      //               if (secondaryDef == DefenseOption.DEF_LEFT)  priorities.add(Integer.valueOf(DefenseOption.DEF_LEFT | DefenseOption.DEF_RIGHT));
       //            }
       //            else if (primaryDef == DefenseOption.DEF_LEFT) {
-      //               if (secondaryDef == DefenseOption.DEF_MAGIC_1) priorities.add(new Integer(DefenseOption.DEF_MAGIC_1 | DefenseOption.DEF_LEFT));
-      //               if (secondaryDef == DefenseOption.DEF_DODGE) priorities.add(new Integer(DefenseOption.DEF_DODGE | DefenseOption.DEF_LEFT));
-      //               if (secondaryDef == DefenseOption.DEF_RIGHT) priorities.add(new Integer(DefenseOption.DEF_LEFT | DefenseOption.DEF_RIGHT));
+      //               if (secondaryDef == DefenseOption.DEF_MAGIC_1) priorities.add(Integer.valueOf(DefenseOption.DEF_MAGIC_1 | DefenseOption.DEF_LEFT));
+      //               if (secondaryDef == DefenseOption.DEF_DODGE) priorities.add(Integer.valueOf(DefenseOption.DEF_DODGE | DefenseOption.DEF_LEFT));
+      //               if (secondaryDef == DefenseOption.DEF_RIGHT) priorities.add(Integer.valueOf(DefenseOption.DEF_LEFT | DefenseOption.DEF_RIGHT));
       //            }
       //            else if (primaryDef == DefenseOption.DEF_DODGE) {
-      //               if (secondaryDef == DefenseOption.DEF_MAGIC_1) priorities.add(new Integer(DefenseOption.DEF_MAGIC_1 | DefenseOption.DEF_DODGE));
-      //               if (secondaryDef == DefenseOption.DEF_DODGE) priorities.add(new Integer(DefenseOption.DEF_RETREAT));
-      //               if (secondaryDef == DefenseOption.DEF_RIGHT) priorities.add(new Integer(DefenseOption.DEF_DODGE | DefenseOption.DEF_RIGHT));
-      //               if (secondaryDef == DefenseOption.DEF_LEFT)  priorities.add(new Integer(DefenseOption.DEF_DODGE | DefenseOption.DEF_LEFT));
+      //               if (secondaryDef == DefenseOption.DEF_MAGIC_1) priorities.add(Integer.valueOf(DefenseOption.DEF_MAGIC_1 | DefenseOption.DEF_DODGE));
+      //               if (secondaryDef == DefenseOption.DEF_DODGE) priorities.add(Integer.valueOf(DefenseOption.DEF_RETREAT));
+      //               if (secondaryDef == DefenseOption.DEF_RIGHT) priorities.add(Integer.valueOf(DefenseOption.DEF_DODGE | DefenseOption.DEF_RIGHT));
+      //               if (secondaryDef == DefenseOption.DEF_LEFT)  priorities.add(Integer.valueOf(DefenseOption.DEF_DODGE | DefenseOption.DEF_LEFT));
       //            }
       //            else if (primaryDef == DefenseOption.DEF_MAGIC_1) {
-      //               if (secondaryDef == DefenseOption.DEF_MAGIC_1) priorities.add(new Integer(DefenseOption.DEF_MAGIC_2));
-      //               if (secondaryDef == DefenseOption.DEF_DODGE) priorities.add(new Integer(DefenseOption.DEF_MAGIC_1 | DefenseOption.DEF_DODGE));
-      //               if (secondaryDef == DefenseOption.DEF_RIGHT) priorities.add(new Integer(DefenseOption.DEF_MAGIC_1 | DefenseOption.DEF_RIGHT));
-      //               if (secondaryDef == DefenseOption.DEF_LEFT)  priorities.add(new Integer(DefenseOption.DEF_MAGIC_1 | DefenseOption.DEF_LEFT));
+      //               if (secondaryDef == DefenseOption.DEF_MAGIC_1) priorities.add(Integer.valueOf(DefenseOption.DEF_MAGIC_2));
+      //               if (secondaryDef == DefenseOption.DEF_DODGE) priorities.add(Integer.valueOf(DefenseOption.DEF_MAGIC_1 | DefenseOption.DEF_DODGE));
+      //               if (secondaryDef == DefenseOption.DEF_RIGHT) priorities.add(Integer.valueOf(DefenseOption.DEF_MAGIC_1 | DefenseOption.DEF_RIGHT));
+      //               if (secondaryDef == DefenseOption.DEF_LEFT)  priorities.add(Integer.valueOf(DefenseOption.DEF_MAGIC_1 | DefenseOption.DEF_LEFT));
       //            }
       //         case 1:
-      //            if (primaryDef == DefenseOption.DEF_RIGHT) priorities.add(new Integer(DefenseOption.DEF_RIGHT));
-      //            else if (primaryDef == DefenseOption.DEF_LEFT) priorities.add(new Integer(DefenseOption.DEF_LEFT));
-      //            else if (primaryDef == DefenseOption.DEF_DODGE) priorities.add(new Integer(DefenseOption.DEF_DODGE));
-      //            else if (primaryDef == DefenseOption.DEF_MAGIC_1) priorities.add(new Integer(DefenseOption.DEF_MAGIC_1));
+      //            if (primaryDef == DefenseOption.DEF_RIGHT) priorities.add(Integer.valueOf(DefenseOption.DEF_RIGHT));
+      //            else if (primaryDef == DefenseOption.DEF_LEFT) priorities.add(Integer.valueOf(DefenseOption.DEF_LEFT));
+      //            else if (primaryDef == DefenseOption.DEF_DODGE) priorities.add(Integer.valueOf(DefenseOption.DEF_DODGE));
+      //            else if (primaryDef == DefenseOption.DEF_MAGIC_1) priorities.add(Integer.valueOf(DefenseOption.DEF_MAGIC_1));
       //         case 0:
       //      }
       //      if (defenseActions > 0) {
       //         // make sure we didn't miss any:
-      //         priorities.add(new Integer(DefenseOption.DEF_DODGE));
-      //         priorities.add(new Integer(DefenseOption.DEF_RIGHT));
-      //         priorities.add(new Integer(DefenseOption.DEF_LEFT));
+      //         priorities.add(Integer.valueOf(DefenseOption.DEF_DODGE));
+      //         priorities.add(Integer.valueOf(DefenseOption.DEF_RIGHT));
+      //         priorities.add(Integer.valueOf(DefenseOption.DEF_LEFT));
       //      }
       priorities.add(new DefenseOptions(DefenseOption.DEF_PD));
       List<Integer> byIds = new ArrayList<>();
@@ -3737,10 +3811,10 @@ public class AI implements Enums
    }
 
    private Character selectTarget(CharacterDisplay display, CombatMap map, boolean allowRangedAllack) {
-      HashMap<Integer, ArrayList<ArenaLocation>> myVisibilityMap = _mapToMapOfLocations.get(new Integer(_self._uniqueID));
+      HashMap<Integer, ArrayList<ArenaLocation>> myVisibilityMap = _mapToMapOfLocations.get(Integer.valueOf(_self._uniqueID));
       if (myVisibilityMap == null) {
          myVisibilityMap = new HashMap<>();
-         _mapToMapOfLocations.put(new Integer(_self._uniqueID), myVisibilityMap);
+         _mapToMapOfLocations.put(Integer.valueOf(_self._uniqueID), myVisibilityMap);
       }
       boolean canAttackUnseenTargets = (_aiType == AI_Type.GOD);
       Character target = null;
@@ -3779,7 +3853,7 @@ public class AI implements Enums
 
                         if (!canAttackUnseenTargets) {
                            // If we haven't seen this enemy, don't raise his/her priority
-                           if (myVisibilityMap.get(new Integer(combatantJ._uniqueID)) == null) {
+                           if (myVisibilityMap.get(Integer.valueOf(combatantJ._uniqueID)) == null) {
                               continue;
                            }
                         }
@@ -3823,7 +3897,7 @@ public class AI implements Enums
       if (updateList) {
          ArrayList<Integer> orderedTargetIds = new ArrayList<>();
          for (int i = 0; i < (_targets.size() - 1); i++) {
-            orderedTargetIds.add(new Integer(_targets.get(i)._uniqueID));
+            orderedTargetIds.add(Integer.valueOf(_targets.get(i)._uniqueID));
          }
          _self.setTargetPriorities(orderedTargetIds);
          // send a request back to the server changing our target priorities,
@@ -3833,7 +3907,7 @@ public class AI implements Enums
       }
       if (!canAttackUnseenTargets) {
          // If we haven't seen this enemy, don't attack him
-         if ((target != null) && (myVisibilityMap.get(new Integer(target._uniqueID)) == null)) {
+         if ((target != null) && (myVisibilityMap.get(Integer.valueOf(target._uniqueID)) == null)) {
             target = null;
          }
       }
@@ -3862,7 +3936,7 @@ public class AI implements Enums
          return 1000;
       }
       boolean targetVisible = true;
-      ArrayList<ArenaLocation> targetLocs = myTargetLocations.get(new Integer(target._uniqueID));
+      ArrayList<ArenaLocation> targetLocs = myTargetLocations.get(Integer.valueOf(target._uniqueID));
       if (targetLocs == null) {
          // we don't know where this character is
          if (!canAttackUnseenTargets) {
@@ -3870,7 +3944,7 @@ public class AI implements Enums
          }
          // GOD AIs always know where a target is:
          targetLocs = map.getLocations(target);
-         myTargetLocations.put(new Integer(target._uniqueID), targetLocs);
+         myTargetLocations.put(Integer.valueOf(target._uniqueID), targetLocs);
          targetVisible = false;
       }
       ArenaCoordinates targetCoord = targetLocs.get(0);
@@ -4050,7 +4124,7 @@ public class AI implements Enums
          if (spell.getCaster() == null) {
             spell.setCaster(_self);
          }
-         if (spell.isCastInBattle()) {
+         if (spell instanceof ICastInBattle) {
             byte time = spell.getIncantationTime();
             if (spell instanceof MageSpell) {
                time += desiredPowerForSpell(spell);
@@ -4071,11 +4145,21 @@ public class AI implements Enums
                      weight = 1;
                   }
                   else if (spell instanceof ostrowski.combat.common.spells.mage.SpellFireball) {
-                     weight = 1;
+                     if ((myWeap != null) && myWeap.getName().contains("Fireball spell")) {
+                        weight = -1;
+                     }
+                     else {
+                        weight = 1;
+                     }
                   }
                   else if ( (spell instanceof ostrowski.combat.common.spells.mage.SpellFlamingWeapon) &&
                            !(spell instanceof ostrowski.combat.common.spells.mage.SpellFlamingMissileWeapon)) {
-                     weight = 1;
+                     if ((myWeap != null) && myWeap.getName().contains("Fireball spell")) {
+                        weight = -1;
+                     }
+                     else {
+                        weight = 1;
+                     }
                   }
                   else if (spell instanceof ostrowski.combat.common.spells.mage.SpellStrength) {
                      weight = 1;
@@ -4143,12 +4227,14 @@ public class AI implements Enums
                   }
 
                   if (spell instanceof ostrowski.combat.common.spells.mage.SpellFlamingWeapon) {
-                     Weapon weap = _self.getWeapon();
-                     if (weap == null) {
+                     if (myWeap == null) {
+                        continue;
+                     }
+                     if (myWeap.getName().contains("Fireball spell")) {
                         continue;
                      }
                      boolean isForMissiles = (spell instanceof ostrowski.combat.common.spells.mage.SpellFlamingMissileWeapon);
-                     if (isForMissiles != weap.isMissileWeapon()) {
+                     if (isForMissiles != myWeap.isMissileWeapon()) {
                         continue;
                      }
                   }
@@ -4247,7 +4333,7 @@ public class AI implements Enums
                }
                else {
                   if (target != null) {
-                     if (spell instanceof IMissileSpell) {
+                     if ((spell instanceof IMissileSpell) || (spell instanceof IAreaSpell)) {
                         if (target._targetID == _self._uniqueID) {
                            short movementDist = (short) (target.getMovementRate() * time);
                            short distanceAtCastTime = (short) (distance - movementDist);

@@ -9,12 +9,13 @@ import ostrowski.combat.common.DiceSet;
 import ostrowski.combat.common.Rules;
 import ostrowski.combat.common.enums.DamageType;
 import ostrowski.combat.common.enums.DieType;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.IMissileSpell;
 import ostrowski.combat.common.things.MissileWeapon;
 import ostrowski.combat.common.weaponStyles.WeaponStyleAttackRanged;
 
 
-public abstract class MissileMageSpell extends MageSpell implements IMissileSpell
+public abstract class MissileMageSpell extends MageSpell implements IMissileSpell, ICastInBattle
 {
    byte _damageBase;
    DieType _damageDieType;
@@ -49,10 +50,6 @@ public abstract class MissileMageSpell extends MageSpell implements IMissileSpel
               "<br/>The damage done by the missile is " + _damageBase + " + " + _damagePerPower +"*(spell power) + " +
               DiceSet.getSingleDie(_damageDieType).toString() + " in " + _damageType.shortname + " damage." +
               " If the caster is larger or smaller than human, the caster's racial build adjustment is added to the damage done.";
-   }
-   @Override
-   public Boolean isCastInBattle() {
-      return true;
    }
 
    @Override

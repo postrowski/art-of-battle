@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 
+import ostrowski.DebugBreak;
 import ostrowski.combat.common.Race.Gender;
 import ostrowski.combat.common.enums.Enums;
 import ostrowski.combat.common.enums.Facing;
@@ -38,6 +39,7 @@ import ostrowski.combat.common.things.Weapon;
 import ostrowski.combat.common.things.Wing;
 import ostrowski.combat.common.weaponStyles.WeaponStyleAttack;
 import ostrowski.combat.protocol.request.RequestAction;
+import ostrowski.combat.protocol.request.RequestLocation;
 import ostrowski.combat.protocol.request.RequestMovement;
 import ostrowski.combat.server.ArenaCoordinates;
 import ostrowski.combat.server.ArenaLocation;
@@ -70,12 +72,27 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
    private final GLView                                 _view;
    private final Display                                _display;
    private final HashMap<ArenaLocation, TexturedObject> _locationToObjectMap = new HashMap<>();
-   private boolean                                _setZoomOnLoad;
+   private boolean                                      _setZoomOnLoad;
    private final HashMap<HumanBody, ArenaLocation>      _mouseOverBodies     = new HashMap<>();
    private final HashMap<String, Texture> _textureByRaceName = new HashMap<>();
 
+   List<Character>             _watchedCharacters      = new ArrayList<>();
+   HashMap<Integer, HumanBody> _characterIdToHumanBody = new HashMap<>();
+   HashMap<Integer, ObjHex>    _characterIdToObjHex    = new HashMap<>();
+
+   Semaphore                    _lock_animationsPending   = new Semaphore("_lock_animationsPending", CombatSemaphore.CLASS_MAPWIDGET3D_animationsPending);
+   Semaphore                    _lock_animatedObjects     = new Semaphore("_lock_animatedObjects", CombatSemaphore.CLASS_MAPWIDGET3_animatedObjects);
+   Semaphore                    _lock_locationToObjectMap = new Semaphore("_lock_locationToObjectMap", CombatSemaphore.CLASS_MAPWIDGET3_locationToObjectMap);
+   private final ArrayList<HumanBody> _animationsPending = new ArrayList<>();
+   private final ArrayList<HumanBody> _animatedObjects   = new ArrayList<>();
+   Thread                       _animationThread   = null;
+
+   private final transient MonitoredObject  _monitoredObj  = new MonitoredObject("MapWidget3D");
+   private final transient MonitoringObject _monitoringObj = new MonitoringObject("MapWidget3D");
+
+
    public MapWidget3D(Composite parent) {
-      _view = new GLView(parent);
+      _view = new GLView(parent, true/*withControls*/);
       Canvas canvas = _view.getCanvas();
       canvas.addKeyListener(this);
       canvas.getParent().addKeyListener(this);
@@ -110,13 +127,6 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
    public void allowDrag(boolean allow) {
       _view.allowDrag(allow);
    }
-
-   Semaphore                    _lock_animationsPending   = new Semaphore("_lock_animationsPending", CombatSemaphore.CLASS_MAPWIDGET3D_animationsPending);
-   Semaphore                    _lock_animatedObjects     = new Semaphore("_lock_animatedObjects", CombatSemaphore.CLASS_MAPWIDGET3_animatedObjects);
-   Semaphore                    _lock_locationToObjectMap = new Semaphore("_lock_locationToObjectMap", CombatSemaphore.CLASS_MAPWIDGET3_locationToObjectMap);
-   private final ArrayList<HumanBody> _animationsPending = new ArrayList<>();
-   private final ArrayList<HumanBody> _animatedObjects   = new ArrayList<>();
-   Thread                       _animationThread   = null;
 
    public void checkAnimation() {
       if (_animationThread != null) {
@@ -236,6 +246,13 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
    }
 
    @Override
+   public void requestLocation(RequestLocation locationMovement) {
+      super.requestLocation(locationMovement);
+      setOpacityOfAllHexes();
+      _view.setWatchMouseMove(true);
+   }
+
+   @Override
    public void setSelectableHexes(ArrayList<ArenaCoordinates> selectableHexes) {
       super.setSelectableHexes(selectableHexes);
       setOpacityOfAllHexes();
@@ -294,50 +311,25 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
    }
 
    private static Terrain getMapTerrainForLocation(ArenaLocation loc) {
-      if (loc.getTerrain() == TerrainType.BUSHES) {
-         return Terrain.BUSH;
+      switch (loc.getTerrain()) {
+         case BUSHES:        return Terrain.BUSH;
+         case DENSE_BUSH:    return Terrain.BUSH_DENSE;
+         case DIRT:          return Terrain.DIRT;
+         case FLOOR:         return Terrain.MARBLE;
+         case GRASS:         return Terrain.GRASS;
+         case GRAVEL:        return Terrain.GRAVEL;
+         case ICE:           return Terrain.ICE;
+         case MUD:           return Terrain.MUD;
+         case SOLID_ROCK:    return Terrain.ROCK;
+         case TREE_TRUNK:    return Terrain.TREE;
+         case WATER:         return Terrain.WATER;
+         case WATER_DEEP:    return Terrain.WATER_DEEP;
+         case WATER_SHALLOW: return Terrain.WATER_SHALLOW;
+         case PAVERS:        return Terrain.PAVERS;
+//         case FUTURE_1:      return Terrain.RESERVED1;
+//         case FUTURE_2:      return Terrain.RESERVED2;
       }
-      if (loc.getTerrain() == TerrainType.DENSE_BUSH) {
-         return Terrain.BUSH_DENSE;
-      }
-      if (loc.getTerrain() == TerrainType.DIRT) {
-         return Terrain.DIRT;
-      }
-      if (loc.getTerrain() == TerrainType.FLOOR) {
-         return Terrain.MARBLE;
-      }
-      if (loc.getTerrain() == TerrainType.GRASS) {
-         return Terrain.GRASS;
-      }
-      if (loc.getTerrain() == TerrainType.GRAVEL) {
-         return Terrain.GRAVEL;
-      }
-      if (loc.getTerrain() == TerrainType.ICE) {
-         return Terrain.ICE;
-      }
-      if (loc.getTerrain() == TerrainType.MUD) {
-         return Terrain.MUD;
-      }
-      if (loc.getTerrain() == TerrainType.SOLID_ROCK) {
-         return Terrain.ROCK;
-      }
-      if (loc.getTerrain() == TerrainType.TREE_TRUNK) {
-         return Terrain.TREE;
-      }
-      if (loc.getTerrain() == TerrainType.WATER) {
-         return Terrain.WATER;
-      }
-      if (loc.getTerrain() == TerrainType.WATER_DEEP) {
-         return Terrain.WATER_DEEP;
-      }
-      if (loc.getTerrain() == TerrainType.WATER_SHALLOW) {
-         return Terrain.WATER_SHALLOW;
-      }
-      if (loc.getTerrain() == TerrainType.PAVERS) {
-         return Terrain.PAVERS;
-      }
-      //if (loc.getTerrain() == Enums.Terrain.FUTURE_1)      return Terrain.RESERVED1;
-      //if (loc.getTerrain() == Enums.Terrain.FUTURE_2)      return Terrain.RESERVED2;
+      DebugBreak.debugBreak();
       return Terrain.GRASS;
    }
 
@@ -498,9 +490,6 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
       }
    }
 
-   private final transient MonitoredObject  _monitoredObj  = new MonitoredObject("MapWidget3D");
-   private final transient MonitoringObject _monitoringObj = new MonitoringObject("MapWidget3D");
-
    @Override
    public String getObjectIDString() {
       return _monitoredObj.getObjectIDString();
@@ -531,24 +520,15 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
    }
 
    public String getPositionName(Position position) {
-      if (position.value == Position.CROUCHING.value) {
-         return "crouch";
+      switch (position) {
+         case CROUCHING:   return "crouch";
+         case KNEELING:    return "kneel";
+         case PRONE_BACK:  return "back";
+         case PRONE_FRONT: return "front";
+         case SITTING:     return "sit";
+         case STANDING:    return "stand";
       }
-      if (position.value == Position.KNEELING.value) {
-         return "kneel";
-      }
-      if (position.value == Position.PRONE_BACK.value) {
-         return "back";
-      }
-      if (position.value == Position.PRONE_FRONT.value) {
-         return "front";
-      }
-      if (position.value == Position.SITTING.value) {
-         return "sit";
-      }
-      if (position.value == Position.STANDING.value) {
-         return "stand";
-      }
+      DebugBreak.debugBreak();
       return "";
    }
 
@@ -573,8 +553,10 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
          });
       }
    }
-   public void monitoredObjectChangedOnUIThread(IMonitorableObject originalWatchedObject, IMonitorableObject modifiedWatchedObject, Object changeNotification,
-                                      Vector<IMonitoringObject> skipList, Diagnostics diag) {
+   public void monitoredObjectChangedOnUIThread(IMonitorableObject originalWatchedObject,
+                                                IMonitorableObject modifiedWatchedObject,
+                                                Object changeNotification,
+                                                Vector<IMonitoringObject> skipList, Diagnostics diag) {
 
       if (modifiedWatchedObject instanceof Character) {
          Character oldChr = (Character) originalWatchedObject;
@@ -683,10 +665,6 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
          });
       }
    }
-
-   List<Character>             _watchedCharacters      = new ArrayList<>();
-   HashMap<Integer, HumanBody> _characterIdToHumanBody = new HashMap<>();
-   HashMap<Integer, ObjHex>    _characterIdToObjHex    = new HashMap<>();
 
    private void addHexToMap(ArenaLocation loc) {
       boolean isVisible = (_selfID == -1) || loc.getVisible();

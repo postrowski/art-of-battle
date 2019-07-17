@@ -11,7 +11,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Dialog;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import ostrowski.combat.server.CombatServer;
@@ -20,7 +19,7 @@ import ostrowski.protocol.SyncRequest;
 public class DieRoll extends Dialog implements KeyListener, FocusListener, ControlListener
 {
    public final Shell        _shell;
-   RollingDie                _rollingDie = null;
+   private StatusChit2       _rollingDie = null;
    private final SyncRequest _req;
    private Point             _currentLoc;
 
@@ -30,14 +29,12 @@ public class DieRoll extends Dialog implements KeyListener, FocusListener, Contr
       _req = req;
 
       _shell = new Shell(parent, SWT.DIALOG_TRIM | checkStyle(style));
-      _shell.setText(getText());
-      _shell.setLayout(new GridLayout(2/*numColumns*/, false/*makeColumnsEqualWidth*/));
+      GridLayout layout = new GridLayout(1/*numColumns*/, false/*makeColumnsEqualWidth*/);
+      _shell.setLayout(layout);
       _shell.addFocusListener(this);
       if (_rollingDie == null) {
-         _rollingDie = new RollingDie(_shell, 0);//SWT.MODELESS | SWT.NO_TRIM | SWT.NO_FOCUS);
+         _rollingDie = new StatusChit2(_shell, 0);//SWT.MODELESS | SWT.NO_TRIM | SWT.NO_FOCUS);
       }
-
-      new Label(_shell, SWT.CENTER).setImage(_shell.getDisplay().getSystemImage(checkImageStyle(style)));
 
       Composite body = new Composite(_shell, SWT.NONE);
       body.addFocusListener(this);

@@ -18,8 +18,9 @@ public enum AI_Type {
    }
    public final String name;
    public static AI_Type getByString(String name) {
-      if (name.startsWith("AI - ")) {
-         name = name.replaceAll("AI - ", "");
+      name = name.strip();
+      if (name.startsWith("AI -")) {
+         name = name.replaceAll("AI -", "").strip();
       }
       for (AI_Type type : AI_Type.values()) {
          if (type.name.equalsIgnoreCase(name)) {

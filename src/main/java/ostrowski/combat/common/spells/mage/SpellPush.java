@@ -7,11 +7,12 @@ package ostrowski.combat.common.spells.mage;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.enums.Attribute;
 import ostrowski.combat.common.enums.DamageType;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.things.LimbType;
 import ostrowski.combat.common.wounds.Wound;
 import ostrowski.combat.server.Arena;
 
-public class SpellPush extends ResistedMageSpell
+public class SpellPush extends ResistedMageSpell implements ICastInBattle
 {
    public static final String NAME = "Push";
    public SpellPush() {
@@ -31,13 +32,8 @@ public class SpellPush extends ResistedMageSpell
              " If the subject of the spell hits a wall as he is pushed back, he will take a wound that has a pain level equal"+
              " to the power put into the spell, and one wound for every two full points of power.";
    }
-   @Override
-   public Boolean isCastInBattle() {
-      return true;
-   }
 
    @Override
-
    public void applyEffects(Arena arena) {
       int distanceKnockedBack = (int) Math.pow(2, getPower());
       while (distanceKnockedBack-- > 0) {

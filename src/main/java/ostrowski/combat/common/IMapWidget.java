@@ -9,6 +9,7 @@ import org.eclipse.swt.widgets.Composite;
 
 import ostrowski.combat.common.orientations.Orientation;
 import ostrowski.combat.protocol.MapVisibility;
+import ostrowski.combat.protocol.request.RequestLocation;
 import ostrowski.combat.protocol.request.RequestMovement;
 import ostrowski.combat.server.ArenaCoordinates;
 import ostrowski.combat.server.ArenaLocation;
@@ -20,7 +21,8 @@ public interface IMapWidget extends KeyListener
    public enum MapMode {
       NONE,
       DRAG,
-      PAINT,
+      PAINT_TERRAIN,
+      PAINT_WALL,
       FILL,
       LINE;
    };
@@ -38,6 +40,7 @@ public interface IMapWidget extends KeyListener
 
    void setRouteMap(HashMap<Orientation, Orientation> newMap, ArrayList<Orientation> path, boolean b);
    void requestMovement(RequestMovement locationMovement);
+   void requestLocation(RequestLocation locationMovement);
    void setSelectableHexes(ArrayList<ArenaCoordinates> selectableCoordinates);
    void endHexSelection();
 

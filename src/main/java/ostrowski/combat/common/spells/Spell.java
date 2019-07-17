@@ -3,6 +3,7 @@ package ostrowski.combat.common.spells;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -90,11 +91,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
    }
 
    static public Spell getSpell(String name) {
-      MageSpell mageSpell = MageSpell.getSpell(name);
-      if (mageSpell != null) {
-         return mageSpell;
-      }
-      return null;
+      return MageSpell.getSpell(name);
    }
 
    public Wound channelEnergy(byte additionalPower) {
@@ -171,7 +168,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
          descriptionBuffer.append(spell.describeSpell());
          spell.describeGrimioreDescription(descriptionBuffer);
          if (!formatForRuleBook) {
-            if (!spell.isCastInBattle() && !(spell instanceof IInstantaneousSpell)) {
+            if (!(spell instanceof ICastInBattle) && !(spell instanceof IInstantaneousSpell)) {
                descriptionBuffer.append("<br/><i>No effect in this simulator</i>");
             }
          }
@@ -239,10 +236,6 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
             descriptionBuffer.append(".");
          }
       }
-   }
-
-   public Boolean isCastInBattle() {
-      return false;
    }
 
    public boolean isDefendable() {
@@ -530,11 +523,9 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
       Class< ? extends Spell> spellClass = this.getClass();
       Spell spell = null;
       try {
-         spell = spellClass.newInstance();
+         spell = spellClass.getDeclaredConstructor().newInstance();
          spell.copyDataFrom(this);
-      } catch (InstantiationException e) {
-         e.printStackTrace();
-      } catch (IllegalAccessException e) {
+      } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
          e.printStackTrace();
       }
       return spell;
@@ -611,7 +602,8 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
       else {
          castingPower = getCastingPower(attack, distanceInHexes, range, battle, sbDescription);
       }
-      if ((_target == null) && (getTargetType() != TargetType.TARGET_NONE)) {
+      if ((_target == null) && (getTargetType() != TargetType.TARGET_NONE)
+               && !(this instanceof IAreaSpell) && (((IAreaSpell) this).getTargetLocation() == null))  {
          sbDescription.append(getCasterName()).append("'s ").append(getName()).append(" spell is wasted because ").append(getCasterName()).append(" has no target!");
       }
       else {
@@ -681,11 +673,9 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
             sbDescription.append("<table border=1>");
             sbDescription.append("<tr><td>").append(castRoll).append("</td><td>Die Roll.</td></tr>");
 
-            byte skill = getCastingLevel();
-            Attribute attribute = getCastingAttribute();
-            byte attrLevel = _caster.getAttributeLevel(attribute);
-            castRoll += (skill + attrLevel);
-            sbDescription.append("<tr><td>").append(skill + attrLevel).append("</td><td>Skill + ").append(attribute.shortName).append(".</td></tr>");
+            byte adjSkillLevel = getAdjustedCastingSkillLevel(_caster);
+            castRoll += adjSkillLevel;
+            sbDescription.append("<tr><td>").append(adjSkillLevel).append("</td><td>Adj. Skill.</td></tr>");
 
             byte effectiveActions = ((MageSpell) this).getActionsUsed(attack);
             int actionsAdj = Rules.getTNBonusForActions(effectiveActions);
@@ -720,6 +710,10 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
          }
       }
       return castRoll;
+   }
+
+   public byte getAdjustedCastingSkillLevel(Character caster) {
+      return Rules.getAdjustedSkillLevel(getCastingLevel(), caster.getAttributeLevel(getCastingAttribute()));
    }
 
    protected static final int EFFECTIVENESS_FAILURE      = -5;

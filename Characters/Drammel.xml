@@ -1,6 +1,5 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="Drammel" Race="Half-Orc">
-  <Attributes DEX="1" HT="1" IQ="4" NIM="3" SOC="-3" STR="1" TOU="1"/>
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Drammel" Race="Half-Orc">
+  <Attributes DEX="1" HT="2" IQ="3" NIM="3" SOC="-3" STR="2" TOU="1"/>
   <Equipment Armor="Leather">
     <Hand Name="right hand">Quarterstaff</Hand>
     <Hand Name="left hand"/>
@@ -39,9 +38,9 @@
     <College Level="3" Name="Protection"/>
   </Colleges>
   <Advantages>
-    <Advantage Level="2" Name="Wealth"/>
-    <Advantage Level="3" Name="Magical Aptitude"/>
-    <Advantage Level="0" Name="Delusional"/>
-    <Advantage Level="0" Name="Compulsive Liar"/>
+    <Advantage LevelName="$500" Name="Wealth"/>
+    <Advantage LevelName="+4" Name="Magical Aptitude"/>
+    <Advantage LevelName="" Name="Delusional"/>
+    <Advantage LevelName="" Name="Compulsive Liar"/>
   </Advantages>
 </Character>

@@ -8,6 +8,7 @@ import ostrowski.combat.common.Character;
 import ostrowski.combat.common.html.Table;
 import ostrowski.combat.common.html.TableData;
 import ostrowski.combat.common.html.TableRow;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.priest.ExpiringPriestSpell;
 import ostrowski.combat.common.spells.priest.IPriestGroup;
 import ostrowski.combat.common.things.Hand;
@@ -16,7 +17,7 @@ import ostrowski.combat.common.things.Shield;
 import ostrowski.combat.common.things.Thing;
 import ostrowski.combat.server.Arena;
 
-public class SpellMagicShield extends ExpiringPriestSpell
+public class SpellMagicShield extends ExpiringPriestSpell implements ICastInBattle
 {
    public static final String NAME = "Magic Shield";
    public SpellMagicShield() {
@@ -53,11 +54,6 @@ public class SpellMagicShield extends ExpiringPriestSpell
          return shield._name + " (PD " + shield._passiveDefense + ")";
       }
       return "";
-   }
-
-   @Override
-   public Boolean isCastInBattle() {
-      return true;
    }
 
    @Override

@@ -6,9 +6,10 @@ package ostrowski.combat.common.spells.mage;
 
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.enums.Attribute;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.server.Arena;
 
-public class SpellWeaken extends ResistedMageSpell
+public class SpellWeaken extends ResistedMageSpell implements ICastInBattle
 {
    public static final String NAME = "Weaken";
    public SpellWeaken() {
@@ -29,10 +30,6 @@ public class SpellWeaken extends ResistedMageSpell
       return "The '" + getName() + "' spell decreases the subject's STR by an amount equal to the power put into the spell." +
              " This will affect the damage done with weapons, and may put the subject into a higher encumbrance level." +
              " Subject that use bows made for their original strength, will find that they are no longer strong enough to draw their own bow!";
-   }
-   @Override
-   public Boolean isCastInBattle() {
-      return true;
    }
 
    @Override

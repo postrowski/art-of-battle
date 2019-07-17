@@ -14,12 +14,13 @@ import ostrowski.combat.common.Character;
 import ostrowski.combat.common.SpecialDamage;
 import ostrowski.combat.common.html.Table;
 import ostrowski.combat.common.html.TableRow;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.things.Limb;
 import ostrowski.combat.common.things.LimbType;
 import ostrowski.combat.common.things.Weapon;
 import ostrowski.combat.server.Arena;
 
-public class SpellFlamingWeapon extends ExpiringMageSpell
+public class SpellFlamingWeapon extends ExpiringMageSpell implements ICastInBattle
 {
    public static final String NAME               = "Flaming Weapon";
    public boolean             _forMissileWeapons = false;
@@ -77,11 +78,6 @@ public class SpellFlamingWeapon extends ExpiringMageSpell
          sb.append(pain).append(" pain.)");
       }
       return sb.toString();
-   }
-
-   @Override
-   public Boolean isCastInBattle() {
-      return true;
    }
 
    @Override

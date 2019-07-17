@@ -8,6 +8,7 @@ import ostrowski.combat.common.Character;
 import ostrowski.combat.common.SpecialDamage;
 import ostrowski.combat.common.enums.DamageType;
 import ostrowski.combat.common.enums.DieType;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.things.Hand;
 import ostrowski.combat.common.things.LimbType;
 import ostrowski.combat.common.things.Thing;
@@ -17,7 +18,7 @@ import ostrowski.combat.common.weaponStyles.WeaponStyleAttack;
 import ostrowski.combat.common.weaponStyles.WeaponStyleAttackThrown;
 import ostrowski.combat.server.Arena;
 
-public class SpellFireball extends MageSpell
+public class SpellFireball extends MageSpell implements ICastInBattle
 {
    public static final String NAME = "Fireball";
    public SpellFireball() {
@@ -52,10 +53,6 @@ public class SpellFireball extends MageSpell
               "<br/>Nearby targets also take damage; for every hex away from the blast center, characters take 5" +
               " points less damage. Bonus damage does not apply to nearby targets." +
               "<br/>The range base for throwing the Fireball is 10.";
-   }
-   @Override
-   public Boolean isCastInBattle() {
-      return true;
    }
 
    @Override

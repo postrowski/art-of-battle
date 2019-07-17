@@ -17,8 +17,15 @@ import ostrowski.util.SemaphoreAutoLocker;
 public class RequestLocation extends SyncRequest
 {
    ArrayList<ArenaCoordinates> _selectableCoordinates;
+   String _cursorResourceName;
 
    public RequestLocation() {
+   }
+   public RequestLocation(String cursorResourceName) {
+      _cursorResourceName = cursorResourceName;
+   }
+   public String getCursorResourceName() {
+      return _cursorResourceName;
    }
    public boolean setAnswer(short xLoc, short yLoc) {
       for (int i=0 ; i<_selectableCoordinates.size() ; i++) {
@@ -73,6 +80,11 @@ public class RequestLocation extends SyncRequest
       }
       return true;
    }
+   @Override
+   public int getAnswerIndex() {
+      return _answer.getIntValue();
+   }
+
    public ArenaCoordinates getAnswerCoordinates() {
       return _selectableCoordinates.get(getAnswerIndex());
    }
@@ -80,6 +92,7 @@ public class RequestLocation extends SyncRequest
    public void serializeFromStream(DataInputStream in) {
       super.serializeFromStream(in);
       try {
+         _cursorResourceName = readString(in);
          _selectableCoordinates = new ArrayList<>();
          int size = in.readInt();
          for (int i=0 ; i<size ; i++) {
@@ -95,6 +108,7 @@ public class RequestLocation extends SyncRequest
    public void serializeToStream(DataOutputStream out) {
       super.serializeToStream(out);
       try {
+         writeToStream(_cursorResourceName, out);
          writeToStream(_selectableCoordinates.size(), out);
          for (int i=0 ; i<_selectableCoordinates.size(); i++) {
             writeToStream(_selectableCoordinates.get(i)._x, out);

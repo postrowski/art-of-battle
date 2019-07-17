@@ -466,6 +466,45 @@ public class Weapon extends Thing {
        });
    }
 
+   public static void main(String[] args) {
+      StringBuilder sb = new StringBuilder();
+      sb.append("[");
+      for (SizelessWeapon weapon : _weaponsList) {
+         sb.append("{");
+         sb.append(" name: '").append(weapon.getName());
+         sb.append("', weight: ").append(weapon.getWeight());
+         sb.append(", cost: ").append(weapon.getCost());
+         sb.append(", styles: [");
+         boolean first = true;
+         for (WeaponStyleAttack style : weapon.getAttackStyles()) {
+            if (!first) {
+               sb.append(",\n       ");
+            }
+            first = false;
+            sb.append("{ name: '").append(style.getName());
+            sb.append("', skill: '").append(style.getSkillType().getName());
+            sb.append("', minSkill: ").append(style.getMinSkill());
+            sb.append(", skillPenalty: ").append(style.getSkillPenalty());
+            sb.append(", speedBase: ").append(style.getSpeedBase());
+            sb.append(", slowStr: ").append(style.getSlowStr());
+            sb.append(", fastStr: ").append(style.getFastStr());
+            sb.append(", hands: ").append(style.getHandsRequired());
+            sb.append(", attackType: '").append(style.getAttackType().toString().charAt(0) + style.getAttackType().toString().toLowerCase().substring(1));
+            sb.append("', damageDie: '").append(style.getVarianceDie());
+            sb.append("', damageBonus: ").append(style.getDamage((byte) 0));
+            sb.append(", damageType: '").append(style.getDamageType().shortname);
+            sb.append("', minRange: ").append(style.getMinRange());
+            sb.append(", maxRange: ").append(style.getMaxRange());
+            sb.append(", parryPenalty: ").append(style.getParryPenalty());
+            sb.append("}");
+         }
+         sb.append("]},\n");
+      }
+      sb.append("]");
+      String results = sb.toString();
+      System.out.println(results);
+   }
+
    public static List<String> getWeaponNames(boolean includeNaturalWeapons) {
       ArrayList<String> list = new ArrayList<>();
       for (SizelessWeapon element : _weaponsList) {
@@ -642,7 +681,12 @@ public class Weapon extends Thing {
                   }
                   if (colSpan>1) {
                      if (data[r][c].length() > 6) {
-                        sb.append(" bgcolor=#FFD8D8");
+                        if (data[r][c].contains(" = 1.5")) {
+                           sb.append(" bgcolor=#BBFFB8");
+                        }
+                        else {
+                           sb.append(" bgcolor=#FFD8D8");
+                        }
                      }
                      sb.append(" colspan=").append(colSpan);
                   }

@@ -32,6 +32,7 @@ import ostrowski.combat.common.enums.Enums;
 import ostrowski.combat.common.enums.Position;
 import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.orientations.Orientation;
+import ostrowski.combat.common.spells.IAreaSpell;
 import ostrowski.combat.common.spells.Spell;
 import ostrowski.combat.common.spells.priest.PriestMissileSpell;
 import ostrowski.combat.common.spells.priest.PriestSpell;
@@ -251,6 +252,9 @@ public class Battle extends Thread implements Enums
 
    // return 'true' if any actions remains to be spent by any character
    private boolean executeRound(ArrayList<Character> activeCombatants, ArrayList<Character> allCombatants) throws BattleTerminatedException {
+
+      _arena.getCombatMap().onNewRound(this);
+
       // Put all the combatants into a List of Lists. Characters in the same inner List
       // will act at the same time as each other. The outer list will be gone through
       // in order to determine who acts when.
@@ -396,7 +400,7 @@ public class Battle extends Thread implements Enums
                HashMap<Character, ArrayList<Wound>> wounds = new HashMap<>();
                HashMap<Character, ArrayList<Spell>> spells = new HashMap<>();
                applyActions(results, wounds, spells);
-               // Now that all simultaneous attack have been resolved, apply any wound damage
+               // Now that all simultaneous attacks have been resolved, apply any wound damage
                if (wounds.size() > 0) {
                   applyWounds(wounds);
                }
@@ -417,6 +421,8 @@ public class Battle extends Thread implements Enums
             }
          }
       }
+      _arena.getCombatMap().onEndRound(this);
+
       return charactersWithActionsRemaining;
    }
 
@@ -517,6 +523,10 @@ public class Battle extends Thread implements Enums
                if (!spellResolved) {
                   Spell spell = actor.getCurrentSpell(true/*eraseCurrentSpell*/);
                   spell.setTarget(target);
+                  if (spell instanceof IAreaSpell) {
+                     ArenaCoordinates coord = action._locationSelection.getAnswerCoordinates();
+                     ((IAreaSpell) spell).setTargetLocation(_arena.getLocation(coord), _arena);
+                  }
                   spell.completeSpell();
                   spell.resolveSpell(action, null/*defense*/, spells, wounds, this);
                }
@@ -805,8 +815,10 @@ public class Battle extends Thread implements Enums
             spell.applySpell(target, _arena);
          }
          boolean targetConsciousAfterWound = target.getCondition().isConscious() && target.getCondition().isAlive();
-         if (targetConsciousBeforeWound && !targetConsciousAfterWound && (target.getWounds() >= Rules.getUnconsciousWoundLevel(target.getAttributeLevel(Attribute.Toughness)))) {
-            _arena.sendMessageTextToAllClients(target.getName() + " falls unconscious due to " + target.getHisHer() + " wounds.", false/*popUp*/);
+         if (targetConsciousBeforeWound && !targetConsciousAfterWound &&
+             (target.getWounds() >= Rules.getUnconsciousWoundLevel(target.getAttributeLevel(Attribute.Toughness)))) {
+            _arena.sendMessageTextToAllClients(target.getName() + " falls unconscious due to " + target.getHisHer() +
+                                               " wounds.", false/*popUp*/);
          }
          // add the new locations of the target to the list of locations
          // that must be redrawn
@@ -825,8 +837,10 @@ public class Battle extends Thread implements Enums
             target.applyWound(wound, _arena);
          }
          boolean targetConsciousAfterWound = target.getCondition().isConscious() && target.getCondition().isAlive();
-         if (targetConsciousBeforeWound && !targetConsciousAfterWound && (target.getWounds() >= Rules.getUnconsciousWoundLevel(target.getAttributeLevel(Attribute.Toughness)))) {
-            _arena.sendMessageTextToAllClients(target.getName() + " falls unconscious due to " + target.getHisHer() + " wounds.", false/*popUp*/);
+         if (targetConsciousBeforeWound && !targetConsciousAfterWound &&
+             (target.getWounds() >= Rules.getUnconsciousWoundLevel(target.getAttributeLevel(Attribute.Toughness)))) {
+            _arena.sendMessageTextToAllClients(target.getName() + " falls unconscious due to " + target.getHisHer() +
+                                               " wounds.", false/*popUp*/);
          }
          Collection<ArenaCoordinates> locationsToRedraw = new ArrayList<>();
          // add the locations of the target to the list of locations
@@ -939,17 +953,15 @@ public class Battle extends Thread implements Enums
       sb.append(attacker.getName()).append(" rolls ").append(dice.toString());
       int roll = dice.roll(true/*allowExplodes*/);
       sb.append(", rolling ").append(dice.getLastDieRoll());
-      byte skill = attacker.getWeaponSkill(attack.getLimb(), attackStyle, attack.isGrappleAttack(),
-                                           attack.isCounterAttack(), false/*accountForHandPenalty*/, false/*adjustForHolds*/);
+      byte adjSkill = attacker.getAdjustedWeaponSkill(attack.getLimb(), attackStyle, attack.isGrappleAttack(),
+                                                      attack.isCounterAttack(), false/*accountForHandPenalty*/, false/*adjustForHolds*/);
       SkillType skillType = attacker.getWeaponSkillType(attack.getLimb(), attackStyle,
                                                         attack.isGrappleAttack(), attack.isCounterAttack());
       sb.append("<table border=1><tr><td>").append(roll).append("</td><td>dice roll</td></tr>");
       if (Configuration.useSimpleDice() || Configuration.useBellCurveDice()) {
-         byte dex = attacker.getAttributeLevel(Attribute.Dexterity);
-         skill += dex;
-         sb.append("<tr><td>+").append(skill).append("</td><td>skill + DEX</td></tr>");
+         sb.append("<tr><td>+").append(adjSkill).append("</td><td>Adj. skill</td></tr>");
          byte actionAdjustment = Rules.getTNBonusForActions(attackActions);
-         skill += actionAdjustment;
+         adjSkill += actionAdjustment;
          sb.append("<tr><td>");
          if (actionAdjustment >= 0) {
             sb.append("+");
@@ -957,26 +969,26 @@ public class Battle extends Thread implements Enums
          sb.append(actionAdjustment).append("</td><td>").append(attackActions).append("-action attack</td></tr>");
       }
       else {
-         sb.append("<tr><td>+").append(skill).append("</td><td>skill</td></tr>");
+         sb.append("<tr><td>+").append(adjSkill).append("</td><td>skill</td></tr>");
       }
 
       if (skillPenalty != 0) {
          sb.append("<tr><td>-").append(skillPenalty).append("</td><td>skill penalty for weapon style: ").append(attackMode.getName()).append("</td></tr>");
-         skill -= skillPenalty;
+         adjSkill -= skillPenalty;
       }
       if (grapplePenalty != 0) {
          sb.append("<tr><td>-").append(grapplePenalty).append("</td><td>penalty for being held</td></tr>");
-         skill -= grapplePenalty;
+         adjSkill -= grapplePenalty;
       }
       if (positionAdjustment != 0) {
          sb.append("<tr><td>").append(positionAdjustment).append("</td><td>penalty for ").append(attacker.getPositionName()).append("</td></tr>");
-         skill += positionAdjustment;
+         adjSkill += positionAdjustment;
       }
       if (terrainAdjustment != 0) {
          sb.append("<tr><td>").append(terrainAdjustment).append("</td><td>penalty for terrain: ").append(terrainExplanation.toString()).append("</td></tr>");
-         skill += terrainAdjustment;
+         adjSkill += terrainAdjustment;
       }
-      byte result = (byte) (roll + skill);
+      byte result = (byte) (roll + adjSkill);
       // Adjustments for size are now handled in the skill and Passive Defense values directly.
       //      byte sizeDiff = (byte) (attacker.getRace().getBonusToHit() + defender.getRace().getBonusToBeHit());
       //      if (sizeDiff != 0) {
@@ -1081,7 +1093,7 @@ public class Battle extends Thread implements Enums
                else {
                   // Set this as a dual grapple attack, so we know if a retreat must alter the location of the attacker
                   attack.setDualGrappleAttack();
-                  defender.setHoldLevel(attacker, new Byte(newHoldLevel));
+                  defender.setHoldLevel(attacker, Byte.valueOf(newHoldLevel));
                   ArenaLocation attackingLimbLoc = attacker.getLimbLocation(attack.getLimb(), _arena.getCombatMap());
                   if (Arena.getShortestDistance(attackingLimbLoc, defender.getOrientation()) > 1) {
                      // Try to move the smaller character until the defender is adjacent to the attacking limb that grabbed him/her.
@@ -1674,6 +1686,7 @@ public class Battle extends Thread implements Enums
                            if (   (obj == actReq)
                                || (obj == actReq._equipmentRequest)
                                || (obj == actReq._movementRequest)
+                               || (obj == actReq._locationSelection)
                                || (obj == actReq._positionRequest)
                                || (obj == actReq._styleRequest)
                                || (obj == actReq._targetPriorities)
@@ -1694,7 +1707,7 @@ public class Battle extends Thread implements Enums
 
                                        Integer moved = movementTracker.get(actor);
                                        if (moved == null) {
-                                          moved = new Integer(0);
+                                          moved = Integer.valueOf(0);
                                        }
 
                                        if (destOrientation.equals(actor.getOrientation())) {
@@ -1713,7 +1726,7 @@ public class Battle extends Thread implements Enums
                                              if (destLimbCoord != null) {
                                                 ArenaCoordinates sourceLimbCoord = actor.getOrientation().getLimbCoordinates(limbType);
                                                 if (!destLimbCoord.sameCoordinates(sourceLimbCoord)) {
-                                                   moved = new Integer(moved.intValue() + 1);
+                                                   moved = Integer.valueOf(moved.intValue() + 1);
                                                    break;
                                                 }
                                              }

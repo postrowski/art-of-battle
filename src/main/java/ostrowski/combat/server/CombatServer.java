@@ -81,7 +81,7 @@ import ostrowski.combat.common.things.Armor;
 import ostrowski.combat.common.things.Shield;
 import ostrowski.combat.common.things.Weapon;
 import ostrowski.combat.common.wounds.WoundChart;
-import ostrowski.ui.Helper;
+import ostrowski.graphics.objects3d.Helper;
 import ostrowski.util.AnglePairDegrees;
 import ostrowski.util.ClientListener;
 import ostrowski.util.CombatSemaphore;
@@ -526,14 +526,19 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    }
 
 
+   @SuppressWarnings("deprecation")
    @Override
    protected void finalize() throws Throwable
    {
-      super.finalize();
-      if (_diag != null) {
-         _diag.endDiagnostics();
-         _diag = null;
-         System.out.println("end diagnostics called in finalize!");
+      try {
+         if (_diag != null) {
+            _diag.endDiagnostics();
+            _diag = null;
+            System.out.println("end diagnostics called in finalize!");
+         }
+      }
+      finally {
+         super.finalize();
       }
    }
 
@@ -646,7 +651,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       _tabFolder.setSelection(selectedTabIndex);
       _tabFolder.addSelectionListener(this);
 
-      // When the server starts up, dissable the pan feature of the map so you can drag a paintbrush
+      // When the server starts up, disable the pan feature of the map so you can drag a paintbrush
       // with terrain over multiple hexes at once.
       _map.allowPan(false);
       _map.setMode(IMapWidget.MapMode.NONE);
@@ -714,7 +719,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
                _combatantsButtons[team][combatant].setEnabled(true);
                _combatantsAI[team][combatant].setEnabled(false);
                _combatantsName[team][combatant].setEnabled(false);
-               _combatantsAI[team][combatant].setText(aiNames.get(0));
+               _combatantsAI[team][combatant].setText(aiNames.get(0)); // 'Off'
 
                _combatantsName[team][combatant].addSelectionListener(this);
                _combatantsName[team][combatant].addModifyListener(this);
@@ -1000,11 +1005,17 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
                if ((aiName == null) || _REMOTE_AI_NAME.equals(aiName) || _INACTIVE_AI_NAME.equals(aiName)) {
                   aiName = locExists ? _REMOTE_AI_NAME : _INACTIVE_AI_NAME;
                }
+               else {
+                  AI_Type aiType = AI_Type.getByString(aiName);
+                  if (aiType != null) {
+                     aiName = "AI - " + aiType.name;
+                  }
+               }
                if (combatantName == null) {
                   combatantName = "";
                }
                if (_combatantsAI != null) {
-                  _combatantsAI[team][curCombatantIndex].setText("AI - " + aiName);
+                  _combatantsAI[team][curCombatantIndex].setText(aiName);
                   _combatantsAI[team][curCombatantIndex].setEnabled(locExists);
                }
                if (_combatantsName != null) {
@@ -1088,9 +1099,9 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       try {
          if (e.widget == _openButton) {
             if (_openButton.getText().equals("Start Battle")) {
-               Shell shell = new Shell(_shell, SWT.DIALOG_TRIM | SWT.MODELESS);
-               shell.setText("test");
-               shell.setLayout(new GridLayout(2/*numColumns*/, false/*makeColumnsEqualWidth*/));
+//               Shell shell = new Shell(_shell, SWT.DIALOG_TRIM | SWT.MODELESS);
+//               shell.setText("test");
+//               shell.setLayout(new GridLayout(2/*numColumns*/, false/*makeColumnsEqualWidth*/));
 //               //shell.addFocusListener(this);
                openPort(true/*startup*/);
             } else { // _openButton.getText().equals("Stop Battle")
@@ -1189,8 +1200,6 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
                if (_arena != null) {
                   _arena.onPause();
                }
-//               DieRoll _dieRoll = new DieRoll(_shell, SWT.MODELESS | SWT.NO_TRIM, null);
-//               _dieRoll.open();
             }
             else {
                onPlay();
@@ -1310,35 +1319,36 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
 
    private void changeAI(byte team, byte cur) {
       // new AI engine selected
+
       String newAI = _combatantsAI[team][cur].getText();
       if (newAI.startsWith("AI - ")) {
          newAI = newAI.replace("AI - ", "");
       }
       Combo nameCombo = _combatantsName[team][cur];
-       if (_REMOTE_AI_NAME.equals(newAI) || _INACTIVE_AI_NAME.equals(newAI)) {
-          if (_map != null) {
-             CombatMap combatMap = _map.getCombatMap();
-             if (combatMap != null) {
-                combatMap.setStockCharacter(null, newAI, team, cur);
-             }
-          }
-          if (nameCombo != null) {
-             nameCombo.setText("");
-             nameCombo.setEnabled(false);
-          }
-       }
-       else {
-          if (nameCombo != null) {
-             if (_map != null) {
-                CombatMap combatMap = _map.getCombatMap();
-                if (combatMap != null) {
-                   combatMap.setStockCharacter(nameCombo.getText(), newAI, team, cur);
-                }
-             }
-             nameCombo.setEnabled(true);
-          }
-       }
-       refreshSaveButton();
+      if (_REMOTE_AI_NAME.equals(newAI) || _INACTIVE_AI_NAME.equals(newAI)) {
+         if (_map != null) {
+            CombatMap combatMap = _map.getCombatMap();
+            if (combatMap != null) {
+               combatMap.setStockCharacter(null, newAI, team, cur);
+            }
+         }
+         if (nameCombo != null) {
+            nameCombo.setText("");
+            nameCombo.setEnabled(false);
+         }
+      }
+      else {
+         if (nameCombo != null) {
+            if (_map != null) {
+               CombatMap combatMap = _map.getCombatMap();
+               if (combatMap != null) {
+                  combatMap.setStockCharacter(nameCombo.getText(), newAI, team, cur);
+               }
+            }
+            nameCombo.setEnabled(true);
+         }
+      }
+      refreshSaveButton();
    }
    public void onPlay() {
       resetPlayPauseControls();
@@ -1822,13 +1832,15 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
                }
             }
             else {
-               for (byte team=0 ; team<_combatantsButtons.length ; team++) {
-                  for (byte cur=0 ; cur<_combatantsButtons[team].length ; cur++) {
+               for (byte team=0 ; (team<_combatantsButtons.length) ; team++) {
+                  for (byte cur=0 ; (cur<_combatantsButtons[team].length) ; cur++) {
                      if (e.widget == _combatantsAI[team][cur]) {
                          changeAI(team, cur);
+                         return;
                      }
                      if (e.widget == _combatantsName[team][cur]) {
                         changeName(team, cur, false/*checkForRandom*/);
+                        return;
                      }
                   }
                }
@@ -1916,7 +1928,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       if (!getShell().isDisposed()) {
          Display display = getShell().getDisplay();
          if (!display.isDisposed()) {
-            final Object synchObject = new Integer(0);
+            final Object synchObject = Integer.valueOf(0);
             display.asyncExec(new Runnable() {
                @Override
                public void run() {

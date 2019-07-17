@@ -6,9 +6,10 @@ package ostrowski.combat.common.spells.mage;
 
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.enums.Attribute;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.server.Arena;
 
-public class SpellStrength extends MageSpell
+public class SpellStrength extends MageSpell implements ICastInBattle
 {
    public static final String NAME = "Strength";
    public SpellStrength() {
@@ -26,10 +27,6 @@ public class SpellStrength extends MageSpell
    @Override
    public String describeSpell() {
       return "The '" + getName() + "' spell increases the subject's STR by an amount equal to the power put into the spell.";
-   }
-   @Override
-   public Boolean isCastInBattle() {
-      return true;
    }
 
    @Override

@@ -8,6 +8,7 @@ import ostrowski.combat.common.Character;
 import ostrowski.combat.common.DiceSet;
 import ostrowski.combat.common.SpecialDamage;
 import ostrowski.combat.common.enums.DamageType;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.IRangedSpell;
 import ostrowski.combat.common.spells.priest.IPriestGroup;
 import ostrowski.combat.common.spells.priest.PriestSpell;
@@ -16,7 +17,7 @@ import ostrowski.combat.common.wounds.WoundChart;
 import ostrowski.combat.server.Arena;
 import ostrowski.combat.server.BattleTerminatedException;
 
-public class SpellCallLightning extends PriestSpell implements IRangedSpell
+public class SpellCallLightning extends PriestSpell implements IRangedSpell, ICastInBattle
 {
    public static final String NAME = "Call Lightning";
    public SpellCallLightning() {};
@@ -148,7 +149,7 @@ public class SpellCallLightning extends PriestSpell implements IRangedSpell
                damageDice = getCaster().adjustDieRoll(damageDice, RollType.DAMAGE_SPELL, hitCharacter/*target*/);
                int damage = damageDice.roll(true/*allowExplodes*/);
                sb.append(" Damage rolled is ").append(damageDice.toString());
-               sb.append(",rolling ").append(damageDice.getLastDieRoll());
+               sb.append(", rolling ").append(damageDice.getLastDieRoll());
                sb.append(", for a total of ").append(damage).append(" electrical damage.<br/>");
 
                byte defenderBuild = hitCharacter.getBuild(DamageType.ELECTRIC);
@@ -157,25 +158,26 @@ public class SpellCallLightning extends PriestSpell implements IRangedSpell
                sb.append(" of ").append(defenderBuild);
                if (reducedDamage < 0) {
                   sb.append(", which blocks all damage.");
-                  return;
                }
-               sb.append(", reducing the damage to ").append(reducedDamage).append("<br/>");
+               else {
+                  sb.append(", reducing the damage to ").append(reducedDamage).append("<br/>");
 
-               StringBuilder alterationExplanationBuffer = new StringBuilder();
-               Wound wound = WoundChart.getWound(reducedDamage, DamageType.ELECTRIC, hitCharacter, alterationExplanationBuffer);
-               sb.append(hitCharacter.getName()).append(" suffers the following wound:<br/>");
-               sb.append(wound.describeWound());
-               if (alterationExplanationBuffer.length() > 0) {
-                  sb.append(", which is modified by ").append(alterationExplanationBuffer.toString());
-               }
-               sb.append("<br/>");
+                  StringBuilder alterationExplanationBuffer = new StringBuilder();
+                  Wound wound = WoundChart.getWound(reducedDamage, DamageType.ELECTRIC, hitCharacter, alterationExplanationBuffer);
+                  sb.append(hitCharacter.getName()).append(" suffers the following wound:<br/>");
+                  sb.append(wound.describeWound());
+                  if (alterationExplanationBuffer.length() > 0) {
+                     sb.append(", which is modified by ").append(alterationExplanationBuffer.toString());
+                  }
+                  sb.append("<br/>");
 
-               ArrayList<Wound> woundsList = wounds.get(hitCharacter);
-               if (woundsList == null) {
-                  woundsList = new ArrayList<>();
-                  wounds.put(hitCharacter, woundsList);
+                  ArrayList<Wound> woundsList = wounds.get(hitCharacter);
+                  if (woundsList == null) {
+                     woundsList = new ArrayList<>();
+                     wounds.put(hitCharacter, woundsList);
+                  }
+                  woundsList.add(wound);
                }
-               woundsList.add(wound);
             }
          }
          arena.sendMessageTextToAllClients(sb.toString(), false/*popUp*/);
@@ -184,10 +186,6 @@ public class SpellCallLightning extends PriestSpell implements IRangedSpell
       }
    }
 
-   @Override
-   public Boolean isCastInBattle() {
-      return true;
-   }
    @Override
    public TargetType getTargetType() {
       return TargetType.TARGET_OTHER_FIGHTING;

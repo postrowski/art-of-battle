@@ -499,8 +499,9 @@ public class Rules extends DebugBreak implements Enums
       sb.append(attrTable.toString());
       sb.append("<H3>Common Ranges adjusted for attibute levels:</H3>");
       sb.append(rangeTable.toString());
-      sb.append("For levels above 20: subtract 15, and double the range (i.e. ASTR=26 for a base range of 20 yields twice that of an ASTR or 11. range of 20 adjusted for a ASTR of 11 is 33, so an ASTR of 26 would have an attribute adjust range of 66.) ");
-      sb.append(" For levels below -10: add 15, and halve the range.");
+      sb.append("For levels above 20: subtract 15, and double the range (i.e. ASTR=26 for a base range of 20 yields twice that of an ASTR or 11.");
+      sb.append("<br/>A range of 20 adjusted for a ASTR of 11 is 33, so an ASTR of 26 would have an attribute adjust range of 66.) ");
+      sb.append("<br/>For levels below -10: add 15, and halve the range.");
       sb.append("</body>");
       return sb.toString();
    }
@@ -513,13 +514,16 @@ public class Rules extends DebugBreak implements Enums
       table.addRow(header1);
       table.addRow(header2);
       header1.addTD(new TableHeader("Attribute<br/>level").setRowSpan(2));
-      header1.addTD(new TableHeader("Cost").setRowSpan(2));
+      header1.addTD(new TableHeader("Cost").setRowSpan(2).setAttribute("width", "45"));
       if (Configuration._useExtendedDice) {
          header1.addTD(new TableHeader("Dice").setColSpan(3));
       }
       if (!Configuration.useExtendedDice() && Configuration.useComplexTOUDice()) {
-         header1.addTD(new TableHeader("TOU<br/>Roll").setRowSpan(2));
-         header1.addTD(new TableHeader("Saving<br/>Throw<br/>Roll").setRowSpan(2));
+         header1.addTD(new TableHeader("Pain&nbsp;recovery<br/>roll<br/>(TOU&nbsp;attribute)").setRowSpan(2));
+      }
+      header1.addTD(new TableHeader("Maximum<br/>pain / wounds<br/>(TOU&nbsp;attribute)").setRowSpan(2));
+      if (!Configuration.useExtendedDice() && Configuration.useComplexTOUDice()) {
+         header1.addTD(new TableHeader("Saving<br/>throw<br/>roll").setRowSpan(2));
       }
       header1.addTD(new TableHeader("Max.&nbsp;weight&nbsp;for&nbsp;enc.&nbsp;level<br/>(not&nbsp;accounting&nbsp;for&nbsp;nimbleness)").setColSpan(6));
       header1.addTD(new TableHeader("Maximum<br/>bench&nbsp;press<br/>(STR&nbsp;attribute)").setRowSpan(2));
@@ -554,7 +558,11 @@ public class Rules extends DebugBreak implements Enums
          if (!Configuration.useExtendedDice() && Configuration.useComplexTOUDice()) {
             DiceSet dice = getDice(attLevel, (byte) 1/*actions*/, Attribute.Toughness);
             row.addTD(new TableData(dice));
-            dice = getDice(attLevel, (byte) 2/*actions*/, Attribute.Toughness);
+         }
+         int maxWounds = getUnconsciousWoundLevel(attLevel);
+         row.addTD(new TableData(maxWounds));
+         if (!Configuration.useExtendedDice() && Configuration.useComplexTOUDice()) {
+            DiceSet dice = getDice(attLevel, (byte) 2/*actions*/, Attribute.Toughness);
             row.addTD(new TableData(dice));
          }
          for (byte enc = 0; enc < 6; enc++) {
@@ -584,20 +592,25 @@ public class Rules extends DebugBreak implements Enums
       table.setClassName("doubleRow");
       TableRow header1 = new TableRow(-1);
       table.addRow(header1);
-      header1.addTD(new TableHeader("Attribute level <br/> (ASTR or IQ)").setRowSpan(2));
+      header1.addTD(new TableHeader("Attribute level <br/> (ASTR or <br/>IQ/SOC&nbsp;+&nbsp;size&nbsp;adj.)").setRowSpan(2));
       int range[] = { 8, 10, 12, 14, 16, 18, 20, 24, 28, 30, 32, 36, 40, 48, 50, 56, 60, 64, 72, 80, 100, 120, 160, 200, 240};
       header1.addTD(new TableHeader("Base range").setColSpan(range.length));
 
       TableRow header2 = new TableRow(-1);
       table.addRow(header2);
       for (int rangeBase : range) {
-         header2.addTD(new TableHeader(rangeBase));
+         header2.addTD(new TableHeader(rangeBase).setAttribute("width", "30"));
       }
 
       int htmlRow = 0;
       for (byte attrLevel = -10; attrLevel <= 20; attrLevel++) {
          TableRow row = new TableRow(htmlRow++);
-         row.addTD(new TableData(attrLevel));
+         if (attrLevel == 0) {
+            row.addTD(new TableHeader(attrLevel));
+         }
+         else {
+            row.addTD(new TableData(attrLevel));
+         }
          for (int rangeBase : range) {
             double adjustedRange = getRangeAdjusterForAdjustedStr(attrLevel) * rangeBase;
             if (attrLevel == 0) {
@@ -618,12 +631,12 @@ public class Rules extends DebugBreak implements Enums
       sb.append("<body>");
       sb.append("<H3>Skill cost:</H3>");
       Table table = new Table();
-      TableRow tr = new TableRow();
+      TableRow tr = new TableRow(-1);
       tr.addHeader("Skill level");
       tr.addHeader("Cost");
       table.addRow(tr);
       for (byte i = 0; i <= getMaxSkillLevel(); i++) {
-         tr = new TableRow();
+         tr = new TableRow(i);
          tr.addHeader(i);
          tr.addTD(getSkillCost(i));
          table.addRow(tr);
@@ -950,6 +963,35 @@ public class Rules extends DebugBreak implements Enums
             return (short) (adjustedRangeBase * 4);
       }
       throw new IllegalArgumentException("range (" + range + ") is not valid.");
+   }
+
+   public static byte getAdjustedSkillLevel(byte skillLevel, byte attributeLevel) {
+      return (byte) (Math.min(skillLevel, attributeLevel) + skillLevel);
+      //return (byte) (skillLevel + attributeLevel);
+   }
+   public static byte getAdjustedCollegeLevel(MageCollege college, Character character) {
+      return getAdjustedSkillLevel(college.getLevel(), character.getAttributeLevel(Attribute.Intelligence));
+   }
+
+   public static byte getAdjustedSkillLevel(Skill skill, Character character) {
+      byte adjustedLevel;
+      Attribute attribute = skill.getAttributeBase();
+      if (attribute != null) {
+         adjustedLevel = getAdjustedSkillLevel(skill.getLevel(), character.getAttributeLevel(attribute));
+      }
+      else {
+         adjustedLevel = skill.getLevel();
+      }
+      if (skill.isAdjustedForSize()) {
+         byte bonusToHit = (character == null) ? 0 : character.getRace().getBonusToHit();
+         adjustedLevel += bonusToHit;
+      }
+      if (skill.isAdjustedForEncumbrance()) {
+         if (character != null) {
+            adjustedLevel -= Rules.getEncumbranceLevel(character);
+         }
+      }
+      return adjustedLevel;
    }
 
 }

@@ -7,6 +7,7 @@ package ostrowski.combat.common.spells.priest.defensive;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.enums.Attribute;
 import ostrowski.combat.common.enums.DamageType;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.Spell;
 import ostrowski.combat.common.spells.priest.ExpiringPriestSpell;
 import ostrowski.combat.common.spells.priest.IPriestGroup;
@@ -15,7 +16,7 @@ import ostrowski.combat.server.Arena;
 /**
  * This spell increases the target Health attribute by an amount equal to twice the effective power of the spell
  */
-public class SpellImprovedArmor extends ExpiringPriestSpell
+public class SpellImprovedArmor extends ExpiringPriestSpell implements ICastInBattle
 {
    public static final String NAME = "Improved Armor";
    public SpellImprovedArmor() {
@@ -40,10 +41,6 @@ public class SpellImprovedArmor extends ExpiringPriestSpell
              " This spell may be cast on yourself or others. Multiple castings on the same subject do not accumulate," +
              " and will not accumulate with an ‘Armor’ spell either." +
              " The highest benefiting spell is the only one that has an effect when multiple armor-type spells are cast on a single subject.";
-   }
-   @Override
-   public Boolean isCastInBattle() {
-      return true;
    }
 
    @Override

@@ -144,7 +144,7 @@ public class Armor extends Thing {
        sb.append("<H4>Armor data:</H4>");
        sb.append("<table>");
        Table table = new Table();
-       TableRow tr = new TableRow();
+       TableRow tr = new TableRow(-1);
        tr.addHeader(new TableHeader("Armor<br/>Name").setRowSpan(2));
        tr.addHeader(new TableHeader("Passive<br/>Defense").setRowSpan(2));
        tr.addTD(new TableHeader("Build&nbsp;vs.").setColSpan(5));
@@ -160,8 +160,9 @@ public class Armor extends Thing {
        tr.addHeader("Elect");
        table.addRow(tr);
        List<Armor> humanArmors = getArmorListForRace(Race.getRace(Race.NAME_Human, Gender.MALE));
+       int i=0;
        for (Armor armor : humanArmors) {
-          tr = new TableRow();
+          tr = new TableRow(i++);
           tr.addHeader(armor.getName());
           tr.addTD(armor.getPassiveDefense());
           tr.addTD(armor.getBarrier(DamageType.BLUNT));

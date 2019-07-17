@@ -4,6 +4,7 @@
  */
 package ostrowski.combat.client.ui;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -26,7 +27,6 @@ import ostrowski.combat.common.Advantage;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.CharacterWidget;
 import ostrowski.combat.common.Rules;
-import ostrowski.combat.common.enums.Attribute;
 import ostrowski.combat.common.enums.Enums;
 import ostrowski.combat.common.spells.IRangedSpell;
 import ostrowski.combat.common.spells.mage.MageCollege;
@@ -156,7 +156,7 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
 
             createLabel(page, "Name", SWT.CENTER, 1, null);
             createLabel(page, "Familiarity", SWT.CENTER, 1, null);
-            createLabel(page, "Skill", SWT.CENTER, 1, null);
+            createLabel(page, "Adj. Skill", SWT.CENTER, 1, null);
             createLabel(page, "Time", SWT.CENTER, 1, null);
             createLabel(page, "Range base", SWT.CENTER, 1, null);
             createLabel(page, "Cost", SWT.CENTER, 1, null);
@@ -306,11 +306,9 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
          for (Class<MageSpell> spellClassToAdd : spellClassesToBeAdded) {
             checkSpells = true;
             try {
-               newSpells.add(spellClassToAdd.newInstance());
+               newSpells.add(spellClassToAdd.getDeclaredConstructor().newInstance());
                newSpellClasses.add(spellClassToAdd);
-            } catch (InstantiationException e) {
-               e.printStackTrace();
-            } catch (IllegalAccessException e) {
+            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
                e.printStackTrace();
             }
          }
@@ -379,9 +377,9 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
       int i=0;
       for (MageCollege college : colleges) {
          collegeComboData[i]   = college.getName();
-         itemEnabledData[i] = true;
+         itemEnabledData[i]    = true;
          collegeLevelData[i]   = college.getLevel();
-         collegeAdjLvlData[i]  = (byte)(college.getLevel() + character.getAttributeLevel(Attribute.Intelligence));
+         collegeAdjLvlData[i]  = Rules.getAdjustedCollegeLevel(college, character);
          collegeCostData[i]    = "(" + String.valueOf(Rules.getCollegeCost(college.getLevel())) + ")";
 
          i++;
@@ -444,7 +442,9 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
          spellComboData[i] = spell.getName();
          spellFamiliarityData[i] = spell.getFamiliarity();
          spellCostData[i] = "(" + String.valueOf(Rules.getSpellCost(spell.getLevel())) + ")";
-         spellEffectiveSkillData[i] = String.valueOf(spell.getEffectiveSkill(character, true/*includeKnowledgePenalty*/));
+         byte atr = character.getAttributeLevel(spell.getCastingAttribute());
+         byte adjustedSkillLevel = Rules.getAdjustedSkillLevel(character.getSpellSkill(spell.getName()), atr);
+         spellEffectiveSkillData[i] = String.valueOf(adjustedSkillLevel);
          spellTimeData[i] = String.valueOf(spell.getIncantationTime());
 
          if (spell instanceof IRangedSpell) {

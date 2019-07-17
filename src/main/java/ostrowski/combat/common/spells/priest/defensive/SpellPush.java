@@ -7,13 +7,14 @@ package ostrowski.combat.common.spells.priest.defensive;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.enums.Attribute;
 import ostrowski.combat.common.enums.DamageType;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.priest.IPriestGroup;
 import ostrowski.combat.common.spells.priest.ResistedPriestSpell;
 import ostrowski.combat.common.things.LimbType;
 import ostrowski.combat.common.wounds.Wound;
 import ostrowski.combat.server.Arena;
 
-public class SpellPush extends ResistedPriestSpell
+public class SpellPush extends ResistedPriestSpell implements ICastInBattle
 {
    public static final String NAME = "Push";
    public SpellPush() {}
@@ -31,10 +32,6 @@ public class SpellPush extends ResistedPriestSpell
              " A spell with 1 point of effective power pushes the subject back 2 hexes, and every additional point of effective power doubles the distance." +
              " If the subject of the spell hits a wall as he is pushed back, he will take a wound that has a pain level equal"+
              " to the effective power of the spell casting, and one wound for every two full points of effective power.";
-   }
-   @Override
-   public Boolean isCastInBattle() {
-      return true;
    }
 
    @Override

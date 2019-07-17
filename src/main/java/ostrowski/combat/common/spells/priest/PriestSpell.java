@@ -454,6 +454,13 @@ public class PriestSpell extends Spell
    }
 
    @Override
+   public byte getAdjustedCastingSkillLevel(Character caster) {
+      byte skill = getCastingLevel();
+      byte attrLevel = caster.getAttributeLevel(getCastingAttribute());
+      return (byte) (skill + attrLevel);
+   }
+
+   @Override
    public void serializeToStream(DataOutputStream out) {
       super.serializeToStream(out);
       try {

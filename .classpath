@@ -11,7 +11,7 @@
 	<classpathentry kind="lib" path="C:/Program Files/Java/64bit/junit-4.9.jar"/>
 	<classpathentry kind="lib" path="C:/Program Files/Java/64bit/lwjgl.jar"/>
 	<classpathentry kind="lib" path="C:/Program Files/Java/64bit/lwjgl_util.jar"/>
-	<classpathentry kind="lib" path="C:/Program Files/Java/swt/swt.jar"/>
-	<classpathentry kind="lib" path="C:/Program Files/Java/swt/swt-debug.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/swt/swt.jar" sourcepath="/SWT_64bit/src.zip"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/swt/swt-debug.jar" sourcepath="C:/Users/paul_/workspace/SWT_64bit/src.zip"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

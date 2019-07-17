@@ -2,11 +2,12 @@ package ostrowski.combat.common.spells.priest.evil;
 
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.enums.Attribute;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.priest.IPriestGroup;
 import ostrowski.combat.common.spells.priest.ResistedPriestSpell;
 import ostrowski.combat.server.Arena;
 
-public class SpellPossession extends ResistedPriestSpell
+public class SpellPossession extends ResistedPriestSpell implements ICastInBattle
 {
    public static final String NAME = "Possession";
    public SpellPossession() {
@@ -61,11 +62,6 @@ public class SpellPossession extends ResistedPriestSpell
    public void removeEffects(Arena arena) {
       _target._teamID = _previousTeamID;
       arena.recomputeAllTargets(_target);
-   }
-
-   @Override
-   public Boolean isCastInBattle() {
-      return true;
    }
 
 }

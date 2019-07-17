@@ -53,7 +53,7 @@ public class RequestTarget extends SyncRequest
       _optionsTeam = new ArrayList<>();
       for (Character target : newOrder) {
          _options.add(new RequestOption(target.getName(), target._uniqueID, true));
-         _optionsTeam.add(new Byte(target._teamID));
+         _optionsTeam.add(Byte.valueOf(target._teamID));
       }
    }
    public ArrayList<Character> getTargetCharacters() {

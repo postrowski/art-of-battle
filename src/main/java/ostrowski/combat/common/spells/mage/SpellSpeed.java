@@ -8,9 +8,10 @@ import ostrowski.combat.common.Character;
 import ostrowski.combat.common.html.Table;
 import ostrowski.combat.common.html.TableHeader;
 import ostrowski.combat.common.html.TableRow;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.server.Arena;
 
-public class SpellSpeed extends ExpiringMageSpell
+public class SpellSpeed extends ExpiringMageSpell implements ICastInBattle
 {
    public static final String NAME = "Speed";
    public SpellSpeed() {
@@ -48,10 +49,6 @@ public class SpellSpeed extends ExpiringMageSpell
       }
       sb.append(table.toString());
       return sb.toString();
-   }
-   @Override
-   public Boolean isCastInBattle() {
-      return true;
    }
 
    @Override

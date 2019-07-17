@@ -6,11 +6,12 @@ package ostrowski.combat.common.spells.priest.offensive;
 
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.enums.Attribute;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.priest.ExpiringPriestSpell;
 import ostrowski.combat.common.spells.priest.IPriestGroup;
 import ostrowski.combat.server.Arena;
 
-public class SpellStrength extends ExpiringPriestSpell
+public class SpellStrength extends ExpiringPriestSpell implements ICastInBattle
 {
    public static final String NAME = "Strength";
    public SpellStrength() {
@@ -30,10 +31,6 @@ public class SpellStrength extends ExpiringPriestSpell
    @Override
    public String describeSpell() {
       return "The '" + getName() + "' spell increases the subject's STR by an amount equal to the effective power of the spell.";
-   }
-   @Override
-   public Boolean isCastInBattle() {
-      return true;
    }
 
    @Override

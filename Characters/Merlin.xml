@@ -1,15 +1,14 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="Merlin" Race="Human">
-  <Attributes DEX="4" HT="-1" IQ="7" NIM="4" SOC="0" STR="0" TOU="1"/>
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Merlin" Race="Human">
+  <Attributes DEX="4" HT="-1" IQ="6" NIM="4" SOC="0" STR="0" TOU="1"/>
   <Equipment Armor="Leather">
     <Hand Name="right hand">Quarterstaff</Hand>
     <Hand Name="left hand"/>
   </Equipment>
   <Skills>
     <Skill Level="6" Name="Quarterstaff"/>
-    <Skill Level="4" Name="Throwing"/>
+    <Skill Level="2" Name="Brawling"/>
     <Skill Level="4" Name="Shield"/>
-    <Skill Level="1" Name="Brawling"/>
+    <Skill Level="4" Name="Throwing"/>
   </Skills>
   <Spells>
     <Spell Level="2" Name="Block Spell"/>
@@ -38,18 +37,19 @@
   </Spells>
   <Colleges>
     <College Level="6" Name="Protection"/>
-    <College Level="2" Name="Enchantment"/>
+    <College Level="3" Name="Enchantment"/>
     <College Level="6" Name="Energy"/>
-    <College Level="5" Name="Earth"/>
-    <College Level="2" Name="Divination"/>
-    <College Level="2" Name="Air"/>
+    <College Level="6" Name="Earth"/>
+    <College Level="3" Name="Divination"/>
+    <College Level="3" Name="Air"/>
     <College Level="5" Name="Conjuration"/>
     <College Level="3" Name="Evocation"/>
   </Colleges>
   <Advantages>
-    <Advantage Level="4" Name="Magical Aptitude"/>
-    <Advantage Level="0" Name="Honest"/>
-    <Advantage Level="1" Name="Hero points"/>
-    <Advantage Level="2" Name="Wealth"/>
+    <Advantage LevelName="+5" Name="Magical Aptitude"/>
+    <Advantage LevelName="" Name="Honest"/>
+    <Advantage LevelName="1" Name="Hero points"/>
+    <Advantage LevelName="$500" Name="Wealth"/>
+    <Advantage LevelName="x1" Name="Quirks"/>
   </Advantages>
 </Character>

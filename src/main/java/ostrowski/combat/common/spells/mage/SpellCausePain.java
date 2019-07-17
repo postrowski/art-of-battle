@@ -7,6 +7,7 @@ package ostrowski.combat.common.spells.mage;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.enums.Attribute;
 import ostrowski.combat.common.enums.DamageType;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.wounds.Wound;
 import ostrowski.combat.server.Arena;
 
@@ -14,7 +15,7 @@ import ostrowski.combat.server.Arena;
  * This spell causes the target to the suffer pain equal to twice
  * the spells power level. This spell has no lasting effects (no wounds).
  */
-public class SpellCausePain extends ResistedMageSpell
+public class SpellCausePain extends ResistedMageSpell implements ICastInBattle
 {
    public static final String NAME = "Cause Pain";
    public SpellCausePain() {
@@ -32,10 +33,6 @@ public class SpellCausePain extends ResistedMageSpell
    @Override
    public String describeSpell() {
       return "The '" + getName() + "' spell causes pain on the subject equal to two times the power put into the spell.";
-   }
-   @Override
-   public Boolean isCastInBattle() {
-      return true;
    }
 
    @Override

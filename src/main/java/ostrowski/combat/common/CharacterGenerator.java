@@ -1,5 +1,6 @@
 package ostrowski.combat.common;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -321,11 +322,14 @@ public class CharacterGenerator implements Enums
                                  Class<? extends MageSpell>[] requiredSpells = mageSpell._prerequisiteSpells;
                                  for (Class<? extends MageSpell> preReq : requiredSpells) {
                                     try {
-                                       MageSpell preReqSpell = preReq.newInstance();
+                                       MageSpell preReqSpell = preReq.getDeclaredConstructor().newInstance();
                                        character.setSpellLevel(preReqSpell.getName(), mageSpell.getLevel());
-                                    } catch (InstantiationException e) {
-                                       e.printStackTrace();
-                                    } catch (IllegalAccessException e) {
+                                    } catch (InstantiationException |
+                                             IllegalAccessException |
+                                             IllegalArgumentException |
+                                             InvocationTargetException |
+                                             NoSuchMethodException |
+                                             SecurityException e) {
                                        e.printStackTrace();
                                     }
                                  }
@@ -927,10 +931,10 @@ public class CharacterGenerator implements Enums
          if (character.isAnimal() || character.hasAdvantage(Advantage.UNDEAD)) {
             Integer count = generatedAnimalsCount.get(raceName);
             if (count == null) {
-               count = new Integer(0);
+               count = Integer.valueOf(0);
             }
             character.setName(raceName + "-" + count.toString());
-            generatedAnimalsCount.put(raceName, new Integer(count.intValue() + 1));
+            generatedAnimalsCount.put(raceName, Integer.valueOf(count.intValue() + 1));
          }
          else {
             character.setName(getName(arena, character.getGender() == Gender.MALE));

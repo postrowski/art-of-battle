@@ -1,9 +1,10 @@
 package ostrowski.combat.common.spells.priest.elemental;
 
 import ostrowski.combat.common.Character;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.priest.ExpiringPriestSpell;
 
-public class SpellSwim extends ExpiringPriestSpell
+public class SpellSwim extends ExpiringPriestSpell implements ICastInBattle
 {
    public static final String NAME = "Swim";
 
@@ -29,10 +30,6 @@ public class SpellSwim extends ExpiringPriestSpell
 
    @Override
    public boolean isBeneficial() {
-      return true;
-   }
-   @Override
-   public Boolean isCastInBattle() {
       return true;
    }
 

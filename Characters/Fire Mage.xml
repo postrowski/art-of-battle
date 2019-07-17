@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Fire Mage" Race="Human">
+  <Attributes DEX="2" HT="-1" IQ="4" NIM="2" SOC="0" STR="3" TOU="1"/>
+  <Equipment Armor="Heavy Leather">
+    <Hand Name="right hand">Quarterstaff</Hand>
+    <Hand Name="left hand"/>
+  </Equipment>
+  <Skills>
+    <Skill Level="5" Name="Quarterstaff"/>
+    <Skill Level="3" Name="Brawling"/>
+    <Skill Level="0" Name="Throwing"/>
+    <Skill Level="0" Name="Swimming"/>
+  </Skills>
+  <Spells>
+    <Spell Level="2" Name="Create Fire"/>
+    <Spell Level="2" Name="Control Fire"/>
+    <Spell Level="2" Name="Control Temperature"/>
+    <Spell Level="2" Name="Throw Spell"/>
+    <Spell Level="2" Name="Wall Of Fire"/>
+  </Spells>
+  <Colleges>
+    <College Level="4" Name="Conjuration"/>
+    <College Level="4" Name="Fire"/>
+  </Colleges>
+  <Advantages>
+    <Advantage LevelName="$1,000" Name="Wealth"/>
+    <Advantage LevelName="+3" Name="Magical Aptitude"/>
+    <Advantage LevelName="" Name="Psychotic"/>
+    <Advantage LevelName="" Name="Intolerant"/>
+  </Advantages>
+</Character>

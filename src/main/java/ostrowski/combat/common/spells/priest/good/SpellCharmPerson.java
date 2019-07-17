@@ -11,12 +11,13 @@ import org.w3c.dom.Node;
 
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.enums.Attribute;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.Spell;
 import ostrowski.combat.common.spells.priest.IPriestGroup;
 import ostrowski.combat.common.spells.priest.ResistedPriestSpell;
 import ostrowski.combat.server.Arena;
 
-public class SpellCharmPerson extends ResistedPriestSpell
+public class SpellCharmPerson extends ResistedPriestSpell implements ICastInBattle
 {
    public static final String NAME = "Charm Person";
    public SpellCharmPerson() {
@@ -67,11 +68,6 @@ public class SpellCharmPerson extends ResistedPriestSpell
       _target._teamID = _previousTeamID;
       arena.sendMessageTextToAllClients(_target.getName() + " is back on team " + TEAM_NAMES[_previousTeamID], false/*popUp*/);
       arena.recomputeAllTargets(_target);
-   }
-
-   @Override
-   public Boolean isCastInBattle() {
-      return true;
    }
 
    @Override

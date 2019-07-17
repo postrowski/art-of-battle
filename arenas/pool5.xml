@@ -1,5 +1,5 @@
-<?xml version="1.0"?>
-<Arena Name="Actions5" height="28" hideViewFromLocalPlayers="false" width="20">
+<?xml version="1.0" encoding="UTF-8"?>
+<Arena Name="Actions5" height="28" hideViewFromLocalPlayers="false" level="0" width="20">
   <rows>
     <row id="0">11:11:11:11:11:1:1:1:1:1:</row>
     <row id="1">11:11:11:11:1:1:1:1:1:1:</row>
@@ -33,10 +33,10 @@
   
   <teams count="4" maxCombatantsPerTeam="15">
     <team id="0">
-      <combatant AI="Norm" charName="? 300" id="0" startX="8" startY="2"/>
-      <combatant AI="Norm" charName="? 250" id="1" startX="12" startY="2"/>
-      <combatant AI="Norm" charName="? 250 bow, longbow" id="2" startX="10" startY="0"/>
-      <combatant AI="Norm" charName="? 250" id="3" startX="10" startY="4"/>
+      <combatant AI="AI - Norm" charName="? 200" id="0" startX="8" startY="2"/>
+      <combatant AI="AI - Norm" charName="? 250" id="1" startX="12" startY="2"/>
+      <combatant AI="AI - Norm" charName="? 250 bow, longbow" id="2" startX="10" startY="0"/>
+      <combatant AI="AI - Norm" charName="? 250" id="3" startX="10" startY="4"/>
       <combatant AI="Off" charName="" id="4"/>
       <combatant AI="Off" charName="" id="5"/>
       <combatant AI="Off" charName="" id="6"/>

@@ -6,12 +6,13 @@ package ostrowski.combat.common.spells.priest.healing;
 
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.enums.DamageType;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.priest.IPriestGroup;
 import ostrowski.combat.common.spells.priest.PriestSpell;
 import ostrowski.combat.common.wounds.Wound;
 import ostrowski.combat.server.Arena;
 
-public class SpellReducePain extends PriestSpell
+public class SpellReducePain extends PriestSpell implements ICastInBattle
 {
    public static final String NAME = "Reduce Pain";
    public SpellReducePain() {};
@@ -29,10 +30,6 @@ public class SpellReducePain extends PriestSpell
    @Override
    public String describeSpell() {
       return "The '" + getName() + "' spell reduces the pain level of the subject by three points of pain for each point of effective power in the spell.";
-   }
-   @Override
-   public Boolean isCastInBattle() {
-      return true;
    }
    @Override
    public void applyEffects(Arena arena) {

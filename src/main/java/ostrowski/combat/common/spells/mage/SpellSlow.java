@@ -9,9 +9,10 @@ import ostrowski.combat.common.enums.Attribute;
 import ostrowski.combat.common.html.Table;
 import ostrowski.combat.common.html.TableHeader;
 import ostrowski.combat.common.html.TableRow;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.server.Arena;
 
-public class SpellSlow extends ResistedMageSpell
+public class SpellSlow extends ResistedMageSpell implements ICastInBattle
 {
    public static final String NAME = "Slow";
    public SpellSlow() {
@@ -49,10 +50,6 @@ public class SpellSlow extends ResistedMageSpell
       }
       sb.append(table.toString());
       return sb.toString();
-   }
-   @Override
-   public Boolean isCastInBattle() {
-      return true;
    }
 
    @Override

@@ -6,9 +6,10 @@ package ostrowski.combat.common.spells.mage;
 
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.enums.Attribute;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.server.Arena;
 
-public class SpellImmobilize extends ResistedMageSpell
+public class SpellImmobilize extends ResistedMageSpell implements ICastInBattle
 {
    public static final String NAME = "Immobilize";
    public SpellImmobilize() {
@@ -27,10 +28,6 @@ public class SpellImmobilize extends ResistedMageSpell
    @Override
    public String describeSpell() {
       return "The '" + getName() + "' spell reduces the subject's movement rate by one point per point of spell power.";
-   }
-   @Override
-   public Boolean isCastInBattle() {
-      return true;
    }
 
    @Override

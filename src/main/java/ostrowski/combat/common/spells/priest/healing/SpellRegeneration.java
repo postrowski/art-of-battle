@@ -7,12 +7,13 @@ import ostrowski.combat.common.Character;
 import ostrowski.combat.common.html.Table;
 import ostrowski.combat.common.html.TableData;
 import ostrowski.combat.common.html.TableRow;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.priest.IPriestGroup;
 import ostrowski.combat.common.spells.priest.PriestSpell;
 import ostrowski.combat.common.wounds.Wound;
 import ostrowski.combat.server.Arena;
 
-public class SpellRegeneration extends PriestSpell
+public class SpellRegeneration extends PriestSpell implements ICastInBattle
 {
    public static final String NAME = "Regeneration";
 
@@ -67,11 +68,6 @@ public class SpellRegeneration extends PriestSpell
             }
          }
       }
-   }
-
-   @Override
-   public Boolean isCastInBattle() {
-      return true;
    }
 
    @Override

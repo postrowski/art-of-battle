@@ -5,11 +5,12 @@
 package ostrowski.combat.common.spells.priest.healing;
 
 import ostrowski.combat.common.Character;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.priest.IPriestGroup;
 import ostrowski.combat.common.spells.priest.PriestSpell;
 import ostrowski.combat.server.Arena;
 
-public class SpellRevive extends PriestSpell
+public class SpellRevive extends PriestSpell implements ICastInBattle
 {
    public static final String NAME = "Revive";
    public SpellRevive() {};
@@ -37,10 +38,6 @@ public class SpellRevive extends PriestSpell
       sb.append(" For each point over 1, then subject will remain awake for twice as long. So at 3 power, the subject will stay awake for 4 turns.");
       sb.append(" At 4 power, the subject will stay awake for 8 turns, and so on.");
       return sb.toString();
-   }
-   @Override
-   public Boolean isCastInBattle() {
-      return true;
    }
    @Override
    public void applyEffects(Arena arena) {

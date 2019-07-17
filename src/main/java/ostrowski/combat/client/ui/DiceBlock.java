@@ -25,6 +25,7 @@ public class DiceBlock extends Helper implements IUIBlock
     CharacterWidget _display;
    private final HashMap<Attribute, Text[]>     _dice = new HashMap<>();
    private Text     _painReductioDice = null;
+   private Text     _maxPainWounds    = null;
 
    public DiceBlock(CharacterWidget display)
    {
@@ -40,10 +41,12 @@ public class DiceBlock extends Helper implements IUIBlock
          buildBlockComplexDice(parent);
       }
       else {
-         Group group = createGroup(parent, "Dice", 2/*columns*/, false/*sameSize*/, 2/*hSpacing*/, 2/*vSpacing*/);
+         Group group = createGroup(parent, "Pain recovery", 2/*columns*/, false/*sameSize*/, 2/*hSpacing*/, 2/*vSpacing*/);
          group.setTabList(new Control[] {});
          createLabel(group, "Pain reduction dice:", SWT.CENTER, 1, new FontData("Arial", 7, SWT.BOLD));
          _painReductioDice = createText(group, " ", false, 1);
+         createLabel(group, "Max Pain / Wounds:", SWT.CENTER, 1, new FontData("Arial", 7, SWT.BOLD));
+         _maxPainWounds = createText(group, " ", false, 1);
       }
    }
 
@@ -64,6 +67,9 @@ public class DiceBlock extends Helper implements IUIBlock
          _dice.get(Attribute.Social)[actions] = createText(group, " ", false, 2);
          _dice.get(Attribute.Toughness)[actions] = createText(group, " ", false, 2);
       }
+
+      createLabel(group, "Max Pain / Wounds:", SWT.CENTER, 5, new FontData("Arial", 7, SWT.BOLD));
+      _maxPainWounds = createText(group, " ", false, 4);
    }
 
    @Override
@@ -86,8 +92,12 @@ public class DiceBlock extends Helper implements IUIBlock
             }
          }
       }
+      byte toughness = character.getAttributeLevel(Attribute.Toughness);
       if (_painReductioDice != null) {
-         _painReductioDice.setText(Rules.getDice(character.getAttributeLevel(Attribute.Toughness), (byte)1, Attribute.Toughness/*attribute*/).toString().replaceAll(" ", ""));
+         _painReductioDice.setText(Rules.getDice(toughness, (byte)1, Attribute.Toughness/*attribute*/).toString().replaceAll(" ", ""));
+      }
+      if (_maxPainWounds != null) {
+         _maxPainWounds.setText("" + Rules.getUnconsciousWoundLevel(toughness));
       }
    }
 

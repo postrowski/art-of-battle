@@ -18,6 +18,7 @@ import ostrowski.combat.protocol.MapVisibility;
 import ostrowski.combat.protocol.MessageText;
 import ostrowski.combat.protocol.ServerStatus;
 import ostrowski.combat.protocol.request.RequestAttackStyle;
+import ostrowski.combat.protocol.request.RequestLocation;
 import ostrowski.combat.protocol.request.RequestMovement;
 import ostrowski.combat.server.ArenaLocation;
 import ostrowski.combat.server.Configuration;
@@ -64,7 +65,7 @@ public class ServerConnection extends CombatSocket
       // First check for events that apply to the display:
       if (inObj instanceof Character) {
          Character newChar = (Character) inObj;
-         Integer uniqueID = new Integer(newChar._uniqueID);
+         Integer uniqueID = Integer.valueOf(newChar._uniqueID);
          Character existingChar = _charactersMap.get(uniqueID);
          if (existingChar == null) {
             _charactersMap.put(uniqueID, newChar);
@@ -129,6 +130,11 @@ public class ServerConnection extends CombatSocket
          }
          if (req instanceof RequestMovement) {
             _display.requestMovement((RequestMovement)req);
+            // the response will be sent after the user selects a location.
+            return;
+         }
+         if (req instanceof RequestLocation) {
+            _display.requestLocation((RequestLocation)req);
             // the response will be sent after the user selects a location.
             return;
          }

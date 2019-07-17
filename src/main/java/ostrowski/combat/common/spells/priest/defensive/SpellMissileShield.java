@@ -6,10 +6,11 @@ package ostrowski.combat.common.spells.priest.defensive;
 
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.enums.DamageType;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.priest.ExpiringPriestSpell;
 import ostrowski.combat.common.spells.priest.IPriestGroup;
 
-public class SpellMissileShield extends ExpiringPriestSpell
+public class SpellMissileShield extends ExpiringPriestSpell implements ICastInBattle
 {
    public static final String NAME = "Missile Shield";
    public SpellMissileShield() {
@@ -30,10 +31,6 @@ public class SpellMissileShield extends ExpiringPriestSpell
    @Override
    public String describeSpell() {
       return "The '" + getName() + "'' spell causes missiles fired at the subject to veer away. This makes the subject harder to hit with ranged attacks, increasing the subject's PD by an amount equal to twice the effective power of the spell.";
-   }
-   @Override
-   public Boolean isCastInBattle() {
-      return true;
    }
 
    @Override

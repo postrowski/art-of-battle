@@ -4,7 +4,9 @@
  */
 package ostrowski.combat.common.spells.mage;
 
+import ostrowski.combat.common.Character;
 import ostrowski.combat.common.spells.IAreaSpell;
+import ostrowski.combat.server.Arena;
 import ostrowski.combat.server.ArenaLocation;
 
 public abstract class AreaMageSpell extends MageSpell implements IAreaSpell
@@ -17,7 +19,7 @@ public abstract class AreaMageSpell extends MageSpell implements IAreaSpell
    }
 
    @Override
-   public void setTargetLocation(ArenaLocation targetLocation)
+   public void setTargetLocation(ArenaLocation targetLocation, Arena arena)
    {
       _targetLocation = targetLocation;
    }
@@ -32,12 +34,34 @@ public abstract class AreaMageSpell extends MageSpell implements IAreaSpell
       return TargetType.TARGET_AREA;
    }
 
+
    @Override
-   public short getMaxRange() {
-      return 1;
+   public void affectCharacterOnEntry(Character enteringCharacter) {
    }
+
    @Override
-   public short getMinRange() {
-      return 0;
+   public void affectCharacterOnExit(Character exitingCharacter) {
+   }
+
+   @Override
+   public void affectCharacterOnRoundStart(Character characterInHex) {
+   }
+
+   @Override
+   public void affectCharacterOnRoundEnd(Character characterInHex) {
+   }
+
+   @Override
+   public String getImageResourceName() {
+      return null;
+   }
+
+   @Override
+   public void affectCharacterOnActivation(Character chr) {
+      affectCharacterOnEntry(chr);
+   }
+
+   @Override
+   public void affectCharacterOnDeactivation(Character chr) {
    }
 }

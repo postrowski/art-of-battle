@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Text;
 import ostrowski.combat.client.CharacterDisplay;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.CharacterWidget;
+import ostrowski.combat.common.Condition;
 import ostrowski.combat.common.Race;
 import ostrowski.combat.common.Rules;
 import ostrowski.combat.common.Skill;
@@ -132,11 +133,11 @@ public class CharInfoBlock extends Helper implements IUIBlock, ModifyListener
       _targetName.addModifyListener(this);
    }
 
-   private static String getAttrString1(Character target) {
+   public static String getAttrString1(Character target) {
       return getAttrString(target, Attribute.Strength, Attribute.Toughness);
    }
 
-   private static String getAttrString2(Character target) {
+   public static String getAttrString2(Character target) {
       return getAttrString(target, Attribute.Intelligence, Attribute.Social);
    }
 
@@ -226,88 +227,100 @@ public class CharInfoBlock extends Helper implements IUIBlock, ModifyListener
       _buildImp.setText(String.valueOf(target.getBuild(DamageType.IMP)));
       _buildCut.setText(String.valueOf(target.getBuild(DamageType.CUT)));
       _buildBlunt.setText(String.valueOf(target.getBuild(DamageType.BLUNT)));
-      if (!target.getCondition().isAlive()) {
-         _painAndWounds.setText("DEAD");
-      }
-      else if (!target.getCondition().isConscious()) {
-         _painAndWounds.setText("K.O.");
-      }
-      else if (target.getCondition().isCollapsed()) {
-         _painAndWounds.setText("Collapsed");
-      }
-      else {
-         StringBuilder sb = new StringBuilder();
-         byte pain = target.getPainPenalty(false/*accountForBerserking*/);
-         sb.append(pain);
-         if ((pain > 0) && target.isBerserking()) {
-            sb.append("(0)");
-         }
-         int wounds = target.getWounds();
-         sb.append(" / ").append(wounds);
-         if (wounds > 0) {
-            sb.append(" (");
-            boolean first = true;
-            for (Wound wnd : target.getCondition().getWoundsList()) {
-               if (!first) {
-                  sb.append("+");
-               }
-               first = false;
-               sb.append(wnd.getEffectiveWounds());
-            }
-            sb.append(")");
-         }
-         if (leftHand != null) {
-            if (leftHand.isCrippled()) {
-               sb.append("!");
-            }
-            else {
-               byte leftPenalty = leftHand.getWoundPenalty();
-               while (leftPenalty-- > 0) {
-                  sb.append("`");
-               }
-            }
-         }
+      _painAndWounds.setText(getPainAndWoundsText(target));
 
-         if (rightHand != null) {
-            if (rightHand.isCrippled()) {
-               sb.append("!");
-            }
-            else {
-               byte rightPenalty = rightHand.getWoundPenalty();
-               while (rightPenalty-- > 0) {
-                  sb.append("'");
-               }
-            }
-         }
-
-         byte movePenalty = target.getCondition().getPenaltyMove();
-         while (movePenalty-- > 0) {
-            sb.append(",");
-         }
-
-         _painAndWounds.setText(sb.toString());
-      }
       _magicPoints.setText(target.getCondition().getMageSpellPointsAvailable() + " / " + target.getCondition().getPriestSpellPointsAvailable());
       _raceName.setText(target.getRace().getName());
       _position.setText(target.getPositionName() + " (" + Rules.getEncumbranceLevel(target) + ")");
-      byte actionsThisRoundDef = target.getCondition().getActionsAvailableThisRound(true/*usedForDefenseOnly*/);
-      byte actionsThisTurnAny = target.getCondition().getActionsAvailable(false/*usedForDefenseOnly*/);
-      byte actionsThisTurnDef = target.getCondition().getActionsAvailable(true/*usedForDefenseOnly*/);
+      _actions.setText(getActionsText(target.getCondition()));
+      _readyTime.setText(getReadyTime(rightHand));
+   }
+
+   private static String getReadyTime(Limb rightHand) {
+      byte actionsNeeded = (rightHand == null) ? 0 : rightHand.getActionsNeededToReady();
+      if (actionsNeeded == 0) {
+         return "ready";
+      }
+      return "" + actionsNeeded + " actions";
+   }
+
+   private static String getActionsText(Condition condition) {
+      byte actionsThisRoundDef = condition.getActionsAvailableThisRound(true/*usedForDefenseOnly*/);
+      byte actionsThisTurnAny = condition.getActionsAvailable(false/*usedForDefenseOnly*/);
+      byte actionsThisTurnDef = condition.getActionsAvailable(true/*usedForDefenseOnly*/);
       StringBuilder actions = new StringBuilder().append(actionsThisRoundDef).append(" / ").append(actionsThisTurnDef);
       if (actionsThisTurnAny != actionsThisTurnDef) {
          actions.append("(def)");
       }
-      _actions.setText(actions.toString());
-      byte actionsNeeded = (rightHand == null) ? 0 : rightHand.getActionsNeededToReady();
-      if (actionsNeeded == 0) {
-         _readyTime.setText("readyS");
-      }
-      else {
-         _readyTime.setText(actionsNeeded + " actions");
-      }
+      return actions.toString();
    }
 
-   private static String getSkillDescriptionForHand(Limb hand, Character target) {
+   public static String getPainAndWoundsText(Character target) {
+      if (!target.getCondition().isAlive()) {
+         return "DEAD";
+      }
+      if (!target.getCondition().isConscious()) {
+         return "K.O.";
+      }
+      if (target.getCondition().isCollapsed()) {
+         return "Collapsed";
+      }
+
+      Limb rightHand = target.getLimb(LimbType.HAND_RIGHT);
+      Limb leftHand = target.getLimb(LimbType.HAND_LEFT);
+      StringBuilder sb = new StringBuilder();
+      byte pain = target.getPainPenalty(false/*accountForBerserking*/);
+      sb.append(pain);
+      if ((pain > 0) && target.isBerserking()) {
+         sb.append("(0)");
+      }
+      int wounds = target.getWounds();
+      sb.append(" / ").append(wounds);
+      if (wounds > 0) {
+         sb.append(" (");
+         boolean first = true;
+         for (Wound wnd : target.getCondition().getWoundsList()) {
+            if (!first) {
+               sb.append("+");
+            }
+            first = false;
+            sb.append(wnd.getEffectiveWounds());
+         }
+         sb.append(")");
+      }
+      if (leftHand != null) {
+         if (leftHand.isCrippled()) {
+            sb.append("!");
+         }
+         else {
+            byte leftPenalty = leftHand.getWoundPenalty();
+            while (leftPenalty-- > 0) {
+               sb.append("`");
+            }
+         }
+      }
+
+      if (rightHand != null) {
+         if (rightHand.isCrippled()) {
+            sb.append("!");
+         }
+         else {
+            byte rightPenalty = rightHand.getWoundPenalty();
+            while (rightPenalty-- > 0) {
+               sb.append("'");
+            }
+         }
+      }
+
+      byte movePenalty = target.getCondition().getPenaltyMove();
+      while (movePenalty-- > 0) {
+         sb.append(",");
+      }
+
+      return sb.toString();
+   }
+
+   public static String getSkillDescriptionForHand(Limb hand, Character target) {
       if (hand != null) {
          Weapon weapon = hand.getWeapon(target);
          if (weapon != null) {
@@ -415,6 +428,36 @@ public class CharInfoBlock extends Helper implements IUIBlock, ModifyListener
             break;
          }
       }
+   }
+
+   public static Object getToolTipSummary(Character target) {
+      StringBuilder sb = new StringBuilder();
+      sb.append("Character: ").append(target.getName());
+      sb.append(" (").append(target.getRace().getName()).append(")");
+
+      sb.append("\n  Actions rnd/turn: ").append(getActionsText(target.getCondition()));
+
+      Limb rightHand = target.getLimb(LimbType.HAND_RIGHT);
+      Limb leftHand = target.getLimb(LimbType.HAND_LEFT);
+      sb.append("\n  Right skill: ").append(getSkillDescriptionForHand(rightHand, target));
+      sb.append("\n  Left skill:  ").append(getSkillDescriptionForHand(leftHand, target));
+      sb.append("\n    ").append(getAttrString1(target));
+      sb.append("\n    ").append(getAttrString2(target));
+
+      sb.append("\n  pain/wounds:   ").append(getPainAndWoundsText(target));
+      if (target.getWeapon() != null) {
+         sb.append("\n  ").append(target.getWeapon().getName()).append(": ").append(getReadyTime(rightHand));
+      }
+      if (leftHand != null) {
+         sb.append("\n  Sheild: ").append(leftHand.getHeldThingName());
+      }
+      sb.append("\n  Armor:  ").append(target.getArmor().getName());
+
+      Position pos = target.getPosition();
+      if (pos != Position.STANDING) {
+         sb.append("\n  ").append(pos.getName());
+      }
+      return sb.toString();
    }
 
 }

@@ -2,12 +2,13 @@ package ostrowski.combat.common.spells.priest.good;
 
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.enums.Attribute;
+import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.priest.IPriestGroup;
 import ostrowski.combat.common.spells.priest.ResistedPriestSpell;
 import ostrowski.combat.server.Arena;
 import ostrowski.combat.server.Configuration;
 
-public class SpellPacify extends ResistedPriestSpell
+public class SpellPacify extends ResistedPriestSpell implements ICastInBattle
 {
    public static final String NAME = "Pacify";
    public SpellPacify() {};
@@ -55,11 +56,6 @@ public class SpellPacify extends ResistedPriestSpell
          getTarget().setIsBerserking(false);
          getTarget().removeSpellFromActiveSpellsList(this);
       }
-   }
-
-   @Override
-   public Boolean isCastInBattle() {
-      return true;
    }
 
 }

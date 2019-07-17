@@ -40,6 +40,7 @@ public class TerrainInterface extends Helper implements SelectionListener, Modif
    private short    _currentTerrain = -1;
    private long     _currentWall    = -1;
    private Button[] _terrainButtons;
+   private Button   _clearButton;
    private Button   _fillButton;
    private boolean  _fillActive     = false;
    private Button   _lineButton;
@@ -70,7 +71,7 @@ public class TerrainInterface extends Helper implements SelectionListener, Modif
    private boolean  _clearItemsActive = false;
 
    public boolean allowPan() {
-      return false;//!(_lineActive || _wallLineActive);
+      return ((_currentTerrain == -1) && (_currentWall == -1));
    }
    public void disableCurrentEdits() {
       if (_currentTerrain != -1) {
@@ -106,7 +107,7 @@ public class TerrainInterface extends Helper implements SelectionListener, Modif
          dummy = new Label(terrainButtonsBlock, 0);
          dummy = new Label(terrainButtonsBlock, 0);
          dummy = new Label(terrainButtonsBlock, 0);
-         dummy = new Label(terrainButtonsBlock, 0);
+         _clearButton = makeButton(terrainButtonsBlock, "Clear");
          _fillButton = makeButton(terrainButtonsBlock, "Paint / Fill");
          _lineButton = makeButton(terrainButtonsBlock, "Draw Line");
       }
@@ -225,6 +226,24 @@ public class TerrainInterface extends Helper implements SelectionListener, Modif
          }
       }
       else if (e.widget == _isLocked) {
+      }
+      else if (e.widget == _clearButton) {
+         _fillActive = false;
+         _wallLineActive = false;
+         _lineActive = false;
+         _setItemsActive = false;
+         _clearItemsActive = false;
+         if (_currentTerrain != -1) {
+            _terrainButtons[_currentTerrain].redraw();
+         }
+         _currentTerrain = -1;
+         _fillButton.redraw();
+         _lineButton.redraw();
+         _wallLineButton.redraw();
+         _setItems.redraw();
+         _clearItems.redraw();
+         _currentWall = -1;
+         redrawWalls();
       }
       else if (e.widget == _fillButton) {
          _fillActive = !_fillActive;
@@ -367,11 +386,17 @@ public class TerrainInterface extends Helper implements SelectionListener, Modif
             }
          }
          else if (_currentTerrain != -1) {
-            _mapInterface.setMode(MapMode.PAINT);
+            _mapInterface.setMode(MapMode.PAINT_TERRAIN);
+         }
+         else if (_currentWall != -1) {
+            _mapInterface.setMode(MapMode.PAINT_WALL);
          }
          else {
             _mapInterface.setMode(MapMode.DRAG);
          }
+      }
+      if (_mapInterface != null) {
+         _mapInterface.allowPan(allowPan());
       }
    }
 
