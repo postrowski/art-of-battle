@@ -109,7 +109,7 @@ public class Weapon extends Thing {
       parryCount         = 0;
 
       for (WeaponStyle element : styleModes) {
-         WeaponStyle styleCopy = (WeaponStyle) element.clone();
+         WeaponStyle styleCopy = element.clone();
          if (styleCopy instanceof WeaponStyleCounterAttack) {
             _counterattackStyles[counterattackCount++] = (WeaponStyleCounterAttack) styleCopy;
          }
@@ -126,20 +126,20 @@ public class Weapon extends Thing {
       }
    }
    @Override
-   public Object clone() {
+   public Weapon clone() {
       WeaponStyle[] styles = new WeaponStyle[_counterattackStyles.length + _grapplingStyles.length + _attackStyles.length + _parryStyles.length];
       int styleCount = 0;
       for (WeaponStyleAttack _attackStyle : _attackStyles) {
-         styles[styleCount++] = (WeaponStyle) _attackStyle.clone();
+         styles[styleCount++] = _attackStyle.clone();
       }
       for (WeaponStyleCounterAttack _counterattackStyle : _counterattackStyles) {
-         styles[styleCount++] = (WeaponStyle) _counterattackStyle.clone();
+         styles[styleCount++] = _counterattackStyle.clone();
       }
       for (WeaponStyleAttackGrapple _grapplingStyle : _grapplingStyles) {
-         styles[styleCount++] = (WeaponStyle) _grapplingStyle.clone();
+         styles[styleCount++] = _grapplingStyle.clone();
       }
       for (WeaponStyleParry _parryStyle : _parryStyles) {
-         styles[styleCount++] = (WeaponStyle) _parryStyle.clone();
+         styles[styleCount++] = _parryStyle.clone();
       }
       return new Weapon(_size, getRacialBase(), _weight, _cost, _name, styles);
    }
@@ -158,13 +158,13 @@ public class Weapon extends Thing {
             _attackStyles[i] = (WeaponStyleAttack) weap._attackStyles[i].clone();
          }
          for(int i=0 ; i<_parryStyles.length ; i++) {
-            _parryStyles[i] = (WeaponStyleParry) weap._parryStyles[i].clone();
+            _parryStyles[i] = weap._parryStyles[i].clone();
          }
          for(int i=0 ; i<_counterattackStyles.length ; i++) {
-            _counterattackStyles[i] = (WeaponStyleCounterAttack) weap._counterattackStyles[i].clone();
+            _counterattackStyles[i] = weap._counterattackStyles[i].clone();
          }
          for(int i=0 ; i<_grapplingStyles.length ; i++) {
-            _grapplingStyles[i] = (WeaponStyleAttackGrapple) weap._grapplingStyles[i].clone();
+            _grapplingStyles[i] = weap._grapplingStyles[i].clone();
          }
       }
    }
@@ -179,7 +179,7 @@ public class Weapon extends Thing {
          // check for special weapons
          for (SizelessWeapon element : _specialWeaponsList) {
             if (element.getName().equalsIgnoreCase(name)) {
-               Weapon weap = (Weapon) element.clone();
+               Weapon weap = element.clone();
                weap.setRacialBase(racialBase);
                return weap;
             }
@@ -190,7 +190,7 @@ public class Weapon extends Thing {
             return null;
          }
       }
-      return (Weapon) getWeapon(NAME_Punch, racialBase).clone();
+      return getWeapon(NAME_Punch, racialBase).clone();
    }
    public boolean isUnarmedStyle () {
       return _size<0;
@@ -545,7 +545,7 @@ public class Weapon extends Thing {
    private static ArrayList<Weapon> getWeaponListForRace(Race race) {
       ArrayList<Weapon> list = new ArrayList<>();
       for (SizelessWeapon weapon : _weaponsList) {
-         Weapon copy = (Weapon) weapon.clone();
+         Weapon copy = weapon.clone();
          copy.setRacialBase(race);
          list.add(copy);
       }
@@ -1222,7 +1222,7 @@ public class Weapon extends Thing {
 interface SizelessWeapon extends Cloneable {
    String getName();
    Weapon copyWithRace(Race racialBase);
-   Object clone();
+   Weapon clone();
    boolean isReal();
    double getWeight();
    int getCost();
@@ -1238,7 +1238,7 @@ class WeaponBase extends Weapon implements SizelessWeapon
    @Override
    public Weapon copyWithRace(Race racialBase) {
       setRacialBase(racialBase);
-      Weapon weap = (Weapon) clone();
+      Weapon weap = clone();
       setRacialBase(null);
       return weap;
    }
@@ -1261,7 +1261,7 @@ class MissileWeaponBase extends MissileWeapon implements SizelessWeapon
    @Override
    public Weapon copyWithRace(Race racialBase) {
       setRacialBase(racialBase);
-      Weapon weap = (Weapon) clone();
+      Weapon weap = clone();
       setRacialBase(null);
       return weap;
    }

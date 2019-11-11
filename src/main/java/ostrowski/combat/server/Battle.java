@@ -1,6 +1,5 @@
 package ostrowski.combat.server;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -1028,6 +1027,7 @@ public class Battle extends Thread implements Enums
       sb.append("<td>defenders TN</td></tr>");
 
       byte bonusDamage = 0;
+      byte holdLevel = 0;
       boolean hit = (result >= finalTN);
       if (dice.lastRollRolledAllOnes()) {
          sb.append("<tr><td colspan=2>automatic miss - all 1s rolled!</td></tr>");
@@ -1036,14 +1036,17 @@ public class Battle extends Thread implements Enums
       else {
          if (hit) {
             bonusDamage = Rules.getDamageBonusForSkillExcess((byte) (result - finalTN));
-            sb.append("<tr><td><b>").append(bonusDamage).append("</b></td>");
+            holdLevel = Rules.getHoldLevelForSkillExcess((byte) (result - finalTN));
             if (grappleAttack) {
+               sb.append("<tr><td><b>").append(holdLevel).append("</b></td>");
                sb.append("<td>target grabbed, hold level</td></tr>");
             }
             else if (attack.isCounterAttackThrow()) {
+               sb.append("<tr><td><b>").append(holdLevel).append("</b></td>");
                sb.append("<td>target throw attempt success margin</td></tr>");
             }
             else {
+               sb.append("<tr><td><b>").append(bonusDamage).append("</b></td>");
                sb.append("<td>target hit, bonus damage</td></tr>");
             }
          }
@@ -1058,8 +1061,8 @@ public class Battle extends Thread implements Enums
          if (!grappleAttack) {
             if (attackingWeapon.getName().equals(Weapon.NAME_Fangs)) {
                if (attacker.hasAdvantage(Race.PROPERTIES_ANIMAL)) {
-                  sb.append("Because the attacker is an animal with fangs, this attack doubles as a grab, at a level equal to the bonus damage of ");
-                  sb.append(bonusDamage).append(".<br/>");
+                  sb.append("Because the attacker is an animal with fangs, this attack doubles as a grab, at a level of ");
+                  sb.append(holdLevel).append(".<br/>");
                   animalBite = true;
                }
             }
@@ -1067,7 +1070,7 @@ public class Battle extends Thread implements Enums
          if (grappleAttack || animalBite) {
             Byte currentHoldLevel = defender.getHoldLevel(attacker);
             byte holdModifier = (byte) (sizeDifference / 2);
-            byte newHoldLevel = (byte) (bonusDamage + holdModifier);
+            byte newHoldLevel = (byte) (holdLevel + holdModifier);
             if (holdModifier != 0) {
                sb.append(" Due to the size difference between the attacker (").append(attacker.getRace().getBuildModifier()).append(") and defender (").append(
                                                                                                                                                                defender.getRace().getBuildModifier()).append(
@@ -2310,13 +2313,6 @@ public class Battle extends Thread implements Enums
          }
       }
       return results;
-   }
-
-   public boolean serializeToFile(File battleFile) {
-      if ((battleFile != null) && battleFile.exists() && battleFile.canRead()) {
-         return true;
-      }
-      return false;
    }
 
    public Element getXmlObject(Document parentDoc) {

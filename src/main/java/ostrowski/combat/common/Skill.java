@@ -66,7 +66,7 @@ public class Skill extends SerializableObject implements Cloneable, Enums {
    }
 
    @Override
-   public Object clone()
+   public Skill clone()
    {
       Skill newSkill = new Skill();
       newSkill._type = _type;

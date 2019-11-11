@@ -86,7 +86,7 @@ public class Condition extends SerializableObject implements Enums {
       // ctor used for all Serializable objects
    }
    public Condition(Orientation orientation) {
-      _orientation = (Orientation) orientation.clone();
+      _orientation = orientation.clone();
    }
    public Condition(Character character) {
       setOrientation(character.getRace().getBaseOrientation());
@@ -675,7 +675,7 @@ public class Condition extends SerializableObject implements Enums {
       }
    }
    @Override
-   public Object clone()
+   public Condition clone()
    {
       Condition duplicate = new Condition(_orientation);
       duplicate._actionsAvailable           = _actionsAvailable;
@@ -686,7 +686,7 @@ public class Condition extends SerializableObject implements Enums {
       duplicate._penaltyMove                = _penaltyMove;
       duplicate._initiative                 = _initiative;
       duplicate._attackedThisRound          = _attackedThisRound;
-      duplicate._defenseOptionsTakenThisRound = (DefenseOptions) _defenseOptionsTakenThisRound.clone();
+      duplicate._defenseOptionsTakenThisRound = _defenseOptionsTakenThisRound.clone();
       duplicate._movementAvailableThisRound = _movementAvailableThisRound;
       duplicate._movementAvailableEachRound = _movementAvailableEachRound;
       duplicate._moveComplete               = _moveComplete;
@@ -698,7 +698,7 @@ public class Condition extends SerializableObject implements Enums {
       duplicate._mageSpellPointsMax         = _mageSpellPointsMax;
       duplicate._priestSpellPointsAvailable = _priestSpellPointsAvailable;
       duplicate._priestSpellPointsMax       = _priestSpellPointsMax;
-      duplicate.setOrientation((Orientation) _orientation.clone());
+      duplicate.setOrientation(_orientation.clone());
       return duplicate;
    }
 

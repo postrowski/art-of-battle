@@ -48,12 +48,12 @@ import ostrowski.util.Diagnostics;
 
 public abstract class Orientation extends SerializableObject implements Enums, Cloneable, Comparable<Orientation>
 {
-   protected ArrayList<ArenaCoordinates> _coordinates;
-   protected ArrayList<Facing>           _facings;
-   private Position                      _position = Position.STANDING;
+   protected final ArrayList<ArenaCoordinates> _coordinates = new ArrayList<>();
+   protected final ArrayList<Facing>           _facings = new ArrayList<>();
+   private Position                            _position = Position.STANDING;
 
    @Override
-   public Object clone() {
+   public Orientation clone() {
       try {
          Orientation dup = this.getClass().getDeclaredConstructor().newInstance();
          dup.copyDataFrom(this);
@@ -71,14 +71,14 @@ public abstract class Orientation extends SerializableObject implements Enums, C
    }
 
    public void copyDataFrom(Orientation source) {
-      _coordinates = new ArrayList<>(); _coordinates.addAll(source._coordinates);
-      _facings     = new ArrayList<>();           _facings.addAll(source._facings);
+      _coordinates.clear();
+      _coordinates.addAll(source._coordinates);
+      _facings.clear();
+      _facings.addAll(source._facings);
       _position    = source._position;
    }
 
    protected Orientation() {
-      _coordinates = new ArrayList<>();
-      _facings = new ArrayList<>();
    }
 
    public boolean isInLocation(ArenaCoordinates loc) {
@@ -125,8 +125,8 @@ public abstract class Orientation extends SerializableObject implements Enums, C
    {
       try {
          short size=readShort(in);
-         _coordinates = new ArrayList<>();
-         _facings = new ArrayList<>();
+         _coordinates.clear();
+         _facings.clear();
          for (int i=0 ; i<size ; i++) {
             ArenaCoordinates arenaCoord = new ArenaCoordinates();
             arenaCoord.serializeFromStream(in);
@@ -926,8 +926,8 @@ public abstract class Orientation extends SerializableObject implements Enums, C
       }
       String position = attributes.getNamedItem("position").getNodeValue();
       _position    = Position.getByValue(Byte.parseByte(position));
-      _facings     = new ArrayList<>();
-      _coordinates = new ArrayList<>();
+      _facings.clear();
+      _coordinates.clear();
 
       NodeList children = element.getChildNodes();
       for (int index=0 ; index<children.getLength() ; index++) {

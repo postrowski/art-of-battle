@@ -25,7 +25,7 @@ public class Shield extends Thing {
    }
 
    @Override
-   public Object clone() {
+   public Shield clone() {
       return new Shield(_name, _damageDone, _passiveDefense, _weight, _cost, getRacialBase());
    }
 
@@ -34,7 +34,7 @@ public class Shield extends Thing {
       if (name != null) {
          for (Shield element : _shieldList) {
             if (name.equalsIgnoreCase(element._name)) {
-               Shield shield = (Shield) element.clone();
+               Shield shield = element.clone();
                shield.setRacialBase(racialBase);
                return shield;
             }
@@ -49,14 +49,14 @@ public class Shield extends Thing {
          }
          if (name.startsWith("Magic ")) {
             Shield nonMagicShield = getShield(name.substring("Magic ".length()), racialBase);
-            Shield magicShield = (Shield) nonMagicShield.clone();
+            Shield magicShield = nonMagicShield.clone();
             magicShield._name = name;
             magicShield._weight = 0;
             magicShield._cost   = 1;// don't set to zero, because that causes isReal() to return false.
             return magicShield;
          }
       }
-      Shield shield = (Shield) _noShield.clone();
+      Shield shield = _noShield.clone();
       shield.setRacialBase(racialBase);
       return shield;
    }
@@ -182,7 +182,7 @@ public class Shield extends Thing {
    public static ArrayList<Shield> getShieldListForRace(Race race) {
       ArrayList<Shield> list = new ArrayList<>();
       for (Shield shield : _shieldList) {
-         Shield copy = (Shield) shield.clone();
+         Shield copy = shield.clone();
          copy.setRacialBase(race);
          list.add(copy);
       }

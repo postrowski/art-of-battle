@@ -491,7 +491,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
       Spell spell = null;
       try {
          String name = readString(in);
-         spell = (Spell) getSpell(name).clone();
+         spell = getSpell(name).clone();
          spell.serializeFromStream(in);
          // _resistedAtt, _prerequisiteSpellNames & _attributeMod don't need to be serialized,
          // because they are constant for a given spell (defined by its name).
@@ -519,7 +519,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
    }
 
    @Override
-   public Object clone() {
+   public Spell clone() {
       Class< ? extends Spell> spellClass = this.getClass();
       Spell spell = null;
       try {
@@ -918,20 +918,20 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
          sbDescription.append("<td><b>Final cast roll</b></td></tr>");
          if (!this.isInate()) {
             if (!(this instanceof PriestSpell)) {
-               sbDescription.append("<tr><td>").append(castingTN).append("</b></td>");
+               sbDescription.append("<tr><td><b>").append(castingTN).append("</b></td>");
                sbDescription.append("<td>Spell Casting TN</td></tr>");
             }
             if (rangeAdjustedCastingTN != castingTN) {
-               sbDescription.append("<tr><td>").append(rangeAdjustedCastingTN).append("</b></td>");
+               sbDescription.append("<tr><td><b>").append(rangeAdjustedCastingTN).append("</b></td>");
                sbDescription.append("<td>Range Adjusted Spell TN</td></tr>");
             }
          }
          if (isDefendable()) {
-            sbDescription.append("<tr><td>").append(_defenseTN).append("</b></td>");
+            sbDescription.append("<tr><td><b>").append(_defenseTN).append("</b></td>");
             sbDescription.append("<td>Defenders TN</td></tr>");
          }
          if (this instanceof IResistedSpell) {
-            sbDescription.append("<tr><td>").append(_resistanceRoll).append("</b></td>");
+            sbDescription.append("<tr><td><b>").append(_resistanceRoll).append("</b></td>");
             sbDescription.append("<td>Resistance TN</td></tr>");
          }
       }

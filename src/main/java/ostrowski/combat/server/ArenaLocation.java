@@ -83,14 +83,18 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
       _monitoredProxy = null;
    }
 
+   public void setDataInternal(long data)
+   {
+      _data = data;
+      _terrain = TerrainType.getByValue(data);
+   }
    public void setData(long data)
    {
       if (_data == data) {
          return;
       }
-      ArenaLocation origLoc = (ArenaLocation) clone();
-      _data = data;
-      _terrain = TerrainType.getByValue(data);
+      ArenaLocation origLoc = clone();
+      setDataInternal(data);
       ObjectChanged changeNotif = new ObjectChanged(origLoc, this);
       notifyWatchers(origLoc, this, changeNotif, null/*skipList*/, null/*diag*/);
    }
@@ -116,7 +120,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    }
 
    @Override
-   public Object clone() {
+   public ArenaLocation clone() {
       ArenaLocation selfCopy = new ArenaLocation(_x, _y);
       selfCopy.copyDataUnsafe(this);
       return selfCopy;
@@ -129,7 +133,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
       _terrain = source._terrain;
       _doors = new ArrayList<>();
       for (int i=0 ; i<source._doors.size() ; i++) {
-         _doors.add((Door) source._doors.get(i).clone());
+         _doors.add(source._doors.get(i).clone());
       }
       _label = source._label;
       _things = new ArrayList<>();
@@ -137,7 +141,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
          // Clone the object, if possible
          Object thing = source._things.get(i);
          if (thing instanceof Thing) {
-            Thing dupThing = (Thing) ((Thing)thing).clone();
+            Thing dupThing = ((Thing)thing).clone();
             if (dupThing == null) {
                DebugBreak.debugBreak();
             }
@@ -168,7 +172,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
       return _doors;
    }
    public void addDoor(Door door) {
-      ArenaLocation origLoc = (ArenaLocation) clone();
+      ArenaLocation origLoc = clone();
       synchronized (this) {
          _lock_this.check();
          // check if we already have this door in place.
@@ -213,7 +217,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
             ArenaLocation origLoc;
             synchronized (this) {
                try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_this)) {
-                  origLoc = (ArenaLocation) clone();
+                  origLoc = clone();
                   if (thing instanceof Character) {
                      if (((Character)thing).stillFighting()) {
                         _label = "";
@@ -256,7 +260,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
             if (_things.size() == 0) {
                return;
             }
-            origLoc = (ArenaLocation) clone();
+            origLoc = clone();
             _things.clear();
          }
       }
@@ -296,7 +300,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
       boolean removed;
       synchronized (this) {
          try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_this)) {
-            origLoc = (ArenaLocation) clone();
+            origLoc = clone();
             removed = _things.remove(thing);
          }
       }
@@ -323,7 +327,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    public void setLabel(String label) {
       if (((label == null) && (_label != null)) ||
           ((label != null) && (!label.equals(_label)))) {
-         ArenaLocation origLoc = (ArenaLocation) clone();
+         ArenaLocation origLoc = clone();
          _label = label;
          ObjectChanged changeNotif = new ObjectChanged(origLoc, this);
          notifyWatchers(origLoc, this, changeNotif, null/*skipList*/, null/*diag*/);
@@ -387,7 +391,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    {
       synchronized (this) {
          try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_this)) {
-            setData(readLong(in));
+            setDataInternal(readLong(in));
             _label = readString(in);
             int count = readInt(in);
             _things.clear();
@@ -683,7 +687,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    }
    public void setTerrain(TerrainType terrain) {
       long walls = getWalls();
-      ArenaLocation origLoc = (ArenaLocation) clone();
+      ArenaLocation origLoc = clone();
       _data = (_data & ~TerrainType.MASK) | (terrain.value);
       _terrain = terrain;
       addWall(walls);
@@ -698,7 +702,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    }
    public void removeAllWalls() {
       if (getWalls() != 0) {
-         ArenaLocation origLoc = (ArenaLocation) clone();
+         ArenaLocation origLoc = clone();
          _data = _terrain.value;
          ObjectChanged changeNotif = new ObjectChanged(origLoc, this);
          notifyWatchers(origLoc, this, changeNotif, null/*skipList*/, null/*diag*/);
@@ -711,7 +715,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
             if (_doors.isEmpty()) {
                return;
             }
-            origLoc = (ArenaLocation) clone();
+            origLoc = clone();
             _doors.clear();
          }
       }
@@ -723,7 +727,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
       if ((_data & pureWalls) == pureWalls) {
          return;
       }
-      ArenaLocation origLoc = (ArenaLocation) clone();
+      ArenaLocation origLoc = clone();
       _data |= pureWalls;
       ObjectChanged changeNotif = new ObjectChanged(origLoc, this);
       notifyWatchers(origLoc, this, changeNotif, null/*skipList*/, null/*diag*/);
@@ -868,7 +872,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
       Object thing = null;
       synchronized (this) {
          try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_this)) {
-            originalLoc = (ArenaLocation) this.clone();
+            originalLoc = this.clone();
             if (itemIndex < _things.size()) {
                thing = _things.remove(itemIndex);
                if (thing != null) {
@@ -902,7 +906,12 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    @Override
    public void notifyWatchers(IMonitorableObject originalWatchedObject, IMonitorableObject modifiedWatchedObject, Object changeNotification, Vector<IMonitoringObject> skipList, Diagnostics diag)
    {
-      _monitoredProxy.notifyWatchers(originalWatchedObject, modifiedWatchedObject, changeNotification, skipList, diag);
+      if (_monitoredProxy == null) {
+         DebugBreak.debugBreak();
+      }
+      else {
+         _monitoredProxy.notifyWatchers(originalWatchedObject, modifiedWatchedObject, changeNotification, skipList, diag);
+      }
    }
    @Override
    public RegisterResults registerAsWatcher(IMonitoringObject watcherObject, Diagnostics diag)
@@ -933,7 +942,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
     * returns true if the visibility changed, false if the visibility didn't change
     */
    public boolean setVisible(boolean isVisible, CombatMap map, ArenaLocation viewerLoc, int viewerID, boolean basedOnFacing) {
-      boolean visibilityChanged = _visible != isVisible;
+      boolean oldVisibility = _visible;
       _visible = isVisible;
       if (_visible && (map != null) && (viewerLoc != null)) {
          _visibleFrom = map.getFirstLocationInPath(this, viewerLoc);
@@ -959,7 +968,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
       if (_visible && (viewerID >= 0)) {
          _viewedBy.add(Integer.valueOf(viewerID));
       }
-      return visibilityChanged;
+      return oldVisibility != _visible;
    }
    public boolean getVisible() {
       return _visible;

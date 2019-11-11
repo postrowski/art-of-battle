@@ -201,9 +201,10 @@ public class CharacterGenerator implements Enums
       if (gender == null) {
          // if not specified, default to 'Male'
          gender = Gender.MALE;
-         // 7% percent of the time, randomly assign the gender, which will 50% of the time still be Male.
+         // 7% percent of the time, randomly assign the gender, excluding Male.
          double rnd = CombatServer.random();
          if (rnd > .93) {
+            // exclude MALE from the remaining set to choose from
             genders.remove(gender);
             if (genders.size() > 0) {
                // if this race has non-males, pick any random non-male gender:
@@ -1201,6 +1202,9 @@ public class CharacterGenerator implements Enums
          // Start at the heaviest armor and most expensive, and find the first armor we can wear and afford:
          for (Armor armor : armors) {
             armorWeight = armor.getAdjustedWeight();
+            if (armorWeight == 0) {
+               continue;
+            }
             if (armorWeight < availableWeight) {
                int armorCost = armor.getCost();
                if (maxExpenditure == -1) {
@@ -1223,6 +1227,9 @@ public class CharacterGenerator implements Enums
          if (shieldLevel != 0) {
             Shield shieldToUse = null;
             for (Shield shield : shields) {
+               if (!shield.isReal()) {
+                  continue;
+               }
                if (shield.getAdjustedWeight() < availableWeight) {
                   if (maxExpenditure == -1) {
                      shieldToUse = shield;

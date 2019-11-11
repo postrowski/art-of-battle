@@ -172,7 +172,7 @@ public class DefenseOptions extends EnumOptions<DefenseOption> implements Compar
       return getIntValue();
    }
    @Override
-   public Object clone() {
+   public DefenseOptions clone() {
       return new DefenseOptions(this.getIntValue());
    }
    @Override

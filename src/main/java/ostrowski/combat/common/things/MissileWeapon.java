@@ -40,8 +40,7 @@ public class MissileWeapon extends Weapon
    }
 
    @Override
-   public Object clone()
-   {
+   public MissileWeapon clone() {
       return new MissileWeapon(_size, getRacialBase(), getWeight(), getCost(), getName(), _attackStyles[0]);
    }
 

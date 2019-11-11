@@ -38,9 +38,9 @@
   
   <teams count="4" maxCombatantsPerTeam="15">
     <team id="0">
-      <combatant AI="Simple" charName="? 100 wolf" id="0" startX="8" startY="12"/>
+      <combatant AI="Remote Connection" charName="" id="0" startX="8" startY="12"/>
       <combatant AI="Simple" charName="? 100 wolf" id="1" startX="10" startY="6"/>
-      <combatant AI="God" charName="? 255 Orc" id="2" startX="7" startY="19"/>
+      <combatant AI="Simple" charName="? 100 wolf" id="2" startX="7" startY="19"/>
       <combatant AI="Off" charName=" " id="3"/>
       <combatant AI="Off" charName=" " id="4"/>
       <combatant AI="Off" charName=" " id="5"/>
@@ -55,9 +55,9 @@
       <combatant AI="Off" charName="" id="14"/>
     </team>
     <team id="1">
-      <combatant AI="Local" charName="? 100 Human" id="0" startX="17" startY="21"/>
-      <combatant AI="Local" charName="? 100 Human " id="1" startX="19" startY="21"/>
-      <combatant AI="Local" charName="? 200 Human" id="2" startX="18" startY="24"/>
+      <combatant AI="Norm" charName="? 100 Human" id="0" startX="17" startY="21"/>
+      <combatant AI="Norm" charName="? 100 Human " id="1" startX="19" startY="21"/>
+      <combatant AI="Norm" charName="? 200 Human" id="2" startX="18" startY="24"/>
       <combatant AI="Off" charName=" " id="3"/>
       <combatant AI="Off" charName=" " id="4"/>
       <combatant AI="Off" charName=" " id="5"/>

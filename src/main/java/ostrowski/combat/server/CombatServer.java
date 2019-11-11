@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -51,6 +52,7 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 
 import ostrowski.DebugBreak;
+import ostrowski.combat.client.CombatClient;
 import ostrowski.combat.client.MessageDialog;
 import ostrowski.combat.client.RequestUserInput;
 import ostrowski.combat.client.ui.AutoRunBlock;
@@ -113,6 +115,17 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
 
    public static void main(String[] args)
    {
+      List<String> newArgs = new ArrayList<>(Arrays.asList(args));
+      if (!newArgs.isEmpty()) {
+         if (newArgs.get(0).equalsIgnoreCase("client")) {
+            newArgs.remove(0);
+            CombatClient.main(newArgs);
+            return;
+         }
+      }
+      main(newArgs);
+   }
+   public static void main(List<String> args) {
       AnglePairDegrees.test();
       probabilityTest();
       @SuppressWarnings("unused")
@@ -235,7 +248,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    private static boolean USE_CACHED_DRAWING = true;
    private static boolean ALLOW_BACKUP = false;
 
-   public CombatServer(String[] args)
+   public CombatServer(List<String> args)
    {
       _isServer = true;
       _this = this;
@@ -477,7 +490,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       _charWidget.buildCharSheet(characterData);
 
       getShell().pack();
-      getShell().open ();
+      getShell().open();
 
       _map.setZoomToFit();
       if (port != null) {
@@ -1543,23 +1556,12 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
                      _pendingMessage.setLength(0);
                   }
                   // remove all CR-LF because they terminate the javascript execution for the insert
-                  msg = msg.replaceAll("\n", "");
+                  msg = msg.replace("\n", "");
+                  // escape any single quote character, since we are putting this inside a single quote
+                  msg = msg.replace("'", "\\'");
                   StringBuilder sb = new StringBuilder();
                   sb.append("document.body.insertAdjacentHTML('beforeEnd', '");
-                  int startIndex = 0;
-                  int quoteIndex = msg.indexOf('\'', startIndex);
-                  if (quoteIndex == -1) {
-                     sb.append(msg);
-                  }
-                  else {
-                     while (quoteIndex != -1 ) {
-                        sb.append(msg.substring(startIndex, quoteIndex));
-                        sb.append("\\\'");
-                        startIndex = quoteIndex + 1;
-                        quoteIndex = msg.indexOf('\'', startIndex);
-                     }
-                     sb.append(msg.substring(startIndex));
-                  }
+                  sb.append(msg);
                   sb.append("');window.scrollTo(0,document.body.scrollHeight);"); // scroll to the bottom of the window
                   if ((_messages != null) && (!_messages.isDisposed())) {
                      _messages.execute(sb.toString());

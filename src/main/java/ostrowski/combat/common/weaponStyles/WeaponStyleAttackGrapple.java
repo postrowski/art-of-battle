@@ -23,7 +23,7 @@ public class WeaponStyleAttackGrapple extends WeaponStyleAttackMelee
    }
 
    @Override
-   public Object clone()
+   public WeaponStyleAttackGrapple clone()
    {
       WeaponStyleAttackGrapple style = new WeaponStyleAttackGrapple(_skillType, _minSkill, _skillPenalty, _name,
                                                                    _parryPenalty, _minRange, _maxRange, _handsRequired);

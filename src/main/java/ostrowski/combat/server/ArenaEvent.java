@@ -168,7 +168,7 @@ public class ArenaEvent implements Cloneable
                (_eventType.equals(EVENT_TYPE_OPEN_DOOR))) {
          for (ArenaCoordinates eventLoc : _eventLocations) {
             ArenaLocation loc = arena.getLocation(eventLoc);
-            ArenaLocation origLoc = (ArenaLocation) loc.clone();
+            ArenaLocation origLoc = loc.clone();
             boolean locChanged = false;
             synchronized (loc) {
                try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(loc._lock_this)) {
@@ -355,7 +355,7 @@ public class ArenaEvent implements Cloneable
             }
          }
          // keep this map for later, in case we come back.
-         _savedMaps.put(map.getName(), (CombatMap) map.clone());
+         _savedMaps.put(map.getName(), map.clone());
          map.removeAllCombatants();
          if (!CombatServer._this.getShell().isDisposed()) {
             Display display = CombatServer._this.getShell().getDisplay();
@@ -453,7 +453,7 @@ public class ArenaEvent implements Cloneable
    }
 
    @Override
-   public Object clone() {
+   public ArenaEvent clone() {
       ArenaEvent dup = new ArenaEvent(_eventName);
       dup._eventType = _eventType;
       dup._eventData = _eventData;

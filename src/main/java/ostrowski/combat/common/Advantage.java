@@ -288,14 +288,14 @@ public class Advantage extends SerializableObject implements Cloneable, Enums
       if (name != null) {
          for (Advantage advantage : _advList) {
             if (advantage._name.equalsIgnoreCase(name)) {
-               return (Advantage) advantage.clone();
+               return advantage.clone();
             }
          }
          // Consider the case of "AdvantageName:LevelName", such as "Code Of Conduct:Honest"
          name = name.toLowerCase();
          for (Advantage advantage : _advList) {
             if (name.startsWith(advantage._name.toLowerCase())) {
-               Advantage adv = (Advantage) advantage.clone();
+               Advantage adv = advantage.clone();
                String selectedLevelName = name.substring(advantage._name.length()+1, name.length()).trim();
                if (adv.setLevelByName(selectedLevelName)) {
                   return adv;
@@ -350,7 +350,7 @@ public class Advantage extends SerializableObject implements Cloneable, Enums
    }
 
    @Override
-   public Object clone() {
+   public Advantage clone() {
       String[] type = new String[0];
       return new Advantage(_name, false, _levels.toArray(type), _costs, _requirements.toArray(type), _conflicts.toArray(type), "");
    }

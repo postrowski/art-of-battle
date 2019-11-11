@@ -304,7 +304,7 @@ public abstract class Limb extends Thing implements Cloneable {
       return simpleName.substring(lastSpace+1);
    }
    @Override
-   public abstract Object clone();
+   public abstract Limb clone();
 
    @Override
    public String toString() {

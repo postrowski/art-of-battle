@@ -76,7 +76,7 @@ public class Wall extends Thing implements Enums
       return "Wall";
    }
    @Override
-   public Object clone() {
+   public Wall clone() {
       return new Wall(_name, _weight, _orientation);
    }
 

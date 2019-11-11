@@ -216,7 +216,7 @@ public class Hand extends Limb {
    }
 
    @Override
-   public Object clone()
+   public Hand clone()
    {
       Hand newHand = new Hand(_limbType, getRacialBase());
       this.copyDataInto(newHand);

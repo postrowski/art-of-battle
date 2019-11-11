@@ -1505,16 +1505,18 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       for (Facing dir : Facing.values()) {
          isKnown.put(dir, false);
       }
-      IMapWidget map = CombatServer._this._map;
-      if (map != null) {
-         CombatMap combatMap = map.getCombatMap();
-         if (combatMap != null) {
-            for (Facing dir : Facing.values()) {
-               short x = (short) (dir.moveX + fromCoord._x);
-               short y = (short) (dir.moveY + fromCoord._y);
-               ArenaLocation fromLoc = combatMap.getLocation(x, y);
-               if ((fromLoc != null) && (fromLoc.getVisible())) {
-                  isKnown.put(dir, true);
+      if (CombatServer._this != null) {
+         IMapWidget map = CombatServer._this._map;
+         if (map != null) {
+            CombatMap combatMap = map.getCombatMap();
+            if (combatMap != null) {
+               for (Facing dir : Facing.values()) {
+                  short x = (short) (dir.moveX + fromCoord._x);
+                  short y = (short) (dir.moveY + fromCoord._y);
+                  ArenaLocation fromLoc = combatMap.getLocation(x, y);
+                  if ((fromLoc != null) && (fromLoc.getVisible())) {
+                     isKnown.put(dir, true);
+                  }
                }
             }
          }

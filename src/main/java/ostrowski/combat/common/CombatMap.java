@@ -862,7 +862,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       return "ComatMap: " + _sizeX +"x" + _sizeY;
    }
    @Override
-   public Object clone() {
+   public CombatMap clone() {
        CombatMap newObj = new CombatMap(_sizeX, _sizeY, null);
        newObj._level = _level;
        newObj._hideViewFromLocalPlayers = _hideViewFromLocalPlayers;
@@ -896,7 +896,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
        }
        newObj._triggers.clear();
        for (ArenaTrigger trigger : _triggers) {
-          newObj._triggers.add((ArenaTrigger) trigger.clone());
+          newObj._triggers.add(trigger.clone());
        }
        return newObj;
    }
@@ -2027,7 +2027,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
                      }
                   }
 
-                  ArenaLocation origDoorLoc = (ArenaLocation) doorLoc.clone();
+                  ArenaLocation origDoorLoc = doorLoc.clone();
                   boolean results = false;
                   if (answer.startsWith(CLOSE_DOOR)) {
                      results = door.close();

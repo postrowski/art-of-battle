@@ -37,15 +37,6 @@ public abstract class Thing extends SerializableObject implements Cloneable, Enu
    private Race  _racialBase     = null;
    public byte   _passiveDefense = 0;
 
-   public static final int STATE_ON_GROUND               = 0;
-   public static final int STATE_IN_AIR                  = 1;
-   public static final int STATE_IN_BACKPACK             = 2;
-   public static final int STATE_ON_BELT                 = 3;
-   public static final int STATE_HELD_1HAND_READY_MELEE  = 4;
-   public static final int STATE_HELD_2HAND_READY_MELEE  = 5;
-   public static final int STATE_HELD_1HAND_READY_RANGED = 6;
-   public static final int STATE_HELD_2HAND_READY_RANGED = 7;
-
    @Override
    public String toString() {
        return _name + ", $" + _cost + ", " + _weight + " lbs, pd=" +_passiveDefense;
@@ -157,8 +148,7 @@ public abstract class Thing extends SerializableObject implements Cloneable, Enu
       }
 
       if (allowTool) {
-         Tool tool = new Tool(thingName, racialBase);
-         return tool;
+         return new Tool(thingName, racialBase);
       }
       return null;
    }
@@ -219,7 +209,7 @@ public abstract class Thing extends SerializableObject implements Cloneable, Enu
    }
 
    @Override
-   public abstract Object clone();
+   public abstract Thing clone();
    public abstract String getDefenseName(boolean tensePast, Character defender);
 
    public boolean canBeApplied() {

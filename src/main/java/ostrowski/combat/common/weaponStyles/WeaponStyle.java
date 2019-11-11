@@ -61,7 +61,7 @@ public abstract class WeaponStyle implements Enums//, Serializable
    public byte getHandsRequired() { return _handsRequired;}
 
    @Override
-   abstract public Object clone();
+   abstract public WeaponStyle clone();
 
    public void copyDataFrom(WeaponStyle source) {
       _skillType     = source._skillType;

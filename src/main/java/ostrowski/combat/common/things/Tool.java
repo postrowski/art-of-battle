@@ -14,7 +14,7 @@ public class Tool extends Thing
       super(name, racialBase, 0, 0, (byte)0);
    }
    @Override
-   public Object clone() {
+   public Tool clone() {
       return new Tool(_name, getRacialBase());
    }
 

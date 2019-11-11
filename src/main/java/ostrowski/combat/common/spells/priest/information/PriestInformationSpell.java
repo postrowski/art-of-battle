@@ -17,9 +17,9 @@ public class PriestInformationSpell implements IPriestGroup
    static {
       _spells.add(new SpellDetectGood(PriestInformationSpell.class, 1));
       _spells.add(new SpellDetectEvil(PriestInformationSpell.class, 1));
-      _spells.add(new SpellDetectPoison(PriestInformationSpell.class, 1));
       _spells.add(new SpellDetectLife(PriestInformationSpell.class, 1));
       _spells.add(new SpellSeekElement(PriestInformationSpell.class, 1));
+      _spells.add(new SpellDetectPoison(PriestInformationSpell.class, 2));
       _spells.add(new SpellDetectLies(PriestInformationSpell.class, 2));
       _spells.add(new SpellDetectDanger(PriestInformationSpell.class, 3));
       _spells.add(new SpellDeterminePath(PriestInformationSpell.class, 4));

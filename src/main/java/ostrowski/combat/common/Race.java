@@ -150,7 +150,7 @@ public class Race implements Cloneable, Enums
          _attributeMods.put(att, attributeMods[att.value]);
       }
       if (orientation != null) {
-         _baseOrientation = (Orientation) orientation.clone();
+         _baseOrientation = orientation.clone();
       }
 
       _racialProperties = new ArrayList<>();
@@ -222,7 +222,7 @@ public class Race implements Cloneable, Enums
                DebugBreak.debugBreak();
             }
             else {
-               spell = (Spell) spell.clone();
+               spell = spell.clone();
                spell.setPower(level);
                spell.setLevel(level);
                spell.setIsInate(true);
@@ -233,7 +233,7 @@ public class Race implements Cloneable, Enums
    }
 
    public Orientation getBaseOrientation() {
-      Orientation orientation = (Orientation) _baseOrientation.clone();
+      Orientation orientation = _baseOrientation.clone();
       return orientation;
    }
 
@@ -246,7 +246,7 @@ public class Race implements Cloneable, Enums
    }
 
    @Override
-   protected Object clone() {
+   protected Race clone() {
       ArrayList<String> spellNames = new ArrayList<>();
       for (Spell spell : _inateSpells) {
          StringBuilder sb = new StringBuilder();
@@ -543,7 +543,7 @@ public class Race implements Cloneable, Enums
       if (name != null) {
          for (Race race : _raceList) {
             if ((name.equalsIgnoreCase(race._name)) && (gender == race._gender)) {
-               return (Race) race.clone();
+               return race.clone();
             }
          }
       }
@@ -565,9 +565,9 @@ public class Race implements Cloneable, Enums
 
    public static List<Gender> getGendersForRace(String raceName) {
       ArrayList<Gender> list = new ArrayList<>();
-      for (Race element : _raceList) {
-         if (raceName.equals(element.getName())) {
-            list.add(element._gender);
+      for (Race race : _raceList) {
+         if (raceName.equals(race.getName())) {
+            list.add(race._gender);
          }
       }
       return list;

@@ -273,7 +273,9 @@ public abstract class OrientationSerpentine extends Orientation
             newOrientation._facings.set(index, newFacing);
             ArrayList<ArenaCoordinates> newCoords = computeLocationsRequiredForFacings(newOrientation._facings, newOrientation._coordinates.get(0));
             if (newCoords != null) {
-               newOrientation._coordinates = newCoords;
+               newOrientation._coordinates.clear();
+               newOrientation._coordinates.addAll(newCoords);
+
                for (int i=0 ; i<_coordinates.size() ; i++) {
                   if (ArenaCoordinates.getDistance(newOrientation._coordinates.get(i), _coordinates.get(i)) > 1) {
                      return null;
@@ -289,7 +291,8 @@ public abstract class OrientationSerpentine extends Orientation
          return null;
       }
 
-      newOrientation._facings = newFacings;
+      newOrientation._facings.clear();
+      newOrientation._facings.addAll(newFacings);
       for (ArenaCoordinates coord : newOrientation._coordinates) {
          if (coord == null) {
             DebugBreak.debugBreak();

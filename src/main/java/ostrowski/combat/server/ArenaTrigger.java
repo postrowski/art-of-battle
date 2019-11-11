@@ -193,18 +193,18 @@ public class ArenaTrigger implements Cloneable
    }
 
    @Override
-   public Object clone() {
+   public ArenaTrigger clone() {
       ArenaTrigger dup = new ArenaTrigger(_name);
       for (ArenaCoordinates coord : _triggerCoordinates) {
          if (coord != null) {
-            dup._triggerCoordinates.add((ArenaCoordinates) coord.clone());
+            dup._triggerCoordinates.add(coord.clone());
          }
       }
       dup._enabled = _enabled;
       dup._onlyAffectsPlayers = _onlyAffectsPlayers;
       dup._requiresEntireTeam = _requiresEntireTeam;
       for (ArenaEvent event : _events) {
-         dup._events.add((ArenaEvent) event.clone());
+         dup._events.add(event.clone());
       }
       return dup;
    }

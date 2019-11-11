@@ -62,7 +62,7 @@ public class MageCollege extends SerializableObject implements Enums
       if (college == null) {
          return null;
       }
-      return (MageCollege) college.clone();
+      return college.clone();
    }
 
    public byte getLevel() {
@@ -74,7 +74,7 @@ public class MageCollege extends SerializableObject implements Enums
    }
 
    @Override
-   public Object clone() {
+   public MageCollege clone() {
       return new MageCollege(this);
    }
 
@@ -102,7 +102,7 @@ public class MageCollege extends SerializableObject implements Enums
       MageCollege college = null;
       try {
          String name = readString(in);
-         college = (MageCollege) getCollege(name).clone();
+         college = getCollege(name).clone();
          college.serializeFromStream(in);
          // _resistedAtt, _prerequisiteSpellNames & _attributeMod don't need to be serialized,
          // because they are constant for a given spell (defined by its name).

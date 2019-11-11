@@ -2853,7 +2853,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       // Make a copy of listOfListOfDefs, because if we mess with it, it will affect the caller
       List<DefenseOptions> listOfListOfDefOptionsCopy = new ArrayList<>();
       for (DefenseOptions defOptions : listOfListOfDefOptions) {
-         listOfListOfDefOptionsCopy.add((DefenseOptions)defOptions.clone());
+         listOfListOfDefOptionsCopy.add(defOptions.clone());
       }
 
       DefenseOptions defOptions = listOfListOfDefOptionsCopy.remove(0);
@@ -2862,7 +2862,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       // now recurse for each possible action taken:
       for (int i=0 ; i<defOptions.size() ; i++) {
          DefenseOption defOpt = defOptions.get(i);
-         DefenseOptions defOpts = (DefenseOptions) defs.clone();
+         DefenseOptions defOpts = defs.clone();
          defOpts.add(defOpt);
          // check for illegal combinations such as Dodge/Retreat, or counter-attack/Retreat
          if (!defOpts.isDefensesValid()) {
@@ -3649,7 +3649,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    }
 
    @Override
-   public Object clone() {
+   public Character clone() {
       byte[] attArray = new byte[Attribute.COUNT];
       for (Attribute att : Attribute.values()) {
          attArray[att.value] = _attributes.get(att);
@@ -3717,7 +3717,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       }
 
       // active values:
-      _condition = (Condition) source._condition.clone();
+      _condition = source._condition.clone();
       _uniqueID = source._uniqueID;
       _teamID = source._teamID;
       _targetID = source._targetID;
@@ -3730,14 +3730,14 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          if (source._currentSpell instanceof MageSpell) {
             for (Spell spell : _knownMageSpellsList) {
                if (spell.getClass() == source._currentSpell.getClass()) {
-                  _currentSpell = (Spell) spell.clone();
+                  _currentSpell = spell.clone();
                   _currentSpell.setCaster(this);
                   break;
                }
             }
          }
          else {
-            _currentSpell = (Spell) source._currentSpell.clone();
+            _currentSpell = source._currentSpell.clone();
             _currentSpell.setCaster(this);
          }
       }
@@ -4491,7 +4491,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    }
 
    public void applyWound(Wound wound, Arena arena) {
-      Character origChar = (Character) clone(); // used to notify watchers if something changes, like a severed limb, etc
+      Character origChar = clone(); // used to notify watchers if something changes, like a severed limb, etc
 
       wound.setInvalidReason(placeWound(wound));
       Wound modifiedWound = modifyWoundFromDefense(wound);
@@ -4700,7 +4700,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    }
 
    public void applyAction(RequestAction action, Arena arena) throws BattleTerminatedException {
-      Character originalCopy = (Character) clone();
+      Character originalCopy = clone();
       if (action.isEquipUnequip()) {
          RequestEquipment reqEqu = action._equipmentRequest;
          if (reqEqu == null) {
@@ -4773,12 +4773,12 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       if (action.isBeginSpell()) {
          int spellIndex = action._spellTypeSelectionRequest._spellSelectionRequest.getAnswerID();
          if (RequestSpellTypeSelection.SPELL_TYPE_MAGE.equals(action._spellTypeSelectionRequest.getAnswer())) {
-            _currentSpell = (MageSpell) _knownMageSpellsList.get(spellIndex).clone();
+            _currentSpell = _knownMageSpellsList.get(spellIndex).clone();
          }
          else {
             String deity = action._spellTypeSelectionRequest.getAnswer();
             List<PriestSpell> spells = PriestSpell.getSpellsForDeity(deity, getAffinity(deity), true/*addNullBetweenGroups*/);
-            _currentSpell = (PriestSpell) spells.get(spellIndex).clone();
+            _currentSpell = spells.get(spellIndex).clone();
          }
          _currentSpell.setCaster(this);
          _currentSpell.beginIncantation();
@@ -4802,7 +4802,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          {
             RequestActionOption reqActOpt = (RequestActionOption) actionOption;
             int spellIndex = reqActOpt.getValue().getIndexOfPrepareInateSpell();
-            _currentSpell = (Spell) _race.getInateSpells().get(spellIndex).clone();
+            _currentSpell = _race.getInateSpells().get(spellIndex).clone();
             _currentSpell.maintainSpell();
             _currentSpell.setCaster(this);
          }
@@ -4984,7 +4984,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       if (destination.equals(_condition.getOrientation())) {
          return;
       }
-      Character origChar = (Character) clone();
+      Character origChar = clone();
       _condition.setOrientation(destination);
       ObjectChanged changeNotif = new ObjectChanged(origChar, this);
       notifyWatchers(origChar, this, changeNotif, null/*skipList*/, diag);

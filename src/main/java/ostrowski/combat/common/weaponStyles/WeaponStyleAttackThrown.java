@@ -30,7 +30,7 @@ public class WeaponStyleAttackThrown extends WeaponStyleAttackRanged
    }
 
    @Override
-   public Object clone()
+   public WeaponStyleAttackThrown clone()
    {
       WeaponStyleAttackThrown style =  new WeaponStyleAttackThrown(_minSkill, _skillPenalty,
                                                                    _damageMod, _varianceDice, _damageType,

@@ -38,18 +38,19 @@ public class MapVisibility extends SerializableObject
       short rowOffset = (short) (x / 8);
       byte bitMask = (byte) (x % 8);
       boolean wasVisible = (_visibilityMask[((_bytesPerRow * y)/2) + rowOffset] & bitMask) != 0;
-      if (wasVisible != visibility) {
-         if (visibility) {
-            _visibilityMask[((_bytesPerRow * y)/2) + rowOffset] |= bitMask;
-         }
-         else {
-            _visibilityMask[((_bytesPerRow * y)/2) + rowOffset] &= ~bitMask;
-         }
-         return true;
+      if (wasVisible == visibility) {
+         return false;
       }
-      return false;
+      if (visibility) {
+         _visibilityMask[((_bytesPerRow * y)/2) + rowOffset] |= bitMask;
+      }
+      else {
+         _visibilityMask[((_bytesPerRow * y)/2) + rowOffset] &= ~bitMask;
+      }
+      return true;
    }
 
+   @Override
    public void serializeFromStream(DataInputStream in)
    {
       try {
@@ -60,6 +61,7 @@ public class MapVisibility extends SerializableObject
       }
    }
 
+   @Override
    public void serializeToStream(DataOutputStream out)
    {
       try {
@@ -69,7 +71,8 @@ public class MapVisibility extends SerializableObject
          e.printStackTrace();
       }
    }
-   public Object clone() {
+   @Override
+   public MapVisibility clone() {
       MapVisibility copy = new MapVisibility(_visibilityMask, _bytesPerRow);
       for (int i=0 ; i<_visibilityMask.length ; i++) {
          copy._visibilityMask[i] = _visibilityMask[i];

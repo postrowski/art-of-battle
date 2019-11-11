@@ -89,7 +89,7 @@ public class Door extends Wall implements Enums
       return "Door";
    }
    @Override
-   public Object clone() {
+   public Door clone() {
       return new Door(_name, _weight, _doorState, _keyCode, _orientation);
    }
 

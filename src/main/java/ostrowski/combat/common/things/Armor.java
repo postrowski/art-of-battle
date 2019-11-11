@@ -28,7 +28,7 @@ public class Armor extends Thing {
       _barrier.put(DamageType.ELECTRIC, (byte) electric);
    }
    @Override
-   public Object clone() {
+   public Armor clone() {
       return new Armor(_name, _passiveDefense,
                        _barrier.get(DamageType.BLUNT), _barrier.get(DamageType.CUT), _barrier.get(DamageType.IMP),
                        _barrier.get(DamageType.FIRE), _barrier.get(DamageType.ELECTRIC), _weight, _cost, getRacialBase());
@@ -43,7 +43,7 @@ public class Armor extends Thing {
       if (name != null) {
          for (Armor element : _armorList) {
             if (name.equalsIgnoreCase(element._name)) {
-               Armor armor = (Armor) element.clone();
+               Armor armor = element.clone();
                armor.setRacialBase(racialBase);
                return armor;
             }
@@ -56,13 +56,13 @@ public class Armor extends Thing {
          // check natural armor list:
          for (Armor element : _naturalArmorList) {
             if (name.equalsIgnoreCase(element._name)) {
-               Armor armor = (Armor) element.clone();
+               Armor armor = element.clone();
                armor.setRacialBase(racialBase);
                return armor;
             }
          }
       }
-      Armor armor = (Armor) NO_ARMOR.clone();
+      Armor armor = NO_ARMOR.clone();
       armor.setRacialBase(racialBase);
       return armor;
    }
@@ -182,7 +182,7 @@ public class Armor extends Thing {
    public static ArrayList<Armor> getArmorListForRace(Race race) {
       ArrayList<Armor> list = new ArrayList<>();
       for (Armor armor : _armorList) {
-         Armor copy = (Armor) armor.clone();
+         Armor copy = armor.clone();
          copy.setRacialBase(race);
          list.add(copy);
       }

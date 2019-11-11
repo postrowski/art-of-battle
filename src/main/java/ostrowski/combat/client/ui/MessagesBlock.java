@@ -85,6 +85,10 @@ public class MessagesBlock extends Helper implements SelectionListener
       if (!message.endsWith(">")) {
          fullMsg += "<br>";
       }
+      // remove all CR-LF because they terminate the javascript execution for the insert
+      fullMsg = fullMsg.replace("\n", "<br/>");
+      // escape any single quote character, since we are putting this inside a single quote
+      fullMsg = fullMsg.replace("'", "\\'");
       _messageBuffer.append(fullMsg);
       if (!_messagesIn.isDisposed()) {
          _messagesIn.execute("document.body.insertAdjacentHTML('beforeEnd', '"+fullMsg+"');window.scrollTo(0,document.body.scrollHeight);");

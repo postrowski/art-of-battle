@@ -1,1 +1,2 @@
-java -Xmx512M -XX:MaxPermSize=128M -classpath swt.jar;Animator.jar;Util.jar;jinput.jar;lwjgl_util.jar;lwjgl.jar;Combat.jar;. ostrowski.combat.server.CombatServer
+#'C:\Program Files\Java\jdk-11.0.5\bin\java.exe' -Xmx512M -classpath combat-client.jar;. ostrowski.combat.server.CombatServer
+.\combat-client.jar server

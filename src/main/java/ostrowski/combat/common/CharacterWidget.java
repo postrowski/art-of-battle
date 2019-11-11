@@ -191,7 +191,7 @@ public class CharacterWidget implements Enums, ModifyListener {
                long startTime = System.currentTimeMillis();
                block.refreshDisplay(_character);
                long endTime = System.currentTimeMillis();
-Rules.diag("recieved Character - refreshDisplay of " + block.getClass().getName() + " took " + ((endTime - startTime) / 1000.0) + " seconds");
+//Rules.diag("recieved Character - refreshDisplay of " + block.getClass().getName() + " took " + ((endTime - startTime) / 1000.0) + " seconds");
             }
          }
       }

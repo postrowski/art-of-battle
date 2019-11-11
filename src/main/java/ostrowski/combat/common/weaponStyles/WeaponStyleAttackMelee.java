@@ -32,7 +32,7 @@ public class WeaponStyleAttackMelee extends WeaponStyleAttack
    }
 
    @Override
-   public Object clone()
+   public WeaponStyleAttack clone()
    {
       WeaponStyleAttack style = new WeaponStyleAttackMelee(_skillType, _minSkill, _skillPenalty, _name,
                                         _speedBase, _slowStr, _fastStr,

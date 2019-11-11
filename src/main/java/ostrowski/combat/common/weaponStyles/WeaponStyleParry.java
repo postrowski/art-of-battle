@@ -42,7 +42,7 @@ public class WeaponStyleParry extends WeaponStyle
    }
 
    @Override
-   public Object clone() {
+   public WeaponStyleParry clone() {
       WeaponStyleParry style =  new WeaponStyleParry(_skillType, _minSkill, _skillPenalty, _name, _speedBase, _slowStr,
                                                      _fastStr, _effectiveness, _handsRequired);
       style.copyDataFrom(this);

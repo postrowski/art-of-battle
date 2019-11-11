@@ -78,7 +78,7 @@ public class Wing extends Limb
    }
 
    @Override
-   public Object clone() {
+   public Wing clone() {
       return new Wing(_limbType, _wingType, getRacialBase());
    }
 }

@@ -75,9 +75,7 @@ public class ServerStatus extends SerializableObject implements Enums
 
    public ArrayList<Character> getCombatants() {
       ArrayList<Character> list = new ArrayList<>();
-      for (Character combatant : _combatants) {
-         list.add(combatant);
-      }
+      list.addAll(_combatants);
       return list;
    }
 

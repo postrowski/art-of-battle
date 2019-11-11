@@ -364,6 +364,12 @@ public class Rules extends DebugBreak implements Enums
       if (skillExcess <= 0) {
          return 0;
       }
+      return (byte) (((byte)(skillExcess / 10)) * 5); // round down (truncate)
+   }
+   public static byte getHoldLevelForSkillExcess(byte skillExcess) {
+      if (skillExcess <= 0) {
+         return 0;
+      }
       return (byte) (skillExcess / 2); // round down (truncate)
    }
 

@@ -49,7 +49,7 @@ public class Potion extends Thing implements Cloneable
    }
 
    @Override
-   public Object clone() {
+   public Potion clone() {
       return new Potion(_name, _strength, _duration, _cost, _background);
    }
 
@@ -151,7 +151,7 @@ public class Potion extends Thing implements Cloneable
       for (Potion potion : _potionList) {
          if (potion.getName().equals(thingName))
          {
-            Potion duplicatePotion = (Potion) potion.clone();
+            Potion duplicatePotion = potion.clone();
             duplicatePotion.setRacialBase(racialBase);
             return duplicatePotion;
          }

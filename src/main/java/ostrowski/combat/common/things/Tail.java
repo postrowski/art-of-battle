@@ -44,7 +44,7 @@ public class Tail extends Limb
       return tail;
    }
    @Override
-   public Object clone() {
+   public Tail clone() {
       return new Tail(_limbType, getRacialBase());
    }
 

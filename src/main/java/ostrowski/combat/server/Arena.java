@@ -841,8 +841,15 @@ public class Arena implements Enums, IMapListener
          sendMessageTextToAllClients(combatant.getName() + " has disconnected.", false/*popUp*/);
          return;
       }
+      waitForClientToReconnect(combatant);
       sendMessageTextToAllClients("An annonymous client has disconnected.", false/*popUp*/);
    }
+
+   private final List<Character> _characterWaitingToConnect = new ArrayList<>();
+   private void waitForClientToReconnect(Character combatant) {
+      _characterWaitingToConnect.add(combatant);
+   }
+
    public void disconnectAllClients() {
       synchronized(_proxyList) {
          try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_proxyList)) {

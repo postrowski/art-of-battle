@@ -20,7 +20,7 @@ public class WeaponStyleGrapplingParry extends WeaponStyleParry
    }
 
    @Override
-   public Object clone() {
+   public WeaponStyleGrapplingParry clone() {
       WeaponStyleGrapplingParry style =  new WeaponStyleGrapplingParry(_skillType, _minSkill, _skillPenalty, _name, _speedBase, _slowStr,
                                                                        _fastStr, getEffectiveness(), _handsRequired);
       style.copyDataFrom(this);

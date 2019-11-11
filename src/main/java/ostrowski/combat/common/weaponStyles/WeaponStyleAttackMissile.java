@@ -22,7 +22,7 @@ public class WeaponStyleAttackMissile extends WeaponStyleAttackRanged
    }
 
    @Override
-   public Object clone()
+   public WeaponStyleAttackMissile clone()
    {
       WeaponStyleAttackMissile style = new WeaponStyleAttackMissile(_skillType, _minSkill, _skillPenalty,
                                                                     _damageMod, _varianceDice, _damageType,
