@@ -50,7 +50,7 @@ public abstract class SpellSummonBeing extends ExpiringPriestSpell implements IC
       String charSoruce = pointTotal + "  " + summonedTypeRaceName();
       Character summonedBeing = CharacterGenerator.generateRandomCharacter(charSoruce, arena, true/*printCharacter*/);
       ArenaLocation loc = ArenaLocation.getForwardMovement(getCaster().getHeadCoordinates(), getCaster().getFacing(), arena.getCombatMap());
-      loc = (ArenaLocation) loc.clone();
+      loc = loc.clone();
       int count = 0;
       while (!arena.addCombatant(summonedBeing, _caster._teamID, loc._x, loc._y, AI_Type.NORM/*aiEngineType*/)) {
          Facing direction = Facing.getByValue((byte) (CombatServer.random() * Facing.values().length));

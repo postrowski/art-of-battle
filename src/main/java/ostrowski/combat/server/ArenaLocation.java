@@ -121,19 +121,20 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
 
    @Override
    public ArenaLocation clone() {
-      ArenaLocation selfCopy = new ArenaLocation(_x, _y);
-      selfCopy.copyDataUnsafe(this);
-      return selfCopy;
+      ArenaLocation clone = (ArenaLocation) super.clone();
+      clone.copyDataUnsafe(this);
+      return clone;
    }
 
+   // This method is not thread-safe. For thread-safe copies, use copyData(ArenaLocation)
    private void copyDataUnsafe(ArenaLocation source)
    {
       super.copyData(source);
       _data  = source._data;
       _terrain = source._terrain;
       _doors = new ArrayList<>();
-      for (int i=0 ; i<source._doors.size() ; i++) {
-         _doors.add(source._doors.get(i).clone());
+      for (Door door : source._doors) {
+         _doors.add(door.clone());
       }
       _label = source._label;
       _things = new ArrayList<>();

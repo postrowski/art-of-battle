@@ -261,7 +261,7 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
             _selfTeam = self._teamID;
             _selfID   = self._uniqueID;
             _targetID = self._targetID;
-            _selfLoc  = (ArenaLocation) selfLoc.clone();
+            _selfLoc  = selfLoc.clone();
          }
       }
       updateFindSelfButton();
@@ -439,7 +439,7 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
       }
       _combatMap.updateCombatant(character, true/*checkTriggers*/);
       if (character._uniqueID == _selfID) {
-         _selfLoc = (ArenaLocation) _combatMap.getHeadLocation(character).clone();
+         _selfLoc = _combatMap.getHeadLocation(character).clone();
          recomputeVisibilityOfSelf(character);
          //recomputeVisibilityByBruteForce(character);
       }
@@ -476,7 +476,7 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
                ArrayList<Character> characters = _combatMap.getLocation(col, row).getCharacters();
                for (Character character : characters) {
                   if (character._uniqueID == selfID) {
-                     _selfLoc = (ArenaLocation) _combatMap.getLocation(col, row).clone();
+                     _selfLoc = _combatMap.getLocation(col, row).clone();
                      break;
                   }
                }

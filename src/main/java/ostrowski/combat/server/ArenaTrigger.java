@@ -13,12 +13,12 @@ import ostrowski.combat.common.CombatMap;
 
 public class ArenaTrigger implements Cloneable
 {
-   private String                   _name               = "";
-   private ArrayList<ArenaCoordinates> _triggerCoordinates   = new ArrayList<>();
-   private boolean                  _onlyAffectsPlayers = true;
-   private boolean                  _requiresEntireTeam = false;
-   private boolean                  _enabled            = true;
-   private ArrayList<ArenaEvent>    _events             = new ArrayList<>();
+   private String                      _name               = "";
+   private ArrayList<ArenaCoordinates> _triggerCoordinates = new ArrayList<>();
+   private boolean                     _onlyAffectsPlayers = true;
+   private boolean                     _requiresEntireTeam = false;
+   private boolean                     _enabled            = true;
+   private ArrayList<ArenaEvent>       _events             = new ArrayList<>();
 
    public ArenaTrigger(String name) {
       _name = name;
@@ -194,19 +194,22 @@ public class ArenaTrigger implements Cloneable
 
    @Override
    public ArenaTrigger clone() {
-      ArenaTrigger dup = new ArenaTrigger(_name);
-      for (ArenaCoordinates coord : _triggerCoordinates) {
-         if (coord != null) {
-            dup._triggerCoordinates.add(coord.clone());
+      try {
+         ArenaTrigger dup = (ArenaTrigger) super.clone();
+         dup._triggerCoordinates = new ArrayList<>();
+         for (ArenaCoordinates coord : _triggerCoordinates) {
+            if (coord != null) {
+               dup._triggerCoordinates.add(coord.clone());
+            }
          }
+         dup._events = new ArrayList<>();
+         for (ArenaEvent event : _events) {
+            dup._events.add(event.clone());
+         }
+         return dup;
+      } catch (CloneNotSupportedException e) {
+         return null;
       }
-      dup._enabled = _enabled;
-      dup._onlyAffectsPlayers = _onlyAffectsPlayers;
-      dup._requiresEntireTeam = _requiresEntireTeam;
-      for (ArenaEvent event : _events) {
-         dup._events.add(event.clone());
-      }
-      return dup;
    }
    public boolean equals(ArenaTrigger other) {
       if (other == null) {

@@ -2502,7 +2502,7 @@ public class AI implements Enums
             return false;
          }
          // spin in a circle, so we can see what is around us, maybe we'll see an enemy:
-         desiredOrientation = (Orientation) _self.getOrientation().clone();
+         desiredOrientation = _self.getOrientation().clone();
          Facing newFacing = desiredOrientation.getFacing().turn(1);
          desiredOrientation.setHeadLocation(_self, map.getLocation(desiredOrientation.getHeadCoordinates()), newFacing, map, null/*diag*/, false/*allowTwisting*/);
       }
@@ -3239,7 +3239,7 @@ public class AI implements Enums
 
          if (defensesToUse.contains(DefenseOption.DEF_RETREAT)) {
             // also get one with a dodge instead of a retreat, in case retreat is not an option:
-            DefenseOptions altDefensesToUse = (DefenseOptions) defensesToUse.clone();
+            DefenseOptions altDefensesToUse = defensesToUse.clone();
             altDefensesToUse.remove(DefenseOption.DEF_RETREAT);
             altDefensesToUse.add(DefenseOption.DEF_DODGE);
             priorities.add(altDefensesToUse);

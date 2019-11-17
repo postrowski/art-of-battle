@@ -3,7 +3,6 @@ package ostrowski.combat.common.spells;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -14,6 +13,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
+import ostrowski.DebugBreak;
 import ostrowski.combat.common.Advantage;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.DiceSet;
@@ -88,10 +88,6 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
 
    public void setLevel(byte level) {
       _level = level;
-   }
-
-   static public Spell getSpell(String name) {
-      return MageSpell.getSpell(name);
    }
 
    public Wound channelEnergy(byte additionalPower) {
@@ -469,6 +465,9 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
    @Override
    public void serializeFromStream(DataInputStream in) {
       try {
+         String name = readString(in);
+         Spell spell = MageSpell.getSpell(name).clone();
+         this.copyDataFrom(spell);
          _power = readByte(in);
          _level = readByte(in);
          // _resistedAtt, _prerequisiteSpellNames & _attributeMod don't need to be serialized,
@@ -485,20 +484,6 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
       } catch (IOException e) {
          e.printStackTrace();
       }
-   }
-
-   public static Spell serializeSpellFromStream(DataInputStream in) {
-      Spell spell = null;
-      try {
-         String name = readString(in);
-         spell = getSpell(name).clone();
-         spell.serializeFromStream(in);
-         // _resistedAtt, _prerequisiteSpellNames & _attributeMod don't need to be serialized,
-         // because they are constant for a given spell (defined by its name).
-      } catch (IOException e) {
-         e.printStackTrace();
-      }
-      return spell;
    }
 
    protected void copyDataFrom(Spell source) {
@@ -520,15 +505,15 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
 
    @Override
    public Spell clone() {
-      Class< ? extends Spell> spellClass = this.getClass();
-      Spell spell = null;
       try {
-         spell = spellClass.getDeclaredConstructor().newInstance();
+         Spell spell = (Spell) super.clone();
          spell.copyDataFrom(this);
-      } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+         return spell;
+      } catch (CloneNotSupportedException e) {
          e.printStackTrace();
+         DebugBreak.debugBreak("Clone failure");
+         return null;
       }
-      return spell;
    }
 
    @Override
@@ -1133,7 +1118,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
          return null;
       }
       String name = namedNodeMap.getNamedItem("Name").getNodeValue();
-      Spell spell = getSpell(name);
+      Spell spell = MageSpell.getSpell(name);
       if (spell == null) {
          // This might be a priest spell, since getSpell only returns Mage spells,
          // since they are the only kind of spell that can be completely defined just by name

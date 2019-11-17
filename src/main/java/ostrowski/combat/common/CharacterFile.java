@@ -129,11 +129,11 @@ public class CharacterFile
          }
       }
       // Only one left, return a clone of it.
-      return (Character) charactersMatchingName.get(0).clone();
+      return charactersMatchingName.get(0).clone();
    }
 
    public Character putCharacter(Character character) {
-      return _nameToCharMap.put(character.getName().toLowerCase(), (Character) character.clone());
+      return _nameToCharMap.put(character.getName().toLowerCase(), character.clone());
    }
 
 }

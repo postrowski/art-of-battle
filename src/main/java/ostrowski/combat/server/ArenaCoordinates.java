@@ -51,9 +51,11 @@ public class ArenaCoordinates extends SerializableObject implements Enums, Compa
    }
    @Override
    public ArenaCoordinates clone() {
-      ArenaCoordinates selfCopy = new ArenaCoordinates(_x, _y);
-      selfCopy.copyData(this);
-      return selfCopy;
+      try {
+         return (ArenaCoordinates) super.clone();
+      } catch (CloneNotSupportedException e) {
+         return null;
+      }
    }
    public void copyData(ArenaCoordinates source) {
       _x = source._x;

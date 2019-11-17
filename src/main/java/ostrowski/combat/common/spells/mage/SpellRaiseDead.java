@@ -62,7 +62,7 @@ public class SpellRaiseDead extends MageSpell
                "Note: While the maximum STR of this ogre zombie is 1, its ASTR could still be as high as 11, due to its large size. Similarly, the ogre zombie's BLD will still be 10 points higher than its HT attribute. \r\n";
    }
 
-   private String getDurationForpower(int p) {
+   private static String getDurationForpower(int p) {
       switch (p) {
          case 0: return "1 hour";
          case 1: return "5 hours";

@@ -48,7 +48,7 @@ public class CharacterWidget implements Enums, ModifyListener {
    private final SpellsBlock         _spellsBlock         = new SpellsBlock(this);
    // these don't:
    public Character            _character           = null;
-   public ArrayList<Helper>    _uiBlocks            = new ArrayList<>();
+   public ArrayList<IUIBlock>    _uiBlocks            = new ArrayList<>();
    private int                 _uniqueConnectionID  = -1;
    public AI _ai;
    private boolean             _blocksInitialized   = false;
@@ -169,9 +169,8 @@ public class CharacterWidget implements Enums, ModifyListener {
    public void updateDisplayFromCharacter() {
       if (_character != null) {
          _inModify = true;
-         for (Helper helper : _uiBlocks) {
-            IUIBlock block = (IUIBlock) helper;
-            block.updateDisplayFromCharacter(_character);
+         for (IUIBlock helper : _uiBlocks) {
+            helper.updateDisplayFromCharacter(_character);
          }
          refreshDisplay();
          _inModify = false;
@@ -186,12 +185,11 @@ public class CharacterWidget implements Enums, ModifyListener {
       _inRefreshDisplay = true;
       try {
          if (_blocksInitialized) {
-            for (Helper helper : _uiBlocks) {
-               IUIBlock block = (IUIBlock) helper;
-               long startTime = System.currentTimeMillis();
-               block.refreshDisplay(_character);
-               long endTime = System.currentTimeMillis();
-//Rules.diag("recieved Character - refreshDisplay of " + block.getClass().getName() + " took " + ((endTime - startTime) / 1000.0) + " seconds");
+            for (IUIBlock helper : _uiBlocks) {
+//               long startTime = System.currentTimeMillis();
+               helper.refreshDisplay(_character);
+//               long endTime = System.currentTimeMillis();
+//Rules.diag("received Character - refreshDisplay of " + block.getClass().getName() + " took " + ((endTime - startTime) / 1000.0) + " seconds");
             }
          }
       }
@@ -202,9 +200,8 @@ public class CharacterWidget implements Enums, ModifyListener {
 
    public void updateCharacterFromDisplay() {
       if (_character != null) {
-         for (Helper helper : _uiBlocks) {
-            IUIBlock block = (IUIBlock) helper;
-            block.updateCharacterFromDisplay(_character);
+         for (IUIBlock helper : _uiBlocks) {
+            helper.updateCharacterFromDisplay(_character);
          }
          _character.refreshDefenses();
       }

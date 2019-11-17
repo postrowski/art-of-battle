@@ -22,7 +22,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.ToolTip;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -37,13 +36,13 @@ import ostrowski.DebugBreak;
 import ostrowski.combat.client.MessageDialog;
 import ostrowski.combat.client.RequestUserInput;
 import ostrowski.combat.client.ui.AutoRunBlock;
-import ostrowski.combat.client.ui.CharInfoBlock;
 import ostrowski.combat.common.AI;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.CharacterGenerator;
 import ostrowski.combat.common.CombatMap;
 import ostrowski.combat.common.DiceSet;
 import ostrowski.combat.common.IMapListener;
+import ostrowski.combat.common.MouseOverCharacterInfoPopup;
 import ostrowski.combat.common.Rules;
 import ostrowski.combat.common.enums.AI_Type;
 import ostrowski.combat.common.enums.Enums;
@@ -87,6 +86,8 @@ public class Arena implements Enums, IMapListener
    private CombatMap                       _combatMap           = null;
    private CombatMap                       _autoRunMap          = null;
    private AutoRunBlock                    _autoRunBlock        = null;
+
+   transient private final MouseOverCharacterInfoPopup _mouseOverCharInfoPopup = new MouseOverCharacterInfoPopup();
 
    public Arena(CombatServer server, short sizeX, short sizeY) {
       _server    = server;
@@ -1807,7 +1808,7 @@ public class Arena implements Enums, IMapListener
    }
    public void onAutoRun(AutoRunBlock autoRunBlock)  {
       _combatMap.setAllCombatantsAsAI();
-      _autoRunMap = (CombatMap) _combatMap.clone();
+      _autoRunMap = _combatMap.clone();
       _autoRunBlock = autoRunBlock;
       _paused = false;
       removeAllCombatants();
@@ -1850,37 +1851,10 @@ public class Arena implements Enums, IMapListener
    public void onMouseDrag(ArenaLocation loc, Event event, double angleFromCenter, double normalizedDistFromCenter)
    {
    }
-   ArenaLocation _currentMouseLoc = null;
-   ToolTip _popupMessage = null;
    @Override
    public void onMouseMove(ArenaLocation loc, Event event, double angleFromCenter, double normalizedDistFromCenter)
    {
-      if (_currentMouseLoc != loc) {
-         Rules.diag("onMouseMove (" + event.x + "," + event.y + ")");
-         _currentMouseLoc = loc;
-         if (_popupMessage == null) {
-            _popupMessage = new ToolTip(event.display.getActiveShell(), SWT.NONE);
-         }
-         else {
-            _popupMessage.setVisible(false);
-         }
-
-         if ((loc != null) && !loc.isEmpty()) {
-            _popupMessage.setLocation(Display.getCurrent().getCursorLocation().x,
-                                      Display.getCurrent().getCursorLocation().y);
-            _popupMessage.setVisible(true);
-            _currentMouseLoc = loc;
-            StringBuilder sb = new StringBuilder();
-            boolean first = true;
-            for (Character ch : loc.getCharacters()) {
-               if (!first) {
-                  sb.append("\n------------\n");
-               }
-               sb.append(CharInfoBlock.getToolTipSummary(ch));
-            }
-            _popupMessage.setMessage(sb.toString());
-         }
-      }
+      _mouseOverCharInfoPopup.onMouseMove(loc, event, angleFromCenter, normalizedDistFromCenter);
    }
    @Override
    public void onMouseDown(ArenaLocation loc, Event event, double angleFromCenter, double normalizedDistFromCenter)
@@ -2205,7 +2179,7 @@ public class Arena implements Enums, IMapListener
          }
 
          if (_autoRunBlock.battleEnded(teamAlive)) {
-            _combatMap = (CombatMap) _autoRunMap.clone();
+            _combatMap = _autoRunMap.clone();
             CombatServer._this.getShell().getDisplay().asyncExec(new Runnable() {
                @Override
                public void run() {

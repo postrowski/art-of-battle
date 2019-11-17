@@ -313,7 +313,7 @@ public class CharacterGenerator implements Enums
                            requiredSkills.put(skillType, level);
                         }
                         else {
-                           Spell spell = Spell.getSpell(name);
+                           Spell spell = MageSpell.getSpell(name);
                            if (spell != null) {
                               Byte level = Byte.parseByte(value);
                               if (spell instanceof MageSpell) {

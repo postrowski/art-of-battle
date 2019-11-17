@@ -102,7 +102,7 @@ public class MainBlock extends Helper implements ModifyListener, SelectionListen
          if (genPoints != -1) {
             Character generatedChar = CharacterGenerator.generateRandomCharacter(genPoints, race, equipment, true/*genNewPseudoRndNumber*/, true/*printCharacter*/);
             generatedChar.setName("? " + generatedChar.getRace().getName() + " " + genPoints);
-            _widget.setCharacter((Character) generatedChar.clone());
+            _widget.setCharacter(generatedChar.clone());
             _originalCharacterName = null;
             _widget.updateDisplayFromCharacter();
          }
@@ -130,7 +130,7 @@ public class MainBlock extends Helper implements ModifyListener, SelectionListen
          if (exitButton != ExitButton.Cancel) {
             String characterName = charDialog._selectedName;
             Character selectedCharacter = _charFile.getCharacter(characterName);
-            Character copy = (Character) selectedCharacter.clone();
+            Character copy = selectedCharacter.clone();
             Gender gender = copy.getGender();
             if (exitButton == ExitButton.Open) {
                _originalCharacterName = characterName;

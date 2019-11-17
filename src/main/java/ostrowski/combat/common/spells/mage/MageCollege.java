@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import ostrowski.DebugBreak;
 import ostrowski.combat.common.enums.Enums;
 import ostrowski.protocol.SerializableObject;
 
@@ -75,7 +76,12 @@ public class MageCollege extends SerializableObject implements Enums
 
    @Override
    public MageCollege clone() {
-      return new MageCollege(this);
+      try {
+         return (MageCollege) super.clone();
+      } catch (CloneNotSupportedException e) {
+         DebugBreak.debugBreak("clone error");
+         return null;
+      }
    }
 
    @Override
@@ -102,7 +108,7 @@ public class MageCollege extends SerializableObject implements Enums
       MageCollege college = null;
       try {
          String name = readString(in);
-         college = getCollege(name).clone();
+         college = getCollege(name);
          college.serializeFromStream(in);
          // _resistedAtt, _prerequisiteSpellNames & _attributeMod don't need to be serialized,
          // because they are constant for a given spell (defined by its name).

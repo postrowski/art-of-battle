@@ -55,8 +55,7 @@ public class ArenaEvent implements Cloneable
    String                   _eventName                           = "";
    String                   _eventType                           = EVENT_TYPE_DISPLAY_MESSAGE_PUBLICLY;
    String                   _eventData                           = "";
-   ArrayList<ArenaCoordinates> _eventLocations                      = null;
-   ArenaEventTrap           _trapInfo                            = null;
+   ArrayList<ArenaCoordinates> _eventLocations                   = null;
 
    public ArenaEvent(String name) {
       _eventName = name;
@@ -440,31 +439,21 @@ public class ArenaEvent implements Cloneable
       else if ((_eventLocations != null) || (other._eventLocations != null)) {
          return false;
       }
-      if ((_trapInfo == null) && (other._trapInfo != null)) {
-         return false;
-      }
-      if ((_trapInfo != null) && (other._trapInfo == null)) {
-         return false;
-      }
-      if ((_trapInfo != null) && (!_trapInfo.equals(other._trapInfo))) {
-         return false;
-      }
       return true;
    }
 
    @Override
    public ArenaEvent clone() {
-      ArenaEvent dup = new ArenaEvent(_eventName);
-      dup._eventType = _eventType;
-      dup._eventData = _eventData;
-      if (_eventLocations != null) {
-         dup._eventLocations = new ArrayList<>();
-         for (ArenaCoordinates loc : _eventLocations) {
-            dup._eventLocations.add(loc);
+      try {
+         ArenaEvent dup = (ArenaEvent) super.clone();
+         if (_eventLocations != null) {
+            dup._eventLocations = new ArrayList<>();
+            dup._eventLocations.addAll(_eventLocations);
          }
+         return dup;
+      } catch (CloneNotSupportedException e) {
+         return null;
       }
-      dup._trapInfo = _trapInfo;
-      return dup;
    }
 
    public Collection<ArenaCoordinates> getLocations() {

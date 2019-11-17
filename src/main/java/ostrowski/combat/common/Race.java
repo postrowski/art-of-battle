@@ -22,6 +22,7 @@ import ostrowski.combat.common.orientations.OrientationSingleQuadraped;
 import ostrowski.combat.common.orientations.OrientationSingleSpider;
 import ostrowski.combat.common.orientations.OrientationSingleWinged;
 import ostrowski.combat.common.spells.Spell;
+import ostrowski.combat.common.spells.mage.MageSpell;
 import ostrowski.combat.common.spells.mage.SpellFlameJet;
 import ostrowski.combat.common.spells.mage.SpellPush;
 import ostrowski.combat.common.spells.mage.SpellSpiderWeb;
@@ -99,8 +100,8 @@ public class Race implements Cloneable, Enums
    private byte                    _armCount                  = 2;
    private byte                    _wingCount                 = 0;
    private Orientation             _baseOrientation           = null;
-   private final ArrayList<String> _racialProperties;
-   private final ArrayList<String> _racialAdvsNames;
+   private final ArrayList<String> _racialProperties          = new ArrayList<>();
+   private final ArrayList<String> _racialAdvsNames           = new ArrayList<>();
    private final ArrayList<Spell>  _inateSpells               = new ArrayList<>();
    private Armor                   _naturalArmor;
 
@@ -153,8 +154,6 @@ public class Race implements Cloneable, Enums
          _baseOrientation = orientation.clone();
       }
 
-      _racialProperties = new ArrayList<>();
-      _racialAdvsNames = new ArrayList<>();
       for (String element : racialProperties) {
          int loc = element.indexOf(" arms");
          if (loc != -1) {
@@ -206,7 +205,7 @@ public class Race implements Cloneable, Enums
          if (index != -1) {
             String spellName = element.substring(0, index);
             byte level = Byte.parseByte(element.substring(index + 1));
-            Spell spell = Spell.getSpell(spellName);
+            MageSpell spell = MageSpell.getSpell(spellName);
             if (spell == null) {
                for (String deity : PriestSpell._deities) {
                   List<PriestSpell> deitySpells = PriestSpell.getSpellsForDeity(deity, 10, false/*addNullBetweenGroups*/);

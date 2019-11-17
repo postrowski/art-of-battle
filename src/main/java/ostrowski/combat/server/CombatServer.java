@@ -1001,12 +1001,12 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
          _map.endHexSelection();
       }
       if (map != null) {
-         map = (CombatMap) map.clone();
+         map = map.clone();
          _changingMap = true;
          _arena.setCombatMap(map, clearCombatants);
          _map.updateMap(map, (byte)-1/*selfID*/, (byte)-1/*selfTeam*/, null/*availableLocs*/, (byte)-1/*targetID*/);
          _triggersInterface.setMap(map);
-         _originalMap = (CombatMap) map.clone();
+         _originalMap = map.clone();
          _arenaSizeXValue.setText(String.valueOf(map.getSizeX()));
          _arenaSizeYValue.setText(String.valueOf(map.getSizeY()/2));
          _hideViewFromLocalPlayersButton.setSelection(map.isHideViewFromLocalPlayers());
@@ -1129,7 +1129,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
          }
          else if (e.widget == _saveMapButton) {
             writeArenaMapToFile(_arena.getCombatMap(), true/*overwriteExistingFile*/);
-            _originalMap = (CombatMap) _arena.getCombatMap().clone();
+            _originalMap = _arena.getCombatMap().clone();
             refreshSaveButton();
          }
          else if (e.widget == _openMapButton) {
@@ -1167,7 +1167,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
             if (!dialog.isCanceled()) {
                CombatMap map = new CombatMap(dialog.getSizeX(), (short) (dialog.getSizeY()*2), null/*diag*/);
                map.setName(dialog.getName());
-               _originalMap = (CombatMap) map.clone();
+               _originalMap = map.clone();
                setMap(map, true/*clearCombatants*/);
                _currentMapFileName = null; // make sure we don't overwrite the current file
                refreshSaveButton();

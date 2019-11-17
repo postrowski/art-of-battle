@@ -173,10 +173,10 @@ public class AdvantagesBlock extends Helper implements Enums, IUIBlock, ModifyLi
       // add clones of each advantage, so if a level of one changes,
       // we don't reflect that change in our list.
       for (Advantage adv : advantages) {
-         _currentAdvantages.add((Advantage) adv.clone());
+         _currentAdvantages.add(adv.clone());
       }
       for (Advantage adv : racialAdvantages) {
-         _currentRacialAdvantages.add((Advantage) adv.clone());
+         _currentRacialAdvantages.add(adv.clone());
       }
       _currentRace = character.getRace();
 

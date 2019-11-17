@@ -73,10 +73,15 @@ public class MapVisibility extends SerializableObject
    }
    @Override
    public MapVisibility clone() {
-      MapVisibility copy = new MapVisibility(_visibilityMask, _bytesPerRow);
-      for (int i=0 ; i<_visibilityMask.length ; i++) {
-         copy._visibilityMask[i] = _visibilityMask[i];
+      try {
+         MapVisibility copy = (MapVisibility) super.clone();
+         copy._visibilityMask = new byte[_visibilityMask.length];
+         for (int i=0 ; i<_visibilityMask.length ; i++) {
+            copy._visibilityMask[i] = _visibilityMask[i];
+         }
+         return copy;
+      } catch (CloneNotSupportedException e) {
+         return null;
       }
-      return copy;
    }
 }
