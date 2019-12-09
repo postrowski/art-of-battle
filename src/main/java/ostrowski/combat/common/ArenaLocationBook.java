@@ -28,7 +28,7 @@ public class ArenaLocationBook implements IMonitorableObject, IMonitoringObject
       IMonitoringObject._monitoringObj._objectIDString = this.getClass().getName() + "for " + owner.getObjectIDString();
       _owner = owner;
       _realMap = map;
-      _viewOfMap = (CombatMap) map.clone();
+      _viewOfMap = map.clone();
       _mapVisibility = new MapVisibility(_realMap);
       recomputeVisibility(diag);
       _mapBook = new MonitoredObject("ArenaLocationBook._mapBook for " + _owner.getObjectIDString());
@@ -42,32 +42,33 @@ public class ArenaLocationBook implements IMonitorableObject, IMonitoringObject
    //   {
    //   }
 
-   @SuppressWarnings("unused")
    private void recomputeVisibility(Diagnostics diag) {
-      if (false) {
-         // This method is called any time the owner moves,
-         // or a door is opened or closed
-         MapVisibility origObj = (MapVisibility) _mapVisibility.clone();
+      // This method is called any time the owner moves,
+      // or a door is opened or closed
+      MapVisibility origObj = _mapVisibility.clone();
 
-         ArenaLocation ownerHeadLoc = _realMap.getHeadLocation(_owner);
-         boolean visibilityChanged = false;
-         for (short col = 0; col < _realMap.getSizeX(); col++) {
-            for (short row = (short) (col % 2); row < _realMap.getSizeY(); row += 2) {
-               ArenaLocation realLoc = _realMap.getLocation(col, row);
-               ArenaLocation viewLoc = _realMap.getLocation(col, row);
-               boolean hasLineOfSight = _realMap.hasLineOfSight(ownerHeadLoc, realLoc, false/*blockedByAnyStandingCharacter*/);
-               // setVisibile returns true when the visibility changes
-               if (_mapVisibility.setVisible(col, row, hasLineOfSight)) {
-                  viewLoc.setVisible(hasLineOfSight, _realMap, ownerHeadLoc, _owner._uniqueID, true/*basedOnFacing*/);
-                  visibilityChanged = true;
-               }
+      ArenaLocation ownerHeadLoc = _realMap.getHeadLocation(_owner);
+      boolean visibilityChanged = false;
+      for (short col = 0; col < _realMap.getSizeX(); col++) {
+         for (short row = (short) (col % 2); row < _realMap.getSizeY(); row += 2) {
+            ArenaLocation realLoc = _realMap.getLocation(col, row);
+            boolean hasLineOfSight = _realMap.hasLineOfSight(ownerHeadLoc, realLoc, false/*blockedByAnyStandingCharacter*/);
+            // is the character looking at this hex?
+            if (hasLineOfSight && !_realMap.isFacing(_owner, realLoc) && !_owner.hasPeripheralVision()) {
+               hasLineOfSight = false;
+               // basedOnFacing can be set to false now that we know he IS facing the location
+            }
+            // setVisibile returns true when the visibility changes
+            if (_mapVisibility.setVisible(col, row, hasLineOfSight)) {
+               realLoc.setVisible(hasLineOfSight, _realMap, ownerHeadLoc, _owner._uniqueID, false/*basedOnFacing*/);
+               visibilityChanged = true;
             }
          }
-         if (visibilityChanged) {// && (_mapBook != null)) {
-            MapVisibility newObj = (MapVisibility) _mapVisibility.clone();
-            ObjectChanged objChanged = new ObjectChanged(origObj, newObj);
-            notifyWatchers(this, this, objChanged, null/*skipList*/, diag);
-         }
+      }
+      if (visibilityChanged && (_mapBook != null)) {
+         MapVisibility newObj = _mapVisibility.clone();
+         ObjectChanged objChanged = new ObjectChanged(origObj, newObj);
+         notifyWatchers(this, this, objChanged, null/*skipList*/, diag);
       }
    }
 
@@ -123,6 +124,9 @@ public class ArenaLocationBook implements IMonitorableObject, IMonitoringObject
                   recomputeVisibility(diag);
                   // recomuteVisibility would have sent any changes to the visible flag.
                }
+//               ArenaLocation headLoc = _owner.getLimbLocation(LimbType.HEAD, _realMap);
+//               boolean hasLineOfSight = _realMap.hasLineOfSight(headLoc, origLoc, false/*blockedByAnyStandingCharacter*/);
+//               if (hasLineOfSight) {
                if (_mapVisibility.isVisible(origLoc._x, origLoc._y)) {
                   // If the location is visible, make sure its up to date with the
                   // viewed version

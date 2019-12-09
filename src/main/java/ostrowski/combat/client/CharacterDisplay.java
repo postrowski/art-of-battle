@@ -32,6 +32,7 @@ import ostrowski.combat.common.CharacterWidget;
 import ostrowski.combat.common.CombatMap;
 import ostrowski.combat.common.IMapListener;
 import ostrowski.combat.common.MouseOverCharacterInfoPopup;
+import ostrowski.combat.common.RuleComposite;
 import ostrowski.combat.common.Rules;
 import ostrowski.combat.common.enums.AI_Type;
 import ostrowski.combat.common.enums.Enums;
@@ -69,7 +70,7 @@ public class CharacterDisplay implements Enums, ModifyListener, IMapListener //,
    //private SpellsBlock         _spellsBlock         = new SpellsBlock(this);
    // these dont:
    private final ConditionBlock      _conditionBlock      = new ConditionBlock(this);
-   private final Configuration       _configurationBlock  = new Configuration(null);
+   private final Configuration       _configurationBlock  = new Configuration();
    private final ConnectionBlock     _connectionBlock     = new ConnectionBlock(this);
    private final MessagesBlock       _messagesBlock       = new MessagesBlock(this);
    private final ArenaMapBlock       _arenaMapBlock       = new ArenaMapBlock();
@@ -186,7 +187,13 @@ public class CharacterDisplay implements Enums, ModifyListener, IMapListener //,
          // disable the controls that should not be enabled until we connect.
          _messagesBlock.enableControls(false/*enabledFlag*/);
       }
-
+      {
+         TabItem item = new TabItem(tabFolder, SWT.NULL);
+         item.setText("Rules");
+         // add the control to the TabItem
+         item.setControl(new RuleComposite(tabFolder, 1, GridData.FILL_BOTH, null/*configuration*/,
+                                           900/*width*/, shell.getDisplay().getSystemColor(SWT.COLOR_WHITE)));
+      }
       if (aiOn) {
          _aiBlock.setAI(true);
       }

@@ -211,7 +211,8 @@ public class Weapon extends Thing {
       return results;
    }
    @Override
-   public byte getBestDefenseOption(Character wielder, LimbType useHand, boolean canUse2Hands, DamageType damType, boolean isGrappleAttack) {
+   public byte getBestDefenseOption(Character wielder, LimbType useHand, boolean canUse2Hands, DamageType damType,
+                                    boolean isGrappleAttack, short distance) {
       byte bestDef = 0;
       for (WeaponStyleParry parryStyle : _parryStyles) {
          if ((parryStyle.getHandsRequired() == 1) || (canUse2Hands)) {
@@ -220,7 +221,7 @@ public class Weapon extends Thing {
             }
             boolean defAllowed = true;
             if (!isReal()) {
-               defAllowed = parryStyle.canDefendAgainstDamageType(damType, isGrappleAttack);
+               defAllowed = parryStyle.canDefendAgainstDamageType(damType, isGrappleAttack, distance);
                // unarmed combat doesn't have penalty for off-hand defense
                useHand = null;
             }

@@ -442,7 +442,8 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
    @Override
    public void serializeToStream(DataOutputStream out) {
       try {
-         writeToStream(_name, out);
+// No need to serialize the name, the serialization key uniquely defined this spell
+//         writeToStream(_name, out);
          writeToStream(_power, out);
          writeToStream(_level, out);
          // _resistedAtt, _prerequisiteSpellNames & _attributeMod don't need to be serialized,
@@ -465,9 +466,10 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
    @Override
    public void serializeFromStream(DataInputStream in) {
       try {
-         String name = readString(in);
-         Spell spell = MageSpell.getSpell(name).clone();
-         this.copyDataFrom(spell);
+      // No need to serialize the name, the serialization key uniquely defined this spell
+//         String name = readString(in);
+//         Spell spell = MageSpell.getSpell(name).clone();
+//         this.copyDataFrom(spell);
          _power = readByte(in);
          _level = readByte(in);
          // _resistedAtt, _prerequisiteSpellNames & _attributeMod don't need to be serialized,
@@ -771,14 +773,17 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
       return sbDescription.toString();
    }
 
-   protected byte getDefenseTn(RequestAction attack, RequestDefense defense, short distanceInHexes, RANGE range, Battle battle, StringBuilder sbDescription) {
+   protected byte getDefenseTn(RequestAction attack, RequestDefense defense, short distanceInHexes,
+                               RANGE range, Battle battle, StringBuilder sbDescription) {
       if (isDefendable()) {
-         return battle.resolveDefenses(_target, defense, (byte) 0/*attackParryPenalty*/, range, attack, sbDescription);
+         return battle.resolveDefenses(_target, defense, (byte) 0/*attackParryPenalty*/, distanceInHexes,
+                                       range, attack, sbDescription);
       }
       return 0;
    }
 
-   protected int getResistanceResult(RequestDefense defense, short distanceInHexes, Battle battle, StringBuilder sbDescription) {
+   protected int getResistanceResult(RequestDefense defense, short distanceInHexes, Battle battle,
+                                     StringBuilder sbDescription) {
       if (!(this instanceof IResistedSpell)) {
          return 0;
       }

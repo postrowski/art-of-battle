@@ -193,7 +193,7 @@ public abstract class Limb extends Thing implements Cloneable {
       }
    }
 
-   public boolean canDefend(Character defender, boolean attackIsRanged, boolean attackIsCharge, boolean attackIsGrapple, DamageType damageType, boolean checkState) {
+   public boolean canDefend(Character defender, boolean attackIsRanged, short distance, boolean attackIsCharge, boolean attackIsGrapple, DamageType damageType, boolean checkState) {
       return false;
    }
    @Override
@@ -204,13 +204,13 @@ public abstract class Limb extends Thing implements Cloneable {
    public String getDefenseName(boolean tensePast, Character defender) {
       return null;
    }
-   public byte getDefenseTNWithoutWounds(Character character, boolean isRangedAttack, boolean isChargeAttack, boolean isGrappleAttack, DamageType damageType, boolean checkState) {
+   public byte getDefenseTNWithoutWounds(Character character, boolean isRangedAttack, short distance, boolean isChargeAttack, boolean isGrappleAttack, DamageType damageType, boolean checkState) {
       return 0;
    }
    public byte getDefenseTime(byte attribute, Character attacker) {
       return 0;
    }
-   public byte getPenaltyForMassiveDamage(Character character, byte minimumDamage,
+   public byte getPenaltyForMassiveDamage(Character character, byte minimumDamage, short distance,
                                           boolean isRangedAttack, boolean isChargeAttack, boolean isGrappleAttack,
                                           DamageType damageType, boolean checkState) {
       return 0;
@@ -343,7 +343,8 @@ public abstract class Limb extends Thing implements Cloneable {
       return null;
    }
    @Override
-   public byte getBestDefenseOption(Character wielder, LimbType useHand, boolean canUse2Hands, DamageType damType, boolean isGrappleAttack) {
+   public byte getBestDefenseOption(Character wielder, LimbType useHand, boolean canUse2Hands, DamageType damType,
+                                    boolean isGrappleAttack, short distance) {
       return 0;
    }
    @Override

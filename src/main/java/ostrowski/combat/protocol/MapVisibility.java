@@ -31,12 +31,12 @@ public class MapVisibility extends SerializableObject
 
    public boolean isVisible(short x, short y) {
       short rowOffset = (short) (x / 8);
-      byte bitMask = (byte) (x % 8);
+      byte bitMask = (byte) (1 << (x % 8));
       return (_visibilityMask[((_bytesPerRow * y)/2) + rowOffset] & bitMask) != 0;
    }
    public boolean setVisible(short x, short y, boolean visibility) {
       short rowOffset = (short) (x / 8);
-      byte bitMask = (byte) (x % 8);
+      byte bitMask = (byte) (1 << (x % 8));
       boolean wasVisible = (_visibilityMask[((_bytesPerRow * y)/2) + rowOffset] & bitMask) != 0;
       if (wasVisible == visibility) {
          return false;

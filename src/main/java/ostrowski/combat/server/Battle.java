@@ -931,7 +931,7 @@ public class Battle extends Thread implements Enums
       }
       sb.append(":<br/></span>");
 
-      byte finalTN = resolveDefenses(defender, defense, attackMode.getParryPenalty(), range, attack, sb);
+      byte finalTN = resolveDefenses(defender, defense, attackMode.getParryPenalty(), minDistanceInHexes, range, attack, sb);
 
       sb.append("<br/>");
       DiceSet dice = null;
@@ -1259,24 +1259,32 @@ public class Battle extends Thread implements Enums
     * @param sb
     * @return
     */
-   public byte resolveDefenses(Character defender, RequestDefense defense, byte attackParryPenalty, RANGE range, RequestAction attack, StringBuilder sb) {
+   public byte resolveDefenses(Character defender, RequestDefense defense, byte attackParryPenalty, short distance,
+                               RANGE range, RequestAction attack, StringBuilder sb) {
       // When we get here, the defense has already been applied to the defender, so their weapon may look
       // unready. Make sure this doesn't interfere with the defense resolution.
       boolean defenseAppliedAlready = true;
-      byte baseTN = defender.getDefenseTN(defense, false/*includeWoundPenalty*/, false/*includeHolds*/, false/*includePosition*/,
-                                          false/*includeMassiveDamagePenalty*/, (byte) 0/*parryPenalty*/, defenseAppliedAlready, RANGE.OUT_OF_RANGE);
-      byte holdTN = defender.getDefenseTN(defense, false/*includeWoundPenalty*/, true/*includeHolds*/, false/*includePosition*/,
-                                          false/*includeMassiveDamagePenalty*/, (byte) 0/*parryPenalty*/, defenseAppliedAlready, RANGE.OUT_OF_RANGE);
-      byte postnTN = defender.getDefenseTN(defense, false/*includeWoundPenalty*/, true/*includeHolds*/, true/*includePosition*/,
-                                           false/*includeMassiveDamagePenalty*/, (byte) 0/*parryPenalty*/, defenseAppliedAlready, RANGE.OUT_OF_RANGE);
-      byte rangeTN = defender.getDefenseTN(defense, false/*includeWoundPenalty*/, true/*includeHolds*/, true/*includePosition*/,
-                                           false/*includeMassiveDamagePenalty*/, (byte) 0/*parryPenalty*/, defenseAppliedAlready, range);
-      byte parryTN = defender.getDefenseTN(defense, false/*includeWoundPenalty*/, true/*includeHolds*/, true/*includePosition*/,
-                                           false/*includeMassiveDamagePenalty*/, attackParryPenalty, defenseAppliedAlready, range);
-      byte woundTN = defender.getDefenseTN(defense, true/*includeWoundPenalty*/, true/*includeHolds*/, true/*includePosition*/,
-                                           false/*includeMassiveDamagePenalty*/, attackParryPenalty, defenseAppliedAlready, range);
-      byte finalTN = defender.getDefenseTN(defense, true/*includeWoundPenalty*/, true/*includeHolds*/, true/*includePosition*/,
-                                           true/*includeMassiveDamagePenalty*/, attackParryPenalty, defenseAppliedAlready, range);
+      byte baseTN = defender.getDefenseTN(defense, false/*includeWoundPenalty*/, false/*includeHolds*/,
+                                          false/*includePosition*/, false/*includeMassiveDamagePenalty*/,
+                                          (byte) 0/*parryPenalty*/, defenseAppliedAlready, distance, RANGE.OUT_OF_RANGE);
+      byte holdTN = defender.getDefenseTN(defense, false/*includeWoundPenalty*/, true/*includeHolds*/,
+                                          false/*includePosition*/, false/*includeMassiveDamagePenalty*/,
+                                          (byte) 0/*parryPenalty*/, defenseAppliedAlready, distance, RANGE.OUT_OF_RANGE);
+      byte postnTN = defender.getDefenseTN(defense, false/*includeWoundPenalty*/, true/*includeHolds*/,
+                                           true/*includePosition*/, false/*includeMassiveDamagePenalty*/,
+                                           (byte) 0/*parryPenalty*/, defenseAppliedAlready, distance, RANGE.OUT_OF_RANGE);
+      byte rangeTN = defender.getDefenseTN(defense, false/*includeWoundPenalty*/, true/*includeHolds*/,
+                                           true/*includePosition*/, false/*includeMassiveDamagePenalty*/,
+                                           (byte) 0/*parryPenalty*/, defenseAppliedAlready, distance, range);
+      byte parryTN = defender.getDefenseTN(defense, false/*includeWoundPenalty*/, true/*includeHolds*/,
+                                           true/*includePosition*/, false/*includeMassiveDamagePenalty*/,
+                                           attackParryPenalty, defenseAppliedAlready, distance, range);
+      byte woundTN = defender.getDefenseTN(defense, true/*includeWoundPenalty*/, true/*includeHolds*/,
+                                           true/*includePosition*/, false/*includeMassiveDamagePenalty*/,
+                                           attackParryPenalty, defenseAppliedAlready, distance, range);
+      byte finalTN = defender.getDefenseTN(defense, true/*includeWoundPenalty*/, true/*includeHolds*/,
+                                           true/*includePosition*/, true/*includeMassiveDamagePenalty*/,
+                                           attackParryPenalty, defenseAppliedAlready, distance, range);
       byte holdAdjustment = (byte) (holdTN - baseTN);
       byte postnAdjustment = (byte) (postnTN - holdTN);
       byte rangeAdjustment = (byte) (rangeTN - postnTN);

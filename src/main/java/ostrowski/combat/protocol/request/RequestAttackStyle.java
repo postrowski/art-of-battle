@@ -12,6 +12,7 @@ import ostrowski.combat.common.enums.AttackType;
 import ostrowski.combat.common.enums.DamageType;
 import ostrowski.combat.common.enums.Enums;
 import ostrowski.combat.common.things.LimbType;
+import ostrowski.protocol.RequestOption;
 import ostrowski.protocol.SyncRequest;
 import ostrowski.util.SemaphoreAutoLocker;
 
@@ -166,7 +167,7 @@ public class RequestAttackStyle extends SyncRequest implements Enums {
    @Deprecated
    public void addAttackOption(int optionID, String optionStr, boolean enabled, AttackType attackType,
                                DiceSet attackDice, DamageType damageType) {
-      super.addOption(optionID, optionStr, enabled);
+      super.addOption(new RequestOption(optionStr, optionID, enabled));
       while (optionID < _attackInfo.size()) {
          _attackInfo.add(new AttackStyleInfo());
       }

@@ -661,8 +661,8 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
          return;
       }
       boolean isMouseOver = (loc == _mouseOverLocation);
-//      boolean isVisible = ((_selfID != -1) || !_combatMap.isHideViewFromLocalPlayers()) && loc.getVisible();
-      boolean isVisible = (_selfID == -1) || loc.getVisible();
+//      boolean isVisible = ((_selfID != -1) || !_combatMap.isHideViewFromLocalPlayers()) && loc.getVisible(_selfID);
+      boolean isVisible = (_selfID == -1) || loc.getVisible(_selfID);
       boolean isKnown = (_selfID == -1) || loc.isKnownBy(_selfID);
       boolean hexSelectable = true;
       if (_selectableHexes != null) {
@@ -1224,8 +1224,8 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
    private void labelHex(ArenaLocation loc, GC gc, Display display)
    {
       if (loc != null) {
-//         boolean isVisible = ((_selfID != -1) || !_combatMap.isHideViewFromLocalPlayers()) && loc.getVisible();
-         boolean isVisible = (_selfID == -1) || loc.getVisible();
+//         boolean isVisible = ((_selfID != -1) || !_combatMap.isHideViewFromLocalPlayers()) && loc.getVisible(_selfID);
+         boolean isVisible = (_selfID == -1) || loc.getVisible(_selfID);
          if (!isVisible) {
             return;
          }
@@ -1300,8 +1300,8 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
    public static void drawWall(ArenaLocation loc, GC gc, Display display, int sizePerHex,
                                int offsetX, int offsetY, short offsetCol, short offsetRow, int selfID,
                                boolean hideViewFromLocalPlayers, double rotation) {
-//      boolean isVisible = ((selfID != -1) || !hideViewFromLocalPlayers) && loc.getVisible();
-      boolean isVisible = (selfID == -1) || loc.getVisible();
+//      boolean isVisible = ((selfID != -1) || !hideViewFromLocalPlayers) && loc.getVisible(_selfID);
+      boolean isVisible = (selfID == -1) || loc.getVisible(selfID);
       if (!isVisible && !loc.isKnownBy(selfID)) {
          return;
       }
@@ -1514,7 +1514,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
                   short x = (short) (dir.moveX + fromCoord._x);
                   short y = (short) (dir.moveY + fromCoord._y);
                   ArenaLocation fromLoc = combatMap.getLocation(x, y);
-                  if ((fromLoc != null) && (fromLoc.getVisible())) {
+                  if ((fromLoc != null) && (fromLoc.getVisible(viewerId))) {
                      isKnown.put(dir, true);
                   }
                }

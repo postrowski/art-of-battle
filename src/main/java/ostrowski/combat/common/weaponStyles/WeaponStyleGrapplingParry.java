@@ -15,7 +15,7 @@ public class WeaponStyleGrapplingParry extends WeaponStyleParry
       super(skillType, minSkill, skillPenalty, name, speedBase, slowStr, fastStr, effectiveness, handsRequired);
    }
    @Override
-   public boolean canDefendAgainstDamageType(DamageType damType, boolean isGrapple) {
+   public boolean canDefendAgainstDamageType(DamageType damType, boolean isGrapple, short distance) {
       return isGrapple;
    }
 

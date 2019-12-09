@@ -71,7 +71,10 @@ public class Armor extends Thing {
    @Override
    public ArrayList<SkillType> getDefenseSkillTypes() { return null;}
    @Override
-   public byte getBestDefenseOption(Character wielder, LimbType useHand, boolean canUse2Hands, DamageType damType, boolean isGrappleAttack) { return 0;}
+   public byte getBestDefenseOption(Character wielder, LimbType useHand, boolean canUse2Hands, DamageType damType,
+                                    boolean isGrappleAttack, short distance) {
+      return 0;
+   }
 
    public byte getBarrier(DamageType damType) { return _barrier.get(damType); }
 

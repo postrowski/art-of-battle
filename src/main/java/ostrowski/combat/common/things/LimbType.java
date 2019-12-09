@@ -64,6 +64,9 @@ public enum LimbType {
     public boolean isWing() {
        return (baseType == Location.WING);
     }
+    public boolean isBody() {
+       return (baseType == Location.BODY);
+    }
     static public LimbType get(Location loc, Side side, Pair pair) {
        for (LimbType t: values()) {
           if ((t.baseType == loc)

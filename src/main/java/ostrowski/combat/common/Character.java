@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -1623,7 +1624,31 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                                                                mapOrientationToNextOrientationsLeadingToChargeAttack);
             }
          }
-         for (Limb limb : _limbs.values()) {
+         // Sort the list for the order to show in the options list
+         List<Limb> sortedLimbs = _limbs.values().stream()
+                  .sorted(new Comparator<Limb>() {
+            @Override
+            public int compare(Limb limbA, Limb limbB) {
+               LimbType limbAtype = limbA._limbType;
+               LimbType limbBtype = limbB._limbType;
+               if (limbA == limbB) {
+                  return 0;
+               }
+               if ((limbAtype.isHead() && !limbBtype.isHead()) ||
+                   (limbAtype.isHand() && !limbBtype.isHand()) ||
+                   (limbAtype.isWing() && !limbBtype.isWing()) ||
+                   (limbAtype.isBody() && !limbBtype.isBody()) ||
+                   (limbAtype.isTail() && !limbBtype.isTail()) ||
+                   (limbAtype.isLeg()  && !limbBtype.isLeg())) {
+                  return -1;
+               }
+               if (((limbAtype.side == Side.RIGHT) && (limbBtype.side != Side.RIGHT))) {
+                  return -1;
+               }
+               return Integer.compare(limbAtype.setId, limbBtype.setId);
+            }
+         }).collect(Collectors.toList());
+         for (Limb limb : sortedLimbs) {
             // adjust the listed distance of each of our limb locations
             if (target != null) {
                ArenaLocation limbLoc = getLimbLocation(limb._limbType, arena.getCombatMap());
@@ -2386,27 +2411,56 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       RANGE range = attack.getRange(attacker, minDistance);
       RequestDefense req = new RequestDefense(attacker, attack, range);
 
-      addDefenseOption(req, new DefenseOptions(DefenseOption.DEF_PD), new DefenseOptions(DefenseOption.DEF_PD), (byte) 0/*attackingWeaponsParryPenalty*/, range, attack);
-      if (stillFighting()) {
-         boolean rangedAttack = attack.isRanged();
-         boolean grappleAttack = attack.isGrappleAttack();
-         boolean chargeAttack = attack.isCharge();
-         DefenseOptions availActions = _condition.getAvailableDefenseOptions();
-
-         if (!forCounterAttack) {
-            // a counter-attack may not be counter-attacked
-            boolean holdingWeapon = false;
-            for (Limb limb : _limbs.values()) {
-               if (limb instanceof Hand) {
-                  Thing weap = limb.getHeldThing();
-                  if ((weap != null) && (weap.isReal())) {
-                     holdingWeapon = true;
-                     break;
+      addDefenseOption(req, new DefenseOptions(DefenseOption.DEF_PD), new DefenseOptions(DefenseOption.DEF_PD),
+                       (byte) 0/*attackingWeaponsParryPenalty*/, range, minDistance, attack);
+      if (!stillFighting()) {
+         return req;
+      }
+      boolean rangedAttack = attack.isRanged();
+      boolean grappleAttack = attack.isGrappleAttack();
+      boolean chargeAttack = attack.isCharge();
+      DefenseOptions availActions = _condition.getAvailableDefenseOptions();
+      SkillType martialArtsSkill = null;
+      boolean tooFarForMartialArtsDefence = false;
+      if (!forCounterAttack) {
+         // a counter-attack may not be counter-attacked
+         boolean holdingWeapon = false;
+         for (Limb limb : _limbs.values()) {
+            if (limb instanceof Hand) {
+               Thing weap = limb.getHeldThing();
+               if ((weap != null) && (weap.isReal())) {
+                  holdingWeapon = true;
+                  break;
+               }
+            }
+         }
+         if (!holdingWeapon) {
+            if (minDistance > 2) {
+               tooFarForMartialArtsDefence = true;
+               Weapon unarmedWeapon = _limbs.get(LimbType.HAND_RIGHT).getWeapon(this);
+               if (unarmedWeapon != null) {
+                  for (WeaponStyleAttack attackStyle : unarmedWeapon._attackStyles) {
+                     if (attackStyle._skillType == SkillType.Brawling) {
+                        martialArtsSkill = SkillType.Brawling;
+                        break;
+                     }
+                  }
+                  for (WeaponStyleAttack attackStyle : unarmedWeapon._attackStyles) {
+                     if (attackStyle._skillType == SkillType.Karate) {
+                        martialArtsSkill = SkillType.Karate;
+                        break;
+                     }
+                  }
+                  for (WeaponStyleAttack attackStyle : unarmedWeapon._attackStyles) {
+                     if (attackStyle._skillType == SkillType.Aikido) {
+                        martialArtsSkill = SkillType.Aikido;
+                        break;
+                     }
                   }
                }
             }
-            if (!holdingWeapon) {
-               // allow counter attack options, if the limb allows it (based on aikido skill):
+            else {
+               // allow counter attack options, if the limb allows it (based on Aikido skill):
                availActions.add(DefenseOption.DEF_COUNTER_GRAB_1,
                                 DefenseOption.DEF_COUNTER_GRAB_2,
                                 DefenseOption.DEF_COUNTER_GRAB_3,
@@ -2415,430 +2469,435 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                                 DefenseOption.DEF_COUNTER_THROW_3);
             }
          }
+      }
 
-         SpellParalyze paralyzeSpell = null;
-         for (Spell spell : _activeSpellsList) {
-            if (spell instanceof SpellParalyze) {
-               paralyzeSpell = (SpellParalyze) spell;
-               break;
-            }
+      SpellParalyze paralyzeSpell = null;
+      for (Spell spell : _activeSpellsList) {
+         if (spell instanceof SpellParalyze) {
+            paralyzeSpell = (SpellParalyze) spell;
+            break;
          }
-         if (paralyzeSpell != null) {
-            if (!paralyzeSpell.allowsRetreat()) {
-               availActions.remove(DefenseOption.DEF_RETREAT);
-            }
-            if (!paralyzeSpell.allowsDodge()) {
-               availActions.remove(DefenseOption.DEF_DODGE);
-            }
-         }
-         if ((paralyzeSpell == null) || paralyzeSpell.allowsBlockParry()) {
-            for (Limb limb : _limbs.values()) {
-               if (limb.canDefend(this, rangedAttack, attack.isCharge(), grappleAttack, attack.getDamageType(), true)) {
-                  availActions.add(limb.getDefOption());
-               }
-            }
-         }
-
-
-         boolean spellDef = false;
-         if (attack.isRanged()) {
-            if (_bestDefensiveSpell_ranged != null) {
-               spellDef = true;
-            }
-         }
-         else if (attack.isCompleteSpell()) {
-            if (_bestDefensiveSpell_spell != null) {
-               spellDef = true;
-            }
-         }
-         else if (_bestDefensiveSpell_melee != null) {
-            // counter-attacks may not be defended against with spells
-            if (!forCounterAttack) {
-               spellDef = true;
-            }
-         }
-
-         if (spellDef) {
-            availActions.add(DefenseOption.DEF_MAGIC_1,
-                             DefenseOption.DEF_MAGIC_2,
-                             DefenseOption.DEF_MAGIC_3,
-                             DefenseOption.DEF_MAGIC_4,
-                             DefenseOption.DEF_MAGIC_5);
-         }
-         boolean retreatBlocked = false;
-         boolean retreatHeld = false;
-         String cantRetreatOrParryFromAttackType = null;
-         WeaponStyleAttack attackMode = attack.getAttackStyle(attacker);
-         byte attackingWeaponsParryPenalty = (attackMode == null) ? 0 : attackMode.getParryPenalty();
-
-         if (rangedAttack || attack.isCharge()) {
-            cantRetreatOrParryFromAttackType = attack.getCantRetreatOrParryFromAttackTypeString();
+      }
+      if (paralyzeSpell != null) {
+         if (!paralyzeSpell.allowsRetreat()) {
             availActions.remove(DefenseOption.DEF_RETREAT);
-            for (Limb limb : _limbs.values()) {
-               if (!limb.canDefend(this, rangedAttack, attack.isCharge(),grappleAttack, attack.getDamageType(), true)) {
-                  availActions.remove(limb.getDefOption());
-               }
-            }
          }
-         byte defenseAdjForRangePerAction = Rules.getRangeDefenseAdjustmentPerAction(range);
-         if (availActions.contains(DefenseOption.DEF_RETREAT)) {
-            if (_heldPenalties.size() > 0) {
-               retreatHeld = true;
-               availActions.remove(DefenseOption.DEF_RETREAT);
-            }
-            else if (!arena.canRetreat(this, attacker.getLimbLocation(attack.getLimb(), arena.getCombatMap()))) {
-               retreatBlocked = true;
-               availActions.remove(DefenseOption.DEF_RETREAT);
-            }
-         }
-         if (isBerserking()) {
-            // Berserking characters can only dodge as a defense.
+         if (!paralyzeSpell.allowsDodge()) {
             availActions.remove(DefenseOption.DEF_DODGE);
          }
-         StringBuilder sb = new StringBuilder();
-         sb.append(getName()).append(", you have ").append(_condition.getActionsAvailable(true/*usedForDefenseOnly*/)).append(" actions remaining");
-         byte actionsAvailableThisRound = getActionsAvailableThisRound(true/*usedForDefenseOnly*/);
-         if (actionsAvailableThisRound == _condition.getActionsAvailable(true/*usedForDefenseOnly*/)) {
+      }
+      if ((paralyzeSpell == null) || paralyzeSpell.allowsBlockParry()) {
+         for (Limb limb : _limbs.values()) {
+            if (limb.canDefend(this, rangedAttack, minDistance, attack.isCharge(), grappleAttack, attack.getDamageType(), true)) {
+               availActions.add(limb.getDefOption());
+            }
+         }
+      }
+
+
+      boolean spellDef = false;
+      if (attack.isRanged()) {
+         if (_bestDefensiveSpell_ranged != null) {
+            spellDef = true;
+         }
+      }
+      else if (attack.isCompleteSpell()) {
+         if (_bestDefensiveSpell_spell != null) {
+            spellDef = true;
+         }
+      }
+      else if (_bestDefensiveSpell_melee != null) {
+         // counter-attacks may not be defended against with spells
+         if (!forCounterAttack) {
+            spellDef = true;
+         }
+      }
+
+      if (spellDef) {
+         availActions.add(DefenseOption.DEF_MAGIC_1,
+                          DefenseOption.DEF_MAGIC_2,
+                          DefenseOption.DEF_MAGIC_3,
+                          DefenseOption.DEF_MAGIC_4,
+                          DefenseOption.DEF_MAGIC_5);
+      }
+      boolean retreatBlocked = false;
+      boolean retreatHeld = false;
+      String cantRetreatOrParryFromAttackType = null;
+      WeaponStyleAttack attackMode = attack.getAttackStyle(attacker);
+      byte attackingWeaponsParryPenalty = (attackMode == null) ? 0 : attackMode.getParryPenalty();
+
+      if (rangedAttack || attack.isCharge()) {
+         cantRetreatOrParryFromAttackType = attack.getCantRetreatOrParryFromAttackTypeString();
+         availActions.remove(DefenseOption.DEF_RETREAT);
+         for (Limb limb : _limbs.values()) {
+            if (!limb.canDefend(this, rangedAttack, minDistance, attack.isCharge(),grappleAttack, attack.getDamageType(), true)) {
+               availActions.remove(limb.getDefOption());
+            }
+         }
+      }
+      byte defenseAdjForRangePerAction = Rules.getRangeDefenseAdjustmentPerAction(range);
+      if (availActions.contains(DefenseOption.DEF_RETREAT)) {
+         if (_heldPenalties.size() > 0) {
+            retreatHeld = true;
+            availActions.remove(DefenseOption.DEF_RETREAT);
+         }
+         else if (!arena.canRetreat(this, attacker.getLimbLocation(attack.getLimb(), arena.getCombatMap()))) {
+            retreatBlocked = true;
+            availActions.remove(DefenseOption.DEF_RETREAT);
+         }
+      }
+      if (isBerserking()) {
+         // Berserking characters can only dodge as a defense.
+         availActions.remove(DefenseOption.DEF_DODGE);
+      }
+      StringBuilder sb = new StringBuilder();
+      sb.append(getName()).append(", you have ").append(_condition.getActionsAvailable(true/*usedForDefenseOnly*/)).append(" actions remaining");
+      byte actionsAvailableThisRound = getActionsAvailableThisRound(true/*usedForDefenseOnly*/);
+      if (actionsAvailableThisRound == _condition.getActionsAvailable(true/*usedForDefenseOnly*/)) {
+         sb.append(".");
+      }
+      else {
+         sb.append(" for this turn, ").append(actionsAvailableThisRound).append(" can be spent this round.");
+      }
+      if (forCounterAttack) {
+         sb.append(" \nYou are being counter-attacked by ").append(attacker.getName());
+      }
+      else if (attack.isGrappleAttack()) {
+         sb.append(" \nYou are being grabbed by ").append(attacker.getName());
+      }
+      else {
+         sb.append(" \nYou are being attacked by ").append(attacker.getName());
+         Weapon attackingWeapon = attack.getAttackingWeapon(attacker);
+         if (attackingWeapon != null) {
+            sb.append(", using a ");
+            if (attackingWeapon.isReal()) {
+               sb.append(attackingWeapon.getName());
+            }
+            else if (attackingWeapon.isMissileWeapon()) {
+               // missile spells return 'false' to the isReal() call
+               sb.append(attackingWeapon.getName());
+            }
+            else {
+               sb.append(attackMode.getName());
+            }
+         }
+         else {
+            Spell spell = attack.getSpell();
+            if (spell != null) {
+               sb.append(", casting a '").append(spell.getName()).append("' spell");
+            }
+         }
+      }
+
+      if (attack.isRangedAttack()) {
+         // If we are being attack by a missile weapon, display how long the
+         // attacker has been aiming at us for.
+         int aimDuration = attacker.getAimDuration(_uniqueID);
+         sb.append(" (").append(attacker.getName()).append(" has been aiming for ").append(aimDuration).append(" rounds, ");
+         // compute and display the effective actions of the attack.
+         int effectiveActions = attack.getAttackActions(false/*considerSpellAsAttack*/);
+         IRequestOption answer = attack.answer();
+         boolean isMissileAttack = false;
+         if (answer instanceof RequestActionOption) {
+            RequestActionOption reqAnswer = (RequestActionOption) answer;
+            isMissileAttack = reqAnswer.getValue() == RequestActionType.OPT_ATTACK_MISSILE;
+         }
+         if (isMissileAttack) {
+            effectiveActions += Math.min(3, aimDuration) - 1;
+         }
+         else {
+            effectiveActions += Math.min(2, aimDuration) - 1;
+         }
+
+         sb.append(" effectively using ").append(effectiveActions).append(" actions");
+      }
+      else {
+         if (forCounterAttack) {
+            sb.append(" (").append(attack.getActionsUsed()).append(" actions");
+         }
+         else {
+            sb.append(" (").append(attack.getAttackActions(true/*considerSpellAsAttack*/)).append(" actions");
+         }
+         if (attack.isCharge()) {
+            sb.append(" charging attack");
+         }
+         sb.append(")");
+      }
+      byte woundPenalty = _condition.getWounds();
+      boolean woundReported = false;
+      if (woundPenalty > 0) {
+         sb.append(" \nWounds reduce all your defenses by ").append(woundPenalty);
+         woundReported = true;
+      }
+      if (getPosition() != Position.STANDING) {
+         sb.append("\nBecause you are ").append(getPositionName());
+         DamageType damType = attack.getDamageType();
+         byte minDam = req.getMinimumDamage();
+         int dodge1 = getDefenseOptionTN(new DefenseOptions(DefenseOption.DEF_DODGE), minDam, false/*includeWoundPenalty*/,
+                                         true/*includeHolds*/, false/*includePos*/, false/*includeMassiveDam*/,
+                                         attackingWeaponsParryPenalty, rangedAttack, minDistance, chargeAttack, grappleAttack,
+                                         damType, false/*defenseAppliedAlready*/, range);
+         int dodge2 = getDefenseOptionTN(new DefenseOptions(DefenseOption.DEF_DODGE), minDam, false/*includeWoundPenalty*/,
+                                         true/*includeHolds*/, true/*includePos*/, false/*includeMassiveDam*/,
+                                         attackingWeaponsParryPenalty, rangedAttack, minDistance, chargeAttack, grappleAttack,
+                                         damType, false/*defenseAppliedAlready*/, range);
+         int retreat1 = getDefenseOptionTN(new DefenseOptions(DefenseOption.DEF_RETREAT), minDam, false/*includeWoundPenalty*/,
+                                           true/*includeHolds*/, false/*includePos*/, false/*includeMassiveDam*/,
+                                           attackingWeaponsParryPenalty, rangedAttack, minDistance, chargeAttack, grappleAttack,
+                                           damType, false/*defenseAppliedAlready*/, range);
+         int retreat2 = getDefenseOptionTN(new DefenseOptions(DefenseOption.DEF_RETREAT), minDam, false/*includeWoundPenalty*/,
+                                           true/*includeHolds*/, true/*includePos*/, false/*includeMassiveDam*/,
+                                           attackingWeaponsParryPenalty, rangedAttack, minDistance, chargeAttack, grappleAttack,
+                                           damType, false/*defenseAppliedAlready*/, range);
+         int parry1 = getDefenseOptionTN(new DefenseOptions(DefenseOption.DEF_RIGHT), minDam, false/*includeWoundPenalty*/,
+                                         true/*includeHolds*/, false/*includePos*/, false/*includeMassiveDam*/,
+                                         attackingWeaponsParryPenalty, rangedAttack, minDistance, chargeAttack, grappleAttack,
+                                         damType, false/*defenseAppliedAlready*/, range);
+         int parry2 = getDefenseOptionTN(new DefenseOptions(DefenseOption.DEF_RIGHT), minDam, false/*includeWoundPenalty*/,
+                                         true/*includeHolds*/, true/*includePos*/, false/*includeMassiveDam*/,
+                                         attackingWeaponsParryPenalty, rangedAttack, minDistance, chargeAttack, grappleAttack,
+                                         damType, false/*defenseAppliedAlready*/, range);
+         if (dodge1 != dodge2) {
+            sb.append(" your dodge is reduced by ").append(dodge1 - dodge2).append(" points,");
+         }
+         if (retreat1 != retreat2) {
+            sb.append(" your retreat is reduced by ").append(retreat1 - retreat2).append(" points,");
+         }
+         if (parry1 != parry2) {
+            sb.append(" your parry and blocks are reduced by ").append(parry1 - parry2).append(" points,");
+         }
+         sb.setLength(sb.length()); // remove the trailing ','
+         sb.append("."); // and replace it with a '.'
+      }
+      int maxActionsPerRound = getMaxActionsPerRound();
+      // If we are berserking, don't bother mentioning that an arm is p
+      if (forCounterAttack) {
+         sb.append("\nBecause you are being counter-attacked, your armor's PD does not benefit your TN.");
+      }
+      if (isBerserking()) {
+         sb.append("\nBecause you are berserking, your only allowed defense is dodge.");
+      }
+      else {
+         for (Hand hand : getArms()) {
+            byte handPenalty = hand.getWoundPenalty();
+            String handDefName = hand.getDefenseName(false, this);
+            if (handDefName != null) {
+               if (handPenalty > 0) {
+                  if (availActions.contains(hand.getDefOption())) {
+                     if (woundReported) {
+                        sb.append(" and reduces");
+                     }
+                     else {
+                        sb.append("\nWounds reduce");
+                        woundReported = true;
+                     }
+                     sb.append(" your ").append(handDefName).append(" level by an additional ").append(handPenalty);
+                  }
+               }
+               else if (handPenalty < 0) {
+                  sb.append("\nYour ").append(hand.getName());
+                  sb.append(" is crippled, so you may not ").append(handDefName).append(".");
+               }
+            }
+         }
+         byte retreatPenalty = _condition.getPenaltyRetreat(false/*includeWounds*/);
+         if (retreatPenalty > 0) {
+            if (availActions.contains(DefenseOption.DEF_RETREAT)) {
+               if (woundPenalty == 0) {
+                  sb.append("\nWounds reduce");
+               }
+               else {
+                  sb.append(" and reduces");
+               }
+               sb.append(" your retreat level by an additional ").append(retreatPenalty);
+            }
+         }
+         sb.append(".");
+      }
+      if (tooFarForMartialArtsDefence) {
+         sb.append("\nYou are too far away from the attacker defend with your ")
+           .append(martialArtsSkill.name()).append(" skill.");
+      }
+
+      if (cantRetreatOrParryFromAttackType != null) {
+         if (!isBerserking()) {
+            sb.append("\nYou may not retreat or parry an attack from a ");
+            sb.append(cantRetreatOrParryFromAttackType).append(".");
+         }
+         if (rangedAttack) {
+            sb.append("\nYou are in the attacker's ").append(range.getName()).append(" range");
+            if (defenseAdjForRangePerAction != 0) {
+               sb.append(", so every active defense will be at ");
+               if (defenseAdjForRangePerAction > 0) {
+                  sb.append("+");
+               }
+               sb.append(defenseAdjForRangePerAction);
+               sb.append(" per action");
+            }
+            else {
+               sb.append(" so your active defenses are unaffected by range");
+            }
+            byte tnRangeAdj = Rules.getRangeDefenseAdjustmentToPD(range);
+            if (tnRangeAdj != 0) {
+               sb.append(" and your PD is increased by ").append(tnRangeAdj);
+            }
             sb.append(".");
          }
-         else {
-            sb.append(" for this turn, ").append(actionsAvailableThisRound).append(" can be spent this round.");
-         }
-         if (forCounterAttack) {
-            sb.append(" \nYou are being counter-attacked by ").append(attacker.getName());
-         }
-         else if (attack.isGrappleAttack()) {
-            sb.append(" \nYou are being grabbed by ").append(attacker.getName());
-         }
-         else {
-            sb.append(" \nYou are being attacked by ").append(attacker.getName());
-            Weapon attackingWeapon = attack.getAttackingWeapon(attacker);
-            if (attackingWeapon != null) {
-               sb.append(", using a ");
-               if (attackingWeapon.isReal()) {
-                  sb.append(attackingWeapon.getName());
+      }
+      else {
+         if (!isBerserking()) {
+            // paralyze at 2 or higher prevents dodge defenses.
+            // paralyze at 3 or higher prevents block & parry defenses.
+            if ((paralyzeSpell != null) && !paralyzeSpell.allowsBlockParry()) {
+               sb.append(" Because you are fully paralyzed, you may not actively defend any attack.");
+            }
+            else {
+               if (attackingWeaponsParryPenalty > 0) {
+                  sb.append(" The attacking weapon is difficult to parry, so you parry at a -");
+                  sb.append(attackingWeaponsParryPenalty);
                }
-               else if (attackingWeapon.isMissileWeapon()) {
-                  // missile spells return 'false' to the isReal() call
-                  sb.append(attackingWeapon.getName());
+               // paralyze at 1 or higher prevents retreat.
+               if ((paralyzeSpell != null) && !paralyzeSpell.allowsRetreat()) {
+                  sb.append(" Because you are paralyzed, you may not retreat from");
+                  if (!paralyzeSpell.allowsDodge()) {
+                     sb.append(", or dodge");
+                  }
+                  sb.append(" the attack.");
                }
                else {
-                  sb.append(attackMode.getName());
-               }
-            }
-            else {
-               Spell spell = attack.getSpell();
-               if (spell != null) {
-                  sb.append(", casting a '").append(spell.getName()).append("' spell");
-               }
-            }
-         }
-
-         if (attack.isRangedAttack()) {
-            // If we are being attack by a missile weapon, display how long the
-            // attacker has been aiming at us for.
-            int aimDuration = attacker.getAimDuration(_uniqueID);
-            sb.append(" (").append(attacker.getName()).append(" has been aiming for ").append(aimDuration).append(" rounds, ");
-            // compute and display the effective actions of the attack.
-            int effectiveActions = attack.getAttackActions(false/*considerSpellAsAttack*/);
-            IRequestOption answer = attack.answer();
-            boolean isMissileAttack = false;
-            if (answer instanceof RequestActionOption) {
-               RequestActionOption reqAnswer = (RequestActionOption) answer;
-               isMissileAttack = reqAnswer.getValue() == RequestActionType.OPT_ATTACK_MISSILE;
-            }
-            if (isMissileAttack) {
-               effectiveActions += Math.min(3, aimDuration) - 1;
-            }
-            else {
-               effectiveActions += Math.min(2, aimDuration) - 1;
-            }
-
-            sb.append(" effectively using ").append(effectiveActions).append(" actions");
-         }
-         else {
-            if (forCounterAttack) {
-               sb.append(" (").append(attack.getActionsUsed()).append(" actions");
-            }
-            else {
-               sb.append(" (").append(attack.getAttackActions(true/*considerSpellAsAttack*/)).append(" actions");
-            }
-            if (attack.isCharge()) {
-               sb.append(" charging attack");
-            }
-            sb.append(")");
-         }
-         byte woundPenalty = _condition.getWounds();
-         boolean woundReported = false;
-         if (woundPenalty > 0) {
-            sb.append(" \nWounds reduce all your defenses by ").append(woundPenalty);
-            woundReported = true;
-         }
-         if (getPosition() != Position.STANDING) {
-            sb.append("\nBecause you are ").append(getPositionName());
-            DamageType damType = attack.getDamageType();
-            byte minDam = req.getMinimumDamage();
-            int dodge1 = getDefenseOptionTN(new DefenseOptions(DefenseOption.DEF_DODGE), minDam, false/*includeWoundPenalty*/,
-                                            true/*includeHolds*/, false/*includePos*/, false/*includeMassiveDam*/,
-                                            attackingWeaponsParryPenalty, rangedAttack, chargeAttack, grappleAttack,
-                                            damType, false/*defenseAppliedAlready*/, range);
-            int dodge2 = getDefenseOptionTN(new DefenseOptions(DefenseOption.DEF_DODGE), minDam, false/*includeWoundPenalty*/,
-                                            true/*includeHolds*/, true/*includePos*/, false/*includeMassiveDam*/,
-                                            attackingWeaponsParryPenalty, rangedAttack, chargeAttack, grappleAttack,
-                                            damType, false/*defenseAppliedAlready*/, range);
-            int retreat1 = getDefenseOptionTN(new DefenseOptions(DefenseOption.DEF_RETREAT), minDam, false/*includeWoundPenalty*/,
-                                              true/*includeHolds*/, false/*includePos*/, false/*includeMassiveDam*/,
-                                              attackingWeaponsParryPenalty, rangedAttack, chargeAttack, grappleAttack,
-                                              damType, false/*defenseAppliedAlready*/, range);
-            int retreat2 = getDefenseOptionTN(new DefenseOptions(DefenseOption.DEF_RETREAT), minDam, false/*includeWoundPenalty*/,
-                                              true/*includeHolds*/, true/*includePos*/, false/*includeMassiveDam*/,
-                                              attackingWeaponsParryPenalty, rangedAttack, chargeAttack, grappleAttack,
-                                              damType, false/*defenseAppliedAlready*/, range);
-            int parry1 = getDefenseOptionTN(new DefenseOptions(DefenseOption.DEF_RIGHT), minDam, false/*includeWoundPenalty*/,
-                                            true/*includeHolds*/, false/*includePos*/, false/*includeMassiveDam*/,
-                                            attackingWeaponsParryPenalty, rangedAttack, chargeAttack, grappleAttack,
-                                            damType, false/*defenseAppliedAlready*/, range);
-            int parry2 = getDefenseOptionTN(new DefenseOptions(DefenseOption.DEF_RIGHT), minDam, false/*includeWoundPenalty*/,
-                                            true/*includeHolds*/, true/*includePos*/, false/*includeMassiveDam*/,
-                                            attackingWeaponsParryPenalty, rangedAttack, chargeAttack, grappleAttack,
-                                            damType, false/*defenseAppliedAlready*/, range);
-            if (dodge1 != dodge2) {
-               sb.append(" your dodge is reduced by ").append(dodge1 - dodge2).append(" points,");
-            }
-            if (retreat1 != retreat2) {
-               sb.append(" your retreat is reduced by ").append(retreat1 - retreat2).append(" points,");
-            }
-            if (parry1 != parry2) {
-               sb.append(" your parry and blocks are reduced by ").append(parry1 - parry2).append(" points,");
-            }
-            sb.setLength(sb.length()); // remove the trailing ','
-            sb.append("."); // and replace it with a '.'
-         }
-         int maxActionsPerRound = getMaxActionsPerRound();
-         // If we are berserking, don't bother mentioning that an arm is p
-         if (forCounterAttack) {
-            sb.append("\nBecause you are being counter-attacked, your armor's PD does not benefit your TN.");
-         }
-         if (isBerserking()) {
-            sb.append("\nBecause you are berserking, your only allowed defense is dodge.");
-         }
-         else {
-            for (Hand hand : getArms()) {
-               byte handPenalty = hand.getWoundPenalty();
-               String handDefName = hand.getDefenseName(false, this);
-               if (handDefName != null) {
-                  if (handPenalty > 0) {
-                     if (availActions.contains(hand.getDefOption())) {
-                        if (woundReported) {
-                           sb.append(" and reduces");
-                        }
-                        else {
-                           sb.append("\nWounds reduce");
-                           woundReported = true;
-                        }
-                        sb.append(" your ").append(handDefName).append(" level by an additional ").append(handPenalty);
-                     }
+                  if (retreatBlocked) {
+                     sb.append(" Your back is against a wall (or obstacle), blocking your retreat.");
                   }
-                  else if (handPenalty < 0) {
-                     sb.append("\nYour ").append(hand.getName());
-                     sb.append(" is crippled, so you may not ").append(handDefName).append(".");
+                  else if (retreatHeld) {
+                     sb.append(" Because your being held, you may not retreat.");
                   }
                }
             }
-            byte retreatPenalty = _condition.getPenaltyRetreat(false/*includeWounds*/);
-            if (retreatPenalty > 0) {
-               if (availActions.contains(DefenseOption.DEF_RETREAT)) {
-                  if (woundPenalty == 0) {
-                     sb.append("\nWounds reduce");
+         }
+      }
+      byte heldPenalty = 0;
+      for (IHolder holder : getHolders()) {
+         heldPenalty += holder.getHoldingLevel();
+      }
+      if (heldPenalty > 0) {
+         sb.append("\nBecause you are being held, all your active defenses are at -").append(heldPenalty).append(".");
+      }
+      boolean massiveAttack = false;
+      List<DefenseOptions> listOfListOfDefOptions = new ArrayList<>();
+      listOfListOfDefOptions.add(new DefenseOptions(DefenseOption.DEF_DODGE, DefenseOption.DEF_RETREAT));
+      if (!isBerserking() && !forCounterAttack) {
+         for (Hand hand : getArms()) {
+            listOfListOfDefOptions.add(new DefenseOptions(hand.getDefOption()));
+            if (hand.canDefend(this, req.isRangedAttack(), minDistance, req.isChargeAttack(),
+                               req.isGrapple(), req.getDamageType(), true/*checkState*/)) {
+               byte handPenalty = hand.getPenaltyForMassiveDamage(this, req.getMinimumDamage(), minDistance,
+                                                                  req.isRangedAttack(), req.isChargeAttack(),
+                                                                  req.isGrapple(), req.getDamageType(),
+                                                                  true/*checkState*/);
+               if (handPenalty > 0) {
+                  if (!massiveAttack) {
+                     massiveAttack = true;
+                     sb.append("\nThe attack will do at least ").append(req.getMinimumDamage());
+                     sb.append(" ").append(req.getDamageType().shortname);
+                     sb.append(" damage, so your defenses are reduced.");
                   }
-                  else {
-                     sb.append(" and reduces");
+                  sb.append("\n").append(hand.getDefenseName(false, this));
+                  sb.append("(").append(hand.getName()).append(")");
+                  sb.append(" is at -").append(handPenalty).append(".");
+               }
+            }
+         }
+         for (Hand hand : getArms()) {
+            if (hand.canDefend(this, req.isRangedAttack(), minDistance, req.isChargeAttack(), req.isGrapple(), req.getDamageType(), true/*checkState*/)) {
+               DefenseOptions listOfCounterAttackOptions = new DefenseOptions();
+               if (hand.canCounterAttack(this, true/*grab*/)) {
+                  switch (actionsAvailableThisRound) {
+                     case 7:
+                     case 6:
+                     case 5:
+                     case 4: listOfCounterAttackOptions.add(DefenseOption.DEF_COUNTER_GRAB_3);
+                     case 3: listOfCounterAttackOptions.add(DefenseOption.DEF_COUNTER_GRAB_2);
+                     case 2: listOfCounterAttackOptions.add(DefenseOption.DEF_COUNTER_GRAB_1);
+                     case 1:
                   }
-                  sb.append(" your retreat level by an additional ").append(retreatPenalty);
+               }
+               if (hand.canCounterAttack(this, false/*grab*/)) {
+                  switch (actionsAvailableThisRound) {
+                     case 7:
+                     case 6:
+                     case 5:
+                     case 4: listOfCounterAttackOptions.add(DefenseOption.DEF_COUNTER_THROW_3);
+                     case 3: listOfCounterAttackOptions.add(DefenseOption.DEF_COUNTER_THROW_2);
+                     case 2: listOfCounterAttackOptions.add(DefenseOption.DEF_COUNTER_THROW_1);
+                     case 1:
+                  }
+               }
+               if (listOfCounterAttackOptions.getIntValue() != 0) {
+                  listOfListOfDefOptions.add(listOfCounterAttackOptions);
+               }
+            }
+         }
+      }
+      if (req.isRangedAttack()) {
+         if (hasMovedLastAction()) {
+            byte movingTNBonus = Rules.getTNBonusForMovement(range, isMovingEvasively());
+            sb.append("\nBecause you are moving");
+            if (isMovingEvasively()) {
+               sb.append(" evasively");
+            }
+            sb.append(", your defenses are increased by ").append(movingTNBonus).append(".");
+         }
+      }
+      if (paralyzeSpell!= null) {
+         if (!paralyzeSpell.allowsRetreat()) {
+            sb.append("\nBecause you are paralyzed, you may not retreat");
+            if (!paralyzeSpell.allowsDodge()) {
+               if (!paralyzeSpell.allowsBlockParry()) {
+                  sb.append(" dodge, parry or block");
+               }
+               else {
+                  sb.append(" or dodge");
                }
             }
             sb.append(".");
          }
+      }
+      if (spellDef) {
+         short priestPoints = getCondition().getPriestSpellPointsAvailable();
+         short magePoints = getCondition().getMageSpellPointsAvailable();
+         if ((priestPoints == 0) && (magePoints == 0)) {
+            sb.append(" You have no spell points remaining to use spell defenses.");
+         }
+         else if ((priestPoints < actionsAvailableThisRound) && (magePoints < actionsAvailableThisRound)) {
+            sb.append(" You only have ").append(Math.max(priestPoints, magePoints)).append(" spell points remaining to use spell defenses.");
+         }
+         DefenseOptions magicDefOptions = new DefenseOptions();
+         switch (maxActionsPerRound) {
+            case 5: magicDefOptions.add(DefenseOption.DEF_MAGIC_5);
+            case 4: magicDefOptions.add(DefenseOption.DEF_MAGIC_4);
+            case 3: magicDefOptions.add(DefenseOption.DEF_MAGIC_3);
+            case 2: magicDefOptions.add(DefenseOption.DEF_MAGIC_2);
+            case 1: magicDefOptions.add(DefenseOption.DEF_MAGIC_1);
+                    listOfListOfDefOptions.add(magicDefOptions);
+         }
+      }
+      sb.append("\nHow do you want to defend yourself?");
+      req.setMessage(sb.toString());
+      System.out.println("listOfListOfDefOptions = " + listOfListOfDefOptions.toString());
 
-         if (cantRetreatOrParryFromAttackType != null) {
-            if (!isBerserking()) {
-               sb.append("\nYou may not retreat or parry an attack from a ");
-               sb.append(cantRetreatOrParryFromAttackType);
-            }
-            if (rangedAttack) {
-               sb.append("\nYou are in the attacker's ").append(range.getName()).append(" range");
-               if (defenseAdjForRangePerAction != 0) {
-                  sb.append(", so every active defense will be at ");
-                  if (defenseAdjForRangePerAction > 0) {
-                     sb.append("+");
-                  }
-                  sb.append(defenseAdjForRangePerAction);
-                  sb.append(" per action");
-               }
-               else {
-                  sb.append(" so your active defenses are unaffected by range");
-               }
-               byte tnRangeAdj = Rules.getRangeDefenseAdjustmentToPD(range);
-               if (tnRangeAdj != 0) {
-                  sb.append(" and your PD is increased by ").append(tnRangeAdj);
-               }
-               else {
-                  sb.append(".");
-               }
-            }
-         }
-         else {
-            if (!isBerserking()) {
-               // paralyze at 2 or higher prevents dodge defenses.
-               // paralyze at 3 or higher prevents block & parry defenses.
-               if ((paralyzeSpell != null) && !paralyzeSpell.allowsBlockParry()) {
-                  sb.append(" Because you are fully paralyzed, you may not actively defend any attack.");
-               }
-               else {
-                  if (attackingWeaponsParryPenalty > 0) {
-                     sb.append(" The attacking weapon is difficult to parry, so you parry at a -");
-                     sb.append(attackingWeaponsParryPenalty);
-                  }
-                  // paralyze at 1 or higher prevents retreat.
-                  if ((paralyzeSpell != null) && !paralyzeSpell.allowsRetreat()) {
-                     sb.append(" Because you are paralyzed, you may not retreat from");
-                     if (!paralyzeSpell.allowsDodge()) {
-                        sb.append(", or dodge");
-                     }
-                     sb.append(" the attack.");
-                  }
-                  else {
-                     if (retreatBlocked) {
-                        sb.append(" Your back is against a wall (or obstacle), blocking your retreat.");
-                     }
-                     else if (retreatHeld) {
-                        sb.append(" Because your being held, you may not retreat.");
-                     }
-                  }
-               }
-            }
-         }
-         byte heldPenalty = 0;
-         for (IHolder holder : getHolders()) {
-            heldPenalty += holder.getHoldingLevel();
-         }
-         if (heldPenalty > 0) {
-            sb.append("\nBecause you are being held, all your active defenses are at -").append(heldPenalty).append(".");
-         }
-         boolean massiveAttack = false;
-         List<DefenseOptions> listOfListOfDefOptions = new ArrayList<>();
-         listOfListOfDefOptions.add(new DefenseOptions(DefenseOption.DEF_DODGE, DefenseOption.DEF_RETREAT));
-         if (!isBerserking() && !forCounterAttack) {
-            for (Hand hand : getArms()) {
-               listOfListOfDefOptions.add(new DefenseOptions(hand.getDefOption()));
-               if (hand.canDefend(this, req.isRangedAttack(), req.isChargeAttack(), req.isGrapple(), req.getDamageType(), true/*checkState*/)) {
-                  byte handPenalty = hand.getPenaltyForMassiveDamage(this, req.getMinimumDamage(), req.isRangedAttack(), req.isChargeAttack(), req.isGrapple(),
-                                                                     req.getDamageType(), true/*checkState*/);
-                  if (handPenalty > 0) {
-                     if (!massiveAttack) {
-                        massiveAttack = true;
-                        sb.append("\nThe attack will do at least ").append(req.getMinimumDamage());
-                        sb.append(" ").append(req.getDamageType().shortname);
-                        sb.append(" damage, so your defenses are reduced.");
-                     }
-                     sb.append("\n").append(hand.getDefenseName(false, this));
-                     sb.append("(").append(hand.getName()).append(")");
-                     sb.append(" is at -").append(handPenalty).append(".");
-                  }
-               }
-            }
-            for (Hand hand : getArms()) {
-               if (hand.canDefend(this, req.isRangedAttack(), req.isChargeAttack(), req.isGrapple(), req.getDamageType(), true/*checkState*/)) {
-                  DefenseOptions listOfCounterAttackOptions = new DefenseOptions();
-                  if (hand.canCounterAttack(this, true/*grab*/)) {
-                     switch (actionsAvailableThisRound) {
-                        case 7:
-                        case 6:
-                        case 5:
-                        case 4: listOfCounterAttackOptions.add(DefenseOption.DEF_COUNTER_GRAB_3);
-                        case 3: listOfCounterAttackOptions.add(DefenseOption.DEF_COUNTER_GRAB_2);
-                        case 2: listOfCounterAttackOptions.add(DefenseOption.DEF_COUNTER_GRAB_1);
-                        case 1:
-                     }
-                  }
-                  if (hand.canCounterAttack(this, false/*grab*/)) {
-                     switch (actionsAvailableThisRound) {
-                        case 7:
-                        case 6:
-                        case 5:
-                        case 4: listOfCounterAttackOptions.add(DefenseOption.DEF_COUNTER_THROW_3);
-                        case 3: listOfCounterAttackOptions.add(DefenseOption.DEF_COUNTER_THROW_2);
-                        case 2: listOfCounterAttackOptions.add(DefenseOption.DEF_COUNTER_THROW_1);
-                        case 1:
-                     }
-                  }
-                  if (listOfCounterAttackOptions.getIntValue() != 0) {
-                     listOfListOfDefOptions.add(listOfCounterAttackOptions);
-                  }
-               }
-            }
-         }
-         if (req.isRangedAttack()) {
-            if (hasMovedLastAction()) {
-               byte movingTNBonus = Rules.getTNBonusForMovement(range, isMovingEvasively());
-               sb.append("\nBecause you are moving");
-               if (isMovingEvasively()) {
-                  sb.append(" evasively");
-               }
-               sb.append(", your defenses are increased by ").append(movingTNBonus).append(".");
-            }
-         }
-         if (paralyzeSpell!= null) {
-            if (!paralyzeSpell.allowsRetreat()) {
-               sb.append("\nBecause you are paralyzed, you may not retreat");
-               if (!paralyzeSpell.allowsDodge()) {
-                  if (!paralyzeSpell.allowsBlockParry()) {
-                     sb.append(" dodge, parry or block");
-                  }
-                  else {
-                     sb.append(" or dodge");
-                  }
-               }
-               sb.append(".");
-            }
-         }
-         if (spellDef) {
-            short priestPoints = getCondition().getPriestSpellPointsAvailable();
-            short magePoints = getCondition().getMageSpellPointsAvailable();
-            if ((priestPoints == 0) && (magePoints == 0)) {
-               sb.append(" You have no spell points remaining to use spell defenses.");
-            }
-            else if ((priestPoints < actionsAvailableThisRound) && (magePoints < actionsAvailableThisRound)) {
-               sb.append(" You only have ").append(Math.max(priestPoints, magePoints)).append(" spell points remaining to use spell defenses.");
-            }
-            DefenseOptions magicDefOptions = new DefenseOptions();
-            switch (maxActionsPerRound) {
-               case 5: magicDefOptions.add(DefenseOption.DEF_MAGIC_5);
-               case 4: magicDefOptions.add(DefenseOption.DEF_MAGIC_4);
-               case 3: magicDefOptions.add(DefenseOption.DEF_MAGIC_3);
-               case 2: magicDefOptions.add(DefenseOption.DEF_MAGIC_2);
-               case 1: magicDefOptions.add(DefenseOption.DEF_MAGIC_1);
-                       listOfListOfDefOptions.add(magicDefOptions);
-            }
-         }
-         sb.append("\nHow do you want to defend yourself?");
-         req.setMessage(sb.toString());
-         System.out.println("listOfListOfDefOptions = " + listOfListOfDefOptions.toString());
+      HashMap<Byte, TreeSet<DefenseOptions>> mapActionsToDefActions = new HashMap<>();
+      addOptionForDefenseOptions(mapActionsToDefActions, listOfListOfDefOptions, actionsAvailableThisRound, new DefenseOptions());
+      // passive defense option has already been added
+      for (byte actions = 1 ; actions <= maxActionsPerRound ; actions++) {
+         // separator for this new columns:
+         addDefenseOption(req, null, null, attackingWeaponsParryPenalty, range, minDistance, attack);
 
-         HashMap<Byte, TreeSet<DefenseOptions>> mapActionsToDefActions = new HashMap<>();
-         addOptionForDefenseOptions(mapActionsToDefActions, listOfListOfDefOptions, actionsAvailableThisRound, new DefenseOptions());
-         // passive defense option has already been added
-         for (byte actions = 1 ; actions <= maxActionsPerRound ; actions++) {
-            // separator for this new columns:
-            addDefenseOption(req, null, null, attackingWeaponsParryPenalty, range, attack);
-
-            TreeSet<DefenseOptions> defActions = mapActionsToDefActions.get(actions);
-            if (defActions != null) {
-               Iterator<DefenseOptions> iter = defActions.iterator();
-               while (iter.hasNext()) {
-                  DefenseOptions defAction = iter.next();
-                  addDefenseOption(req, defAction, availActions, attackingWeaponsParryPenalty, range, attack);
-               }
+         TreeSet<DefenseOptions> defActions = mapActionsToDefActions.get(actions);
+         if (defActions != null) {
+            Iterator<DefenseOptions> iter = defActions.iterator();
+            while (iter.hasNext()) {
+               DefenseOptions defAction = iter.next();
+               addDefenseOption(req, defAction, availActions, attackingWeaponsParryPenalty, range, minDistance, attack);
             }
          }
       }
@@ -3120,7 +3179,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    }
 
    private void addDefenseOption(RequestDefense req, DefenseOptions defOpts, DefenseOptions availableOptions,
-                                 byte attackingWeaponsParryPenalty, RANGE range, RequestAction attack) {
+                                 byte attackingWeaponsParryPenalty, RANGE range, short distance, RequestAction attack) {
       if (defOpts == null) {
          req.addSeparatorOption();
          return;
@@ -3175,7 +3234,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       if (enabled) {
          TN = getDefenseOptionTN(defOpts, req.getMinimumDamage(), true/*includeWoundPenalty*/, true/*includeHolds*/,
                                  true/*includePosition*/, true, attackingWeaponsParryPenalty, req.isRangedAttack(),
-                                 req.isChargeAttack(), req.isGrapple(), req.getDamageType(), false/*defenseAppliedAlready*/,
+                                 distance, req.isChargeAttack(), req.isGrapple(), req.getDamageType(), false/*defenseAppliedAlready*/,
                                  range);
          if (req.isRangedAttack()) {
             if (hasMovedLastAction()) {
@@ -3197,22 +3256,29 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       return defOpt.getName(pastTense, this, attack);
    }
 
-   public byte getDefenseTN(RequestDefense defense, boolean includeWoundPenalty, boolean includeHolds, boolean includePosition,
-                            boolean includeMassiveDamagePenalty, byte attackingWeaponsParryPenalty, boolean defenseAppliedAlready, RANGE range) {
+   public byte getDefenseTN(RequestDefense defense, boolean includeWoundPenalty, boolean includeHolds,
+                            boolean includePosition, boolean includeMassiveDamagePenalty,
+                            byte attackingWeaponsParryPenalty, boolean defenseAppliedAlready,
+                            short distance, RANGE range) {
       return getDefenseOptionTN(new DefenseOptions(defense.getDefenseIndex()), defense.getMinimumDamage(), includeWoundPenalty, includeHolds, includePosition,
-                          includeMassiveDamagePenalty, attackingWeaponsParryPenalty, defense.isRangedAttack(), defense.isChargeAttack(),
+                          includeMassiveDamagePenalty, attackingWeaponsParryPenalty, defense.isRangedAttack(), distance, defense.isChargeAttack(),
                           defense.isGrapple(), defense.getDamageType(), defenseAppliedAlready, range);
    }
 
-   public byte getPassiveDefense(RANGE range, boolean isGrappleAttack) {
+   public byte getPassiveDefense(RANGE range, boolean isGrappleAttack, short distance) {
       return getDefenseOptionsBase(DamageType.GENERAL, isGrappleAttack, false/*includeWoundPenalty*/,
-                                   false/*includePosition*/, true/*computePdOnly*/).get(range).get(DefenseOption.DEF_PD);
+                                   false/*includePosition*/, true/*computePdOnly*/, distance).get(range).get(DefenseOption.DEF_PD);
    }
 
-   public byte getDefenseOptionTN(DefenseOptions defenseOptions, byte minimumDamage, boolean includeWoundPenalty, boolean includeHolds, boolean includePosition,
-                            boolean includeMassiveDamagePenalty, byte attackingWeaponsParryPenalty, boolean isRangedAttack, boolean isChargeAttack,
-                            boolean isGrappleAttack, DamageType damageType, boolean defenseAppliedAlready, RANGE range) {
-      HashMap<RANGE, HashMap<DefenseOption, Byte>> baseDefs = getDefenseOptionsBase(DamageType.GENERAL, isGrappleAttack, false/*includeWoundPenalty*/, includePosition, false/*computePdOnly*/);
+   public byte getDefenseOptionTN(DefenseOptions defenseOptions, byte minimumDamage, boolean includeWoundPenalty,
+                                  boolean includeHolds, boolean includePosition, boolean includeMassiveDamagePenalty,
+                                  byte attackingWeaponsParryPenalty, boolean isRangedAttack, short distance,
+                                  boolean isChargeAttack, boolean isGrappleAttack, DamageType damageType,
+                                  boolean defenseAppliedAlready, RANGE range) {
+      HashMap<RANGE, HashMap<DefenseOption, Byte>> baseDefs = getDefenseOptionsBase(DamageType.GENERAL, isGrappleAttack,
+                                                                                    false/*includeWoundPenalty*/,
+                                                                                    includePosition,
+                                                                                    false/*computePdOnly*/, distance);
       byte basePD = baseDefs.get(range).get(DefenseOption.DEF_PD);
       byte baseTN = getBaseDefenseOptionTN(baseDefs, defenseOptions, range, isGrappleAttack, damageType, includeWoundPenalty, includePosition, includeHolds);
       byte defenseTN = baseTN;
@@ -3220,7 +3286,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          // Is this hand used in the defense?
          DefenseOption defIndex = limb.getDefOption();
          if (defenseOptions.contains(defIndex)) {
-            byte maxTnThisHand = limb.getDefenseTNWithoutWounds(this, isRangedAttack, isChargeAttack, isGrappleAttack, damageType, !defenseAppliedAlready);
+            byte maxTnThisHand = limb.getDefenseTNWithoutWounds(this, isRangedAttack, distance, isChargeAttack, isGrappleAttack, damageType, !defenseAppliedAlready);
             byte penalty = 0;
             if ((limb instanceof Hand) && ((Hand) limb).isDefenseParry(this)) {
                penalty += attackingWeaponsParryPenalty;
@@ -3231,7 +3297,9 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
             //                  else penalty += _limbs.get(limbType).getWoundPenalty();
             //               }
             if (includeMassiveDamagePenalty) {
-               byte massiveDamagePenalty = limb.getPenaltyForMassiveDamage(this, minimumDamage, isRangedAttack, isChargeAttack, isGrappleAttack, damageType,
+               byte massiveDamagePenalty = limb.getPenaltyForMassiveDamage(this, minimumDamage, distance,
+                                                                           isRangedAttack, isChargeAttack,
+                                                                           isGrappleAttack, damageType,
                                                                            !defenseAppliedAlready);
                penalty += massiveDamagePenalty;
             }
@@ -3253,7 +3321,11 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       return defenseTN;
    }
 
-   public HashMap<RANGE, HashMap<DefenseOption, Byte>> getDefenseOptionsBase(DamageType damType, boolean isGrappleAttack, boolean includeWoundPenalty, boolean includePosition, boolean computePdOnly) {
+   public HashMap<RANGE, HashMap<DefenseOption, Byte>> getDefenseOptionsBase(DamageType damType, boolean isGrappleAttack,
+                                                                             boolean includeWoundPenalty,
+                                                                             boolean includePosition,
+                                                                             boolean computePdOnly,
+                                                                             short distance) {
       byte attributeNim = getAttributeLevel(Attribute.Nimbleness);
       byte dodge = Rules.getDodgeLevel(attributeNim);
       byte retreat = Rules.getRetreatLevel(attributeNim);
@@ -3293,7 +3365,8 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                   byte def = 0;
                   if (heldThing != null) {
                      if ((range == RANGE.OUT_OF_RANGE) || heldThing.canDefendAgainstRangedWeapons()) {
-                        def = heldThing.getBestDefenseOption(this, armType, canUse2Hands, damType, isGrappleAttack);
+                        def = heldThing.getBestDefenseOption(this, armType, canUse2Hands, damType, isGrappleAttack,
+                                                             distance);
                         byte rangeAdjustment = Rules.getRangeDefenseAdjustmentPerAction(range);
                         def += rangeAdjustment;
                         if (includeWoundPenalty) {
@@ -5786,7 +5859,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       // If this character is drawn over multiple hexes, avoid drawing the same one portion of the character across
       // multiple locations by adding the location to the key
       if (orientation.getCoordinates().size() > 0) {
-         newDrawnObjectKey += loc.getMapKey();
+         newDrawnObjectKey += loc._x + "," + loc._y;
       }
 
       DrawnObject cachedObj = _drawnObjectsCache.get(newDrawnObjectKey);

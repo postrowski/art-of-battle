@@ -12,10 +12,10 @@ package ostrowski.combat.common.enums;
  *
  */
 public interface Enums {
-   public static final byte     TEAM_ALPHA             = 0;
-   public static final byte     TEAM_BETA              = 1;
-   public static final byte     TEAM_INDEPENDENT       = 2;
-   public static final String[] TEAM_NAMES             = new String[] { "A", "B", "I", "U"};
+   public static final byte     TEAM_ALPHA        = 0;
+   public static final byte     TEAM_BETA         = 1;
+   public static final byte     TEAM_INDEPENDENT  = 2;
+   public static final String[] TEAM_NAMES        = new String[] { "A", "B", "I", "U"};
 
 
    public enum TargetType {

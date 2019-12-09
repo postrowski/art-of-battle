@@ -57,7 +57,6 @@ import ostrowski.combat.client.MessageDialog;
 import ostrowski.combat.client.RequestUserInput;
 import ostrowski.combat.client.ui.AutoRunBlock;
 import ostrowski.combat.client.ui.CharInfoBlock;
-import ostrowski.combat.common.Advantage;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.CharacterFile;
 import ostrowski.combat.common.CharacterGenerator;
@@ -69,20 +68,12 @@ import ostrowski.combat.common.IMapListener;
 import ostrowski.combat.common.IMapWidget;
 import ostrowski.combat.common.MapWidget2D;
 import ostrowski.combat.common.MapWidget3D;
-import ostrowski.combat.common.Race;
+import ostrowski.combat.common.RuleComposite;
 import ostrowski.combat.common.Rules;
 import ostrowski.combat.common.enums.AI_Type;
 import ostrowski.combat.common.enums.Attribute;
-import ostrowski.combat.common.enums.DamageType;
 import ostrowski.combat.common.enums.Enums;
 import ostrowski.combat.common.enums.TerrainType;
-import ostrowski.combat.common.html.HtmlBuilder;
-import ostrowski.combat.common.spells.mage.MageSpell;
-import ostrowski.combat.common.spells.priest.PriestSpell;
-import ostrowski.combat.common.things.Armor;
-import ostrowski.combat.common.things.Shield;
-import ostrowski.combat.common.things.Weapon;
-import ostrowski.combat.common.wounds.WoundChart;
 import ostrowski.graphics.objects3d.Helper;
 import ostrowski.util.AnglePairDegrees;
 import ostrowski.util.ClientListener;
@@ -204,29 +195,15 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    private final Semaphore                  _lock_pausePlayControl = new Semaphore("CombatServer_pausePalyControl",
                                                                                    CombatSemaphore.CLASS_COMBATSERVER_pausePlayControl);
 
-   private final Configuration              _configuration    = new Configuration(this);
+   private final Configuration              _configuration    = new Configuration();
    private CharacterWidget                  _charWidget       = null;
    public  CharacterFile                    _charFile         = new CharacterFile("Character.data");
    private final CharInfoBlock              _charInfoBlock    = new CharInfoBlock(null);
    private Button                           _hideViewFromLocalPlayersButton;
 
-   private static final int BROWSER_WEAPONS         = 0;
-   private static final int BROWSER_ARMOR_SHIELDS   = 1;
-   private static final int BROWSER_WOUNDS          = 2;
-   private static final int BROWSER_RACES           = 3;
-   private static final int BROWSER_SKILLS          = 4;
-   private static final int BROWSER_ATTRIBUTES      = 5;
-   private static final int BROWSER_ADVANTAGES      = 6;
-   private static final int BROWSER_SPELLS_MAGE     = 7;
-   private static final int BROWSER_SPELLS_PRIEST   = 8;
-   private static final int BROWSER_MISC            = 9;
-   private static final int BROWSER_TAB_COUNT       = 10;
 
    public static final byte MAX_COMBATANTS_PER_TEAM = 15;
    public static final byte MAX_TEAMS               = (byte)(TEAM_NAMES.length);
-
-   private final Browser[]                        _rulesBrowser       = new Browser[BROWSER_TAB_COUNT];
-   private final HashMap<DamageType, Browser>     _rulesWoundsBrowser = new HashMap<>();
 
    private final HashMap<String, CombatMap> _nameToArenaMap   = null;// new HashMap<String, CombatMap>();
 
@@ -304,77 +281,9 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       // create the next tab
       item = new TabItem( tabFolder, SWT.NULL);
       item.setText( "Rules");
-      Composite rulesComposite = createComposite(tabFolder, 1, GridData.FILL_BOTH);
       // add the control to the TabItem
-      item.setControl( rulesComposite );
-
-      _configuration.buildDisplay(rulesComposite, true/*isServer*/);
-
-      TabFolder tabFolderRules = new TabFolder(rulesComposite, SWT.NONE);
-      GridData gdata = new GridData(GridData.FILL_BOTH);
-      gdata.horizontalSpan = 1;
-      gdata.grabExcessVerticalSpace = true;
-      gdata.grabExcessHorizontalSpace = true;
-      tabFolderRules.setLayoutData(gdata);
-      for (int tab=0 ; tab<BROWSER_TAB_COUNT ; tab++) {
-
-         // create a TabItem
-         item = new TabItem( tabFolderRules, SWT.NULL);
-         switch (tab) {
-            case BROWSER_ARMOR_SHIELDS: item.setText("Armor && Shields");break;
-            case BROWSER_RACES:         item.setText("Race Data");       break;
-            case BROWSER_SKILLS:        item.setText("Skills");          break;
-            case BROWSER_ATTRIBUTES:    item.setText("Attributes");      break;
-            case BROWSER_ADVANTAGES:    item.setText("Advantages");      break;
-            case BROWSER_SPELLS_MAGE:   item.setText("Mage Spells");     break;
-            case BROWSER_SPELLS_PRIEST: item.setText("Priest Spells");   break;
-            case BROWSER_WEAPONS:       item.setText("Weapons");         break;
-            case BROWSER_WOUNDS:        item.setText("Wounds");          break;
-            case BROWSER_MISC:          item.setText("Misc.");           break;
-         }
-         // create a control
-         Composite subComposite = createComposite(tabFolderRules, 1, GridData.FILL_BOTH);
-         // add the control to the TabItem
-         item.setControl( subComposite );
-         if (tab == BROWSER_WOUNDS) {
-            TabFolder woundsSubFolder = new TabFolder(subComposite, SWT.NONE);
-            for (DamageType damType : ostrowski.combat.common.enums.DamageType.values()) {
-               if (damType == ostrowski.combat.common.enums.DamageType.NONE) {
-                  continue;
-               }
-               // create a TabItem
-               item = new TabItem( woundsSubFolder, SWT.NULL);
-               if (damType == ostrowski.combat.common.enums.DamageType.GENERAL) {
-                  item.setText("Combined damage");
-               }
-               else {
-                  item.setText(damType.fullname);
-               }
-               // create a control
-               subComposite = createComposite(woundsSubFolder, 1, GridData.FILL_BOTH);
-               // add the control to the TabItem
-               item.setControl( subComposite );
-               _rulesWoundsBrowser.put(damType, new Browser(subComposite, SWT.NONE | SWT.BORDER));
-               GridData data = new GridData(SWT.FILL, SWT.FILL, true/*grabExcessHorizontalSpace*/, true/*grabExcessVerticalSpace*/);
-               data.minimumHeight = 550;
-               data.minimumWidth  = WINDOW_WIDTH-30;
-               data.horizontalSpan = 3;
-               _rulesWoundsBrowser.get(damType).setLayoutData(data);
-               _rulesWoundsBrowser.get(damType).setBackground(display.getSystemColor(SWT.COLOR_WHITE));
-            }
-         }
-         else
-         {
-            _rulesBrowser[tab] = new Browser(subComposite, SWT.NONE | SWT.BORDER);
-            GridData data = new GridData(SWT.FILL, SWT.FILL, true/*grabExcessHorizontalSpace*/, true/*grabExcessVerticalSpace*/);
-            data.minimumHeight = 600;
-            data.minimumWidth  = WINDOW_WIDTH;
-            data.horizontalSpan = 3;
-            _rulesBrowser[tab].setLayoutData(data);
-            _rulesBrowser[tab].setBackground(display.getSystemColor(SWT.COLOR_WHITE));
-         }
-      }
-      updateRulesSection();
+      item.setControl(new RuleComposite(tabFolder, 1, GridData.FILL_BOTH, _configuration,
+                                        WINDOW_WIDTH, display.getSystemColor(SWT.COLOR_WHITE)));
 
       Composite mainGridBlock = new Composite(arenaMap, SWT.NONE);
       mainGridBlock.setLayout(new GridLayout(1, false));
@@ -555,40 +464,6 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       }
    }
 
-   /**
-    *
-    */
-   public void updateRulesSection()
-   {
-      if (_rulesBrowser == null) {
-         return;
-      }
-      StringBuilder sb = new StringBuilder();
-      sb.append(HtmlBuilder.getHTMLHeader());
-      sb.append("<body>");
-      sb.append("<table class='Hidden'><tr><td>");
-      sb.append(Armor.generateHtmlTable());
-      sb.append("</td><td valign='Top'>");
-      sb.append(Shield.generateHtmlTable());
-      sb.append("</td></tr></table>");
-      sb.append("</body>");
-      _rulesBrowser[BROWSER_ARMOR_SHIELDS].setText(sb.toString());
-      _rulesBrowser[BROWSER_RACES].setText(Race.generateHtmlTable());
-      _rulesBrowser[BROWSER_SKILLS].setText(Rules.generateSkillsHtmlTable());
-      _rulesBrowser[BROWSER_ATTRIBUTES].setText(Rules.generateAttributesHtmlTable());
-      _rulesBrowser[BROWSER_ADVANTAGES].setText(Advantage.generateHtmlTable());
-      _rulesBrowser[BROWSER_SPELLS_MAGE].setText(MageSpell.generateHtmlTableMageSpells());
-      _rulesBrowser[BROWSER_SPELLS_PRIEST].setText(PriestSpell.generateHtmlTablePriestSpells());
-      _rulesBrowser[BROWSER_WEAPONS].setText(Weapon.generateHtmlTable());
-
-      for (DamageType damType : ostrowski.combat.common.enums.DamageType.values()) {
-         if (damType != ostrowski.combat.common.enums.DamageType.NONE) {
-            _rulesWoundsBrowser.get(damType).setText(WoundChart.generateHtmlTable(damType));
-         }
-      }
-      _rulesWoundsBrowser.get(ostrowski.combat.common.enums.DamageType.GENERAL).setText(WoundChart.generateCombinedHtmlTable());
-      _rulesBrowser[BROWSER_MISC].setText(Rules.generateMiscHtmlTable());
-   }
 
    /**
     * @param mainGridBlock

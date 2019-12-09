@@ -386,12 +386,13 @@ public class CharacterGeneratorTest implements Enums {
          strStr += "(" + character.getAdjustedStrength() + ")";
          htStr += "(" + character.getBuildBase() + ")";
       }
+      short distance = 1;
       HashMap<RANGE, HashMap<DefenseOption, Byte>> defMap =
                character.getDefenseOptionsBase(DamageType.GENERAL,
                                                false/*isGrappleAttack*/,
                                                false /*includeWoundPenalty*/,
                                                false /*includePosition*/,
-                                               false /*computePdOnly*/);
+                                               false /*computePdOnly*/, distance);
 
       DiceSet painDice = Rules.getPainReductionDice(character.getAttributeLevel(Attribute.Toughness));
 
@@ -522,7 +523,7 @@ public class CharacterGeneratorTest implements Enums {
          }
          HashMap<DefenseOption, Byte> defOptMap = defMap.get(RANGE.OUT_OF_RANGE);
          rows[0].addTD(new TableData(equip).setRowSpan(rowsToUse));
-         rows[0].addTD(new TableData(String.valueOf(character.getPassiveDefense(RANGE.OUT_OF_RANGE, false))).setRowSpan(rowsToUse));
+         rows[0].addTD(new TableData(String.valueOf(character.getPassiveDefense(RANGE.OUT_OF_RANGE, false, distance))).setRowSpan(rowsToUse));
          rows[0].addTD(new TableData(String.valueOf(defOptMap.get(DefenseOption.DEF_RETREAT))).setRowSpan(rowsToUse));
          rows[0].addTD(new TableData(String.valueOf(defOptMap.get(DefenseOption.DEF_DODGE))).setRowSpan(rowsToUse));
          Byte block = defOptMap.get(DefenseOption.DEF_LEFT);
@@ -853,6 +854,7 @@ public class CharacterGeneratorTest implements Enums {
       byte shieldSkillLevel = 5;
       byte nim = 4;
       byte str = 5;
+      short distance = 1;
       Character character = CharacterGenerator.generateRandomCharacter("? 200 Human STR:" + str
                                                                        + " NIM:" + nim +
                                                                        " \"" + armorName + "\"" +
@@ -870,7 +872,7 @@ public class CharacterGeneratorTest implements Enums {
       assertTrue("Wrong shield", character.getLimb(LimbType.HAND_LEFT).getHeldThing().getName().equals(shieldName));
       assertTrue("Wrong weapon", character.getLimb(LimbType.HAND_RIGHT).getHeldThing().getName().equals(weaponName));
       byte pd = (byte) (armor.getPassiveDefense() + shield.getPassiveDefense());
-      byte testPd = character.getPassiveDefense(RANGE.OUT_OF_RANGE, false/*isGrappleAttack*/);
+      byte testPd = character.getPassiveDefense(RANGE.OUT_OF_RANGE, false/*isGrappleAttack*/, distance);
       assertTrue("Wrong PD", testPd == pd);
       // try off-hand parrys and blocks
       CombatMap map = new CombatMap((short)10, (short)10, null);
@@ -906,7 +908,7 @@ public class CharacterGeneratorTest implements Enums {
                   rangeAdjPerAction = 0;
                }
                byte rangedPd = (byte) (pd + rangeAdjToPD);
-               byte pdAtRange = character.getPassiveDefense(range, false/*isGrappleAttack*/);
+               byte pdAtRange = character.getPassiveDefense(range, false/*isGrappleAttack*/, distance);
 
                byte effectiveDodge = (byte) (Rules.getDodgeLevel(nim) + rangeAdjPerAction);
                if (effectiveDodge < 0) {
@@ -926,65 +928,66 @@ public class CharacterGeneratorTest implements Enums {
                assertTrue("Wrong PD at range: " + range.getName(), pdAtRange == rangedPd);
 
                boolean isGrapple = false;
-               assertDefense(character, new DefenseOptions(DefenseOption.DEF_DODGE),                         attackingWeaponsParryPen, range, isGrapple, (rangedPd + effectiveDodge));
-               assertDefense(character, new DefenseOptions(DefenseOption.DEF_RETREAT),                       attackingWeaponsParryPen, range, isGrapple, (rangedPd + effectiveRetreat));
-               assertDefense(character, new DefenseOptions(DefenseOption.DEF_LEFT),                          attackingWeaponsParryPen, range, isGrapple, (rangedPd + effectiveBlock));
-               assertDefense(character, new DefenseOptions(DefenseOption.DEF_LEFT,  DefenseOption.DEF_DODGE),attackingWeaponsParryPen, range, isGrapple, (rangedPd + effectiveBlock + effectiveDodge));
-               assertDefense(character, new DefenseOptions(DefenseOption.DEF_RIGHT),                         attackingWeaponsParryPen, range, isGrapple, (rangedPd + effectiveParry));
-               assertDefense(character, new DefenseOptions(DefenseOption.DEF_RIGHT, DefenseOption.DEF_DODGE),attackingWeaponsParryPen, range, isGrapple, (rangedPd + effectiveParry + effectiveDodge));
-               assertDefense(character, new DefenseOptions(DefenseOption.DEF_LEFT,  DefenseOption.DEF_RIGHT),attackingWeaponsParryPen, range, isGrapple, (rangedPd + effectiveBlock + effectiveParry));
-               assertDefense(character, new DefenseOptions(DefenseOption.DEF_LEFT,  DefenseOption.DEF_RIGHT, DefenseOption.DEF_DODGE), attackingWeaponsParryPen, range, isGrapple, (rangedPd + effectiveBlock + effectiveParry + effectiveDodge));
-               assertDefense(character, new DefenseOptions(DefenseOption.DEF_LEFT,  DefenseOption.DEF_RETREAT),           attackingWeaponsParryPen, range, isGrapple, (rangedPd + effectiveBlock + effectiveRetreat));
-               assertDefense(character, new DefenseOptions(DefenseOption.DEF_RIGHT, DefenseOption.DEF_RETREAT),           attackingWeaponsParryPen, range, isGrapple, (rangedPd + effectiveParry + effectiveRetreat));
-               assertDefense(character, new DefenseOptions(DefenseOption.DEF_RIGHT, DefenseOption.DEF_LEFT, DefenseOption.DEF_DODGE), attackingWeaponsParryPen, range, isGrapple, (rangedPd + effectiveParry + effectiveBlock + effectiveDodge));
+               assertDefense(character, new DefenseOptions(DefenseOption.DEF_DODGE),                         attackingWeaponsParryPen, distance, range, isGrapple, (rangedPd + effectiveDodge));
+               assertDefense(character, new DefenseOptions(DefenseOption.DEF_RETREAT),                       attackingWeaponsParryPen, distance, range, isGrapple, (rangedPd + effectiveRetreat));
+               assertDefense(character, new DefenseOptions(DefenseOption.DEF_LEFT),                          attackingWeaponsParryPen, distance, range, isGrapple, (rangedPd + effectiveBlock));
+               assertDefense(character, new DefenseOptions(DefenseOption.DEF_LEFT,  DefenseOption.DEF_DODGE),attackingWeaponsParryPen, distance, range, isGrapple, (rangedPd + effectiveBlock + effectiveDodge));
+               assertDefense(character, new DefenseOptions(DefenseOption.DEF_RIGHT),                         attackingWeaponsParryPen, distance, range, isGrapple, (rangedPd + effectiveParry));
+               assertDefense(character, new DefenseOptions(DefenseOption.DEF_RIGHT, DefenseOption.DEF_DODGE),attackingWeaponsParryPen, distance, range, isGrapple, (rangedPd + effectiveParry + effectiveDodge));
+               assertDefense(character, new DefenseOptions(DefenseOption.DEF_LEFT,  DefenseOption.DEF_RIGHT),attackingWeaponsParryPen, distance, range, isGrapple, (rangedPd + effectiveBlock + effectiveParry));
+               assertDefense(character, new DefenseOptions(DefenseOption.DEF_LEFT,  DefenseOption.DEF_RIGHT, DefenseOption.DEF_DODGE), attackingWeaponsParryPen, distance, range, isGrapple, (rangedPd + effectiveBlock + effectiveParry + effectiveDodge));
+               assertDefense(character, new DefenseOptions(DefenseOption.DEF_LEFT,  DefenseOption.DEF_RETREAT),           attackingWeaponsParryPen, distance, range, isGrapple, (rangedPd + effectiveBlock + effectiveRetreat));
+               assertDefense(character, new DefenseOptions(DefenseOption.DEF_RIGHT, DefenseOption.DEF_RETREAT),           attackingWeaponsParryPen, distance, range, isGrapple, (rangedPd + effectiveParry + effectiveRetreat));
+               assertDefense(character, new DefenseOptions(DefenseOption.DEF_RIGHT, DefenseOption.DEF_LEFT, DefenseOption.DEF_DODGE), attackingWeaponsParryPen, distance, range, isGrapple, (rangedPd + effectiveParry + effectiveBlock + effectiveDodge));
                character.getCondition().setPosition(Position.PRONE_FRONT, map, character);
                // Can't block or parry when on stomach:
-               assertDefense(character, new DefenseOptions(DefenseOption.DEF_LEFT),                          attackingWeaponsParryPen, range, isGrapple, (rangedPd));
-               assertDefense(character, new DefenseOptions(DefenseOption.DEF_RIGHT),                         attackingWeaponsParryPen, range, isGrapple, (rangedPd));
-               assertDefense(character, new DefenseOptions(DefenseOption.DEF_DODGE),                         attackingWeaponsParryPen, range, isGrapple, (rangedPd + Math.max(0, effectiveDodge   - 6)));
-               assertDefense(character, new DefenseOptions(DefenseOption.DEF_RETREAT),                       attackingWeaponsParryPen, range, isGrapple, (rangedPd + Math.max(0, effectiveRetreat - 6)));
+               assertDefense(character, new DefenseOptions(DefenseOption.DEF_LEFT),                          attackingWeaponsParryPen, distance, range, isGrapple, (rangedPd));
+               assertDefense(character, new DefenseOptions(DefenseOption.DEF_RIGHT),                         attackingWeaponsParryPen, distance, range, isGrapple, (rangedPd));
+               assertDefense(character, new DefenseOptions(DefenseOption.DEF_DODGE),                         attackingWeaponsParryPen, distance, range, isGrapple, (rangedPd + Math.max(0, effectiveDodge   - 6)));
+               assertDefense(character, new DefenseOptions(DefenseOption.DEF_RETREAT),                       attackingWeaponsParryPen, distance, range, isGrapple, (rangedPd + Math.max(0, effectiveRetreat - 6)));
                // TODO check attack skill is 0
                character.getCondition().setPosition(Position.PRONE_BACK, map, character);
-               assertDefense(character, new DefenseOptions(DefenseOption.DEF_LEFT),                          attackingWeaponsParryPen, range, isGrapple, (rangedPd + Math.max(0, effectiveBlock   - 4)));
-               assertDefense(character, new DefenseOptions(DefenseOption.DEF_RIGHT),                         attackingWeaponsParryPen, range, isGrapple, (rangedPd + Math.max(0, effectiveParry   - 4)));
-               assertDefense(character, new DefenseOptions(DefenseOption.DEF_DODGE),                         attackingWeaponsParryPen, range, isGrapple, (rangedPd + Math.max(0, effectiveDodge   - 4)));
-               assertDefense(character, new DefenseOptions(DefenseOption.DEF_RETREAT),                       attackingWeaponsParryPen, range, isGrapple, (rangedPd + Math.max(0, effectiveRetreat - 4)));
+               assertDefense(character, new DefenseOptions(DefenseOption.DEF_LEFT),                          attackingWeaponsParryPen, distance, range, isGrapple, (rangedPd + Math.max(0, effectiveBlock   - 4)));
+               assertDefense(character, new DefenseOptions(DefenseOption.DEF_RIGHT),                         attackingWeaponsParryPen, distance, range, isGrapple, (rangedPd + Math.max(0, effectiveParry   - 4)));
+               assertDefense(character, new DefenseOptions(DefenseOption.DEF_DODGE),                         attackingWeaponsParryPen, distance, range, isGrapple, (rangedPd + Math.max(0, effectiveDodge   - 4)));
+               assertDefense(character, new DefenseOptions(DefenseOption.DEF_RETREAT),                       attackingWeaponsParryPen, distance, range, isGrapple, (rangedPd + Math.max(0, effectiveRetreat - 4)));
                // TODO check attack skill is at -4
                character.getCondition().setPosition(Position.SITTING, map, character);
-               assertDefense(character, new DefenseOptions(DefenseOption.DEF_LEFT),                          attackingWeaponsParryPen, range, isGrapple, (rangedPd + effectiveBlock));
-               assertDefense(character, new DefenseOptions(DefenseOption.DEF_RIGHT),                         attackingWeaponsParryPen, range, isGrapple, (rangedPd + effectiveParry));
-               assertDefense(character, new DefenseOptions(DefenseOption.DEF_DODGE),                         attackingWeaponsParryPen, range, isGrapple, (rangedPd + Math.max(0, effectiveDodge   - 4)));
-               assertDefense(character, new DefenseOptions(DefenseOption.DEF_RETREAT),                       attackingWeaponsParryPen, range, isGrapple, (rangedPd + Math.max(0, effectiveRetreat - 4)));
+               assertDefense(character, new DefenseOptions(DefenseOption.DEF_LEFT),                          attackingWeaponsParryPen, distance, range, isGrapple, (rangedPd + effectiveBlock));
+               assertDefense(character, new DefenseOptions(DefenseOption.DEF_RIGHT),                         attackingWeaponsParryPen, distance, range, isGrapple, (rangedPd + effectiveParry));
+               assertDefense(character, new DefenseOptions(DefenseOption.DEF_DODGE),                         attackingWeaponsParryPen, distance, range, isGrapple, (rangedPd + Math.max(0, effectiveDodge   - 4)));
+               assertDefense(character, new DefenseOptions(DefenseOption.DEF_RETREAT),                       attackingWeaponsParryPen, distance, range, isGrapple, (rangedPd + Math.max(0, effectiveRetreat - 4)));
                // TODO check attack skill is at -4
                character.getCondition().setPosition(Position.KNEELING, map, character);
-               assertDefense(character, new DefenseOptions(DefenseOption.DEF_LEFT),                          attackingWeaponsParryPen, range, isGrapple, (rangedPd + effectiveBlock));
-               assertDefense(character, new DefenseOptions(DefenseOption.DEF_RIGHT),                         attackingWeaponsParryPen, range, isGrapple, (rangedPd + effectiveParry));
-               assertDefense(character, new DefenseOptions(DefenseOption.DEF_DODGE),                         attackingWeaponsParryPen, range, isGrapple, (rangedPd + Math.max(0, effectiveDodge   - 4)));
-               assertDefense(character, new DefenseOptions(DefenseOption.DEF_RETREAT),                       attackingWeaponsParryPen, range, isGrapple, (rangedPd + Math.max(0, effectiveRetreat - 4)));
+               assertDefense(character, new DefenseOptions(DefenseOption.DEF_LEFT),                          attackingWeaponsParryPen, distance, range, isGrapple, (rangedPd + effectiveBlock));
+               assertDefense(character, new DefenseOptions(DefenseOption.DEF_RIGHT),                         attackingWeaponsParryPen, distance, range, isGrapple, (rangedPd + effectiveParry));
+               assertDefense(character, new DefenseOptions(DefenseOption.DEF_DODGE),                         attackingWeaponsParryPen, distance, range, isGrapple, (rangedPd + Math.max(0, effectiveDodge   - 4)));
+               assertDefense(character, new DefenseOptions(DefenseOption.DEF_RETREAT),                       attackingWeaponsParryPen, distance, range, isGrapple, (rangedPd + Math.max(0, effectiveRetreat - 4)));
                // TODO check attack skill is normal
                character.getCondition().setPosition(Position.CROUCHING, map, character);
-               assertDefense(character, new DefenseOptions(DefenseOption.DEF_LEFT),                          attackingWeaponsParryPen, range, isGrapple, (rangedPd + effectiveBlock));
-               assertDefense(character, new DefenseOptions(DefenseOption.DEF_RIGHT),                         attackingWeaponsParryPen, range, isGrapple, (rangedPd + effectiveParry));
-               assertDefense(character, new DefenseOptions(DefenseOption.DEF_DODGE),                         attackingWeaponsParryPen, range, isGrapple, (rangedPd + effectiveDodge));
-               assertDefense(character, new DefenseOptions(DefenseOption.DEF_RETREAT),                       attackingWeaponsParryPen, range, isGrapple, (rangedPd + Math.max(0, effectiveRetreat - 4)));
+               assertDefense(character, new DefenseOptions(DefenseOption.DEF_LEFT),                          attackingWeaponsParryPen, distance, range, isGrapple, (rangedPd + effectiveBlock));
+               assertDefense(character, new DefenseOptions(DefenseOption.DEF_RIGHT),                         attackingWeaponsParryPen, distance, range, isGrapple, (rangedPd + effectiveParry));
+               assertDefense(character, new DefenseOptions(DefenseOption.DEF_DODGE),                         attackingWeaponsParryPen, distance, range, isGrapple, (rangedPd + effectiveDodge));
+               assertDefense(character, new DefenseOptions(DefenseOption.DEF_RETREAT),                       attackingWeaponsParryPen, distance, range, isGrapple, (rangedPd + Math.max(0, effectiveRetreat - 4)));
                // TODO check attack skill is normal
                character.getCondition().setPosition(Position.STANDING, map, character);
             }
          }
       }
    }
-   public void assertDefense(Character character, DefenseOptions defOpts, byte attackingWeaponsParryPen, RANGE range, boolean isGrapple, int expectedTN) {
+   public void assertDefense(Character character, DefenseOptions defOpts, byte attackingWeaponsParryPen,
+                             short distance, RANGE range, boolean isGrapple, int expectedTN) {
       boolean isRanged = (range != RANGE.OUT_OF_RANGE);
       boolean isCharge = false;
       byte tn = character.getDefenseOptionTN(defOpts, (byte) 0/* minDamage */, false/* includeWoundPenalty */,
                                   false/*includeHolds*/, true/* includePosition */,
-                                  false/* includeMassiveDamPen */, attackingWeaponsParryPen, isRanged, isGrapple, isCharge,
-                                  ostrowski.combat.common.enums.DamageType.GENERAL, false/* defAppliedAlready */, range);
+                                  false/* includeMassiveDamPen */, attackingWeaponsParryPen, isRanged, distance,
+                                  isGrapple, isCharge, DamageType.GENERAL, false/* defAppliedAlready */, range);
       if (tn != expectedTN) {
          tn = character.getDefenseOptionTN(defOpts, (byte) 0/* minDamage */, false/* includeWoundPenalty */,
                                      false/*includeHolds*/, true/* includePosition */,
-                                     false/* includeMassiveDamPen */, attackingWeaponsParryPen, isRanged, isGrapple, isCharge,
-                                     ostrowski.combat.common.enums.DamageType.GENERAL, false/* defAppliedAlready */, range);
+                                     false/* includeMassiveDamPen */, attackingWeaponsParryPen, isRanged, distance,
+                                     isGrapple, isCharge, DamageType.GENERAL, false/* defAppliedAlready */, range);
          assertTrue("Wrong " + defOpts.getDefenseName(isCharge, character, null) + " TN (" + tn + ") while " +
                     character.getPositionName() + " at range " + range.getName() +" (expected to be " + expectedTN + ")", false);
       }

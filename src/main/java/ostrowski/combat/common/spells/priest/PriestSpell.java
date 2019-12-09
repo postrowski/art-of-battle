@@ -31,6 +31,7 @@ import ostrowski.combat.common.spells.priest.demonic.PriestDemonicSpell;
 import ostrowski.combat.common.spells.priest.elemental.PriestElementalSpell;
 import ostrowski.combat.common.spells.priest.evil.PriestEvilSpell;
 import ostrowski.combat.common.spells.priest.good.PriestGoodSpell;
+import ostrowski.combat.common.spells.priest.good.SpellBless;
 import ostrowski.combat.common.spells.priest.healing.PriestHealingSpell;
 import ostrowski.combat.common.spells.priest.information.PriestInformationSpell;
 import ostrowski.combat.common.spells.priest.nature.PriestNatureSpell;
@@ -40,7 +41,7 @@ import ostrowski.combat.protocol.request.RequestDefense;
 import ostrowski.combat.server.Battle;
 import ostrowski.combat.server.Configuration;
 
-public class PriestSpell extends Spell
+public abstract class PriestSpell extends Spell
 {
    private byte                           _affinityLevel;
    protected byte                         _effectivePower;
@@ -80,6 +81,18 @@ public class PriestSpell extends Spell
       return 0;
    }
 
+   static public PriestSpell getSpell(String name) {
+      for (String deity : PriestSpell._deities) {
+         List<PriestSpell> deitySpells = PriestSpell.getSpellsForDeity(deity, 10, false/*addNullBetweenGroups*/);
+         for (PriestSpell priestSpell : deitySpells) {
+            if (priestSpell.getName().equalsIgnoreCase(name)) {
+               return priestSpell;
+            }
+         }
+      }
+      return null;
+   }
+
    @SuppressWarnings("unchecked")
    public static String generateHtmlTablePriestSpells() {
       ArrayList<PriestSpell>[] spellsInGroup = new ArrayList[GROUP_NAMES.size()];
@@ -101,7 +114,7 @@ public class PriestSpell extends Spell
       sb.append("</td><td style='border-width: 0px; padding:40px'>");
 
       sb.append("<H4>Dice for power:</H4>");
-      PriestSpell anySpell = new PriestSpell();
+      PriestSpell anySpell = new SpellBless();
       table = new Table();
       table.addRow(new TableRow(-1, "Effective power", "Dice used"));
       for (byte power=1 ; power<=8 ; power++) {

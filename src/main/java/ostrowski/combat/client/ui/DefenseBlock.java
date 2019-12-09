@@ -124,7 +124,9 @@ public class DefenseBlock extends Helper implements IUIBlock
       // refreshDisplay is used to update fields that don't have ModifyListeners:
       HashMap<RANGE, HashMap<DefenseOption, Byte>> defBase = null;
       if (character != null) {
-         defBase = character.getDefenseOptionsBase(DamageType.NONE, false/*isGrappleAttack*/, false/*includeWoundPenalty*/, false/*includePosition*/, false/*computePdOnly*/);
+         defBase = character.getDefenseOptionsBase(DamageType.NONE, false/*isGrappleAttack*/,
+                                                   false/*includeWoundPenalty*/, false/*includePosition*/,
+                                                   false/*computePdOnly*/, (short)1/*distance*/);
       }
       for (RANGE range : RANGE.values()) {
          HashMap<DefenseOption, Text> baseDefMapToText = _baseDefenseOpt.get(range);
@@ -157,8 +159,8 @@ public class DefenseBlock extends Helper implements IUIBlock
       Limb rightArm = character.getLimb(LimbType.HAND_RIGHT);
       boolean leftDefenseRanged  = ((character==null) || (leftArm==null))  ? false : (leftArm.canDefendAgainstRangedWeapons());
       boolean rightDefenseRanged = ((character==null) || (rightArm==null)) ? false : (rightArm.canDefendAgainstRangedWeapons());
-      boolean leftDefense  = ((character==null) || (leftArm==null))  ? false : (leftArm.canDefend(character, false/*rangedAttack*/, false/*attackIsCharge*/, false/*grappleAttack*/, DamageType.NONE, false));
-      boolean rightDefense = ((character==null) || (rightArm==null)) ? false : (rightArm.canDefend(character, false/*rangedAttack*/, false/*attackIsCharge*/, false/*grappleAttack*/, DamageType.NONE, false));
+      boolean leftDefense  = ((character==null) || (leftArm==null))  ? false : (leftArm.canDefend(character, false/*rangedAttack*/, (short)0/*distance*/, false/*attackIsCharge*/, false/*grappleAttack*/, DamageType.NONE, false));
+      boolean rightDefense = ((character==null) || (rightArm==null)) ? false : (rightArm.canDefend(character, false/*rangedAttack*/, (short)0/*distance*/, false/*attackIsCharge*/, false/*grappleAttack*/, DamageType.NONE, false));
       // If we are holding a two handed weapon, we can't use the left defense:
       if ((character != null) && (rightArm != null) && leftDefense) {
          Thing rightThing = rightArm.getHeldThing();

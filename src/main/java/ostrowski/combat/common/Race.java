@@ -205,22 +205,14 @@ public class Race implements Cloneable, Enums
          if (index != -1) {
             String spellName = element.substring(0, index);
             byte level = Byte.parseByte(element.substring(index + 1));
-            MageSpell spell = MageSpell.getSpell(spellName);
+            Spell spell = MageSpell.getSpell(spellName);
             if (spell == null) {
-               for (String deity : PriestSpell._deities) {
-                  List<PriestSpell> deitySpells = PriestSpell.getSpellsForDeity(deity, 10, false/*addNullBetweenGroups*/);
-                  for (PriestSpell priestSpell : deitySpells) {
-                     if (priestSpell.getName().equalsIgnoreCase(spellName)) {
-                        spell = priestSpell;
-                        break;
-                     }
-                  }
+               spell = PriestSpell.getSpell(spellName);
+               if (spell == null) {
+                  DebugBreak.debugBreak();
                }
             }
-            if (spell == null) {
-               DebugBreak.debugBreak();
-            }
-            else {
+            if (spell != null) {
                spell = spell.clone();
                spell.setPower(level);
                spell.setLevel(level);

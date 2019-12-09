@@ -23,11 +23,12 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import ostrowski.combat.common.RuleComposite;
 import ostrowski.ui.Helper;
 
 public class Configuration implements SelectionListener
 {
-   public CombatServer   _server                    = null;
+   public RuleComposite  _ruleComposite             = null;
 
    static public boolean _spellTnAffectedByMa       = true;
    static public boolean _useSimpleDamage           = true;
@@ -80,11 +81,13 @@ public class Configuration implements SelectionListener
       return _serverPort;
    }
 
-   public Configuration(CombatServer server) {
-      _server = server;
+   public Configuration() {
    }
 
    public void buildDisplay(Composite parent, boolean isServer) {
+      if (parent instanceof RuleComposite) {
+         _ruleComposite = (RuleComposite) parent;
+      }
       readFromFile();
       Composite topGridBlock = new Composite(parent, SWT.NONE);
       topGridBlock.setLayout(new GridLayout((isServer ? 3 : 1), true));
@@ -209,8 +212,8 @@ public class Configuration implements SelectionListener
          _showChit = _showChitButton.getSelection();
       }
       writeToFile();
-      if (_server != null) {
-         _server.updateRulesSection();
+      if (_ruleComposite != null) {
+         _ruleComposite.updateRulesSection();
       }
    }
 

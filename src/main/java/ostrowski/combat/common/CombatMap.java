@@ -491,6 +491,9 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
                      }
                      setVisibilityOrKnownBy(self, setVisibility, basedOnFacing, locsToRedraw, loc, fromLoc);
                   }
+                  else {
+                     loc.setVisible(false, this, originalLoc, self._uniqueID, false/*basedOnFacing*/);
+                  }
                   // add the angles that this hex blocks to the list of all angles blocked
                   angleBlockedVisually.add(blockingAngles);
                }
@@ -954,7 +957,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       return false;
    }
    public boolean hasLineOfSight(ArenaLocation fromLoc, ArenaCoordinates toLoc,
-                         boolean blockedByAnyStandingCharacter) {
+                                 boolean blockedByAnyStandingCharacter) {
       int characterCount = countCharactersBetween(fromLoc, toLoc, true/*onlyCountStandingCharacters*/);
       if (characterCount == -1) {
          // There is a wall between the fromLoc and toLoc

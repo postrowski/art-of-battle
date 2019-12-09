@@ -17,16 +17,21 @@ import ostrowski.protocol.SerializableObject;
 
 public class ServerStatus extends SerializableObject implements Enums
 {
-   byte[]    _roomOnTeam     = new byte[TEAM_NAMES.length];
-   private ArrayList<Character> _combatants = new ArrayList<>();
+   private byte[]              _roomOnTeam            = new byte[TEAM_NAMES.length];
+   private List<Character>     _combatants            = new ArrayList<>();
+   private final List<Integer> _combatantsWaitingByID = new ArrayList<>();
 
    public ServerStatus() {}
-   public ServerStatus(CombatMap map, ArrayList<Character> combatants)
+   public ServerStatus(CombatMap map, List<Character> combatants,
+                       List<Character> combatantsWaitingToConnect)
    {
       byte[] roomOnTeam = map.getAvailableCombatantsOnTeams();
       _combatants = combatants;
       for (byte team=0 ; team<_roomOnTeam.length ; team++) {
          _roomOnTeam[team] = roomOnTeam[team];
+      }
+      for (Character chr : combatantsWaitingToConnect) {
+         _combatantsWaitingByID.add(chr._uniqueID);
       }
    }
 
@@ -41,6 +46,7 @@ public class ServerStatus extends SerializableObject implements Enums
    {
       try {
          writeToStream(_combatants, out);
+         writeToStream(_combatantsWaitingByID, out);
          writeToStream((byte)(_roomOnTeam.length), out);
          for (byte element : _roomOnTeam) {
             writeToStream(element, out);
@@ -63,6 +69,7 @@ public class ServerStatus extends SerializableObject implements Enums
    {
       try {
          readIntoListCharacter(_combatants, in);
+         readIntoListInteger(_combatantsWaitingByID, in);
          byte size = readByte(in);
          _roomOnTeam = new byte[size];
          for (int i=0 ; i<size ; i++) {
@@ -76,6 +83,15 @@ public class ServerStatus extends SerializableObject implements Enums
    public ArrayList<Character> getCombatants() {
       ArrayList<Character> list = new ArrayList<>();
       list.addAll(_combatants);
+      return list;
+   }
+   public ArrayList<Character> getCombatantsWaitingToConnect() {
+      ArrayList<Character> list = new ArrayList<>();
+      for (Character chr : _combatants) {
+         if (_combatantsWaitingByID.contains(chr._uniqueID)) {
+            list.add(chr);
+         }
+      }
       return list;
    }
 

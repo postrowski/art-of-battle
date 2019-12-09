@@ -62,7 +62,8 @@ public class Potion extends Thing implements Cloneable
    }
 
    @Override
-   public byte getBestDefenseOption(Character wielder, LimbType useHand, boolean canUse2Hands, DamageType damType, boolean isGrappleAttack) {
+   public byte getBestDefenseOption(Character wielder, LimbType useHand, boolean canUse2Hands, DamageType damType,
+                                    boolean isGrappleAttack, short distance) {
       return 0;
    }
 

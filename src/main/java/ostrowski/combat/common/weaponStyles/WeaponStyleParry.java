@@ -17,7 +17,7 @@ public class WeaponStyleParry extends WeaponStyle
       _effectiveness = effectiveness;
    }
    public double getEffectiveness() { return _effectiveness; }
-   public boolean canDefendAgainstDamageType(DamageType damType, boolean isGrapple) {
+   public boolean canDefendAgainstDamageType(DamageType damType, boolean isGrapple, short distance) {
       if (isGrapple) {
          return false;
       }
@@ -25,12 +25,13 @@ public class WeaponStyleParry extends WeaponStyle
          return true;
       }
       if (damType == DamageType.IMP) {
-         // Aikido or Karate skill can defend against impaling attacks
-         return (getSkillType() == SkillType.Aikido) ||
-                (getSkillType() == SkillType.Karate);
+         // Aikido or Karate skill can defend against impaling attacks, but only within 2 hexes
+         return ((getSkillType() == SkillType.Aikido) ||
+                 (getSkillType() == SkillType.Karate)) && (distance < 3);
       }
       if (damType == DamageType.CUT) {
-         return (getSkillType() == SkillType.Aikido);
+         // Aikido skill can defend against impaling attacks, but only within 2 hexes
+         return (getSkillType() == SkillType.Aikido) && (distance < 3);
       }
       if (damType == DamageType.ELECTRIC) {
          return false;

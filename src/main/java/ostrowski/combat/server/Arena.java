@@ -874,7 +874,7 @@ public class Arena implements Enums, IMapListener
       sendServerStatus(proxy);
    }
    public void sendServerStatus(ClientProxy target) {
-      ServerStatus status = new ServerStatus(_combatMap, _combatants);
+      ServerStatus status = new ServerStatus(_combatMap, _combatants, _characterWaitingToConnect);
       if (target == null) {
          sendEventToAllClients(status);
       }

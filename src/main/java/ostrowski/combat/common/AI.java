@@ -1684,7 +1684,7 @@ public class AI implements Enums
       DiceSet castingDice = spell.getCastDice(actionsUsed, range);
 
       if (spell.isDefendable()) {
-         defenseTN = target.getPassiveDefense(range, false/*isGrappleAttack*/);
+         defenseTN = target.getPassiveDefense(range, false/*isGrappleAttack*/, curDist);
          byte defenseActions = target.getActionsAvailableThisRound(true/*usedForDefenseOnly*/);
          if (defenseActions > 1) {
             byte minimumDamage = 0;
@@ -1693,8 +1693,10 @@ public class AI implements Enums
                DefenseOptions defOpts = new DefenseOptions(DefenseOption.DEF_DODGE, DefenseOption.DEF_LEFT);
                defenseTN = target.getDefenseOptionTN(defOpts, minimumDamage , true/*includeWoundPenalty*/,
                                                      true/*includeHolds*/, true/*includePosition*/,
-                                                     true/*includeMassiveDamagePenalty*/, (byte) 0/*attackingWeaponsParryPenalty*/,
-                                                     spell instanceof IRangedSpell/*isRangedAttack*/, false/*isChargeAttack*/,
+                                                     true/*includeMassiveDamagePenalty*/,
+                                                     (byte) 0/*attackingWeaponsParryPenalty*/,
+                                                     spell instanceof IRangedSpell/*isRangedAttack*/,
+                                                     curDist, false/*isChargeAttack*/,
                                                      false/*isGrappleAttack*/, spell.getDamageType(),
                                                      false/*defenseAppliedAlready*/, range);
                // TODO: what about magic defenses?
@@ -1703,15 +1705,19 @@ public class AI implements Enums
                DefenseOptions defOpts = new DefenseOptions(DefenseOption.DEF_DODGE);
                byte dodgeTN = target.getDefenseOptionTN(defOpts, minimumDamage , true/*includeWoundPenalty*/,
                                                         true/*includeHolds*/, true/*includePosition*/,
-                                                        true/*includeMassiveDamagePenalty*/, (byte) 0/*attackingWeaponsParryPenalty*/,
-                                                        spell instanceof IRangedSpell/*isRangedAttack*/, false/*isChargeAttack*/,
+                                                        true/*includeMassiveDamagePenalty*/,
+                                                        (byte) 0/*attackingWeaponsParryPenalty*/,
+                                                        spell instanceof IRangedSpell/*isRangedAttack*/,
+                                                        curDist, false/*isChargeAttack*/,
                                                         false/*isGrappleAttack*/, spell.getDamageType(),
                                                         false/*defenseAppliedAlready*/, range);
                defOpts = new DefenseOptions(DefenseOption.DEF_LEFT);
                byte blockTN = target.getDefenseOptionTN(defOpts, minimumDamage , true/*includeWoundPenalty*/,
                                                         true/*includeHolds*/, true/*includePosition*/,
-                                                        true/*includeMassiveDamagePenalty*/, (byte) 0/*attackingWeaponsParryPenalty*/,
-                                                        spell instanceof IRangedSpell/*isRangedAttack*/, false/*isChargeAttack*/,
+                                                        true/*includeMassiveDamagePenalty*/,
+                                                        (byte) 0/*attackingWeaponsParryPenalty*/,
+                                                        spell instanceof IRangedSpell/*isRangedAttack*/,
+                                                        curDist, false/*isChargeAttack*/,
                                                         false/*isGrappleAttack*/, spell.getDamageType(),
                                                         false/*defenseAppliedAlready*/, range);
                defenseTN = (byte) Math.max(dodgeTN, blockTN);
@@ -2829,13 +2835,14 @@ public class AI implements Enums
 
    private boolean requestDefense(RequestDefense defense) {
       Character attacker = getCharacter(defense.getAttackerID());
+      short curMinDist = Arena.getMinDistance(_self, attacker);
       // Don't put more into the defense than the attacker put into the attack.
       StringBuilder sb = new StringBuilder();
       sb.append("attackActions = ").append(defense.getAttackActions());
       if (defense.isRangedAttack()) {
          sb.append("(ranged)");
       }
-      byte pd = _self.getPassiveDefense(defense.getRange(), false/*isGrappleAttack*/);
+      byte pd = _self.getPassiveDefense(defense.getRange(), false/*isGrappleAttack*/, curMinDist);
       double expectedDamage = defense.getExpectedDamage() - _self.getBuild(defense.getDamageType());
 
       // SpiderWeb spells MUST be defended against as if they do damage:
@@ -2863,7 +2870,6 @@ public class AI implements Enums
       int penaltyRightArm = 4 * ((rightArm == null) ? 0 : rightArm.getDefenseTime(_self.getAttributeLevel(Attribute.Strength), _self));
       int penaltyLeftArm = 4 * ((leftArm == null) ? 0 : leftArm.getDefenseTime(_self.getAttributeLevel(Attribute.Strength), _self));
 
-      short curMinDist = Arena.getMinDistance(_self, attacker);
       short desiredDistance = getDesiredDistance(attacker, true);
       boolean preferRetreat = (curMinDist < desiredDistance) || (_self.getPainPenalty(true/*accountForBerserking*/) > 6);
       // unless we want to retreat, assess a 3-point penalty to retreats, because it moves us out of range.
@@ -3067,6 +3073,7 @@ public class AI implements Enums
 
    private boolean requestDefenseSimple(RequestDefense defense) {
       Character attacker = getCharacter(defense.getAttackerID());
+      short curMinDist = Arena.getMinDistance(_self, attacker);
       // Don't put more into the defense than the attacker put into the attack.
       StringBuilder sb = new StringBuilder();
       byte defenseActions = defense.getAttackActions();
@@ -3103,7 +3110,7 @@ public class AI implements Enums
          }
          sb.append("strong ");
       }
-      byte pd = _self.getPassiveDefense(defense.getRange(), false/*isGrappleAttack*/);
+      byte pd = _self.getPassiveDefense(defense.getRange(), false/*isGrappleAttack*/, curMinDist);
       if (pd > (defense.getExpectedToHitRoll() + 5)) {
          // Don't defend too hard against attacks that probably won't hit anyway.
          defenseActions--;
@@ -3131,8 +3138,11 @@ public class AI implements Enums
       Limb leftArm = _self.getLimb(LimbType.HAND_LEFT);
       Limb rightArm = _self.getLimb(LimbType.HAND_RIGHT);
 
-      byte leftTN = (leftArm == null) ? 0 : ((Hand) leftArm).getDefenseTN(_self, rangedAttack, chargeAttack, grappleAttack, defense.getDamageType());
-      byte rightTN = (rightArm == null) ? 0 : ((Hand) rightArm).getDefenseTN(_self, rangedAttack, chargeAttack, grappleAttack, defense.getDamageType());
+      short distance = ArenaCoordinates.getDistance(_self.getHeadCoordinates(), attacker.getHeadCoordinates());
+      byte leftTN = (leftArm == null) ? 0 : ((Hand) leftArm).getDefenseTN(_self, rangedAttack, distance, chargeAttack,
+                                                                          grappleAttack, defense.getDamageType());
+      byte rightTN = (rightArm == null) ? 0 : ((Hand) rightArm).getDefenseTN(_self, rangedAttack, distance, chargeAttack,
+                                                                             grappleAttack, defense.getDamageType());
       byte dodgeTN = Rules.getDodgeLevel(_self.getAttributeLevel(Attribute.Nimbleness));
       byte magicTN = 0;
       IInstantaneousSpell bestDefSpell = null;
@@ -3222,7 +3232,6 @@ public class AI implements Enums
       preferredDefenses.add(secondaryDef);
       preferredDefenses.add(tertiaryDef);
 
-      short curMinDist = Arena.getMinDistance(_self, attacker);
       short desiredDistance = getDesiredDistance(attacker, true);
       boolean prefereRetreat = (curMinDist < desiredDistance) || (_self.getPainPenalty(true/*accountForBerserking*/) > 6);
 

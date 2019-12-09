@@ -86,7 +86,8 @@ public abstract class Thing extends SerializableObject implements Cloneable, Enu
    public byte getPassiveDefense()   { return _passiveDefense; }
    public abstract String getActiveDefenseName();
    public abstract ArrayList<SkillType> getDefenseSkillTypes();
-   public abstract byte getBestDefenseOption(Character wielder, LimbType useHand, boolean canUse2Hands, DamageType damType, boolean isGrappleAttack);
+   public abstract byte getBestDefenseOption(Character wielder, LimbType useHand, boolean canUse2Hands,
+                                             DamageType damType, boolean isGrappleAttack, short distance);
    public boolean canDefendAgainstRangedWeapons() { return false;}
    public boolean isReal() { return _cost > 0;}
    public static Thing getThing(String thingName, Race racialBase) {

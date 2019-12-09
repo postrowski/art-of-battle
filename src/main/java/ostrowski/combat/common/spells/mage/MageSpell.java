@@ -31,7 +31,7 @@ import ostrowski.combat.server.Arena;
 import ostrowski.combat.server.Battle;
 import ostrowski.combat.server.Configuration;
 
-public class MageSpell extends Spell implements Enums
+public abstract class MageSpell extends Spell implements Enums
 {
    public final static String FAM_UNFAMILIAR        = "unfamiliar";
    public final static String FAM_KNOWN             = "known";

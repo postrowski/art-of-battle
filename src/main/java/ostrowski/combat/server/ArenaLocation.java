@@ -34,7 +34,6 @@ import ostrowski.combat.common.things.Weapon;
 import ostrowski.combat.protocol.request.RequestAction;
 import ostrowski.combat.protocol.request.RequestActionOption;
 import ostrowski.combat.protocol.request.RequestActionType;
-import ostrowski.protocol.ISingularSerializableObject;
 import ostrowski.protocol.ObjectChanged;
 import ostrowski.protocol.SerializableFactory;
 import ostrowski.protocol.SerializableObject;
@@ -46,7 +45,7 @@ import ostrowski.util.MonitoredObject;
 import ostrowski.util.Semaphore;
 import ostrowski.util.SemaphoreAutoTracker;
 
-public class ArenaLocation extends ArenaCoordinates implements IMonitorableObject, Enums, ISingularSerializableObject
+public class ArenaLocation extends ArenaCoordinates implements IMonitorableObject, Enums
 {
    public    Semaphore             _lock_this               = new Semaphore("AreanLocation_lock_this", CombatSemaphore.CLASS_ARENALOCATION_this);
    private   TerrainType           _terrain                 = TerrainType.FLOOR;
@@ -54,18 +53,13 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    private   ArrayList<Object>     _things                  = new ArrayList<>();
    private   ArrayList<Door>       _doors                   = new ArrayList<>();
    private   ArrayList<IAreaSpell> _activeSpells            = new ArrayList<>();
-   private   boolean               _visible                 = true;
+   private   HashSet<Integer>      _visibleTo               = new HashSet<>();
    private   HashSet<Integer>      _viewedBy                = new HashSet<>();
-   public    ArenaLocation         _visibleFrom             = null;
+   public    HashMap<Integer, ArenaCoordinates> _visibleToCharacterFromLoc  = new HashMap<>();
    private   String                _label                   = null;
    transient MonitoredObject       _monitoredProxy          = null;
    private   boolean               _selectable              = true;
-
    public static final String      PICKUP                   = "pickup ";
-   // implementing the ISingularSerializableObject interface allows this class to
-   // have only one ArenaLocation object for any given location (based on _x & _y),
-   // even as ArenaLocation objects are read in.
-   private final HashMap<String, ArenaLocation> _SINGULAR_OBJECTS = new HashMap<>();
 
    public ArenaLocation(short x, short y) {
       super(x,y);
@@ -154,10 +148,21 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
             _things.add(thing);
          }
       }
-      _visible = source._visible;
-      _visibleFrom = source._visibleFrom;
+      _visibleTo = new HashSet<>();
+      _visibleToCharacterFromLoc = new HashMap<>();
       _viewedBy = new HashSet<>();
-      _viewedBy.addAll(source._viewedBy);
+      if (source._visibleTo != null) {
+         _visibleTo.addAll(source._visibleTo);
+      }
+      if (source._visibleToCharacterFromLoc != null) {
+         for (Integer charId : source._visibleToCharacterFromLoc.keySet()) {
+            ArenaCoordinates visFrom = source._visibleToCharacterFromLoc.get(charId);
+            _visibleToCharacterFromLoc.put(charId, new ArenaCoordinates(visFrom._x, visFrom._y));
+         }
+      }
+      if (source._viewedBy != null) {
+         _viewedBy.addAll(source._viewedBy);
+      }
    }
 
    public void copyData(ArenaLocation source)
@@ -943,36 +948,53 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
     * returns true if the visibility changed, false if the visibility didn't change
     */
    public boolean setVisible(boolean isVisible, CombatMap map, ArenaLocation viewerLoc, int viewerID, boolean basedOnFacing) {
-      boolean oldVisibility = _visible;
-      _visible = isVisible;
-      if (_visible && (map != null) && (viewerLoc != null)) {
-         _visibleFrom = map.getFirstLocationInPath(this, viewerLoc);
-         short dist = ArenaCoordinates.getDistance(this, _visibleFrom);
-         if (dist > 1) {
-            DebugBreak.debugBreak();
-         }
-         if (basedOnFacing && (viewerID >= 0)) {
-            for (Character viewer : viewerLoc.getCharacters()) {
-               if (viewer._uniqueID == viewerID) {
-                  // This is the character looking at this hex.
-                  if (!map.isFacing(viewer, this) && !viewer.hasPeripheralVision()) {
-                     _visible = false;
-                  }
-                  break;
+      boolean oldVisibility = _visibleTo.contains(viewerID);
+      boolean newVisibility = isVisible;
+      if (sameCoordinates(viewerLoc)) {
+         newVisibility = true;
+      }
+      else if (newVisibility && (map != null) && (viewerLoc != null) && basedOnFacing && (viewerID >= 0)) {
+         for (Character viewer : viewerLoc.getCharacters()) {
+            if (viewer._uniqueID == viewerID) {
+               // This is the character looking at this hex.
+               if (!map.isFacing(viewer, this) && !viewer.hasPeripheralVision()) {
+                  newVisibility = false;
                }
+               break;
             }
          }
       }
-      else {
-         _visibleFrom = null;
+      if (newVisibility == oldVisibility) {
+         return false;
       }
-      if (_visible && (viewerID >= 0)) {
-         _viewedBy.add(Integer.valueOf(viewerID));
+
+      if (viewerID == -1) {
+         _visibleTo.clear();
+         return true;
       }
-      return oldVisibility != _visible;
+      if (viewerID >= 0) {
+         Integer viewerInt = Integer.valueOf(viewerID);
+         if (newVisibility ) {
+            if ((map != null) && (viewerLoc != null)) {
+               ArenaCoordinates visibleFrom = map.getFirstLocationInPath(this, viewerLoc);
+               _visibleToCharacterFromLoc.put(viewerInt, visibleFrom);
+               short dist = ArenaCoordinates.getDistance(this, visibleFrom);
+               if (dist > 1) {
+                  DebugBreak.debugBreak();
+               }
+            }
+            _visibleTo.add(viewerInt);
+            _viewedBy.add(viewerInt);
+         }
+         else {
+            _visibleTo.remove(viewerInt);
+            _visibleToCharacterFromLoc.remove(viewerInt);
+         }
+      }
+      return true;
    }
-   public boolean getVisible() {
-      return _visible;
+   public boolean getVisible(int viewerID) {
+      return _visibleTo.contains(Integer.valueOf(viewerID));
    }
    public boolean isKnownBy(int viewerID) {
       return (_viewedBy.contains(Integer.valueOf(viewerID)));
@@ -990,23 +1012,6 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    }
    public void clearCharacterViewedHistory() {
       _viewedBy.clear();
-   }
-
-   @Override
-   public String getMapKey() {
-      return _x+","+_y;
-   }
-   @Override
-   public void copyDataFrom(SerializableObject newSerObj) {
-      copyData((ArenaLocation) newSerObj);
-   }
-   @Override
-   public ISingularSerializableObject findExistingObject() {
-      return _SINGULAR_OBJECTS.get(getMapKey());
-   }
-   @Override
-   public void plantInitialObject() {
-      _SINGULAR_OBJECTS.put(getMapKey(), this);
    }
 
    public boolean sameContents(ArenaLocation otherLoc) {

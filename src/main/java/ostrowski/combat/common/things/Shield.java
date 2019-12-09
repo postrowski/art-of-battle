@@ -74,8 +74,10 @@ public class Shield extends Thing {
       return results;
    }
    @Override
-   public byte getBestDefenseOption(Character wielder, LimbType useHand, boolean canUse2Hands, DamageType damType, boolean isGrappleAttack) {
-      return Rules.getBlockLevel(wielder.getSkillLevel(getDefenseSkillTypes().get(0), useHand, false/*sizeAdjust*/, true/*adjustForEncumbrance*/, true/*adjustForHolds*/));
+   public byte getBestDefenseOption(Character wielder, LimbType useHand, boolean canUse2Hands, DamageType damType,
+                                    boolean isGrappleAttack, short distance) {
+      return Rules.getBlockLevel(wielder.getSkillLevel(getDefenseSkillTypes().get(0), useHand, false/*sizeAdjust*/,
+                                                       true/*adjustForEncumbrance*/, true/*adjustForHolds*/));
    }
    @Override
    public void copyData(Thing source) {

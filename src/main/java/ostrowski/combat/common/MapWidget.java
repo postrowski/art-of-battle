@@ -206,7 +206,11 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
    {
       ArenaLocation curLoc = _combatMap.getLocation(arenaLoc._x, arenaLoc._y);
       if (curLoc != null) {
+         // preserve the knownBy self information, since the _visibleTo field doesn't get serialized
+         ArenaLocation oldData = curLoc.clone();
          curLoc.copyData(arenaLoc);
+         curLoc.setKnownBy(_selfID, oldData.isKnownBy(_selfID));
+         curLoc.setVisible(oldData.getVisible(_selfID), _combatMap, null, _selfID, false);
       }
       else {
          _combatMap.addLocation(arenaLoc);

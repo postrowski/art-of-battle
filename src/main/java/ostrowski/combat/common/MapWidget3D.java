@@ -667,7 +667,7 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
    }
 
    private void addHexToMap(ArenaLocation loc) {
-      boolean isVisible = (_selfID == -1) || loc.getVisible();
+      boolean isVisible = (_selfID == -1) || loc.getVisible(_selfID);
       boolean isKnown = (_selfID == -1) || loc.isKnownBy(_selfID);
 
       if (!isVisible && (loc == _selfLoc)) {

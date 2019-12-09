@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<Arena Name="Field" height="36" hideViewFromLocalPlayers="true" width="24">
+<?xml version="1.0" encoding="UTF-8"?><Arena Name="Field" height="36" hideViewFromLocalPlayers="true" level="0" width="24">
   <rows>
     <row id="0">1:1:1:1:1:1:1:11:11:11:11:11:</row>
     <row id="1">1:1:1:1:1:1:1:11:11:11:11:1:</row>
@@ -58,7 +57,7 @@
       <combatant AI="Off" charName="" id="14"/>
     </team>
     <team id="1">
-      <combatant AI="Norm" charName="? 700 Dragon, Small" id="0" startX="11" startY="3"/>
+      <combatant AI="Remote Connection" charName="" id="0" startX="11" startY="3"/>
       <combatant AI="Off" charName="" id="1"/>
       <combatant AI="Off" charName="" id="2"/>
       <combatant AI="Off" charName=" " id="3"/>

@@ -376,7 +376,7 @@ public class Hand extends Limb {
       return false;
    }
    @Override
-   public boolean canDefend(Character defender, boolean attackIsRanged, boolean attackIsCharge, boolean attackIsGrapple, DamageType damageType, boolean checkState) {
+   public boolean canDefend(Character defender, boolean attackIsRanged, short distance, boolean attackIsCharge, boolean attackIsGrapple, DamageType damageType, boolean checkState) {
       if (isCrippled()) {
          return false;
       }
@@ -422,7 +422,7 @@ public class Hand extends Limb {
          byte bestIndex = -1;
          for (byte i=0 ; i<parrySkills.length ; i++) {
             WeaponStyleParry parrySkill = parrySkills[i];
-            if (parrySkill.canDefendAgainstDamageType(damageType, attackIsGrapple)) {
+            if (parrySkill.canDefendAgainstDamageType(damageType, attackIsGrapple, distance)) {
                SkillType styleType = parrySkill.getSkillType();
                Skill skill = defender.getSkill(styleType);
                if (skill != null) {
@@ -495,13 +495,15 @@ public class Hand extends Limb {
    {
       _attackedThisRound = false;
    }
-   public byte getDefenseTN(Character self, boolean rangedAttack, boolean isChargeAttack, boolean isGrappleAttack, DamageType damageType) {
+   public byte getDefenseTN(Character self, boolean rangedAttack, short distance, boolean isChargeAttack,
+                            boolean isGrappleAttack, DamageType damageType) {
       // If this hand is crippled, return 0
       if (isCrippled()) {
          return 0;
       }
 
-      byte defLevel = getDefenseTNWithoutWounds(self, rangedAttack, isChargeAttack, isGrappleAttack, damageType, true/*checkState*/);
+      byte defLevel = getDefenseTNWithoutWounds(self, rangedAttack, distance, isChargeAttack,
+                                                isGrappleAttack, damageType, true/*checkState*/);
       defLevel -= getWoundPenalty();
       if (defLevel < 0) {
          defLevel = 0;
@@ -509,8 +511,9 @@ public class Hand extends Limb {
       return defLevel;
    }
    @Override
-   public byte getDefenseTNWithoutWounds(Character self, boolean rangedAttack, boolean isChargeAttack, boolean isGrappleAttack, DamageType damageType, boolean checkState) {
-      if (canDefend(self, rangedAttack, isChargeAttack, isGrappleAttack, damageType, checkState)) {
+   public byte getDefenseTNWithoutWounds(Character self, boolean rangedAttack, short distance, boolean isChargeAttack,
+                                         boolean isGrappleAttack, DamageType damageType, boolean checkState) {
+      if (canDefend(self, rangedAttack, distance, isChargeAttack, isGrappleAttack, damageType, checkState)) {
          Weapon weap = getWeapon(self);
          if (weap != null) {
             if ((_defenseStyle < 0) || (_defenseStyle >= weap._parryStyles.length)) {
@@ -533,28 +536,35 @@ public class Hand extends Limb {
       return 0;
    }
    @Override
-   public byte getPenaltyForMassiveDamage(Character self, byte minDamageAttacking,
+   public byte getPenaltyForMassiveDamage(Character self, byte minDamageAttacking, short distance,
                                           boolean rangedAttack, boolean isChargeAttack, boolean isGrappleAttack,
                                           DamageType damageType, boolean checkState) {
-      double tnWithHand = getDefenseTNWithoutWounds(self, rangedAttack, isChargeAttack, isGrappleAttack, damageType, checkState);
+      double tnWithHand = getDefenseTNWithoutWounds(self, rangedAttack, distance, isChargeAttack, isGrappleAttack,
+                                                    damageType, checkState);
       byte maxDamageDealt = -127;
       Weapon weap = getWeapon(self);
       if (weap != null) {
-         byte bestOptLevel = weap.getBestDefenseOption(self, _limbType, false/*canUseTwoHands*/, damageType, isGrappleAttack);
-         for (WeaponStyleParry parryStyle : weap._parryStyles) {
-            if (parryStyle.getSkillType() == SkillType.Aikido)  {
-               byte skillLevel = (byte) (self.getSkillLevel(parryStyle.getSkillType(), _limbType, false/*sizeAdjust*/,
-                                                            false/*adjustForEncumbrance*/, true/*adjustForHolds*/)
-                                         - parryStyle.getSkillPenalty());
-               byte parryLevel = Rules.getParryLevel(skillLevel, parryStyle.getEffectiveness());
-               if (bestOptLevel == parryLevel) {
-                  Rules.diag("getPenaltyForMassiveDamage: self=" + self.getName() +
-                             ", handID=" + _limbType +
-                             ", maxDamageDealt=" + maxDamageDealt +
-                             ", minDamageAttacking=" + minDamageAttacking +
-                             ", tnWithHand=" + tnWithHand +
-                             ", penalty=0, due to Aikido skill parry");
-                  return 0;
+         byte bestOptLevel = weap.getBestDefenseOption(self, _limbType, false/*canUseTwoHands*/, damageType,
+                                                       isGrappleAttack, distance);
+         // Aikido can only be used within 2 hexes
+         if (distance < 3) {
+            for (WeaponStyleParry parryStyle : weap._parryStyles) {
+               if (parryStyle.getSkillType() == SkillType.Aikido) {
+                  // Aikido uses each hand effectively, so don't consider hand penalties
+                  LimbType limbType = null;
+                  byte skillLevel = (byte) (self.getSkillLevel(parryStyle.getSkillType(), limbType , false/*sizeAdjust*/,
+                                                               false/*adjustForEncumbrance*/, true/*adjustForHolds*/)
+                                            - parryStyle.getSkillPenalty());
+                  byte parryLevel = Rules.getParryLevel(skillLevel, parryStyle.getEffectiveness());
+                  if (bestOptLevel == parryLevel) {
+                     Rules.diag("getPenaltyForMassiveDamage: self=" + self.getName() +
+                                ", handID=" + _limbType +
+                                ", maxDamageDealt=" + maxDamageDealt +
+                                ", minDamageAttacking=" + minDamageAttacking +
+                                ", tnWithHand=" + tnWithHand +
+                                ", penalty=0, due to Aikido skill parry");
+                     return 0;
+                  }
                }
             }
          }
