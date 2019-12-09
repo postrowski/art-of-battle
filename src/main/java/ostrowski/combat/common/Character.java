@@ -198,7 +198,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                curHand.setHeldThing(null, this);
             }
             else {
-               curHand.setHeldThing((Thing) heldThing.clone(), this);
+               curHand.setHeldThing(heldThing.clone(), this);
             }
          }
       }
@@ -3683,7 +3683,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       }
       _limbs.clear();
       for (LimbType limbType : source._limbs.keySet()) {
-         _limbs.put(limbType, (Limb) source._limbs.get(limbType).clone());
+         _limbs.put(limbType, source._limbs.get(limbType).clone());
       }
 
       synchronized (_equipment) {

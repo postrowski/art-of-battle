@@ -16,6 +16,7 @@ import ostrowski.combat.common.things.Weapon;
 import ostrowski.combat.common.weaponStyles.WeaponStyleAttackRanged;
 import ostrowski.combat.server.Arena;
 import ostrowski.protocol.IRequestOption;
+import ostrowski.protocol.RequestOption;
 import ostrowski.protocol.SyncRequest;
 
 public class RequestSingleTargetSelection extends SyncRequest implements Enums
@@ -206,12 +207,14 @@ public class RequestSingleTargetSelection extends SyncRequest implements Enums
                   }
                }
             }
-
-            addOption(target._uniqueID, description.toString(), enabled);
+            RequestOption opt = new RequestOption(description.toString(), target._uniqueID, enabled);
+            addOption(opt);
+            if (requestor._targetID == target._uniqueID) {
+               setDefaultOption(opt);
+            }
          }
       }
-      addOption(OPT_CANCEL_ACTION, "Cancel", true/*enabled*/);
-      setDefaultOption(requestor._targetID);
+      addOption(new RequestOption("Cancel", OPT_CANCEL_ACTION, true/*enabled*/));
    }
 
    @Override

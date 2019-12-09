@@ -9,6 +9,7 @@ import java.util.List;
 import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.Spell;
 import ostrowski.combat.common.spells.mage.MageSpell;
+import ostrowski.protocol.RequestOption;
 import ostrowski.protocol.SyncRequest;
 
 public class RequestSpellSelection extends SyncRequest
@@ -48,7 +49,7 @@ public class RequestSpellSelection extends SyncRequest
             else {
                name = spell.getName() + " (" + incantationTime + " rounds)";
             }
-            addOption(index, name, true/*enabled*/);
+            addOption(new RequestOption(name, index, true/*enabled*/));
             newColumn = false;
          }
       }

@@ -16,6 +16,7 @@ import ostrowski.combat.common.enums.DefenseOption;
 import ostrowski.combat.common.enums.Enums;
 import ostrowski.combat.common.spells.Spell;
 import ostrowski.combat.common.weaponStyles.WeaponStyleAttack;
+import ostrowski.protocol.RequestOption;
 import ostrowski.protocol.SyncRequest;
 import ostrowski.util.SemaphoreAutoLocker;
 
@@ -135,7 +136,7 @@ public class RequestDefense extends SyncRequest implements Enums
          if (enabled) {
             defenseName += " (TN="+TN+")";
          }
-         addOption(defOpts.getIntValue(), defenseName, enabled);
+         addOption(new RequestOption(defenseName, defOpts.getIntValue(), enabled));
       }
    }
 

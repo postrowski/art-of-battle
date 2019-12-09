@@ -3,6 +3,7 @@ package ostrowski.combat.common;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolTip;
 
 import ostrowski.combat.client.ui.CharInfoBlock;
@@ -18,17 +19,17 @@ public class MouseOverCharacterInfoPopup
          Rules.diag("onMouseMove (" + event.x + "," + event.y + ")");
          _currentMouseLoc = loc;
          if (_popupMessage == null) {
-            _popupMessage = new ToolTip(event.display.getActiveShell(), SWT.NONE);
+            Shell shell = event.display.getActiveShell();
+            if (shell == null) {
+               return;
+            }
+            _popupMessage = new ToolTip(shell, SWT.NONE);
          }
          else {
             _popupMessage.setVisible(false);
          }
 
          if ((loc != null) && !loc.isEmpty()) {
-            _popupMessage.setLocation(Display.getCurrent().getCursorLocation().x,
-                                      Display.getCurrent().getCursorLocation().y);
-            _popupMessage.setVisible(true);
-            _currentMouseLoc = loc;
             StringBuilder sb = new StringBuilder();
             boolean first = true;
             for (Character ch : loc.getCharacters()) {
@@ -38,6 +39,10 @@ public class MouseOverCharacterInfoPopup
                sb.append(CharInfoBlock.getToolTipSummary(ch));
             }
             _popupMessage.setMessage(sb.toString());
+            _popupMessage.setLocation(Display.getCurrent().getCursorLocation().x,
+                                      Display.getCurrent().getCursorLocation().y);
+            _popupMessage.setVisible(true);
+            _currentMouseLoc = loc;
          }
       }
    }

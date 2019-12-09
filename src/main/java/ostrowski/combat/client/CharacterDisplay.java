@@ -11,12 +11,10 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.ToolTip;
 
 import ostrowski.combat.client.ui.AIBlock;
 import ostrowski.combat.client.ui.ArenaMapBlock;
@@ -33,6 +31,7 @@ import ostrowski.combat.common.CharacterFile;
 import ostrowski.combat.common.CharacterWidget;
 import ostrowski.combat.common.CombatMap;
 import ostrowski.combat.common.IMapListener;
+import ostrowski.combat.common.MouseOverCharacterInfoPopup;
 import ostrowski.combat.common.Rules;
 import ostrowski.combat.common.enums.AI_Type;
 import ostrowski.combat.common.enums.Enums;
@@ -79,6 +78,8 @@ public class CharacterDisplay implements Enums, ModifyListener, IMapListener //,
    private final List<SyncRequest>   _pendingRequests     = new ArrayList<>();
    public Shell                      _shell;
    public ArrayList<Helper>          _uiBlocks            = new ArrayList<>();
+
+   transient private final MouseOverCharacterInfoPopup _mouseOverCharInfoPopup = new MouseOverCharacterInfoPopup();
 
 //   @Override
 //   public void handleEvent(Event event) {
@@ -375,36 +376,9 @@ public class CharacterDisplay implements Enums, ModifyListener, IMapListener //,
    public void onMouseDown(ArenaLocation loc, Event event, double angleFromCenter, double normalizedDistFromCenter) {
    }
 
-   ArenaLocation _currentMouseLoc = null;
-   ToolTip _popupMessage = null;
    @Override
    public void onMouseMove(ArenaLocation loc, Event event, double angleFromCenter, double normalizedDistFromCenter) {
-      if (_currentMouseLoc != loc) {
-         Rules.diag("onMouseMove (" + event.x + "," + event.y + ")");
-         _currentMouseLoc = loc;
-         if (_popupMessage == null) {
-            _popupMessage = new ToolTip(event.display.getActiveShell(), SWT.NONE);
-         }
-         else {
-            _popupMessage.setVisible(false);
-         }
-
-         if ((loc != null) && !loc.isEmpty()) {
-            _popupMessage.setLocation(Display.getCurrent().getCursorLocation().x,
-                                      Display.getCurrent().getCursorLocation().y);
-            _popupMessage.setVisible(true);
-            _currentMouseLoc = loc;
-            StringBuilder sb = new StringBuilder();
-            boolean first = true;
-            for (Character ch : loc.getCharacters()) {
-               if (!first) {
-                  sb.append("\n------------\n");
-               }
-               sb.append(CharInfoBlock.getToolTipSummary(ch));
-            }
-            _popupMessage.setMessage(sb.toString());
-         }
-      }
+      _mouseOverCharInfoPopup.onMouseMove(loc, event, angleFromCenter, normalizedDistFromCenter);
    }
 
    @Override

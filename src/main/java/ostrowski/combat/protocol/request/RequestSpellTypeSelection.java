@@ -9,6 +9,7 @@ import java.util.List;
 
 import ostrowski.combat.common.Character;
 import ostrowski.combat.server.Arena;
+import ostrowski.protocol.RequestOption;
 import ostrowski.protocol.SyncRequest;
 
 public class RequestSpellTypeSelection extends SyncRequest
@@ -37,10 +38,10 @@ public class RequestSpellTypeSelection extends SyncRequest
       setMessage(message.toString());
 
       if (mage) {
-         addOption(0, SPELL_TYPE_MAGE, mage/*enabled*/);
+         addOption(new RequestOption(SPELL_TYPE_MAGE, 0, mage/*enabled*/));
       }
       for (int index=0 ; index<priestAffinities.size() ; index++) {
-         addOption(index+1, priestAffinities.get(index), true/*enabled*/);
+         addOption(new RequestOption(priestAffinities.get(index), index+1, true/*enabled*/));
       }
    }
 
