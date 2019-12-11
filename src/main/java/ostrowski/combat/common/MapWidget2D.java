@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.eclipse.swt.SWT;
@@ -314,8 +315,8 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
 //                  maxRow = _combatMap.getSizeY();
 //               }
 
-               HashMap<Integer, Color> cachedColorsMap = new HashMap<>();
-               HashMap<Color, Pattern> cachedPatternMap = new HashMap<>();
+               Map<Integer, Color> cachedColorsMap = new HashMap<>();
+               Map<Color, Pattern> cachedPatternMap = new HashMap<>();
 
                boolean isHideViewFromLocalPlayers = _combatMap.isHideViewFromLocalPlayers();
                for (short col = minCol; col < maxCol; col++) {
@@ -655,7 +656,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       return (d2 < (ZOOM_BUTTON_RADIUS * ZOOM_BUTTON_RADIUS));
    }
 
-   public void drawHex(ArenaLocation loc, GC gc, Display display, HashMap<Integer, Color> cachedColorsMap, HashMap<Color, Pattern> cachedPatternMap)
+   public void drawHex(ArenaLocation loc, GC gc, Display display, Map<Integer, Color> cachedColorsMap, Map<Color, Pattern> cachedPatternMap)
    {
       if (loc == null) {
          return;
@@ -674,8 +675,8 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
 //            }
 //         }
       }
-      ArrayList<ArenaTrigger> triggers = new ArrayList<>();
-      ArrayList<ArenaEvent> events = new ArrayList<>();;
+      List<ArenaTrigger> triggers = new ArrayList<>();
+      List<ArenaEvent> events = new ArrayList<>();;
       ArenaTrigger trigger = _combatMap.getSelectedTrigger();
       if (trigger != null) {
          if (trigger.isTriggerAtLocation(loc, null/*mover*/)) {
@@ -762,18 +763,18 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
                                int offsetX, int offsetY, short offsetCol, short offsetRow,
                                boolean isMouseOver, int selfID, int targetID, byte selfTeam,
                                boolean hexSelectable, boolean isVisible, boolean isKnown, int borderFade,
-                               HashMap<ArenaCoordinates, ArenaCoordinates> routeMap,
-                               ArrayList<ArenaCoordinates> path,
+                               Map<ArenaCoordinates, ArenaCoordinates> routeMap,
+                               List<ArenaCoordinates> path,
                                List<Orientation> selectionOrientations,
                                List<Orientation> completionOrientations,
                                List<Orientation> cancelOrientations,
                                Character mouseOverCharacter,
                                RequestLocation locationRequest,
-                               ArrayList<ArenaTrigger> triggers,
-                               ArrayList<ArenaEvent> events,
+                               List<ArenaTrigger> triggers,
+                               List<ArenaEvent> events,
                                boolean showKnownButNotVisibleChars,
-                               HashMap<Integer, Color> cachedColorsMap,
-                               HashMap<Color, Pattern> cachedPatternMap)
+                               Map<Integer, Color> cachedColorsMap,
+                               Map<Color, Pattern> cachedPatternMap)
    {
       drawHex(loc, gc, display, sizePerHex,
               offsetX, offsetY, offsetCol, offsetRow,
@@ -798,18 +799,18 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
                                int offsetX, int offsetY, short offsetCol, short offsetRow,
                                boolean isMouseOver, int selfID, int targetID, byte selfTeam,
                                boolean hexSelectable, boolean isVisible, boolean isKnown, int borderFade,
-                               HashMap<ArenaCoordinates, ArenaCoordinates> routeMap,
-                               ArrayList<ArenaCoordinates> path,
+                               Map<ArenaCoordinates, ArenaCoordinates> routeMap,
+                               List<ArenaCoordinates> path,
                                List<Orientation> selectionOrientations,
                                List<Orientation> completionOrientations,
                                List<Orientation> cancelOrientations,
                                Character mouseOverCharacter,
                                RequestLocation locationRequest,
-                               ArrayList<ArenaTrigger> triggers,
-                               ArrayList<ArenaEvent> events,
+                               List<ArenaTrigger> triggers,
+                               List<ArenaEvent> events,
                                boolean showKnownButNotVisibleChars,
-                               HashMap<Integer, Color> cachedColorsMap,
-                               HashMap<Color, Pattern> cachedPatternMap,
+                               Map<Integer, Color> cachedColorsMap,
+                               Map<Color, Pattern> cachedPatternMap,
                                double rotation)
    {
       if (loc == null) {
@@ -1182,8 +1183,8 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
     */
    private static void drawRouteLine(ArenaLocation loc, GC gc, Display display, int sizePerHex,
                                      int offsetX, int offsetY, short offsetCol, short offsetRow,
-                                     HashMap<ArenaCoordinates, ArenaCoordinates> routeMap,
-                                     ArrayList<ArenaCoordinates> path, int[] bounds)
+                                     Map<ArenaCoordinates, ArenaCoordinates> routeMap,
+                                     List<ArenaCoordinates> path, int[] bounds)
    {
       ArenaCoordinates comeFrom = routeMap.get(loc);
       if (comeFrom != null) {
@@ -1233,7 +1234,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
          Point textStart = getTextStartPoint(bounds);
          int x = textStart.x;
          int y = textStart.y;
-         ArrayList<Object> labelsAndColors = getTypeAndLabels(loc);
+         List<Object> labelsAndColors = getTypeAndLabels(loc);
          while (labelsAndColors.size() > 0) {
             Object type = labelsAndColors.remove(0);
             String labelText  = (String) labelsAndColors.remove(0);
@@ -1316,7 +1317,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
        *    2 3 4      y = highest
        */
 
-      ArrayList<Door> doors = new ArrayList<>();
+      List<Door> doors = new ArrayList<>();
       doors.addAll(loc.getDoors());
       long walls = loc.getWalls();
       if ((walls == 0) && (doors.size() == 0)) {
@@ -1332,7 +1333,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
          // When selfID == -1, we are drawing the wall buttons.
          // In this case, we never want to draw the hidden area 'behind' a wall.
          if (selfID != -1) {
-            HashMap<Facing, Boolean> vis = getVisibilityOfAdjacentHexes(loc, selfID);
+            Map<Facing, Boolean> vis = getVisibilityOfAdjacentHexes(loc, selfID);
 /*            boolean ext[] = getArrayOfShouldWallsExtendIntoAdjacentHexes(loc, selfID);
 
             gc.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
@@ -1424,8 +1425,8 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       }
    }
 
-   private static final HashMap<String, ImageData> imageDataByName = new HashMap<>();
-   private static final HashMap<String, Image>     imageByName     = new HashMap<>();
+   private static final Map<String, ImageData> imageDataByName = new HashMap<>();
+   private static final Map<String, Image>     imageByName     = new HashMap<>();
    private static ImageData getImageDataResourceByName(String name) {
       if (imageDataByName.get(name) == null) {
          imageDataByName.put(name, getImageData(name));
@@ -1439,7 +1440,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       return imageByName.get(name);
    }
 
-   private static int computeFillPoint(HashMap<Facing, Boolean> visPerDirection, TerrainWall wall) {
+   private static int computeFillPoint(Map<Facing, Boolean> visPerDirection, TerrainWall wall) {
       if (wall.contains((TerrainWall.VERT_LEFT.with(TerrainWall.VERT_CENTER.with(TerrainWall.VERT_RIGHT))))) {
          if (visPerDirection.get(Facing._2_OCLOCK) != visPerDirection.get(Facing._10_OCLOCK)) {
             return visPerDirection.get(Facing._2_OCLOCK) ? 0 : 6;
@@ -1500,8 +1501,8 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       return -1;
    }
 
-   private static HashMap<Facing, Boolean> getVisibilityOfAdjacentHexes(ArenaCoordinates fromCoord, int viewerId) {
-      HashMap<Facing, Boolean> isKnown = new HashMap<>();
+   private static Map<Facing, Boolean> getVisibilityOfAdjacentHexes(ArenaCoordinates fromCoord, int viewerId) {
+      Map<Facing, Boolean> isKnown = new HashMap<>();
       for (Facing dir : Facing.values()) {
          isKnown.put(dir, false);
       }
@@ -1635,7 +1636,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
             break;
          }
       }
-      ArrayList<Integer> points = new ArrayList<>();
+      List<Integer> points = new ArrayList<>();
       int direction = 1;
       if (!clockwise) {
          direction = 11;
@@ -1748,7 +1749,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
 
                // Now check for any text that must be written to this hex,
                // and ensure that region is also covered:
-               ArrayList<Object> typeAndLabels = getTypeAndLabels(loc);
+               List<Object> typeAndLabels = getTypeAndLabels(loc);
                int maxWidthInCharacters = 0;
                int height = 0;
 
@@ -1814,7 +1815,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
     *  0   3
     *   1 2
     */
-   private static HashMap<Integer, HashMap<Short, HashMap<Short, int[]>>> MAP_SIZE_TO_MAP_ROW_TO_MAP_COLUMN_TO_HEX_DIMS = new HashMap<>();
+   private static Map<Integer, Map<Short, Map<Short, int[]>>> MAP_SIZE_TO_MAP_ROW_TO_MAP_COLUMN_TO_HEX_DIMS = new HashMap<>();
    public static int[] getHexDimensions(short column, short row, int sizePerHex, int offsetX, int offsetY, boolean cacheResults, double rotation) {
       int[] baseHexDimensions = getHexDimensions(column, row, sizePerHex, offsetX, offsetY, cacheResults);
       if (rotation == 0) {
@@ -1833,14 +1834,14 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
    }
    public static int[] getHexDimensions(short column, short row, int sizePerHex, int offsetX, int offsetY, boolean cacheResults)
    {
-      HashMap<Short, HashMap<Short, int[]>> mapRowToMapColumnToHexDims = MAP_SIZE_TO_MAP_ROW_TO_MAP_COLUMN_TO_HEX_DIMS.get(sizePerHex);
+      Map<Short, Map<Short, int[]>> mapRowToMapColumnToHexDims = MAP_SIZE_TO_MAP_ROW_TO_MAP_COLUMN_TO_HEX_DIMS.get(sizePerHex);
       if (mapRowToMapColumnToHexDims == null) {
          mapRowToMapColumnToHexDims = new HashMap<>();
          if (cacheResults) {
             MAP_SIZE_TO_MAP_ROW_TO_MAP_COLUMN_TO_HEX_DIMS.put(sizePerHex, mapRowToMapColumnToHexDims);
          }
       }
-      HashMap<Short, int[]> mapColumnToHexDims = mapRowToMapColumnToHexDims.get(row);
+      Map<Short, int[]> mapColumnToHexDims = mapRowToMapColumnToHexDims.get(row);
       if (mapColumnToHexDims == null) {
          mapColumnToHexDims = new HashMap<>();
          if (cacheResults) {
@@ -1891,7 +1892,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       return hexDims;
    }
 
-   private static HashMap<Integer, double[]> MAP_OF_HEX_SIZES_TO_BASE_DIMENSIONS = new HashMap<>();
+   private static Map<Integer, double[]> MAP_OF_HEX_SIZES_TO_BASE_DIMENSIONS = new HashMap<>();
    public static double[] getHexBaseDimensions(int sizePerHex) {
       double[] results = MAP_OF_HEX_SIZES_TO_BASE_DIMENSIONS.get(sizePerHex);
       if (results == null) {
@@ -2073,7 +2074,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       return true;
    }
 
-   private static HashMap<Integer, RGB> PALLET = new HashMap<>();
+   private static Map<Integer, RGB> PALLET = new HashMap<>();
    public static RGB getColor(int colorAsint) {
       RGB color = PALLET.get(colorAsint);
       if (color == null) {

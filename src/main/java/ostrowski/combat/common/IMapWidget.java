@@ -1,7 +1,7 @@
 package ostrowski.combat.common;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.RGB;
@@ -30,7 +30,7 @@ public interface IMapWidget extends KeyListener
    void setLayoutData(Object data);
    void addControlGroup(Composite parent);
 
-   boolean updateMap(CombatMap map, int selfID, byte selfTeam, ArrayList<ArenaLocation> availableLocs, int targetID);
+   boolean updateMap(CombatMap map, int selfID, byte selfTeam, List<ArenaLocation> availableLocs, int targetID);
    CombatMap getCombatMap();
 
    void setZoomToFit();
@@ -38,10 +38,10 @@ public interface IMapWidget extends KeyListener
 
    void addListener(IMapListener listener);
 
-   void setRouteMap(HashMap<Orientation, Orientation> newMap, ArrayList<Orientation> path, boolean b);
+   void setRouteMap(Map<Orientation, Orientation> newMap, List<Orientation> path, boolean b);
    void requestMovement(RequestMovement locationMovement);
    void requestLocation(RequestLocation locationMovement);
-   void setSelectableHexes(ArrayList<ArenaCoordinates> selectableCoordinates);
+   void setSelectableHexes(List<ArenaCoordinates> selectableCoordinates);
    void endHexSelection();
 
    int getSelfId();
@@ -55,8 +55,8 @@ public interface IMapWidget extends KeyListener
 
    void setHideViewFromLocalPlayers(boolean selection);
 
-   ArrayList<ArenaLocation> getLine();
-   ArrayList<ArenaLocation> getWallLine();
+   List<ArenaLocation> getLine();
+   List<ArenaLocation> getWallLine();
    void setLine(ArenaCoordinates startCoord, ArenaCoordinates endCoord, RGB lineColor);
    void setWallLine(ArenaLocation start, double startAngleFromCenter, ArenaLocation end, double endAngleFromCenter, RGB color);
    void allowPan(boolean allow);

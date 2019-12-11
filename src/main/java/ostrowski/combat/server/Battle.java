@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -220,8 +221,8 @@ public class Battle extends Thread implements Enums
 
       // First let everyone with the highest actions go first.
       // When there is a tie, let those with the higher initiative go first.
-      ArrayList<Character> combatants = _arena.orderCombatantsByActionsAndInitiative();
-      ArrayList<Character> activeCombatants = new ArrayList<>();
+      List<Character> combatants = _arena.orderCombatantsByActionsAndInitiative();
+      List<Character> activeCombatants = new ArrayList<>();
       do {
          activeCombatants.clear();
          synchronized (combatants) {
@@ -250,7 +251,7 @@ public class Battle extends Thread implements Enums
    }
 
    // return 'true' if any actions remains to be spent by any character
-   private boolean executeRound(ArrayList<Character> activeCombatants, ArrayList<Character> allCombatants) throws BattleTerminatedException {
+   private boolean executeRound(List<Character> activeCombatants, List<Character> allCombatants) throws BattleTerminatedException {
 
       _arena.getCombatMap().onNewRound(this);
 
@@ -261,7 +262,7 @@ public class Battle extends Thread implements Enums
       // combatants with higher initiative will appear higher in the outer list.
       // combatants with the same available actions and initiative will appear in the same inner list,
       // which is contained by the outer list.
-      ArrayList<ArrayList<Character>> outerList = new ArrayList<>();
+      List<List<Character>> outerList = new ArrayList<>();
       for (Character combatant : activeCombatants) {
          if (combatant.stillFighting()) {
             byte actionsChar = combatant.getActionsAvailable(false/*usedForDefenseOnly*/);
@@ -269,13 +270,13 @@ public class Battle extends Thread implements Enums
                boolean inserted = false;
                byte initChar = combatant.getInitiative();
                for (int i = 0; i < outerList.size(); i++) {
-                  ArrayList<Character> innerList = outerList.get(i);
+                  List<Character> innerList = outerList.get(i);
                   Character charComp = innerList.get(0);
                   byte actionsComp = charComp.getActionsAvailable(false/*usedForDefenseOnly*/);
                   byte initComp = charComp.getInitiative();
                   if ((actionsComp < actionsChar) || ((actionsComp == actionsChar) && (initComp < initChar))) {
                      // insert before
-                     ArrayList<Character> newInnerList = new ArrayList<>();
+                     List<Character> newInnerList = new ArrayList<>();
                      newInnerList.add(combatant);
                      outerList.add(i, newInnerList);
 
@@ -385,7 +386,7 @@ public class Battle extends Thread implements Enums
 
       _phaseCount = 1;
       while (outerList.size() > 0) {
-         ArrayList<Character> innerList = outerList.remove(0);
+         List<Character> innerList = outerList.remove(0);
          if (innerList.size() > 0) {
             checkForPause();
             _phaseCount++;
@@ -394,10 +395,10 @@ public class Battle extends Thread implements Enums
             sb.append("<b>actions=").append(actingChar.getActionsAvailable(false/*usedForDefenseOnly*/));
             sb.append(", initiative=").append(actingChar.getInitiative()).append(":</b><br/>");
             _arena.sendMessageTextToAllClients(sb.toString(), false/*popUp*/);
-            HashMap<Character, RequestAction> results = new HashMap<>();
+            Map<Character, RequestAction> results = new HashMap<>();
             if (selectActions(innerList, results, allCombatants)) {
-               HashMap<Character, ArrayList<Wound>> wounds = new HashMap<>();
-               HashMap<Character, ArrayList<Spell>> spells = new HashMap<>();
+               Map<Character, List<Wound>> wounds = new HashMap<>();
+               Map<Character, List<Spell>> spells = new HashMap<>();
                applyActions(results, wounds, spells);
                // Now that all simultaneous attacks have been resolved, apply any wound damage
                if (wounds.size() > 0) {
@@ -425,8 +426,9 @@ public class Battle extends Thread implements Enums
       return charactersWithActionsRemaining;
    }
 
-   private void applyActions(HashMap<Character, RequestAction> results, HashMap<Character,
-                             ArrayList<Wound>> wounds, HashMap<Character, ArrayList<Spell>> spells)
+   private void applyActions(Map<Character, RequestAction> results,
+                             Map<Character, List<Wound>> wounds,
+                             Map<Character, List<Spell>> spells)
             throws BattleTerminatedException {
       TreeSet<Character> actors = new TreeSet<>(results.keySet());
       for (Character actor : actors) {
@@ -566,8 +568,9 @@ public class Battle extends Thread implements Enums
       }
    }
 
-   private void resolveDefendableAction(Character actor, RequestAction action, Character target, HashMap<Character,
-                                        ArrayList<Wound>> wounds, HashMap<Character, ArrayList<Spell>> spells)
+   private void resolveDefendableAction(Character actor, RequestAction action, Character target,
+                                        Map<Character, List<Wound>> wounds,
+                                        Map<Character, List<Spell>> spells)
               throws BattleTerminatedException {
       Collection<ArenaCoordinates> targetsLocationsToRedraw = new ArrayList<>();
       // add the original locations of the target to the list of locations
@@ -634,7 +637,7 @@ public class Battle extends Thread implements Enums
       _arena.sendCharacterUpdate(target, targetsLocationsToRedraw);
    }
    private void resolveCounterAttack(Character counterAttacker, RequestDefense defense, Character counterAttackTarget,
-                                     HashMap<Character, ArrayList<Wound>> wounds,
+                                     Map<Character, List<Wound>> wounds,
                                      Collection<ArenaCoordinates> targetsLocationsToRedraw) throws BattleTerminatedException {
       int actionsUsed = RequestDefense.getDefenseCounterActions(defense.getAnswerID());
 
@@ -800,7 +803,7 @@ public class Battle extends Thread implements Enums
       }
    }
 
-   public void applySpells(HashMap<Character, ArrayList<Spell>> spells) throws BattleTerminatedException {
+   public void applySpells(Map<Character, List<Spell>> spells) throws BattleTerminatedException {
       TreeSet<Character> hitTargets = new TreeSet<>(spells.keySet());
       for (Character target : hitTargets) {
          Collection<ArenaCoordinates> locationsToRedraw = new ArrayList<>();
@@ -809,7 +812,7 @@ public class Battle extends Thread implements Enums
          locationsToRedraw.addAll(target.getCoordinates());
 
          boolean targetConsciousBeforeWound = target.getCondition().isConscious();
-         ArrayList<Spell> spellsList = spells.get(target);
+         List<Spell> spellsList = spells.get(target);
          for (Spell spell : spellsList) {
             spell.applySpell(target, _arena);
          }
@@ -827,11 +830,11 @@ public class Battle extends Thread implements Enums
       }
    }
 
-   public void applyWounds(HashMap<Character, ArrayList<Wound>> wounds) {
-      TreeSet<Character> hitTargets = new TreeSet<>(wounds.keySet());
+   public void applyWounds(Map<Character, List<Wound>> wounds) {
+      Set<Character> hitTargets = new TreeSet<>(wounds.keySet());
       for (Character target : hitTargets) {
          boolean targetConsciousBeforeWound = target.getCondition().isConscious();
-         ArrayList<Wound> woundsList = wounds.get(target);
+         List<Wound> woundsList = wounds.get(target);
          for (Wound wound : woundsList) {
             target.applyWound(wound, _arena);
          }
@@ -851,7 +854,7 @@ public class Battle extends Thread implements Enums
    }
 
    private boolean resolveAttack(Character attacker, RequestAction attack, Character defender, RequestDefense defense,
-                                 HashMap<Character, ArrayList<Wound>> wounds) throws BattleTerminatedException {
+                                 Map<Character, List<Wound>> wounds) throws BattleTerminatedException {
       int attackStyle = attack._styleRequest.getAnswerIndex();
       boolean grappleAttack = attack.isGrappleAttack() || attack.isCounterAttackGrab();
       Weapon attackingWeapon = attacker.getLimb(attack.getLimb()).getWeapon(attacker);
@@ -1218,8 +1221,10 @@ public class Battle extends Thread implements Enums
                damageExplanation += " + " + damageDieExplanation;
             }
 
-            resolveDamage(attacker, defender, attackingWeapon.getName(), damageExplanation, baseDamage, bonusDamage, damageDie, attackMode.getDamageType(),
-                          attackingWeapon.getSpecialDamageModifier(), attackingWeapon.getSpecialDamageModifierExplanation(), sb, wounds,
+            resolveDamage(attacker, defender, attackingWeapon.getName(), damageExplanation, baseDamage,
+                          bonusDamage, damageDie, attackMode.getDamageType(),
+                          attackingWeapon.getSpecialDamageModifier(),
+                          attackingWeapon.getSpecialDamageModifierExplanation(), sb, wounds,
                           (byte) (result - finalTN), attack.isCharge());
          }
       }
@@ -1229,7 +1234,7 @@ public class Battle extends Thread implements Enums
          if (attackingWeapon.getSize() > 0) {
             ArenaLocation dropSpot = null;
             if (hit) {
-               ArrayList<Wound> woundsOnDefender = wounds.get(defender);
+               List<Wound> woundsOnDefender = wounds.get(defender);
                // woundsOnDefender can be null if the hit was too small to do any effective damage
                if ((woundsOnDefender != null) && (woundsOnDefender.size() > 0)) {
                   dropSpot = defender.getLimbLocation(woundsOnDefender.get(woundsOnDefender.size() - 1).getLimb(), _arena.getCombatMap());
@@ -1398,10 +1403,11 @@ public class Battle extends Thread implements Enums
       return finalTN;
    }
 
-   public void resolveDamage(Character attacker, Character defender, String attackingWeaponName, String damageExplanation, int baseDamage, byte bonusDamage,
-                             DiceSet damageDie, DamageType damageType, SpecialDamage specialDamageModifier, String specialDamageModifierExplanation,
-                             StringBuilder sb, HashMap<Character, ArrayList<Wound>> wounds, byte attackSuccessRollOverTN, boolean isCharge)
-                                                                                                                                           throws BattleTerminatedException {
+   public void resolveDamage(Character attacker, Character defender, String attackingWeaponName, String damageExplanation,
+                             int baseDamage, byte bonusDamage, DiceSet damageDie, DamageType damageType,
+                             SpecialDamage specialDamageModifier, String specialDamageModifierExplanation,
+                             StringBuilder sb, Map<Character, List<Wound>> wounds, byte attackSuccessRollOverTN,
+                             boolean isCharge) throws BattleTerminatedException {
       String damageTypeString = damageType.fullname;
       damageDie = attacker.adjustDieRoll(damageDie, RollType.DAMAGE_ATTACK, defender/*target*/);
       int damageRoll = damageDie.roll(true/*allowExplodes*/);
@@ -1575,7 +1581,7 @@ public class Battle extends Thread implements Enums
          }
       }
 
-      ArrayList<Wound> woundsList = wounds.get(defender);
+      List<Wound> woundsList = wounds.get(defender);
       if (woundsList == null) {
          woundsList = new ArrayList<>();
          wounds.put(defender, woundsList);
@@ -1583,13 +1589,13 @@ public class Battle extends Thread implements Enums
       woundsList.add(wound);
    }
 
-   private boolean selectActions(ArrayList<Character> activeCombatants, HashMap<Character,
-                                 RequestAction> results, ArrayList<Character> allCombatants)
+   private boolean selectActions(List<Character> activeCombatants, Map<Character,
+                                 RequestAction> results, List<Character> allCombatants)
                  throws BattleTerminatedException {
       // First, ask each character to declare their action for this round, but don't wait for the response yet.
-      ArrayList<SyncRequest> resultsQueue = new ArrayList<>();
-      ArrayList<SyncRequest> waitingList = new ArrayList<>();
-      ArrayList<Character> actedCombatants = new ArrayList<>();
+      List<SyncRequest> resultsQueue = new ArrayList<>();
+      List<SyncRequest> waitingList = new ArrayList<>();
+      List<Character> actedCombatants = new ArrayList<>();
       for (Character actor : activeCombatants) {
          Rules.diag("Battle:selectActions for actor " + actor.getName());
          actedCombatants.add(actor);
@@ -1829,9 +1835,9 @@ public class Battle extends Thread implements Enums
       return true;
    }
 
-   private void checkForWaitingCharactersToAttack(HashMap<Character, RequestAction> results, ArrayList<Character> allCombatants,
-                                                  ArrayList<SyncRequest> resultsQueue, ArrayList<SyncRequest> waitingList,
-                                                  ArrayList<Character> actedCombatants, Character actor) {
+   private void checkForWaitingCharactersToAttack(Map<Character, RequestAction> results, List<Character> allCombatants,
+                                                  List<SyncRequest> resultsQueue, List<SyncRequest> waitingList,
+                                                  List<Character> actedCombatants, Character actor) {
       ArrayList<Character> newAttackers = getAttackerWaitingToAttack(actor);
       for (Character attacker : newAttackers) {
          // If we waited for an opportunity on our last round, and someone
@@ -1904,7 +1910,7 @@ public class Battle extends Thread implements Enums
     * @param actor
     * @param actReq
     */
-   private void getNextQuestionForAction(ArrayList<Character> allCombatants, ArrayList<SyncRequest> resultsQueue, ArrayList<SyncRequest> waitingList,
+   private void getNextQuestionForAction(List<Character> allCombatants, List<SyncRequest> resultsQueue, List<SyncRequest> waitingList,
                                          Character actor, RequestAction actReq) {
       // now, any action that needs another question must be asked
       SyncRequest req = actReq.getNextQuestion(actor, allCombatants, _arena);

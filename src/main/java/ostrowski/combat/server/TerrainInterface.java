@@ -1,6 +1,7 @@
 package ostrowski.combat.server;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -621,8 +622,8 @@ public class TerrainInterface extends Helper implements SelectionListener, Modif
       }
    }
    public void onMouseUp(ArenaLocation loc, Event event, double angleFromCenter, double normalizedDistFromCenter,
-                         IMapWidget mapWidget, ArrayList<ArenaCoordinates> locationsToRedraw) {
-      ArrayList<ArenaLocation> lineLocs = null;
+                         IMapWidget mapWidget, List<ArenaCoordinates> locationsToRedraw) {
+      List<ArenaLocation> lineLocs = null;
       if ((_currentTerrain > -1) &&_lineActive) {
          lineLocs = mapWidget.getLine();
       }
@@ -741,8 +742,8 @@ public class TerrainInterface extends Helper implements SelectionListener, Modif
          }
       }
    }
-   private static void fillMap(ArenaLocation loc, short newTerrain, CombatMap map, ArrayList<ArenaCoordinates> locationsToRedraw) {
-      ArrayList<ArenaLocation> locsLeftToProcess = new ArrayList<>();
+   private static void fillMap(ArenaLocation loc, short newTerrain, CombatMap map, List<ArenaCoordinates> locationsToRedraw) {
+      List<ArenaLocation> locsLeftToProcess = new ArrayList<>();
       locsLeftToProcess.add(loc);
 
       TerrainType originalTerrain = loc.getTerrain();

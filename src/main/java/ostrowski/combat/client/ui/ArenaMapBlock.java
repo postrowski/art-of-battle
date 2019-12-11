@@ -6,6 +6,7 @@ package ostrowski.combat.client.ui;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -51,7 +52,7 @@ public class ArenaMapBlock extends Helper
       _map.addControlGroup(parent);
    }
 
-   public void updateMap(CombatMap map, int selfID, byte selfTeam, ArrayList<ArenaLocation> availableLocs, int targetID) {
+   public void updateMap(CombatMap map, int selfID, byte selfTeam, List<ArenaLocation> availableLocs, int targetID) {
       if (_map.updateMap(map, selfID, selfTeam, availableLocs, targetID)) {
          _map.setZoomToFit();
       }

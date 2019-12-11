@@ -253,7 +253,7 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
    }
 
    @Override
-   public void setSelectableHexes(ArrayList<ArenaCoordinates> selectableHexes) {
+   public void setSelectableHexes(List<ArenaCoordinates> selectableHexes) {
       super.setSelectableHexes(selectableHexes);
       setOpacityOfAllHexes();
    }
@@ -282,7 +282,7 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
    }
 
    @Override
-   public boolean updateMap(CombatMap map, int selfID, byte selfTeam, ArrayList<ArenaLocation> availableLocs, int targetID) {
+   public boolean updateMap(CombatMap map, int selfID, byte selfTeam, List<ArenaLocation> availableLocs, int targetID) {
       synchronized (_locationToObjectMap) {
          _lock_locationToObjectMap.check();
          _locationToObjectMap.clear();

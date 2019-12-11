@@ -5,8 +5,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -551,8 +551,8 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
       return Attribute.Intelligence;
    }
 
-   public boolean resolveSpell(RequestAction attack, RequestDefense defense, HashMap<Character, ArrayList<Spell>> spells,
-                               HashMap<Character, ArrayList<Wound>> wounds, Battle battle) throws BattleTerminatedException {
+   public boolean resolveSpell(RequestAction attack, RequestDefense defense, Map<Character, List<Spell>> spells,
+                               Map<Character, List<Wound>> wounds, Battle battle) throws BattleTerminatedException {
       StringBuilder sbDescription = new StringBuilder();
       // explain casting
       // determine spell casting TN
@@ -622,7 +622,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
          if (target == null) {
             target = _caster;
          }
-         ArrayList<Spell> spellList = spells.get(target);
+         List<Spell> spellList = spells.get(target);
          if (spellList == null) {
             spellList = new ArrayList<>();
             spells.put(target, spellList);

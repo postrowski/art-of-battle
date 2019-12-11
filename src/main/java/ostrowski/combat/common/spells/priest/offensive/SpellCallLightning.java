@@ -3,6 +3,7 @@ package ostrowski.combat.common.spells.priest.offensive;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.DiceSet;
@@ -134,7 +135,7 @@ public class SpellCallLightning extends PriestSpell implements IRangedSpell, ICa
                }
             }
          }
-         HashMap<Character, ArrayList<Wound>> wounds = new HashMap<>();
+         Map<Character, List<Wound>> wounds = new HashMap<>();
          if (hitCharacter != null) {
             DiceSet damageDice = new DiceSet(0, 0, 0, 0, 0, 2, 0, 0/*dBell*/, 1.0);
             boolean computeDamage = false;
@@ -171,7 +172,7 @@ public class SpellCallLightning extends PriestSpell implements IRangedSpell, ICa
                   }
                   sb.append("<br/>");
 
-                  ArrayList<Wound> woundsList = wounds.get(hitCharacter);
+                  List<Wound> woundsList = wounds.get(hitCharacter);
                   if (woundsList == null) {
                      woundsList = new ArrayList<>();
                      wounds.put(hitCharacter, woundsList);

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.swt.events.KeyEvent;
@@ -112,26 +113,26 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
       return null;
    }
 
-   private Button                                          _centerOnSelfButton;
-   protected CombatMap                                     _combatMap;
-   protected final ArrayList<IMapListener>                 _listeners;
-   protected int                                           _selfID;
-   protected byte                                          _selfTeam;
-   protected ArenaLocation                                 _selfLoc               = null;
-   protected int                                           _targetID;
-   protected RequestMovement                               _movementRequest       = null;
-   protected RequestLocation                               _locationRequest       = null;
-   protected ArrayList<ArenaLocation>                      _selectableHexes       = null;
-   protected boolean                                       _isDragable            = true;
-   protected List<Orientation>                             _mouseOverOrientations = new ArrayList<>();
-   protected Character                                     _mouseOverCharacter    = null;
-   protected ArenaLocation                                 _mouseOverLocation     = null;
-   protected HashMap<ArenaCoordinates, List<ArenaTrigger>> _eventsMap             = new HashMap<>();
+   private Button                                      _centerOnSelfButton;
+   protected CombatMap                                 _combatMap;
+   protected final List<IMapListener>                  _listeners;
+   protected int                                       _selfID;
+   protected byte                                      _selfTeam;
+   protected ArenaLocation                             _selfLoc               = null;
+   protected int                                       _targetID;
+   protected RequestMovement                           _movementRequest       = null;
+   protected RequestLocation                           _locationRequest       = null;
+   protected List<ArenaLocation>                       _selectableHexes       = null;
+   protected boolean                                   _isDragable            = true;
+   protected List<Orientation>                         _mouseOverOrientations = new ArrayList<>();
+   protected Character                                 _mouseOverCharacter    = null;
+   protected ArenaLocation                             _mouseOverLocation     = null;
+   protected Map<ArenaCoordinates, List<ArenaTrigger>> _eventsMap             = new HashMap<>();
 
-   protected HashMap<ArenaCoordinates, ArenaCoordinates>   _routeMap              = null;
-   protected ArrayList<ArenaCoordinates>                   _path                  = null;
-   protected static ArrayList<ArenaLocation>               _line                  = new ArrayList<>();
-   protected static RGB                                    _lineColor             = null;
+   protected Map<ArenaCoordinates, ArenaCoordinates>   _routeMap              = null;
+   protected List<ArenaCoordinates>                    _path                  = null;
+   protected static List<ArenaLocation>                _line                  = new ArrayList<>();
+   protected static RGB                                _lineColor             = null;
 
    protected IMapWidget.MapMode _mapMode = MapMode.DRAG;
 
@@ -293,7 +294,7 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
    }
 
    @Override
-   public void setSelectableHexes(ArrayList<ArenaCoordinates> selectableHexes)
+   public void setSelectableHexes(List<ArenaCoordinates> selectableHexes)
    {
       _selectableHexes  = _combatMap.getLocations(selectableHexes);
       for (ArenaLocation selectableHex : _selectableHexes) {
@@ -321,8 +322,8 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
    }
 
    @Override
-   public void setRouteMap(HashMap<Orientation, Orientation> newMap,
-                           ArrayList<Orientation> path, boolean allowRedraw)
+   public void setRouteMap(Map<Orientation, Orientation> newMap,
+                           List<Orientation> path, boolean allowRedraw)
    {
       _routeMap = null;
       _path = null;
@@ -454,7 +455,7 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
 
    @Override
    public boolean updateMap(CombatMap map, int selfID, byte selfTeam,
-                            ArrayList<ArenaLocation> availableLocs, int targetID)
+                            List<ArenaLocation> availableLocs, int targetID)
    {
       _selfID   = selfID;
       _selfTeam = selfTeam;
@@ -584,11 +585,11 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
       _lineColor = lineColor;
    }
    @Override
-   public ArrayList<ArenaLocation> getLine() {
+   public List<ArenaLocation> getLine() {
       return _line;
    }
    @Override
-   public ArrayList<ArenaLocation> getWallLine() {
+   public List<ArenaLocation> getWallLine() {
       return _line;
    }
 

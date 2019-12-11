@@ -6,6 +6,8 @@ package ostrowski.combat.common.spells.mage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.CombatMap;
@@ -157,9 +159,9 @@ public class SpellWallOfFire extends ExpiringMageSpell implements IAreaSpell, IC
             sb.append(", which is modified by ").append(alterationExplanationBuffer.toString());
          }
          sb.append("<br/>");
-         ArrayList<Wound> woundsList = new ArrayList<>();
+         List<Wound> woundsList = new ArrayList<>();
          woundsList.add(wound);
-         HashMap<Character, ArrayList<Wound>> wounds = new HashMap<>();
+         Map<Character, List<Wound>> wounds = new HashMap<>();
          wounds.put(charToTakeDamage, woundsList);
          _arena._battle.applyWounds(wounds);
       }

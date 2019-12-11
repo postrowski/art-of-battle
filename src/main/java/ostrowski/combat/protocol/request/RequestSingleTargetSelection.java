@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.Rules;
@@ -103,8 +104,8 @@ public class RequestSingleTargetSelection extends SyncRequest implements Enums
       }
       messageBuffer.append(".");
       _message = messageBuffer.toString();
-      ArrayList<Character> combatants = arena.getCombatants();
-      ArrayList<Character> targets =  new ArrayList<>();
+      List<Character> combatants = arena.getCombatants();
+      List<Character> targets =  new ArrayList<>();
       boolean targetEnemies = (castingSpell == null) || !castingSpell.isBeneficial();
       synchronized (combatants) {
 

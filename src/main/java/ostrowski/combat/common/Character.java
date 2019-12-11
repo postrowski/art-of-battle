@@ -3915,7 +3915,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       return _orderedTargetIds;
    }
 
-   public void setTargetPriorities(ArrayList<Integer> orderedTargetIds) {
+   public void setTargetPriorities(List<Integer> orderedTargetIds) {
       _orderedTargetIds.clear();
       _orderedTargetIds.addAll(orderedTargetIds);
       if ((_orderedTargetIds != null) && (_orderedTargetIds.size() > 0)) {
