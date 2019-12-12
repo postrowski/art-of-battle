@@ -17,27 +17,19 @@ import ostrowski.protocol.SerializableObject;
 
 public class ServerStatus extends SerializableObject implements Enums
 {
-   private byte[]              _roomOnTeam            = new byte[TEAM_NAMES.length];
-   private List<Character>     _combatants            = new ArrayList<>();
-   private final List<Integer> _combatantsWaitingByID = new ArrayList<>();
+   private List<Character>         _combatants            = new ArrayList<>();
+   private final List<Integer>     _combatantsWaitingByID = new ArrayList<>();
 
    public ServerStatus() {}
    public ServerStatus(CombatMap map, List<Character> combatants,
                        List<Character> combatantsWaitingToConnect)
    {
-      byte[] roomOnTeam = map.getAvailableCombatantsOnTeams();
       _combatants = combatants;
-      for (byte team=0 ; team<_roomOnTeam.length ; team++) {
-         _roomOnTeam[team] = roomOnTeam[team];
-      }
       for (Character chr : combatantsWaitingToConnect) {
          _combatantsWaitingByID.add(chr._uniqueID);
       }
    }
 
-   public boolean isRoomOnTeam(byte team) {
-      return _roomOnTeam[team] > 0;
-   }
 //   public Object writeReplace() throws ObjectStreamException { return null; }
 //   public Object readResolve() throws ObjectStreamException {  return null; }
 
@@ -47,10 +39,6 @@ public class ServerStatus extends SerializableObject implements Enums
       try {
          writeToStream(_combatants, out);
          writeToStream(_combatantsWaitingByID, out);
-         writeToStream((byte)(_roomOnTeam.length), out);
-         for (byte element : _roomOnTeam) {
-            writeToStream(element, out);
-         }
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -70,11 +58,6 @@ public class ServerStatus extends SerializableObject implements Enums
       try {
          readIntoListCharacter(_combatants, in);
          readIntoListInteger(_combatantsWaitingByID, in);
-         byte size = readByte(in);
-         _roomOnTeam = new byte[size];
-         for (int i=0 ; i<size ; i++) {
-            _roomOnTeam[i] = readByte(in);
-         }
       } catch (IOException e) {
          e.printStackTrace();
       }

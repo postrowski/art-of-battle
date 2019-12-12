@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -154,18 +156,18 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
    public short getSizeY() { return _sizeY;}
    public short getSizeX() { return _sizeX;}
    public byte getAvailableCombatantIndexOnTeam(byte team) {
-       if (team == -1) {
+      if (team == -1) {
          return -1;
       }
 
-       for (byte cur=0 ; cur<_maxCombatantsPerTeam ; cur++) {
-          ArenaLocation loc = _startPoints[team][cur];
-          if ((loc != null) && (loc.getCharacters().size() == 0)) {
+      for (byte cur=0 ; cur<_maxCombatantsPerTeam ; cur++) {
+         ArenaLocation loc = _startPoints[team][cur];
+         if ((loc != null) && (loc.getCharacters().size() == 0)) {
             return cur;
          }
-       }
-       return -1;
-    }
+      }
+      return -1;
+   }
    public byte[] getAvailableCombatantsOnTeams() {
       byte[] roomOnTeam = new byte[TEAM_NAMES.length];
       for (byte team=0 ; team<_teamCount ; team++) {
@@ -179,9 +181,28 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       }
       return roomOnTeam;
    }
-   public ArrayList<ArenaLocation> getAvailablePlayerLocs()
+   public Map<Byte, List<String>> getAvailableCombatantNamesByTeams() {
+      Map<Byte, List<String>> charNamesByTeam = new HashMap<>();
+      for (byte team=0 ; team<_teamCount ; team++) {
+         List<String> characterNames = new ArrayList<>();
+         charNamesByTeam.put(team, characterNames);
+         for (byte cur=0 ; cur<_maxCombatantsPerTeam ; cur++) {
+            ArenaLocation loc = _startPoints[team][cur];
+            if ((loc != null) && (loc.getCharacters().size() == 0)) {
+               if (_stockCharName[team][cur].isEmpty()) {
+                  characterNames.add("Any");
+               }
+               else {
+                  characterNames.add(_stockCharName[team][cur]);
+               }
+            }
+         }
+      }
+      return charNamesByTeam;
+   }
+   public List<ArenaLocation> getAvailablePlayerLocs()
    {
-      ArrayList<ArenaLocation> availLocs = new ArrayList<>();
+      List<ArenaLocation> availLocs = new ArrayList<>();
       for (byte team=0 ; team<_teamCount ; team++) {
          for (byte cur=0 ; cur<_maxCombatantsPerTeam ; cur++) {
             ArenaLocation loc = _startPoints[team][cur];
@@ -213,7 +234,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
    }
    public boolean removeCharacter(Character character) {
       boolean removed = false;
-      ArrayList<ArenaLocation> locs = getLocations(character);
+      List<ArenaLocation> locs = getLocations(character);
       for (ArenaLocation loc : locs) {
          if (loc != null) {
             if (loc.remove(character)) {
@@ -228,7 +249,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       return removed;
    }
    public void addCharacter(Character character) {
-      ArrayList<ArenaLocation> locs = getLocations(character);
+      List<ArenaLocation> locs = getLocations(character);
       for (ArenaLocation loc : locs) {
          if (loc != null) {
             loc.addThing(character);
@@ -564,8 +585,8 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       }
       return getLocation(coordinate._x, coordinate._y);
    }
-   public ArrayList<ArenaLocation> getLocations(ArrayList<ArenaCoordinates> coordinates) {
-      ArrayList<ArenaLocation> locations = new ArrayList<>();
+   public List<ArenaLocation> getLocations(List<ArenaCoordinates> coordinates) {
+      List<ArenaLocation> locations = new ArrayList<>();
       for (ArenaCoordinates coordinate : coordinates) {
          locations.add(getLocation(coordinate));
       }
@@ -576,8 +597,8 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       ArenaLocation loc = character.getLimbLocation(LimbType.HEAD, this);
       return getLocation(loc._x, loc._y);
    }
-   public ArrayList<ArenaLocation> getLocations(Character character) {
-      ArrayList<ArenaLocation> locations = new ArrayList<>();
+   public List<ArenaLocation> getLocations(Character character) {
+      List<ArenaLocation> locations = new ArrayList<>();
       for (ArenaCoordinates coord : character.getCoordinates()) {
          locations.add(getLocation(coord._x, coord._y));
       }
@@ -1555,13 +1576,13 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
 
    public void updateCombatant(Character newCharacter, boolean checkTriggers)
    {
-       ArrayList<ArenaLocation> newCharLocs = getLocations(newCharacter);
+       List<ArenaLocation> newCharLocs = getLocations(newCharacter);
        boolean characterChangedLocations = false;
        for (ArenaLocation newLoc : newCharLocs) {
           if (newLoc == null) {
              DebugBreak.debugBreak();
           }
-          ArrayList<Character> chars = newLoc.getCharacters();
+          List<Character> chars = newLoc.getCharacters();
           boolean characterFound = false;
           for (Character newLocCharacter : chars) {
              if (newLocCharacter._uniqueID == newCharacter._uniqueID) {

@@ -46,6 +46,7 @@ import ostrowski.combat.protocol.ServerStatus;
 import ostrowski.combat.protocol.TargetPriorities;
 import ostrowski.combat.protocol.request.RequestAction;
 import ostrowski.combat.protocol.request.RequestActionOption;
+import ostrowski.combat.protocol.request.RequestArenaEntrance;
 import ostrowski.combat.protocol.request.RequestAttackStyle;
 import ostrowski.combat.protocol.request.RequestDefense;
 import ostrowski.combat.protocol.request.RequestDefenseOfCounterAttack;
@@ -249,6 +250,7 @@ public class Rules extends DebugBreak implements Enums
       SerializableFactory.registerClass("SrvSts", ServerStatus.class);
       SerializableFactory.registerClass("ReqAct", RequestAction.class);
       SerializableFactory.registerClass("ReqAcO", RequestActionOption.class);
+      SerializableFactory.registerClass("ReqArE", RequestArenaEntrance.class);
       SerializableFactory.registerClass("ReqSty", RequestAttackStyle.class);
       SerializableFactory.registerClass("ReqDef", RequestDefense.class);
       SerializableFactory.registerClass("ReqDCA", RequestDefenseOfCounterAttack.class);

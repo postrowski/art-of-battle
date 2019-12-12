@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -59,6 +60,7 @@ import ostrowski.combat.protocol.MessageText;
 import ostrowski.combat.protocol.ServerStatus;
 import ostrowski.combat.protocol.TargetPriorities;
 import ostrowski.combat.protocol.request.RequestAction;
+import ostrowski.combat.protocol.request.RequestArenaEntrance;
 import ostrowski.combat.protocol.request.RequestLocation;
 import ostrowski.combat.protocol.request.RequestMovement;
 import ostrowski.protocol.SerializableObject;
@@ -75,12 +77,13 @@ public class Arena implements Enums, IMapListener
    Semaphore _lock_mapCombatantsToAI = new Semaphore("Arena_mapCombatantsToAI", CombatSemaphore.CLASS_ARENA_mapCombatantsToAI);
    Semaphore _lock_proxyList = new Semaphore("Arena_proxyList", CombatSemaphore.CLASS_ARENA_proxyList);
    Semaphore _lock_locationRequests = new Semaphore("Arena_locationRequests", CombatSemaphore.CLASS_ARENA_locationRequests);
-   private final ArrayList<Character>            _combatants          = new ArrayList<>();
-   private final ArrayList<ClientProxy>          _proxyList           = new ArrayList<>();
-   private final HashMap<Character, AI>          _mapCombatantToAI    = new HashMap<>();
-   private final Set<Character>                  _localCombatants     = new HashSet<>();
-   private final HashMap<Character, ClientProxy> _mapCombatantToProxy = new HashMap<>();
-   private final HashMap<ClientProxy, Character> _mapProxyToCombatant = new HashMap<>();
+   private final List<Character>             _combatants          = new ArrayList<>();
+   private final List<ClientProxy>           _proxyList           = new ArrayList<>();
+   private final List<Character>             _characterWaitingToConnect = new ArrayList<>();
+   private final Map<Character, AI>          _mapCombatantToAI    = new HashMap<>();
+   private final Set<Character>              _localCombatants     = new HashSet<>();
+   private final Map<Character, ClientProxy> _mapCombatantToProxy = new HashMap<>();
+   private final Map<ClientProxy, Character> _mapProxyToCombatant = new HashMap<>();
    public  Battle                          _battle              = null;
    private CombatServer                    _server              = null;
    private CombatMap                       _combatMap           = null;
@@ -455,7 +458,7 @@ public class Arena implements Enums, IMapListener
       return false;
 
    }
-   public ArrayList<Character> orderCombatantsByActionsAndInitiative()
+   public List<Character> orderCombatantsByActionsAndInitiative()
    {
       synchronized (_combatants) {
          try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_combatants)) {
@@ -491,7 +494,7 @@ public class Arena implements Enums, IMapListener
       }
       return _combatants;
    }
-   public ArrayList<Character> getCombatants() { return _combatants; }
+   public List<Character> getCombatants() { return _combatants; }
 
    public Character getCharacter(int charID) {
       synchronized (_combatants) {
@@ -846,7 +849,6 @@ public class Arena implements Enums, IMapListener
       sendMessageTextToAllClients("An annonymous client has disconnected.", false/*popUp*/);
    }
 
-   private final List<Character> _characterWaitingToConnect = new ArrayList<>();
    private void waitForClientToReconnect(Character combatant) {
       _characterWaitingToConnect.add(combatant);
    }
@@ -873,6 +875,7 @@ public class Arena implements Enums, IMapListener
       proxy.sendObject(_combatMap);
       sendServerStatus(proxy);
    }
+
    public void sendServerStatus(ClientProxy target) {
       ServerStatus status = new ServerStatus(_combatMap, _combatants, _characterWaitingToConnect);
       if (target == null) {
@@ -938,8 +941,8 @@ public class Arena implements Enums, IMapListener
    }
    public boolean canCharacterMove(Character mover, Orientation newOrientation) {
       Orientation curOrient = mover.getOrientation();
-      ArrayList<ArenaLocation> curLocs = getLocations(curOrient.getCoordinates());
-      ArrayList<ArenaLocation> newLocs = getLocations(newOrientation.getCoordinates());
+      List<ArenaLocation> curLocs = getLocations(curOrient.getCoordinates());
+      List<ArenaLocation> newLocs = getLocations(newOrientation.getCoordinates());
       for (int i=0 ; i<curLocs.size() ; i++) {
          if (!ArenaLocation.canMoveBetween(curLocs.get(i), newLocs.get(i), true/*blockByCharacters*/)) {
 //         if (!newLocs.get(i).canEnter(curLocs.get(i), true/*blockByCharacters*/)) {
@@ -948,8 +951,8 @@ public class Arena implements Enums, IMapListener
       }
       return true;
    }
-   public ArrayList<ArenaLocation> canCharacterMove(Character mover, Facing direction) {
-      ArrayList<ArenaLocation> newLocs = new ArrayList<>();
+   public List<ArenaLocation> canCharacterMove(Character mover, Facing direction) {
+      List<ArenaLocation> newLocs = new ArrayList<>();
       for (ArenaCoordinates coord : mover.getCoordinates()) {
          short newX = (short) (coord._x + direction.moveX);
          short newY = (short) (coord._y + direction.moveY);
@@ -1029,14 +1032,14 @@ public class Arena implements Enums, IMapListener
 
    public void getMoveableLocations(Character character, byte movementAllowance, CombatMap map,
                                     List<Orientation> futureOrientations,
-                                    HashMap<Orientation, Orientation> mapOfFutureOrientToSourceOrient) {
+                                    Map<Orientation, Orientation> mapOfFutureOrientToSourceOrient) {
       futureOrientations.add(character.getOrientation());
       getFutureMoves(futureOrientations, character, character.getOrientation(), movementAllowance, map,
                      !character.hasMovedThisRound()/*firstMoveOfRound*/, mapOfFutureOrientToSourceOrient, false/*considerUnknownLocations*/);
    }
    public void getFutureMoves(List<Orientation> validOrientations, Character character, Orientation curOrientation,
                               byte movementAllowance, CombatMap map, boolean firstMoveOfRound,
-                              HashMap<Orientation, Orientation> mapOfFutureOrientToSourceOrient, boolean considerUnknownLocations) {
+                              Map<Orientation, Orientation> mapOfFutureOrientToSourceOrient, boolean considerUnknownLocations) {
       if (mapOfFutureOrientToSourceOrient == null) {
          mapOfFutureOrientToSourceOrient = new HashMap<>();
       }
@@ -1079,10 +1082,10 @@ public class Arena implements Enums, IMapListener
     */
    static public Orientation getAllRoutesFrom(Orientation startOrientation, CombatMap map,
                                               int maxMovement, byte movePerRound, boolean firstMoveOfRound,
-                                              Character mover, HashMap<Orientation, Orientation> bestFromMap,
+                                              Character mover, Map<Orientation, Orientation> bestFromMap,
                                               Character target, ArenaCoordinates toLoc, boolean allowRanged,
                                               boolean onlyChargeTypes,
-                                              ArrayList<SkillType> itemsToPickupUsingSkill, boolean considerUnknownLocations) {
+                                              List<SkillType> itemsToPickupUsingSkill, boolean considerUnknownLocations) {
       // movesInRound is an ArrayList of [HashMap that key a location, with a value of where it comes from].
       // The index in the movesInRound list is how many movement points it will take to get there.
       ArrayList<HashMap<Orientation, Orientation >> movesInRound = new ArrayList<>();
@@ -1241,7 +1244,7 @@ public class Arena implements Enums, IMapListener
                      }
                   }
                   if (itemsToPickupUsingSkill != null) {
-                     ArrayList<ArenaLocation> destLocations = map.getLocations(destOrientation.getCoordinates());
+                     List<ArenaLocation> destLocations = map.getLocations(destOrientation.getCoordinates());
                      for (ArenaLocation destLoc : destLocations) {
                         synchronized (destLoc) {
                            try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(destLoc._lock_this)) {
@@ -1943,7 +1946,7 @@ public class Arena implements Enums, IMapListener
    public ArenaLocation getLocation(ArenaCoordinates coord) {
       return _combatMap.getLocation(coord);
    }
-   public ArrayList<ArenaLocation> getLocations(ArrayList<ArenaCoordinates> headCoord) {
+   public List<ArenaLocation> getLocations(List<ArenaCoordinates> headCoord) {
       return _combatMap.getLocations(headCoord);
    }
    public boolean serializeToFile(File battleFile) {
@@ -2143,7 +2146,7 @@ public class Arena implements Enums, IMapListener
          }
       }
       int highestUniqueID = 0;
-      ArrayList<Character> combatants = getCombatants();
+      List<Character> combatants = getCombatants();
       for (Character character : combatants) {
          character.setCasterAndTargetFromIDs(combatants);
          if (character._uniqueID > highestUniqueID) {
