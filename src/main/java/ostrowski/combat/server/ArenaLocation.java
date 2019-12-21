@@ -769,7 +769,14 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    }
    @Override
    public String toString() {
-      return "ArenaLoc {"+_x+","+_y+"}";
+      StringBuilder sb = new StringBuilder();
+      sb.append("ArenaLoc {").append(_x).append(",").append(_y).append("}");
+      sb.append(", things:[");
+      for (Object thing : _things) {
+         sb.append(thing.toString()).append("\n");
+      }
+      sb.append("]");
+      return sb.toString();
    }
 
    public void addLocationActions(RequestAction req, Character actor)

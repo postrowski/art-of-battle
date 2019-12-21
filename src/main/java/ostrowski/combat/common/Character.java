@@ -3825,7 +3825,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    public String toString() {
       StringBuilder sb = new StringBuilder();
       sb.append("Character: ");
-      sb.append(", uniqueID: ").append(_uniqueID);
+      sb.append("uniqueID: ").append(_uniqueID);
       sb.append(", name: ").append(_name);
       sb.append(", points: ").append(getPointTotal());
       sb.append(", race: ").append((_race == null) ? null : _race.getName());
