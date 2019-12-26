@@ -478,7 +478,7 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
                if ((row % 2) != (col % 2)) {
                   continue;
                }
-               ArrayList<Character> characters = _combatMap.getLocation(col, row).getCharacters();
+               List<Character> characters = _combatMap.getLocation(col, row).getCharacters();
                for (Character character : characters) {
                   if (character._uniqueID == selfID) {
                      _selfLoc = _combatMap.getLocation(col, row).clone();

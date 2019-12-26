@@ -37,7 +37,6 @@ import ostrowski.combat.common.Rules;
 import ostrowski.combat.common.enums.AI_Type;
 import ostrowski.combat.common.enums.Enums;
 import ostrowski.combat.protocol.BeginBattle;
-import ostrowski.combat.protocol.EnterArena;
 import ostrowski.combat.protocol.MapVisibility;
 import ostrowski.combat.protocol.MessageText;
 import ostrowski.combat.protocol.ServerStatus;
@@ -75,7 +74,7 @@ public class CharacterDisplay implements Enums, ModifyListener, IMapListener //,
    private final MessagesBlock       _messagesBlock       = new MessagesBlock(this);
    private final ArenaMapBlock       _arenaMapBlock       = new ArenaMapBlock();
    private final AIBlock             _aiBlock             = new AIBlock(this);
-   private int                       _uniqueConnectionID  = -1;
+   public  int                       _uniqueConnectionID  = -1;
    private final List<SyncRequest>   _pendingRequests     = new ArrayList<>();
    public Shell                      _shell;
    public ArrayList<Helper>          _uiBlocks            = new ArrayList<>();
@@ -248,23 +247,7 @@ public class CharacterDisplay implements Enums, ModifyListener, IMapListener //,
       _messagesBlock.enableControls(true/*enabledFlag*/);
    }
 
-   public void onEnterArena(boolean entering, byte team) {
-      setControls(!entering, true);
-      if (_charWidget._character != null) {
-         _charWidget._character._uniqueID = _uniqueConnectionID;
-      }
-      EnterArena enterMsg = new EnterArena(_charWidget._character, entering, team);
-      _serverConnection.sendObject(enterMsg, "server");
-      _targetPriorityBlock.setTeam(team);
-      _targetPriorityBlock.updateServerWithTargets();
-   }
-
-   public void onBeginBattle() {
-      _serverConnection.sendObject(new BeginBattle(), "server");
-   }
-
    public void beginBattle(BeginBattle battleMsg) {
-      _connectionBlock.beginBattle(battleMsg);
    }
 
    //   public void handleMessage(final String inputLine)
@@ -342,11 +325,11 @@ public class CharacterDisplay implements Enums, ModifyListener, IMapListener //,
 
    public void updateMap(CombatMap map) {
       if (map != null) {
-         _arenaMapBlock.updateMap(map, _charWidget._character._uniqueID, _charWidget._character._teamID, map.getAvailablePlayerLocs(),
-                                  _charInfoBlock.getTargetUniqueID());
-         //         if ((_charWidget._character._locX != -1) && (_charWidget._character._locY != -1)) {
-         //            _arenaMapBlock.updateCombatant(_charWidget._character);
-         //         }
+         _arenaMapBlock.updateMap(map, _charWidget._character._uniqueID, _charWidget._character._teamID,
+                                  map.getAvailablePlayerLocs(), _charInfoBlock.getTargetUniqueID());
+//         if ((_charWidget._character._locX != -1) && (_charWidget._character._locY != -1)) {
+//            _arenaMapBlock.updateCombatant(_charWidget._character);
+//         }
       }
    }
 
@@ -423,7 +406,7 @@ public class CharacterDisplay implements Enums, ModifyListener, IMapListener //,
       }
       // If this didn't match the first _pendingRequest, maybe they are changing targets
       // A click on a character means 'target this character'.
-      ArrayList<Character> characters = loc.getCharacters();
+      List<Character> characters = loc.getCharacters();
       for (Character target : characters) {
          // Never target yourself.
          // TODO: what about healing spells? targeting yourself should be allowed for this.
@@ -442,6 +425,7 @@ public class CharacterDisplay implements Enums, ModifyListener, IMapListener //,
 
    public void setUniqueConnectionID(int id) {
       _uniqueConnectionID = id;
+      _charWidget._character._uniqueID = _uniqueConnectionID;
       Rules.setDiagComponentName("Client" + id);
    }
 

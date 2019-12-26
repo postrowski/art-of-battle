@@ -447,9 +447,9 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
       }
    }
 
-   public ArrayList<Character> getCharacters() {
+   public List<Character> getCharacters() {
       // Report all characters in this location.
-      ArrayList<Character> chars = new ArrayList<>();
+      List<Character> chars = new ArrayList<>();
       synchronized (this) {
          try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_this)) {
             if (_things == null) {
@@ -772,8 +772,13 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
       StringBuilder sb = new StringBuilder();
       sb.append("ArenaLoc {").append(_x).append(",").append(_y).append("}");
       sb.append(", things:[");
+      boolean first = true;
       for (Object thing : _things) {
-         sb.append(thing.toString()).append("\n");
+         if (!first) {
+            sb.append("\n");
+         }
+         first = false;
+         sb.append(thing.toString());
       }
       sb.append("]");
       return sb.toString();

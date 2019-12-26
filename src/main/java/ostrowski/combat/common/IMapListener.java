@@ -12,6 +12,10 @@ public interface IMapListener
 {
    void onMouseUp(ArenaLocation loc, Event event, double angleFromCenter, double normalizedDistFromCenter);
    void onMouseDown(ArenaLocation loc, Event event, double angleFromCenter, double normalizedDistFromCenter);
+   default void onRightMouseUp(ArenaLocation loc, Event event, double angleFromCenter, double normalizedDistFromCenter) {
+   }
+   default void onRightMouseDown(ArenaLocation loc, Event event, double angleFromCenter, double normalizedDistFromCenter) {
+   }
    void onMouseDrag(ArenaLocation loc, Event event, double angleFromCenter, double normalizedDistFromCenter);
    void onMouseMove(ArenaLocation loc, Event event, double angleFromCenter, double normalizedDistFromCenter);
 }

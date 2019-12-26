@@ -16,9 +16,10 @@ public class MouseOverCharacterInfoPopup
 
    public void onMouseMove(ArenaLocation loc, Event event, double angleFromCenter, double normalizedDistFromCenter) {
       if (_currentMouseLoc != loc) {
-         Rules.diag("onMouseMove (" + event.x + "," + event.y + ")");
+         //Rules.diag("onMouseMove (" + event.x + "," + event.y + ")");
          _currentMouseLoc = loc;
-         if (_popupMessage == null) {
+         if ((_popupMessage == null) || _popupMessage.isDisposed()) {
+
             Shell shell = event.display.getActiveShell();
             if (shell == null) {
                return;

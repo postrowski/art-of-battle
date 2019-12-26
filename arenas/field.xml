@@ -41,7 +41,7 @@
   <teams count="4" maxCombatantsPerTeam="15">
     <team id="0">
       <combatant AI="Local" charName="Conan" id="0" startX="9" startY="31"/>
-      <combatant AI="Off" charName="" id="1"/>
+      <combatant AI="Local" charName="? 300 Orc" id="1" startX="13" startY="29"/>
       <combatant AI="Off" charName="" id="2"/>
       <combatant AI="Off" charName="" id="3"/>
       <combatant AI="Off" charName=" " id="4"/>
@@ -57,8 +57,8 @@
       <combatant AI="Off" charName="" id="14"/>
     </team>
     <team id="1">
-      <combatant AI="Remote Connection" charName="" id="0" startX="11" startY="3"/>
-      <combatant AI="Off" charName="" id="1"/>
+      <combatant AI="Local" charName="Bruce Lee" id="0" startX="11" startY="3"/>
+      <combatant AI="Local" charName="? 300 Dwarf" id="1" startX="8" startY="6"/>
       <combatant AI="Off" charName="" id="2"/>
       <combatant AI="Off" charName=" " id="3"/>
       <combatant AI="Off" charName=" " id="4"/>

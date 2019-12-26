@@ -14,9 +14,11 @@ import ostrowski.combat.common.CombatMap;
 import ostrowski.combat.common.Condition;
 import ostrowski.combat.protocol.BeginBattle;
 import ostrowski.combat.protocol.CombatSocket;
+import ostrowski.combat.protocol.EnterArena;
 import ostrowski.combat.protocol.MapVisibility;
 import ostrowski.combat.protocol.MessageText;
 import ostrowski.combat.protocol.ServerStatus;
+import ostrowski.combat.protocol.request.RequestArenaEntrance;
 import ostrowski.combat.protocol.request.RequestAttackStyle;
 import ostrowski.combat.protocol.request.RequestLocation;
 import ostrowski.combat.protocol.request.RequestMovement;
@@ -140,12 +142,14 @@ public class ServerConnection extends CombatSocket
          }
          if (Configuration.showChit())
          {
-            if (_statusChit == null) {
-               _statusChit = new StatusChit(_display._shell, SWT.MODELESS | SWT.NO_TRIM);
-               _statusChit.open();
-            }
-            if (_display._charWidget._character != null) {
-               _statusChit.updateFromCharacter(_display._charWidget._character);
+            if (!(req instanceof RequestArenaEntrance)) {
+               if (_statusChit == null) {
+                  _statusChit = new StatusChit(_display._shell, SWT.MODELESS | SWT.NO_TRIM);
+                  _statusChit.open();
+               }
+               if (_display._charWidget._character != null) {
+                  _statusChit.updateFromCharacter(_display._charWidget._character);
+               }
             }
          }
 
@@ -167,6 +171,21 @@ public class ServerConnection extends CombatSocket
             else if (answer instanceof String) {
                req.setCustAnswer((String) answer);
             }
+         }
+         if (req instanceof RequestArenaEntrance) {
+            RequestArenaEntrance entReq = (RequestArenaEntrance) req;
+            Character chr = entReq.getSelectedCharacter();
+            if (chr != null) {
+               _display.setCharacter(chr);
+            }
+            else {
+               chr = _display._charWidget._character;
+               chr._uniqueID = _display._uniqueConnectionID;
+               entReq.setSelectedCharacter(chr);
+            }
+            EnterArena enterMsg = new EnterArena(chr, true, entReq.getSelectedCharacterTeam(), entReq.getSelectedCharacterTeamPosition());
+            sendObject(enterMsg, "server");
+            return;
          }
          Response resp = new Response(req);
          resp.setAnswerKey(req.getFullAnswerID());

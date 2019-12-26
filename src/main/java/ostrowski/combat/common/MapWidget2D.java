@@ -550,8 +550,10 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
          }
       }
       else if ((event.type == SWT.MouseDown) || (event.type == SWT.MouseUp)) {
-         if (event.x > ((Math.min(ZOOM_IN_BUTTON_CENTER.x, ZOOM_OUT_BUTTON_CENTER.x) - ZOOM_BUTTON_RADIUS))) {
-            if (event.y > (ZOOM_IN_BUTTON_CENTER.y - ZOOM_BUTTON_RADIUS)) {
+         if (event.button == 1) {
+            // left mouse button
+            if ((event.x > ((Math.min(ZOOM_IN_BUTTON_CENTER.x, ZOOM_OUT_BUTTON_CENTER.x) - ZOOM_BUTTON_RADIUS)))
+                && (event.y > (ZOOM_IN_BUTTON_CENTER.y - ZOOM_BUTTON_RADIUS))) {
                if (isInButton(event, ZOOM_IN_BUTTON_CENTER)) {
                   if (event.type == SWT.MouseDown) {
                      _zoom++;
@@ -577,48 +579,48 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
                   return;
                }
             }
-         }
-         if (_isDragable) {
-            if (event.type == SWT.MouseDown) {
-               boolean mouseOverSelectableHex = false;
-               if (_selectableHexes != null) {
-                  for (ArenaLocation selectableHex : _selectableHexes) {
-                     int[] bounds = getHexDimensions(selectableHex);
-                     if ((event.x > bounds[X_SMALLEST]) && (event.y > bounds[Y_SMALLEST]) &&
-                         (event.x < bounds[X_LARGEST]) && (event.y < bounds[Y_LARGEST])) {
-                        mouseOverSelectableHex = true;
-                        break;
+            if (_isDragable) {
+               if (event.type == SWT.MouseDown) {
+                  boolean mouseOverSelectableHex = false;
+                  if (_selectableHexes != null) {
+                     for (ArenaLocation selectableHex : _selectableHexes) {
+                        int[] bounds = getHexDimensions(selectableHex);
+                        if ((event.x > bounds[X_SMALLEST]) && (event.y > bounds[Y_SMALLEST]) &&
+                            (event.x < bounds[X_LARGEST]) && (event.y < bounds[Y_LARGEST])) {
+                           mouseOverSelectableHex = true;
+                           break;
+                        }
                      }
                   }
-               }
-               if (!mouseOverSelectableHex) {
-                  _dragStart = new Point(event.x, event.y);
-                  _canvas.redraw();
-                  return;
-               }
-            }
-            // must be SWT.MouseUp
-            if (_dragStart != null) {
-               if (_dragEnd != null) {
-                  // complete the drag operation:
-                  int dX = _dragEnd.x - _dragStart.x;
-                  int dY = _dragEnd.y - _dragStart.y;
-                  if ((dX != 0) || (dY != 0)) {
-                     int[] loc_1_1 = getHexDimensions((short)1/*column*/, (short)1/*row*/, _sizePerHex, 0/*offsetX*/, 0/*offsetY*/, true/*cacheResults*/);
-                     int[] loc_2_2 = getHexDimensions((short)2/*column*/, (short)2/*row*/, _sizePerHex, 0/*offsetX*/, 0/*offsetY*/, true/*cacheResults*/);
-                     _top -= dY / (loc_2_2[1] - loc_1_1[1]);
-                     _left -= dX / (loc_2_2[0] - loc_1_1[0]);
-                     _top  = (short) Math.max(0, _top);
-                     _left = (short) Math.max(0, _left);
-                     resetOnNewZoomLevel(null);
+                  if (!mouseOverSelectableHex) {
+                     _dragStart = new Point(event.x, event.y);
+                     _canvas.redraw();
+                     return;
                   }
                }
+               // must be SWT.MouseUp
+               if (_dragStart != null) {
+                  if (_dragEnd != null) {
+                     // complete the drag operation:
+                     int dX = _dragEnd.x - _dragStart.x;
+                     int dY = _dragEnd.y - _dragStart.y;
+                     if ((dX != 0) || (dY != 0)) {
+                        int[] loc_1_1 = getHexDimensions((short)1/*column*/, (short)1/*row*/, _sizePerHex, 0/*offsetX*/, 0/*offsetY*/, true/*cacheResults*/);
+                        int[] loc_2_2 = getHexDimensions((short)2/*column*/, (short)2/*row*/, _sizePerHex, 0/*offsetX*/, 0/*offsetY*/, true/*cacheResults*/);
+                        _top -= dY / (loc_2_2[1] - loc_1_1[1]);
+                        _left -= dX / (loc_2_2[0] - loc_1_1[0]);
+                        _top  = (short) Math.max(0, _top);
+                        _left = (short) Math.max(0, _left);
+                        resetOnNewZoomLevel(null);
+                     }
+                  }
 
-               _imageDataCopy = null;
-               _dragStart = null;
-               if (_dragEnd != null) {
-                  _dragEnd = null;
-                  return;
+                  _imageDataCopy = null;
+                  _dragStart = null;
+                  if (_dragEnd != null) {
+                     _dragEnd = null;
+                     return;
+                  }
                }
             }
          }
@@ -631,10 +633,20 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
          }
          for (IMapListener listener : _listeners) {
             if (event.type == SWT.MouseDown) {
-               listener.onMouseDown(loc, event, angle, distance);
+               if (event.button == 1) {
+                  listener.onMouseDown(loc, event, angle, distance);
+               }
+               else if (event.button == 3) {
+                  listener.onRightMouseDown(loc, event, angle, distance);
+               }
             }
             else if (event.type == SWT.MouseUp) {
-               listener.onMouseUp(loc, event, angle, distance);
+               if (event.button == 1) {
+                  listener.onMouseUp(loc, event, angle, distance);
+               }
+               else if (event.button == 3) {
+                  listener.onRightMouseUp(loc, event, angle, distance);
+               }
             }
          }
       }
@@ -889,8 +901,11 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
                background = 0x20C020;
             }
          }
+         else if (teamId == Enums.TEAM_UNIVERSAL) {
+            background = 0xffC0C0;
+         }
          else {
-            background = 0xC0ffC0;
+            background = 0xFFFFFF;
             DebugBreak.debugBreak();
          }
       }

@@ -40,9 +40,13 @@ public class ClientProxy extends CombatSocket implements IMonitoringObject {
         _monitoringObject = new MonitoringObject("ClientProxy");
     }
     @Override
-   public void setSocket(Socket socket)
+    public void setSocket(Socket socket)
     {
         super.setSocket(socket);
+    }
+
+    public int getClientID() {
+       return _clientID;
     }
 
     public void setClientName(String clientName) { _name = clientName; setName(_name+"-ClientProxy");}
@@ -58,7 +62,9 @@ public class ClientProxy extends CombatSocket implements IMonitoringObject {
        else if (inObj instanceof EnterArena) {
           EnterArena msgEnter = (EnterArena) inObj;
           if (msgEnter.isEntering()) {
-             _arena.addCombatant(msgEnter.getCharacter(), msgEnter.getTeam(), (byte)-1/*combatantIndexOnTeam*/, this, true/*checkForAutoStart*/);
+             msgEnter.getCharacter()._teamID = msgEnter.getTeam();
+             _arena.addCombatant(msgEnter.getCharacter(), msgEnter.getTeam(),
+                                 msgEnter.getIndexOnTeam(), this, true/*checkForAutoStart*/);
           }
           else {
              _arena.removeCombatant(msgEnter.getCharacter(), this);

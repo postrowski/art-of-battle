@@ -44,6 +44,7 @@ import ostrowski.combat.common.CombatMap;
 import ostrowski.combat.common.DiceSet;
 import ostrowski.combat.common.IMapListener;
 import ostrowski.combat.common.MouseOverCharacterInfoPopup;
+import ostrowski.combat.common.RightClickPopupMenu;
 import ostrowski.combat.common.Rules;
 import ostrowski.combat.common.enums.AI_Type;
 import ostrowski.combat.common.enums.Enums;
@@ -61,6 +62,7 @@ import ostrowski.combat.protocol.ServerStatus;
 import ostrowski.combat.protocol.TargetPriorities;
 import ostrowski.combat.protocol.request.RequestAction;
 import ostrowski.combat.protocol.request.RequestArenaEntrance;
+import ostrowski.combat.protocol.request.RequestArenaEntrance.TeamMember;
 import ostrowski.combat.protocol.request.RequestLocation;
 import ostrowski.combat.protocol.request.RequestMovement;
 import ostrowski.protocol.SerializableObject;
@@ -79,7 +81,7 @@ public class Arena implements Enums, IMapListener
    Semaphore _lock_locationRequests = new Semaphore("Arena_locationRequests", CombatSemaphore.CLASS_ARENA_locationRequests);
    private final List<Character>             _combatants          = new ArrayList<>();
    private final List<ClientProxy>           _proxyList           = new ArrayList<>();
-   private final List<Character>             _characterWaitingToConnect = new ArrayList<>();
+   private final List<Character>             _charactersWaitingToConnect = new ArrayList<>();
    private final Map<Character, AI>          _mapCombatantToAI    = new HashMap<>();
    private final Set<Character>              _localCombatants     = new HashSet<>();
    private final Map<Character, ClientProxy> _mapCombatantToProxy = new HashMap<>();
@@ -91,6 +93,7 @@ public class Arena implements Enums, IMapListener
    private AutoRunBlock                    _autoRunBlock        = null;
 
    transient private final MouseOverCharacterInfoPopup _mouseOverCharInfoPopup = new MouseOverCharacterInfoPopup();
+   transient private final RightClickPopupMenu _characterMenuPopup = new RightClickPopupMenu(this);
 
    public Arena(CombatServer server, short sizeX, short sizeY) {
       _server    = server;
@@ -99,12 +102,13 @@ public class Arena implements Enums, IMapListener
    public void setSize(short newX, short newY) {
       _combatMap.setSize(newX, newY);
    }
-   public boolean addCombatant(Character combatant, byte team, short startingLocationX, short startingLocationY, AI_Type aiEngineType) {
+   public boolean addCombatant(Character combatant, byte team, short startingLocationX, short startingLocationY,
+                               AI_Type aiEngineType) {
       ArenaLocation startingLocation = _combatMap.getLocation(startingLocationX, startingLocationY);
       if (startingLocation == null) {
          return false;
       }
-      ArrayList<Character> chars = startingLocation.getCharacters();
+      List<Character> chars = startingLocation.getCharacters();
       if ((chars != null) && (chars.size() > 0)) {
          return false;
       }
@@ -158,31 +162,58 @@ public class Arena implements Enums, IMapListener
       }
       String newCombatantsName = combatant.getName();
       Integer currentDupCount = _registeredNames.get(newCombatantsName);
+      boolean foundWaiting = false;
       boolean nameChanged = false;
       if (currentDupCount == null) {
          _registeredNames.put(newCombatantsName, Integer.valueOf(1));
       }
       else {
-         if (currentDupCount == 1) {
-            for (Character existingCombatant : getCombatants()) {
-               if (existingCombatant.getName().equals(newCombatantsName)) {
-                  existingCombatant.setName(newCombatantsName + "-1");
-                  sendCharacterUpdate(existingCombatant, null);
+         // Look for a character with a matching _uniqueID
+         for (Character waitingCharacter : _charactersWaitingToConnect) {
+            if (waitingCharacter._uniqueID == combatant._uniqueID) {
+               _charactersWaitingToConnect.remove(waitingCharacter);
+               foundWaiting = true;
+               break;
+            }
+         }
+         if (!foundWaiting) {
+            // Try looking up by name, and set the _uniqueID
+            for (Character waitingCharacter : _charactersWaitingToConnect) {
+               if (waitingCharacter.getName().equals(combatant.getName())) {
+                  _charactersWaitingToConnect.remove(waitingCharacter);
+                  waitingCharacter._uniqueID = combatant._uniqueID;
+                  foundWaiting = true;
                   break;
                }
             }
+            if (!foundWaiting) {
+               if (currentDupCount == 1) {
+                  for (Character existingCombatant : getCombatants()) {
+                     if (existingCombatant.getName().equals(newCombatantsName)) {
+                        existingCombatant.setName(newCombatantsName + "-1");
+                        sendCharacterUpdate(existingCombatant, null);
+                        break;
+                     }
+                  }
+               }
+               int curCount = currentDupCount.intValue() + 1;
+               _registeredNames.put(newCombatantsName, Integer.valueOf(curCount));
+               combatant.setName(newCombatantsName + "-" + curCount);
+               nameChanged = true;
+            }
          }
-         int curCount = currentDupCount.intValue() + 1;
-         _registeredNames.put(newCombatantsName, Integer.valueOf(curCount));
-         combatant.setName(newCombatantsName + "-" + curCount);
-         nameChanged = true;
+      }
+      if (!foundWaiting) {
+         if ((combatantIndexOnTeam == -1) ||
+                  (!_combatMap.addCharacter(combatant, team, combatantIndexOnTeam, clientProxy))) {
+            if (checkForAutoStart) {
+               checkForAutoStart();
+            }
+            return false;
+         }
       }
 
-      if ((combatantIndexOnTeam == -1) || (!_combatMap.addCharacter(combatant, team, combatantIndexOnTeam, clientProxy))) {
-         return false;
-      }
-
-      // We cnan't send out an update until after the character exists on the map,
+      // We can't send out an update until after the character exists on the map,
       // or the AI agents will try to recompute visibility, which is not knowable yet.
       if (nameChanged) {
          sendCharacterUpdate(combatant, null);
@@ -193,17 +224,23 @@ public class Arena implements Enums, IMapListener
          _mapProxyToCombatant.put(clientProxy, combatant);
          clientProxy.setClientName(combatant.getName());
          combatant.setClientProxy(clientProxy, _combatMap, null/*diag*/);
+         combatant._uniqueID = clientProxy.getClientID();
       }
       else {
          combatant._uniqueID = ClientProxy.getNextServerID();
          String aiEngineStr = _combatMap.getStockAIName(team)[combatantIndexOnTeam];
          AI_Type aiType = AI_Type.getByString(aiEngineStr);
          if (aiType == null) {
-            if (!aiEngineStr.equalsIgnoreCase("Local")) {
-               DebugBreak.debugBreak("Can't find AI for " + aiEngineStr);
-               // Assume 'Local' for now...
+            if (CombatServer._REMOTE_AI_NAME.equals(aiEngineStr)) {
+               _charactersWaitingToConnect.add(combatant);
             }
-            _localCombatants.add(combatant);
+            else {
+               if (!aiEngineStr.equalsIgnoreCase("Local")) {
+                  DebugBreak.debugBreak("Can't find AI for " + aiEngineStr);
+                  // Assume 'Local' for now...
+               }
+               _localCombatants.add(combatant);
+            }
          }
          else {
             AI ai = new AI(combatant, aiType);
@@ -232,6 +269,12 @@ public class Arena implements Enums, IMapListener
 
       synchronized (_combatants) {
          _lock_combatants.check();
+         for (Character character : _combatants) {
+            if (character.getName().equals(combatant.getName())) {
+               _combatants.remove(character);
+               break;
+            }
+         }
          _combatants.add(combatant);
       }
       sendServerStatus(null);
@@ -261,27 +304,39 @@ public class Arena implements Enums, IMapListener
 
 
    public boolean checkForAutoStart() {
-      int combatants = _mapCombatantToProxy.size() + _mapCombatantToAI.size() + _localCombatants.size();
-      if (_combatMap.getCombatantsCount() == combatants) {
-         beginBattle();
-         return true;
+      if (!_charactersWaitingToConnect.isEmpty()) {
+         return false;
       }
-      return false;
+      int combatants = _mapCombatantToProxy.size() + _mapCombatantToAI.size() + _localCombatants.size();
+      if (_combatMap.getCombatantsCount() != combatants) {
+         return false;
+      }
+      beginBattle();
+      return true;
    }
 
+   public void removeCombatant(Character combatant) {
+      if (combatant != null) {
+         _mapCombatantToProxy.remove(combatant);
+         _mapCombatantToAI.remove(combatant);
+         _localCombatants.remove(combatant);
+         synchronized (_combatants) {
+            _lock_combatants.check();
+            _combatants.remove(combatant);
+         }
+         sendMessageTextToAllClients(combatant.getName() + " has exited the arena.", false/*popUp*/);
+         sendServerStatus(null);
+         _combatMap.unregisterAsWatcher(combatant._mapWatcher, _server._diag);
+      }
+   }
    public void removeCombatant(Character combatant, ClientProxy clientProxy) {
       Character localCombatant = _mapProxyToCombatant.remove(clientProxy);
       if (localCombatant != null) {
-         _mapCombatantToProxy.remove(localCombatant);
-         _mapCombatantToAI.remove(localCombatant);
-         _localCombatants.remove(localCombatant);
-         synchronized (_combatants) {
-            _lock_combatants.check();
-            _combatants.remove(localCombatant);
-         }
-         sendMessageTextToAllClients(localCombatant.getName() + " has exited the arena.", false/*popUp*/);
-         sendServerStatus(null);
+         removeCombatant(localCombatant);
          _combatMap.unregisterAsWatcher(combatant._mapWatcher, _server._diag);
+      }
+      else {
+         removeCombatant(combatant);
       }
    }
 
@@ -835,22 +890,18 @@ public class Arena implements Enums, IMapListener
       }
       Character combatant = _mapProxyToCombatant.remove(disconnectingProxy);
       if (combatant != null) {
+         _charactersWaitingToConnect.add(combatant);
          _mapCombatantToProxy.remove(combatant);
-         _combatMap.removeCharacter(combatant);
-         synchronized (_combatants) {
-            _lock_combatants.check();
-            _combatants.remove(combatant);
-         }
+//         _combatMap.removeCharacter(combatant);
+//         synchronized (_combatants) {
+//            _lock_combatants.check();
+//            _combatants.remove(combatant);
+//         }
          sendServerStatus(null);
          sendMessageTextToAllClients(combatant.getName() + " has disconnected.", false/*popUp*/);
          return;
       }
-      waitForClientToReconnect(combatant);
       sendMessageTextToAllClients("An annonymous client has disconnected.", false/*popUp*/);
-   }
-
-   private void waitForClientToReconnect(Character combatant) {
-      _characterWaitingToConnect.add(combatant);
    }
 
    public void disconnectAllClients() {
@@ -874,10 +925,30 @@ public class Arena implements Enums, IMapListener
       }
       proxy.sendObject(_combatMap);
       sendServerStatus(proxy);
+
+      Map<Byte, List<TeamMember>> availableCombatantNamesByTeams = null;
+      if ((_battle._turnCount == 1 ) &&
+          (_battle._roundCount == 1 ) &&
+          (_battle._phaseCount == 1 )) {
+         // battle is not yet in progress.
+         availableCombatantNamesByTeams = _combatMap.getRemoteTeamMembersByTeams();
+      }
+      // Add the people who are those in the _charactersWaitingToConnect list.
+      availableCombatantNamesByTeams = new HashMap<>();
+      for (Character combatant : _charactersWaitingToConnect) {
+         byte team = combatant._teamID;
+         List<TeamMember> members = availableCombatantNamesByTeams.get(team);
+         if (members == null) {
+            members = new ArrayList<>();
+            availableCombatantNamesByTeams.put(team, members);
+         }
+         members.add(new TeamMember(team, combatant.getName(), combatant, (byte)-1/*teamPosition*/, true/*available*/));
+      }
+      proxy.sendObject(new RequestArenaEntrance(availableCombatantNamesByTeams));
    }
 
    public void sendServerStatus(ClientProxy target) {
-      ServerStatus status = new ServerStatus(_combatMap, _combatants, _characterWaitingToConnect);
+      ServerStatus status = new ServerStatus(_combatMap, _combatants, _charactersWaitingToConnect);
       if (target == null) {
          sendEventToAllClients(status);
       }
@@ -1865,6 +1936,12 @@ public class Arena implements Enums, IMapListener
       Rules.diag("Arena:onMouseDown (" + event.x + "," + event.y + "), event.button=" + event.button);
    }
    @Override
+   public void onRightMouseDown(ArenaLocation loc, Event event, double angleFromCenter, double normalizedDistFromCenter)
+   {
+      _characterMenuPopup.onRightMouseDown(loc, event, angleFromCenter, normalizedDistFromCenter);
+      Rules.diag("Arena:onRightMouseDown (" + event.x + "," + event.y + "), event.button=" + event.button);
+   }
+   @Override
    public void onMouseUp(ArenaLocation loc, Event event, double angleFromCenter, double normalizedDistFromCenter)
    {
       Rules.diag("Arena:onMouseUp (" + event.x + "," + event.y + "), event.button=" + event.button);
@@ -2199,6 +2276,47 @@ public class Arena implements Enums, IMapListener
 
    public boolean doLocalPlayersExist() {
       return (_localCombatants != null) && !_localCombatants.isEmpty();
+   }
+
+   public boolean isRemotelyControlled(Character combatant) {
+      return _charactersWaitingToConnect.contains(combatant) ||
+               _mapProxyToCombatant.containsValue(combatant);
+   }
+   public AI_Type getAiType(Character combatant) {
+      if (_localCombatants.contains(combatant)) {
+         AI ai = _mapCombatantToAI.get(combatant);
+         if (ai != null) {
+            return ai.getAiType();
+         }
+      }
+      return null;
+   }
+   public void setControl(Character combatant, boolean localControl, AI_Type AIEngineType) {
+      if (localControl) {
+         _charactersWaitingToConnect.remove(combatant);
+         // make sure we don't duplicate this combatant by removing it first (no harm if not in list)
+         _localCombatants.remove(combatant);
+         if (AIEngineType == null) {
+            _mapCombatantToAI.remove(combatant);
+            _localCombatants.add(combatant);
+         }
+         else {
+            _mapCombatantToAI.put(combatant, new AI(combatant, AIEngineType));
+         }
+
+         ClientProxy clientProxy = _mapCombatantToProxy.remove(combatant);
+         if (clientProxy != null) {
+            _mapProxyToCombatant.remove(clientProxy);
+         }
+      }
+      else {
+         // changing to remote connection
+         // make sure we don't duplicate this combatant by removing it first (no harm if not in list)
+         _charactersWaitingToConnect.remove(combatant);
+         _charactersWaitingToConnect.add(combatant);
+         _mapCombatantToAI.remove(combatant);
+         _localCombatants.remove(combatant);
+      }
    }
 
 }

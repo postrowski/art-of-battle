@@ -196,7 +196,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
                                                                                    CombatSemaphore.CLASS_COMBATSERVER_pausePlayControl);
 
    private final Configuration              _configuration    = new Configuration();
-   private CharacterWidget                  _charWidget       = null;
+   public  CharacterWidget                  _charWidget       = null;
    public  CharacterFile                    _charFile         = new CharacterFile("Character.data");
    private final CharInfoBlock              _charInfoBlock    = new CharInfoBlock(null);
    private Button                           _hideViewFromLocalPlayersButton;
@@ -219,8 +219,8 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    private CombatMap _originalMap = null;
    private boolean _autoStart = false;
 
-   private static final String _REMOTE_AI_NAME = "Remote Connection";
-   private static final String _INACTIVE_AI_NAME = "Off";
+   public static final String _REMOTE_AI_NAME = "Remote Connection";
+   public static final String _INACTIVE_AI_NAME = "Off";
 
    private static boolean USE_CACHED_DRAWING = true;
    private static boolean ALLOW_BACKUP = false;
@@ -907,9 +907,9 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
                   _combatantsAI[team][curCombatantIndex].setEnabled(locExists);
                }
                if (_combatantsName != null) {
-                  boolean aiOn = locExists && !_REMOTE_AI_NAME.equals(aiName) && !_INACTIVE_AI_NAME.equals(aiName);
                   _combatantsName[team][curCombatantIndex].setText(combatantName);
-                  _combatantsName[team][curCombatantIndex].setEnabled(aiOn);
+                  boolean enableNameEdit = locExists && !_INACTIVE_AI_NAME.equals(aiName);
+                  _combatantsName[team][curCombatantIndex].setEnabled(enableNameEdit);
                }
             }
          }

@@ -15,6 +15,7 @@ public interface Enums {
    public static final byte     TEAM_ALPHA        = 0;
    public static final byte     TEAM_BETA         = 1;
    public static final byte     TEAM_INDEPENDENT  = 2;
+   public static final byte     TEAM_UNIVERSAL    = 3;
    public static final String[] TEAM_NAMES        = new String[] { "A", "B", "I", "U"};
 
 

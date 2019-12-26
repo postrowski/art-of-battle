@@ -240,6 +240,7 @@ public class MainBlock extends Helper implements ModifyListener, SelectionListen
          _saveButton.setEnabled(true);
          _race.setText(character.getRace().getName());
          _gender.setText(character.getGender()._name);
+         _name.setText(character.getName());
       }
       updateSaveButton();
    }
