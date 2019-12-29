@@ -18,9 +18,9 @@ public enum Position {
    public final byte adjustmentToDefenseParry;
    public final byte extraMovementPenalty;
    public final String name;
-   private Position(int val, int adjustmentToAttack,
-                    int adjustmentToDefendDodge, int adjustmentToDefendRetreat, int adjustmentToDefendParry,
-                    int extraMovementPenalty, String nam) {
+   Position(int val, int adjustmentToAttack,
+            int adjustmentToDefendDodge, int adjustmentToDefendRetreat, int adjustmentToDefendParry,
+            int extraMovementPenalty, String nam) {
       this.value = (byte)val;
       this.adjustmentToAttack = (byte) adjustmentToAttack;
       this.adjustmentToDefenseDodge = (byte) adjustmentToDefendDodge;

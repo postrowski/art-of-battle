@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import ostrowski.DebugBreak;
 import ostrowski.combat.common.Character;
@@ -59,8 +60,9 @@ public abstract class OrientationSerpentine extends Orientation
 
 
    @Override
-   public boolean setHeadLocation(Character character, ArenaLocation headLocation, Facing facing, CombatMap map, Diagnostics diag, boolean allowTwisting) {
-      ArrayList<ArenaLocation> newLocs = getLocationsForNewHeadLocation(character, headLocation, facing, map, diag);
+   public boolean setHeadLocation(Character character, ArenaLocation headLocation, Facing facing, CombatMap map,
+                                  Diagnostics diag, boolean allowTwisting) {
+      List<ArenaLocation> newLocs = getLocationsForNewHeadLocation(character, headLocation, facing, map, diag);
       if (newLocs == null) {
          return false;
       }
@@ -75,7 +77,7 @@ public abstract class OrientationSerpentine extends Orientation
       if ((_baseSize == 1) && (getPosition() == Position.PRONE_BACK)) {
          maxBendAllowed = 3;
       }
-      ArrayList<Facing> newFacings = OrientationSerpentine.computeFacingsRequiredForLocations(newLocs, facing, maxBendAllowed);
+      List<Facing> newFacings = OrientationSerpentine.computeFacingsRequiredForLocations(newLocs, facing, maxBendAllowed);
       if (newFacings == null) {
          DebugBreak.debugBreak();
          OrientationSerpentine.computeFacingsRequiredForLocations(newLocs, facing, maxBendAllowed);
@@ -93,8 +95,9 @@ public abstract class OrientationSerpentine extends Orientation
       return true;
    }
 
-   static public ArrayList<Facing> computeFacingsRequiredForLocations(ArrayList<? extends ArenaCoordinates> coordinates, Facing headFacing, int maxBendAllowed) {
-      ArrayList<Facing> facingAtPoint = new ArrayList<>();
+   static public List<Facing> computeFacingsRequiredForLocations(List<? extends ArenaCoordinates> coordinates,
+                                                                 Facing headFacing, int maxBendAllowed) {
+      List<Facing> facingAtPoint = new ArrayList<>();
       Facing prevFacing = headFacing;
       facingAtPoint.add(prevFacing);
       for (int i=1 ; i<coordinates.size() ; i++) {
@@ -271,7 +274,7 @@ public abstract class OrientationSerpentine extends Orientation
                }
             }
             newOrientation._facings.set(index, newFacing);
-            ArrayList<ArenaCoordinates> newCoords = computeLocationsRequiredForFacings(newOrientation._facings, newOrientation._coordinates.get(0));
+            List<ArenaCoordinates> newCoords = computeLocationsRequiredForFacings(newOrientation._facings, newOrientation._coordinates.get(0));
             if (newCoords != null) {
                newOrientation._coordinates.clear();
                newOrientation._coordinates.addAll(newCoords);
@@ -286,7 +289,7 @@ public abstract class OrientationSerpentine extends Orientation
       }
 
 
-      ArrayList<Facing> newFacings = OrientationSerpentine.computeFacingsRequiredForLocations(_coordinates, _facings.get(0), _maxBendAllowed);
+      List<Facing> newFacings = OrientationSerpentine.computeFacingsRequiredForLocations(_coordinates, _facings.get(0), _maxBendAllowed);
       if (newFacings == null) {
          return null;
       }
@@ -318,7 +321,8 @@ public abstract class OrientationSerpentine extends Orientation
 //   }
 
    @Override
-   public ArenaLocation getLimbLocation(LimbType limbType, CombatMap map, ArenaLocation headLocation, ArrayList<Facing> facings)
+   public ArenaLocation getLimbLocation(LimbType limbType, CombatMap map, ArenaLocation headLocation,
+                                        List<Facing> facings)
    {
       int index = 0;
       Facing dirAwayFromHead = facings.get(0).turn(3);

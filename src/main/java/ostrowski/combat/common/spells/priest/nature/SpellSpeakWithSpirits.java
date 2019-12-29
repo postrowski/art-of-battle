@@ -7,7 +7,8 @@ import ostrowski.combat.common.spells.priest.PriestSpell;
 public class SpellSpeakWithSpirits extends PriestSpell
 {
    public static final String NAME = "Speak with spirits";
-   public SpellSpeakWithSpirits() {};
+   public SpellSpeakWithSpirits() {}
+
    public SpellSpeakWithSpirits(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, group, affinity);
    }

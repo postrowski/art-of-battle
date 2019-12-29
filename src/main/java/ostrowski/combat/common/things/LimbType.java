@@ -36,14 +36,15 @@ public enum LimbType {
     BODY_6       ( 24, Location.BODY, Side.ANY,   6, "Body"),
     BODY_7       ( 25, Location.BODY, Side.ANY,   7, "Body"),
     BODY_8       ( 26, Location.BODY, Side.ANY,   8, "Body");
-    private LimbType(int val, Location baseType, Side side, int setId, String name) {
+    LimbType(int val, Location baseType, Side side, int setId, String name) {
        this.value = (byte) val;
        this.baseType = baseType;
        this.side = side;
        this.setId = setId;
        this.name = name;
-    };
-    public final Byte value;
+    }
+
+   public final Byte value;
     public final Location baseType;
     public final Side side;
     public final int setId;

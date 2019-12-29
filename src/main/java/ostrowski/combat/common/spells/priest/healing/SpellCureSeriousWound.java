@@ -11,7 +11,8 @@ public class SpellCureSeriousWound extends SpellCureWound
 {
    @SuppressWarnings("hiding")
    public static final String NAME = "Cure Serious Wound";
-   public SpellCureSeriousWound() {};
+   public SpellCureSeriousWound() {}
+
    public SpellCureSeriousWound(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, group, affinity);
    }

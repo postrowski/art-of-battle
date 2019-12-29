@@ -11,7 +11,8 @@ import ostrowski.combat.common.spells.priest.PriestSpell;
 public class SpellDetectPoison extends PriestSpell
 {
    public static final String NAME = "Detect Poison";
-   public SpellDetectPoison() {};
+   public SpellDetectPoison() {}
+
    public SpellDetectPoison(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, group, affinity);
    }

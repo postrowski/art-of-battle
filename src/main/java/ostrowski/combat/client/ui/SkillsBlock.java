@@ -128,7 +128,7 @@ public class SkillsBlock extends Helper implements Enums, ModifyListener, IUIBlo
                int adjustedLevel = Rules.getAdjustedSkillLevel(skill, character);
 
                _skillLevelAdj[i].setText("[" + adjustedLevel + "]");
-               _skillCost[i].setText("(" + String.valueOf(Rules.getSkillCost(skill.getLevel())) + ")");
+               _skillCost[i].setText("(" + Rules.getSkillCost(skill.getLevel()) + ")");
                _skillType[i].setEnabled(true);
                _skillLevel[i].setEnabled(true);
                skillFound = skill;
@@ -150,7 +150,7 @@ public class SkillsBlock extends Helper implements Enums, ModifyListener, IUIBlo
          int adjustedLevel = Rules.getAdjustedSkillLevel(skill, character);
 
          _skillLevelAdj[nextInsertIndex].setText("[" + adjustedLevel + "]");
-         _skillCost[nextInsertIndex].setText("(" + String.valueOf(Rules.getSkillCost(skill.getLevel())) + ")");
+         _skillCost[nextInsertIndex].setText("(" + Rules.getSkillCost(skill.getLevel()) + ")");
          _skillType[nextInsertIndex].setEnabled(character != null);
          _skillLevel[nextInsertIndex].setEnabled(character != null);
          nextInsertIndex++;
@@ -175,8 +175,8 @@ public class SkillsBlock extends Helper implements Enums, ModifyListener, IUIBlo
       _skillLevelAdj[rowIndex].setText(     nextItemAvailable ? _skillLevelAdj[rowIndex+1].getText()      : "[0]");
       _skillCost[rowIndex]    .setText(     nextItemAvailable ? _skillCost[rowIndex+1]    .getText()      : "(0)");
       _skillType[rowIndex]    .select(      nextItemAvailable ? _skillType[rowIndex+1]    .getSelectionIndex() : 0);
-      _skillType[rowIndex]    .setEnabled(  nextItemAvailable ? _skillType[rowIndex+1]    .getEnabled()   : true);
-      _skillLevel[rowIndex]   .setEnabled(  nextItemAvailable ? _skillLevel[rowIndex+1]   .getEnabled()   : true);
+      _skillType[rowIndex]    .setEnabled(!nextItemAvailable || _skillType[rowIndex + 1].getEnabled());
+      _skillLevel[rowIndex]   .setEnabled(!nextItemAvailable || _skillLevel[rowIndex + 1].getEnabled());
       if (nextItemAvailable) {
          removeSkillRow(rowIndex+1);
       }

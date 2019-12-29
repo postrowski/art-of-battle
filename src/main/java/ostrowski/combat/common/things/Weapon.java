@@ -747,13 +747,13 @@ public class Weapon extends Thing {
                   sb.append("</td>");
                   sb.append("<td>").append(String.valueOf(rangedAttack.getHandsRequired())).append("</td>");
                   sb.append("<td>").append(String.valueOf(rangedAttack.getMinSkill())).append("</td>");
-                  sb.append("<td class='alignLeft'>").append(String.valueOf(rangedAttack.getPreparationStepsAsHTML(""))).append("</td>");
+                  sb.append("<td class='alignLeft'>").append(rangedAttack.getPreparationStepsAsHTML("")).append("</td>");
                   sb.append("<td>").append(String.valueOf(rangedAttack.getDamageMod())).append("</td>");
                   sb.append("<td>").append(rangedAttack.getVarianceDie().toString()).append("</td>");
                   sb.append("<td>").append(rangedAttack.getDamageType().shortname).append("</td>");
                   sb.append("<td>").append(String.valueOf(rangedAttack.getRangeBase())).append("</td>");
-                  sb.append("<td>").append(String.valueOf(weap.getCost())).append("</td>");
-                  sb.append("<td>").append(String.valueOf(weap.getWeight())).append("</td>");
+                  sb.append("<td>").append(weap.getCost()).append("</td>");
+                  sb.append("<td>").append(weap.getWeight()).append("</td>");
                   sb.append("</tr>\n");
                }
             }
@@ -867,10 +867,7 @@ public class Weapon extends Thing {
          return false;
       }
       short minRange = getWeaponMinRange(allowRanged, onlyChargeTypes, wielder);
-      if (minRange > maxDistance) {
-         return false;
-      }
-      return true;
+      return minRange <= maxDistance;
    }
    public byte getWeaponMaxDamage(Character actor)
    {
@@ -1206,10 +1203,7 @@ public class Weapon extends Thing {
             if (armCount == -1) {
                armCount = self.getUncrippledArmCount(true/*reduceCountForTwoHandedWeaponsHeld*/);
             }
-            if (armCount < grapple.getHandsRequired()) {
-               return false;
-            }
-            return true;
+            return armCount >= grapple.getHandsRequired();
          }
       }
       return false;

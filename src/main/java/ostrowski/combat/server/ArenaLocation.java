@@ -505,46 +505,34 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
       long fromWalls = getWallsAndClosedDoors();
       if (fromWalls !=0) {
          if (charMoveDir == Facing._6_OCLOCK) {
-            if (TerrainWall.HORIZONTAL_BOTTOM.contains(fromWalls) ||
-                TerrainWall.DIAG_FAR_RIGHT_RIGHT.contains(fromWalls) ||
-                TerrainWall.DIAG_FAR_LEFT_LEFT.contains(fromWalls)) {
-               return false;
-            }
+            return !TerrainWall.HORIZONTAL_BOTTOM.contains(fromWalls) &&
+                   !TerrainWall.DIAG_FAR_RIGHT_RIGHT.contains(fromWalls) &&
+                   !TerrainWall.DIAG_FAR_LEFT_LEFT.contains(fromWalls);
          }
          else if (charMoveDir == Facing.NOON) {
-            if (TerrainWall.HORIZONTAL_TOP.contains(fromWalls) ||
-                TerrainWall.DIAG_FAR_RIGHT_LEFT.contains(fromWalls) ||
-                TerrainWall.DIAG_FAR_LEFT_RIGHT.contains(fromWalls)) {
-               return false;
-            }
+            return !TerrainWall.HORIZONTAL_TOP.contains(fromWalls) &&
+                   !TerrainWall.DIAG_FAR_RIGHT_LEFT.contains(fromWalls) &&
+                   !TerrainWall.DIAG_FAR_LEFT_RIGHT.contains(fromWalls);
          }
          else if (charMoveDir == Facing._8_OCLOCK) {
-            if (TerrainWall.DIAG_LEFT_LEFT.contains(fromWalls) ||
-                TerrainWall.VERT_LEFT.contains(fromWalls) ||
-                TerrainWall.DIAG_FAR_LEFT_LEFT.contains(fromWalls)) {
-               return false;
-            }
+            return !TerrainWall.DIAG_LEFT_LEFT.contains(fromWalls) &&
+                   !TerrainWall.VERT_LEFT.contains(fromWalls) &&
+                   !TerrainWall.DIAG_FAR_LEFT_LEFT.contains(fromWalls);
          }
          else if (charMoveDir == Facing._2_OCLOCK) {
-            if (TerrainWall.DIAG_LEFT_RIGHT.contains(fromWalls) ||
-                TerrainWall.VERT_RIGHT.contains(fromWalls) ||
-                TerrainWall.DIAG_FAR_LEFT_RIGHT.contains(fromWalls)) {
-               return false;
-            }
+            return !TerrainWall.DIAG_LEFT_RIGHT.contains(fromWalls) &&
+                   !TerrainWall.VERT_RIGHT.contains(fromWalls) &&
+                   !TerrainWall.DIAG_FAR_LEFT_RIGHT.contains(fromWalls);
          }
          else if (charMoveDir == Facing._10_OCLOCK) {
-            if (TerrainWall.DIAG_RIGHT_LEFT.contains(fromWalls) ||
-                TerrainWall.VERT_LEFT.contains(fromWalls) ||
-                TerrainWall.DIAG_FAR_RIGHT_LEFT.contains(fromWalls)) {
-               return false;
-            }
+            return !TerrainWall.DIAG_RIGHT_LEFT.contains(fromWalls) &&
+                   !TerrainWall.VERT_LEFT.contains(fromWalls) &&
+                   !TerrainWall.DIAG_FAR_RIGHT_LEFT.contains(fromWalls);
          }
          else if (charMoveDir == Facing._4_OCLOCK) {
-            if (TerrainWall.DIAG_RIGHT_RIGHT.contains(fromWalls) ||
-                TerrainWall.VERT_RIGHT.contains(fromWalls) ||
-                TerrainWall.DIAG_FAR_RIGHT_RIGHT.contains(fromWalls)) {
-               return false;
-            }
+            return !TerrainWall.DIAG_RIGHT_RIGHT.contains(fromWalls) &&
+                   !TerrainWall.VERT_RIGHT.contains(fromWalls) &&
+                   !TerrainWall.DIAG_FAR_RIGHT_RIGHT.contains(fromWalls);
          }
       }
       return true;
@@ -601,9 +589,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
          if (charMoveDir == null) {
             return false;
          }
-         if ((toWalls & BLOCKING_WALLS_FOR_MOVEMENT_IN_DIRECTION.get(charMoveDir)) != 0) {
-            return false;
-         }
+         return (toWalls & BLOCKING_WALLS_FOR_MOVEMENT_IN_DIRECTION.get(charMoveDir)) == 0;
       }
       return true;
    }
@@ -801,7 +787,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
                   name = PICKUP + ((Thing) thing).getName();
                }
                else if (thing instanceof String) {
-                  name = PICKUP + (String) thing;
+                  name = PICKUP + thing;
                }
                else {
                   if (!(thing instanceof Character)) {
@@ -857,10 +843,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    public boolean isPickupItem(Character actor, RequestAction actionReq)
    {
       String answer = actionReq.getAnswer();
-      if (answer.startsWith(PICKUP)) {
-         return true;
-      }
-      return false;
+      return answer.startsWith(PICKUP);
    }
    public boolean applyAction(Character actor, RequestAction actionReq) {
       return false;
@@ -1052,14 +1035,9 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
                }
             }
             if ((_label != null) && (otherLoc._label != null)) {
-               if (!_label.equals(otherLoc._label)) {
-                  return false;
-               }
+               return _label.equals(otherLoc._label);
             }
-            else if ((_label != null) || (otherLoc._label != null)) {
-               return false;
-            }
-            return true;
+            else return (_label == null) && (otherLoc._label == null);
          }
       }
    }

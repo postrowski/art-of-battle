@@ -133,7 +133,7 @@ public class RollingDie extends Dialog implements PaintListener
 
       public int _x;
       public int _y;
-      private DIRS(int x, int y) {
+      DIRS(int x, int y) {
          _x = x;
          _y = y;
       }

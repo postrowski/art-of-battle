@@ -36,11 +36,8 @@ public class WeaponStyleAttackGrapple extends WeaponStyleAttackMelee
       if (!(other instanceof WeaponStyleAttackGrapple)) {
          return false;
       }
-      if (!super.equals(other)) {
-         return false;
-      }
+      return super.equals(other);
       //WeaponStyleAttackGrapple otherStyle = (WeaponStyleAttackGrapple) other;
-      return true;
    }
 
 }

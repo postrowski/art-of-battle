@@ -87,10 +87,7 @@ public class ArenaCoordinates extends SerializableObject implements Enums, Compa
       if (otherCoord._x != _x) {
          return false;
       }
-      if (otherCoord._y != _y) {
-         return false;
-      }
-      return true;
+      return otherCoord._y == _y;
    }
 
    @Override

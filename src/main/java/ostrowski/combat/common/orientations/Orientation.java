@@ -527,10 +527,7 @@ public abstract class Orientation extends SerializableObject implements Enums, C
       return baseSize;
    }
    public boolean shouldDraw(Limb limb) {
-      if ((limb == null) || (limb.isSevered())) {
-         return false;
-      }
-      return true;
+      return (limb != null) && (!limb.isSevered());
    }
    protected DrawnObject getOutlines(Character character, int size, ArenaLocation loc, boolean weapon, RGB foreground, RGB background) {
       int wideDiameter = size;

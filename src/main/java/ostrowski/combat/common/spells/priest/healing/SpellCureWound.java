@@ -20,7 +20,8 @@ import ostrowski.combat.server.Arena;
 public class SpellCureWound extends PriestSpell implements ICastInBattle
 {
    public static final String NAME = "Cure Wound";
-   public SpellCureWound() {};
+   public SpellCureWound() {}
+
    public SpellCureWound(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, group, affinity);
    }

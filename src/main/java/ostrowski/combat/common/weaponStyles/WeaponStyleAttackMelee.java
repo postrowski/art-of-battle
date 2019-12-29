@@ -47,11 +47,8 @@ public class WeaponStyleAttackMelee extends WeaponStyleAttack
       if (!(other instanceof WeaponStyleAttackMelee)) {
          return false;
       }
-      if (!super.equals(other)) {
-         return false;
-      }
+      return super.equals(other);
       //WeaponStyleAttackMelee otherStyle = (WeaponStyleAttackMelee) other;
-      return true;
    }
 
 }

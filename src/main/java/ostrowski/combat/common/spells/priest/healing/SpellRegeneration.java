@@ -18,7 +18,7 @@ public class SpellRegeneration extends PriestSpell implements ICastInBattle
    public static final String NAME = "Regeneration";
 
    public SpellRegeneration() {
-   };
+   }
 
    public SpellRegeneration(Class< ? extends IPriestGroup> group, int affinity) {
       super(NAME, group, affinity);

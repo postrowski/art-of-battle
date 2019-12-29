@@ -332,11 +332,15 @@ public class Rules extends DebugBreak implements Enums
       }
    }
 
-   static public byte getMaxSpellLevel()   {  return 10;   };
-   static public byte getMaxCollegeLevel() {  return 10;   };
-   static public byte getMaxSkillLevel()   {  return 10;   };
-   static public byte getMaxAttribute()    {  return 10;   };
-   static public byte getMinAttribute()    {  return -10;  };
+   static public byte getMaxSpellLevel()   {  return 10;   }
+
+   static public byte getMaxCollegeLevel() {  return 10;   }
+
+   static public byte getMaxSkillLevel()   {  return 10;   }
+
+   static public byte getMaxAttribute()    {  return 10;   }
+
+   static public byte getMinAttribute()    {  return -10;  }
 
    static public int getAttCost(byte attLevel) {
       switch (attLevel) {
@@ -748,7 +752,7 @@ public class Rules extends DebugBreak implements Enums
       TableRow header1 = new TableRow(-1);
       table.addRow(header1);
       header1.addTD(new TableHeader("Attribute level <br/> (ASTR or <br/>IQ/SOC&nbsp;+&nbsp;size&nbsp;adj.)").setRowSpan(2));
-      int range[] = { 8, 10, 12, 14, 16, 18, 20, 24, 28, 30, 32, 36, 40, 48, 50, 56, 60, 64, 72, 80, 100, 120, 160, 200, 240};
+      int[] range = {8, 10, 12, 14, 16, 18, 20, 24, 28, 30, 32, 36, 40, 48, 50, 56, 60, 64, 72, 80, 100, 120, 160, 200, 240};
       header1.addTD(new TableHeader("Base range").setColSpan(range.length));
 
       TableRow header2 = new TableRow(-1);

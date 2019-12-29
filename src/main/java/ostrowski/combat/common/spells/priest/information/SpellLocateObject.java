@@ -7,7 +7,8 @@ import ostrowski.combat.common.spells.priest.PriestSpell;
 public class SpellLocateObject extends PriestSpell
 {
    public static final String NAME = "Locate Object";
-   public SpellLocateObject() {};
+   public SpellLocateObject() {}
+
    public SpellLocateObject(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, group, affinity);
    }

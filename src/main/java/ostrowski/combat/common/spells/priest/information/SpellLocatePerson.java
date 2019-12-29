@@ -7,7 +7,8 @@ import ostrowski.combat.common.spells.priest.PriestSpell;
 public class SpellLocatePerson extends PriestSpell
 {
    public static final String NAME = "Locate Person";
-   public SpellLocatePerson() {};
+   public SpellLocatePerson() {}
+
    public SpellLocatePerson(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, group, affinity);
    }

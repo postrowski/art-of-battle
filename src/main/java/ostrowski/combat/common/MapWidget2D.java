@@ -688,7 +688,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
 //         }
       }
       List<ArenaTrigger> triggers = new ArrayList<>();
-      List<ArenaEvent> events = new ArrayList<>();;
+      List<ArenaEvent> events = new ArrayList<>();
       ArenaTrigger trigger = _combatMap.getSelectedTrigger();
       if (trigger != null) {
          if (trigger.isTriggerAtLocation(loc, null/*mover*/)) {

@@ -12,7 +12,8 @@ import ostrowski.combat.server.Arena;
 public class SpellSleep extends ResistedPriestSpell implements ICastInBattle
 {
    public static final String NAME = "Sleep";
-   public SpellSleep() {};
+   public SpellSleep() {}
+
    public SpellSleep(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, Attribute.Nimbleness, (byte)3/*resistedActions*/, true/*expires*/, group, affinity);
    }

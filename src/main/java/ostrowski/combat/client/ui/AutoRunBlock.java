@@ -137,9 +137,6 @@ public class AutoRunBlock extends Helper implements IUIBlock, ModifyListener, Se
          }
       } while (true);
 
-      if (results.charAt(0) == 't') {
-         return true;
-      }
-      return false;
+      return results.charAt(0) == 't';
    }
 }

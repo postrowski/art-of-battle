@@ -191,19 +191,13 @@ public class Condition extends SerializableObject implements Enums {
       if (_attackedThisRound) {
          return false;
       }
-      if (getPositionAdjustmentForAttack() == -99) {
-         return false;
-      }
-      return true;
+      return getPositionAdjustmentForAttack() != -99;
    }
    public boolean canDefend() {
       if (!_isConscious) {
          return false;
       }
-      if (getActionsAvailableThisRound(true/*usedForDefenseOnly*/) <= 0) {
-         return false;
-      }
-      return true;
+      return getActionsAvailableThisRound(true/*usedForDefenseOnly*/) > 0;
    }
    private boolean canRetreat() {
       if (_collapsed) {
@@ -221,10 +215,7 @@ public class Condition extends SerializableObject implements Enums {
       if (_penaltyMove < 0) {
          return false;
       }
-      if ((_movementAvailableThisRound < 2) && _hasMovedThisRound) {
-         return false;
-      }
-      return true;
+      return (_movementAvailableThisRound >= 2) || !_hasMovedThisRound;
    }
    public boolean canAdvance() {
       if (!_isConscious) {
@@ -236,10 +227,7 @@ public class Condition extends SerializableObject implements Enums {
       if (_penaltyMove < 0) {
          return false;
       }
-      if (_movementAvailableThisRound < 1) {
-         return false;
-      }
-      return true;
+      return _movementAvailableThisRound >= 1;
    }
    public void adjustActions(byte actionsThisRound, byte actionsPerRound) {
       boolean hasActionsThisRound = (_actionsAvailable > 0);

@@ -241,7 +241,7 @@ public class Advantage extends SerializableObject implements Cloneable, Enums
       _advList.add(new Advantage(WEALTH_MULTIPLIER_4,  true, new String[] {}, new int[]{-15},      new String[] {WEALTH_MULTIPLIER_4}, new String[] {}, "Wealth multipliers are assigned to each race. This value multiplies the starting wealth for any character."));
       _advList.add(new Advantage(WEALTH_MULTIPLIER_5,  true, new String[] {}, new int[]{-20},      new String[] {WEALTH_MULTIPLIER_5}, new String[] {}, "Wealth multipliers are assigned to each race. This value multiplies the starting wealth for any character."));
       _advList.add(new Advantage(WINGED_FLIGHT,        true, new String[] {}, new int[]  {0},      new String[] {WINGED_FLIGHT}, new String[] {}, "Winged flight allows the individual to fly through the air. The ‘winged flight’ advantage may not be purchased, but some races (notably Fairies) have this advantage intrinsically."));
-   };
+   }
 
    public static ArrayList<String> getAdvantagesNames(ArrayList<String> existingProperties, Race race) {
       ArrayList<String> list = new ArrayList<>();
@@ -296,7 +296,7 @@ public class Advantage extends SerializableObject implements Cloneable, Enums
          for (Advantage advantage : _advList) {
             if (name.startsWith(advantage._name.toLowerCase())) {
                Advantage adv = advantage.clone();
-               String selectedLevelName = name.substring(advantage._name.length()+1, name.length()).trim();
+               String selectedLevelName = name.substring(advantage._name.length()+1).trim();
                if (adv.setLevelByName(selectedLevelName)) {
                   return adv;
                }

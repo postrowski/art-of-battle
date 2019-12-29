@@ -268,9 +268,9 @@ public class TriggersInterface extends Helper implements SelectionListener, Modi
             mapWidget.redraw();
          }
          _triggerName.setText(trigger==null ? "" : trigger.getName());
-         _triggerEnabled.setSelection(trigger==null ? false : trigger.getEnabled());
-         _triggerRequiresEntireTeam.setSelection(trigger==null ? false : trigger.getRequiresEntireTeam());
-         _triggerOnlyAffectsPlayers.setSelection(trigger==null ? false : trigger.getOnlyAffectsPlayers());
+         _triggerEnabled.setSelection(trigger != null && trigger.getEnabled());
+         _triggerRequiresEntireTeam.setSelection(trigger != null && trigger.getRequiresEntireTeam());
+         _triggerOnlyAffectsPlayers.setSelection(trigger != null && trigger.getOnlyAffectsPlayers());
          setCurrentTrigger(trigger);
       }
       else if (e.widget == _deleteEvent) {
@@ -382,9 +382,9 @@ public class TriggersInterface extends Helper implements SelectionListener, Modi
       setEventEnabled(trigger != null);
       setTriggerEnabled(trigger != null);
       _triggerName.setText((trigger != null) ? trigger.getName() : "");
-      _triggerEnabled.setSelection((trigger != null) ? trigger.getEnabled() : false);
-      _triggerRequiresEntireTeam.setSelection((trigger != null) ? trigger.getRequiresEntireTeam() : false);
-      _triggerOnlyAffectsPlayers.setSelection((trigger != null) ? trigger.getOnlyAffectsPlayers() : false);
+      _triggerEnabled.setSelection((trigger != null) && trigger.getEnabled());
+      _triggerRequiresEntireTeam.setSelection((trigger != null) && trigger.getRequiresEntireTeam());
+      _triggerOnlyAffectsPlayers.setSelection((trigger != null) && trigger.getOnlyAffectsPlayers());
       _eventsList.removeAll();
       setEvent(null);
       setEventEnabled(false);

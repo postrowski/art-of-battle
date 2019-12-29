@@ -31,10 +31,7 @@ public class WeaponStyleGrapplingParry extends WeaponStyleParry
       if (!(other instanceof WeaponStyleGrapplingParry)) {
          return false;
       }
-      if (!super.equals(other)) {
-         return false;
-      }
+      return super.equals(other);
       //WeaponStyleGrapplingParry otherStyle = (WeaponStyleGrapplingParry) other;
-      return true;
    }
 }

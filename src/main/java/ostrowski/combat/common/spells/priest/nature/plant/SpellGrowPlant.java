@@ -7,7 +7,8 @@ import ostrowski.combat.common.spells.priest.PriestSpell;
 public class SpellGrowPlant extends PriestSpell
 {
    public static final String NAME = "Grow Plant";
-   public SpellGrowPlant() {};
+   public SpellGrowPlant() {}
+
    public SpellGrowPlant(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, group, affinity);
    }

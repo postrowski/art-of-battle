@@ -6,7 +6,8 @@ import ostrowski.combat.common.spells.priest.SpellSummonBeing;
 public class SpellSummonWarrior extends SpellSummonBeing
 {
    public static final String NAME = "Summon Warrior";
-   public SpellSummonWarrior() {};
+   public SpellSummonWarrior() {}
+
    public SpellSummonWarrior(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, group, affinity);
    }

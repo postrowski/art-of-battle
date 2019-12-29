@@ -71,8 +71,6 @@ public class HtmlBuilder
       sb.append("  border-width:0px;");
       sb.append("}");
 
-      sb.append("");
-      sb.append("");
       sb.append("\n");
       sb.append("</style>\n");
       sb.append("</head>\n");

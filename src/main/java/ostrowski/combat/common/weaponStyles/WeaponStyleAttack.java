@@ -150,9 +150,7 @@ public abstract class WeaponStyleAttack extends WeaponStyle
          if ((otherLimb == null) || (otherLimb.isCrippled())) {
             return false;
          }
-         if (useFromLimb.getLocationSide() != Wound.Side.RIGHT) {
-            return false;
-         }
+         return useFromLimb.getLocationSide() == Side.RIGHT;
       }
       return true;
    }
@@ -187,10 +185,7 @@ public abstract class WeaponStyleAttack extends WeaponStyle
       if (otherStyle._minRange != otherStyle._minRange) {
          return false;
       }
-      if (otherStyle._maxRange != otherStyle._maxRange) {
-         return false;
-      }
-      return true;
+      return otherStyle._maxRange == otherStyle._maxRange;
    }
    public boolean canCharge(boolean isMounted, boolean hasFourLegs) {
       if (_chargeType == Charge.Never) {
@@ -202,10 +197,7 @@ public abstract class WeaponStyleAttack extends WeaponStyle
       if ((_chargeType == Charge.WhenMounted) && !isMounted) {
          return false;
       }
-      if ((_chargeType == Charge.With4Legs) && !hasFourLegs) {
-         return false;
-      }
-      return true;
+      return (_chargeType != Charge.With4Legs) || hasFourLegs;
    }
    @Override
    public void copyDataFrom(WeaponStyle source) {

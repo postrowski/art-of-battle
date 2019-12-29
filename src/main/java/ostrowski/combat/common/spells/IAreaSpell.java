@@ -7,15 +7,15 @@ import ostrowski.combat.server.ArenaLocation;
 
 public interface IAreaSpell
 {
-   public void setTargetLocation(ArenaLocation targetLocation, Arena _arena);
-   public ArenaLocation getTargetLocation();
-   public TargetType getTargetType();
-   public byte getRadiusOfAffect();
-   public void affectCharacterOnEntry(    Character enteringCharacter);
-   public void affectCharacterOnExit(     Character exitingCharacter);
-   public void affectCharacterOnRoundStart(Character characterInHex);
-   public void affectCharacterOnRoundEnd(  Character characterInHex);
-   public String getImageResourceName();
-   public void affectCharacterOnActivation(Character chr);
-   public void affectCharacterOnDeactivation(Character chr);
+   void setTargetLocation(ArenaLocation targetLocation, Arena _arena);
+   ArenaLocation getTargetLocation();
+   TargetType getTargetType();
+   byte getRadiusOfAffect();
+   void affectCharacterOnEntry(Character enteringCharacter);
+   void affectCharacterOnExit(Character exitingCharacter);
+   void affectCharacterOnRoundStart(Character characterInHex);
+   void affectCharacterOnRoundEnd(Character characterInHex);
+   String getImageResourceName();
+   void affectCharacterOnActivation(Character chr);
+   void affectCharacterOnDeactivation(Character chr);
 }

@@ -13,7 +13,7 @@ public enum AI_Type {
    //              will attack closest enemy that it knows about,
    //              will advance toward closest enemy, unless a ranged attack can be made
 
-   private AI_Type(String name) {
+   AI_Type(String name) {
       this.name = name;
    }
    public final String name;

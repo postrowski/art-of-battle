@@ -178,10 +178,10 @@ public enum RequestActionType {
    private final String keysHead;
    private final byte attackActions;
    private final byte totalActions;
-   private RequestActionType(int attackActions, int totalActions, String keys) {
+   RequestActionType(int attackActions, int totalActions, String keys) {
       this(attackActions, totalActions, keys, keys, keys, keys);
    }
-   private RequestActionType(int attackActions, int totalActions, String keysRight, String keysLeft, String keysLegs, String keysHead) {
+   RequestActionType(int attackActions, int totalActions, String keysRight, String keysLeft, String keysLegs, String keysHead) {
       this.attackActions = (byte) attackActions;
       this.totalActions  = (byte) totalActions;
       this.keys = keysRight;

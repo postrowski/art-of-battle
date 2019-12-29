@@ -36,5 +36,5 @@ public class PriestNatureSpell implements IPriestGroup
       _spells.add(new SpellDragonForm(PriestNatureSpell.class, 9));
       _spells.add(new SpellReverseTime(PriestNatureSpell.class, 10));
       _spells.add(new SpellPlague(PriestNatureSpell.class, 10));
-   };
+   }
 }

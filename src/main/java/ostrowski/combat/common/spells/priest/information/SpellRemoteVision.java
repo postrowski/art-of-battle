@@ -10,7 +10,8 @@ import ostrowski.combat.common.spells.priest.PriestSpell;
 public class SpellRemoteVision extends PriestSpell
 {
    public static final String NAME = "Remote Vision";
-   public SpellRemoteVision() {};
+   public SpellRemoteVision() {}
+
    public SpellRemoteVision(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, group, affinity);
    }

@@ -40,7 +40,7 @@ public class OpenCharacter extends Dialog implements MouseListener
 
    public enum ExitButton {
       Open, Copy, Cancel
-   };
+   }
 
    public ExitButton _exitButton  = ExitButton.Cancel;
 

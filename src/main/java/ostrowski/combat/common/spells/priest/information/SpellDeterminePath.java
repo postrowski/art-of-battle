@@ -7,7 +7,8 @@ import ostrowski.combat.common.spells.priest.PriestSpell;
 public class SpellDeterminePath extends PriestSpell
 {
    public static final String NAME = "Determine Path";
-   public SpellDeterminePath() {};
+   public SpellDeterminePath() {}
+
    public SpellDeterminePath(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, group, affinity);
    }

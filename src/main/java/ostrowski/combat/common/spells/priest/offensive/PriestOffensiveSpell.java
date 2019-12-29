@@ -18,5 +18,5 @@ public abstract class PriestOffensiveSpell implements IPriestGroup
       _spells.add(new SpellSummonWarrior(PriestOffensiveSpell.class, 6));
       _spells.add(new SpellSummonChampion(PriestOffensiveSpell.class, 9));
       _spells.add(new SpellSummonDeity(PriestOffensiveSpell.class, 10));
-   };
+   }
 }

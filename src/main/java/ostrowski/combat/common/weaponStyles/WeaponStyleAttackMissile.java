@@ -36,10 +36,7 @@ public class WeaponStyleAttackMissile extends WeaponStyleAttackRanged
       if (!(other instanceof WeaponStyleAttackMissile)) {
          return false;
       }
-      if (!super.equals(other)) {
-         return false;
-      }
+      return super.equals(other);
       //WeaponStyleAttackMissile otherStyle = (WeaponStyleAttackMissile) other;
-      return true;
    }
 }

@@ -195,7 +195,7 @@ public class RequestUserInput extends Dialog implements KeyListener, FocusListen
                   public void widgetSelected(SelectionEvent e) {
                      int index = -1;
                      for (int j=0 ; j<_buttons.length ; j++) {
-                        if (_buttons[j] == ((Button)(e.widget))) {
+                        if (_buttons[j] == e.widget) {
                            index = j;
                         }
                      }

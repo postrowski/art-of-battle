@@ -29,5 +29,5 @@ public class PriestInformationSpell implements IPriestGroup
       _spells.add(new SpellRemoteVision(PriestInformationSpell.class, 8));
       _spells.add(new SpellTeleportation(PriestInformationSpell.class, 9));
       _spells.add(new SpellOpenPortal(PriestInformationSpell.class, 10));
-   };
+   }
 }

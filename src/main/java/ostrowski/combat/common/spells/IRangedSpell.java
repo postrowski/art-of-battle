@@ -5,11 +5,11 @@ import ostrowski.combat.common.enums.Enums.RANGE;
 
 public interface IRangedSpell
 {
-   public short getMaxRange(Character caster);
-   public short getMinRange(Character caster);
-   public RANGE getRange(short distanceInHexes);
-   public byte getRangeDefenseAdjustmentToPD(short distanceInHexes);
-   public byte getRangeDefenseAdjustmentPerAction(short distanceInHexes);
-   public byte getRangeTNAdjustment(short distanceInHexes);
-   public short getRangeBase();
+   short getMaxRange(Character caster);
+   short getMinRange(Character caster);
+   RANGE getRange(short distanceInHexes);
+   byte getRangeDefenseAdjustmentToPD(short distanceInHexes);
+   byte getRangeDefenseAdjustmentPerAction(short distanceInHexes);
+   byte getRangeTNAdjustment(short distanceInHexes);
+   short getRangeBase();
 }

@@ -17,7 +17,8 @@ public class SpellHeal extends SpellCureSeriousWound
 {
    @SuppressWarnings("hiding")
    public static final String NAME = "Heal";
-   public SpellHeal() {};
+   public SpellHeal() {}
+
    public SpellHeal(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, group, affinity);
    }

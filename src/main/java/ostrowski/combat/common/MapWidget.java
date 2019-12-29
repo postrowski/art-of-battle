@@ -147,7 +147,7 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
    @Override
    public void addControlGroup(Composite parent)
    {
-      _centerOnSelfButton = createButton(parent, "Center view on self", 1/*hSpan*/, (FontData)null/*fontData*/, this);
+      _centerOnSelfButton = createButton(parent, "Center view on self", 1/*hSpan*/, null/*fontData*/, this);
       _centerOnSelfButton.setEnabled(false);
    }
 
@@ -602,8 +602,7 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
    @Override
    public void allowDrag(boolean allow) { }
    @Override
-   public void setMode(MapMode mode) { _mapMode = mode;};
-
+   public void setMode(MapMode mode) { _mapMode = mode;}
 
 
    // KeyListener implementation:

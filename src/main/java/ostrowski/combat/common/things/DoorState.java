@@ -8,7 +8,7 @@ public enum DoorState {
    Closed(2),
    Locked(3),
    Blocked(4);
-   private DoorState(int val) {
+   DoorState(int val) {
       value = val;
    }
    public final int value;

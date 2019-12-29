@@ -11,7 +11,8 @@ import ostrowski.combat.common.spells.priest.PriestSpell;
 public class SpellDiagnose extends PriestSpell
 {
    public static final String NAME = "Diagnose";
-   public SpellDiagnose() {};
+   public SpellDiagnose() {}
+
    public SpellDiagnose(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, group, affinity);
    }

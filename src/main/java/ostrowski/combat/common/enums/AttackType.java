@@ -9,7 +9,7 @@ public enum AttackType {
    MISSILE(3),
    GRAPPLE(4),
    COUNTER_ATTACK(5);
-   private AttackType(int val) {
+   AttackType(int val) {
       this.value = (byte)val;
    }
    public final byte value;

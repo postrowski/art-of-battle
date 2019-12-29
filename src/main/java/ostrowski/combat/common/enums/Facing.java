@@ -12,7 +12,7 @@ public enum Facing {
    public final byte value;
    public final byte moveX;
    public final byte moveY;
-   private Facing(int val, int moveX, int moveY) {
+   Facing(int val, int moveX, int moveY) {
       this.value = (byte) val;
       this.moveX = (byte) moveX;
       this.moveY = (byte) moveY;

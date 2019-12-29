@@ -104,14 +104,12 @@ public class DefenseOptions extends EnumOptions<DefenseOption> implements Compar
       // When counter attacking, one or more block/parrys must be used:
       if (counterAttacking) {
          // a defense that doesn't include a block can't use counter defenses:
-         if (!_list.contains(DefenseOption.DEF_LEFT) &&
-             !_list.contains(DefenseOption.DEF_LEFT_2) &&
-             !_list.contains(DefenseOption.DEF_LEFT_3) &&
-             !_list.contains(DefenseOption.DEF_RIGHT) &&
-             !_list.contains(DefenseOption.DEF_RIGHT_2) &&
-             !_list.contains(DefenseOption.DEF_RIGHT_3)) {
-            return false;
-         }
+         return _list.contains(DefenseOption.DEF_LEFT) ||
+                _list.contains(DefenseOption.DEF_LEFT_2) ||
+                _list.contains(DefenseOption.DEF_LEFT_3) ||
+                _list.contains(DefenseOption.DEF_RIGHT) ||
+                _list.contains(DefenseOption.DEF_RIGHT_2) ||
+                _list.contains(DefenseOption.DEF_RIGHT_3);
       }
       return true;
    }

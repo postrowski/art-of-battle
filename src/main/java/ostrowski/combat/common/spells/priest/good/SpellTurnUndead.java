@@ -9,7 +9,8 @@ import ostrowski.combat.common.spells.priest.ResistedPriestSpell;
 public class SpellTurnUndead extends ResistedPriestSpell implements IRangedSpell
 {
    public static final String NAME = "Turn Undead";
-   public SpellTurnUndead() {};
+   public SpellTurnUndead() {}
+
    public SpellTurnUndead(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, Attribute.Health, (byte)2/*resistedActions*/, false/*expires*/, group, affinity);
    }

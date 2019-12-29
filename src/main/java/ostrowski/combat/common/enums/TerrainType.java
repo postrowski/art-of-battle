@@ -31,7 +31,7 @@ public enum TerrainType {
    public final int colorAsInt;
    public final String name;
    public final boolean isWater;
-   private TerrainType(int val, int costToEnter, int defensePenalty, int attackPenalty, RGB color, String nam) {
+   TerrainType(int val, int costToEnter, int defensePenalty, int attackPenalty, RGB color, String nam) {
       this.value = val;
       this.costToEnter = costToEnter;
       this.canBeEnterd = (costToEnter != 100);

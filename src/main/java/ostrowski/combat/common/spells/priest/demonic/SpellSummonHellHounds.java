@@ -7,7 +7,8 @@ import ostrowski.combat.common.spells.priest.SpellSummonBeing;
 public class SpellSummonHellHounds extends SpellSummonBeing
 {
    public static final String NAME = "Summon Hell Hounds";
-   public SpellSummonHellHounds() {};
+   public SpellSummonHellHounds() {}
+
    public SpellSummonHellHounds(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, group, affinity);
    }

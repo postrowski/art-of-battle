@@ -10,7 +10,8 @@ import ostrowski.combat.common.spells.priest.PriestSpell;
 public class SpellStasis extends PriestSpell
 {
    public static final String NAME = "Statis";
-   public SpellStasis() {};
+   public SpellStasis() {}
+
    public SpellStasis(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, group, affinity);
    }

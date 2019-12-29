@@ -33,5 +33,5 @@ public class PriestDemonicSpell implements IPriestGroup
 
       // Not even Major Demons get these:
       _spells.add(new SpellSummonMajorDemon(PriestDemonicSpell.class, 10));
-   };
+   }
 }

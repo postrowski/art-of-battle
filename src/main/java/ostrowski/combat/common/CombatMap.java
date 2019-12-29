@@ -391,7 +391,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
          angleBlockedVisually.add(new AnglePair(leftEdge, rightEdge));
       }
 
-      double angleAtCorner[] = new double[12];
+      double[] angleAtCorner = new double[12];
       boolean[] xFlags = new boolean[] {true, false};
       boolean[] yFlags = new boolean[] {true, false};
       for (boolean positiveX : xFlags) {
@@ -1005,10 +1005,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
          // There is a wall between the fromLoc and toLoc
          return false;
       }
-      if (blockedByAnyStandingCharacter && (characterCount>0)) {
-         return false;
-      }
-      return true;
+      return !blockedByAnyStandingCharacter || (characterCount <= 0);
    }
    /**
     * This method returns a count of the number of character between the fromLoc and the toLoc, non-inclusive.
@@ -1055,7 +1052,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
          setVisibilityOrKnownBy(computeVisibilityFromCharacter, setVisibility, basedOnFacing, locsToRedraw, fromLoc, fromLoc);
          return charCount;
       }
-      ArrayList<ArenaLocation> path = getLOSPath(fromLoc, toCoord, false/*trimPath*/);
+      List<ArenaLocation> path = getLOSPath(fromLoc, toCoord, false/*trimPath*/);
       // getLOSPath doesn't add the start or end points to the path.
       // we start our search from the fromLoc, so that's accounted for, but need
       // to add the toCoord so we check that last hex transition.
@@ -1087,13 +1084,13 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
          // canEnter will return false if the 2 hexes aren't adjacent, or a wall in testLoc blocks blocks the way
          if (!testLoc.canEnter(curLoc, false/*blockByCharacters*/) &&
              ((prevLoc == null) || (curLoc == prevLoc) || !testLoc.canEnter(prevLoc, false/*blockByCharacters*/))) {
-            if (testLoc.sameCoordinates(toCoord)) {
+//            if (testLoc.sameCoordinates(toCoord)) {
 //               int terrain = toLoc.getTerrain();
 //               if ((terrain == TERRAIN_SOLID_ROCK) || (terrain == TERRAIN_TREE_TRUNK))
                // 11/12/2014 - comment out this return because it allows someone to attack another person,
                // if the target is hiding behind a single wall in their own hex.
                //return charCount;
-            }
+//            }
             if (skippedHex) {
                return -1;
             }
@@ -1121,7 +1118,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
    private void setVisibilityOrKnownBy(Character computeVisibilityFromCharacter, boolean setVisibility, boolean basedOnFacing,
                                        Collection<ArenaCoordinates> locsToRedraw, ArenaLocation loc, ArenaLocation fromLoc) {
       if (computeVisibilityFromCharacter != null) {
-         boolean redrawLoc = false;
+         boolean redrawLoc;
          if (setVisibility) {
             redrawLoc = loc.setVisible(true/*isVisible*/, this, fromLoc, computeVisibilityFromCharacter._uniqueID, basedOnFacing);
          }
@@ -1149,9 +1146,9 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
     * @param trimPath
     * @return
     */
-   public ArrayList<ArenaLocation> getLOSPath(ArenaCoordinates fromCoord, ArenaCoordinates toCoord, boolean trimPath) {
+   public List<ArenaLocation> getLOSPath(ArenaCoordinates fromCoord, ArenaCoordinates toCoord, boolean trimPath) {
       // This method does NOT put the fromCoord or the toCoord in the path!
-      ArrayList<ArenaLocation> path = new ArrayList<>();
+      List<ArenaLocation> path = new ArrayList<>();
       int deltaX = toCoord._x - fromCoord._x;
       int deltaY = toCoord._y - fromCoord._y;
       int absX = Math.abs(deltaX);
@@ -1251,7 +1248,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       int centerCoordToY = (hexDims[MapWidget2D.Y_SMALLEST] + hexDims[MapWidget2D.Y_LARGEST]) / 2;
 
       // There can only be two possible edges that we could pass through, based on the angle:
-      byte pointIndex = -1;
+      byte pointIndex;
 
       if (deltaX < 0) {
          if (absX > absY) {
@@ -1349,8 +1346,8 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
     * @param trimPath
     * @return
     */
-   public ArrayList<ArenaLocation> getLOSPath_OLD(ArenaCoordinates fromCoord, ArenaCoordinates toCoord, boolean trimPath) {
-       ArrayList<ArenaLocation> path = new ArrayList<>();
+   public List<ArenaLocation> getLOSPath_OLD(ArenaCoordinates fromCoord, ArenaCoordinates toCoord, boolean trimPath) {
+       List<ArenaLocation> path = new ArrayList<>();
        int xDist = toCoord._x - fromCoord._x;
        int yDist = toCoord._y - fromCoord._y;
        int pointsToCheck = (Math.abs(xDist) + Math.abs(yDist)) * 2;
@@ -1545,7 +1542,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
        if (startingLocation.sameCoordinates(centerHex)) {
           return Facing.NOON;
        }
-       ArrayList<ArenaLocation> path = getLOSPath(startingLocation, centerHex, false/*trimPath*/);
+       List<ArenaLocation> path = getLOSPath(startingLocation, centerHex, false/*trimPath*/);
        if (path.size() == 0) {
           return Facing.NOON;
        }
@@ -1979,15 +1976,12 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
    public boolean isLocationAction(Character actor, RequestAction actionReq)
    {
       String answer = actionReq.getAnswer();
-      if (answer.startsWith(CLOSE_DOOR) ||
-          answer.startsWith(OPEN_DOOR) ||
-          answer.startsWith(LOCK_DOOR) ||
-          answer.startsWith(UNLOCK_DOOR) ||
-          answer.startsWith(ASSIST_CUT_PRE) ||
-          answer.startsWith(ASSIST_POTION_PRE) ) {
-         return true;
-      }
-      return false;
+      return answer.startsWith(CLOSE_DOOR) ||
+             answer.startsWith(OPEN_DOOR) ||
+             answer.startsWith(LOCK_DOOR) ||
+             answer.startsWith(UNLOCK_DOOR) ||
+             answer.startsWith(ASSIST_CUT_PRE) ||
+             answer.startsWith(ASSIST_POTION_PRE);
    }
    public boolean applyAction(Character actor, RequestAction actionReq) throws BattleTerminatedException
    {

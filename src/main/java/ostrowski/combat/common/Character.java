@@ -472,7 +472,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    }
 
    /**
-    * @param attributeIndex
+    * @param attribute
     * @return the characters level for the specified attribute
     */
    public byte getAttributeLevel(Attribute attribute) {
@@ -2192,7 +2192,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                                  StringBuilder actionStr = new StringBuilder();
                                  actionStr.append("channel energy (").append(energy).append("-actions");
                                  actionStr.append(", using ").append(energy);
-                                 if (((MageSpell) _currentSpell).getSpellPoints() > 0) {
+                                 if (_currentSpell.getSpellPoints() > 0) {
                                     actionStr.append(" more");
                                  }
                                  actionStr.append(" spell point");
@@ -3040,7 +3040,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
             // if no shield, always try to use weapon in a 2-handed style
             Limb otherLimb = _limbs.get(parentAction.getLimb().getPairedType());
             if ((otherLimb != null) && (otherLimb._limbType != parentAction.getLimb())) {
-               if ((otherLimb instanceof Hand) && ((Hand) otherLimb).isEmpty() && (!((Hand) otherLimb).isCrippled())) {
+               if ((otherLimb instanceof Hand) && otherLimb.isEmpty() && (!otherLimb.isCrippled())) {
                   for (int i = 0; i < styles.length; i++) {
                      // If the target is out of range, don't bother checking for handedness
                      short minRange = styles[i].getMinRange();
@@ -3348,7 +3348,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          if (hand != null) {
             Thing heldThing = hand.getHeldThing();
             Limb pairedHand = getLimb(hand._limbType.getPairedType());
-            Thing pairedHeldThing = (pairedHand == null) ? null : ((Hand) pairedHand).getHeldThing();
+            Thing pairedHeldThing = (pairedHand == null) ? null : pairedHand.getHeldThing();
             boolean canUse2Hands = ((pairedHeldThing == null) || (pairedHeldThing == heldThing));
             if (heldThing == null) {
                heldThing = hand.getWeapon(this);
@@ -3936,7 +3936,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       sb.append(_race.getName()).append(SEPARATOR_MAIN);
       sb.append(_race.getGender()._name).append(SEPARATOR_MAIN);
       for (Attribute att : Attribute.values()) {
-         sb.append(String.valueOf(_attributes.get(att))).append(SEPARATOR_SECONDARY);
+         sb.append(_attributes.get(att)).append(SEPARATOR_SECONDARY);
       }
       sb.append(SEPARATOR_MAIN);
       sb.append((_armor == null) ? " " : _armor.getName()).append(SEPARATOR_MAIN);
@@ -5985,10 +5985,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       if (_race.isAquatic()) {
          return false;
       }
-      if (isUnderSpell(SpellSwim.NAME) != null) {
-         return false;
-      }
-      return true;
+      return isUnderSpell(SpellSwim.NAME) == null;
    }
    public boolean isPenalizedOutOfWater() {
       return _race.isAquatic();
@@ -6007,7 +6004,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       }
       for (Limb limb : getLimbs()) {
          if (limb instanceof Hand) {
-            if (((Hand) limb).getHeldThingName().equalsIgnoreCase(fullName)) {
+            if (limb.getHeldThingName().equalsIgnoreCase(fullName)) {
                return true;
             }
          }

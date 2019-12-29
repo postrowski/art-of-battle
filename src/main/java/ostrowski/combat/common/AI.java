@@ -606,9 +606,7 @@ public class AI implements Enums
                return true;
             }
          }
-         if (findPotionToUse(requestEquipmentPriorities, Potion.POTION_MINOR_HEALING, action)) {
-            return true;
-         }
+         return findPotionToUse(requestEquipmentPriorities, Potion.POTION_MINOR_HEALING, action);
       }
       return false;
    }
@@ -1754,10 +1752,7 @@ public class AI implements Enums
    }
 
    public boolean canAndShouldHealSelfWithPotion() {
-      if (_self.getWounds() > 3) {
-         return true;
-      }
-      return false;
+      return _self.getWounds() > 3;
    }
 
    private byte desiredPowerForSpell(Spell spell) {
@@ -2211,10 +2206,7 @@ public class AI implements Enums
          Map<Integer, List<ArenaLocation>> myVisibilityMap = _mapToMapOfLocations.get(_self._uniqueID);
          if (myVisibilityMap == null) {
             // we don't know where anyone is.
-            if (allowWander && wander(reqMove, map)) {
-               return true;
-            }
-            return false;
+            return allowWander && wander(reqMove, map);
          }
          List<ArenaLocation> targetCoordinates = myVisibilityMap.get(target._uniqueID);
          if (targetCoordinates == null) {
@@ -2655,9 +2647,7 @@ public class AI implements Enums
       // Now just pick a random one of these orientations:
       if ((possibleMoves != null) && (!possibleMoves.isEmpty())) {
          selectedOrientation = possibleMoves.get((int) (CombatServer.random() * possibleMoves.size()));
-         if (reqMove.setOrientation(selectedOrientation)) {
-            return true;
-         }
+         return reqMove.setOrientation(selectedOrientation);
       }
       return false;
    }

@@ -97,7 +97,7 @@ public class ConditionBlock extends Helper implements IUIBlock {
        byte availActions = cond.getActionsAvailable(false/*usedForDefenseOnly*/);
        byte finalDefActions = cond.getActionsAvailable(true/*usedForDefenseOnly*/);
        if ((availActions == 0) && (finalDefActions > 0)) {
-         _actionsAvail.setText(String.valueOf(finalDefActions + " (def only)"));
+         _actionsAvail.setText(finalDefActions + " (def only)");
       }
       else {
          _actionsAvail.setText(String.valueOf(availActions));

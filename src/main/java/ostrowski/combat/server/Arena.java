@@ -730,7 +730,7 @@ public class Arena implements Enums, IMapListener
                   }
                   // Since the player has made his/her choice,
                   // stop hiding the hexes that the player can't see
-                  _server._map.recomputeVisibility((Character)null/*self*/, null/*diag*/);
+                  _server._map.recomputeVisibility(null/*self*/, null/*diag*/);
                   _server.redrawMap();
 
                   req.set_backupSelected(reqUI.isBackupSelected());
@@ -1856,9 +1856,7 @@ public class Arena implements Enums, IMapListener
          attackingOrientation.getPossibleChargePathsToTarget(getCombatMap(), attacker, defender,
                                                              attacker.getAvailableMovement(false/*movingEvasively*/),
                                                              mapOrientationToNextOrientationsLeadingToChargeAttack);
-         if (mapOrientationToNextOrientationsLeadingToChargeAttack.size() >= 1) {
-            return true;
-         }
+         return mapOrientationToNextOrientationsLeadingToChargeAttack.size() >= 1;
 
       }
       return false;
@@ -1996,7 +1994,7 @@ public class Arena implements Enums, IMapListener
       if (nextMoveReq == null) {
          _server._map.endHexSelection();
          // Stop hiding the hexes that the player can't see
-         _server._map.recomputeVisibility((Character)null/*self*/, null/*diag*/);
+         _server._map.recomputeVisibility(null/*self*/, null/*diag*/);
       }
       else {
          _server._map.requestMovement(nextMoveReq);

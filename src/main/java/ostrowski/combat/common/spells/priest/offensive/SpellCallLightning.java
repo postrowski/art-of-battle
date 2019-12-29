@@ -21,7 +21,8 @@ import ostrowski.combat.server.BattleTerminatedException;
 public class SpellCallLightning extends PriestSpell implements IRangedSpell, ICastInBattle
 {
    public static final String NAME = "Call Lightning";
-   public SpellCallLightning() {};
+   public SpellCallLightning() {}
+
    public SpellCallLightning(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, group, affinity);
    }

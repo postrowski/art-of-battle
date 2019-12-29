@@ -10,7 +10,8 @@ import ostrowski.combat.common.spells.priest.PriestSpell;
 public class SpellOpenPortal extends PriestSpell
 {
    public static final String NAME = "Open Portal";
-   public SpellOpenPortal() {};
+   public SpellOpenPortal() {}
+
    public SpellOpenPortal(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, group, affinity);
    }

@@ -16,7 +16,7 @@ public enum Attribute {
    public final byte value;
    public final String shortName;
 
-   private Attribute(int val, String abbreviation) {
+   Attribute(int val, String abbreviation) {
       this.value = (byte) val;
       this.shortName = abbreviation;
    }

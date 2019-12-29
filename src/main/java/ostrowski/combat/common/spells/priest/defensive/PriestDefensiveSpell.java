@@ -18,5 +18,5 @@ public class PriestDefensiveSpell implements IPriestGroup
       _spells.add(new SpellMissileShield(PriestDefensiveSpell.class, 5));
       _spells.add(new SpellReverseMissile(PriestDefensiveSpell.class, 6));
       _spells.add(new SpellSphereOfImpenetrability(PriestDefensiveSpell.class, 7));
-   };
+   }
 }

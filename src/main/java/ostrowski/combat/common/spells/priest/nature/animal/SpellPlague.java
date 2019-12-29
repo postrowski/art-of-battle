@@ -9,7 +9,8 @@ import ostrowski.combat.common.spells.priest.PriestSpell;
 public class SpellPlague extends PriestSpell
 {
    public static final String NAME = "Plague";
-   public SpellPlague() {};
+   public SpellPlague() {}
+
    public SpellPlague(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, group, affinity);
    }
@@ -48,7 +49,7 @@ public class SpellPlague extends PriestSpell
          table.addRow(new TableRow(power-1, ""+power,
                                             ""+getCreatureTypesForPower(power),
                                             ""+getDurationForPower(power),
-                                            ""+getDamageChanceForPower(power).toString()));
+                                   "" + getDamageChanceForPower(power)));
       }
       sb.append(table.toString());
 //    sb.append("If desired, the casting priest may trade 1 power point from duration, creature type or swarm size for 1 point of any other attribute (duration, type or size).");

@@ -7,7 +7,8 @@ import ostrowski.combat.common.spells.priest.PriestSpell;
 public class SpellSummonDeity extends PriestSpell
 {
    public static final String NAME = "Summon Deity";
-   public SpellSummonDeity() {};
+   public SpellSummonDeity() {}
+
    public SpellSummonDeity(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, group, affinity);
    }

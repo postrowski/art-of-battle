@@ -8,7 +8,8 @@ import ostrowski.combat.common.spells.priest.ResistedPriestSpell;
 public class SpellEntangle extends ResistedPriestSpell
 {
    public static final String NAME = "Entangle";
-   public SpellEntangle() {};
+   public SpellEntangle() {}
+
    public SpellEntangle(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, Attribute.Strength, (byte) 3/*resistedActions*/, true/*expires*/, group, affinity);
    }

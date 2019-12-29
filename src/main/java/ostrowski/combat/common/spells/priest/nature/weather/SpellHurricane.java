@@ -7,7 +7,8 @@ import ostrowski.combat.common.spells.priest.PriestSpell;
 public class SpellHurricane extends PriestSpell
 {
    public static final String NAME = "Hurricane";
-   public SpellHurricane() {};
+   public SpellHurricane() {}
+
    public SpellHurricane(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, group, affinity);
    }

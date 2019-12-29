@@ -70,7 +70,7 @@ public enum SkillType {
    public boolean isAdjustedForEncumbrance() { return _isAdjustedForEncumbrance; }
    public boolean isUnarmed()                { return _isUnarmed; }
 
-   private SkillType(String name, boolean isAdjForSize, boolean isAdjustedForEncumbrance, Attribute attributeBase, ArmsUsed armCount, boolean isUnarmed) {
+   SkillType(String name, boolean isAdjForSize, boolean isAdjustedForEncumbrance, Attribute attributeBase, ArmsUsed armCount, boolean isUnarmed) {
       _name                      = name;
       _isAdjustedForSize         = isAdjForSize;
       _isAdjustedForEncumbrance  = isAdjustedForEncumbrance;

@@ -12,7 +12,8 @@ import ostrowski.combat.server.Arena;
 public class SpellLight extends PriestSpell
 {
    public static final String NAME = "Light";
-   public SpellLight() {};
+   public SpellLight() {}
+
    public SpellLight(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, group, affinity);
    }

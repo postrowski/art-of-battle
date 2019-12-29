@@ -18,7 +18,8 @@ public class SpellSpeed extends ExpiringPriestSpell implements ICastInBattle
    public static final String NAME = "Speed";
    public SpellSpeed() {
       this(null, 0);
-   };
+   }
+
    public SpellSpeed(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, (short)10/*baseExpirationTimeInTurns*/, (short)2/*bonusTimeInTurnsPerPower*/, group, affinity);
    }

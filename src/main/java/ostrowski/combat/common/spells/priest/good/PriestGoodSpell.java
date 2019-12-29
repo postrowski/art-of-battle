@@ -22,5 +22,5 @@ public class PriestGoodSpell implements IPriestGroup
       _spells.add(new SpellBanishEvil(PriestGoodSpell.class, 7));
       _spells.add(new SpellDestroyEvil(PriestGoodSpell.class, 8));
       _spells.add(new SpellResurrection(PriestGoodSpell.class, 9));
-   };
+   }
 }

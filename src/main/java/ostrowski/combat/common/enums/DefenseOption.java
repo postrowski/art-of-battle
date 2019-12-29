@@ -86,7 +86,7 @@ public enum DefenseOption {
    private String defenseName;
    private String pastTenseDefenseName;
 
-   private DefenseOption(int actionsUsed, String defenseName, String pastTenseDefenseName) {
+   DefenseOption(int actionsUsed, String defenseName, String pastTenseDefenseName) {
       this.value = 1 << this.ordinal();
       this.actionsUsed = (byte) actionsUsed;
       this.defenseName = defenseName;

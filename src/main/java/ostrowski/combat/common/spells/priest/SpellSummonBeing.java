@@ -15,7 +15,8 @@ import ostrowski.combat.server.CombatServer;
 
 public abstract class SpellSummonBeing extends ExpiringPriestSpell implements ICastInBattle
 {
-   public SpellSummonBeing() {};
+   public SpellSummonBeing() {}
+
    public SpellSummonBeing(String subClassName, Class<? extends IPriestGroup> group, int affinity) {
       super(subClassName, (short)10/*baseExpirationTimeInTurns*/, (short)10 /*bonusTimeInTurnsPerPower*/, group, affinity);
    }

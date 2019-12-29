@@ -47,7 +47,7 @@ public class Race implements Cloneable, Enums
    public enum Gender {
       MALE("Male"),
       FEMALE("Female");
-      private Gender(String name) {
+      Gender(String name) {
          _name=name;
       }
       public String _name;
@@ -77,7 +77,7 @@ public class Race implements Cloneable, Enums
       BIRD(            new OrientationSingleWinged()),
       SPIDER(          new OrientationSingleSpider());
 
-      private BodyType(Orientation orientation) {
+      BodyType(Orientation orientation) {
          _orientation = orientation;
       }
       public final Orientation _orientation;
@@ -588,7 +588,7 @@ public class Race implements Cloneable, Enums
       tr = new TableRow();
       tr.setClassName("header-row");
       for (Attribute att : Attribute.values()) {
-         tr.addHeader(String.valueOf(att.shortName.charAt(0)) + att.shortName.substring(1).toLowerCase() + ".");
+         tr.addHeader(att.shortName.charAt(0) + att.shortName.substring(1).toLowerCase() + ".");
       }
       for (int i = 0; i <= 5; i++) {
          tr.addHeader(i);
@@ -840,7 +840,7 @@ public class Race implements Cloneable, Enums
          }
          if (racialAdvName.startsWith(advName)) {
             Advantage adv = (Advantage.getAdvantage(advName));
-            String selectedLevelName = racialAdvName.substring(advName.length() + 1, racialAdvName.length());
+            String selectedLevelName = racialAdvName.substring(advName.length() + 1);
             if (adv.setLevelByName(selectedLevelName)) {
                return adv;
             }

@@ -29,20 +29,24 @@ public class RequestActionOption extends SerializableObject implements IRequestO
    @Override
    public String getName() {
       return this._name;
-   };
+   }
+
    @Override
    public int getIntValue() {
       if (this._actionType == RequestActionType.OPT_CANCEL_ACTION) {
          return SyncRequest.OPT_CANCEL_ACTION;
       }
       return this._actionType.ordinal() + (this._limbType.ordinal() * LIMB_MULTIPLIER);
-   };
+   }
+
    public RequestActionType getValue() {
       return this._actionType;
-   };
+   }
+
    public LimbType getLimbType() {
       return this._limbType;
-   };
+   }
+
    @Override
    public boolean isEnabled() {
       return this._enabled;
@@ -62,7 +66,7 @@ public class RequestActionOption extends SerializableObject implements IRequestO
    @Override
    public void setEnabled(boolean enabled) {
       this._enabled = enabled;
-   };
+   }
 
    @Override
    public void serializeToStream(DataOutputStream out) {

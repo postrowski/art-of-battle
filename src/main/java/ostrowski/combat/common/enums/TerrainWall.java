@@ -33,7 +33,7 @@ public enum TerrainWall {
    public static final int TERRAIN_ATTRIBUTES_START_BITPOS = TERRAIN_WALL_START_BITPOS + 17;
    public static final int TERRAIN_ATTRIBUTE_FLAMES        = 1 << (TERRAIN_ATTRIBUTES_START_BITPOS + 0);
 
-   private TerrainWall(int bitPos, int startPoint, int endPoint, int thickness, int fillpoint) {
+   TerrainWall(int bitPos, int startPoint, int endPoint, int thickness, int fillpoint) {
       this.bitMask = 1 << (TERRAIN_WALL_START_BITPOS + bitPos);
       this.startPoint = startPoint;
       this.endPoint = endPoint;

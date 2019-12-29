@@ -65,9 +65,6 @@ public class OrientationSingleWinged extends OrientationSerpentine
       if ((limb == null) || (limb.isSevered())) {
          return false;
       }
-      if (limb instanceof Leg) {
-         return false;
-      }
-      return true;
+      return !(limb instanceof Leg);
    }
 }

@@ -26,5 +26,5 @@ public class PriestEvilSpell implements IPriestGroup
       _spells.add(new SpellPossession(PriestEvilSpell.class, 8));
       _spells.add(new SpellDestroyGood(PriestEvilSpell.class, 9));
       _spells.add(new SpellOpenGateToHell(PriestEvilSpell.class, 10));
-   };
+   }
 }

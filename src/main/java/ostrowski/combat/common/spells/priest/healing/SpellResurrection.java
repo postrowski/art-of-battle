@@ -11,7 +11,8 @@ import ostrowski.combat.common.spells.priest.PriestSpell;
 public class SpellResurrection extends PriestSpell
 {
    public static final String NAME = "Resurrection";
-   public SpellResurrection() {};
+   public SpellResurrection() {}
+
    public SpellResurrection(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, group, affinity);
    }

@@ -53,11 +53,8 @@ public class WeaponStyleAttackThrown extends WeaponStyleAttackRanged
       if (!(other instanceof WeaponStyleAttackThrown)) {
          return false;
       }
-      if (!super.equals(other)) {
-         return false;
-      }
+      return super.equals(other);
       //WeaponStyleAttackThrown otherStyle = (WeaponStyleAttackThrown) other;
-      return true;
    }
 
 }

@@ -52,7 +52,6 @@ public class Hand extends Limb {
    public Thing getHeldThing() { return _heldThing;}
    /**
     * returns true if we are able to set the current held thing.
-    * @see ostrowski.combat.common.Limb#setHeldThing(ostrowski.combat.common.things.Thing)
     */
    @Override
    public boolean setHeldThing(Thing thing, Character self) {
@@ -228,7 +227,7 @@ public class Hand extends Limb {
       super.copyDataInto(dest);
       if (dest instanceof Hand) {
          Hand hand = (Hand) dest;
-         hand._heldThing         = (_heldThing == null) ? null : (Thing) _heldThing.clone();
+         hand._heldThing         = (_heldThing == null) ? null : _heldThing.clone();
          hand._attackedThisRound = _attackedThisRound;
          hand._preparedState     = _preparedState;
          hand._defenseStyle      = _defenseStyle;
@@ -449,11 +448,8 @@ public class Hand extends Limb {
          Weapon weap = (Weapon) _heldThing;
          return (weap._parryStyles.length > 0);
       }
-      if (_heldThing instanceof Shield) {
-         return true;
-      }
+      return _heldThing instanceof Shield;
       // not a shield or weapon - can't defend!
-      return false;
    }
    @Override
    public boolean canAttack(Character character) {
@@ -598,14 +594,11 @@ public class Hand extends Limb {
       if (_heldThing != null) {
          return "parry".equalsIgnoreCase(_heldThing.getActiveDefenseName());
       }
-      if ((character.getSkillLevel(SkillType.Aikido,    null, false/*sizeAdjust*/, false/*adjustForEncumbrance*/, false/*adjustForHolds*/) == 0) &&
-          (character.getSkillLevel(SkillType.Karate,    null, false/*sizeAdjust*/, false/*adjustForEncumbrance*/, false/*adjustForHolds*/) == 0) &&
-          (character.getSkillLevel(SkillType.Boxing,    null, false/*sizeAdjust*/, false/*adjustForEncumbrance*/, false/*adjustForHolds*/) == 0) &&
-          (character.getSkillLevel(SkillType.Brawling,  null, false/*sizeAdjust*/, false/*adjustForEncumbrance*/, false/*adjustForHolds*/) == 0) &&
-          (character.getSkillLevel(SkillType.Wrestling, null, false/*sizeAdjust*/, false/*adjustForEncumbrance*/, false/*adjustForHolds*/) == 0)) {
-         return false;
-      }
-      return true;
+      return (character.getSkillLevel(SkillType.Aikido, null, false/*sizeAdjust*/, false/*adjustForEncumbrance*/, false/*adjustForHolds*/) != 0) ||
+             (character.getSkillLevel(SkillType.Karate, null, false/*sizeAdjust*/, false/*adjustForEncumbrance*/, false/*adjustForHolds*/) != 0) ||
+             (character.getSkillLevel(SkillType.Boxing, null, false/*sizeAdjust*/, false/*adjustForEncumbrance*/, false/*adjustForHolds*/) != 0) ||
+             (character.getSkillLevel(SkillType.Brawling, null, false/*sizeAdjust*/, false/*adjustForEncumbrance*/, false/*adjustForHolds*/) != 0) ||
+             (character.getSkillLevel(SkillType.Wrestling, null, false/*sizeAdjust*/, false/*adjustForEncumbrance*/, false/*adjustForHolds*/) != 0);
 //      Weapon punch = Weapon.getWeapon("punch");
 //      return punch.getActiveDefenseName().equals("parry");
    }

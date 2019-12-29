@@ -26,5 +26,5 @@ public class PriestElementalSpell implements IPriestGroup
       _spells.add(new SpellWalkThroughWalls(PriestElementalSpell.class, 7));
       _spells.add(new SpellEarthquake(PriestElementalSpell.class, 9)); // topples buildings or rock formations
       _spells.add(new SpellHurricane(PriestElementalSpell.class, 10));
-   };
+   }
 }

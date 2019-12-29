@@ -13,7 +13,8 @@ import ostrowski.combat.server.Arena;
 public class SpellRevive extends PriestSpell implements ICastInBattle
 {
    public static final String NAME = "Revive";
-   public SpellRevive() {};
+   public SpellRevive() {}
+
    public SpellRevive(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, group, affinity);
    }

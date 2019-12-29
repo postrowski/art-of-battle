@@ -7,7 +7,8 @@ import ostrowski.combat.common.spells.priest.SpellSummonBeing;
 public class SpellSummonMajorDemon extends SpellSummonBeing
 {
    public static final String NAME = "Summon Major Demon";
-   public SpellSummonMajorDemon() {};
+   public SpellSummonMajorDemon() {}
+
    public SpellSummonMajorDemon(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, group, affinity);
    }

@@ -1025,10 +1025,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
     * @return
     */
    public boolean isIncompatibleWith(Spell spell) {
-      if (getName().equals(spell.getName())) {
-         return true;
-      }
-      return false;
+      return getName().equals(spell.getName());
    }
 
    public Spell getActiveSpellIncompatibleWith(Character target) {
@@ -1180,11 +1177,8 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
          return true;
       }
       TargetType targetType = getTargetType();
-      if ((targetType == TargetType.TARGET_OTHER_EVIL_FIGHTING) || (targetType == TargetType.TARGET_OTHER_GOOD_FIGHTING)
-          || (targetType == TargetType.TARGET_AREA) || (targetType == TargetType.TARGET_OBJECT) || (targetType == TargetType.TARGET_NONE)) {
-         return false;
-      }
-      return true;
+      return (targetType != TargetType.TARGET_OTHER_EVIL_FIGHTING) && (targetType != TargetType.TARGET_OTHER_GOOD_FIGHTING)
+             && (targetType != TargetType.TARGET_AREA) && (targetType != TargetType.TARGET_OBJECT) && (targetType != TargetType.TARGET_NONE);
    }
 
 }

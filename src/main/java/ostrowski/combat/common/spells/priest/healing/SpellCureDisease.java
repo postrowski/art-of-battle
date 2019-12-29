@@ -12,7 +12,8 @@ import ostrowski.combat.server.Arena;
 public class SpellCureDisease extends PriestSpell
 {
    public static final String NAME = "Cure Disease";
-   public SpellCureDisease() {};
+   public SpellCureDisease() {}
+
    public SpellCureDisease(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, group, affinity);
    }

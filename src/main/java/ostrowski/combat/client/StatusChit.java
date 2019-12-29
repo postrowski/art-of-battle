@@ -280,7 +280,8 @@ class TextWheel {
    public static int _fullWidth  = 400;
    public static int _fullHieght = 300;
 
-   public enum Edge { TOP, LEFT, BOTTOM, RIGHT};
+   public enum Edge { TOP, LEFT, BOTTOM, RIGHT}
+
    private int _radius;
    private final double _percentClockwiseAlongEdge;
    private final int _blockingSize;

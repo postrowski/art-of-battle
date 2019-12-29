@@ -15,7 +15,7 @@ public enum DamageType {
    public final String fullname;
    public final String shortname;
 
-   private DamageType(int val, String name, String shortname) {
+   DamageType(int val, String name, String shortname) {
       this.value = (byte) val;
       this.fullname = name;
       this.shortname = shortname;

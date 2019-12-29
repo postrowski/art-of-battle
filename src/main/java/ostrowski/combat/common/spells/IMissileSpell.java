@@ -8,15 +8,15 @@ import ostrowski.combat.common.weaponStyles.WeaponStyleAttackRanged;
 
 public interface IMissileSpell extends IRangedSpell
 {
-   public String getMissileWeaponName();
-   public int    getMissileWeaponSize();
-   public int    getMissileWeaponSkillPenalty();
-   public int    getHandsRequired();
-   public String explainDamage();
-   public byte   getSpellDamageBase();
-   public MissileWeapon getMissileWeapon();
-   public WeaponStyleAttackRanged getWeaponStyleAttackRanged();
-   public TargetType getTargetType();
-   public DiceSet getDamageDice();
-   public DamageType getDamageType();
+   String getMissileWeaponName();
+   int    getMissileWeaponSize();
+   int    getMissileWeaponSkillPenalty();
+   int    getHandsRequired();
+   String explainDamage();
+   byte   getSpellDamageBase();
+   MissileWeapon getMissileWeapon();
+   WeaponStyleAttackRanged getWeaponStyleAttackRanged();
+   TargetType getTargetType();
+   DiceSet getDamageDice();
+   DamageType getDamageType();
 }

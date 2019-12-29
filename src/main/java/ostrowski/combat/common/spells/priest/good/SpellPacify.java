@@ -11,7 +11,8 @@ import ostrowski.combat.server.Configuration;
 public class SpellPacify extends ResistedPriestSpell implements ICastInBattle
 {
    public static final String NAME = "Pacify";
-   public SpellPacify() {};
+   public SpellPacify() {}
+
    public SpellPacify(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, Attribute.Intelligence, (byte)1/*resistedActions*/, true/*expires*/,group, affinity);
    }

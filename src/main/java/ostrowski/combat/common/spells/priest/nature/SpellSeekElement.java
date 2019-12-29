@@ -7,7 +7,8 @@ import ostrowski.combat.common.spells.priest.PriestSpell;
 public class SpellSeekElement extends PriestSpell
 {
    public static final String NAME = "Seek Element";
-   public SpellSeekElement() {};
+   public SpellSeekElement() {}
+
    public SpellSeekElement(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, group, affinity);
    }

@@ -36,10 +36,7 @@ public class WeaponStyleParry extends WeaponStyle
       if (damType == DamageType.ELECTRIC) {
          return false;
       }
-      if (damType == DamageType.FIRE) {
-         return false;
-      }
-      return true;
+      return damType != DamageType.FIRE;
    }
 
    @Override
@@ -65,9 +62,6 @@ public class WeaponStyleParry extends WeaponStyle
          return false;
       }
       WeaponStyleParry otherStyle = (WeaponStyleParry) other;
-      if (_effectiveness != otherStyle._effectiveness) {
-         return false;
-      }
-      return true;
+      return _effectiveness == otherStyle._effectiveness;
    }
 }

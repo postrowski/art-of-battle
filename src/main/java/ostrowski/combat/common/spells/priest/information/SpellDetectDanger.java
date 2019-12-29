@@ -7,7 +7,8 @@ import ostrowski.combat.common.spells.priest.PriestSpell;
 public class SpellDetectDanger extends PriestSpell
 {
    public static final String NAME = "Detect Danger";
-   public SpellDetectDanger() {};
+   public SpellDetectDanger() {}
+
    public SpellDetectDanger(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, group, affinity);
    }

@@ -6,12 +6,12 @@ import ostrowski.combat.common.enums.Enums.TargetType;
 
 public interface IResistedSpell
 {
-   public short getMaxRange(Character caster);
-   public boolean isDefendable();
-   public byte getResistanceAttribute(Character target);
-   public byte getResistanceActions();
-   public DiceSet getResistanceDice(Character target);
-   public TargetType getTargetType();
-   public String getResistanceAttributeName();
-   public byte getRangeTNAdjustment(short distanceInHexes);
+   short getMaxRange(Character caster);
+   boolean isDefendable();
+   byte getResistanceAttribute(Character target);
+   byte getResistanceActions();
+   DiceSet getResistanceDice(Character target);
+   TargetType getTargetType();
+   String getResistanceAttributeName();
+   byte getRangeTNAdjustment(short distanceInHexes);
 }

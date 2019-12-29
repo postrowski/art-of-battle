@@ -120,13 +120,10 @@ public class AdvantagesBlock extends Helper implements Enums, IUIBlock, ModifyLi
                boolean isRacial = false;
                for (Advantage racialAdv : racialAdvantages) {
                   if (racialAdv.getName().equals(advName)) {
-                     isRacial = true;
                      // If this racial advantage has levels, and the user has
                      // specifed a level that is not the racial default, then
                      // we need to add it to the list of advantages for the character.
-                     if (racialAdv.hasLevels() && (racialAdv.getLevel() != adv.getLevel())) {
-                        isRacial = false;
-                     }
+                     isRacial = !racialAdv.hasLevels() || (racialAdv.getLevel() == adv.getLevel());
                   }
                }
                if (!isRacial) {
@@ -223,7 +220,7 @@ public class AdvantagesBlock extends Helper implements Enums, IUIBlock, ModifyLi
             break;
          }
 
-         _advCost[i].setText("(" + String.valueOf(advantage.getCost((character==null)?null:character.getRace())) + ")");
+         _advCost[i].setText("(" + advantage.getCost((character == null) ? null : character.getRace()) + ")");
          if (!racialAdv) {
             ArrayList<String> existingProperties;
             if (character != null) {
@@ -283,8 +280,8 @@ public class AdvantagesBlock extends Helper implements Enums, IUIBlock, ModifyLi
    }
 
    /**
-    * @param i
-    * @param existingProperties
+    * @param combo
+    * @param availableItems
     */
    private static void setComboContents(Combo combo, ArrayList<String> availableItems)
    {

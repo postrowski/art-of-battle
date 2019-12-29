@@ -36,7 +36,8 @@ public class OrientationReptilian extends OrientationSerpentine
    }
 
    @Override
-   public DrawnObject getBodyOutlines(Character character, int size, int narrowDiameter, ArenaLocation loc, int[] bounds, RGB foreground, RGB background)
+   public DrawnObject getBodyOutlines(Character character, int size, int narrowDiameter, ArenaLocation loc,
+                                      int[] bounds, RGB foreground, RGB background)
    {
       int pointCount = size;
       DrawnObject charOutlines = new DrawnObject(foreground, background);
@@ -65,10 +66,7 @@ public class OrientationReptilian extends OrientationSerpentine
    @Override
    public boolean shouldDraw(Limb limb) {
       if (super.shouldDraw(limb)) {
-         if (limb instanceof Tail) {
-            return false;
-         }
-         return true;
+         return !(limb instanceof Tail);
       }
       return false;
    }

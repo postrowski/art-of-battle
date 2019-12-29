@@ -31,7 +31,8 @@ public abstract class WoundChart implements Enums {
    DamageType _damageType;
    // prevent default ctor
    @SuppressWarnings("unused")
-   private WoundChart() {};
+   private WoundChart() {}
+
    public WoundChart(DamageType damageType) {
       _damageType = damageType;
       registerWithFactory(this);
@@ -160,7 +161,6 @@ public abstract class WoundChart implements Enums {
       return sb.toString();
    }
    /**
-    * @param sb
     */
    private static String generateWoundChartHeaderRow()
    {

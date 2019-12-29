@@ -10,7 +10,8 @@ import ostrowski.combat.common.spells.priest.PriestSpell;
 public class SpellSummonSwarm extends PriestSpell
 {
    public static final String NAME = "Summon Swarm";
-   public SpellSummonSwarm() {};
+   public SpellSummonSwarm() {}
+
    public SpellSummonSwarm(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, group, affinity);
    }

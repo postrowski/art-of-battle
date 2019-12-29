@@ -10,7 +10,8 @@ import ostrowski.combat.common.spells.priest.PriestSpell;
 public class SpellReverseAging extends PriestSpell
 {
    public static final String NAME = "Reverse Aging";
-   public SpellReverseAging() {};
+   public SpellReverseAging() {}
+
    public SpellReverseAging(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, group, affinity);
    }

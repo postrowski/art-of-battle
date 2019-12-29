@@ -380,7 +380,7 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
          itemEnabledData[i]    = true;
          collegeLevelData[i]   = college.getLevel();
          collegeAdjLvlData[i]  = Rules.getAdjustedCollegeLevel(college, character);
-         collegeCostData[i]    = "(" + String.valueOf(Rules.getCollegeCost(college.getLevel())) + ")";
+         collegeCostData[i]    = "(" + Rules.getCollegeCost(college.getLevel()) + ")";
 
          i++;
          if (i >= _collegeCombo.length) {
@@ -441,7 +441,7 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
       for (MageSpell spell : mageSpells) {
          spellComboData[i] = spell.getName();
          spellFamiliarityData[i] = spell.getFamiliarity();
-         spellCostData[i] = "(" + String.valueOf(Rules.getSpellCost(spell.getLevel())) + ")";
+         spellCostData[i] = "(" + Rules.getSpellCost(spell.getLevel()) + ")";
          byte atr = character.getAttributeLevel(spell.getCastingAttribute());
          byte adjustedSkillLevel = Rules.getAdjustedSkillLevel(character.getSpellSkill(spell.getName()), atr);
          spellEffectiveSkillData[i] = String.valueOf(adjustedSkillLevel);

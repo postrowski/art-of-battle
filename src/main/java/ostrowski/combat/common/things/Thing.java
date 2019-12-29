@@ -203,10 +203,7 @@ public abstract class Thing extends SerializableObject implements Cloneable, Enu
       if (_weight         != other._weight) {
          return false;
       }
-      if (_passiveDefense != other._passiveDefense) {
-         return false;
-      }
-      return true;
+      return _passiveDefense == other._passiveDefense;
    }
 
    @Override

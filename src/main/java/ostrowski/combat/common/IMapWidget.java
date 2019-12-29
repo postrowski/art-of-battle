@@ -18,14 +18,14 @@ import ostrowski.util.Diagnostics;
 
 public interface IMapWidget extends KeyListener
 {
-   public enum MapMode {
+   enum MapMode {
       NONE,
       DRAG,
       PAINT_TERRAIN,
       PAINT_WALL,
       FILL,
-      LINE;
-   };
+      LINE
+   }
 
    void setLayoutData(Object data);
    void addControlGroup(Composite parent);

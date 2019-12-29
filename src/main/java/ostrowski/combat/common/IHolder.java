@@ -6,11 +6,11 @@ import ostrowski.combat.server.Arena;
 
 public interface IHolder
 {
-   public Byte getHoldingLevel();
-   public String getName();
-   public RequestGrapplingHoldMaintain getGrapplingHoldMaintain(Character actor, RequestAction action, Arena arena);
-   public void applyHoldMaintenance(RequestGrapplingHoldMaintain grappleMaintain, Arena arena);
-   public Character getHoldTarget();
-   public void setHoldTarget(Character holdTarget);
-   public byte getAdjustedStrength();
+   Byte getHoldingLevel();
+   String getName();
+   RequestGrapplingHoldMaintain getGrapplingHoldMaintain(Character actor, RequestAction action, Arena arena);
+   void applyHoldMaintenance(RequestGrapplingHoldMaintain grappleMaintain, Arena arena);
+   Character getHoldTarget();
+   void setHoldTarget(Character holdTarget);
+   byte getAdjustedStrength();
 }

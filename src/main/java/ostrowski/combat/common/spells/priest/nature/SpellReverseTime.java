@@ -10,7 +10,8 @@ import ostrowski.combat.common.spells.priest.PriestSpell;
 public class SpellReverseTime extends PriestSpell
 {
    public static final String NAME = "Reverse Time";
-   public SpellReverseTime() {};
+   public SpellReverseTime() {}
+
    public SpellReverseTime(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, group, affinity);
    }

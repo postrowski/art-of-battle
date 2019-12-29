@@ -151,7 +151,7 @@ public class CharacterGenerator implements Enums
             if (token.toLowerCase().startsWith(seedKey)) {
                seed = Integer.parseInt(token.substring(seedKey.length()));
             }
-            if (token.equals("rnd:" + String.valueOf(seed))) {
+            if (token.equals("rnd:" + seed)) {
                tokens.remove(token);
                pseudoRndNumberToUse = seed;
                break;
@@ -486,17 +486,12 @@ public class CharacterGenerator implements Enums
          if ((oneHandedSwing != null) && (twoHandedSwing != null)) {
             byte str = character.getAttributeLevel(Attribute.Strength);
             // If we are strong enough to use this one handed, do it
+            // If we are not strong enough to use this quickly one handed, but are not strong enough to use
+            // it two handed quickly either, then use it one handed, as long as we are strong enough to not be slow:
             if (str >= oneHandedSwing.getFastStr()) {
                usingAsOneHanded = true;
             }
-            else if ((str < twoHandedSwing.getFastStr()) && (str > oneHandedSwing.getSlowStr())) {
-               // If we are not strong enough to use this quickly one handed, but are not strong enough to use
-               // it two handed quickly either, then use it one handed, as long as we are strong enough to not be slow:
-               usingAsOneHanded = true;
-            }
-            else {
-               usingAsOneHanded = false;
-            }
+            else usingAsOneHanded = (str < twoHandedSwing.getFastStr()) && (str > oneHandedSwing.getSlowStr());
             if (!usingAsOneHanded) {
                weaponSkill = new Skill(twoHandedSwing.getSkillType(), (byte)0);
             }

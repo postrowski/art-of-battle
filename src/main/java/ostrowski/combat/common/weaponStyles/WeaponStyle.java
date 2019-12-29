@@ -115,9 +115,6 @@ public abstract class WeaponStyle implements Enums//, Serializable
       if (_fastStr != otherStyle._fastStr) {
          return false;
       }
-      if (_handsRequired != otherStyle._handsRequired) {
-         return false;
-      }
-      return true;
+      return _handsRequired == otherStyle._handsRequired;
    }
 }

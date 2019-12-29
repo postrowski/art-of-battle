@@ -10,7 +10,8 @@ import ostrowski.combat.common.spells.priest.PriestSpell;
 public class SpellIceStorm extends PriestSpell
 {
    public static final String NAME = "Ice Storm";
-   public SpellIceStorm() {};
+   public SpellIceStorm() {}
+
    public SpellIceStorm(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, group, affinity);
    }

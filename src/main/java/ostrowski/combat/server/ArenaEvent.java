@@ -78,13 +78,10 @@ public class ArenaEvent implements Cloneable
    }
 
    public boolean usesLocation() {
-      if (_eventType.equals(EVENT_TYPE_CLOSE_DOOR)      ||
-          _eventType.equals(EVENT_TYPE_OPEN_DOOR)       ||
-          _eventType.equals(EVENT_TYPE_ENTER_CHARACTER) ||
-          _eventType.equals(EVENT_TYPE_TRAP)) {
-         return true;
-      }
-      return false;
+      return _eventType.equals(EVENT_TYPE_CLOSE_DOOR) ||
+             _eventType.equals(EVENT_TYPE_OPEN_DOOR) ||
+             _eventType.equals(EVENT_TYPE_ENTER_CHARACTER) ||
+             _eventType.equals(EVENT_TYPE_TRAP);
    }
    public Element getXmlNode(Document mapDoc, String newLine) {
       Element eventElement = mapDoc.createElement("event");
@@ -436,9 +433,7 @@ public class ArenaEvent implements Cloneable
             }
          }
       }
-      else if ((_eventLocations != null) || (other._eventLocations != null)) {
-         return false;
-      }
+      else return (_eventLocations == null) && (other._eventLocations == null);
       return true;
    }
 

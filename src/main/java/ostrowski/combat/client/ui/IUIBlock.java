@@ -11,11 +11,11 @@ import ostrowski.combat.common.enums.Enums;
 
 public interface IUIBlock extends Enums
 {
-   public void buildBlock(Composite parent);
+   void buildBlock(Composite parent);
    // updateDisplayFromCharacter is used to update fields that have ModifyListeners:
-   public void updateDisplayFromCharacter(Character character);
+   void updateDisplayFromCharacter(Character character);
    // refreshDisplay is used to update fields that dont have ModifyListeners:
-   public void refreshDisplay(Character character);
-   public void updateCharacterFromDisplay(Character character);
-   public void enableControls(boolean enabledFlag);
+   void refreshDisplay(Character character);
+   void updateCharacterFromDisplay(Character character);
+   void enableControls(boolean enabledFlag);
 }

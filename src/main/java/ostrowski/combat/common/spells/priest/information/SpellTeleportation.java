@@ -10,7 +10,8 @@ import ostrowski.combat.common.spells.priest.PriestSpell;
 public class SpellTeleportation extends PriestSpell
 {
    public static final String NAME = "Teleportation";
-   public SpellTeleportation() {};
+   public SpellTeleportation() {}
+
    public SpellTeleportation(Class<? extends IPriestGroup> group, int affinity) {
       super(NAME, group, affinity);
    }
