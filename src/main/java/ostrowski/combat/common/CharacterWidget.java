@@ -1,28 +1,18 @@
 package ostrowski.combat.common;
 
-import java.util.ArrayList;
-
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-
 import ostrowski.combat.client.CharacterDisplay;
-import ostrowski.combat.client.ui.AdvantagesBlock;
-import ostrowski.combat.client.ui.ArmorBlock;
-import ostrowski.combat.client.ui.AttributesBlock;
-import ostrowski.combat.client.ui.DefenseBlock;
-import ostrowski.combat.client.ui.DiceBlock;
-import ostrowski.combat.client.ui.EncumbranceBlock;
-import ostrowski.combat.client.ui.IUIBlock;
-import ostrowski.combat.client.ui.MainBlock;
-import ostrowski.combat.client.ui.SkillsBlock;
-import ostrowski.combat.client.ui.SpellsBlock;
-import ostrowski.combat.client.ui.WeaponBlock;
+import ostrowski.combat.client.ui.*;
 import ostrowski.combat.common.enums.AI_Type;
 import ostrowski.combat.common.enums.Enums;
 import ostrowski.ui.Helper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /*
  * Created on May 5, 2006
@@ -36,22 +26,22 @@ import ostrowski.ui.Helper;
 public class CharacterWidget implements Enums, ModifyListener {
 
    // these object all implement the IUIBlock Interface:
-   private final AdvantagesBlock     _advantagesBlock     = new AdvantagesBlock(this);
-   private final ArmorBlock          _armorBlock          = new ArmorBlock(this);
-   private final AttributesBlock     _attributesBlock     = new AttributesBlock(this);
-   private final DefenseBlock        _defenseBlock        = new DefenseBlock(this);
-   private final DiceBlock           _diceBlock           = new DiceBlock(this);
-   private final SkillsBlock         _skillsBlock         = new SkillsBlock(this);
-   private MainBlock           _topBlock            = null;
-   private final WeaponBlock         _weaponBlock         = new WeaponBlock(this);
-   private final EncumbranceBlock    _encumbranceBlock    = new EncumbranceBlock(this);
-   private final SpellsBlock         _spellsBlock         = new SpellsBlock(this);
+   private final AdvantagesBlock     _advantagesBlock    = new AdvantagesBlock(this);
+   private final ArmorBlock          _armorBlock         = new ArmorBlock(this);
+   private final AttributesBlock     _attributesBlock    = new AttributesBlock(this);
+   private final DefenseBlock        _defenseBlock       = new DefenseBlock(this);
+   private final DiceBlock           _diceBlock          = new DiceBlock(this);
+   private final SkillsBlock         _skillsBlock        = new SkillsBlock(this);
+   private       MainBlock           _topBlock           = null;
+   private final WeaponBlock         _weaponBlock        = new WeaponBlock(this);
+   private final EncumbranceBlock    _encumbranceBlock   = new EncumbranceBlock(this);
+   private final SpellsBlock         _spellsBlock        = new SpellsBlock(this);
    // these don't:
-   public Character            _character           = null;
-   public ArrayList<IUIBlock>    _uiBlocks            = new ArrayList<>();
-   private int                 _uniqueConnectionID  = -1;
-   public AI _ai;
-   private boolean             _blocksInitialized   = false;
+   public        Character           _character          = null;
+   public final  ArrayList<IUIBlock> _uiBlocks           = new ArrayList<>();
+   private       int                 _uniqueConnectionID = -1;
+   public        AI                  _ai;
+   private       boolean             _blocksInitialized  = false;
    public CharacterWidget(String preferedCharName, CharacterFile charFile) {
        this(preferedCharName, charFile, null);
    }
@@ -69,7 +59,7 @@ public class CharacterWidget implements Enums, ModifyListener {
          }
          if (preferedCharName == null) {
             // grab the first name in the list
-            ArrayList<String> names = charFile.getCharacterNames();
+            List<String> names = charFile.getCharacterNames();
             if (names.size() > 0) {
                preferedCharName = names.get(0);
             }

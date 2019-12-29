@@ -3,49 +3,38 @@
  */
 package ostrowski.combat.client.ui;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Text;
-
+import org.eclipse.swt.widgets.*;
 import ostrowski.combat.client.CharacterDisplay;
 import ostrowski.combat.client.OpenCharacter;
 import ostrowski.combat.client.OpenCharacter.ExitButton;
 import ostrowski.combat.common.Character;
-import ostrowski.combat.common.CharacterFile;
-import ostrowski.combat.common.CharacterGenerator;
-import ostrowski.combat.common.CharacterWidget;
-import ostrowski.combat.common.GenerateCharacterDialog;
-import ostrowski.combat.common.Race;
+import ostrowski.combat.common.*;
 import ostrowski.combat.common.Race.Gender;
 import ostrowski.combat.server.CombatServer;
 import ostrowski.ui.Helper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainBlock extends Helper implements ModifyListener, SelectionListener, IUIBlock
 {
-   private Button           _openButton;
-   private Button           _newButton;
-   private Button           _saveButton;
-   private Button           _genButton;
-   private Text             _name;
-   private Combo            _race;
-   private Combo            _gender;
-   private Text             _points;
+   private       Button           _openButton;
+   private       Button           _newButton;
+   private       Button           _saveButton;
+   private       Button           _genButton;
+   private       Text             _name;
+   private       Combo            _race;
+   private       Combo            _gender;
+   private       Text             _points;
    private final CharacterWidget  _widget;
    private final CharacterDisplay _display;
-   public CharacterFile     _charFile;
-
-   private String           _originalCharacterName = null;
+   public final  CharacterFile    _charFile;
+   private       String           _originalCharacterName = null;
 
    public MainBlock(CharacterWidget widget, CharacterFile charFile, CharacterDisplay display) {
       _widget = widget;
@@ -59,8 +48,7 @@ public class MainBlock extends Helper implements ModifyListener, SelectionListen
       Group topGroup = createGroup(parent, "", 6/*columns*/, false, 3/*hSpacing*/, 3/*vSpacing*/);
 
       createLabel(topGroup, "Name:", SWT.LEFT, 2/*hSpan*/, null);
-      ArrayList<String> namesList = new ArrayList<>();
-      namesList.addAll(_charFile.getCharacterNames());
+      List<String> namesList = new ArrayList<>(_charFile.getCharacterNames());
       _name = createText(topGroup, "", true/*editable*/, 2/*hSpan*/);
       _points = createText(topGroup, "0 points", false, 2/*hSpan*/);
 

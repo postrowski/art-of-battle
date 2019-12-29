@@ -6,7 +6,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
-
 import ostrowski.combat.client.CharacterDisplay;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.Condition;
@@ -15,7 +14,7 @@ import ostrowski.combat.common.things.LimbType;
 import ostrowski.ui.Helper;
 
 public class ConditionBlock extends Helper implements IUIBlock {
-   CharacterDisplay _display;
+   final   CharacterDisplay _display;
    private Text             _initiative;
    private Text             _moveAvail;
    private Text             _position;

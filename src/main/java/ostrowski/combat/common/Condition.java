@@ -1,24 +1,8 @@
 package ostrowski.combat.common;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
+import org.w3c.dom.*;
 import ostrowski.DebugBreak;
-import ostrowski.combat.common.enums.Attribute;
-import ostrowski.combat.common.enums.DefenseOption;
-import ostrowski.combat.common.enums.Enums;
-import ostrowski.combat.common.enums.Facing;
-import ostrowski.combat.common.enums.Position;
+import ostrowski.combat.common.enums.*;
 import ostrowski.combat.common.orientations.Orientation;
 import ostrowski.combat.common.spells.Spell;
 import ostrowski.combat.common.things.LimbType;
@@ -34,6 +18,13 @@ import ostrowski.combat.server.CombatServer;
 import ostrowski.protocol.SerializableObject;
 import ostrowski.util.Diagnostics;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+
 /*
  * Created on May 3, 2006
  *
@@ -44,43 +35,41 @@ import ostrowski.util.Diagnostics;
  *
  */
 public class Condition extends SerializableObject implements Enums {
-   private byte             _actionsAvailable               = 0;
-   private byte             _finalDefensiveActionsAvailable = 0;
-   private byte             _maxActionsPerRound             = 3;
-   StringBuilder            _actionsAvailAudit              = new StringBuilder();
+   private byte          _actionsAvailable               = 0;
+   private byte          _finalDefensiveActionsAvailable = 0;
+   private byte          _maxActionsPerRound             = 3;
+   final   StringBuilder _actionsAvailAudit              = new StringBuilder();
    // wounds:
-   private byte             _wounds                         = 0;
-   private byte             _bleedRate                      = 0;
-   private byte             _penaltyPain                    = 0;
+   private byte          _wounds                         = 0;
+   private byte          _bleedRate                      = 0;
+   private byte          _penaltyPain                    = 0;
 
    // penalties are positive integers so a 2 means a -2 to actions.
    // A negative value means no use possible, such as a severed limb.
-   private byte             _penaltyMove                    = 0;
+   private byte _penaltyMove                = 0;
+   private byte _actionsSpentThisRound      = 0;
+   private byte _initiative                 = 0;
+   private byte _movementAvailableThisRound = 0;
+   private byte _movementAvailableEachRound = 0;
 
-   private byte             _actionsSpentThisRound          = 0;
-   private byte             _initiative                     = 0;
+   private boolean        _hasMovedThisRound            = false;
+   private boolean        _attackedThisRound            = false;
+   private boolean        _moveComplete                 = false;
+   private boolean        _movingEvasively              = false;
+   private boolean        _movedLastAction              = false;
+   private DefenseOptions _defenseOptionsTakenThisRound = new DefenseOptions();
 
-   private byte             _movementAvailableThisRound     = 0;
-   private byte             _movementAvailableEachRound     = 0;
+   private Orientation _orientation = null;
+   private boolean     _collapsed   = false;
+   private boolean     _isConscious = true;
+   private boolean     _isAlive     = true;
 
-   private boolean          _hasMovedThisRound              = false;
-   private boolean          _attackedThisRound              = false;
-   private boolean          _moveComplete                   = false;
-   private boolean          _movingEvasively                = false;
-   private boolean          _movedLastAction                = false;
-   private DefenseOptions   _defenseOptionsTakenThisRound   = new DefenseOptions();
+   private short _priestSpellPointsMax       = 0;
+   private short _mageSpellPointsMax         = 0;
+   private short _priestSpellPointsAvailable = 0;
+   private short _mageSpellPointsAvailable   = 0;
 
-   private Orientation      _orientation                    = null;
-   private boolean          _collapsed                      = false;
-   private boolean          _isConscious                    = true;
-   private boolean          _isAlive                        = true;
-
-   private short            _priestSpellPointsMax           = 0;
-   private short            _mageSpellPointsMax             = 0;
-   private short            _priestSpellPointsAvailable     = 0;
-   private short            _mageSpellPointsAvailable       = 0;
-
-   private ArrayList<Wound> _woundsList                     = new ArrayList<>();
+   private ArrayList<Wound> _woundsList = new ArrayList<>();
 
    public Condition() {
       // ctor used for all Serializable objects
@@ -350,8 +339,7 @@ public class Condition extends SerializableObject implements Enums {
    }
 
    public void setPosition(Position newPosition, CombatMap map, Character actor) {
-      Collection<ArenaCoordinates> coordinatesToRedraw = new ArrayList<>();
-      coordinatesToRedraw.addAll(getCoordinates());
+      Collection<ArenaCoordinates> coordinatesToRedraw = new ArrayList<>(getCoordinates());
       _orientation.setPosition(newPosition, map, actor);
       coordinatesToRedraw.addAll(getCoordinates());
       if (CombatServer._this != null) {
@@ -405,7 +393,7 @@ public class Condition extends SerializableObject implements Enums {
       }
    }
 
-   static HashMap<RequestActionType, Position> mapActionPosToPosition = new HashMap<>();
+   static final HashMap<RequestActionType, Position> mapActionPosToPosition = new HashMap<>();
    static {
       mapActionPosToPosition.put(RequestActionType.OPT_CHANGE_POS_STAND,         Position.STANDING);
       mapActionPosToPosition.put(RequestActionType.OPT_CHANGE_POS_KNEEL,         Position.KNEELING);

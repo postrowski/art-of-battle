@@ -1,32 +1,20 @@
 package ostrowski.combat.server;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.Text;
-
+import org.eclipse.swt.widgets.*;
 import ostrowski.combat.common.CombatMap;
 import ostrowski.combat.common.IMapWidget;
 import ostrowski.combat.common.MapWidget2D;
 import ostrowski.ui.Helper;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class TriggersInterface extends Helper implements SelectionListener, ModifyListener, PaintListener
 {
@@ -519,9 +507,6 @@ public class TriggersInterface extends Helper implements SelectionListener, Modi
                event._eventLocations = new ArrayList<>();
             }
             if (event._eventLocations.contains(loc)) {
-               event._eventLocations.remove(loc);
-            }
-            else if (event._eventLocations.contains(loc)) {
                event._eventLocations.remove(loc);
             }
             else {

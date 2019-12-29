@@ -1,73 +1,33 @@
 package ostrowski.combat.common;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.Vector;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSOutput;
 import org.w3c.dom.ls.LSSerializer;
 import org.xml.sax.SAXException;
-
 import ostrowski.DebugBreak;
 import ostrowski.combat.common.Race.Gender;
-import ostrowski.combat.common.enums.AI_Type;
-import ostrowski.combat.common.enums.Enums;
-import ostrowski.combat.common.enums.Facing;
-import ostrowski.combat.common.enums.TerrainType;
-import ostrowski.combat.common.enums.TerrainWall;
+import ostrowski.combat.common.enums.*;
 import ostrowski.combat.common.orientations.Orientation;
 import ostrowski.combat.common.spells.IAreaSpell;
 import ostrowski.combat.common.spells.mage.SpellSpiderWeb;
-import ostrowski.combat.common.things.Door;
-import ostrowski.combat.common.things.DoorState;
-import ostrowski.combat.common.things.Limb;
-import ostrowski.combat.common.things.LimbType;
-import ostrowski.combat.common.things.Potion;
-import ostrowski.combat.common.things.Thing;
-import ostrowski.combat.common.things.Weapon;
+import ostrowski.combat.common.things.*;
 import ostrowski.combat.common.weaponStyles.WeaponStyleAttack;
 import ostrowski.combat.protocol.request.RequestAction;
 import ostrowski.combat.protocol.request.RequestActionOption;
 import ostrowski.combat.protocol.request.RequestActionType;
 import ostrowski.combat.protocol.request.RequestArenaEntrance;
-import ostrowski.combat.server.ArenaCoordinates;
-import ostrowski.combat.server.ArenaLocation;
-import ostrowski.combat.server.ArenaTrigger;
-import ostrowski.combat.server.Battle;
-import ostrowski.combat.server.BattleTerminatedException;
-import ostrowski.combat.server.ClientProxy;
-import ostrowski.combat.server.CombatServer;
+import ostrowski.combat.server.*;
 import ostrowski.protocol.ObjectChanged;
 import ostrowski.protocol.SerializableObject;
-import ostrowski.util.AnglePair;
-import ostrowski.util.AnglesList;
-import ostrowski.util.Diagnostics;
-import ostrowski.util.IMonitorableObject;
-import ostrowski.util.IMonitoringObject;
-import ostrowski.util.MonitoredObject;
-import ostrowski.util.MonitoringObject;
-import ostrowski.util.SemaphoreAutoTracker;
+import ostrowski.util.*;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.*;
+import java.util.*;
 
 public class CombatMap extends SerializableObject implements Enums, IMonitorableObject, IMonitoringObject, Cloneable {
    transient private MonitoringObject _mapWatcher;
@@ -399,14 +359,14 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
             if ((xAbsDelta == 0) && !positiveX) {
                continue;
             }
-            short xDelta = (short) (positiveX ? xAbsDelta : 0-xAbsDelta);
+            short xDelta = (short) (positiveX ? xAbsDelta : -xAbsDelta);
             short x = (short) (originalLoc._x + xDelta);
             if ((x < 0) || (x>=_sizeX)) {
                break;
             }
             for (boolean positiveY : yFlags) {
                for (short yAbsDelta=(short) (xAbsDelta%2) ; yAbsDelta<_sizeY ; yAbsDelta += 2) {
-                  short yDelta = (short) (positiveY ? yAbsDelta : 0-yAbsDelta);
+                  short yDelta = (short) (positiveY ? yAbsDelta : -yAbsDelta);
                   short y = (short) (originalLoc._y + yDelta);
                   if ((y < 0) || (y>=_sizeY)) {
                      break;
@@ -1000,7 +960,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
    }
    public boolean hasLineOfSight(ArenaLocation fromLoc, ArenaCoordinates toLoc,
                                  boolean blockedByAnyStandingCharacter) {
-      int characterCount = countCharactersBetween(fromLoc, toLoc, true/*onlyCountStandingCharacters*/);
+      int characterCount = countCharactersBetween(fromLoc, toLoc /*onlyCountStandingCharacters*/);
       if (characterCount == -1) {
          // There is a wall between the fromLoc and toLoc
          return false;
@@ -1023,7 +983,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       ArenaLocation fromLoc = getLocation(fromChar.getHeadCoordinates());
       int minCharCount = -1;
       for (ArenaLocation toLoc : getLocations(toChar)) {
-         int count = countCharactersBetween(fromLoc, toLoc, true/*onlyCountStandingCharacters*/);
+         int count = countCharactersBetween(fromLoc, toLoc /*onlyCountStandingCharacters*/);
          if (minCharCount == -1) {
             minCharCount = count;
          }
@@ -1038,10 +998,9 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
     * If a wall is present between the from and to locations, a -1 is returned.
     * @param fromLoc
     * @param toCoord
-    * @param onlyCountStandingCharacters
     * @return
     */
-   private int countCharactersBetween(ArenaLocation fromLoc, ArenaCoordinates toCoord, boolean onlyCountStandingCharacters) {
+   private int countCharactersBetween(ArenaLocation fromLoc, ArenaCoordinates toCoord) {
       Character computeVisibilityFromCharacter = null;
       boolean setVisibility = false;
       boolean basedOnFacing = false;
@@ -1102,7 +1061,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
             return charCount;
          }
          if (!testLoc.sameCoordinates(fromLoc)) {
-            charCount += testLoc.getCharacterCount(onlyCountStandingCharacters, computeVisibilityFromCharacter);
+            charCount += testLoc.getCharacterCount(true, computeVisibilityFromCharacter);
          }
          prevLoc = curLoc;
          curLoc = testLoc;
@@ -1274,7 +1233,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       }
 
       // when pointIndex is 0, facing1 is 8 O'Clock. when pointIndex is 1, facing1 is 6 O'Clock
-      Facing facing1 = Facing._8_OCLOCK.turn(0 - pointIndex);
+      Facing facing1 = Facing._8_OCLOCK.turn(-pointIndex);
       Facing facing2 = facing1.turnRight();
 
       byte moveX1 = facing1.moveX;
@@ -2115,7 +2074,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
     */
    static final HashMap<Facing, TerrainWall> DOOR_DIRECTIONS_AHEAD = new HashMap<>();
    static final HashMap<Facing, TerrainWall> DOOR_DIRECTIONS_HALF_RIGHT = new HashMap<>();
-   {
+   static {
       DOOR_DIRECTIONS_AHEAD.put(Facing.NOON      , TerrainWall.HORIZONTAL_TOP);
       DOOR_DIRECTIONS_AHEAD.put(Facing._2_OCLOCK , TerrainWall.DIAG_LEFT_RIGHT);
       DOOR_DIRECTIONS_AHEAD.put(Facing._4_OCLOCK , TerrainWall.DIAG_RIGHT_RIGHT);
@@ -2510,7 +2469,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
                         int a=1;
                         for (Integer uniqueID : includeKnownByUniqueIDInfo) {
                            if ((mask & a) != 0) {
-                              _locations[colId][row].setKnownBy(uniqueID.intValue(), true);
+                              _locations[colId][row].setKnownBy(uniqueID, true);
                            }
                            a *= 2;
                         }
@@ -2543,7 +2502,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
                         int a=1;
                         for (Integer uniqueID : includeKnownByUniqueIDInfo) {
                            if ((mask & a) != 0) {
-                              _locations[col][rowId].setKnownBy(uniqueID.intValue(), true);
+                              _locations[col][rowId].setKnownBy(uniqueID, true);
                            }
                            a *= 2;
                         }

@@ -1,10 +1,5 @@
 package ostrowski.combat.common.spells.priest.offensive;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.DiceSet;
 import ostrowski.combat.common.SpecialDamage;
@@ -17,6 +12,11 @@ import ostrowski.combat.common.wounds.Wound;
 import ostrowski.combat.common.wounds.WoundChart;
 import ostrowski.combat.server.Arena;
 import ostrowski.combat.server.BattleTerminatedException;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SpellCallLightning extends PriestSpell implements IRangedSpell, ICastInBattle
 {
@@ -173,11 +173,7 @@ public class SpellCallLightning extends PriestSpell implements IRangedSpell, ICa
                   }
                   sb.append("<br/>");
 
-                  List<Wound> woundsList = wounds.get(hitCharacter);
-                  if (woundsList == null) {
-                     woundsList = new ArrayList<>();
-                     wounds.put(hitCharacter, woundsList);
-                  }
+                  List<Wound> woundsList = wounds.computeIfAbsent(hitCharacter, k -> new ArrayList<>());
                   woundsList.add(wound);
                }
             }

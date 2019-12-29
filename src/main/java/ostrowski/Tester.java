@@ -6,26 +6,16 @@ package ostrowski;
  * For a list of all SWT example snippets see
  * http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/platform-swt-home/dev.html#snippets
  */
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Path;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.graphics.Transform;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-
 import ostrowski.combat.common.DiceSet;
+
+import java.util.*;
 
 //import java.io.File;
 //import java.util.ArrayList;
@@ -113,16 +103,15 @@ public class Tester
             accumulatorWithNegs.put(dice, accumulatorNoNegs.get(dice) + roll);
          }
       }
-      List<Integer> counts = new ArrayList<>();
-      counts.addAll(accumulatorNoNegs.values());
+      List<Integer> counts = new ArrayList<>(accumulatorNoNegs.values());
       Collections.sort(counts);
       System.out.println("die type\tchanceNoZero\taverageNoNegs\taverageWithNegs\texpected roll");
       for (Integer count : counts) {
          for (DiceSet set : diceSet) {
             if (accumulatorNoNegs.get(set) == count) {
-               String name = set.toString();
+               StringBuilder name = new StringBuilder(set.toString());
                while (name.length() < 6) {
-                  name = " " + name;
+                  name.insert(0, " ");
                }
                String averageNoNegs   = TrimAndPad((((float)count) / i));
                String averageWithNegs = TrimAndPad((((float)accumulatorWithNegs.get(set)) / i));
@@ -136,11 +125,11 @@ public class Tester
 
    private static String TrimAndPad(double sourceVal) {
 
-      String sourceString = "" + ((Math.round(sourceVal * 10000)) / 10000.0);
+      StringBuilder sourceString = new StringBuilder("" + ((Math.round(sourceVal * 10000)) / 10000.0));
       while (sourceString.length() < 5) {
-         sourceString += "0";
+         sourceString.append("0");
       }
-      return sourceString;
+      return sourceString.toString();
    }
 
    public static void main2(String[] args) {

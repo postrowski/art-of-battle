@@ -4,11 +4,6 @@
  */
 package ostrowski.combat.common.spells.mage;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.CombatMap;
 import ostrowski.combat.common.DiceSet;
@@ -20,6 +15,11 @@ import ostrowski.combat.common.wounds.WoundChart;
 import ostrowski.combat.server.Arena;
 import ostrowski.combat.server.ArenaCoordinates;
 import ostrowski.combat.server.ArenaLocation;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SpellWallOfFire extends ExpiringMageSpell implements IAreaSpell, ICastInBattle
 {
@@ -123,7 +123,7 @@ public class SpellWallOfFire extends ExpiringMageSpell implements IAreaSpell, IC
       return getPower();
    }
 
-   private static HashMap<Character, Integer> timeInHexPerCharacter = new HashMap<>();
+   private static final HashMap<Character, Integer> timeInHexPerCharacter = new HashMap<>();
    private void applyDamage(Character charToTakeDamage) {
       Integer timeInHex = timeInHexPerCharacter.remove(charToTakeDamage);
       if (timeInHex > 3) {

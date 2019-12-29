@@ -2,8 +2,8 @@ package ostrowski.combat.common.html;
 
 public class TableData extends HtmlElement
 {
-   public String _data;
-   public boolean _isBold;
+   public final String  _data;
+   public       boolean _isBold;
    public TableData(Object data) {
       this(data,false);
    }

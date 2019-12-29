@@ -4,48 +4,20 @@
  */
 package ostrowski.combat.server;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSOutput;
 import org.w3c.dom.ls.LSSerializer;
-
 import ostrowski.DebugBreak;
 import ostrowski.combat.client.MessageDialog;
 import ostrowski.combat.client.RequestUserInput;
 import ostrowski.combat.client.ui.AutoRunBlock;
-import ostrowski.combat.common.AI;
 import ostrowski.combat.common.Character;
-import ostrowski.combat.common.CharacterGenerator;
-import ostrowski.combat.common.CombatMap;
-import ostrowski.combat.common.DiceSet;
-import ostrowski.combat.common.IMapListener;
-import ostrowski.combat.common.MouseOverCharacterInfoPopup;
-import ostrowski.combat.common.RightClickPopupMenu;
-import ostrowski.combat.common.Rules;
+import ostrowski.combat.common.*;
 import ostrowski.combat.common.enums.AI_Type;
 import ostrowski.combat.common.enums.Enums;
 import ostrowski.combat.common.enums.Facing;
@@ -72,14 +44,22 @@ import ostrowski.util.Diagnostics;
 import ostrowski.util.Semaphore;
 import ostrowski.util.SemaphoreAutoTracker;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.*;
+
 
 public class Arena implements Enums, IMapListener
 {
-   Semaphore _lock_combatants = new Semaphore("Arena_combatants", CombatSemaphore.CLASS_ARENA_combatants);
-   Semaphore _lock_mapCombatantsToAI = new Semaphore("Arena_mapCombatantsToAI", CombatSemaphore.CLASS_ARENA_mapCombatantsToAI);
-   Semaphore _lock_proxyList = new Semaphore("Arena_proxyList", CombatSemaphore.CLASS_ARENA_proxyList);
-   Semaphore _lock_locationRequests = new Semaphore("Arena_locationRequests", CombatSemaphore.CLASS_ARENA_locationRequests);
-   private final List<Character>             _combatants          = new ArrayList<>();
+   final         Semaphore       _lock_combatants        = new Semaphore("Arena_combatants", CombatSemaphore.CLASS_ARENA_combatants);
+   final         Semaphore       _lock_mapCombatantsToAI = new Semaphore("Arena_mapCombatantsToAI", CombatSemaphore.CLASS_ARENA_mapCombatantsToAI);
+   final         Semaphore       _lock_proxyList         = new Semaphore("Arena_proxyList", CombatSemaphore.CLASS_ARENA_proxyList);
+   final         Semaphore       _lock_locationRequests  = new Semaphore("Arena_locationRequests", CombatSemaphore.CLASS_ARENA_locationRequests);
+   private final List<Character> _combatants             = new ArrayList<>();
    private final List<ClientProxy>           _proxyList           = new ArrayList<>();
    private final List<Character>             _charactersWaitingToConnect = new ArrayList<>();
    private final Map<Character, AI>          _mapCombatantToAI    = new HashMap<>();
@@ -155,7 +135,7 @@ public class Arena implements Enums, IMapListener
       return true;
    }
 
-   HashMap<String, Integer> _registeredNames = new HashMap<>();
+   final HashMap<String, Integer> _registeredNames = new HashMap<>();
    public boolean addCombatant(Character combatant, byte team, byte combatantIndexOnTeam, ClientProxy clientProxy, boolean checkForAutoStart) {
       if (combatantIndexOnTeam == -1) {
           combatantIndexOnTeam = _combatMap.getAvailableCombatantIndexOnTeam(team);
@@ -196,7 +176,7 @@ public class Arena implements Enums, IMapListener
                      }
                   }
                }
-               int curCount = currentDupCount.intValue() + 1;
+               int curCount = currentDupCount + 1;
                _registeredNames.put(newCombatantsName, curCount);
                combatant.setName(newCombatantsName + "-" + curCount);
                nameChanged = true;
@@ -286,7 +266,7 @@ public class Arena implements Enums, IMapListener
       }
    }
 
-   private void recomputeAllKnownLocations(Object object) {
+   private void recomputeAllKnownLocations() {
       // Make sure all the AI player have selected targets.
       synchronized(_mapCombatantToAI) {
          try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_mapCombatantsToAI)) {
@@ -413,7 +393,7 @@ public class Arena implements Enums, IMapListener
       AI ai = _mapCombatantToAI.get(combatant);
       if (ai != null) {
          // If so, update the AI engine too.
-         ai.updateTargetPriorities(targetPriorities, null);
+         ai.updateTargetPriorities(targetPriorities);
       }
    }
    public void terminateBattle() {
@@ -568,9 +548,9 @@ public class Arena implements Enums, IMapListener
    public static final int PLAYBACK_MODE_OFF    = 0;
    public static final int PLAYBACK_MODE_RECORD = 1;
    public static final int PLAYBACK_MODE_PLAY   = 2;
-   public int _playbackMode = PLAYBACK_MODE_OFF;
-   public ArrayList<SyncRequest> _recordedActions = null;//new ArrayList<SyncRequest>();
-   public int _playbackIndex = 0;
+   public       int                    _playbackMode    = PLAYBACK_MODE_OFF;
+   public final ArrayList<SyncRequest> _recordedActions = null;//new ArrayList<>();
+   public       int                    _playbackIndex   = 0;
 
    public boolean sendObjectToCombatant(final Character combatant, SerializableObject obj) {
       ClientProxy proxy = (_mapCombatantToProxy.get(combatant));
@@ -722,7 +702,7 @@ public class Arena implements Enums, IMapListener
 
                   if (answer != null) {
                      if (answer instanceof Integer) {
-                         req.setAnswerByOptionIndex((((Integer) answer).intValue()));
+                         req.setAnswerByOptionIndex(((Integer) answer));
                      }
                      else {
                          req.setCustAnswer((String) answer);
@@ -937,11 +917,7 @@ public class Arena implements Enums, IMapListener
       availableCombatantNamesByTeams = new HashMap<>();
       for (Character combatant : _charactersWaitingToConnect) {
          byte team = combatant._teamID;
-         List<TeamMember> members = availableCombatantNamesByTeams.get(team);
-         if (members == null) {
-            members = new ArrayList<>();
-            availableCombatantNamesByTeams.put(team, members);
-         }
+         List<TeamMember> members = availableCombatantNamesByTeams.computeIfAbsent(team, k -> new ArrayList<>());
          members.add(new TeamMember(team, combatant.getName(), combatant, (byte)-1/*teamPosition*/, true/*available*/));
       }
       proxy.sendObject(new RequestArenaEntrance(availableCombatantNamesByTeams));
@@ -1218,8 +1194,7 @@ public class Arena implements Enums, IMapListener
                // Sort this list, so it is not ordered by ID, which is non-deterministic, and therefore not
                // reproducible when we go to playback a scenario
                TreeSet<Orientation> sortedLocations = new TreeSet<> (routeFromThisRound.keySet());
-               ArrayList<Orientation> moveDestinationsPossibleThisRound = new ArrayList<>();
-               moveDestinationsPossibleThisRound.addAll(sortedLocations);
+               ArrayList<Orientation> moveDestinationsPossibleThisRound = new ArrayList<>(sortedLocations);
                // Now, iterate over all the possible Orientations that start took us 'currentMove' movement points to reach
                while (moveDestinationsPossibleThisRound.size() > 0) {
                   // randomly choose a location to move from. This causes a more natural movement when used by AI.
@@ -1689,9 +1664,9 @@ public class Arena implements Enums, IMapListener
       synchronized (_combatants) {
          try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_combatants)) {
             for (Integer uniqueId : orderedTargets) {
-               if (uniqueId.intValue() != attacker._uniqueID) {
+               if (uniqueId != attacker._uniqueID) {
                   for (Character enemy : _combatants) {
-                     if (enemy._uniqueID == uniqueId.intValue()) {
+                     if (enemy._uniqueID == uniqueId) {
                         // Don't bother attacking an enemy that is unconscious or dead.
                         if (enemy.stillFighting()) {
                            if ((enemy._teamID == TEAM_INDEPENDENT) ||
@@ -2232,7 +2207,7 @@ public class Arena implements Enums, IMapListener
       ClientProxy.setNextServerID(highestUniqueID);
 
       recomputeAllTargets(null);
-      recomputeAllKnownLocations(null);
+      recomputeAllKnownLocations();
 
       if (_paused) {
          _battle.onPause();

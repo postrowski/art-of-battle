@@ -4,21 +4,21 @@
  */
 package ostrowski.combat.protocol;
 
+import ostrowski.combat.common.enums.Enums;
+import ostrowski.protocol.SerializableObject;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import ostrowski.combat.common.enums.Enums;
-import ostrowski.protocol.SerializableObject;
-
 public class MessageText extends SerializableObject implements Enums
 {
-   String _source;
-   String _text;
+   String  _source;
+   String  _text;
    boolean _popUp = false;
-   List<String> _targets;
-   private boolean _isPublic;
+   final   List<String> _targets;
+   private boolean      _isPublic;
    public MessageText() {
       _text    = null;
       _targets = null;

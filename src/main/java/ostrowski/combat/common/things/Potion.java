@@ -4,10 +4,7 @@
  */
 package ostrowski.combat.common.things;
 
-import java.util.ArrayList;
-
 import org.eclipse.swt.graphics.RGB;
-
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.DrawnObject;
 import ostrowski.combat.common.Race;
@@ -20,6 +17,9 @@ import ostrowski.combat.common.spells.priest.healing.SpellHeal;
 import ostrowski.combat.common.spells.priest.offensive.SpellSpeed;
 import ostrowski.combat.server.Arena;
 import ostrowski.combat.server.BattleTerminatedException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Potion extends Thing implements Cloneable
 {
@@ -136,7 +136,7 @@ public class Potion extends Thing implements Cloneable
       return true;
    }
 
-   static Potion[] _potionList = new Potion[] {                //  strength, duration, cost
+   static final Potion[] _potionList = new Potion[] {                //  strength, duration, cost
                                   new Potion(POTION_MINOR_HEALING,     1,           0,  250, new RGB(  0,   0, 100)),
                                   new Potion(POTION_HEALING,           3,           0,  500, new RGB(  0,   0, 150)),
                                   new Potion(POTION_MAJOR_HEALING,     5,           0, 1000, new RGB(  0,   0, 200)),
@@ -179,10 +179,6 @@ public class Potion extends Thing implements Cloneable
       return potion;
    }
 
-   @Override
-   public String getName() {
-      return super.getName();//"Potion";
-   }
 
    public boolean isBeneficial() {
       return true;
@@ -195,8 +191,8 @@ public class Potion extends Thing implements Cloneable
       return false;
    }
 
-   public static ArrayList<String> getPotionNames() {
-      ArrayList<String> names = new ArrayList<>();
+   public static List<String> getPotionNames() {
+      List<String> names = new ArrayList<>();
       for (Potion potion : _potionList) {
          names.add(potion.getName());
       }

@@ -4,12 +4,12 @@
  */
 package ostrowski.combat.protocol;
 
+import ostrowski.combat.common.CombatMap;
+import ostrowski.protocol.SerializableObject;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
-import ostrowski.combat.common.CombatMap;
-import ostrowski.protocol.SerializableObject;
 
 public class MapVisibility extends SerializableObject
 {
@@ -76,9 +76,7 @@ public class MapVisibility extends SerializableObject
       try {
          MapVisibility copy = (MapVisibility) super.clone();
          copy._visibilityMask = new byte[_visibilityMask.length];
-         for (int i=0 ; i<_visibilityMask.length ; i++) {
-            copy._visibilityMask[i] = _visibilityMask[i];
-         }
+         System.arraycopy(_visibilityMask, 0, copy._visibilityMask, 0, _visibilityMask.length);
          return copy;
       } catch (CloneNotSupportedException e) {
          return null;

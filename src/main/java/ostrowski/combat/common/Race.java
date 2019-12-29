@@ -1,46 +1,24 @@
 package ostrowski.combat.common;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import ostrowski.DebugBreak;
 import ostrowski.combat.common.enums.Attribute;
 import ostrowski.combat.common.enums.DamageType;
 import ostrowski.combat.common.enums.Enums;
-import ostrowski.combat.common.html.HtmlBuilder;
-import ostrowski.combat.common.html.Table;
-import ostrowski.combat.common.html.TableData;
-import ostrowski.combat.common.html.TableHeader;
-import ostrowski.combat.common.html.TableRow;
-import ostrowski.combat.common.orientations.Orientation;
-import ostrowski.combat.common.orientations.OrientationDoubleCentaur;
-import ostrowski.combat.common.orientations.OrientationDoubleQuadraped;
-import ostrowski.combat.common.orientations.OrientationReptilian;
-import ostrowski.combat.common.orientations.OrientationSingleHumaniod;
-import ostrowski.combat.common.orientations.OrientationSingleQuadraped;
-import ostrowski.combat.common.orientations.OrientationSingleSpider;
-import ostrowski.combat.common.orientations.OrientationSingleWinged;
+import ostrowski.combat.common.html.*;
+import ostrowski.combat.common.orientations.*;
 import ostrowski.combat.common.spells.Spell;
-import ostrowski.combat.common.spells.mage.MageSpell;
-import ostrowski.combat.common.spells.mage.SpellFlameJet;
-import ostrowski.combat.common.spells.mage.SpellPush;
-import ostrowski.combat.common.spells.mage.SpellSpiderWeb;
-import ostrowski.combat.common.spells.mage.SpellWaterJet;
+import ostrowski.combat.common.spells.mage.*;
 import ostrowski.combat.common.spells.priest.PriestSpell;
 import ostrowski.combat.common.spells.priest.evil.SpellFear;
 import ostrowski.combat.common.spells.priest.evil.SpellMassFear;
 import ostrowski.combat.common.spells.priest.good.SpellCharmPerson;
-import ostrowski.combat.common.things.Armor;
-import ostrowski.combat.common.things.Hand;
-import ostrowski.combat.common.things.Head;
-import ostrowski.combat.common.things.Leg;
-import ostrowski.combat.common.things.Limb;
-import ostrowski.combat.common.things.LimbType;
-import ostrowski.combat.common.things.Tail;
-import ostrowski.combat.common.things.Thing;
-import ostrowski.combat.common.things.Wing;
+import ostrowski.combat.common.things.*;
 import ostrowski.combat.common.wounds.Wound;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 public class Race implements Cloneable, Enums
 {
@@ -50,7 +28,7 @@ public class Race implements Cloneable, Enums
       Gender(String name) {
          _name=name;
       }
-      public String _name;
+      public final String _name;
       public static Gender getByName(String genderStr) {
          for (Gender gender : values()) {
             if (gender._name.equals(genderStr)) {
@@ -84,30 +62,29 @@ public class Race implements Cloneable, Enums
    }
 
 
-   public String                   _name;
-   public Gender                   _gender;
-   public short                    _cost;
-   public byte                     _buildModifier;
-   public byte                     _bonusToBeHit;
-   public double                   _aveWeight;
-   public float                    _widthMod3d;
-   public float                    _lengthMod3d;
-   public byte                     _baseSpeed;
-   public HashMap<Attribute, Byte> _attributeMods             = new HashMap<>();
-   private byte                    _headCount                 = 1;
-   private byte                    _eyeCount                  = 2;
-   private byte                    _legCount                  = 2;
-   private byte                    _armCount                  = 2;
-   private byte                    _wingCount                 = 0;
-   private Orientation             _baseOrientation           = null;
-   private final ArrayList<String> _racialProperties          = new ArrayList<>();
-   private final ArrayList<String> _racialAdvsNames           = new ArrayList<>();
-   private final ArrayList<Spell>  _inateSpells               = new ArrayList<>();
-   private Armor                   _naturalArmor;
-
-   private boolean                 _isAquatic                 = false;
-   private boolean                 _isAnimal                  = false;
-   private boolean                 _canFly                    = false;
+   public final  String                   _name;
+   public final  Gender                   _gender;
+   public final  short                    _cost;
+   public final  byte                     _buildModifier;
+   public final  byte                     _bonusToBeHit;
+   public final  double                   _aveWeight;
+   public final  float                    _widthMod3d;
+   public final  float                    _lengthMod3d;
+   public final  byte                     _baseSpeed;
+   public final  HashMap<Attribute, Byte> _attributeMods    = new HashMap<>();
+   private       byte                     _headCount        = 1;
+   private       byte                     _eyeCount         = 2;
+   private       byte                     _legCount         = 2;
+   private       byte                     _armCount         = 2;
+   private       byte                     _wingCount        = 0;
+   private       Orientation              _baseOrientation  = null;
+   private final List<String>        _racialProperties = new ArrayList<>();
+   private final List<String>        _racialAdvsNames  = new ArrayList<>();
+   private final ArrayList<Spell>         _inateSpells      = new ArrayList<>();
+   private       Armor                    _naturalArmor;
+   private       boolean                  _isAquatic        = false;
+   private       boolean                  _isAnimal         = false;
+   private       boolean                  _canFly           = false;
 
    public String getName() {
       return _name;
@@ -197,9 +174,7 @@ public class Race implements Cloneable, Enums
          // TODO: make the head the weapon, and horns one style, bite another.
          DebugBreak.debugBreak();
       }
-      for (String element : racialAdvantages) {
-         _racialAdvsNames.add(element);
-      }
+      _racialAdvsNames.addAll(Arrays.asList(racialAdvantages));
       for (String element : inateSpellNames) {
          int index = element.indexOf(":");
          if (index != -1) {
@@ -238,7 +213,7 @@ public class Race implements Cloneable, Enums
 
    @Override
    protected Race clone() {
-      ArrayList<String> spellNames = new ArrayList<>();
+      List<String> spellNames = new ArrayList<>();
       for (Spell spell : _inateSpells) {
          StringBuilder sb = new StringBuilder();
          //         if (spell instanceof PriestSpell) {
@@ -260,7 +235,7 @@ public class Race implements Cloneable, Enums
    }
 
    public byte getBonusToHit() {
-      return (byte) (0 - _bonusToBeHit);
+      return (byte) (-_bonusToBeHit);
    }
 
    private double getAveWeight() {
@@ -414,7 +389,7 @@ public class Race implements Cloneable, Enums
    // Racial Build Adj.  = log (racial average weight/150) * 40/3
    // racial weight ave. = 150 * 10^(racial build adj. * 3 / 40);  (doubles every 4 levels)
    // hit adjustment = (buildAdjustment / 4)
-   static Race[] _raceList = new Race[] {
+   static final Race[] _raceList = new Race[] {
                   // name               gender,       cost, bld hit  ave# move   bodyConfig               length width           STR  HT TOU  IQ NIM DEX SOC
        new Race(NAME_Kobold,          Gender.MALE,     -70,  -7, -2,   45,   4,          BodyType.HUMANIOD,1.0, 1.0, new byte[] { 0,  2,  0, -3,  0,  0, -3}, new String[] {PROPERTIES_NPC, PROPERTIES_NIGHT_VISION}, new String[] {Advantage.WEALTH_MULTIPLIER_5, Advantage.NIGHT_VISION}, new String [] {}),
        new Race(NAME_Kobold,          Gender.FEMALE,   -80,  -7, -2,   45,   4,          BodyType.HUMANIOD,1.0, 1.0, new byte[] {-2,  2,  0, -3,  0,  0, -2}, new String[] {PROPERTIES_NPC, PROPERTIES_NIGHT_VISION}, new String[] {Advantage.WEALTH_MULTIPLIER_5, Advantage.NIGHT_VISION}, new String [] {}),
@@ -542,7 +517,7 @@ public class Race implements Cloneable, Enums
    }
 
    public static List<String> getRaceNames(boolean includeNPCs) {
-      ArrayList<String> list = new ArrayList<>();
+      List<String> list = new ArrayList<>();
       for (Race element : _raceList) {
          if (includeNPCs || !element.isNpc()) {
             // don't repeat race names for male & female
@@ -790,15 +765,13 @@ public class Race implements Cloneable, Enums
       return _wingCount;
    }
 
-   public ArrayList<String> getRacialPropertiesList() {
-      ArrayList<String> propList = new ArrayList<>();
-      for (String property : propList) {
-         propList.add(property);
-      }
+   public List<String> getRacialPropertiesList() {
+      List<String> propList = new ArrayList<>();
+      propList.addAll(propList);
       return propList;
    }
 
-   public ArrayList<Advantage> getAdvantagesList() {
+   public List<Advantage> getAdvantagesList() {
       ArrayList<Advantage> advList = new ArrayList<>();
       for (String advName : _racialAdvsNames) {
          Advantage adv = Advantage.getAdvantage(advName);
@@ -908,17 +881,10 @@ public class Race implements Cloneable, Enums
          if (_name.equals(NAME_Fairy)) {
             wingType = Wing.Type.Fairy;
          }
-         if (_name.contains("Dragon")) {
+         if (_name.contains("Dragon") ||
+             _name.equals(NAME_Sturge) ||
+             _name.equals(NAME_Gargoyle)) {
             wingType = Wing.Type.Bat;
-         }
-         if (_name.equals(NAME_Sturge)) {
-            wingType = Wing.Type.Bat;
-         }
-         if (_name.equals(NAME_Gargoyle)) {
-            wingType = Wing.Type.Bat;
-         }
-         if (_name.equals(NAME_Eagle)) {
-            wingType = Wing.Type.Feathered;
          }
          return new Wing(id, wingType, this);
       }
@@ -961,7 +927,7 @@ public class Race implements Cloneable, Enums
       }
       int attributeCost = testCharacter.getPointTotal();
 
-      ArrayList<Advantage> advs = getAdvantagesList();
+      List<Advantage> advs = getAdvantagesList();
       int advCost = 0;
       for (Advantage adv : advs) {
          advCost += adv.getCost(getRace(NAME_Human, Gender.MALE));
@@ -971,83 +937,85 @@ public class Race implements Cloneable, Enums
       boolean hasFangs = false;
       boolean isAnimal = false;
       for (String prop : _racialProperties) {
-         if (prop.equals(PROPERTIES_2_WINGS)) {
-            propCost += 40;
-         }
-         else if (prop.equals(PROPERTIES_4_ARMS)) {
-            propCost += 100;
-         }
-         else if (prop.equals(PROPERTIES_4_LEGS)) {
-            propCost += 40;
-         }
-         else if (prop.equals(PROPERTIES_6_LEGS)) {
-            propCost += 60;
-         }
-         else if (prop.equals(PROPERTIES_ANIMAL)) {
-            propCost += -100;
-            isAnimal = true;
-         }
-         else if (prop.equals(PROPERTIES_HORNS)) {
-            propCost += 15;
-         }
-         else if (prop.equals(PROPERTIES_STURGEBREAK)) {
-            propCost += 25;
-         }
-         else if (prop.equals(PROPERTIES_FANGS)) {
-            propCost += 10;
-            hasFangs = true;
-         }
-         else if (prop.equals(PROPERTIES_TUSKS)) {
-            propCost += 25;
-         }
-         else if (prop.equals(PROPERTIES_CLAWS)) {
-            propCost += 10;
-         }
-         else if (prop.equals(PROPERTIES_TAIL)) {
-            propCost += 5;
-         }
-         else if (prop.equals(PROPERTIES_FEATHERS)) {
-            propCost += 10;
-         }
-         else if (prop.equals(PROPERTIES_THIN_FUR)) {
-            propCost += 10;
-         }
-         else if (prop.equals(PROPERTIES_FUR)) {
-            propCost += 20;
-         }
-         else if (prop.equals(PROPERTIES_THICK_FUR)) {
-            propCost += 30;
-         }
-         else if (prop.equals(PROPERTIES_THIN_SCALES)) {
-            propCost += 40;
-         }
-         else if (prop.equals(PROPERTIES_SCALES)) {
-            propCost += 50;
-         }
-         else if (prop.equals(PROPERTIES_THICK_SCALES)) {
-            propCost += 60;
-         }
-         else if (prop.equals(PROPERTIES_REGENERATIVE)) {
-            propCost += 50;
-         }
-         else if (prop.equals(PROPERTIES_NPC)) {
-            propCost += 0;
-         }
-         else if (prop.equals(PROPERTIES_NIGHT_VISION)) {
-            propCost += 10;
-         }
-         else if (prop.equals(PROPERTIES_INFRAVISION)) {
-            propCost += 15;
-         }
-         else if (prop.equals(PROPERTIES_AQUATIC)) {
-            propCost += -25;
+         switch (prop) {
+            case PROPERTIES_2_WINGS:
+               propCost += 40;
+               break;
+            case PROPERTIES_4_ARMS:
+               propCost += 100;
+               break;
+            case PROPERTIES_4_LEGS:
+               propCost += 40;
+               break;
+            case PROPERTIES_6_LEGS:
+               propCost += 60;
+               break;
+            case PROPERTIES_ANIMAL:
+               propCost += -100;
+               isAnimal = true;
+               break;
+            case PROPERTIES_HORNS:
+               propCost += 15;
+               break;
+            case PROPERTIES_STURGEBREAK:
+               propCost += 25;
+               break;
+            case PROPERTIES_FANGS:
+               propCost += 10;
+               hasFangs = true;
+               break;
+            case PROPERTIES_TUSKS:
+               propCost += 25;
+               break;
+            case PROPERTIES_CLAWS:
+               propCost += 10;
+               break;
+            case PROPERTIES_TAIL:
+               propCost += 5;
+               break;
+            case PROPERTIES_FEATHERS:
+               propCost += 10;
+               break;
+            case PROPERTIES_THIN_FUR:
+               propCost += 10;
+               break;
+            case PROPERTIES_FUR:
+               propCost += 20;
+               break;
+            case PROPERTIES_THICK_FUR:
+               propCost += 30;
+               break;
+            case PROPERTIES_THIN_SCALES:
+               propCost += 40;
+               break;
+            case PROPERTIES_SCALES:
+               propCost += 50;
+               break;
+            case PROPERTIES_THICK_SCALES:
+               propCost += 60;
+               break;
+            case PROPERTIES_REGENERATIVE:
+               propCost += 50;
+               break;
+            case PROPERTIES_NPC:
+               propCost += 0;
+               break;
+            case PROPERTIES_NIGHT_VISION:
+               propCost += 10;
+               break;
+            case PROPERTIES_INFRAVISION:
+               propCost += 15;
+               break;
+            case PROPERTIES_AQUATIC:
+               propCost += -25;
+               break;
          }
       }
       if (hasFangs && isAnimal) {
          // animals with fangs get a grapple attack worth 20 points over just fangs alone
          propCost += 20;
       }
-      int adjustmentForBuild = _buildModifier * 10;
+      int adjustmentForBuild;
       int adjustmentForMove = (_baseSpeed - 5) * 10;
       if (_buildModifier > 0) {
          // +20 for level above 0, up to 5:

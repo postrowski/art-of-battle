@@ -4,15 +4,15 @@
  */
 package ostrowski.combat.protocol.request;
 
-import java.util.ArrayList;
-import java.util.StringTokenizer;
-
 import ostrowski.DebugBreak;
 import ostrowski.combat.common.Character;
 import ostrowski.protocol.IRequestOption;
 import ostrowski.protocol.RequestOption;
 import ostrowski.protocol.SyncRequest;
 import ostrowski.util.SemaphoreAutoLocker;
+
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 public class RequestTarget extends SyncRequest
 {
@@ -70,8 +70,8 @@ public class RequestTarget extends SyncRequest
    @Override
    public String getAnswer() {
       StringBuilder sb = new StringBuilder();
-      for (int i=0 ; i<_options.size() ; i++) {
-         sb.append(_options.get(i)).append(",");
+      for (IRequestOption option : _options) {
+         sb.append(option).append(",");
       }
       return sb.toString();
    }

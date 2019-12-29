@@ -4,15 +4,12 @@
  */
 package ostrowski.combat.client.ui;
 
-import java.util.HashMap;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
-
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.CharacterWidget;
 import ostrowski.combat.common.Rules;
@@ -20,12 +17,14 @@ import ostrowski.combat.common.enums.Attribute;
 import ostrowski.combat.server.Configuration;
 import ostrowski.ui.Helper;
 
+import java.util.HashMap;
+
 public class DiceBlock extends Helper implements IUIBlock
 {
-    CharacterWidget _display;
-   private final HashMap<Attribute, Text[]>     _dice = new HashMap<>();
-   private Text     _painReductioDice = null;
-   private Text     _maxPainWounds    = null;
+   final         CharacterWidget            _display;
+   private final HashMap<Attribute, Text[]> _dice             = new HashMap<>();
+   private       Text                       _painReductioDice = null;
+   private       Text                       _maxPainWounds    = null;
 
    public DiceBlock(CharacterWidget display)
    {

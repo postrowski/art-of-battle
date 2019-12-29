@@ -71,10 +71,6 @@ public class SpellRegeneration extends PriestSpell implements ICastInBattle
    }
 
    @Override
-   public void removeEffects(Arena arena) {
-   }
-
-   @Override
    public TargetType getTargetType() {
       return TargetType.TARGET_ANYONE_ALIVE;
    }

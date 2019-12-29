@@ -5,7 +5,6 @@
 package ostrowski.combat.common.things;
 
 import org.eclipse.swt.graphics.RGB;
-
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.DrawnObject;
 import ostrowski.combat.common.Race;
@@ -41,38 +40,38 @@ public class Wing extends Limb
 
       DrawnObject obj = new DrawnObject(foreground, background);
       if (_wingType == Wing.Type.Bat) {
-         obj.addPoint((wideDiameter *  4)/32, 0-((narrowDiameter * 5)/32));  // front shoulder
-         obj.addPoint((wideDiameter *  7)/32, 0-((narrowDiameter * 4)/32));  // front elbow
-         obj.addPoint((wideDiameter * 11)/32, 0-((narrowDiameter * 7)/32));  // front elbow
-         obj.addPoint((wideDiameter * 17)/32, 0-((narrowDiameter * 2)/32));  // front wrist
-         obj.addPoint((wideDiameter * 19)/32, 0-((narrowDiameter * -4)/32));  // wing tip
-         obj.addPoint((wideDiameter * 17)/32, 0-((narrowDiameter * -5)/32));  // back wrist
-         obj.addPoint((wideDiameter * 15)/32, 0-((narrowDiameter * -12)/32));  // back outer extension
-         obj.addPoint((wideDiameter * 13)/32, 0-((narrowDiameter * -6)/32));  // back inner draw
-         obj.addPoint((wideDiameter * 10)/32, 0-((narrowDiameter * -15)/32));  // back inner extension
-         obj.addPoint((wideDiameter *  4)/32, 0-((narrowDiameter *  -6)/32));  // back shoulder
+         obj.addPoint((wideDiameter *  4)/32, -((narrowDiameter * 5) / 32));  // front shoulder
+         obj.addPoint((wideDiameter *  7)/32, -((narrowDiameter * 4) / 32));  // front elbow
+         obj.addPoint((wideDiameter * 11)/32, -((narrowDiameter * 7) / 32));  // front elbow
+         obj.addPoint((wideDiameter * 17)/32, -((narrowDiameter * 2) / 32));  // front wrist
+         obj.addPoint((wideDiameter * 19)/32, -((narrowDiameter * -4) / 32));  // wing tip
+         obj.addPoint((wideDiameter * 17)/32, -((narrowDiameter * -5) / 32));  // back wrist
+         obj.addPoint((wideDiameter * 15)/32, -((narrowDiameter * -12) / 32));  // back outer extension
+         obj.addPoint((wideDiameter * 13)/32, -((narrowDiameter * -6) / 32));  // back inner draw
+         obj.addPoint((wideDiameter * 10)/32, -((narrowDiameter * -15) / 32));  // back inner extension
+         obj.addPoint((wideDiameter *  4)/32, -((narrowDiameter * -6) / 32));  // back shoulder
       }
       else if (_wingType == Wing.Type.Fairy) {
-         obj.addPoint((wideDiameter *  4)/32, 0-((narrowDiameter * 5)/32));  // front shoulder
-         obj.addPoint((wideDiameter *  7)/32, 0-((narrowDiameter * 4)/32));  // front elbow
-         obj.addPoint((wideDiameter * 11)/32, 0-((narrowDiameter * 7)/32));  // front elbow
-         obj.addPoint((wideDiameter * 13)/32, 0-((narrowDiameter * 5)/32));  // front edge
-         obj.addPoint((wideDiameter * 17)/32, 0-((narrowDiameter * 2)/32));  // front wrist
-         obj.addPoint((wideDiameter * 19)/32, 0-((narrowDiameter * -4)/32));  // wing tip
-         obj.addPoint((wideDiameter * 17)/32, 0-((narrowDiameter * -10)/32));  // back wrist
-         obj.addPoint((wideDiameter * 10)/32, 0-((narrowDiameter * -8)/32));  // back inner extension
-         obj.addPoint((wideDiameter *  4)/32, 0-((narrowDiameter * -10)/32));  // back shoulder
+         obj.addPoint((wideDiameter *  4)/32, -((narrowDiameter * 5) / 32));  // front shoulder
+         obj.addPoint((wideDiameter *  7)/32, -((narrowDiameter * 4) / 32));  // front elbow
+         obj.addPoint((wideDiameter * 11)/32, -((narrowDiameter * 7) / 32));  // front elbow
+         obj.addPoint((wideDiameter * 13)/32, -((narrowDiameter * 5) / 32));  // front edge
+         obj.addPoint((wideDiameter * 17)/32, -((narrowDiameter * 2) / 32));  // front wrist
+         obj.addPoint((wideDiameter * 19)/32, -((narrowDiameter * -4) / 32));  // wing tip
+         obj.addPoint((wideDiameter * 17)/32, -((narrowDiameter * -10) / 32));  // back wrist
+         obj.addPoint((wideDiameter * 10)/32, -((narrowDiameter * -8) / 32));  // back inner extension
+         obj.addPoint((wideDiameter *  4)/32, -((narrowDiameter * -10) / 32));  // back shoulder
       }
       else if (_wingType == Wing.Type.Feathered) {
-         obj.addPoint((wideDiameter *  4)/32, 0-((narrowDiameter * 5)/32));  // front shoulder
-         obj.addPoint((wideDiameter *  7)/32, 0-((narrowDiameter * 4)/32));  // front elbow
-         obj.addPoint((wideDiameter * 11)/32, 0-((narrowDiameter * 7)/32));  // front elbow
-         obj.addPoint((wideDiameter * 13)/32, 0-((narrowDiameter * 5)/32));  // front edge
-         obj.addPoint((wideDiameter * 17)/32, 0-((narrowDiameter * 2)/32));  // front wrist
-         obj.addPoint((wideDiameter * 19)/32, 0-((narrowDiameter * -4)/32));  // wing tip
-         obj.addPoint((wideDiameter * 17)/32, 0-((narrowDiameter * -10)/32));  // back wrist
-         obj.addPoint((wideDiameter * 10)/32, 0-((narrowDiameter * -8)/32));  // back inner extension
-         obj.addPoint((wideDiameter *  4)/32, 0-((narrowDiameter * -10)/32));  // back shoulder
+         obj.addPoint((wideDiameter *  4)/32, -((narrowDiameter * 5) / 32));  // front shoulder
+         obj.addPoint((wideDiameter *  7)/32, -((narrowDiameter * 4) / 32));  // front elbow
+         obj.addPoint((wideDiameter * 11)/32, -((narrowDiameter * 7) / 32));  // front elbow
+         obj.addPoint((wideDiameter * 13)/32, -((narrowDiameter * 5) / 32));  // front edge
+         obj.addPoint((wideDiameter * 17)/32, -((narrowDiameter * 2) / 32));  // front wrist
+         obj.addPoint((wideDiameter * 19)/32, -((narrowDiameter * -4) / 32));  // wing tip
+         obj.addPoint((wideDiameter * 17)/32, -((narrowDiameter * -10) / 32));  // back wrist
+         obj.addPoint((wideDiameter * 10)/32, -((narrowDiameter * -8) / 32));  // back inner extension
+         obj.addPoint((wideDiameter *  4)/32, -((narrowDiameter * -10) / 32));  // back shoulder
       }
       return obj;
    }

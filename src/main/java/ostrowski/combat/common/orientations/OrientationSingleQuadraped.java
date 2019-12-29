@@ -1,13 +1,13 @@
 package ostrowski.combat.common.orientations;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-
 import ostrowski.combat.common.enums.Position;
 import ostrowski.combat.common.things.Head;
 import ostrowski.combat.common.things.Leg;
 import ostrowski.combat.common.things.Limb;
 import ostrowski.combat.server.ArenaLocation;
+
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 public class OrientationSingleQuadraped extends OrientationSerpentine
 {
@@ -31,7 +31,7 @@ public class OrientationSingleQuadraped extends OrientationSerpentine
    public int getLimbOffsetY(Limb limb, int size, ArenaLocation loc) {
       if (limb != null) {
          if (limb instanceof Head) {
-            return 0-(size/3);
+            return -(size / 3);
          }
       }
       return super.getLimbOffsetY(limb, size, loc);

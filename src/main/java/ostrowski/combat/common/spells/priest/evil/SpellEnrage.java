@@ -40,7 +40,7 @@ public class SpellEnrage extends ResistedPriestSpell implements ICastInBattle
       if (penalty == 0) {
          return dice;
       }
-      return dice.addBonus(0-penalty);
+      return dice.addBonus(-penalty);
    }
    @Override
    public String describeSpell() {

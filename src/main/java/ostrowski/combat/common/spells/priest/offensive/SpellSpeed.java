@@ -60,9 +60,6 @@ public class SpellSpeed extends ExpiringPriestSpell implements ICastInBattle
       byte deltaActionsPerRound = getActionsChangePerRoundModifier(getPower());
       getTarget().getCondition().adjustActions(deltaActionsPerTurn, deltaActionsPerRound);
    }
-   @Override
-   public void removeEffects(Arena arena) {
-   }
 
    // These methods are used by spell that raise or lower a being's actions per turn (speed & slow spells):
    @Override

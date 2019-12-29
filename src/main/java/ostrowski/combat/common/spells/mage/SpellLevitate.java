@@ -7,7 +7,6 @@ package ostrowski.combat.common.spells.mage;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.Spell;
-import ostrowski.combat.server.Arena;
 
 public class SpellLevitate extends ExpiringMageSpell implements ICastInBattle
 {
@@ -26,13 +25,6 @@ public class SpellLevitate extends ExpiringMageSpell implements ICastInBattle
       return "The '" + getName() + "' spell causes the subject of the spell to float in the air."+
               " While levitating, the subject may move 1 yard per action spent." +
               " The weight limit of the spell is determined by the power put into the spell.";
-   }
-
-   @Override
-   public void applyEffects(Arena arena) {
-   }
-   @Override
-   public void removeEffects(Arena arena) {
    }
 
    @Override

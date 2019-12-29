@@ -57,9 +57,7 @@ public class SpellReverseMissile extends InstantaneousPriestSpell
    public void applyEffects(Arena arena) {
       // TODO: missile attacks firer, priest's NIM to-hit roll (at actions of spell)
    }
-   @Override
-   public void removeEffects(Arena arena) {
-   }
+
    @Override
    public TargetType getTargetType() {
       return TargetType.TARGET_SELF;

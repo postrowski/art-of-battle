@@ -13,7 +13,7 @@ public class SpellFlamingMissileWeapon extends SpellFlamingWeapon
 
    @SuppressWarnings("unchecked")
    public SpellFlamingMissileWeapon() {
-      super(NAME, new Class[] { SpellControlFire.class, SpellControlTemperature.class, SpellCreateFire.class, SpellFlamingWeapon.class});
+      super(new Class[] {SpellControlFire.class, SpellControlTemperature.class, SpellCreateFire.class, SpellFlamingWeapon.class});
    }
 
    @Override

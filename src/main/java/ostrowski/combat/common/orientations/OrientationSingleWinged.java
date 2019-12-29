@@ -1,14 +1,10 @@
 package ostrowski.combat.common.orientations;
 
+import ostrowski.combat.common.things.*;
+import ostrowski.combat.server.ArenaLocation;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
-
-import ostrowski.combat.common.things.Head;
-import ostrowski.combat.common.things.Leg;
-import ostrowski.combat.common.things.Limb;
-import ostrowski.combat.common.things.LimbType;
-import ostrowski.combat.common.things.Wing;
-import ostrowski.combat.server.ArenaLocation;
 
 public class OrientationSingleWinged extends OrientationSerpentine
 {
@@ -51,7 +47,7 @@ public class OrientationSingleWinged extends OrientationSerpentine
       if (limb != null) {
 
          if (limb instanceof Head) {
-            return 0-(size/6);
+            return -(size / 6);
          }
          if (limb instanceof Wing) {
             return size/15;

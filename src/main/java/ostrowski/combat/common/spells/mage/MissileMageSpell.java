@@ -17,11 +17,11 @@ import ostrowski.combat.common.weaponStyles.WeaponStyleAttackRanged;
 
 public abstract class MissileMageSpell extends MageSpell implements IMissileSpell, ICastInBattle
 {
-   byte _damageBase;
-   DieType _damageDieType;
-   DamageType _damageType;
-   byte _damagePerPower;
-   short _missileRangeBase;
+   final byte       _damageBase;
+   final DieType    _damageDieType;
+   final DamageType _damageType;
+   final byte       _damagePerPower;
+   final short      _missileRangeBase;
 
    @SuppressWarnings("rawtypes")
    public MissileMageSpell(String name, Class[] prerequisiteSpells, MageCollege[] colleges,

@@ -29,7 +29,7 @@ public abstract class SpellBanish extends ResistedPriestSpell implements IRanged
    public DiceSet adjustDieRoll(DiceSet dice, RollType rollType, Object target) {
       if ((rollType == RollType.ATTACK_TO_HIT) || (rollType == RollType.BERSERK_RECOVERY) || (rollType == RollType.BERSERK_RESISTANCE)
           || (rollType == RollType.MAGIC_RESISTANCE) || (rollType == RollType.SPELL_CASTING)) {
-         return dice.addBonus(0 - getPainAmount());
+         return dice.addBonus(-getPainAmount());
       }
       return dice;
    }

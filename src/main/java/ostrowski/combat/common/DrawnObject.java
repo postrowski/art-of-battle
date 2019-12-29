@@ -1,14 +1,9 @@
 package ostrowski.combat.common;
 
-import java.util.ArrayList;
-
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Device;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
-
+import org.eclipse.swt.graphics.*;
 import ostrowski.DebugBreak;
+
+import java.util.ArrayList;
 
 public class DrawnObject
 {
@@ -254,10 +249,10 @@ public class DrawnObject
     * Returns the intersection point of two lines, so long as the point of intersection exists on Line1
     * (between the two provided points {x1, y1}-{x2, y2}).
     *
-    * @param   p1line1   First line start point
-    * @param   p2line2   First line end point
-    * @param   p1line1   Second line start point
-    * @param   p2line2   Second line end point
+    * @param   p1Line1   First line start point
+    * @param   p2Line1   First line end point
+    * @param   p1Line2   Second line start point
+    * @param   p2Line2   Second line end point
     * @return  The Point object where the two lines intersect. This method
     * returns null if the two lines do not intersect.
     */

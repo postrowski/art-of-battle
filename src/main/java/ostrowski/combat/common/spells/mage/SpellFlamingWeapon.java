@@ -3,13 +3,10 @@
  */
 package ostrowski.combat.common.spells.mage;
 
-import java.util.List;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.SpecialDamage;
 import ostrowski.combat.common.html.Table;
@@ -19,6 +16,8 @@ import ostrowski.combat.common.things.Limb;
 import ostrowski.combat.common.things.LimbType;
 import ostrowski.combat.common.things.Weapon;
 import ostrowski.combat.server.Arena;
+
+import java.util.List;
 
 public class SpellFlamingWeapon extends ExpiringMageSpell implements ICastInBattle
 {
@@ -33,8 +32,8 @@ public class SpellFlamingWeapon extends ExpiringMageSpell implements ICastInBatt
             new MageCollege[] { MageCollege.CONJURATION, MageCollege.FIRE});
    }
 
-   protected SpellFlamingWeapon(String name, Class<? extends MageSpell>[] requiredClasses) {
-      super(name, (short) 10/*baseExpirationTimeInTurns*/, (short) 5/*bonusTimeInTurnsPerPower*/, requiredClasses,
+   protected SpellFlamingWeapon(Class<? extends MageSpell>[] requiredClasses) {
+      super(SpellFlamingMissileWeapon.NAME, (short) 10/*baseExpirationTimeInTurns*/, (short) 5/*bonusTimeInTurnsPerPower*/, requiredClasses,
             new MageCollege[] { MageCollege.CONJURATION, MageCollege.FIRE});
       _forMissileWeapons = true;
    }

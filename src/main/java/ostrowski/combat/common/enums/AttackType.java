@@ -14,7 +14,7 @@ public enum AttackType {
    }
    public final byte value;
 
-   private static HashMap<Byte, AttackType> MAP_TO_ATTACK_TYPES = new HashMap<>();
+   private static final HashMap<Byte, AttackType> MAP_TO_ATTACK_TYPES = new HashMap<>();
    static {
       for (AttackType type : AttackType.values()) {
          MAP_TO_ATTACK_TYPES.put(type.value, type);

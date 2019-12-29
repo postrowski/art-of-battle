@@ -1,42 +1,27 @@
 package ostrowski.combat.common;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.StringTokenizer;
-import java.util.TreeSet;
-
 import ostrowski.DebugBreak;
 import ostrowski.combat.common.Race.Gender;
 import ostrowski.combat.common.enums.AttackType;
 import ostrowski.combat.common.enums.Attribute;
 import ostrowski.combat.common.enums.Enums;
 import ostrowski.combat.common.enums.SkillType;
-import ostrowski.combat.common.spells.Spell;
 import ostrowski.combat.common.spells.mage.MageCollege;
 import ostrowski.combat.common.spells.mage.MageSpell;
-import ostrowski.combat.common.things.Armor;
-import ostrowski.combat.common.things.Hand;
-import ostrowski.combat.common.things.Head;
-import ostrowski.combat.common.things.Limb;
-import ostrowski.combat.common.things.LimbType;
-import ostrowski.combat.common.things.Potion;
-import ostrowski.combat.common.things.Shield;
-import ostrowski.combat.common.things.Thing;
-import ostrowski.combat.common.things.Weapon;
+import ostrowski.combat.common.things.*;
 import ostrowski.combat.common.weaponStyles.WeaponStyleAttack;
 import ostrowski.combat.server.Arena;
 import ostrowski.combat.server.CombatServer;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
+import java.util.Map.Entry;
+
 public class CharacterGenerator implements Enums
 {
 
-   private static ArrayList<String> convertSourceIntoTokens(String fullSource) {
-      ArrayList<String> tokens = new ArrayList<>();
+   private static List<String> convertSourceIntoTokens(String fullSource) {
+      List<String> tokens = new ArrayList<>();
       StringTokenizer st = new StringTokenizer(fullSource, " ");
       while (st.hasMoreTokens()) {
          String token = st.nextToken();
@@ -64,7 +49,7 @@ public class CharacterGenerator implements Enums
    static final String _dummy = Rules.diagCompName;
 
    static public Character generateRandomCharacter(String fullSource, Arena arena, boolean printCharacter) {
-      ArrayList<String> tokens = convertSourceIntoTokens(fullSource);
+      List<String> tokens = convertSourceIntoTokens(fullSource);
       int points = 200;
       String raceName = Race.NAME_Human;
       List<String> raceNames = Race.getRaceNames(true);
@@ -138,7 +123,7 @@ public class CharacterGenerator implements Enums
       DISSALLOWED_SKILLS_FOR_RACE.put(Race.NAME_Zombie,   Arrays.asList(SkillType.Aikido, SkillType.Karate, SkillType.Boxing));
    }
 
-   static public Character generateRandomCharacter(int points, String raceName, ArrayList<String> tokens,
+   static public Character generateRandomCharacter(int points, String raceName, List<String> tokens,
                                                    boolean genNewPseudoRndNumber, Arena arena, boolean printCharacter) {
       int pointsLeft = points;
       Character character = new Character();
@@ -313,31 +298,28 @@ public class CharacterGenerator implements Enums
                            requiredSkills.put(skillType, level);
                         }
                         else {
-                           Spell spell = MageSpell.getSpell(name);
-                           if (spell != null) {
-                              Byte level = Byte.parseByte(value);
-                              if (spell instanceof MageSpell) {
-                                 MageSpell mageSpell = (MageSpell) spell;
-                                 mageSpell.setFamiliarity(MageSpell.FAM_KNOWN);
-                                 character.setSpellLevel(mageSpell.getName(), mageSpell.getLevel());
-                                 Class<? extends MageSpell>[] requiredSpells = mageSpell._prerequisiteSpells;
-                                 for (Class<? extends MageSpell> preReq : requiredSpells) {
-                                    try {
-                                       MageSpell preReqSpell = preReq.getDeclaredConstructor().newInstance();
-                                       character.setSpellLevel(preReqSpell.getName(), mageSpell.getLevel());
-                                    } catch (InstantiationException |
-                                             IllegalAccessException |
-                                             IllegalArgumentException |
-                                             InvocationTargetException |
-                                             NoSuchMethodException |
-                                             SecurityException e) {
-                                       e.printStackTrace();
-                                    }
+                           MageSpell mageSpell = MageSpell.getSpell(name);
+                           if (mageSpell != null) {
+                              byte level = Byte.parseByte(value);
+                              mageSpell.setFamiliarity(MageSpell.FAM_KNOWN);
+                              character.setSpellLevel(mageSpell.getName(), mageSpell.getLevel());
+                              Class<? extends MageSpell>[] requiredSpells = mageSpell._prerequisiteSpells;
+                              for (Class<? extends MageSpell> preReq : requiredSpells) {
+                                 try {
+                                    MageSpell preReqSpell = preReq.getDeclaredConstructor().newInstance();
+                                    character.setSpellLevel(preReqSpell.getName(), mageSpell.getLevel());
+                                 } catch (InstantiationException |
+                                          IllegalAccessException |
+                                          IllegalArgumentException |
+                                          InvocationTargetException |
+                                          NoSuchMethodException |
+                                          SecurityException e) {
+                                    e.printStackTrace();
                                  }
-                                 for (MageCollege college : mageSpell._prerequisiteColleges) {
-                                    if (level > character.getCollegeLevel(college.getName())) {
-                                       character.setCollegeLevel(college.getName(), level);
-                                    }
+                              }
+                              for (MageCollege college : mageSpell._prerequisiteColleges) {
+                                 if (level > character.getCollegeLevel(college.getName())) {
+                                    character.setCollegeLevel(college.getName(), level);
                                  }
                               }
                            }
@@ -405,7 +387,7 @@ public class CharacterGenerator implements Enums
          noEquip = true;
       }
 
-      pointsLeft = points - character.getPointTotal();
+      pointsLeft = pointsLeft - character.getPointTotal();
 
       Weapon primaryWeapon = null;
       // override with specified weapon:
@@ -513,7 +495,7 @@ public class CharacterGenerator implements Enums
       Byte reqSkillLevel = requiredSkills.get(weaponSkill.getType());
       byte weaponLevel = getSkillLevel(points, pointsLeft);
       if (reqSkillLevel != null) {
-         weaponLevel = reqSkillLevel.byteValue();
+         weaponLevel = reqSkillLevel;
       }
       weaponSkill.setLevel(weaponLevel);
       character.setSkillLevel(weaponSkill.getType(), weaponLevel);
@@ -523,7 +505,7 @@ public class CharacterGenerator implements Enums
          shieldLevel = getSkillLevel(points, pointsLeft);
          Byte reqShieldLevel = requiredSkills.get(SkillType.Shield);
          if (reqShieldLevel != null) {
-            shieldLevel = reqShieldLevel.byteValue();
+            shieldLevel = reqShieldLevel;
          }
          character.setSkillLevel(SkillType.Shield, shieldLevel);
          pointsLeft = points - character.getPointTotal();
@@ -537,7 +519,7 @@ public class CharacterGenerator implements Enums
                byte desiredSecondaryLevel = getSkillLevel(points / 4, pointsLeft / 4);
                Byte requiredSecondaryLevel = requiredSkills.get(attackStyleSkillType);
                if (requiredSecondaryLevel != null) {
-                  desiredSecondaryLevel = requiredSecondaryLevel.byteValue();
+                  desiredSecondaryLevel = requiredSecondaryLevel;
                }
                else {
                   // Don't let the secondary weapon level be higher than the primary weapon level.
@@ -552,23 +534,23 @@ public class CharacterGenerator implements Enums
       SkillType unarmedCombatType = null;
       if (requiredSkills.get(SkillType.Karate) != null) {
          unarmedCombatType = SkillType.Karate;
-         desiredBrawlingLevel = requiredSkills.get(SkillType.Karate).byteValue();
+         desiredBrawlingLevel = requiredSkills.get(SkillType.Karate);
       }
       else if (requiredSkills.get(SkillType.Boxing) != null) {
          unarmedCombatType = SkillType.Boxing;
-         desiredBrawlingLevel = requiredSkills.get(SkillType.Boxing).byteValue();
+         desiredBrawlingLevel = requiredSkills.get(SkillType.Boxing);
       }
       else if (requiredSkills.get(SkillType.Aikido) != null) {
          unarmedCombatType = SkillType.Aikido;
-         desiredBrawlingLevel = requiredSkills.get(SkillType.Aikido).byteValue();
+         desiredBrawlingLevel = requiredSkills.get(SkillType.Aikido);
       }
       else if (requiredSkills.get(SkillType.Brawling) != null) {
          unarmedCombatType = SkillType.Brawling;
-         desiredBrawlingLevel = requiredSkills.get(SkillType.Brawling).byteValue();
+         desiredBrawlingLevel = requiredSkills.get(SkillType.Brawling);
       }
       else if (requiredSkills.get(SkillType.Wrestling) != null) {
          unarmedCombatType = SkillType.Wrestling;
-         desiredBrawlingLevel = requiredSkills.get(SkillType.Wrestling).byteValue();
+         desiredBrawlingLevel = requiredSkills.get(SkillType.Wrestling);
       }
       else if (character.getRace().hasProperty(Race.PROPERTIES_HORNS)) {
          unarmedCombatType = SkillType.Brawling;
@@ -620,7 +602,7 @@ public class CharacterGenerator implements Enums
          if ((unarmedCombatType != null) && (desiredBrawlingLevel > 0)) {
             Byte reqUnarmedCombatLevel = requiredSkills.get(unarmedCombatType);
             if (reqUnarmedCombatLevel != null) {
-               desiredBrawlingLevel = reqUnarmedCombatLevel.byteValue();
+               desiredBrawlingLevel = reqUnarmedCombatLevel;
             }
             character.setSkillLevel(unarmedCombatType, desiredBrawlingLevel);
             pointsLeft = points - character.getPointTotal();
@@ -629,7 +611,7 @@ public class CharacterGenerator implements Enums
 
       boolean throwWeapon = false;
       if (primaryWeapon.isThrowable()) {
-         double throwSkillChance = Math.max(0d, Math.min(95d, points / 2));
+         double throwSkillChance = Math.max(0d, Math.min(95d, points / 2d));
          throwWeapon = (throwSkillChance > (CombatServer.random() * 100));
          if (missileWeapon) {
             throwWeapon = true;
@@ -707,7 +689,6 @@ public class CharacterGenerator implements Enums
          }
       }
 
-      double weightCarried = character.getWeightCarried();
       byte desiredEncLevel = Rules.getEncumbranceLevel(character);
       // determine best armor.
       if (!noEquip && ((requiredArmor == null) || (requiredShield == null))) {
@@ -736,7 +717,7 @@ public class CharacterGenerator implements Enums
          computeBestArmorAndShield(character, shieldLevel, desiredEncLevel, requiredArmor, requiredShield, maxExpenditure);
       }
 
-      weightCarried = character.getWeightCarried();
+      double weightCarried = character.getWeightCarried();
       byte adjStrength = character.getAdjustedStrength();
       byte nimbleness = character.getAttributeLevel(Attribute.Nimbleness);
       double maxWeightCarried = Rules.getMaxWeightForEncLevel(adjStrength, nimbleness, desiredEncLevel);
@@ -763,12 +744,12 @@ public class CharacterGenerator implements Enums
                   desiredKnifeLevel = (byte) Math.min(desiredKnifeLevel, weaponLevel);
                   Byte reqKnifeLevel = requiredSkills.get(knife.getAttackStyle(0).getSkillType());
                   if (reqKnifeLevel != null) {
-                     desiredKnifeLevel = reqKnifeLevel.byteValue();
+                     desiredKnifeLevel = reqKnifeLevel;
                   }
                   character.setSkillLevel(knife.getAttackStyle(0).getSkillType(), desiredKnifeLevel);
 
                   if (!throwWeapon) {
-                     double throwSkillChance = Math.max(0d, Math.min(95d, points / 3));
+                     double throwSkillChance = Math.max(0d, Math.min(95d, points / 3d));
                      throwWeapon = (throwSkillChance > (CombatServer.random() * 100));
                      if (throwWeapon) {
                         byte desiredThrowLevel = getSkillLevel(points / 5, pointsLeft / 5);
@@ -892,8 +873,8 @@ public class CharacterGenerator implements Enums
 
          // allow the character to go up a max of 3 levels
          String baseWealth = wealth.getLevelName();
-         Integer racialWealthValue = Integer.valueOf(baseWealth.substring(1).replaceAll(",", ""));// remove the '$' and all commas
-         maxExpenditure = Math.round(racialWealthValue.intValue() * wealthMultiplier);
+         int racialWealthValue = Integer.parseInt(baseWealth.substring(1).replaceAll(",", ""));// remove the '$' and all commas
+         maxExpenditure = Math.round(racialWealthValue * wealthMultiplier);
 
          weightAvailable = maxWeightCarried - weightCarried;
          int allowableExpenditure = maxExpenditure - character.getTotalCost();
@@ -930,7 +911,7 @@ public class CharacterGenerator implements Enums
                count = 0;
             }
             character.setName(raceName + "-" + count);
-            generatedAnimalsCount.put(raceName, count.intValue() + 1);
+            generatedAnimalsCount.put(raceName, count + 1);
          }
          else {
             character.setName(getName(arena, character.getGender() == Gender.MALE));
@@ -1011,10 +992,7 @@ public class CharacterGenerator implements Enums
       double maxPercentageOfTotalPoint = 0.5 + ((CombatServer.random() + CombatServer.random() + CombatServer.random() + CombatServer.random()) / 8.0);
       int maxPointsForStrength = (int) (pointsLeft * maxPercentageOfTotalPoint);
       // randomize the list of attack styles:
-      ArrayList<WeaponStyleAttack> styleList = new ArrayList<>();
-      for (WeaponStyleAttack style : primaryWeapon.getAttackStyles()) {
-         styleList.add(style);
-      }
+      ArrayList<WeaponStyleAttack> styleList = new ArrayList<>(Arrays.asList(primaryWeapon.getAttackStyles()));
       ArrayList<WeaponStyleAttack> randomizedStyleListThrust = new ArrayList<>();
       ArrayList<WeaponStyleAttack> randomizedStyleListSwing = new ArrayList<>();
       ArrayList<WeaponStyleAttack> randomizedStyleListOther = new ArrayList<>();
@@ -1053,27 +1031,23 @@ public class CharacterGenerator implements Enums
       return getAttributeLevel(points, pointsLeft);
    }
 
-   static HashMap<String, Integer> generatedAnimalsCount = new HashMap<>();
+   static final HashMap<String, Integer> generatedAnimalsCount = new HashMap<>();
 
-   static String[]                 NAMES_MALE            = new String[] { "Arron", "Barley", "Charlie", "David", "Eric", "Freddy", "Guido", "Harold", "Indy", "Jarmok", "Kerri", "Liam", "Max", "Niro", "Othello", "Paul", "Quincy", "Ralph", "Samuel", "Thomas", "Unvar", "Vaughn", "William", "Xork", "Yorge", "Zazzon"};
-   static String[]                 NAMES_FEMALE          = new String[] { "Angelina", "Betty", "Cindy", "Dominique", "Elana", "Fran", "Gena", "Hellen", "Iris", "Jeri", "Kendra", "Luanne", "Margo", "Nelly", "Ophellia", "Peggy", "Quilemina", "Rachel", "Samantha", "Tina", "Ulga", "Vemma", "Wendy", "Xena", "Yanna", "Zella"};
+   static final String[] NAMES_MALE   = new String[] {"Arron", "Barley", "Charlie", "David", "Eric", "Freddy", "Guido", "Harold", "Indy", "Jarmok", "Kerri", "Liam", "Max", "Niro", "Othello", "Paul", "Quincy", "Ralph", "Samuel", "Thomas", "Unvar", "Vaughn", "William", "Xork", "Yorge", "Zazzon"};
+   static final String[] NAMES_FEMALE = new String[] {"Angelina", "Betty", "Cindy", "Dominique", "Elana", "Fran", "Gena", "Hellen", "Iris", "Jeri", "Kendra", "Luanne", "Margo", "Nelly", "Ophellia", "Peggy", "Quilemina", "Rachel", "Samantha", "Tina", "Ulga", "Vemma", "Wendy", "Xena", "Yanna", "Zella"};
 
-   public static ArrayList<String> NAMES_LIST_MALE       = new ArrayList<>();
-   public static ArrayList<String> NAMES_LIST_FEMALE     = new ArrayList<>();
+   public static final List<String> NAMES_LIST_MALE   = new ArrayList<>();
+   public static final List<String> NAMES_LIST_FEMALE = new ArrayList<>();
 
    private static String getName(Arena arena, boolean maleName) {
       double rnd = CombatServer.random();
       if ((NAMES_LIST_MALE.size() == 0) || (arena != null)) {
          NAMES_LIST_MALE.clear();
-         for (String name : NAMES_MALE) {
-            NAMES_LIST_MALE.add(name);
-         }
+         NAMES_LIST_MALE.addAll(Arrays.asList(NAMES_MALE));
       }
       if ((NAMES_LIST_FEMALE.size() == 0) || (arena != null)) {
          NAMES_LIST_FEMALE.clear();
-         for (String name : NAMES_FEMALE) {
-            NAMES_LIST_FEMALE.add(name);
-         }
+         NAMES_LIST_FEMALE.addAll(Arrays.asList(NAMES_FEMALE));
       }
       // make sure that we exclude all names that are already used in the arena.
       if (arena != null) {
@@ -1154,9 +1128,9 @@ public class CharacterGenerator implements Enums
       if (requiredShield == null) {
          // Remove any existing shields, in all of our Hands
          for (Limb limb : character.getLimbs()) {
-            if ((limb != null) && (limb instanceof Hand)) {
+            if (limb instanceof Hand) {
                Thing currentShield = limb.getHeldThing();
-               if ((currentShield != null) && (currentShield instanceof Shield)) {
+               if (currentShield instanceof Shield) {
                   limb.setHeldThing(null, character);
                }
             }
@@ -1193,7 +1167,7 @@ public class CharacterGenerator implements Enums
 
       if (requiredArmor == null) {
          int maxCost = 10000;
-         double armorWeight = 0;
+         double armorWeight;
          // Start at the heaviest armor and most expensive, and find the first armor we can wear and afford:
          for (Armor armor : armors) {
             armorWeight = armor.getAdjustedWeight();
@@ -1292,7 +1266,7 @@ public class CharacterGenerator implements Enums
    }
 
    private static TreeSet<Skill> sortSkillsByLevel(List<Skill> skillsList, final boolean ascending) {
-      TreeSet<Skill> skills = new TreeSet<>(new Comparator<Skill>() {
+      TreeSet<Skill> skills = new TreeSet<>(new Comparator<>() {
          @Override
          public int compare(Skill o1, Skill o2) {
             if (o1.getLevel() == o2.getLevel()) {
@@ -1340,7 +1314,7 @@ public class CharacterGenerator implements Enums
       return increaseCharacterPoints(character, pointsLeft, startIndex, ++attIndex, requiredAttributes);
    }
 
-   static Attribute[] REDUCE_ATTRIBUTES = new Attribute[] { Attribute.Intelligence, Attribute.Social, Attribute.Toughness, Attribute.Health, Attribute.Nimbleness, Attribute.Intelligence, Attribute.Social, Attribute.Toughness, Attribute.Intelligence, Attribute.Social};
+   static final Attribute[] REDUCE_ATTRIBUTES = new Attribute[] {Attribute.Intelligence, Attribute.Social, Attribute.Toughness, Attribute.Health, Attribute.Nimbleness, Attribute.Intelligence, Attribute.Social, Attribute.Toughness, Attribute.Intelligence, Attribute.Social};
 
    private static Attribute reduceCharacterAttributes(Character character, boolean allowDexAndStr, HashMap<String, Integer> requiredAttributes) {
       if (allowDexAndStr) {
@@ -1374,7 +1348,7 @@ public class CharacterGenerator implements Enums
       return reduceCharacterAttributes(character, startIndex, redAttIndex, reducibleAttributes, requiredAttributes);
    }
 
-   static String[] REDUCE_ADVANTAGES = new String[] { Advantage.BAD_TEMPER, Advantage.COMPULSIVE_LIAR, Advantage.GREEDY, Advantage.HONEST, Advantage.BAD_TEMPER, Advantage.COMPULSIVE_LIAR, Advantage.GREEDY, Advantage.HONEST, Advantage.LECHEROUS, Advantage.SADISTIC, Advantage.BERSERKER, Advantage.MUTE};
+   static final String[] REDUCE_ADVANTAGES = new String[] {Advantage.BAD_TEMPER, Advantage.COMPULSIVE_LIAR, Advantage.GREEDY, Advantage.HONEST, Advantage.BAD_TEMPER, Advantage.COMPULSIVE_LIAR, Advantage.GREEDY, Advantage.HONEST, Advantage.LECHEROUS, Advantage.SADISTIC, Advantage.BERSERKER, Advantage.MUTE};
 
    private static boolean reduceCharacterAdvantages(Character character) {
       byte redAdvIndex = (byte) (CombatServer.random() * REDUCE_ADVANTAGES.length);
@@ -1488,7 +1462,7 @@ public class CharacterGenerator implements Enums
    }
 
    private static Weapon getBestWeaponForStrength(byte str, boolean missileWeapon, boolean allowTwoHanded, int maxExpenditure, Race racialBase) {
-      ArrayList<String> appropriateWeapons = new ArrayList<>();
+      List<String> appropriateWeapons = new ArrayList<>();
       getBestWeaponForStrength(str, missileWeapon, appropriateWeapons, allowTwoHanded, maxExpenditure, racialBase);
       getBestWeaponForStrength(str, missileWeapon, appropriateWeapons, allowTwoHanded, maxExpenditure, racialBase);
       if (!missileWeapon) {
@@ -1498,7 +1472,7 @@ public class CharacterGenerator implements Enums
       return Weapon.getWeapon(weaponName, racialBase);
    }
 
-   private static void getBestWeaponForStrength(byte str, boolean missileWeapon, ArrayList<String> appropriateWeapons, boolean allowTwoHanded,
+   private static void getBestWeaponForStrength(byte str, boolean missileWeapon, List<String> appropriateWeapons, boolean allowTwoHanded,
                                                 int maxExpenditure, Race racialBase) {
       int wealthMultiplierTimes100 = (int)(racialBase.getWealthMultiplier() * 100);
       if (missileWeapon) {
@@ -1615,7 +1589,7 @@ public class CharacterGenerator implements Enums
                appropriateWeapons.add(Weapon.NAME_ThreePartStaff);
          }
       }
-      ArrayList<String> removeWeapons = new ArrayList<>();
+      List<String> removeWeapons = new ArrayList<>();
       if (!allowTwoHanded) {
          for (String weaponName : appropriateWeapons) {
             Weapon weap = Weapon.getWeapon(weaponName, racialBase);

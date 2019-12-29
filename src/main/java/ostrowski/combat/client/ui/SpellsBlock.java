@@ -4,25 +4,12 @@
  */
 package ostrowski.combat.client.ui;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Spinner;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.Text;
-
+import org.eclipse.swt.widgets.*;
 import ostrowski.combat.common.Advantage;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.CharacterWidget;
@@ -34,6 +21,11 @@ import ostrowski.combat.common.spells.mage.MageSpell;
 import ostrowski.combat.common.spells.priest.PriestSpell;
 import ostrowski.combat.common.spells.priest.ResistedPriestSpell;
 import ostrowski.ui.Helper;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
 {
@@ -75,14 +67,12 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
    private final String[]         _spellCostData           = new String[_spellCombo.length];
    private final boolean[]        _spellEnabledData        = new boolean[_spellCombo.length];
 
-   private TabFolder        _mainFolder;
-   private TabFolder        _mageFolder;
-   private TabFolder        _priestFolder;
+   private TabFolder              _mainFolder;
    private final Text[][]         _priestSpellName       = new Text[PRIEST_PAGES][PRIEST_SPELLS_PER_PAGE];
    private final Text[][]         _priestSpellAffinity   = new Text[PRIEST_PAGES][PRIEST_SPELLS_PER_PAGE];
    private final Text[][]         _priestSpellRange      = new Text[PRIEST_PAGES][PRIEST_SPELLS_PER_PAGE];
    private final Text[][]         _priestSpellResistance = new Text[PRIEST_PAGES][PRIEST_SPELLS_PER_PAGE];
-   private TabItem[]        _priestPage;
+   private TabItem[]              _priestPage;
 
 
    public SpellsBlock(CharacterWidget widget)
@@ -100,6 +90,7 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
 
       {
          // Create the Wizardry page
+         TabFolder mageFolder;
          {
             TabItem item = new TabItem(_mainFolder, SWT.NULL);
             item.setText( "Wizardry");
@@ -107,15 +98,15 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
             item.setControl( page );
             page.setLayout(new GridLayout(1 /*columns*/,false/*sameWidth*/));
 
-            _mageFolder = new TabFolder(page, SWT.NONE);
+            mageFolder = new TabFolder(page, SWT.NONE);
             data = new GridData(GridData.FILL_HORIZONTAL);
-            _mageFolder.setLayoutData(data);
+            mageFolder.setLayoutData(data);
          }
 
          {
-            TabItem item = new TabItem(_mageFolder, SWT.NULL);
+            TabItem item = new TabItem(mageFolder, SWT.NULL);
             item.setText( "Colleges");
-            Composite page = Helper.createComposite(_mageFolder, 1, GridData.FILL_BOTH);
+            Composite page = Helper.createComposite(mageFolder, 1, GridData.FILL_BOTH);
             item.setControl( page );
             page.setLayout(new GridLayout(4 /*columns*/,false/*sameWidth*/));
 
@@ -123,7 +114,7 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
             createLabel(page, "Base Level", SWT.CENTER, 1, null);
             createLabel(page, "Adj. Level", SWT.CENTER, 1, null);
             createLabel(page, "Cost", SWT.CENTER, 1, null);
-            ArrayList<String> collegeNames = MageCollege.getCollegeNames();
+            List<String> collegeNames = MageCollege.getCollegeNames();
             collegeNames.add(0, "---");
             for (int itemIndex=0 ; itemIndex<MAGE_SPELLS_PER_PAGE ; itemIndex++) {
                _collegeComboData [itemIndex] = collegeNames.get(0);
@@ -148,9 +139,9 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
             page.setTabList(tabList);
          }
          for (int pageIndex=0 ; pageIndex<MAGE_PAGES ; pageIndex++) {
-            TabItem item = new TabItem(_mageFolder, SWT.NULL);
+            TabItem item = new TabItem(mageFolder, SWT.NULL);
             item.setText( "Page " + (pageIndex+1));
-            Composite page = Helper.createComposite(_mageFolder, 1, GridData.FILL_BOTH);
+            Composite page = Helper.createComposite(mageFolder, 1, GridData.FILL_BOTH);
             item.setControl( page );
             page.setLayout(new GridLayout(6 /*columns*/,false/*sameWidth*/));
 
@@ -160,7 +151,7 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
             createLabel(page, "Time", SWT.CENTER, 1, null);
             createLabel(page, "Range base", SWT.CENTER, 1, null);
             createLabel(page, "Cost", SWT.CENTER, 1, null);
-            ArrayList<String> spellNames = MageSpell.getSpellNames();
+            List<String> spellNames = MageSpell.getSpellNames();
             spellNames.add(0, "---");
             List<String> familiarities = new ArrayList<>();
             familiarities.add(MageSpell.FAM_UNFAMILIAR);
@@ -199,6 +190,7 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
       }
       {
          // create the Priest magic page
+         TabFolder priestFolder;
          {
             TabItem item = new TabItem(_mainFolder, SWT.NULL);
             item.setText("Priest");
@@ -206,16 +198,16 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
             item.setControl( page );
             page.setLayout(new GridLayout(1 /*columns*/,false/*sameWidth*/));
 
-            _priestFolder = new TabFolder(page, SWT.NONE);
+            priestFolder = new TabFolder(page, SWT.NONE);
             data = new GridData(GridData.FILL_HORIZONTAL | SWT.BORDER);
-            _priestFolder.setLayoutData(data);
+            priestFolder.setLayoutData(data);
          }
 
          _priestPage = new TabItem[PRIEST_PAGES];
          for (int pageIndex=0 ; pageIndex<PRIEST_PAGES ; pageIndex++) {
-            _priestPage[pageIndex] = new TabItem(_priestFolder, SWT.NULL);
+            _priestPage[pageIndex] = new TabItem(priestFolder, SWT.NULL);
             _priestPage[pageIndex].setText( "Page " + (pageIndex+1));
-            Composite page = Helper.createComposite(_priestFolder, 1, GridData.FILL_BOTH);
+            Composite page = Helper.createComposite(priestFolder, 1, GridData.FILL_BOTH);
             _priestPage[pageIndex].setControl( page );
             page.setLayout(new GridLayout(4 /*columns*/,false/*sameWidth*/));
 
@@ -342,8 +334,7 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
       character.setCollegesList(newColleges);
    }
    public boolean isRequiredByOtherSpells(List<MageSpell> knownSpells, MageSpell source) {
-      for (int mainIndex = 0 ; mainIndex<knownSpells.size() ; mainIndex++) {
-         MageSpell spell = knownSpells.get(mainIndex);
+      for (MageSpell spell : knownSpells) {
          for (Class<MageSpell> prerequisiteSpellClass : spell._prerequisiteSpells) {
             if (source.getClass() == prerequisiteSpellClass) {
                return true;

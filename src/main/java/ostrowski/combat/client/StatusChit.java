@@ -1,44 +1,42 @@
 package ostrowski.combat.client;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.graphics.Region;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Dialog;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-
+import org.eclipse.swt.widgets.*;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.Condition;
 import ostrowski.combat.common.things.Limb;
 import ostrowski.combat.common.things.LimbType;
 import ostrowski.combat.server.CombatServer;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 
 public class StatusChit extends Dialog implements PaintListener
 {
-   private static HashMap<String, Point> LOCATION_BY_CHARACTER_NAME = new HashMap<>();
-   private final ArrayList<TextWheel> _textWheels = new ArrayList<>();
-   private Shell _shell = null;
+   private static final HashMap<String, Point> LOCATION_BY_CHARACTER_NAME = new HashMap<>();
+   private final        ArrayList<TextWheel>   _textWheels                = new ArrayList<>();
+   private              Shell                  _shell                     = null;
 
-   public String _name;
-   private final int _nameFontSize = 20;
-   private Point _nameCenterLoc = new Point(0,0);
+   public String            _name;
+   private static final int NAME_FONT_SIZE = 20;
+   private Point            _nameCenterLoc = new Point(0,0);
 
-   private TextWheel _position, _posAdj, _actions, _initiative, _wounds, _pain, _weapon, _magic, _misc;
+   private final TextWheel _position;
+   private final TextWheel _posAdj;
+   private final TextWheel _actions;
+   private final TextWheel _initiative;
+   private final TextWheel _wounds;
+   private final TextWheel _pain;
+   private final TextWheel _weapon;
+   private final TextWheel _magic;
+   private final TextWheel _misc;
 
    public Point _offsetFromParent = null; // if this is null, we are not pinned to the parent, otherwise we are.
 
@@ -264,7 +262,7 @@ public class StatusChit extends Dialog implements PaintListener
       event.gc.setBackground(event.display.getSystemColor(SWT.COLOR_GRAY));
       event.gc.setForeground(event.display.getSystemColor(SWT.COLOR_RED));
 
-      TextWheel.drawText(event.gc, _nameCenterLoc, _nameFontSize, _name);
+      TextWheel.drawText(event.gc, _nameCenterLoc, NAME_FONT_SIZE, _name);
    }
 
    public void setLocation(Point location) {
@@ -282,29 +280,26 @@ class TextWheel {
 
    public enum Edge { TOP, LEFT, BOTTOM, RIGHT}
 
-   private int _radius;
-   private final double _percentClockwiseAlongEdge;
-   private final int _blockingSize;
-   private Point _blockingPoint1;
-   private Point _blockingPoint2;
-   private final int _angleOpen;
-   private final Edge _edge;
+   private final int   _radius;
+   private       Point _blockingPoint1;
+   private       Point  _blockingPoint2;
+   private final int    _angleOpen;
+   private final Edge   _edge;
    private final String _label;
-   private final int _labelFontSize;
-   private Point _labelCenterLoc = new Point(0,0);
-   public String _text;
-   private final int _textFontSize;
-   private final Point _textCenterLoc = new Point(0,0);
-   private final Point _center = new Point(0,0);
-   private int _centerAngle = 0;
-   private int _angleWidth = 0;
+   private final int    _labelFontSize;
+   private       Point  _labelCenterLoc = new Point(0, 0);
+   public        String _text;
+   private final int    _textFontSize;
+   private final Point  _textCenterLoc  = new Point(0, 0);
+   private final Point  _center         = new Point(0, 0);
+   private       int    _centerAngle    = 0;
+   private       int    _angleWidth     = 0;
 
    public TextWheel(double radiusPercentage, double percentClockwiseAlongEdge,
                     double percentBlocking, int angleOpen, Edge edge,
                     int angleWidth, double labelVertOffsetPercent,
                     double labelHorizontalOffsetPercentage, String label,
                     double labelFontSizePercentage, String text, double textFontSizePercentage) {
-      _percentClockwiseAlongEdge = percentClockwiseAlongEdge;
       _angleOpen = angleOpen;
       _edge = edge;
       _angleWidth = angleWidth;
@@ -318,44 +313,44 @@ class TextWheel {
       else {
          _radius = (int) (radiusPercentage * _fullWidth);
       }
-      _blockingSize = (int) (_radius * percentBlocking);
+      int blockingSize = (int) (_radius * percentBlocking);
 
       switch (_edge) {
          case TOP:
-            _center.x = (int) (_fullWidth * _percentClockwiseAlongEdge);
+            _center.x = (int) (_fullWidth * percentClockwiseAlongEdge);
             _center.y = _radius;
             _centerAngle = 90;
             _textCenterLoc.x = _center.x;
-            _textCenterLoc.y = (((_center.y - _radius) + _center.y) - _blockingSize) / 2;
-            _blockingPoint1 = new Point(_center.x - _blockingSize, _center.y - _blockingSize);
-            _blockingPoint2 = new Point(_center.x + _blockingSize, _center.y - _blockingSize);
+            _textCenterLoc.y = (((_center.y - _radius) + _center.y) - blockingSize) / 2;
+            _blockingPoint1 = new Point(_center.x - blockingSize, _center.y - blockingSize);
+            _blockingPoint2 = new Point(_center.x + blockingSize, _center.y - blockingSize);
             break;
          case BOTTOM:
-            _center.x = (int) (_fullWidth * (1-_percentClockwiseAlongEdge));
+            _center.x = (int) (_fullWidth * (1 - percentClockwiseAlongEdge));
             _center.y = _fullHieght - _radius;
             _centerAngle = 270;
             _textCenterLoc.x = _center.x;
-            _textCenterLoc.y = ((_center.y + _radius) + _center.y + _blockingSize) / 2;
-            _blockingPoint1 = new Point(_center.x + _blockingSize, _center.y + _blockingSize);
-            _blockingPoint2 = new Point(_center.x - _blockingSize, _center.y + _blockingSize);
+            _textCenterLoc.y = ((_center.y + _radius) + _center.y + blockingSize) / 2;
+            _blockingPoint1 = new Point(_center.x + blockingSize, _center.y + blockingSize);
+            _blockingPoint2 = new Point(_center.x - blockingSize, _center.y + blockingSize);
             break;
          case LEFT:
             _center.x = _radius;
-            _center.y = (int) (_fullHieght * (1-_percentClockwiseAlongEdge));
+            _center.y = (int) (_fullHieght * (1 - percentClockwiseAlongEdge));
             _centerAngle = 180;
             _textCenterLoc.y = _center.y;
-            _textCenterLoc.x = (((_center.x - _radius) + _center.x) - _blockingSize) / 2;
-            _blockingPoint1 = new Point(_center.x - _blockingSize, _center.y + (_blockingSize / 2));
-            _blockingPoint2 = new Point(_center.x - _blockingSize, _center.y - (_blockingSize / 2));
+            _textCenterLoc.x = (((_center.x - _radius) + _center.x) - blockingSize) / 2;
+            _blockingPoint1 = new Point(_center.x - blockingSize, _center.y + (blockingSize / 2));
+            _blockingPoint2 = new Point(_center.x - blockingSize, _center.y - (blockingSize / 2));
             break;
          case RIGHT:
             _center.x = _fullWidth - _radius;
-            _center.y = (int) (_fullHieght * _percentClockwiseAlongEdge);
+            _center.y = (int) (_fullHieght * percentClockwiseAlongEdge);
             _centerAngle = 0;
             _textCenterLoc.y = _center.y;
-            _textCenterLoc.x = ((_center.x + _radius) + _center.x + _blockingSize) / 2;
-            _blockingPoint1 = new Point(_center.x + _blockingSize, _center.y - _blockingSize);
-            _blockingPoint2 = new Point(_center.x + _blockingSize, _center.y + _blockingSize);
+            _textCenterLoc.x = ((_center.x + _radius) + _center.x + blockingSize) / 2;
+            _blockingPoint1 = new Point(_center.x + blockingSize, _center.y - blockingSize);
+            _blockingPoint2 = new Point(_center.x + blockingSize, _center.y + blockingSize);
             break;
       }
       int labelVertOffset = (int) (labelVertOffsetPercent * _fullHieght);

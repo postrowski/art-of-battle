@@ -4,53 +4,16 @@
  */
 package ostrowski.combat.server;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
-import java.util.StringTokenizer;
-import java.util.TreeSet;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.events.ShellListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.DeviceData;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.Text;
-
+import org.eclipse.swt.widgets.*;
 import ostrowski.DebugBreak;
 import ostrowski.combat.client.CombatClient;
 import ostrowski.combat.client.MessageDialog;
@@ -58,36 +21,27 @@ import ostrowski.combat.client.RequestUserInput;
 import ostrowski.combat.client.ui.AutoRunBlock;
 import ostrowski.combat.client.ui.CharInfoBlock;
 import ostrowski.combat.common.Character;
-import ostrowski.combat.common.CharacterFile;
-import ostrowski.combat.common.CharacterGenerator;
-import ostrowski.combat.common.CharacterWidget;
-import ostrowski.combat.common.CombatMap;
-import ostrowski.combat.common.DiceSet;
-import ostrowski.combat.common.GenerateCharacterDialog;
-import ostrowski.combat.common.IMapListener;
-import ostrowski.combat.common.IMapWidget;
-import ostrowski.combat.common.MapWidget2D;
-import ostrowski.combat.common.MapWidget3D;
-import ostrowski.combat.common.RuleComposite;
-import ostrowski.combat.common.Rules;
+import ostrowski.combat.common.*;
 import ostrowski.combat.common.enums.AI_Type;
 import ostrowski.combat.common.enums.Attribute;
 import ostrowski.combat.common.enums.Enums;
 import ostrowski.combat.common.enums.TerrainType;
 import ostrowski.graphics.objects3d.Helper;
-import ostrowski.util.AnglePairDegrees;
 import ostrowski.util.ClientListener;
-import ostrowski.util.CombatSemaphore;
-import ostrowski.util.Diagnostics;
-import ostrowski.util.Semaphore;
-import ostrowski.util.SemaphoreAutoTracker;
-import ostrowski.util.Sleak;
+import ostrowski.util.*;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.List;
+import java.util.*;
 
 public class CombatServer extends Helper implements SelectionListener, Enums, IMapListener, ModifyListener, Listener, KeyListener, ControlListener, ShellListener
 {
-   private static String VERSION_NUMBER = "4.2.0";
+   private static final String VERSION_NUMBER = "4.2.0";
 
-   public static HashMap<Thread, HashMap<String, Object>> threadStorage_ = new HashMap<>();
+   public static final HashMap<Thread, HashMap<String, Object>> threadStorage_ = new HashMap<>();
    public static Object getThreadStorage(String key) {
       HashMap<String, Object> threadsStorage = threadStorage_.get(Thread.currentThread());
       if (threadsStorage == null) {
@@ -96,11 +50,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       return threadsStorage.get(key);
    }
    public static Object putThreadStorage(String key, Object value) {
-      HashMap<String, Object> threadsStorage = threadStorage_.get(Thread.currentThread());
-      if (threadsStorage == null) {
-         threadsStorage = new HashMap<>();
-         threadStorage_.put(Thread.currentThread(), threadsStorage);
-      }
+      HashMap<String, Object> threadsStorage = threadStorage_.computeIfAbsent(Thread.currentThread(), k -> new HashMap<>());
       return threadsStorage.put(key, value);
    }
 
@@ -170,9 +120,9 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    private Button                           _saveMapButton;
    private Text                             _arenaSizeXValue;
    private Text                             _arenaSizeYValue;
-   public  IMapWidget                       _map;
-   private Browser                          _fullMessages;
-   private Browser                          _messages;
+   public        IMapWidget _map;
+   private final Browser    _fullMessages;
+   private       Browser    _messages;
 
    private ClientListener                   _clientListener;
    private final Arena                      _arena;
@@ -180,7 +130,6 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    private Combo[/*team*/][/*id*/]          _combatantsName;
    private Combo[/*team*/][/*id*/]          _combatantsAI;
    private final byte                       _maxTeams         = CombatServer.MAX_TEAMS;
-   private final byte                       _maxCharsPerTeam  = MAX_COMBATANTS_PER_TEAM;
    private byte                             _currentTeam      = -1;
    private byte                             _currentCombatant = -1;
    private boolean                          _changingMap      = false;
@@ -195,10 +144,9 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    private final Semaphore                  _lock_pausePlayControl = new Semaphore("CombatServer_pausePalyControl",
                                                                                    CombatSemaphore.CLASS_COMBATSERVER_pausePlayControl);
 
-   private final Configuration              _configuration    = new Configuration();
-   public  CharacterWidget                  _charWidget       = null;
-   public  CharacterFile                    _charFile         = new CharacterFile("Character.data");
-   private final CharInfoBlock              _charInfoBlock    = new CharInfoBlock(null);
+   public        CharacterWidget _charWidget    = null;
+   public final  CharacterFile   _charFile      = new CharacterFile("Character.data");
+   private final CharInfoBlock   _charInfoBlock = new CharInfoBlock(null);
    private Button                           _hideViewFromLocalPlayersButton;
 
 
@@ -282,7 +230,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       item = new TabItem( tabFolder, SWT.NULL);
       item.setText( "Rules");
       // add the control to the TabItem
-      item.setControl(new RuleComposite(tabFolder, 1, GridData.FILL_BOTH, _configuration,
+      item.setControl(new RuleComposite(tabFolder, 1, GridData.FILL_BOTH, new Configuration(),
                                         WINDOW_WIDTH, display.getSystemColor(SWT.COLOR_WHITE)));
 
       Composite mainGridBlock = new Composite(arenaMap, SWT.NONE);
@@ -390,9 +338,9 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
          _arena.serializeFromFile(battleFile);
       }
 
-//      List<String> mapLocNames = new ArrayList<String>();
+//      List<String> mapLocNames = new ArrayList<>();
 //      for (byte team=0 ; team<_maxTeams ; team++) {
-//         for (byte cur=0 ; cur<_maxCharsPerTeam ; cur++) {
+//         for (byte cur=0 ; cur<MAX_COMBATANTS_PER_TEAM ; cur++) {
 //            mapLocNames.add(CombatMap.getLabel(team, cur));
 //         }
 //      }
@@ -577,9 +525,9 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
          data = new GridData();
          data.horizontalSpan = 3;
          combatantButtonsBlock.setLayoutData(data);
-         _combatantsButtons = new Button[_maxTeams][_maxCharsPerTeam];
-         _combatantsAI      = new Combo[_maxTeams][_maxCharsPerTeam];
-         _combatantsName    = new Combo[_maxTeams][_maxCharsPerTeam];
+         _combatantsButtons = new Button[_maxTeams][MAX_COMBATANTS_PER_TEAM];
+         _combatantsAI      = new Combo[_maxTeams][MAX_COMBATANTS_PER_TEAM];
+         _combatantsName    = new Combo[_maxTeams][MAX_COMBATANTS_PER_TEAM];
          List<String> charNames = _charWidget.getCharacterFile().getCharacterNames();
          charNames.add("Random...");
          List<String> aiNames = new ArrayList<>();
@@ -591,7 +539,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
          }
          for (int team=0 ; team<_maxTeams ; team++) {
             Group teamGroup = createGroup(combatantButtonsBlock, TEAM_NAMES[team], 3/*columns*/, false/*sameSize*/, 3/*hSpacing*/, 3/*vSpacing*/);
-            for (int combatant=0 ; combatant<_maxCharsPerTeam ; combatant++) {
+            for (int combatant=0 ; combatant<MAX_COMBATANTS_PER_TEAM ; combatant++) {
                _combatantsButtons[team][combatant] = new Button(teamGroup, SWT.PUSH);
                _combatantsAI[team][combatant] = createCombo(teamGroup, SWT.DROP_DOWN | SWT.READ_ONLY, 1/*hSpan*/, aiNames);
                _combatantsName[team][combatant] = createCombo(teamGroup, SWT.NONE, 1/*hSpan*/, charNames);
@@ -645,8 +593,8 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       }
    }
 
-   private static short MAP_SIZE_HEIGHT = 300;
-   private static short MAP_SIZE_WIDTH  = 600;
+   private static final short MAP_SIZE_HEIGHT = 300;
+   private static final short MAP_SIZE_WIDTH  = 600;
    /**
     * @param mainGridBlock
     */
@@ -866,9 +814,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
             map.serializeFromFile(mapFile);
          }
       }
-      if (map != null) {
-         setMap(map, true/*clearCombatants*/);
-      }
+      setMap(map, true/*clearCombatants*/);
    }
    public void setMap(CombatMap map, boolean clearCombatants) {
       if (_map != null) {
@@ -1385,10 +1331,10 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
          }
       }
    }
-   Semaphore _lock_pendingMessage = new Semaphore("CombatServer_pendingMessage",
-                                                  CombatSemaphore.CLASS_COMBATSERVER_pendingMessage);
-   private final StringBuilder _pendingMessage = new StringBuilder();
-//   ArrayList<String> audit = new ArrayList<String>();
+   final         Semaphore     _lock_pendingMessage = new Semaphore("CombatServer_pendingMessage",
+                                                                    CombatSemaphore.CLASS_COMBATSERVER_pendingMessage);
+   private final StringBuilder _pendingMessage      = new StringBuilder();
+//   List<String> audit = new ArrayList<>();
    public void appendMessage(String message)
    {
       if (message == null)
@@ -1841,7 +1787,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
          _lock_pausePlayControl.check();
       }
    }
-   public static int MAX_PSEUDO_RANDOM_VALUE = 1000;
+   public static final int MAX_PSEUDO_RANDOM_VALUE = 1000;
    public static void generateNewPseudoRandomNumberSeed() {
       setPseudoRandomNumberSeed((int) (System.currentTimeMillis() / 100));
    }
@@ -1900,7 +1846,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    public void keyReleased(KeyEvent arg0) {
       _map.keyReleased(arg0);
    }
-   public static ArrayList<MapWidget3D> _widgets = new ArrayList<>();
+   public static final ArrayList<MapWidget3D> _widgets = new ArrayList<>();
 
    public static boolean _uses3dMap = false;
    public static void registerMapWidget3D(MapWidget3D mapWidget3D) {

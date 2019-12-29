@@ -4,25 +4,17 @@
  */
 package ostrowski.combat.client.ui;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Text;
-
-import ostrowski.combat.common.Advantage;
+import org.eclipse.swt.widgets.*;
 import ostrowski.combat.common.Character;
-import ostrowski.combat.common.CharacterWidget;
-import ostrowski.combat.common.Race;
-import ostrowski.combat.common.Rules;
+import ostrowski.combat.common.*;
 import ostrowski.combat.common.enums.Enums;
 import ostrowski.ui.Helper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AdvantagesBlock extends Helper implements Enums, IUIBlock, ModifyListener
 {
@@ -44,12 +36,12 @@ public class AdvantagesBlock extends Helper implements Enums, IUIBlock, ModifyLi
       createLabel(_advGroup, "Name", SWT.LEFT, 1, null);
       createLabel(_advGroup, "Level", SWT.CENTER, 1, null);
       createLabel(_advGroup, "Cost", SWT.CENTER, 1, null);
-      ArrayList<String> existingProperties = new ArrayList<>();
+      List<String> existingProperties = new ArrayList<>();
       List<String> advNames = Advantage.getAdvantagesNames(existingProperties, _display._character.getRace());
       advNames.add(0, "---");
       for (int i=0 ; i<_advCombo.length ; i++) {
          _advCombo[i] = createCombo(_advGroup, SWT.READ_ONLY, 1, advNames);
-         _advLevel[i] = createCombo(_advGroup, SWT.READ_ONLY, 1, new ArrayList<String>());
+         _advLevel[i] = createCombo(_advGroup, SWT.READ_ONLY, 1, new ArrayList<>());
          _advLevel[i].setEnabled(false);
          _advLevel[i].setSize(50, _advLevel[i].getItemHeight());
          _advLevel[i].add("---");
@@ -153,6 +145,7 @@ public class AdvantagesBlock extends Helper implements Enums, IUIBlock, ModifyLi
 
       List<Advantage> racialAdvantages = (character==null) ? new ArrayList<>() : character.getRace().getAdvantagesList();
       List<Advantage> advantages = (character==null) ? new ArrayList<>() : character.getAdvantagesList();
+      Race race = (character == null) ? null : character.getRace();
       long end = System.currentTimeMillis();
       Rules.diag("getAdvantages took " + ((end-start) /1000.0) + " seconds.");
 
@@ -160,7 +153,7 @@ public class AdvantagesBlock extends Helper implements Enums, IUIBlock, ModifyLi
           racialAdvantages.containsAll(_currentRacialAdvantages) &&
           (advantages.size() == _currentAdvantages.size()) &&
           advantages.containsAll(_currentAdvantages) &&
-          (character.getRace() == _currentRace)) {
+          (race == _currentRace)) {
          // both list match, nothing to do
          return;
       }
@@ -175,7 +168,7 @@ public class AdvantagesBlock extends Helper implements Enums, IUIBlock, ModifyLi
       for (Advantage adv : racialAdvantages) {
          _currentRacialAdvantages.add(adv.clone());
       }
-      _currentRace = character.getRace();
+      _currentRace = race;
 
       int i=0;
       for (Advantage advantage : racialAdvantages) {
@@ -188,7 +181,7 @@ public class AdvantagesBlock extends Helper implements Enums, IUIBlock, ModifyLi
          _advCombo[i].setEnabled(false);
          _advCost[i].setText("---");
          if (advantage.hasLevels()) {
-            ArrayList<String> levelNames = advantage.getLevelNames();
+            List<String> levelNames = advantage.getLevelNames();
             String levelName = advantage.getLevelName();
             setComboContents(_advLevel[i], levelNames);
             _advLevel[i].setEnabled(true);
@@ -220,9 +213,9 @@ public class AdvantagesBlock extends Helper implements Enums, IUIBlock, ModifyLi
             break;
          }
 
-         _advCost[i].setText("(" + advantage.getCost((character == null) ? null : character.getRace()) + ")");
+         _advCost[i].setText("(" + advantage.getCost(race) + ")");
          if (!racialAdv) {
-            ArrayList<String> existingProperties;
+            List<String> existingProperties;
             if (character != null) {
                existingProperties = character.getPropertyNames();
             }
@@ -230,7 +223,7 @@ public class AdvantagesBlock extends Helper implements Enums, IUIBlock, ModifyLi
                existingProperties = new ArrayList<>();
             }
             existingProperties.remove(advantage.getName());
-            existingProperties = Advantage.getAdvantagesNames(existingProperties, (character==null)?null:character.getRace());
+            existingProperties = Advantage.getAdvantagesNames(existingProperties, race);
             existingProperties.add(0, "---");
             _advCombo[i].add(advantage.getName());
             _advCombo[i].setText(advantage.getName());
@@ -239,7 +232,7 @@ public class AdvantagesBlock extends Helper implements Enums, IUIBlock, ModifyLi
             _advCombo[i].setEnabled(character != null);
          }
          if (advantage.hasLevels()) {
-            ArrayList<String> levelNames = advantage.getLevelNames();
+            List<String> levelNames = advantage.getLevelNames();
             String levelName = advantage.getLevelName();
             setComboContents(_advLevel[i], levelNames);
             _advLevel[i].setText(levelName);
@@ -254,11 +247,11 @@ public class AdvantagesBlock extends Helper implements Enums, IUIBlock, ModifyLi
       }
 
       // clear out any remaining advantages combo boxes
-      ArrayList<String> existingProperties = new ArrayList<>();
+      List<String> existingProperties = new ArrayList<>();
       if (character != null) {
          existingProperties = character.getPropertyNames();
       }
-      List<String> advNames = Advantage.getAdvantagesNames(existingProperties, (character==null)?null:character.getRace());
+      List<String> advNames = Advantage.getAdvantagesNames(existingProperties, race);
       boolean enabled = true;
       for ( ; i<_advCombo.length ; i++) {
          _advCombo[i].removeAll();
@@ -283,10 +276,10 @@ public class AdvantagesBlock extends Helper implements Enums, IUIBlock, ModifyLi
     * @param combo
     * @param availableItems
     */
-   private static void setComboContents(Combo combo, ArrayList<String> availableItems)
+   private static void setComboContents(Combo combo, List<String> availableItems)
    {
       String curSelection = combo.getText();
-      int index=0;
+      int index;
       for (index=0 ; index<availableItems.size() ; index++) {
          if (index<combo.getItemCount()) {
             combo.setItem(index, availableItems.get(index));

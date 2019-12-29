@@ -4,16 +4,8 @@
  */
 package ostrowski.combat.protocol.request;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
-
 import ostrowski.DebugBreak;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.CombatMap;
@@ -25,6 +17,13 @@ import ostrowski.combat.server.ArenaLocation;
 import ostrowski.protocol.RequestOption;
 import ostrowski.protocol.SyncRequest;
 import ostrowski.util.SemaphoreAutoLocker;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class RequestMovement extends SyncRequest implements Enums
 {
@@ -160,7 +159,7 @@ public class RequestMovement extends SyncRequest implements Enums
                   if (index != -1) {
                      Integer sourceIndex = futureOrientationsSourceIndexIntoFutureOrientations.get(index);
                      if (sourceIndex >= 0) {
-                        Orientation fromOrientation = _futureOrientations.get(sourceIndex.intValue());
+                        Orientation fromOrientation = _futureOrientations.get(sourceIndex);
                         _mapOfFutureOrientToSourceOrient.put(futureOrientation, fromOrientation);
                         futureOrientation = fromOrientation;
                      }
@@ -267,8 +266,7 @@ public class RequestMovement extends SyncRequest implements Enums
    static private Orientation getBestOrientation(ArenaLocation loc, double angleFromCenter, double normalizedDistFromCenter, List<Orientation> orientations) {
       Facing facing = getFacingFromAngle(angleFromCenter);
       ArrayList<Orientation> orientationsAtLocation = new ArrayList<>();
-      for (int i=0 ; i<orientations.size() ; i++) {
-         Orientation orient = orientations.get(i);
+      for (Orientation orient : orientations) {
          if (orient.getHeadCoordinates().sameCoordinates(loc)) {
             if (orient.getFacing() == facing) {
                return orient;

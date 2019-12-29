@@ -1,15 +1,9 @@
 package ostrowski.combat.common.wounds;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-
 import ostrowski.DebugBreak;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.SpecialDamage;
@@ -17,6 +11,12 @@ import ostrowski.combat.common.enums.DamageType;
 import ostrowski.combat.common.enums.Enums;
 import ostrowski.combat.common.things.LimbType;
 import ostrowski.protocol.SerializableObject;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /*
  * Created on May 4, 2006
@@ -370,7 +370,7 @@ public class Wound extends SerializableObject implements Enums
    }
 
    public String describeEffects() {
-      ArrayList<String> effects = new ArrayList<>();
+      List<String> effects = new ArrayList<>();
       if ((_effectsMask & EFFECT_DEATH) != 0) {
          effects.add("death");
       }

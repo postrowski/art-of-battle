@@ -31,7 +31,7 @@ public enum TerrainWall {
 
    public static final int TERRAIN_WALL_START_BITPOS       = 6;
    public static final int TERRAIN_ATTRIBUTES_START_BITPOS = TERRAIN_WALL_START_BITPOS + 17;
-   public static final int TERRAIN_ATTRIBUTE_FLAMES        = 1 << (TERRAIN_ATTRIBUTES_START_BITPOS + 0);
+   public static final int TERRAIN_ATTRIBUTE_FLAMES        = 1 << (TERRAIN_ATTRIBUTES_START_BITPOS);
 
    TerrainWall(int bitPos, int startPoint, int endPoint, int thickness, int fillpoint) {
       this.bitMask = 1 << (TERRAIN_WALL_START_BITPOS + bitPos);
@@ -55,8 +55,8 @@ public enum TerrainWall {
    public final int thickness;
    public final int fillpoint;
 
-   private static HashMap<Long, TerrainWall> MAP_BY_BITMASK = new HashMap<>();
-   public static long MASK;
+   private static final HashMap<Long, TerrainWall> MAP_BY_BITMASK = new HashMap<>();
+   public static        long                       MASK;
    static {
       for (TerrainWall terrainWall : values()) {
          MAP_BY_BITMASK.put(terrainWall.bitMask, terrainWall);

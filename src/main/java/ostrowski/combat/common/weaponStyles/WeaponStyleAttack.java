@@ -13,7 +13,6 @@ import ostrowski.combat.common.enums.DamageType;
 import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.things.Limb;
 import ostrowski.combat.common.things.Weapon;
-import ostrowski.combat.common.wounds.Wound;
 
 public abstract class WeaponStyleAttack extends WeaponStyle
 {

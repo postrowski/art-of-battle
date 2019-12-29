@@ -13,20 +13,20 @@ public enum Attribute {
    Dexterity   (5, "DEX"),
    Social      (6, "SOC");
 
-   public final byte value;
-   public final String shortName;
-
-   Attribute(int val, String abbreviation) {
-      this.value = (byte) val;
-      this.shortName = abbreviation;
-   }
-   private static HashMap<Byte, Attribute> MAP_TO_ATTRIBUTE = new HashMap<>();
-   public static int COUNT;
+   public final         byte                     value;
+   public final         String                   shortName;
+   private static final HashMap<Byte, Attribute> MAP_TO_ATTRIBUTE = new HashMap<>();
+   public static final  int                      COUNT;
    static {
       for (Attribute attr : Attribute.values()) {
          MAP_TO_ATTRIBUTE.put(attr.value, attr);
       }
       COUNT = Attribute.values().length;
+   }
+
+   Attribute(int val, String abbreviation) {
+      this.value = (byte) val;
+      this.shortName = abbreviation;
    }
    public static Attribute getByValue(byte val) {
       return MAP_TO_ATTRIBUTE.get(val);

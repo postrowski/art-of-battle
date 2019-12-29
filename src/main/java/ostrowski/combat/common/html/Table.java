@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Table extends HtmlElement
 {
-   public ArrayList<TableRow> _data = new ArrayList<>();
+   public final ArrayList<TableRow> _data = new ArrayList<>();
    public Table() {
    }
 

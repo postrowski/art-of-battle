@@ -5,7 +5,6 @@
 package ostrowski.combat.common.things;
 
 import org.eclipse.swt.graphics.RGB;
-
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.DrawnObject;
 import ostrowski.combat.common.Race;
@@ -39,13 +38,13 @@ public class Leg extends Limb
       }
 
       obj.addPoint((wideDiameter * 19)/32, 0);                        // outer hip
-      obj.addPoint((wideDiameter * 16)/32, 0-((narrowDiameter * 16)/32)); // outer knee
-      obj.addPoint((wideDiameter *  5)/32, 0-((narrowDiameter * 25)/32)); // outer ankle
-      obj.addPoint((wideDiameter *  5)/32, 0-((narrowDiameter * 31)/32)); // top toes
-      obj.addPoint((wideDiameter *  4)/32, 0-((narrowDiameter * 32)/32)); // bottom toes
-      obj.addPoint((wideDiameter *  2)/32, 0-((narrowDiameter * 23)/32)); // heel
-      obj.addPoint((wideDiameter *  4)/32, 0-((narrowDiameter * 22)/32)); // ankle
-      obj.addPoint((wideDiameter * 13)/32, 0-((narrowDiameter * 13)/32)); // knee
+      obj.addPoint((wideDiameter * 16)/32, -((narrowDiameter * 16)/32)); // outer knee
+      obj.addPoint((wideDiameter *  5)/32, -((narrowDiameter * 25)/32)); // outer ankle
+      obj.addPoint((wideDiameter *  5)/32, -((narrowDiameter * 31)/32)); // top toes
+      obj.addPoint((wideDiameter *  4)/32, -((narrowDiameter * 32)/32)); // bottom toes
+      obj.addPoint((wideDiameter *  2)/32, -((narrowDiameter * 23)/32)); // heel
+      obj.addPoint((wideDiameter *  4)/32, -((narrowDiameter * 22)/32)); // ankle
+      obj.addPoint((wideDiameter * 13)/32, -((narrowDiameter * 13)/32)); // knee
       obj.addPoint((wideDiameter * 14)/32, 0);                        // hip
       obj.addPoint((wideDiameter * 16)/32, (narrowDiameter * 3)/32);    // hip
       return obj;

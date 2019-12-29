@@ -9,7 +9,6 @@ import ostrowski.combat.common.enums.Attribute;
 import ostrowski.combat.common.html.Table;
 import ostrowski.combat.common.html.TableData;
 import ostrowski.combat.common.html.TableRow;
-import ostrowski.combat.server.Arena;
 
 /**
  * This spell causes the subject do what the caster asks of him. The power level of
@@ -70,10 +69,4 @@ public class SpellControlMind extends ResistedMageSpell
       return "";
    }
 
-   @Override
-   public void applyEffects(Arena arena) {
-   }
-   @Override
-   public void removeEffects(Arena arena) {
-   }
 }

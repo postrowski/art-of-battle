@@ -26,7 +26,7 @@ public enum Facing {
    public Facing turn(int facingChange) {
       return getByValue((byte)(this.value + facingChange));
    }
-   private static HashMap<Byte, Facing> MAP_TO_FACINGS = new HashMap<>();
+   private static final HashMap<Byte, Facing> MAP_TO_FACINGS = new HashMap<>();
    static {
       for (Facing facing : Facing.values()) {
          MAP_TO_FACINGS.put(facing.value, facing);

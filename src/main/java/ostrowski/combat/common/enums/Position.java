@@ -30,7 +30,7 @@ public enum Position {
       this.name = nam;
    }
 
-   private static HashMap<Byte, Position> MAP_TO_POSITIONS = new HashMap<>();
+   private static final HashMap<Byte, Position> MAP_TO_POSITIONS = new HashMap<>();
    static {
       for (Position pos : Position.values()) {
          MAP_TO_POSITIONS.put(pos.value, pos);

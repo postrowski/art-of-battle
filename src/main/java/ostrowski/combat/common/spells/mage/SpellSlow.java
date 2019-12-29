@@ -26,10 +26,10 @@ public class SpellSlow extends ResistedMageSpell implements ICastInBattle
       byte deltaActionsPerTurn = getActionsChangePerTurnModifier(getPower());
       byte deltaActionsPerRound = getActionsChangePerRoundModifier(getPower());
       if (firstTime) {
-         return getTargetName() + "'s slows down: " + (0-deltaActionsPerTurn) + " actions per turn, " +
-                (0-deltaActionsPerRound) + " actions each round." ;
+         return getTargetName() + "'s slows down: " + (-deltaActionsPerTurn) + " actions per turn, " +
+                (-deltaActionsPerRound) + " actions each round." ;
       }
-      return "(actions reduced " + (0-deltaActionsPerTurn) + " per turn, " + (0-deltaActionsPerRound) + " each round.)" ;
+      return "(actions reduced " + (-deltaActionsPerTurn) + " per turn, " + (-deltaActionsPerRound) + " each round.)" ;
    }
    @Override
    public String describeSpell() {
@@ -45,8 +45,8 @@ public class SpellSlow extends ResistedMageSpell implements ICastInBattle
       header2.addHeader(new TableHeader("Per turn")).addHeader("Per round");
       for (byte power=1 ; power<9 ; power++) {
          table.addRow(new TableRow(power-1, ""+power,
-                                            ""+(0-getActionsChangePerTurnModifier(power)),
-                                            ""+(0-getActionsChangePerRoundModifier(power))));
+                                            ""+(-getActionsChangePerTurnModifier(power)),
+                                            ""+(-getActionsChangePerRoundModifier(power))));
       }
       sb.append(table);
       return sb.toString();
@@ -57,10 +57,6 @@ public class SpellSlow extends ResistedMageSpell implements ICastInBattle
       byte deltaActionsPerTurn = getActionsChangePerTurnModifier(getPower());
       byte deltaActionsPerRound = getActionsChangePerRoundModifier(getPower());
       getTarget().getCondition().adjustActions(deltaActionsPerTurn, deltaActionsPerRound);
-   }
-
-   @Override
-   public void removeEffects(Arena arena) {
    }
 
    // These methods are used by spell that raise or lower a being's actions per turn (speed & slow spells):

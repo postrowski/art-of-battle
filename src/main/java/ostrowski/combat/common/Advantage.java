@@ -4,11 +4,6 @@
  */
 package ostrowski.combat.common;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-
 import ostrowski.combat.common.enums.Enums;
 import ostrowski.combat.common.html.HtmlBuilder;
 import ostrowski.combat.common.html.Table;
@@ -17,14 +12,21 @@ import ostrowski.combat.common.html.TableRow;
 import ostrowski.combat.common.spells.priest.PriestSpell;
 import ostrowski.protocol.SerializableObject;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class Advantage extends SerializableObject implements Cloneable, Enums
 {
    String   _name;
    boolean  _hasEffectInSimulator;
    int[]    _costs;
-   ArrayList<String> _requirements;
-   public ArrayList<String> _conflicts;
-   ArrayList<String> _levels;
+   List<String> _requirements;
+   public List<String> _conflicts;
+   List<String> _levels;
    byte      _level = 0;
    String   _description;
 
@@ -39,15 +41,9 @@ public class Advantage extends SerializableObject implements Cloneable, Enums
       _requirements = new ArrayList<>();
       _conflicts    = new ArrayList<>();
       _levels       = new ArrayList<>();
-      for (String element : levels) {
-         _levels.add(element);
-      }
-      for (String element : requirements) {
-         _requirements.add(element);
-      }
-      for (String element : conflicts) {
-         _conflicts.add(element);
-      }
+      _levels.addAll(Arrays.asList(levels));
+      _requirements.addAll(Arrays.asList(requirements));
+      _conflicts.addAll(Arrays.asList(conflicts));
       _description = description;
    }
 
@@ -58,7 +54,6 @@ public class Advantage extends SerializableObject implements Cloneable, Enums
    public static final String  AMBIDEXTROUS         = "Ambidextrous";
    public static final String  APPEARANCE           = "Appearance";
    public static final String  ARMS_4               = "Four Arms";
-   public static final String  AUDIOGRAPHIC_MEMORY  = "Audiographic memory";
    public static final String  BAD_TEMPER           = "Bad Temper";
    public static final String  BERSERKER            = "Berserker";
    public static final String  CODE_OF_CONDUCT      = "Code of Conduct";
@@ -119,8 +114,8 @@ public class Advantage extends SerializableObject implements Cloneable, Enums
 
    // make a reference to the Rules object before we get into the static initializer, because that
    // makes a reference to the PriestSpells, which need the Rules object to already have been loaded.
-   static final String _dummy = Rules.diagCompName;
-   public static ArrayList<Advantage> _advList = new ArrayList<>();
+   static final        String               _dummy   = Rules.diagCompName;
+   public static final ArrayList<Advantage> _advList = new ArrayList<>();
    static {
       _advList.add(new Advantage(ABSOLUTE_DIRECTION,  false, new String[] {}, new int[] { 5},       new String[] {}, new String[] {}, "Absolute Direction lets the bearer know which direction north is at all times, even when underground. These individuals will almost never become lost."));
       _advList.add(new Advantage(ABSOLUTE_TIMING,     false, new String[] {}, new int[] { 5},       new String[] {}, new String[] {}, "Absolute Timing allows the bearer to know exactly what of day it is at all times. They are also extremely accurate at estimating length of time."));
@@ -243,8 +238,8 @@ public class Advantage extends SerializableObject implements Cloneable, Enums
       _advList.add(new Advantage(WINGED_FLIGHT,        true, new String[] {}, new int[]  {0},      new String[] {WINGED_FLIGHT}, new String[] {}, "Winged flight allows the individual to fly through the air. The ‘winged flight’ advantage may not be purchased, but some races (notably Fairies) have this advantage intrinsically."));
    }
 
-   public static ArrayList<String> getAdvantagesNames(ArrayList<String> existingProperties, Race race) {
-      ArrayList<String> list = new ArrayList<>();
+   public static List<String> getAdvantagesNames(List<String> existingProperties, Race race) {
+      List<String> list = new ArrayList<>();
       for (Advantage advantage : _advList) {
          if (advantage.isAllowed(existingProperties, race)) {
             if (!existingProperties.contains(advantage.getName())) {
@@ -255,7 +250,7 @@ public class Advantage extends SerializableObject implements Cloneable, Enums
       return list;
    }
 
-   boolean isAllowed(ArrayList<String> existingProperties, Race race)
+   boolean isAllowed(List<String> existingProperties, Race race)
    {
       for (String conflict : _conflicts) {
          if (existingProperties.contains(conflict)) {
@@ -309,7 +304,7 @@ public class Advantage extends SerializableObject implements Cloneable, Enums
    public String getName()                  { return _name;}
    public int getCost(Race race) {
       if (race != null) {
-         ArrayList<Advantage> racialAdvantages = race.getAdvantagesList();
+         List<Advantage> racialAdvantages = race.getAdvantagesList();
          for (Advantage adv  : racialAdvantages) {
             if (adv.getName().equals(getName())) {
                int costForRacialLevel = _costs[adv._level];
@@ -340,10 +335,8 @@ public class Advantage extends SerializableObject implements Cloneable, Enums
    }
 
    public boolean hasLevels()               { return _levels.size() > 0;}
-   public ArrayList<String> getLevelNames() {
-      ArrayList<String> namesCopy = new ArrayList<>();
-      namesCopy.addAll(_levels);
-      return namesCopy;
+   public List<String> getLevelNames() {
+      return new ArrayList<>(_levels);
    }
    public String getDescripton() {
       return _description;
@@ -407,7 +400,7 @@ public class Advantage extends SerializableObject implements Cloneable, Enums
          sb.append("<th>").append(name);
          sb.append("</th>");
          if (adv.hasLevels()) {
-            ArrayList<String> levelNames = adv.getLevelNames();
+            List<String> levelNames = adv.getLevelNames();
             sb.append("<td>");
 
             Table table = new Table();

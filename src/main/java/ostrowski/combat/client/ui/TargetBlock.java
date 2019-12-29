@@ -4,9 +4,6 @@
  */
 package ostrowski.combat.client.ui;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -14,7 +11,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
-
 import ostrowski.combat.client.CharacterDisplay;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.CharacterWidget;
@@ -22,6 +18,9 @@ import ostrowski.combat.common.enums.DamageType;
 import ostrowski.combat.common.enums.Position;
 import ostrowski.combat.common.things.LimbType;
 import ostrowski.ui.Helper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TargetBlock extends Helper implements IUIBlock, ModifyListener
 {
@@ -49,7 +48,7 @@ public class TargetBlock extends Helper implements IUIBlock, ModifyListener
    {
       Group group = createGroup(parent, "Target", 2/*columns*/, false/*sameSize*/, 3/*hSpacing*/, 3/*vSpacing*/);
       createLabel(group, "name:", SWT.RIGHT, 1, null);
-      _targetName = createCombo(group, SWT.READ_ONLY, 1, new ArrayList<String>());
+      _targetName = createCombo(group, SWT.READ_ONLY, 1, new ArrayList<>());
       createLabel(group, "distance:", SWT.RIGHT, 1, null);
       _distance = createText(group, "0", false, 1);
       createLabel(group, "weapon:", SWT.RIGHT, 1, null);

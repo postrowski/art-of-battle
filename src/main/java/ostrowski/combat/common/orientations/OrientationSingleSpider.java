@@ -1,14 +1,10 @@
 package ostrowski.combat.common.orientations;
 
+import ostrowski.combat.common.things.*;
+import ostrowski.combat.server.ArenaLocation;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
-
-import ostrowski.combat.common.things.Hand;
-import ostrowski.combat.common.things.Head;
-import ostrowski.combat.common.things.Leg;
-import ostrowski.combat.common.things.Limb;
-import ostrowski.combat.common.things.LimbType;
-import ostrowski.combat.server.ArenaLocation;
 
 public class OrientationSingleSpider extends OrientationSingleQuadraped
 {
@@ -46,19 +42,19 @@ public class OrientationSingleSpider extends OrientationSingleQuadraped
    public int getLimbOffsetY(Limb limb, int size, ArenaLocation loc) {
       if (limb != null) {
          if (limb instanceof Head) {
-            return 0-(size/3);
+            return -(size / 3);
          }
          if (limb instanceof Hand) {
             if (limb.getLocationPair() == Pair.FIRST) {
-               return 0-((size*1)/4);
+               return -((size) / 4);
             }
-            return 0-((size*1)/5);
+            return -((size) / 5);
          }
          else if (limb instanceof Leg) {
             if (limb.getLocationPair() == Pair.FIRST) {
-               return (size*1)/6;
+               return (size) / 6;
             }
-            return (size*1)/5;
+            return (size) / 5;
          }
       }
       return 0;//super.getLimbOffsetY(limb, size, loc);
@@ -97,7 +93,7 @@ public class OrientationSingleSpider extends OrientationSingleQuadraped
          return 0;
       }
       if (limb.getLocationSide() == Side.RIGHT) {
-         return 0-dist;//super.getLimbOffsetX(limb, size, loc);
+         return -dist;//super.getLimbOffsetX(limb, size, loc);
       }
       return dist;//super.getLimbOffsetX(limb, size, loc);
    }
@@ -133,9 +129,6 @@ public class OrientationSingleSpider extends OrientationSingleQuadraped
    public boolean shouldDraw(Limb limb) {
       if ((limb == null) || (limb.isSevered())) {
          return false;
-      }
-      if (limb instanceof Leg) {
-         return true;
       }
       return true;
    }

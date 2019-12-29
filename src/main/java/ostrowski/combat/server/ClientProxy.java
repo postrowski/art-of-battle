@@ -1,14 +1,7 @@
 package ostrowski.combat.server;
 
-import java.net.Socket;
-import java.util.Vector;
-
 import ostrowski.combat.common.Rules;
-import ostrowski.combat.protocol.BeginBattle;
-import ostrowski.combat.protocol.CombatSocket;
-import ostrowski.combat.protocol.EnterArena;
-import ostrowski.combat.protocol.MessageText;
-import ostrowski.combat.protocol.TargetPriorities;
+import ostrowski.combat.protocol.*;
 import ostrowski.protocol.ClientID;
 import ostrowski.protocol.SerializableObject;
 import ostrowski.util.Diagnostics;
@@ -17,13 +10,16 @@ import ostrowski.util.IMonitoringObject;
 import ostrowski.util.MonitoringObject;
 import ostrowski.util.sockets.SocketConnector;
 
+import java.net.Socket;
+import java.util.Vector;
+
 public class ClientProxy extends CombatSocket implements IMonitoringObject {
 
-   public MonitoringObject _monitoringObject;
-   Arena                   _arena;
-   public String           _name         = "";
-   private int             _clientID     = 0;
-   static private int      _nextServerID = 1;
+   public final MonitoringObject _monitoringObject;
+   Arena _arena;
+   public         String _name         = "";
+   private        int    _clientID     = 0;
+   static private int    _nextServerID = 1;
 
     static public void setNextServerID(int nextServerID) { _nextServerID = nextServerID;}
     static public int getNextServerID() { return _nextServerID++;}

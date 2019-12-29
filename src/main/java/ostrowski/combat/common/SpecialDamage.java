@@ -57,7 +57,7 @@ public class SpecialDamage
             return (byte) value;
          }
          if ((_bits & MOD_REDUCED_PAIN) != 0) {
-            return (byte) (0-value);
+            return (byte) (-value);
          }
       }
       return 0;
@@ -85,7 +85,7 @@ public class SpecialDamage
             return (byte) value;
          }
          if ((_bits & MOD_REDUCED_WOUNDS) != 0) {
-            return (byte) (0-value);
+            return (byte) (-value);
          }
       }
       return 0;

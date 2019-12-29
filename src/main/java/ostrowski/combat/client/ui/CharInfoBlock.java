@@ -3,10 +3,6 @@
  */
 package ostrowski.combat.client.ui;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeSet;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -14,27 +10,22 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
-
 import ostrowski.combat.client.CharacterDisplay;
 import ostrowski.combat.common.Character;
-import ostrowski.combat.common.CharacterWidget;
-import ostrowski.combat.common.Condition;
-import ostrowski.combat.common.Race;
-import ostrowski.combat.common.Rules;
-import ostrowski.combat.common.Skill;
+import ostrowski.combat.common.*;
 import ostrowski.combat.common.enums.Attribute;
 import ostrowski.combat.common.enums.DamageType;
 import ostrowski.combat.common.enums.Position;
 import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.orientations.Orientation;
-import ostrowski.combat.common.things.Limb;
-import ostrowski.combat.common.things.LimbType;
-import ostrowski.combat.common.things.Shield;
-import ostrowski.combat.common.things.Thing;
-import ostrowski.combat.common.things.Weapon;
+import ostrowski.combat.common.things.*;
 import ostrowski.combat.common.wounds.Wound;
 import ostrowski.combat.server.Arena;
 import ostrowski.ui.Helper;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeSet;
 
 public class CharInfoBlock extends Helper implements IUIBlock, ModifyListener
 {
@@ -69,7 +60,7 @@ public class CharInfoBlock extends Helper implements IUIBlock, ModifyListener
    public void buildBlock(Composite parent) {
       Group group = createGroup(parent, "Character Info", 4/*columns*/, false/*sameSize*/, 3/*hSpacing*/, 3/*vSpacing*/);
       createLabel(group, "name:", SWT.RIGHT, 1, null);
-      _targetName = createCombo(group, SWT.READ_ONLY, 3, new ArrayList<String>());
+      _targetName = createCombo(group, SWT.READ_ONLY, 3, new ArrayList<>());
 
       createLabel(group, "race:", SWT.RIGHT, 1, null);
       _raceName = createText(group, Race.NAME_Human, false, 3);

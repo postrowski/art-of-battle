@@ -7,7 +7,6 @@ package ostrowski.combat.common.spells.mage;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.enums.Attribute;
 import ostrowski.combat.common.spells.ICastInBattle;
-import ostrowski.combat.server.Arena;
 
 public class SpellImmobilize extends ResistedMageSpell implements ICastInBattle
 {
@@ -30,12 +29,6 @@ public class SpellImmobilize extends ResistedMageSpell implements ICastInBattle
       return "The '" + getName() + "' spell reduces the subject's movement rate by one point per point of spell power.";
    }
 
-   @Override
-   public void applyEffects(Arena arena) {
-   }
-   @Override
-   public void removeEffects(Arena arena) {
-   }
    @Override
    public byte getModifiedMovementPerRound(byte previousMovementRate) {
       if (!isExpired()) {

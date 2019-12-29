@@ -8,7 +8,6 @@ import ostrowski.combat.common.html.TableRow;
 import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.priest.IPriestGroup;
 import ostrowski.combat.common.spells.priest.ResistedPriestSpell;
-import ostrowski.combat.server.Arena;
 
 public class SpellParalyze extends ResistedPriestSpell implements ICastInBattle
 {
@@ -47,13 +46,6 @@ public class SpellParalyze extends ResistedPriestSpell implements ICastInBattle
          case 5: return "Subject is completely paralyzed, and may do nothing. Breathing and heart-rate are unaffected.";
       }
       return "";
-   }
-
-   @Override
-   public void applyEffects(Arena arena) {
-   }
-   @Override
-   public void removeEffects(Arena arena) {
    }
 
    @Override

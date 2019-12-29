@@ -3,6 +3,8 @@
  */
 package ostrowski.combat.common;
 
+import ostrowski.combat.server.CombatServer;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -12,12 +14,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
 
-import ostrowski.combat.server.CombatServer;
-
 public class CharacterFile
 {
-   public HashMap<String, Character> _nameToCharMap = new HashMap<>();
-   private final String              _directory;
+   public final  HashMap<String, Character> _nameToCharMap = new HashMap<>();
+   private final String                     _directory;
 
    public CharacterFile(String fileName) {
       _directory = "Characters";
@@ -89,9 +89,9 @@ public class CharacterFile
       }
    }
 
-   public ArrayList<String> getCharacterNames() {
+   public List<String> getCharacterNames() {
       TreeSet<String> names = new TreeSet<>(_nameToCharMap.keySet());
-      ArrayList<String> strNames = new ArrayList<>(_nameToCharMap.size());
+      List<String> strNames = new ArrayList<>(_nameToCharMap.size());
       for (String name : names) {
          Character combatant = _nameToCharMap.get(name);
          if (CombatServer._isServer || !combatant.getRace().isNpc()) {

@@ -1,7 +1,5 @@
 package ostrowski.combat.common.spells.priest.demonic;
 
-import java.util.ArrayList;
-
 import ostrowski.combat.common.spells.priest.IPriestGroup;
 import ostrowski.combat.common.spells.priest.PriestSpell;
 import ostrowski.combat.common.spells.priest.defensive.SpellArmor;
@@ -12,9 +10,11 @@ import ostrowski.combat.common.spells.priest.evil.PriestEvilSpell;
 import ostrowski.combat.common.spells.priest.evil.SpellOpenGateToHell;
 import ostrowski.combat.common.spells.priest.offensive.SpellSpeed;
 
+import java.util.ArrayList;
+
 public class PriestDemonicSpell implements IPriestGroup
 {
-   static public ArrayList<PriestSpell> _spells = new ArrayList<>();
+   static public final ArrayList<PriestSpell> _spells = new ArrayList<>();
    static {
       // All Demons can have these:
       _spells.add(new SpellArmor(PriestDemonicSpell.class, 2));            // defensive

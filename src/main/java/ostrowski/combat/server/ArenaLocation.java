@@ -4,18 +4,7 @@
  */
 package ostrowski.combat.server;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Vector;
-
 import org.eclipse.swt.graphics.RGB;
-
 import ostrowski.DebugBreak;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.CombatMap;
@@ -25,30 +14,24 @@ import ostrowski.combat.common.enums.TerrainType;
 import ostrowski.combat.common.enums.TerrainWall;
 import ostrowski.combat.common.spells.IAreaSpell;
 import ostrowski.combat.common.spells.Spell;
-import ostrowski.combat.common.things.Door;
-import ostrowski.combat.common.things.Limb;
-import ostrowski.combat.common.things.LimbType;
-import ostrowski.combat.common.things.Shield;
-import ostrowski.combat.common.things.Thing;
-import ostrowski.combat.common.things.Weapon;
+import ostrowski.combat.common.things.*;
 import ostrowski.combat.protocol.request.RequestAction;
 import ostrowski.combat.protocol.request.RequestActionOption;
 import ostrowski.combat.protocol.request.RequestActionType;
 import ostrowski.protocol.ObjectChanged;
 import ostrowski.protocol.SerializableFactory;
 import ostrowski.protocol.SerializableObject;
-import ostrowski.util.CombatSemaphore;
-import ostrowski.util.Diagnostics;
-import ostrowski.util.IMonitorableObject;
-import ostrowski.util.IMonitoringObject;
-import ostrowski.util.MonitoredObject;
-import ostrowski.util.Semaphore;
-import ostrowski.util.SemaphoreAutoTracker;
+import ostrowski.util.*;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.*;
 
 public class ArenaLocation extends ArenaCoordinates implements IMonitorableObject, Enums
 {
-   public    Semaphore             _lock_this               = new Semaphore("AreanLocation_lock_this", CombatSemaphore.CLASS_ARENALOCATION_this);
-   private   TerrainType           _terrain                 = TerrainType.FLOOR;
+   public final Semaphore   _lock_this = new Semaphore("AreanLocation_lock_this", CombatSemaphore.CLASS_ARENALOCATION_this);
+   private      TerrainType _terrain   = TerrainType.FLOOR;
    private   long                  _data                    = _terrain.value;
    private   ArrayList<Object>     _things                  = new ArrayList<>();
    private   ArrayList<Door>       _doors                   = new ArrayList<>();
@@ -351,24 +334,21 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
             writeToStream(_data, out);
             writeToStream(_label, out);
             writeToStream(_things.size(), out);
-            for (int i=0 ; i<_things.size() ; i++) {
-               if (_things.get(i) instanceof Character) {
-                  Character combatant = (Character) _things.get(i);
+            for (Object thing : _things) {
+               if (thing instanceof Character) {
+                  Character combatant = (Character) thing;
                   writeObject("ObjChr", out);
                   writeObject(combatant, out);
-               }
-               else if (_things.get(i) instanceof Weapon) {
-                  Weapon weap = (Weapon) _things.get(i);
+               } else if (thing instanceof Weapon) {
+                  Weapon weap = (Weapon) thing;
                   writeObject("ObjStr", out);
                   writeObject(weap.getName(), out);
-               }
-               else if (_things.get(i) instanceof String) {
+               } else if (thing instanceof String) {
                   writeObject("ObjStr", out);
-                  writeObject(_things.get(i), out);
-               }
-               else if (_things.get(i) instanceof Thing) {
+                  writeObject(thing, out);
+               } else if (thing instanceof Thing) {
                   writeObject("ObjStr", out);
-                  writeObject(((Thing)_things.get(i)).getName(), out);
+                  writeObject(((Thing) thing).getName(), out);
                }
             }
             writeToStream(_doors, out);
@@ -538,7 +518,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
       return true;
 
    }
-   static private HashMap<Facing, Long> BLOCKING_WALLS_FOR_MOVEMENT_IN_DIRECTION = new HashMap<>();
+   static private final HashMap<Facing, Long> BLOCKING_WALLS_FOR_MOVEMENT_IN_DIRECTION = new HashMap<>();
    static {
       BLOCKING_WALLS_FOR_MOVEMENT_IN_DIRECTION.put(Facing._6_OCLOCK , TerrainWall.HORIZONTAL_TOP.with(    TerrainWall.DIAG_FAR_RIGHT_LEFT.with( TerrainWall.DIAG_FAR_LEFT_RIGHT)));
       BLOCKING_WALLS_FOR_MOVEMENT_IN_DIRECTION.put(Facing.NOON      , TerrainWall.HORIZONTAL_BOTTOM.with( TerrainWall.DIAG_FAR_RIGHT_RIGHT.with(TerrainWall.DIAG_FAR_LEFT_LEFT)));

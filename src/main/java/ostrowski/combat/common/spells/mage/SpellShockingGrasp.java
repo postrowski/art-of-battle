@@ -12,7 +12,6 @@ import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.things.Weapon;
 import ostrowski.combat.common.wounds.Wound;
 import ostrowski.combat.common.wounds.WoundChart;
-import ostrowski.combat.server.Arena;
 
 public class SpellShockingGrasp extends ExpiringMageSpell implements ICastInBattle
 {
@@ -106,13 +105,6 @@ public class SpellShockingGrasp extends ExpiringMageSpell implements ICastInBatt
       _duration = -1;
 
       return wound;
-   }
-
-   @Override
-   public void applyEffects(Arena arena) {
-   }
-   @Override
-   public void removeEffects(Arena arena) {
    }
 
    @Override

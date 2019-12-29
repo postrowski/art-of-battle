@@ -7,7 +7,6 @@ package ostrowski.combat.common.spells.priest.good;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.spells.priest.IPriestGroup;
 import ostrowski.combat.common.spells.priest.PriestSpell;
-import ostrowski.combat.server.Arena;
 
 public class SpellLight extends PriestSpell
 {
@@ -28,12 +27,6 @@ public class SpellLight extends PriestSpell
              " The more power put into the spell, the brighter the light, and the longer the spell lasts.";
    }
 
-   @Override
-   public void applyEffects(Arena arena) {
-   }
-   @Override
-   public void removeEffects(Arena arena) {
-   }
    @Override
    public TargetType getTargetType() {
       return TargetType.TARGET_OBJECT;

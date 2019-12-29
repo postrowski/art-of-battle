@@ -11,7 +11,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
-
 import ostrowski.combat.client.CharacterDisplay;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.things.Hand;
@@ -23,8 +22,8 @@ import ostrowski.ui.Helper;
 
 public class AttackBlock extends Helper implements IUIBlock, SelectionListener
 {
-   Button[]     _button        = new Button[4];
-   private byte _selectedStyle = -1;
+   final   Button[] _button        = new Button[4];
+   private byte     _selectedStyle = -1;
    private Text _weaponName;
 
    public AttackBlock(CharacterDisplay display) {

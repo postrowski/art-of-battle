@@ -1,69 +1,28 @@
 package ostrowski.combat.common;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import ostrowski.DebugBreak;
 import ostrowski.combat.common.enums.Attribute;
 import ostrowski.combat.common.enums.DefenseOption;
 import ostrowski.combat.common.enums.Enums;
 import ostrowski.combat.common.enums.Position;
-import ostrowski.combat.common.html.HtmlBuilder;
-import ostrowski.combat.common.html.Table;
-import ostrowski.combat.common.html.TableData;
-import ostrowski.combat.common.html.TableHeader;
-import ostrowski.combat.common.html.TableRow;
-import ostrowski.combat.common.orientations.OrientationDoubleCentaur;
-import ostrowski.combat.common.orientations.OrientationDoubleQuadraped;
-import ostrowski.combat.common.orientations.OrientationReptilian;
-import ostrowski.combat.common.orientations.OrientationSingleHumaniod;
-import ostrowski.combat.common.orientations.OrientationSingleQuadraped;
-import ostrowski.combat.common.orientations.OrientationSingleWinged;
+import ostrowski.combat.common.html.*;
+import ostrowski.combat.common.orientations.*;
 import ostrowski.combat.common.spells.mage.MageCollege;
-import ostrowski.combat.common.things.Armor;
-import ostrowski.combat.common.things.Door;
-import ostrowski.combat.common.things.Hand;
-import ostrowski.combat.common.things.Head;
-import ostrowski.combat.common.things.Leg;
-import ostrowski.combat.common.things.LimbType;
-import ostrowski.combat.common.things.MissileWeapon;
-import ostrowski.combat.common.things.Potion;
-import ostrowski.combat.common.things.Shield;
-import ostrowski.combat.common.things.Tail;
-import ostrowski.combat.common.things.Tool;
-import ostrowski.combat.common.things.Wall;
-import ostrowski.combat.common.things.Weapon;
-import ostrowski.combat.common.things.Wing;
+import ostrowski.combat.common.things.*;
 import ostrowski.combat.common.wounds.Wound;
-import ostrowski.combat.protocol.BeginBattle;
-import ostrowski.combat.protocol.EnterArena;
-import ostrowski.combat.protocol.MapVisibility;
-import ostrowski.combat.protocol.MessageText;
-import ostrowski.combat.protocol.ServerStatus;
-import ostrowski.combat.protocol.TargetPriorities;
-import ostrowski.combat.protocol.request.RequestAction;
-import ostrowski.combat.protocol.request.RequestActionOption;
-import ostrowski.combat.protocol.request.RequestArenaEntrance;
-import ostrowski.combat.protocol.request.RequestAttackStyle;
-import ostrowski.combat.protocol.request.RequestDefense;
-import ostrowski.combat.protocol.request.RequestDefenseOfCounterAttack;
-import ostrowski.combat.protocol.request.RequestEquipment;
-import ostrowski.combat.protocol.request.RequestGrapplingHoldMaintain;
-import ostrowski.combat.protocol.request.RequestLocation;
-import ostrowski.combat.protocol.request.RequestMovement;
-import ostrowski.combat.protocol.request.RequestPosition;
-import ostrowski.combat.protocol.request.RequestSingleTargetSelection;
-import ostrowski.combat.protocol.request.RequestSpellSelection;
-import ostrowski.combat.protocol.request.RequestSpellTypeSelection;
-import ostrowski.combat.protocol.request.RequestTarget;
-import ostrowski.combat.protocol.request.RequestUseOfHeroPoint;
+import ostrowski.combat.protocol.*;
+import ostrowski.combat.protocol.request.*;
 import ostrowski.combat.server.ArenaCoordinates;
 import ostrowski.combat.server.ArenaLocation;
 import ostrowski.combat.server.Configuration;
 import ostrowski.protocol.SerializableFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * @author Paul
@@ -295,11 +254,11 @@ public class Rules extends DebugBreak implements Enums
    }
 
    static public String valueOf(long num, int places) {
-      String value = String.valueOf(num);
+      StringBuilder value = new StringBuilder(String.valueOf(num));
       while (value.length() < places) {
-         value = "0" + value;
+         value.insert(0, "0");
       }
-      return value;
+      return value.toString();
    }
 
    static public void diag(String output) {
@@ -408,7 +367,7 @@ public class Rules extends DebugBreak implements Enums
       return strengthBase;
    }
 
-   static HashMap<String, DiceSet> _diceTable = new HashMap<>();
+   static final HashMap<String, DiceSet> _diceTable = new HashMap<>();
 
    static public DiceSet getDice(byte attributeLevel, byte actions, Attribute attribute) {
       boolean useComplexDice = Configuration.useExtendedDice();
@@ -914,7 +873,7 @@ public class Rules extends DebugBreak implements Enums
          sb.append("<td class='alignLeft'>");
          // don't show races for size 0 beings.
          if (ave != 0) {
-            ArrayList<String> raceNames = new ArrayList<>();
+            List<String> raceNames = new ArrayList<>();
             for (Race race : Race._raceList) {
                if (raceNames.contains(race.getName())) {
                   // ignore duplicate races that exist to deal with genders.

@@ -1,23 +1,14 @@
 package ostrowski.combat.common;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-
 import ostrowski.DebugBreak;
 import ostrowski.combat.common.enums.TerrainWall;
 import ostrowski.combat.common.orientations.Orientation;
@@ -25,14 +16,12 @@ import ostrowski.combat.common.things.Thing;
 import ostrowski.combat.protocol.MapVisibility;
 import ostrowski.combat.protocol.request.RequestLocation;
 import ostrowski.combat.protocol.request.RequestMovement;
-import ostrowski.combat.server.ArenaCoordinates;
-import ostrowski.combat.server.ArenaEvent;
-import ostrowski.combat.server.ArenaLocation;
-import ostrowski.combat.server.ArenaTrigger;
-import ostrowski.combat.server.CombatServer;
+import ostrowski.combat.server.*;
 import ostrowski.protocol.SyncRequest;
 import ostrowski.ui.Helper;
 import ostrowski.util.Diagnostics;
+
+import java.util.*;
 
 
 public abstract class MapWidget extends Helper implements SelectionListener, IMapWidget, KeyListener
@@ -75,20 +64,20 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
       // For each of the six vertices, connect the appropriate other lines into polygons.
       for (int i=0 ; i<12 ; i+=2) {
          // short edge lines with a connected long edge:
-         addWallPolygon(getWallByVertexPoints(i+0, i+2),  getWallByVertexPoints(i+0, i+4),  null);
-         addWallPolygon(getWallByVertexPoints(i+0, i+2),  getWallByVertexPoints(i+2, i+10), null);
+         addWallPolygon(getWallByVertexPoints(i, i + 2), getWallByVertexPoints(i, i + 4), null);
+         addWallPolygon(getWallByVertexPoints(i, i + 2), getWallByVertexPoints(i + 2, i + 10), null);
          // short edge lines with a long center line:
-         addWallPolygon(getWallByVertexPoints(i+0, i+2),  getWallByVertexPoints(i+0, i+6),  null);
-         addWallPolygon(getWallByVertexPoints(i+0, i+2),  getWallByVertexPoints(i+2, i+8),  null);
-         addWallPolygon(getWallByVertexPoints(i+0, i+2),  getWallByVertexPoints(i+4, i+10), null);
+         addWallPolygon(getWallByVertexPoints(i, i + 2), getWallByVertexPoints(i, i + 6), null);
+         addWallPolygon(getWallByVertexPoints(i, i + 2), getWallByVertexPoints(i + 2, i + 8), null);
+         addWallPolygon(getWallByVertexPoints(i, i + 2), getWallByVertexPoints(i + 4, i + 10), null);
          // short edge lines with a short center line:
-         addWallPolygon(getWallByVertexPoints(i+0, i+2),  getWallByVertexPoints(i+5, i+11), null);
-         addWallPolygon(getWallByVertexPoints(i+0, i+2),  getWallByVertexPoints(i+3, i+9),  null);
+         addWallPolygon(getWallByVertexPoints(i, i + 2), getWallByVertexPoints(i + 5, i + 11), null);
+         addWallPolygon(getWallByVertexPoints(i, i + 2), getWallByVertexPoints(i + 3, i + 9), null);
          // Short center line with an adjacent parallel line:
-         addWallPolygon(getWallByVertexPoints(i+0, i+4),  getWallByVertexPoints(i+5, i+11), null);
+         addWallPolygon(getWallByVertexPoints(i, i + 4), getWallByVertexPoints(i + 5, i + 11), null);
          // Short center line with a connected center line:
-         addWallPolygon(getWallByVertexPoints(i+0, i+4),  getWallByVertexPoints(i+0, i+6),  null);
-         addWallPolygon(getWallByVertexPoints(i+0, i+4),  getWallByVertexPoints(i+4, i+10), null);
+         addWallPolygon(getWallByVertexPoints(i, i + 4), getWallByVertexPoints(i, i + 6), null);
+         addWallPolygon(getWallByVertexPoints(i, i + 4), getWallByVertexPoints(i + 4, i + 10), null);
       }
    }
    /*
@@ -113,26 +102,26 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
       return null;
    }
 
-   private Button                                      _centerOnSelfButton;
-   protected CombatMap                                 _combatMap;
-   protected final List<IMapListener>                  _listeners;
-   protected int                                       _selfID;
-   protected byte                                      _selfTeam;
-   protected ArenaLocation                             _selfLoc               = null;
-   protected int                                       _targetID;
-   protected RequestMovement                           _movementRequest       = null;
-   protected RequestLocation                           _locationRequest       = null;
-   protected List<ArenaLocation>                       _selectableHexes       = null;
-   protected boolean                                   _isDragable            = true;
-   protected List<Orientation>                         _mouseOverOrientations = new ArrayList<>();
-   protected Character                                 _mouseOverCharacter    = null;
-   protected ArenaLocation                             _mouseOverLocation     = null;
-   protected Map<ArenaCoordinates, List<ArenaTrigger>> _eventsMap             = new HashMap<>();
+   private         Button                                    _centerOnSelfButton;
+   protected       CombatMap                                 _combatMap;
+   protected final List<IMapListener>                        _listeners;
+   protected       int                                       _selfID;
+   protected       byte                                      _selfTeam;
+   protected       ArenaLocation                             _selfLoc               = null;
+   protected       int                                       _targetID;
+   protected       RequestMovement                           _movementRequest       = null;
+   protected       RequestLocation                           _locationRequest       = null;
+   protected       List<ArenaLocation>                       _selectableHexes       = null;
+   protected       boolean                                   _isDragable            = true;
+   protected       List<Orientation>                         _mouseOverOrientations = new ArrayList<>();
+   protected       Character                                 _mouseOverCharacter    = null;
+   protected       ArenaLocation                             _mouseOverLocation     = null;
+   protected final Map<ArenaCoordinates, List<ArenaTrigger>> _eventsMap             = new HashMap<>();
 
-   protected Map<ArenaCoordinates, ArenaCoordinates>   _routeMap              = null;
-   protected List<ArenaCoordinates>                    _path                  = null;
-   protected static List<ArenaLocation>                _line                  = new ArrayList<>();
-   protected static RGB                                _lineColor             = null;
+   protected        Map<ArenaCoordinates, ArenaCoordinates> _routeMap  = null;
+   protected        List<ArenaCoordinates>                  _path      = null;
+   protected static List<ArenaLocation>                     _line      = new ArrayList<>();
+   protected static RGB                                     _lineColor = null;
 
    protected IMapWidget.MapMode _mapMode = MapMode.DRAG;
 
@@ -367,13 +356,13 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
       }
    }
 
-   protected static Object TYPE_label        = new Object();
-   protected static Object TYPE_fighting     = new Object();
-   protected static Object TYPE_non_fighting = new Object();
-   protected static Object TYPE_thing        = new Object();
-   protected static Object TYPE_string       = new Object();
-   protected static Object TYPE_event        = new Object();
-   protected static Object TYPE_trigger      = new Object();
+   protected static final Object TYPE_label        = new Object();
+   protected static final Object TYPE_fighting     = new Object();
+   protected static final Object TYPE_non_fighting = new Object();
+   protected static final Object TYPE_thing        = new Object();
+   protected static final Object TYPE_string       = new Object();
+   protected static final Object TYPE_event        = new Object();
+   protected static final Object TYPE_trigger      = new Object();
 
    protected ArrayList<Object> getTypeAndLabels(ArenaLocation loc) {
       ArrayList<Object> typesAndLabels = new ArrayList<>();
@@ -387,8 +376,7 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
             typesAndLabels.add(TYPE_label);
             typesAndLabels.add(label);
          }
-         ArrayList<Object> things = new ArrayList<> ();
-         things.addAll(loc.getThings());
+         ArrayList<Object> things = new ArrayList<>(loc.getThings());
 
          for (Object thing : things) {
             if (thing instanceof Character) {
@@ -510,8 +498,8 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
                ArenaLocation viewLoc = _combatMap.getLocation(col, row);
                ArenaLocation viewerLoc = null;
                boolean visible = false;
-               for (int i = 0; i < availableLocs.size(); i++) {
-                  viewerLoc = availableLocs.get(i);
+               for (ArenaLocation availableLoc : availableLocs) {
+                  viewerLoc = availableLoc;
                   if (map.hasLineOfSight(viewerLoc, viewLoc, false/*blockedByAnyStandingCharacter*/)) {
                      visible = true;
                      break;

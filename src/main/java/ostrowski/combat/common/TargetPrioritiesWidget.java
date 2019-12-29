@@ -4,9 +4,6 @@
  */
 package ostrowski.combat.common;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -14,10 +11,12 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
-
 import ostrowski.combat.client.CharacterDisplay;
 import ostrowski.combat.common.enums.Enums;
 import ostrowski.ui.Helper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TargetPrioritiesWidget extends Helper implements SelectionListener
 {
@@ -131,13 +130,13 @@ public class TargetPrioritiesWidget extends Helper implements SelectionListener
    public void updateServerWithTargets() {
       if (_display != null) {
          List<Character> orderedEnemies = new ArrayList<>();
-         for (int i=0 ; i<_combatants.size() ; i++) {
-            if (_combatants.get(i) == null) {
+         for (Character combatant : _combatants) {
+            if (combatant == null) {
                // The 'null' entry corresponds to the "friend below this" entry.
                // When we reach it, stop adding enemies.
                break;
             }
-            orderedEnemies.add(_combatants.get(i));
+            orderedEnemies.add(combatant);
          }
          _display.updateTargetPriorities(orderedEnemies);
       }
@@ -233,13 +232,13 @@ public class TargetPrioritiesWidget extends Helper implements SelectionListener
    }
    public ArrayList<Character> getOrderedEnemies() {
       ArrayList<Character> orderedEnemies = new ArrayList<>();
-      for (int i=0 ; i<_combatants.size() ; i++) {
-         if (_combatants.get(i) == null) {
+      for (Character combatant : _combatants) {
+         if (combatant == null) {
             // The 'null' entry corresponds to the "friend below this" entry.
             // When we reach it, stop adding enemies.
             break;
          }
-         orderedEnemies.add(_combatants.get(i));
+         orderedEnemies.add(combatant);
       }
       return orderedEnemies;
    }

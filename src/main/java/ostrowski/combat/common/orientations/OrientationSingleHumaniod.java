@@ -1,26 +1,19 @@
 package ostrowski.combat.common.orientations;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-
 import org.eclipse.swt.graphics.RGB;
-
 import ostrowski.DebugBreak;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.CombatMap;
 import ostrowski.combat.common.DrawnObject;
 import ostrowski.combat.common.enums.Facing;
 import ostrowski.combat.common.enums.Position;
-import ostrowski.combat.common.things.Hand;
-import ostrowski.combat.common.things.Head;
-import ostrowski.combat.common.things.Leg;
-import ostrowski.combat.common.things.Limb;
-import ostrowski.combat.common.things.LimbType;
-import ostrowski.combat.common.things.Tail;
-import ostrowski.combat.common.things.Wing;
+import ostrowski.combat.common.things.*;
 import ostrowski.combat.common.wounds.Wound;
 import ostrowski.combat.server.ArenaCoordinates;
 import ostrowski.combat.server.ArenaLocation;
+
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 public class OrientationSingleHumaniod extends OrientationSerpentine
 {
@@ -195,7 +188,7 @@ public class OrientationSingleHumaniod extends OrientationSerpentine
       if (getPosition() == Position.SITTING) {
          if (limb instanceof Leg) {
             if (limb.getLocationSide() == Wound.Side.RIGHT) {
-               return 0-(size/6);
+               return -(size / 6);
             }
             else if (limb.getLocationSide() == Wound.Side.LEFT) {
                return size/6;
@@ -209,11 +202,11 @@ public class OrientationSingleHumaniod extends OrientationSerpentine
          if (limb.getLocationSide() == Wound.Side.LEFT) {
             return size/5;
          }
-         return 0-(size/5);
+         return -(size / 5);
       }
       if (limb instanceof Wing) {
          if (limb.getLocationSide() == Side.LEFT) {
-            return 0-(size/3);
+            return -(size / 3);
          }
          return size/3;
       }
@@ -224,7 +217,7 @@ public class OrientationSingleHumaniod extends OrientationSerpentine
    public int getLimbOffsetY(Limb limb, int size, ArenaLocation loc) {
       if (getPosition() == Position.SITTING) {
          if (limb instanceof Leg) {
-            return 0-(size/6);
+            return -(size / 6);
          }
       }
       if (limb instanceof Wing) {

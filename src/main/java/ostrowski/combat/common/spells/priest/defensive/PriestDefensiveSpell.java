@@ -1,13 +1,13 @@
 package ostrowski.combat.common.spells.priest.defensive;
 
-import java.util.ArrayList;
-
 import ostrowski.combat.common.spells.priest.IPriestGroup;
 import ostrowski.combat.common.spells.priest.PriestSpell;
 
+import java.util.ArrayList;
+
 public class PriestDefensiveSpell implements IPriestGroup
 {
-   static public ArrayList<PriestSpell> _spells = new ArrayList<>();
+   static public final ArrayList<PriestSpell> _spells = new ArrayList<>();
    static {
       _spells.add(new SpellArmor(PriestDefensiveSpell.class, 1));
       _spells.add(new SpellBlockAttack(PriestDefensiveSpell.class, 2));

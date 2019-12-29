@@ -4,15 +4,15 @@
  */
 package ostrowski.combat.protocol.request;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-
 import ostrowski.combat.server.ArenaCoordinates;
 import ostrowski.protocol.RequestOption;
 import ostrowski.protocol.SyncRequest;
 import ostrowski.util.SemaphoreAutoLocker;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class RequestLocation extends SyncRequest
 {
@@ -110,9 +110,9 @@ public class RequestLocation extends SyncRequest
       try {
          writeToStream(_cursorResourceName, out);
          writeToStream(_selectableCoordinates.size(), out);
-         for (int i=0 ; i<_selectableCoordinates.size(); i++) {
-            writeToStream(_selectableCoordinates.get(i)._x, out);
-            writeToStream(_selectableCoordinates.get(i)._y, out);
+         for (ArenaCoordinates selectableCoordinate : _selectableCoordinates) {
+            writeToStream(selectableCoordinate._x, out);
+            writeToStream(selectableCoordinate._y, out);
          }
       } catch (IOException e) {
          e.printStackTrace();

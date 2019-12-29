@@ -52,7 +52,7 @@ public class SpellPacify extends ResistedPriestSpell implements ICastInBattle
       if (getTarget().isBerserking()) {
          Byte originalTeam = arena._battle._berserkingCharactersOriginalTeamID.get(getTarget()._uniqueID);
          if (originalTeam != null) {
-            getTarget()._teamID = originalTeam.byteValue();
+            getTarget()._teamID = originalTeam;
          }
          getTarget().setIsBerserking(false);
          getTarget().removeSpellFromActiveSpellsList(this);

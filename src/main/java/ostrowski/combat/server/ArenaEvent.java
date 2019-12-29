@@ -1,16 +1,7 @@
 package ostrowski.combat.server;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-
 import org.eclipse.swt.widgets.Display;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
+import org.w3c.dom.*;
 import ostrowski.DebugBreak;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.CharacterGenerator;
@@ -22,6 +13,11 @@ import ostrowski.combat.common.things.Door;
 import ostrowski.combat.common.things.Thing;
 import ostrowski.protocol.ObjectChanged;
 import ostrowski.util.SemaphoreAutoTracker;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 
 public class ArenaEvent implements Cloneable
 {
@@ -37,7 +33,7 @@ public class ArenaEvent implements Cloneable
    public static final String EVENT_TYPE_DISABLE_THIS_TRIGGER      = "Disable This Trigger";
    public static final String EVENT_TYPE_TELEPORT                  = "Teleport";
 
-   static final ArrayList<String> EVENT_TYPES = new ArrayList<>();
+   static final List<String> EVENT_TYPES = new ArrayList<>();
    static {
       EVENT_TYPES.add(EVENT_TYPE_DISPLAY_MESSAGE_PRIVATELY);
       EVENT_TYPES.add(EVENT_TYPE_DISPLAY_MESSAGE_PUBLICLY);
@@ -273,8 +269,8 @@ public class ArenaEvent implements Cloneable
          }
          // search progressively larger and larger locations until we find an unoccupied location:
          for (int searchDistance=1 ; searchDistance<=4 ; searchDistance++) {
-            for (int xOffset = 0-searchDistance ; xOffset <= searchDistance ; xOffset++) {
-               for (int yOffset = 0-(searchDistance*2) ; yOffset <= (searchDistance*2) ; yOffset++) {
+            for (int xOffset = -searchDistance; xOffset <= searchDistance ; xOffset++) {
+               for (int yOffset = -(searchDistance * 2); yOffset <= (searchDistance * 2) ; yOffset++) {
                   // don't consider illegal locations:
                   if ((xOffset%2) == (yOffset%2)) {
                      // don't consider the location we have already checked:

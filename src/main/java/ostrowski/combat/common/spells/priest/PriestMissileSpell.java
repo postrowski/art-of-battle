@@ -16,10 +16,10 @@ import ostrowski.combat.server.Battle;
 
 public abstract class PriestMissileSpell extends PriestSpell implements IMissileSpell, ICastInBattle
 {
-   DieType _damageDiceType;
-   short _rangeBase;
-   DamageType _damageType;
-   String _missileWeaponName;
+   final DieType    _damageDiceType;
+   final short      _rangeBase;
+   final DamageType _damageType;
+   final String     _missileWeaponName;
 
    public PriestMissileSpell(String name, Class< ? extends IPriestGroup> group, int affinity,
                              DieType damageDiceType, short rangeBase, DamageType damageType, String missileWeaponName) {

@@ -1,11 +1,5 @@
 package ostrowski.combat.protocol.request;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import ostrowski.DebugBreak;
 import ostrowski.combat.common.DiceSet;
 import ostrowski.combat.common.enums.AttackType;
@@ -16,11 +10,17 @@ import ostrowski.protocol.RequestOption;
 import ostrowski.protocol.SyncRequest;
 import ostrowski.util.SemaphoreAutoLocker;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 public class RequestAttackStyle extends SyncRequest implements Enums {
-   class AttackStyleInfo {
-      DamageType _damageType;
-      AttackType _attackType;
-      DiceSet _attackDice;
+   static class AttackStyleInfo {
+      final DamageType _damageType;
+      final AttackType _attackType;
+      final DiceSet    _attackDice;
       public AttackStyleInfo(DamageType damageType, AttackType attackType, DiceSet attackDice) {
          _damageType = damageType;
          _attackType = attackType;
@@ -60,8 +60,8 @@ public class RequestAttackStyle extends SyncRequest implements Enums {
 
    public int  _actorID   = -1;
    public int  _targetID  = -1;
-   public LimbType _limbType = null;
-   List<AttackStyleInfo> _attackInfo = new ArrayList<>();
+   public LimbType              _limbType   = null;
+   final  List<AttackStyleInfo> _attackInfo = new ArrayList<>();
 
 
    public RequestAttackStyle() {

@@ -3,20 +3,21 @@
  */
 package ostrowski.combat.common.spells.mage;
 
+import ostrowski.DebugBreak;
+import ostrowski.combat.common.enums.Enums;
+import ostrowski.protocol.SerializableObject;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import ostrowski.DebugBreak;
-import ostrowski.combat.common.enums.Enums;
-import ostrowski.protocol.SerializableObject;
+import java.util.List;
 
 public class MageCollege extends SerializableObject implements Enums
 {
-   public static ArrayList<String>            _nameList   = new ArrayList<>();
-   public static HashMap<String, MageCollege> _colleges   = new HashMap<>();
+   public static final List<String>                 _nameList = new ArrayList<>();
+   public static final HashMap<String, MageCollege> _colleges = new HashMap<>();
 
    private String                             _name;
    private byte                               _level;
@@ -54,7 +55,7 @@ public class MageCollege extends SerializableObject implements Enums
       return _name;
    }
 
-   public static ArrayList<String> getCollegeNames() {
+   public static List<String> getCollegeNames() {
       return _nameList;
    }
 

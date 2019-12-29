@@ -1,43 +1,19 @@
 package ostrowski.combat.common.orientations;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.RGB;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
+import org.w3c.dom.*;
 import ostrowski.DebugBreak;
 import ostrowski.combat.common.Character;
-import ostrowski.combat.common.CombatMap;
-import ostrowski.combat.common.DrawnObject;
-import ostrowski.combat.common.MapWidget2D;
-import ostrowski.combat.common.Rules;
+import ostrowski.combat.common.*;
 import ostrowski.combat.common.enums.DefenseOption;
 import ostrowski.combat.common.enums.Enums;
 import ostrowski.combat.common.enums.Facing;
 import ostrowski.combat.common.enums.Position;
 import ostrowski.combat.common.spells.Spell;
-import ostrowski.combat.common.things.Hand;
-import ostrowski.combat.common.things.Head;
-import ostrowski.combat.common.things.Leg;
-import ostrowski.combat.common.things.Limb;
-import ostrowski.combat.common.things.LimbType;
-import ostrowski.combat.common.things.Shield;
-import ostrowski.combat.common.things.Thing;
-import ostrowski.combat.common.things.Weapon;
+import ostrowski.combat.common.things.*;
 import ostrowski.combat.common.wounds.Wound;
 import ostrowski.combat.protocol.request.RequestActionType;
 import ostrowski.combat.server.Arena;
@@ -45,6 +21,14 @@ import ostrowski.combat.server.ArenaCoordinates;
 import ostrowski.combat.server.ArenaLocation;
 import ostrowski.protocol.SerializableObject;
 import ostrowski.util.Diagnostics;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 public abstract class Orientation extends SerializableObject implements Enums, Cloneable, Comparable<Orientation>
 {
@@ -305,8 +289,8 @@ public abstract class Orientation extends SerializableObject implements Enums, C
       return null;
    }
 
-   byte[] ADV_FACING_DELTA = new byte[] { 0, 5, 5, 1, 1};
-   boolean[] ADV_ADVANCING = new boolean[] {true, false, true, false, true};
+   final byte[]    ADV_FACING_DELTA = new byte[] {0, 5, 5, 1, 1};
+   final boolean[] ADV_ADVANCING    = new boolean[] {true, false, true, false, true};
    public ArrayList<Orientation> getPossibleAdvanceOrientations(CombatMap map, boolean blockByCharacters)
    {
       ArrayList<Orientation> possibleMoves = new ArrayList<>();
@@ -633,7 +617,7 @@ public abstract class Orientation extends SerializableObject implements Enums, C
     *   1     5     y = high
     *    2 3 4      y = highest
     */
-   private static HashMap<Facing, Integer> MAP_FACING_TO_SIDE_CCW = new HashMap<>();
+   private static final HashMap<Facing, Integer> MAP_FACING_TO_SIDE_CCW = new HashMap<>();
    static {
       MAP_FACING_TO_SIDE_CCW.put(Facing.NOON,       0);
       MAP_FACING_TO_SIDE_CCW.put(Facing._2_OCLOCK, 10);
@@ -656,7 +640,7 @@ public abstract class Orientation extends SerializableObject implements Enums, C
       return new int[] { sideCCW_X, sideCCW_Y, hexDim[frontCCW], hexDim[frontCCW + 1], hexDim[frontCW], hexDim[frontCW + 1], sideCW_X, sideCW_Y};
    }
 
-   HashMap<Integer, RGB> _mapOfIntToRGB = new HashMap<>();
+   final HashMap<Integer, RGB> _mapOfIntToRGB = new HashMap<>();
    private RGB getRGB(int color) {
       RGB rgb = _mapOfIntToRGB.get(color);
       if (rgb == null) {
@@ -676,7 +660,7 @@ public abstract class Orientation extends SerializableObject implements Enums, C
       int backgroundFront = MapWidget2D.darkenColor(background, 50);
       int foregroundFront = MapWidget2D.darkenColor(foreground, 50);
 
-      int size = Math.abs(bounds[(2*2)+0] - bounds[(2*1)+0]); // the length of the bottom horizontal line
+      int size = Math.abs(bounds[(2 * 2)] - bounds[(2)]); // the length of the bottom horizontal line
       if (frontBounds != null) {
          Color bgColor = new Color(display, MapWidget2D.getColor(backgroundFront));
          Color fgColor = new Color(display, MapWidget2D.getColor(foregroundFront));

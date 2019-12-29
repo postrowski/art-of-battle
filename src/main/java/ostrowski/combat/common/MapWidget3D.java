@@ -1,42 +1,17 @@
 package ostrowski.combat.common;
 
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.Vector;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-
 import ostrowski.DebugBreak;
 import ostrowski.combat.common.Race.Gender;
-import ostrowski.combat.common.enums.Enums;
-import ostrowski.combat.common.enums.Facing;
-import ostrowski.combat.common.enums.Position;
-import ostrowski.combat.common.enums.SkillType;
-import ostrowski.combat.common.enums.TerrainType;
-import ostrowski.combat.common.enums.TerrainWall;
+import ostrowski.combat.common.enums.*;
 import ostrowski.combat.common.orientations.Orientation;
-import ostrowski.combat.common.things.Door;
-import ostrowski.combat.common.things.Hand;
-import ostrowski.combat.common.things.Head;
-import ostrowski.combat.common.things.Leg;
-import ostrowski.combat.common.things.Limb;
-import ostrowski.combat.common.things.LimbType;
-import ostrowski.combat.common.things.MissileWeapon;
-import ostrowski.combat.common.things.Shield;
-import ostrowski.combat.common.things.Tail;
-import ostrowski.combat.common.things.Thing;
-import ostrowski.combat.common.things.Weapon;
-import ostrowski.combat.common.things.Wing;
+import ostrowski.combat.common.things.*;
 import ostrowski.combat.common.weaponStyles.WeaponStyleAttack;
 import ostrowski.combat.protocol.request.RequestAction;
 import ostrowski.combat.protocol.request.RequestLocation;
@@ -48,44 +23,35 @@ import ostrowski.graphics.AnimationSequence;
 import ostrowski.graphics.GLView;
 import ostrowski.graphics.IGLViewListener;
 import ostrowski.graphics.SequenceLibrary;
-import ostrowski.graphics.model.ISelectionWatcher;
-import ostrowski.graphics.model.Message;
-import ostrowski.graphics.model.ObjHex;
+import ostrowski.graphics.model.*;
 import ostrowski.graphics.model.ObjHex.Terrain;
-import ostrowski.graphics.model.ObjModel;
-import ostrowski.graphics.model.TexturedObject;
-import ostrowski.graphics.model.Tuple3;
 import ostrowski.graphics.objects3d.HumanBody;
 import ostrowski.graphics.texture.Texture;
-import ostrowski.util.CombatSemaphore;
-import ostrowski.util.Diagnostics;
-import ostrowski.util.IMonitorableObject;
-import ostrowski.util.IMonitoringObject;
-import ostrowski.util.MonitoredObject;
-import ostrowski.util.MonitoringObject;
-import ostrowski.util.Semaphore;
-import ostrowski.util.SemaphoreAutoTracker;
-import ostrowski.util.SemaphoreAutoUntracker;
+import ostrowski.util.*;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonitoringObject
 {
    private final GLView                                 _view;
    private final Display                                _display;
    private final HashMap<ArenaLocation, TexturedObject> _locationToObjectMap = new HashMap<>();
-   private boolean                                      _setZoomOnLoad;
+   private       boolean                                _setZoomOnLoad;
    private final HashMap<HumanBody, ArenaLocation>      _mouseOverBodies     = new HashMap<>();
-   private final HashMap<String, Texture> _textureByRaceName = new HashMap<>();
+   private final HashMap<String, Texture>               _textureByRaceName   = new HashMap<>();
 
-   List<Character>             _watchedCharacters      = new ArrayList<>();
-   HashMap<Integer, HumanBody> _characterIdToHumanBody = new HashMap<>();
-   HashMap<Integer, ObjHex>    _characterIdToObjHex    = new HashMap<>();
+   final List<Character>             _watchedCharacters      = new ArrayList<>();
+   final HashMap<Integer, HumanBody> _characterIdToHumanBody = new HashMap<>();
+   final HashMap<Integer, ObjHex>    _characterIdToObjHex    = new HashMap<>();
 
-   Semaphore                    _lock_animationsPending   = new Semaphore("_lock_animationsPending", CombatSemaphore.CLASS_MAPWIDGET3D_animationsPending);
-   Semaphore                    _lock_animatedObjects     = new Semaphore("_lock_animatedObjects", CombatSemaphore.CLASS_MAPWIDGET3_animatedObjects);
-   Semaphore                    _lock_locationToObjectMap = new Semaphore("_lock_locationToObjectMap", CombatSemaphore.CLASS_MAPWIDGET3_locationToObjectMap);
-   private final ArrayList<HumanBody> _animationsPending = new ArrayList<>();
-   private final ArrayList<HumanBody> _animatedObjects   = new ArrayList<>();
-   Thread                       _animationThread   = null;
+   final         Semaphore            _lock_animationsPending   = new Semaphore("_lock_animationsPending", CombatSemaphore.CLASS_MAPWIDGET3D_animationsPending);
+   final         Semaphore            _lock_animatedObjects     = new Semaphore("_lock_animatedObjects", CombatSemaphore.CLASS_MAPWIDGET3_animatedObjects);
+   final         Semaphore            _lock_locationToObjectMap = new Semaphore("_lock_locationToObjectMap", CombatSemaphore.CLASS_MAPWIDGET3_locationToObjectMap);
+   private final ArrayList<HumanBody> _animationsPending        = new ArrayList<>();
+   private final ArrayList<HumanBody> _animatedObjects          = new ArrayList<>();
+   Thread _animationThread = null;
 
    private final transient MonitoredObject  _monitoredObj  = new MonitoredObject("MapWidget3D");
    private final transient MonitoringObject _monitoringObj = new MonitoringObject("MapWidget3D");
@@ -863,16 +829,21 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
          return null;
       }
       String weaponName = thing.getName();
-      if ((weaponName == Weapon.NAME_Axe) || (weaponName == Weapon.NAME_BastardSword) || (weaponName == Weapon.NAME_BastardSword_Fine)
-          || (weaponName == Weapon.NAME_Broadsword) || (weaponName == Weapon.NAME_Club) || (weaponName == Weapon.NAME_Dagger)
-          || (weaponName == Weapon.NAME_Flail) || (weaponName == Weapon.NAME_GreatAxe) || (weaponName == Weapon.NAME_Halberd)
-          || (weaponName == Weapon.NAME_Javelin) || (weaponName == Weapon.NAME_Katana) || (weaponName == Weapon.NAME_Katana_Fine)
-          || (weaponName == Weapon.NAME_Knife) || (weaponName == Weapon.NAME_Longsword) || (weaponName == Weapon.NAME_Longsword_Fine)
-          || (weaponName == Weapon.NAME_Mace) || (weaponName == Weapon.NAME_Maul) || (weaponName == Weapon.NAME_MorningStar)
-          || (weaponName == Weapon.NAME_Nunchucks) || (weaponName == Weapon.NAME_PickAxe) || (weaponName == Weapon.NAME_Quarterstaff)
-          || (weaponName == Weapon.NAME_Rapier) || (weaponName == Weapon.NAME_Sabre) || (weaponName == Weapon.NAME_Shortsword)
-          || (weaponName == Weapon.NAME_Spear) || (weaponName == Weapon.NAME_ThrowingAxe) || (weaponName == Weapon.NAME_TwoHandedSword)
-          || (weaponName == Weapon.NAME_TwoHandedSword_Fine) || (weaponName == Weapon.NAME_WarHammer)) {
+      if ((weaponName == Weapon.NAME_Axe)                  || (weaponName == Weapon.NAME_BastardSword)
+          || (weaponName == Weapon.NAME_BastardSword_Fine) || (weaponName == Weapon.NAME_Broadsword)
+          || (weaponName == Weapon.NAME_Club)              || (weaponName == Weapon.NAME_Dagger)
+          || (weaponName == Weapon.NAME_Flail)             || (weaponName == Weapon.NAME_GreatAxe)
+          || (weaponName == Weapon.NAME_Halberd)           || (weaponName == Weapon.NAME_Javelin)
+          || (weaponName == Weapon.NAME_Katana)            || (weaponName == Weapon.NAME_Katana_Fine)
+          || (weaponName == Weapon.NAME_Knife)             || (weaponName == Weapon.NAME_Longsword)
+          || (weaponName == Weapon.NAME_Longsword_Fine)    || (weaponName == Weapon.NAME_Mace)
+          || (weaponName == Weapon.NAME_Maul)              || (weaponName == Weapon.NAME_MorningStar)
+          || (weaponName == Weapon.NAME_Nunchucks)         || (weaponName == Weapon.NAME_PickAxe)
+          || (weaponName == Weapon.NAME_Quarterstaff)      || (weaponName == Weapon.NAME_Rapier)
+          || (weaponName == Weapon.NAME_Sabre)             || (weaponName == Weapon.NAME_Shortsword)
+          || (weaponName == Weapon.NAME_Spear)             || (weaponName == Weapon.NAME_ThrowingAxe)
+          || (weaponName == Weapon.NAME_TwoHandedSword)    || (weaponName == Weapon.NAME_TwoHandedSword_Fine)
+          || (weaponName == Weapon.NAME_WarHammer)) {
          if (weaponName.endsWith("_Fine")) {
             weaponName = weaponName.substring(0, weaponName.length() - 5);
          }
@@ -893,11 +864,16 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
          return ostrowski.graphics.objects3d.Thing.Weapon.Bow_idle;
       }
 
-      if ((weaponName == Weapon.NAME_BlowGun) || (weaponName == Weapon.NAME_Crossbow) || (weaponName == Weapon.NAME_CrossbowHeavy)
-          || (weaponName == Weapon.NAME_CrossbowLight) || (weaponName == Weapon.NAME_Sling) || (weaponName == Weapon.NAME_StaffSling)
-          || (weaponName == Weapon.NAME_ThreePartStaff) || (weaponName == Weapon.NAME_ThrowingStar)) {
-         return null;
-      }
+//      if ((weaponName == Weapon.NAME_BlowGun)
+//          || (weaponName == Weapon.NAME_Crossbow)
+//          || (weaponName == Weapon.NAME_CrossbowHeavy)
+//          || (weaponName == Weapon.NAME_CrossbowLight)
+//          || (weaponName == Weapon.NAME_Sling)
+//          || (weaponName == Weapon.NAME_StaffSling)
+//          || (weaponName == Weapon.NAME_ThreePartStaff)
+//          || (weaponName == Weapon.NAME_ThrowingStar)) {
+//         return null;
+//      }
 
       //      if ((weaponName == Weapon.NAME_Claws) ||
       //          (weaponName == Weapon.NAME_Fangs) ||
@@ -920,7 +896,7 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
 
       if (human == null) {
          float lengthFactor;
-         float aveSize = (chr.getBuildBase() + chr.getAdjustedStrength()) / 2;
+         float aveSize = (chr.getBuildBase() + chr.getAdjustedStrength()) / 2f;
          if (aveSize > 0) {
             lengthFactor = (float) Math.pow(1.01, aveSize);
          }
@@ -972,13 +948,13 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
             }
             switch (chr._teamID) {
                case Enums.TEAM_ALPHA:
-                  nameMessage._colorRGB = new RGB(00, colorBase, 00);
+                  nameMessage._colorRGB = new RGB(0, colorBase, 0);
                   break;
                case Enums.TEAM_BETA:
-                  nameMessage._colorRGB = new RGB(colorBase, 00, 00);
+                  nameMessage._colorRGB = new RGB(colorBase, 0, 0);
                   break;
                case Enums.TEAM_INDEPENDENT:
-                  nameMessage._colorRGB = new RGB(00, 00, colorBase);
+                  nameMessage._colorRGB = new RGB(0, 0, colorBase);
                   break;
             }
             nameMessage._visible = true;
@@ -1004,7 +980,7 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
 
       boolean leftHandUsingBox = false;
       Thing rightHandHeldThing = null;
-      String rightHandHeldThingName = null;
+      String rightHandHeldThingName;
       if ((rightHand == null) || (rightHand.isSevered())) {
          human.removeArm(true/*rightArm*/);
       }
@@ -1013,14 +989,16 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
          if (rightHandHeldThing != null) {
             rightHandHeldThingName = rightHandHeldThing.getName();
             if ((rightHandHeldThing instanceof MissileWeapon) && rightHandHeldThing.getName().startsWith("Bow, ")) {
-               if (rightHandHeldThingName.equals(Weapon.NAME_BowLongbow)) {
-                  rightHandHeldThingName = "Longbow";
-               }
-               else if (rightHandHeldThingName.equals(Weapon.NAME_BowShortbow)) {
-                  rightHandHeldThingName = "Shortbow";
-               }
-               else if (rightHandHeldThingName.equals(Weapon.NAME_BowComposite)) {
-                  rightHandHeldThingName = "Bow";
+               switch (rightHandHeldThingName) {
+                  case Weapon.NAME_BowLongbow:
+                     rightHandHeldThingName = "Longbow";
+                     break;
+                  case Weapon.NAME_BowShortbow:
+                     rightHandHeldThingName = "Shortbow";
+                     break;
+                  case Weapon.NAME_BowComposite:
+                     rightHandHeldThingName = "Bow";
+                     break;
                }
 
                if (!rightHandHeldThingName.equals(rightHandHeldThing.getName())) {

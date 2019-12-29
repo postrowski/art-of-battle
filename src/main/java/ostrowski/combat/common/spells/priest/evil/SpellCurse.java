@@ -32,14 +32,14 @@ public class SpellCurse extends ExpiringPriestSpell implements ICastInBattle
           (rollType == RollType.MAGIC_RESISTANCE)  ||
           (rollType == RollType.SPELL_CASTING))
       {
-         return dice.addBonus(0-getEffectivePower());
+         return dice.addBonus(-getEffectivePower());
       }
       return dice;
    }
 
    @Override
    public DiceSet adjustResistanceRoll(DiceSet dice) {
-      return dice.addBonus(0-getEffectivePower());
+      return dice.addBonus(-getEffectivePower());
    }
 
    @Override

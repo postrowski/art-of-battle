@@ -3,12 +3,6 @@
  */
 package ostrowski.combat.common.spells.mage;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.TreeSet;
-
 import ostrowski.DebugBreak;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.DiceSet;
@@ -16,11 +10,7 @@ import ostrowski.combat.common.Rules;
 import ostrowski.combat.common.enums.Attribute;
 import ostrowski.combat.common.enums.DamageType;
 import ostrowski.combat.common.enums.Enums;
-import ostrowski.combat.common.html.HtmlBuilder;
-import ostrowski.combat.common.html.Table;
-import ostrowski.combat.common.html.TableData;
-import ostrowski.combat.common.html.TableHeader;
-import ostrowski.combat.common.html.TableRow;
+import ostrowski.combat.common.html.*;
 import ostrowski.combat.common.spells.IRangedSpell;
 import ostrowski.combat.common.spells.IResistedSpell;
 import ostrowski.combat.common.spells.Spell;
@@ -30,6 +20,9 @@ import ostrowski.combat.protocol.request.RequestDefense;
 import ostrowski.combat.server.Arena;
 import ostrowski.combat.server.Battle;
 import ostrowski.combat.server.Configuration;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 public abstract class MageSpell extends Spell implements Enums
 {
@@ -168,7 +161,7 @@ public abstract class MageSpell extends Spell implements Enums
       return _attributeMod.get(attribute);
    }
 
-   static Collection<MageSpell> _spellsList = new TreeSet<>();
+   static final Collection<MageSpell> _spellsList = new TreeSet<>();
    static {
       _spellsList.add(new SpellAffectArea());
       _spellsList.add(new SpellArmor());
@@ -237,7 +230,7 @@ public abstract class MageSpell extends Spell implements Enums
       for (MageSpell spell : _spellsList) {
          // If this assumption isn't true, then the code in Spell.getEffectiveness needs to change:
          if (spell.isDefendable() != ((spell instanceof MissileMageSpell) || (spell instanceof SpellSpiderWeb))) {
-            problems.append(spell.getName() + ".isDefendable != (Missile || SpiderWeb)");
+            problems.append(spell.getName()).append(".isDefendable != (Missile || SpiderWeb)");
          }
 
          StringBuilder misssingCollegeProblems = new StringBuilder();
@@ -312,13 +305,13 @@ public abstract class MageSpell extends Spell implements Enums
       //printSkillInGroups();
    }
 //   private static void printSkillInGroups() {
-//      ArrayList<ArrayList<MageSpell>> listOfGroupedSpells = new ArrayList<ArrayList<MageSpell>>();
-//      ArrayList<MageSpell> spellsToGroup = new ArrayList<MageSpell>();
+//      ArrayList<ArrayList<MageSpell>> listOfGroupedSpells = new ArrayList<>();
+//      ArrayList<MageSpell> spellsToGroup = new ArrayList<>();
 //      spellsToGroup.addAll(_spellsList);
 //      while (spellsToGroup.size() > 0) {
 //         MageSpell spellToGroup = spellsToGroup.remove(0);
-//         ArrayList<MageSpell> preProcessedGroup = new ArrayList<MageSpell>();
-//         ArrayList<MageSpell> postProcessedGroup = new ArrayList<MageSpell>();
+//         ArrayList<MageSpell> preProcessedGroup = new ArrayList<>();
+//         ArrayList<MageSpell> postProcessedGroup = new ArrayList<>();
 //         preProcessedGroup.add(spellToGroup);
 //         while (preProcessedGroup.size() > 0) {
 //            MageSpell spellToProcess = preProcessedGroup.remove(0);
@@ -386,8 +379,8 @@ public abstract class MageSpell extends Spell implements Enums
       return level;
    }
 
-   public static ArrayList<String> getSpellNames() {
-      ArrayList<String> list = new ArrayList<>();
+   public static List<String> getSpellNames() {
+      List<String> list = new ArrayList<>();
       for (MageSpell element : _spellsList) {
          list.add(element._name);
       }

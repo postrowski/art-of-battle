@@ -1,8 +1,5 @@
 package ostrowski.combat.server;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -14,13 +11,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Text;
-
+import org.eclipse.swt.widgets.*;
 import ostrowski.combat.common.CombatMap;
 import ostrowski.combat.common.IMapWidget;
 import ostrowski.combat.common.IMapWidget.MapMode;
@@ -36,6 +27,9 @@ import ostrowski.combat.common.things.Thing;
 import ostrowski.graphics.IGLViewListener;
 import ostrowski.ui.Helper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TerrainInterface extends Helper implements SelectionListener, ModifyListener, Listener, Enums, IGLViewListener
 {
    private short    _currentTerrain = -1;
@@ -50,8 +44,6 @@ public class TerrainInterface extends Helper implements SelectionListener, Modif
    private boolean  _wallLineActive = false;
    private Button[] _wallButtons;
    private Button   _isDoor;
-   @SuppressWarnings("unused")
-   private Label    _isDoorLabel;
    private Button   _isOpen;
    private Label    _isOpenLabel;
    private Button   _isLockable;
@@ -140,7 +132,7 @@ public class TerrainInterface extends Helper implements SelectionListener, Modif
          {
             Composite doorBlock = createGroup(wallsDoorsBlock, "Door info", 3/*columns*/, false/*sameSize*/, 1 /*hSpacing*/, 1 /*vSpacing*/);
             _isDoor          = new Button(doorBlock, SWT.CHECK);
-            _isDoorLabel     = createLabel(doorBlock, "this wall section has a door.", SWT.LEFT, 2/*hSpan*/, null);
+            Label isDoorLabel = createLabel(doorBlock, "this wall section has a door.", SWT.LEFT, 2/*hSpan*/, null);
             _isOpen          = new Button(doorBlock, SWT.CHECK);
             _isOpenLabel     = createLabel(doorBlock, "the door is open.", SWT.LEFT, 2/*hSpan*/, null);
             _isLockable      = new Button(doorBlock, SWT.CHECK);

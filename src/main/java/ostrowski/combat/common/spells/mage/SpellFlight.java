@@ -9,7 +9,6 @@ import ostrowski.combat.common.html.Table;
 import ostrowski.combat.common.html.TableRow;
 import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.Spell;
-import ostrowski.combat.server.Arena;
 
 public class SpellFlight extends ExpiringMageSpell implements ICastInBattle
 {
@@ -49,13 +48,6 @@ public class SpellFlight extends ExpiringMageSpell implements ICastInBattle
 
    private static byte getMovementRate(byte power) {
       return (byte)(power * 2);
-   }
-
-   @Override
-   public void applyEffects(Arena arena) {
-   }
-   @Override
-   public void removeEffects(Arena arena) {
    }
 
    @Override

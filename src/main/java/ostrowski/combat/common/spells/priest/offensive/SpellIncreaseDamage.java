@@ -12,7 +12,6 @@ import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.priest.ExpiringPriestSpell;
 import ostrowski.combat.common.spells.priest.IPriestGroup;
 import ostrowski.combat.common.wounds.Wound;
-import ostrowski.combat.server.Arena;
 
 public class SpellIncreaseDamage extends ExpiringPriestSpell implements ICastInBattle
 {
@@ -59,9 +58,6 @@ public class SpellIncreaseDamage extends ExpiringPriestSpell implements ICastInB
       }
       sb.append(table);
       return sb.toString();
-   }
-   @Override
-   public void applyEffects(Arena arena) {
    }
 
    @Override

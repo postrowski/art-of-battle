@@ -1,5 +1,10 @@
 package ostrowski.combat.common;
 
+import ostrowski.combat.common.enums.DieType;
+import ostrowski.combat.common.enums.Enums;
+import ostrowski.combat.server.CombatServer;
+import ostrowski.protocol.SerializableObject;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -8,11 +13,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
-
-import ostrowski.combat.common.enums.DieType;
-import ostrowski.combat.common.enums.Enums;
-import ostrowski.combat.server.CombatServer;
-import ostrowski.protocol.SerializableObject;
 
 /*
  * Created on May 3, 2006
@@ -427,7 +427,7 @@ public class DiceSet extends SerializableObject implements Enums
       return 0;
    }
 
-   static HashMap<String, Double> _map = new HashMap<>();
+   static final HashMap<String, Double> _map = new HashMap<>();
 
    private double getOddsForTNWithOneDie(DieType die, int d4s, int d6s, int d8s, int d10s, int d12s, int d20s, int dBell, double TN, int rollSoFar) {
       if (die == DieType.Dbell) {
@@ -489,10 +489,10 @@ public class DiceSet extends SerializableObject implements Enums
          results = chance / dice;
          _map.put(key, results);
       }
-      return results.doubleValue();
+      return results;
    }
 
-   static HashMap<DieType, Double> _EXPECTED = new HashMap<>();
+   static final HashMap<DieType, Double> _EXPECTED = new HashMap<>();
    static {
       _EXPECTED.put(DieType.D1, 1.0);
       _EXPECTED.put(DieType.D4, 3.33333333277187);

@@ -3,30 +3,15 @@ package ostrowski.combat.client;
 /*
  * Created on Dec 2, 2005
  */
-import java.util.HashMap;
-import java.util.List;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Dialog;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
-
+import org.eclipse.swt.widgets.*;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.IMapWidget;
 import ostrowski.combat.common.TargetPrioritiesWidget;
@@ -34,6 +19,9 @@ import ostrowski.combat.protocol.request.RequestTarget;
 import ostrowski.combat.server.CombatServer;
 import ostrowski.combat.server.Configuration;
 import ostrowski.protocol.SyncRequest;
+
+import java.util.HashMap;
+import java.util.List;
 
 public class RequestUserInput extends Dialog implements KeyListener, FocusListener, ControlListener {
    public final Shell                     _shell;
@@ -47,8 +35,8 @@ public class RequestUserInput extends Dialog implements KeyListener, FocusListen
    private TargetPrioritiesWidget         _targetPrioritiesWidget  = null;
    private final IMapWidget               _reportSelectMapWidget;
    private final Character                _actingCharacter;
-   private StatusChit                     _statusChit              = null;
-   private static HashMap<Integer, Point> LOCATION_BY_CHARACTER_ID = new HashMap<>();
+   private              StatusChit              _statusChit              = null;
+   private static final HashMap<Integer, Point> LOCATION_BY_CHARACTER_ID = new HashMap<>();
 
    public RequestUserInput(Shell parent, int style, SyncRequest req, boolean showChit) {
       this(parent, style, req, false, null, null, showChit);

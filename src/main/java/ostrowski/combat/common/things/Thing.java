@@ -4,14 +4,7 @@
  */
 package ostrowski.combat.common.things;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-
 import org.eclipse.swt.graphics.RGB;
-
 import ostrowski.DebugBreak;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.DrawnObject;
@@ -28,6 +21,12 @@ import ostrowski.combat.common.weaponStyles.WeaponStyleAttackThrown;
 import ostrowski.combat.server.Arena;
 import ostrowski.combat.server.BattleTerminatedException;
 import ostrowski.protocol.SerializableObject;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
 
 public abstract class Thing extends SerializableObject implements Cloneable, Enums
 {
@@ -144,7 +143,7 @@ public abstract class Thing extends SerializableObject implements Cloneable, Enu
          int damage = 5 + (power * 5);
          WeaponStyleAttack style = new WeaponStyleAttackThrown(0/*minSkill*/, 0/*penalty*/, damage, DieType.D6, DamageType.FIRE, 12/*rangeBase*/,  1/*hands*/);
          // Give it a non-zero cost, so it will not quality as not being real
-         Weapon fireball = new Weapon(0-power/*size*/, racialBase, 0/*lbs*/, 1/*$*/, thingName, new WeaponStyle[] {style});
+         Weapon fireball = new Weapon(-power/*size*/, racialBase, 0/*lbs*/, 1/*$*/, thingName, new WeaponStyle[] {style});
          return fireball;
       }
 

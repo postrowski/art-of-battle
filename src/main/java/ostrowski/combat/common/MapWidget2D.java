@@ -3,52 +3,34 @@
  */
 package ostrowski.combat.common;
 
-import java.awt.Point;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.Pattern;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-
+import org.eclipse.swt.widgets.*;
 import ostrowski.DebugBreak;
 import ostrowski.combat.common.enums.Enums;
 import ostrowski.combat.common.enums.Facing;
 import ostrowski.combat.common.enums.TerrainWall;
 import ostrowski.combat.common.orientations.Orientation;
 import ostrowski.combat.common.spells.IAreaSpell;
-import ostrowski.combat.common.things.Door;
-import ostrowski.combat.common.things.Hand;
-import ostrowski.combat.common.things.Leg;
-import ostrowski.combat.common.things.Limb;
-import ostrowski.combat.common.things.Thing;
-import ostrowski.combat.common.things.Wing;
+import ostrowski.combat.common.things.*;
 import ostrowski.combat.protocol.request.RequestLocation;
-import ostrowski.combat.server.ArenaCoordinates;
-import ostrowski.combat.server.ArenaEvent;
-import ostrowski.combat.server.ArenaLocation;
-import ostrowski.combat.server.ArenaTrigger;
-import ostrowski.combat.server.CombatServer;
+import ostrowski.combat.server.*;
 import ostrowski.util.SemaphoreAutoTracker;
+
+import java.awt.Point;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.*;
 
 public class MapWidget2D extends MapWidget implements Listener, SelectionListener
 {
@@ -706,11 +688,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
             _eventsMap.clear();
             for (ArenaTrigger trig : _combatMap.getTriggers()) {
                for (ArenaCoordinates trigLoc : trig.getTriggerCoordinates()) {
-                  List<ArenaTrigger> triggersAtLoc = _eventsMap.get(trigLoc);
-                  if (triggersAtLoc == null) {
-                     triggersAtLoc = new ArrayList<>();
-                     _eventsMap.put(trigLoc, triggersAtLoc);
-                  }
+                  List<ArenaTrigger> triggersAtLoc = _eventsMap.computeIfAbsent(trigLoc, k -> new ArrayList<>());
                   triggersAtLoc.add(trig);
                }
             }
@@ -740,10 +718,10 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
          completionOrientations = _movementRequest.getCompletionOrientations();
          cancelOrientations = _movementRequest.getCancelOrientations();
       }
-      drawHex(loc, gc, display, _sizePerHex, 0/*offsetX*/, 0/*offsetY*/, _left/*offsetCol*/, _top/*offsetRow*/,
-              isMouseOver, _selfID, _targetID, _selfTeam, hexSelectable, isVisible, isKnown, 90/*borderFade*/,
+      drawHex(loc, gc, display, _sizePerHex, /*offsetX*/ /*offsetY*/ _left/*offsetCol*/, _top/*offsetRow*/,
+              isMouseOver, _selfID, _targetID, _selfTeam, hexSelectable, isVisible, isKnown, /*borderFade*/
               _routeMap, _path, _mouseOverOrientations, completionOrientations, cancelOrientations,
-              _mouseOverCharacter, _locationRequest, triggers, events, showKnownButNotVisibleChars, cachedColorsMap,  cachedPatternMap);
+              _mouseOverCharacter, _locationRequest, triggers, events, showKnownButNotVisibleChars, cachedColorsMap, cachedPatternMap);
    }
 
    public static void drawHex(ArenaLocation loc, GC gc, Display display, int sizePerHex,
@@ -772,9 +750,9 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
    }
 
    private static void drawHex(ArenaLocation loc, GC gc, Display display, int sizePerHex,
-                               int offsetX, int offsetY, short offsetCol, short offsetRow,
+                               short offsetCol, short offsetRow,
                                boolean isMouseOver, int selfID, int targetID, byte selfTeam,
-                               boolean hexSelectable, boolean isVisible, boolean isKnown, int borderFade,
+                               boolean hexSelectable, boolean isVisible, boolean isKnown,
                                Map<ArenaCoordinates, ArenaCoordinates> routeMap,
                                List<ArenaCoordinates> path,
                                List<Orientation> selectionOrientations,
@@ -789,9 +767,9 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
                                Map<Color, Pattern> cachedPatternMap)
    {
       drawHex(loc, gc, display, sizePerHex,
-              offsetX, offsetY, offsetCol, offsetRow,
+              0, 0, offsetCol, offsetRow,
               isMouseOver, selfID, targetID, selfTeam,
-              hexSelectable, isVisible, isKnown, borderFade,
+              hexSelectable, isVisible, isKnown, 90,
               routeMap,
               path,
               selectionOrientations,
@@ -1025,8 +1003,8 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
                      // create a pseudo-random orientation of this item, so it will always be in the random spot
                      // each time we draw it.
                      Random pseudoRandom = new Random((loc._x * 65536) + loc._y + (itemIndex++ * 1000));
-                     int centerX = (bounds[(2*0)+0] + bounds[(2*3)+0]) / 2;
-                     int centerY = (bounds[(2*0)+1] + bounds[(2*3)+1]) / 2;
+                     int centerX = (bounds[0] + bounds[(2 * 3)]) / 2;
+                     int centerY = (bounds[1] + bounds[(2 * 3) + 1]) / 2;
                      int width  = bounds[X_LARGEST] - bounds[X_SMALLEST];
                      int height = bounds[Y_LARGEST] - bounds[Y_SMALLEST];
                      int offX = (int) ((width/4) * pseudoRandom.nextDouble() * pseudoRandom.nextDouble());
@@ -1049,7 +1027,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
                && (mouseOverCharacter != null)) {
          if (mouseOverCharacter != null) {
             Orientation selectionOrientation = selectionOrientations.get(0);
-//            completionOrientations = new ArrayList<Orientation>();
+//            completionOrientations = new ArrayList<>();
 //            completionOrientations.add(mouseOverCharacter.getOrientation());
             boolean drawCheckMark = (completionOrientations != null) && completionOrientations.contains(selectionOrientation);
             boolean drawCancelMark = (cancelOrientations != null) && cancelOrientations.contains(selectionOrientation);
@@ -1120,28 +1098,28 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       // they would cancel movement, and let them choose another operation.
       int[] xMark = new int[2*8];
       // top left point
-      xMark[2*0]   = (bounds[2*0  ]  + (bounds[2*5  ]*3))/4;
-      xMark[(2*0)+1] = (bounds[(2*0)+1]  + bounds[(2*5)+1])/2;
+      xMark[0]   = (bounds[0] + (bounds[2 * 5  ] * 3)) / 4;
+      xMark[1] = (bounds[1] + bounds[(2 * 5) + 1]) / 2;
       // top middle point
-      xMark[2*1]   = (bounds[2*5 ]  + bounds[2*4  ])/2;
-      xMark[(2*1)+1] = ((bounds[(2*0)+1]*4) + bounds[(2*5)+1])/5;
+      xMark[2]   = (bounds[2 * 5 ] + bounds[2 * 4  ]) / 2;
+      xMark[(2) + 1] = ((bounds[1] * 4) + bounds[(2 * 5) + 1]) / 5;
       // top right point
       xMark[2*2]   = (bounds[2*3  ]  + (bounds[2*4  ]*3))/4;
-      xMark[(2*2)+1] =  xMark[(2*0)+1];
+      xMark[(2*2)+1] =  xMark[1];
       // right middle point
-      xMark[2*3]   = (bounds[2*1  ] + bounds[2*3  ])/2;
-      xMark[(2*3)+1] =  bounds[(2*0)+1];
+      xMark[2*3]   = (bounds[2] + bounds[2 * 3  ]) / 2;
+      xMark[(2*3)+1] =  bounds[1];
       // bottom right point
       xMark[2*4]   = xMark[2*2];
       xMark[(2*4)+1] =  (bounds[(2*2)+1] + bounds[(2*3)+1])/2;
       // bottom middle point
-      xMark[2*5]   =  xMark[2*1];
-      xMark[(2*5)+1] = ((bounds[(2*0)+1]*4) + bounds[(2*1)+1])/5;
+      xMark[2*5]   =  xMark[2];
+      xMark[(2*5)+1] = ((bounds[1] * 4) + bounds[(2) + 1]) / 5;
       // bottom left point
-      xMark[2*6]   = xMark[2*0];
+      xMark[2*6]   = xMark[0];
       xMark[(2*6)+1] = xMark[(2*4)+1];
       // left middle point
-      xMark[2*7]   = (bounds[2*0  ] + bounds[2*2  ])/2;
+      xMark[2*7]   = (bounds[0] + bounds[2 * 2  ]) / 2;
       xMark[(2*7)+1] =  xMark[(2*3)+1];
 
       bgColor = new Color(display, getColor(0xff0000)); // red
@@ -1162,17 +1140,17 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       // they would terminate their movement.
       int[] checkMark = new int[2*4];
       // left point
-      checkMark[2*0]   = (bounds[2*0  ]   + bounds[2*1  ])/2;
-      checkMark[(2*0)+1] =  bounds[(2*0)+1];
+      checkMark[0]   = (bounds[0] + bounds[2]) / 2;
+      checkMark[1] =  bounds[1];
       // bottom point
-      checkMark[2*1]   = ((bounds[2*1  ]*3) + bounds[2*2  ])/4;
-      checkMark[(2*1)+1] = (bounds[(2*0)+1]   + (bounds[(2*1)+1]*3))/4;
+      checkMark[2]   = ((bounds[2] * 3) + bounds[2 * 2  ]) / 4;
+      checkMark[(2) + 1] = (bounds[1] + (bounds[(2) + 1] * 3)) / 4;
       // right (high) point
       checkMark[2*2]   = (bounds[2*3  ]   + bounds[2*4  ])/2;
       checkMark[(2*2)+1] = (bounds[(2*3)+1]   + bounds[(2*4)+1])/2;
       // middle point
-      checkMark[2*3]   = ((bounds[2*1  ]*3) + bounds[2*2  ])/4;
-      checkMark[(2*3)+1] = ((bounds[(2*0)+1]*2) + bounds[(2*1)+1])/3;
+      checkMark[2*3]   = ((bounds[2] * 3) + bounds[2 * 2  ]) / 4;
+      checkMark[(2*3)+1] = ((bounds[1] * 2) + bounds[(2) + 1]) / 3;
 
       bgColor = new Color(display, getColor(0x00ff00)); // green
       fgColor = new Color(display, getColor(0x000000));
@@ -1254,15 +1232,15 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
             Object type = labelsAndColors.remove(0);
             String labelText  = (String) labelsAndColors.remove(0);
             if (type == TYPE_fighting) {
-               drawOutlinedText(gc, display, x, y, labelText, SWT.COLOR_WHITE, SWT.COLOR_BLACK);
+               drawOutlinedText(gc, display, x, y, labelText, SWT.COLOR_WHITE);
                y += getFontSizeByZoomLevel() + 1;
             }
             if (type == TYPE_non_fighting) {
-               drawOutlinedText(gc, display, x, y, labelText, SWT.COLOR_GRAY, SWT.COLOR_BLACK);
+               drawOutlinedText(gc, display, x, y, labelText, SWT.COLOR_GRAY);
                y += getFontSizeByZoomLevel() + 1;
             }
             if ((type == TYPE_thing) || (type == TYPE_string))  {
-               drawOutlinedText(gc, display, x, y, labelText, SWT.COLOR_GREEN, SWT.COLOR_BLACK);
+               drawOutlinedText(gc, display, x, y, labelText, SWT.COLOR_GREEN);
                y += getFontSizeByZoomLevel() + 1;
             }
             if ((type == TYPE_label) || (type == TYPE_event) || (type == TYPE_trigger)) {
@@ -1279,8 +1257,8 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
                        ((bounds[Y_SMALLEST] + bounds[X_SMALLEST + 1]) - 1) / 2);
    }
 
-   private static void drawOutlinedText(GC gc, Display display, int x, int y, String text, int swtColorIDForeground, int swtColorIDBackground) {
-      gc.setForeground(display.getSystemColor(swtColorIDBackground));
+   private static void drawOutlinedText(GC gc, Display display, int x, int y, String text, int swtColorIDForeground) {
+      gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
       for (int xOff=-1 ; xOff<=1 ; xOff++) {
          for (int yOff=-1 ; yOff<=1 ; yOff++) {
             if ((xOff != 0) || (yOff != 0)) {
@@ -1332,8 +1310,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
        *    2 3 4      y = highest
        */
 
-      List<Door> doors = new ArrayList<>();
-      doors.addAll(loc.getDoors());
+      List<Door> doors = new ArrayList<>(loc.getDoors());
       long walls = loc.getWalls();
       if ((walls == 0) && (doors.size() == 0)) {
          // no walls or doors in this hex.
@@ -1663,7 +1640,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       int[] shadowBounds = new int[points.size() * 2];
       int i = 0;
       for (Integer point : points) {
-         int val = point.intValue();
+         int val = point;
          shadowBounds[i++] = getPoint(hexBounds, val, true/*getXValue*/);
          shadowBounds[i++] = getPoint(hexBounds, val, false/*getXValue*/);
       }
@@ -1704,7 +1681,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
 
    private static void get3points(int[] hexBounds, int point, double wallWidth, int[] results, int startAt) {
       // always return them in clockwise order
-      results[startAt + 0] = splitPoints(hexBounds, point, (point + 11) % 12, wallWidth, true/*getXValue*/);
+      results[startAt] = splitPoints(hexBounds, point, (point + 11) % 12, wallWidth, true/*getXValue*/);
       results[startAt + 1] = splitPoints(hexBounds, point, (point + 11) % 12, wallWidth, false/*getXValue*/);
       results[startAt + 2] = getPoint(hexBounds, point, true/*getXValue*/);
       results[startAt + 3] = getPoint(hexBounds, point, false/*getXValue*/);
@@ -1830,7 +1807,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
     *  0   3
     *   1 2
     */
-   private static Map<Integer, Map<Short, Map<Short, int[]>>> MAP_SIZE_TO_MAP_ROW_TO_MAP_COLUMN_TO_HEX_DIMS = new HashMap<>();
+   private static final Map<Integer, Map<Short, Map<Short, int[]>>> MAP_SIZE_TO_MAP_ROW_TO_MAP_COLUMN_TO_HEX_DIMS = new HashMap<>();
    public static int[] getHexDimensions(short column, short row, int sizePerHex, int offsetX, int offsetY, boolean cacheResults, double rotation) {
       int[] baseHexDimensions = getHexDimensions(column, row, sizePerHex, offsetX, offsetY, cacheResults);
       if (rotation == 0) {
@@ -1867,7 +1844,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       if (hexDims == null) {
          double[] hexDimensions = getHexBaseDimensions(sizePerHex);
          double sizeX = sizePerHex;
-         double sizeY = (sizePerHex * 71) / 81; // set aspect ratio
+         double sizeY = (sizePerHex * 71d) / 81; // set aspect ratio
          double locX = sizeX * ((column *  0.75) + .5);
          double locY = ((row+1) * sizeY) / 2;
          hexDims = new int[] { (int) Math.round(hexDimensions[0] + locX), (int) Math.round(hexDimensions[1] + locY),
@@ -1907,12 +1884,12 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       return hexDims;
    }
 
-   private static Map<Integer, double[]> MAP_OF_HEX_SIZES_TO_BASE_DIMENSIONS = new HashMap<>();
+   private static final Map<Integer, double[]> MAP_OF_HEX_SIZES_TO_BASE_DIMENSIONS = new HashMap<>();
    public static double[] getHexBaseDimensions(int sizePerHex) {
       double[] results = MAP_OF_HEX_SIZES_TO_BASE_DIMENSIONS.get(sizePerHex);
       if (results == null) {
          double sizeX = sizePerHex;
-         double sizeY = (sizePerHex * 71) / 81; // set aspect ratio
+         double sizeY = (sizePerHex * 71d) / 81; // set aspect ratio
          double halfY = sizeY / 2;
          double halfX = sizeX / 2;
          double quartX = sizeX / 4;
@@ -1941,11 +1918,11 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
    }
    public double getMeasurementFromCenter(ArenaLocation loc, int x, int y, boolean angle) {
       int[] bounds = getHexDimensions(loc);
-      int centerX = (bounds[0*2]   + bounds[3*2]) / 2;
-      int centerY = (bounds[(0*2)+1] + bounds[(3*2)+1]) / 2;
+      int centerX = (bounds[0] + bounds[3 * 2]) / 2;
+      int centerY = (bounds[1] + bounds[(3 * 2) + 1]) / 2;
       // normalize the distances, so a 1 means at the edge or vertex
       double yDist = ((double)(y - centerY)) / (bounds[(5*2)+1] - centerY);
-      double xDist = ((double)(x - centerX)) / (bounds[0*2]   - centerX);
+      double xDist = ((double)(x - centerX)) / (bounds[0] - centerX);
 
       if (angle) {
          return Math.atan2(yDist, xDist);
@@ -2089,7 +2066,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       return true;
    }
 
-   private static Map<Integer, RGB> PALLET = new HashMap<>();
+   private static final Map<Integer, RGB> PALLET = new HashMap<>();
    public static RGB getColor(int colorAsint) {
       RGB color = PALLET.get(colorAsint);
       if (color == null) {

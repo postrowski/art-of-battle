@@ -4,38 +4,26 @@
  */
 package ostrowski.combat.client;
 
-import java.util.HashMap;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
-
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.CombatMap;
 import ostrowski.combat.common.Condition;
-import ostrowski.combat.protocol.BeginBattle;
-import ostrowski.combat.protocol.CombatSocket;
-import ostrowski.combat.protocol.EnterArena;
-import ostrowski.combat.protocol.MapVisibility;
-import ostrowski.combat.protocol.MessageText;
-import ostrowski.combat.protocol.ServerStatus;
+import ostrowski.combat.protocol.*;
 import ostrowski.combat.protocol.request.RequestArenaEntrance;
 import ostrowski.combat.protocol.request.RequestAttackStyle;
 import ostrowski.combat.protocol.request.RequestLocation;
 import ostrowski.combat.protocol.request.RequestMovement;
 import ostrowski.combat.server.ArenaLocation;
 import ostrowski.combat.server.Configuration;
-import ostrowski.protocol.ClientID;
-import ostrowski.protocol.ObjectChanged;
-import ostrowski.protocol.ObjectDelete;
-import ostrowski.protocol.ObjectInfo;
-import ostrowski.protocol.Response;
-import ostrowski.protocol.SerializableObject;
-import ostrowski.protocol.SyncRequest;
+import ostrowski.protocol.*;
 import ostrowski.util.sockets.SocketConnector;
+
+import java.util.HashMap;
 
 public class ServerConnection extends CombatSocket
 {
-   CharacterDisplay _display;
+   final CharacterDisplay _display;
    StatusChit _statusChit = null;
 
    public ServerConnection(CharacterDisplay display) {
@@ -59,7 +47,7 @@ public class ServerConnection extends CombatSocket
       }
    }
 
-   public static HashMap<Integer, Character> _charactersMap = new HashMap<>();
+   public static final HashMap<Integer, Character> _charactersMap = new HashMap<>();
    public void processRecievedObjectInUIThread(SerializableObject inObj) {
       if (_display._shell.isDisposed()) {
          return;
@@ -166,7 +154,7 @@ public class ServerConnection extends CombatSocket
          Object answer = reqUI.open();
          if (answer != null) {
             if (answer instanceof Integer) {
-               req.setAnswerByOptionIndex((((Integer) answer).intValue()));
+               req.setAnswerByOptionIndex(((Integer) answer));
             }
             else if (answer instanceof String) {
                req.setCustAnswer((String) answer);

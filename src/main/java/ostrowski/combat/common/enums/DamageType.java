@@ -21,7 +21,7 @@ public enum DamageType {
       this.shortname = shortname;
    }
 
-   private static HashMap<Byte, DamageType> MAP_TO_DAMAGETYPE = new HashMap<>();
+   private static final HashMap<Byte, DamageType> MAP_TO_DAMAGETYPE = new HashMap<>();
    static {
       for (DamageType damageType : values()) {
          MAP_TO_DAMAGETYPE.put(damageType.value, damageType);

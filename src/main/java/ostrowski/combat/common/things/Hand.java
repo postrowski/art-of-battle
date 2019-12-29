@@ -1,23 +1,13 @@
 package ostrowski.combat.common.things;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
 import org.eclipse.swt.graphics.RGB;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-
 import ostrowski.DebugBreak;
-import ostrowski.combat.common.Advantage;
 import ostrowski.combat.common.Character;
-import ostrowski.combat.common.DefenseOptions;
-import ostrowski.combat.common.DrawnObject;
-import ostrowski.combat.common.Race;
-import ostrowski.combat.common.Rules;
-import ostrowski.combat.common.Skill;
+import ostrowski.combat.common.*;
 import ostrowski.combat.common.enums.DamageType;
 import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.weaponStyles.WeaponStyleAttackRanged;
@@ -29,6 +19,10 @@ import ostrowski.combat.protocol.request.RequestAction;
 import ostrowski.combat.protocol.request.RequestDefense;
 import ostrowski.combat.server.Arena;
 import ostrowski.combat.server.BattleTerminatedException;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 public class Hand extends Limb {
    public Thing _heldThing           = null;
@@ -654,10 +648,10 @@ public class Hand extends Limb {
 
       DrawnObject obj = new DrawnObject(foreground, background);
       obj.addPoint((wideDiameter * 19)/32, 0);                         // outer shoulder
-      obj.addPoint((wideDiameter * 16)/32, 0-((narrowDiameter * 16)/32));  // outer elbow
-      obj.addPoint((wideDiameter *  5)/32, 0-((narrowDiameter * 25)/32));  // outer wrist
-      obj.addPoint((wideDiameter *  4)/32, 0-((narrowDiameter * 22)/32));  // wrist
-      obj.addPoint((wideDiameter * 13)/32, 0-((narrowDiameter * 13)/32));  // elbow
+      obj.addPoint((wideDiameter * 16)/32, -((narrowDiameter * 16)/32));  // outer elbow
+      obj.addPoint((wideDiameter *  5)/32, -((narrowDiameter * 25)/32));  // outer wrist
+      obj.addPoint((wideDiameter *  4)/32, -((narrowDiameter * 22)/32));  // wrist
+      obj.addPoint((wideDiameter * 13)/32, -((narrowDiameter * 13)/32));  // elbow
       obj.addPoint((wideDiameter * 14)/32, 0);                         // shoulder
       obj.addPoint((wideDiameter * 16)/32, (narrowDiameter * 3)/32);     // shoulder
       return obj;

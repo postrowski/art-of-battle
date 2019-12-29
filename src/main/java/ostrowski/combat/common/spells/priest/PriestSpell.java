@@ -1,29 +1,16 @@
 package ostrowski.combat.common.spells.priest;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-
 import ostrowski.DebugBreak;
 import ostrowski.combat.common.Advantage;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.DiceSet;
 import ostrowski.combat.common.Rules;
 import ostrowski.combat.common.enums.Attribute;
-import ostrowski.combat.common.html.HtmlBuilder;
-import ostrowski.combat.common.html.Table;
-import ostrowski.combat.common.html.TableData;
-import ostrowski.combat.common.html.TableHeader;
-import ostrowski.combat.common.html.TableRow;
+import ostrowski.combat.common.html.*;
 import ostrowski.combat.common.spells.IRangedSpell;
 import ostrowski.combat.common.spells.Spell;
 import ostrowski.combat.common.spells.priest.defensive.PriestDefensiveSpell;
@@ -40,6 +27,14 @@ import ostrowski.combat.protocol.request.RequestAction;
 import ostrowski.combat.protocol.request.RequestDefense;
 import ostrowski.combat.server.Battle;
 import ostrowski.combat.server.Configuration;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public abstract class PriestSpell extends Spell
 {
@@ -138,12 +133,11 @@ public abstract class PriestSpell extends Spell
 
          String deity = _deities.get(row);
          tableRow.addHeader(deity);
-         ArrayList<String> groupsForDeity = getSpellGroups(deity);
-         for (int col = 0; col < GROUP_NAMES.size(); col++) {
-            if (groupsForDeity.contains(GROUP_NAMES.get(col))) {
+         List<String> groupsForDeity = getSpellGroups(deity);
+         for (String groupName : GROUP_NAMES) {
+            if (groupsForDeity.contains(groupName)) {
                tableRow.addTD("Yes");
-            }
-            else {
+            } else {
                tableRow.addTD("&nbsp;");
             }
          }
@@ -156,8 +150,8 @@ public abstract class PriestSpell extends Spell
       table = new Table();
       headerRow = new TableRow(-1, "Affinity");
       table.addRow(headerRow);
-      for (int col = 0; col < GROUP_NAMES.size(); col++) {
-         headerRow.addHeader(GROUP_NAMES.get(col));
+      for (String groupName : GROUP_NAMES) {
+         headerRow.addHeader(groupName);
       }
       for (int affinity = 1; affinity <= 10; affinity++) {
          TableRow tableRow = new TableRow(affinity-1);
@@ -197,7 +191,15 @@ public abstract class PriestSpell extends Spell
    }
 
    @SuppressWarnings("unchecked")
-   static Class< ? extends IPriestGroup>[] GROUPS            = new Class[] { PriestDefensiveSpell.class, PriestEvilSpell.class, PriestOffensiveSpell.class, PriestGoodSpell.class, PriestHealingSpell.class, PriestInformationSpell.class, PriestNatureSpell.class, PriestDemonicSpell.class,};
+   static final Class< ? extends IPriestGroup>[] GROUPS = new Class[] {PriestDefensiveSpell.class,
+                                                                       PriestEvilSpell.class,
+                                                                       PriestOffensiveSpell.class,
+                                                                       PriestGoodSpell.class,
+                                                                       PriestHealingSpell.class,
+                                                                       PriestInformationSpell.class,
+                                                                       PriestNatureSpell.class,
+                                                                       PriestDemonicSpell.class,
+                                                                       };
 
    static private final String             THOR              = "Thor";
    static private final String             APHRODITE         = "Aphrodite";
@@ -205,7 +207,7 @@ public abstract class PriestSpell extends Spell
    static private final String             HADES             = "Hades";
    static private final String             TAO               = "Tao";
    static private final String             DEMONIC           = "Demonic";
-   static public final ArrayList<String>   _deities          = new ArrayList<>();
+   static public final List<String>   _deities          = new ArrayList<>();
    static {
       _deities.add(THOR);
       _deities.add(APHRODITE);
@@ -224,7 +226,7 @@ public abstract class PriestSpell extends Spell
    static public final String              GROUP_GOOD        = "Good";
    static public final String              GROUP_OFFENSIVE   = "Offensive";
    static public final String              GROUP_DEMON       = "Demon";
-   static public final ArrayList<String>   GROUP_NAMES       = new ArrayList<>();
+   static public final List<String>   GROUP_NAMES       = new ArrayList<>();
    static {
       GROUP_NAMES.add(GROUP_DEFENSIVE);
       GROUP_NAMES.add(GROUP_HEALING);
@@ -250,8 +252,8 @@ public abstract class PriestSpell extends Spell
       }
    }
 
-   static public ArrayList<String> getSpellGroups(String deity) {
-      ArrayList<String> spells = new ArrayList<>();
+   static public List<String> getSpellGroups(String deity) {
+      List<String> spells = new ArrayList<>();
       if (deity.equalsIgnoreCase(THOR)) {
          spells.add(GROUP_DEFENSIVE);
          spells.add(GROUP_HEALING);
@@ -319,18 +321,18 @@ public abstract class PriestSpell extends Spell
          spells.addAll(PriestDemonicSpell._spells);
       }
       // add the deity-specific spells
-      if ((group == null) || (group.equalsIgnoreCase(THOR))) {
-      }
-      else if ((group == null) || (group.equalsIgnoreCase(APHRODITE))) {
-      }
-      else if ((group == null) || (group.equalsIgnoreCase(DRUID))) {
-      }
-      else if ((group == null) || (group.equalsIgnoreCase(HADES))) {
-      }
-      else if ((group == null) || (group.equalsIgnoreCase(TAO))) {
-      }
-      else if ((group == null) || (group.equalsIgnoreCase(DEMONIC))) {
-      }
+//      if ((group == null) || (group.equalsIgnoreCase(THOR))) {
+//      }
+//      else if ((group == null) || (group.equalsIgnoreCase(APHRODITE))) {
+//      }
+//      else if ((group == null) || (group.equalsIgnoreCase(DRUID))) {
+//      }
+//      else if ((group == null) || (group.equalsIgnoreCase(HADES))) {
+//      }
+//      else if ((group == null) || (group.equalsIgnoreCase(TAO))) {
+//      }
+//      else if ((group == null) || (group.equalsIgnoreCase(DEMONIC))) {
+//      }
       return spells;
    }
 

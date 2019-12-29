@@ -1,36 +1,13 @@
 package ostrowski.combat.server;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-
 import ostrowski.DebugBreak;
-import ostrowski.combat.common.Advantage;
 import ostrowski.combat.common.Character;
-import ostrowski.combat.common.CombatMap;
-import ostrowski.combat.common.DefenseOptions;
-import ostrowski.combat.common.DiceSet;
-import ostrowski.combat.common.IHolder;
-import ostrowski.combat.common.Race;
-import ostrowski.combat.common.Rules;
-import ostrowski.combat.common.SpecialDamage;
-import ostrowski.combat.common.enums.Attribute;
-import ostrowski.combat.common.enums.DamageType;
-import ostrowski.combat.common.enums.DieType;
-import ostrowski.combat.common.enums.Enums;
-import ostrowski.combat.common.enums.Position;
-import ostrowski.combat.common.enums.SkillType;
+import ostrowski.combat.common.*;
+import ostrowski.combat.common.enums.*;
 import ostrowski.combat.common.orientations.Orientation;
 import ostrowski.combat.common.spells.IAreaSpell;
 import ostrowski.combat.common.spells.Spell;
@@ -46,18 +23,14 @@ import ostrowski.combat.common.weaponStyles.WeaponStyleAttackRanged;
 import ostrowski.combat.common.wounds.Wound;
 import ostrowski.combat.common.wounds.WoundChart;
 import ostrowski.combat.protocol.BeginBattle;
-import ostrowski.combat.protocol.request.RequestAction;
-import ostrowski.combat.protocol.request.RequestActionOption;
-import ostrowski.combat.protocol.request.RequestActionType;
-import ostrowski.combat.protocol.request.RequestDefense;
-import ostrowski.combat.protocol.request.RequestGrapplingHoldMaintain;
-import ostrowski.combat.protocol.request.RequestMovement;
-import ostrowski.combat.protocol.request.RequestUseOfHeroPoint;
+import ostrowski.combat.protocol.request.*;
 import ostrowski.protocol.IRequestOption;
 import ostrowski.protocol.SyncRequest;
 import ostrowski.util.CombatSemaphore;
 import ostrowski.util.Semaphore;
 import ostrowski.util.SemaphoreAutoTracker;
+
+import java.util.*;
 
 public class Battle extends Thread implements Enums
 {
@@ -315,7 +288,7 @@ public class Battle extends Thread implements Enums
                   if ((defendableActions > 0) && (combatant.getActionsAvailable(false/*usedForDefenseOnly*/) == 0)) {
                      sb.append(" (def only)");
                   }
-                  ArrayList<String> weapons = new ArrayList<>();
+                  List<String> weapons = new ArrayList<>();
                   boolean printHands = false;
                   for (LimbType limbType : combatant.getRace().getLimbSet()) {
                      Limb limb = combatant.getLimb(limbType);
@@ -551,10 +524,9 @@ public class Battle extends Thread implements Enums
             }
          }
          else {
-            Collection<ArenaCoordinates> locationsToRedraw = new ArrayList<>();
             // add the original locations of the target to the list of locations
             // that must be redrawn
-            locationsToRedraw.addAll(actor.getCoordinates());
+            Collection<ArenaCoordinates> locationsToRedraw = new ArrayList<>(actor.getCoordinates());
             _arena.sendCharacterUpdate(actor, locationsToRedraw);
          }
          if (action.isLocationAction(actor, _arena)) {
@@ -572,10 +544,9 @@ public class Battle extends Thread implements Enums
                                         Map<Character, List<Wound>> wounds,
                                         Map<Character, List<Spell>> spells)
               throws BattleTerminatedException {
-      Collection<ArenaCoordinates> targetsLocationsToRedraw = new ArrayList<>();
       // add the original locations of the target to the list of locations
       // that must be redrawn
-      targetsLocationsToRedraw.addAll(target.getCoordinates());
+      Collection<ArenaCoordinates> targetsLocationsToRedraw = new ArrayList<>(target.getCoordinates());
 
       // If this is a PriestMissileSpell, the effective power has not been computed yet,
       // so there is no way to set the estimated damage, so the AI can't defend appropriately!
@@ -752,7 +723,7 @@ public class Battle extends Thread implements Enums
          skill += positionAdjustment;
       }
       if (actorPainAndWounds != 0) {
-         sb.append("<tr><td>").append(0 - actorPainAndWounds).append("</td><td>pain and wounds</td></tr>");
+         sb.append("<tr><td>").append(-actorPainAndWounds).append("</td><td>pain and wounds</td></tr>");
          skill -= actorPainAndWounds;
       }
       byte result = (byte) (roll + skill);
@@ -806,10 +777,9 @@ public class Battle extends Thread implements Enums
    public void applySpells(Map<Character, List<Spell>> spells) throws BattleTerminatedException {
       TreeSet<Character> hitTargets = new TreeSet<>(spells.keySet());
       for (Character target : hitTargets) {
-         Collection<ArenaCoordinates> locationsToRedraw = new ArrayList<>();
          // add the current locations of the target to the list of locations
          // that must be redrawn
-         locationsToRedraw.addAll(target.getCoordinates());
+         Collection<ArenaCoordinates> locationsToRedraw = new ArrayList<>(target.getCoordinates());
 
          boolean targetConsciousBeforeWound = target.getCondition().isConscious();
          List<Spell> spellsList = spells.get(target);
@@ -844,10 +814,9 @@ public class Battle extends Thread implements Enums
             _arena.sendMessageTextToAllClients(target.getName() + " falls unconscious due to " + target.getHisHer() +
                                                " wounds.", false/*popUp*/);
          }
-         Collection<ArenaCoordinates> locationsToRedraw = new ArrayList<>();
          // add the locations of the target to the list of locations
          // that must be redrawn
-         locationsToRedraw.addAll(target.getCoordinates());
+         Collection<ArenaCoordinates> locationsToRedraw = new ArrayList<>(target.getCoordinates());
 
          _arena.sendCharacterUpdate(target, locationsToRedraw);
       }
@@ -1091,7 +1060,7 @@ public class Battle extends Thread implements Enums
                }
             }
             if (newHoldLevel >= 0) {
-               if ((currentHoldLevel != null) && (currentHoldLevel.byteValue() >= newHoldLevel)) {
+               if ((currentHoldLevel != null) && (currentHoldLevel >= newHoldLevel)) {
                   sb.append("New hold level is less than or equal to the current hold level of ").append(currentHoldLevel);
                   sb.append(" so this grab is ineffective.<br/>");
                   hit = false;
@@ -1563,7 +1532,7 @@ public class Battle extends Thread implements Enums
       byte holdStrength = defender.getPenaltyForBeingHeld();
       Byte holdingStrength = defender.getHoldingLevel();
       if (holdingStrength != null) {
-         holdStrength += holdingStrength.byteValue();
+         holdStrength += holdingStrength;
       }
       if (holdStrength >= (5 * knockBack)) {
          knockBack = 0;
@@ -1582,11 +1551,7 @@ public class Battle extends Thread implements Enums
          }
       }
 
-      List<Wound> woundsList = wounds.get(defender);
-      if (woundsList == null) {
-         woundsList = new ArrayList<>();
-         wounds.put(defender, woundsList);
-      }
+      List<Wound> woundsList = wounds.computeIfAbsent(defender, k -> new ArrayList<>());
       woundsList.add(wound);
    }
 
@@ -1744,7 +1709,7 @@ public class Battle extends Thread implements Enums
                                              if (destLimbCoord != null) {
                                                 ArenaCoordinates sourceLimbCoord = actor.getOrientation().getLimbCoordinates(limbType);
                                                 if (!destLimbCoord.sameCoordinates(sourceLimbCoord)) {
-                                                   moved = moved.intValue() + 1;
+                                                   moved = moved + 1;
                                                    break;
                                                 }
                                              }
@@ -1819,10 +1784,10 @@ public class Battle extends Thread implements Enums
       for (Character mover : movedCharacters) {
          Integer movement = movementTracker.get(mover);
          if (mover.getPosition() == Position.STANDING) {
-            _arena.sendMessageTextToAllClients(mover.getName() + " moves " + movement.intValue() + " hexes.", false/*popUp*/);
+            _arena.sendMessageTextToAllClients(mover.getName() + " moves " + movement + " hexes.", false/*popUp*/);
          }
          else {
-            _arena.sendMessageTextToAllClients(mover.getName() + " crawls " + movement.intValue() + " hexes.", false/*popUp*/);
+            _arena.sendMessageTextToAllClients(mover.getName() + " crawls " + movement + " hexes.", false/*popUp*/);
          }
       }
 
@@ -1967,7 +1932,7 @@ public class Battle extends Thread implements Enums
                if (attacker.stillFighting()) {
                   ArrayList<Integer> orderedTargets = attacker.getOrderedTargetPriorites();
                   for (Integer uniqueId : orderedTargets) {
-                     if (uniqueId.intValue() == actor._uniqueID) {
+                     if (uniqueId == actor._uniqueID) {
                         if (attacker.getOrientation().canAttack(attacker, actor, _arena.getCombatMap(), false/*allowRanged*/, false/*onlyChargeTypes*/)) {
                            newAttackers.add(attacker);
                         }
@@ -2025,7 +1990,7 @@ public class Battle extends Thread implements Enums
    //      return true;
    //   }
 
-   public HashMap<Integer, Byte> _berserkingCharactersOriginalTeamID = new HashMap<>();
+   public final HashMap<Integer, Byte> _berserkingCharactersOriginalTeamID = new HashMap<>();
 
    private void resolvePainAndInitiative() {
       StringBuilder events = new StringBuilder();
@@ -2228,7 +2193,7 @@ public class Battle extends Thread implements Enums
                         combatant.setIsBerserking(false);
                         Byte originalTeamID = _berserkingCharactersOriginalTeamID.remove(combatant._uniqueID);
                         if (originalTeamID != null) {
-                           combatant._teamID = originalTeamID.byteValue();
+                           combatant._teamID = originalTeamID;
                         }
                      }
                      else {
@@ -2288,9 +2253,9 @@ public class Battle extends Thread implements Enums
       }
    }
 
-   HashMap<Character, Character> _aimingCharacters = new HashMap<>();
-   Semaphore _lock_aimingCharacters = new Semaphore("Battle_aimingCharacters", CombatSemaphore.CLASS_BATTLE_aimingCharacters);
-   Semaphore _lock_waitingToAttack = new Semaphore("Battle_waitingToAttack", CombatSemaphore.CLASS_BATTLE_waitingToAttack);
+   final HashMap<Character, Character> _aimingCharacters      = new HashMap<>();
+   final Semaphore                     _lock_aimingCharacters = new Semaphore("Battle_aimingCharacters", CombatSemaphore.CLASS_BATTLE_aimingCharacters);
+   final Semaphore                     _lock_waitingToAttack  = new Semaphore("Battle_waitingToAttack", CombatSemaphore.CLASS_BATTLE_waitingToAttack);
 
    private void addAimingCharacter(Character aimer, Character target) {
       synchronized (_aimingCharacters) {

@@ -1,102 +1,46 @@
 package ostrowski.combat.common;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.TreeSet;
-import java.util.Vector;
-import java.util.stream.Collectors;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSOutput;
 import org.w3c.dom.ls.LSSerializer;
 import org.xml.sax.SAXException;
-
 import ostrowski.DebugBreak;
 import ostrowski.combat.common.Race.Gender;
-import ostrowski.combat.common.enums.AI_Type;
-import ostrowski.combat.common.enums.Attribute;
-import ostrowski.combat.common.enums.DamageType;
-import ostrowski.combat.common.enums.DefenseOption;
-import ostrowski.combat.common.enums.Enums;
-import ostrowski.combat.common.enums.Facing;
-import ostrowski.combat.common.enums.Position;
-import ostrowski.combat.common.enums.SkillType;
+import ostrowski.combat.common.enums.*;
 import ostrowski.combat.common.orientations.Orientation;
 import ostrowski.combat.common.spells.IInstantaneousSpell;
 import ostrowski.combat.common.spells.IRangedSpell;
 import ostrowski.combat.common.spells.Spell;
-import ostrowski.combat.common.spells.mage.InstantaneousMageSpell;
-import ostrowski.combat.common.spells.mage.MageCollege;
-import ostrowski.combat.common.spells.mage.MageSpell;
-import ostrowski.combat.common.spells.mage.SpellFlight;
-import ostrowski.combat.common.spells.mage.SpellLevitate;
+import ostrowski.combat.common.spells.mage.*;
 import ostrowski.combat.common.spells.priest.PriestSpell;
 import ostrowski.combat.common.spells.priest.SpellSummonBeing;
 import ostrowski.combat.common.spells.priest.elemental.SpellSwim;
 import ostrowski.combat.common.spells.priest.evil.SpellParalyze;
 import ostrowski.combat.common.spells.priest.good.SpellPacify;
-import ostrowski.combat.common.things.Armor;
-import ostrowski.combat.common.things.Hand;
-import ostrowski.combat.common.things.Leg;
-import ostrowski.combat.common.things.Limb;
-import ostrowski.combat.common.things.LimbType;
-import ostrowski.combat.common.things.Shield;
-import ostrowski.combat.common.things.Thing;
-import ostrowski.combat.common.things.Weapon;
+import ostrowski.combat.common.things.*;
 import ostrowski.combat.common.weaponStyles.WeaponStyle;
 import ostrowski.combat.common.weaponStyles.WeaponStyleAttack;
 import ostrowski.combat.common.weaponStyles.WeaponStyleAttackRanged;
 import ostrowski.combat.common.wounds.Wound;
 import ostrowski.combat.common.wounds.WoundCantBeAppliedToTargetException;
-import ostrowski.combat.protocol.request.RequestAction;
-import ostrowski.combat.protocol.request.RequestActionOption;
-import ostrowski.combat.protocol.request.RequestActionType;
-import ostrowski.combat.protocol.request.RequestAttackStyle;
-import ostrowski.combat.protocol.request.RequestDefense;
-import ostrowski.combat.protocol.request.RequestEquipment;
-import ostrowski.combat.protocol.request.RequestGrapplingHoldMaintain;
-import ostrowski.combat.protocol.request.RequestPosition;
-import ostrowski.combat.protocol.request.RequestSpellSelection;
-import ostrowski.combat.protocol.request.RequestSpellTypeSelection;
-import ostrowski.combat.protocol.request.RequestTarget;
-import ostrowski.combat.server.Arena;
-import ostrowski.combat.server.ArenaCoordinates;
-import ostrowski.combat.server.ArenaLocation;
-import ostrowski.combat.server.BattleTerminatedException;
-import ostrowski.combat.server.ClientProxy;
-import ostrowski.combat.server.CombatServer;
+import ostrowski.combat.protocol.request.*;
+import ostrowski.combat.server.*;
 import ostrowski.protocol.IRequestOption;
 import ostrowski.protocol.ObjectChanged;
 import ostrowski.protocol.SerializableObject;
 import ostrowski.protocol.SyncRequest;
-import ostrowski.util.CombatSemaphore;
-import ostrowski.util.Diagnostics;
-import ostrowski.util.IMonitorableObject;
-import ostrowski.util.IMonitoringObject;
-import ostrowski.util.Semaphore;
-import ostrowski.util.SemaphoreAutoLocker;
+import ostrowski.util.*;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.*;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 /*
@@ -122,7 +66,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    private List<MageCollege>                 _knownCollegesList                          = new ArrayList<>();
    private List<Advantage>                   _advList                                    = new ArrayList<>();
 
-   Semaphore                                 _lock_equipment                             = new Semaphore("equipment", CombatSemaphore.CLASS_CHARACTER_EQUIPMENT);
+   final Semaphore _lock_equipment = new Semaphore("equipment", CombatSemaphore.CLASS_CHARACTER_EQUIPMENT);
 
    // computed values:
    private byte                              _buildBase;
@@ -143,7 +87,6 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    private int                               _eyeCount                                   = 2;
    private int                               _legCount                                   = 2;
    private int                               _wingCount                                  = 0;
-   transient private ClientProxy             _clientProxy                                = null;
    private Spell                             _currentSpell                               = null;
    private boolean                           _isBerserking                               = false;
 
@@ -178,19 +121,13 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          }
       }
       if (mageSpells != null) {
-         for (MageSpell element : mageSpells) {
-            _knownMageSpellsList.add(element);
-         }
+         _knownMageSpellsList.addAll(Arrays.asList(mageSpells));
       }
       if (colleges != null) {
-         for (MageCollege element : colleges) {
-            _knownCollegesList.add(element);
-         }
+         _knownCollegesList.addAll(Arrays.asList(colleges));
       }
       if (advantages != null) {
-         for (Advantage element : advantages) {
-            _advList.add(element);
-         }
+         _advList.addAll(Arrays.asList(advantages));
       }
       if (limbs != null) {
          for (Hand curHand : getArms()) {
@@ -363,7 +300,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    }
 
    public boolean addAdvantage(Advantage newAdvantage) {
-      ArrayList<String> existingAdvNames = new ArrayList<>();
+      List<String> existingAdvNames = new ArrayList<>();
       for (Advantage advantage : _advList) {
          existingAdvNames.add(advantage.getName());
          if (advantage.getName().equals(newAdvantage.getName())) {
@@ -402,7 +339,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
 
       float adjustedMoneySpent = moneySpent / _race.getWealthMultiplier();
 
-      ArrayList<String> levels = wealth.getLevelNames();
+      List<String> levels = wealth.getLevelNames();
       for (byte i = 0; i < levels.size(); i++) {
          int level = Integer.parseInt(levels.get(i).substring(1).replaceAll(",", ""));// remove the '$' and all commas
          if (adjustedMoneySpent <= level) {
@@ -430,8 +367,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    }
 
    public List<Skill> getSkillsList() {
-      ArrayList<Skill> skills = new ArrayList<>();
-      skills.addAll(_skillsList.values());
+      ArrayList<Skill> skills = new ArrayList<>(_skillsList.values());
       return skills;
    }
 
@@ -595,7 +531,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       _advList = new ArrayList<>();
       while (prevAdvList.size() > 0) {
          Advantage adv = prevAdvList.remove(0);
-         ArrayList<String> advNames = Advantage.getAdvantagesNames(getPropertyNames(), getRace());
+         List<String> advNames = Advantage.getAdvantagesNames(getPropertyNames(), getRace());
          if (advNames.contains(adv.getName())) {
             _advList.add(adv);
          }
@@ -889,7 +825,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          }
          if (adjustForHolds) {
             for (Byte hold : _heldPenalties.values()) {
-               skillLevel -= hold.byteValue();
+               skillLevel -= hold;
             }
          }
          if (skillLevel < 0) {
@@ -914,7 +850,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          }
          if (adjustForHolds) {
             for (Byte hold : _heldPenalties.values()) {
-               skillLevel -= hold.byteValue();
+               skillLevel -= hold;
             }
          }
          if (skillLevel < 0) {
@@ -1231,7 +1167,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                            attackPenalty -= painPenalty;
                         }
                         sb.append(" \nYou may attack at a -").append(attackPenalty).append(" due to ");
-                        ArrayList<String> penalties = new ArrayList<>();
+                        List<String> penalties = new ArrayList<>();
                         if ((_condition.getPenaltyPain() > 0) && !isBerserking()) {
                            penalties.add(String.valueOf(_condition.getPenaltyPain()) + " points of pain");
                         }
@@ -1458,7 +1394,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                   else {
                      sb.append(range.getName()).append(" range");
                   }
-                  byte rangePenalty = (byte) (0 - Rules.getRangeDefenseAdjustmentToPD(range));
+                  byte rangePenalty = (byte) (-Rules.getRangeDefenseAdjustmentToPD(range));
                   if (rangePenalty > 0) {
                      sb.append(", for a bonus of +").append(rangePenalty).append(" to hit.");
                   }
@@ -1675,7 +1611,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                String weapName = weap.getName() + handName;
                // for unarmed combat, use the style name instead of the weapon name.
                if (!weap.isReal()) {
-                  ArrayList<String> attackStyleNames = new ArrayList<>();
+                  List<String> attackStyleNames = new ArrayList<>();
                   for (WeaponStyleAttack style : weap.getAttackStyles()) {
                      if (style.canAttack(this, weap, limb)) {
                         String styleName = style.getName();
@@ -2320,7 +2256,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
 
    public byte getTerrainAdjustmentForAttack(StringBuilder terrainExplanation, CombatMap map) {
       List<String> terrainNames = new ArrayList<>();
-      byte terrainAdj = (byte) (0 - getOrientation().getAttackPenaltyForTerrain(this, map, terrainNames));
+      byte terrainAdj = (byte) (-getOrientation().getAttackPenaltyForTerrain(this, map, terrainNames));
       if (terrainExplanation != null) {
          while (terrainNames.size() > 0) {
             String terrainName = terrainNames.remove(0);
@@ -2929,11 +2865,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          }
          byte actionsUsed = defOpts.getDefenseActionsUsed();
          if (actionsUsed <= maxActionsUseAllowed) {
-            TreeSet<DefenseOptions> defActionsPerAction = mapActionsToDefActions.get(actionsUsed);
-            if (defActionsPerAction == null) {
-               defActionsPerAction = new TreeSet<>();
-               mapActionsToDefActions.put(actionsUsed, defActionsPerAction);
-            }
+            TreeSet<DefenseOptions> defActionsPerAction = mapActionsToDefActions.computeIfAbsent(actionsUsed, k -> new TreeSet<>());
             defActionsPerAction.add(defOpts);
             addOptionForDefenseOptions(mapActionsToDefActions, listOfListOfDefOptionsCopy, maxActionsUseAllowed, defOpts);
          }
@@ -3493,7 +3425,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
 
    public ArrayList<PriestSpell> getPriestSpells() {
       ArrayList<PriestSpell> spells = new ArrayList<>();
-      ArrayList<String> deities = getPriestDeities();
+      List<String> deities = getPriestDeities();
       for (String deity : deities) {
          int deityAffinity = getAffinity(deity);
          if (deityAffinity > 0) {
@@ -3533,8 +3465,8 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       return spells;
    }
 
-   public ArrayList<String> getPriestDeities() {
-      ArrayList<String> deities = new ArrayList<>();
+   public List<String> getPriestDeities() {
+      List<String> deities = new ArrayList<>();
       for (String deity : PriestSpell._deities) {
          if (hasAdvantage(Advantage.DIVINE_AFFINITY_ + deity)) {
             deities.add(deity);
@@ -3601,8 +3533,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          for (Attribute att : Attribute.values()) {
             writeToStream(_attributes.get(att), out);
          }
-         ArrayList<Limb> limbs = new ArrayList<>();
-         limbs.addAll(_limbs.values());
+         ArrayList<Limb> limbs = new ArrayList<>(_limbs.values());
          writeToStream(limbs, out);
 
          synchronized (_equipment) {
@@ -3919,7 +3850,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       _orderedTargetIds.clear();
       _orderedTargetIds.addAll(orderedTargetIds);
       if ((_orderedTargetIds != null) && (_orderedTargetIds.size() > 0)) {
-         _targetID = _orderedTargetIds.get(0).intValue();
+         _targetID = _orderedTargetIds.get(0);
       }
    }
    public void setTarget(int targetsUniqueID) {
@@ -3978,8 +3909,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          sb.append(SEPARATOR_SECONDARY);
       }
       else {
-         for (int i = 0; i < _advList.size(); i++) {
-            Advantage adv = _advList.get(i);
+         for (Advantage adv : _advList) {
             sb.append(adv.getName()).append(SEPARATOR_SECONDARY);
             sb.append(adv.getLevel()).append(SEPARATOR_SECONDARY);
          }
@@ -4209,8 +4139,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       }
       if (_advList.size() > 0) {
          Element advantagesElement = parentDoc.createElement("Advantages");
-         for (int i = 0; i < _advList.size(); i++) {
-            Advantage adv = _advList.get(i);
+         for (Advantage adv : _advList) {
             Element advantageElement = parentDoc.createElement("Advantage");
             advantageElement.setAttribute("Name", adv.getName());
             advantageElement.setAttribute("LevelName", adv.getLevelName());
@@ -4630,7 +4559,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
             if ((modifiedWound.getLocationSide() == Wound.Side.RIGHT) || twoHandedWeapon) {
                thingDropped = (rightArm == null) ? null : rightArm.dropThing();
             }
-            else if ((modifiedWound.getLocationSide() == Wound.Side.LEFT) || twoHandedWeapon) {
+            else if ((modifiedWound.getLocationSide() == Wound.Side.LEFT)) {
                thingDropped = (leftArm == null) ? null : leftArm.dropThing();
             }
             else if ((modifiedWound.getLocationSide() != Wound.Side.RIGHT) && (modifiedWound.getLocationSide() != Wound.Side.LEFT)) {
@@ -4984,7 +4913,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       if (_condition == null) {
          return;
       }
-      ArrayList<String> deities = getPriestDeities();
+      List<String> deities = getPriestDeities();
       Advantage ma = getAdvantage(Advantage.MAGICAL_APTITUDE);
       byte affinity = 0;
       byte divinePower = 0;
@@ -5015,12 +4944,11 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    }
 
    public void setClientProxy(ClientProxy proxy, CombatMap map, Diagnostics diag) {
-      _clientProxy = proxy;
       // If we have a client proxy, then it is a watcher of the mapWatcher
       _mapWatcher = new ArenaLocationBook(this, map, diag);
-      _mapWatcher.registerAsWatcher(_clientProxy, diag);
+      _mapWatcher.registerAsWatcher(proxy, diag);
       // and also as a watcher of the Character itself.
-      registerAsWatcher(_clientProxy, diag);
+      registerAsWatcher(proxy, diag);
    }
 
    public AI_Type getAIType() {
@@ -5567,9 +5495,9 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       return true;
    }
 
-   public ArrayList<String> getPropertyNames() {
-      ArrayList<String> props = _race.getRacialPropertiesList();
-      ArrayList<Advantage> advs = _race.getAdvantagesList();
+   public List<String> getPropertyNames() {
+      List<String> props = _race.getRacialPropertiesList();
+      List<Advantage> advs = _race.getAdvantagesList();
       for (Advantage adv : advs) {
          props.add(adv.getName());
       }
@@ -5669,7 +5597,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
 
    public RequestSpellTypeSelection getSpellTypeSelectionRequest() {
       boolean mage = ((_knownMageSpellsList != null) && (_knownMageSpellsList.size() > 0));
-      ArrayList<String> priestAffinities = getPriestDeities();
+      List<String> priestAffinities = getPriestDeities();
       return new RequestSpellTypeSelection(mage, priestAffinities, this);
    }
 
@@ -5850,8 +5778,8 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       return (byte) (_race.getBuildModifier() + ((getAttributeLevel(Attribute.Strength) + getAttributeLevel(Attribute.Health)) / 2));
    }
 
-   private transient HashMap<String, DrawnObject> _drawnObjectsCache       = new HashMap<>();
-   private transient ArrayList<String>            _recentlyDrawnObjectKeys = new ArrayList<>();
+   private final transient HashMap<String, DrawnObject> _drawnObjectsCache       = new HashMap<>();
+   private final transient List<String>            _recentlyDrawnObjectKeys = new ArrayList<>();
 
    public DrawnObject getDrawnObject(int size, RGB background, RGB foreground, ArenaLocation loc, int[] bounds, Orientation orientation) {
       // If nothing has changed since we last drew ourselves, just return the last thing we drew
@@ -5878,7 +5806,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
 
       int[] preOffsetBounds = new int[bounds.length];
       for (int i = 0; i < preOffsetBounds.length; i += 2) {
-         preOffsetBounds[i + 0] = bounds[i + 0] - hexCenter.x;
+         preOffsetBounds[i] = bounds[i] - hexCenter.x;
          preOffsetBounds[i + 1] = bounds[i + 1] - hexCenter.y;
       }
 
@@ -6054,9 +5982,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       ArrayList<Thing> dupList = new ArrayList<>();
       synchronized (_equipment) {
          try (SemaphoreAutoLocker sal = new SemaphoreAutoLocker(_lock_equipment)) {
-            for (Thing thing : _equipment) {
-               dupList.add(thing);
-            }
+            dupList.addAll(_equipment);
          }
       }
       return dupList;
@@ -6084,13 +6010,13 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    public byte getPenaltyForBeingHeld() {
       byte total = 0;
       for (Byte penalty : _heldPenalties.values()) {
-         total += penalty.byteValue();
+         total += penalty;
       }
       return total;
    }
 
    public void setHoldLevel(IHolder holder, Byte holdLevel) {
-      if ((holdLevel == null) || (holdLevel.byteValue() < 0)) {
+      if ((holdLevel == null) || (holdLevel < 0)) {
          _heldPenalties.remove(holder);
          if (holder.getHoldTarget() == this) {
             holder.setHoldTarget(null);
@@ -6152,7 +6078,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    private final HashMap<IHolder, Byte> _heldPenalties    = new HashMap<>();
    private Character                _holdTarget = null;
 
-   public static Comparator<? super Character> nameComparator = new Comparator<> () {
+   public static final Comparator<? super Character> nameComparator = new Comparator<> () {
       @Override
       public int compare(Character char1, Character char2) {
          return char1.getName().compareTo(char2.getName());

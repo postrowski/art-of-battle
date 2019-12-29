@@ -4,20 +4,11 @@
  */
 package ostrowski.combat.client.ui;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-
 import ostrowski.combat.common.Character;
-import ostrowski.combat.common.CombatMap;
-import ostrowski.combat.common.IMapListener;
-import ostrowski.combat.common.IMapWidget;
-import ostrowski.combat.common.MapWidget2D;
-import ostrowski.combat.common.MapWidget3D;
+import ostrowski.combat.common.*;
 import ostrowski.combat.common.orientations.Orientation;
 import ostrowski.combat.protocol.MapVisibility;
 import ostrowski.combat.protocol.request.RequestLocation;
@@ -27,11 +18,15 @@ import ostrowski.combat.server.CombatServer;
 import ostrowski.ui.Helper;
 import ostrowski.util.Diagnostics;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 public class ArenaMapBlock extends Helper
 {
-   private final short _width  = 600;
-   private final short _height = 400;
-   private IMapWidget          _map;
+   private final static short WIDTH  = 600;
+   private final static short HEIGHT = 400;
+   private IMapWidget         _map;
    public ArenaMapBlock() {
    }
    public void buildBlock(Composite parent, int hSpan) {
@@ -42,8 +37,8 @@ public class ArenaMapBlock extends Helper
          _map = new MapWidget2D(parent);
       }
       GridData data = new GridData(SWT.FILL, SWT.FILL, true/*grabExcessHorizontalSpace*/, true/*grabExcessVerticalSpace*/);
-      data.minimumHeight = _height;
-      data.minimumWidth  = _width;
+      data.minimumHeight = HEIGHT;
+      data.minimumWidth  = WIDTH;
       data.horizontalSpan = hSpan;
       data.horizontalAlignment = GridData.FILL;
       _map.setLayoutData(data);

@@ -1,10 +1,6 @@
 package ostrowski.combat.common.things;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.swt.graphics.RGB;
-
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.DrawnObject;
 import ostrowski.combat.common.Race;
@@ -14,6 +10,9 @@ import ostrowski.combat.common.enums.DamageType;
 import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.html.Table;
 import ostrowski.combat.common.html.TableRow;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Shield extends Thing {
 
@@ -84,22 +83,22 @@ public class Shield extends Thing {
       super.copyData(source);
    }
 
-   public static String NAME_None      = "No Shield";
-   public static String NAME_Buckler   = "Buckler";
-   public static String NAME_Small     = "Small Shield";
-   public static String NAME_Medium    = "Medium Shield";
-   public static String NAME_Large     = "Large Shield";
-   public static String NAME_Tower     = "Tower Shield";
-   public static Shield[] _shieldList = new Shield[] {     //  dam  pd lbs   $
-                                      new Shield(NAME_None,     0,  0,  0,   0, null),
-                                      new Shield(NAME_Buckler,  8,  0,  2,  30, null),
-                                      new Shield(NAME_Small,   12,  1,  4,  50, null),
-                                      new Shield(NAME_Medium,  14,  2,  8,  70, null),
-                                      new Shield(NAME_Large,   16,  3, 15,  90, null),
-                                      new Shield(NAME_Tower,   18,  4, 25, 120, null),
-   };
+   public static final String   NAME_None    = "No Shield";
+   public static final String   NAME_Buckler = "Buckler";
+   public static final String   NAME_Small   = "Small Shield";
+   public static final String   NAME_Medium  = "Medium Shield";
+   public static final String   NAME_Large   = "Large Shield";
+   public static final String   NAME_Tower   = "Tower Shield";
+   public static final Shield[] _shieldList  = new Shield[] {     //  dam  pd lbs   $
+                                                                  new Shield(NAME_None,     0,  0,  0,   0, null),
+                                                                  new Shield(NAME_Buckler,  8,  0,  2,  30, null),
+                                                                  new Shield(NAME_Small,   12,  1,  4,  50, null),
+                                                                  new Shield(NAME_Medium,  14,  2,  8,  70, null),
+                                                                  new Shield(NAME_Large,   16,  3, 15,  90, null),
+                                                                  new Shield(NAME_Tower,   18,  4, 25, 120, null),
+                                                                  };
    static public List<String> getShieldNames() {
-      ArrayList<String> list = new ArrayList<>();
+      List<String> list = new ArrayList<>();
       for (Shield element : _shieldList) {
          list.add(element._name);
       }

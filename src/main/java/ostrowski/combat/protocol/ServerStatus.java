@@ -4,16 +4,16 @@
  */
 package ostrowski.combat.protocol;
 
+import ostrowski.combat.common.Character;
+import ostrowski.combat.common.CombatMap;
+import ostrowski.combat.common.enums.Enums;
+import ostrowski.protocol.SerializableObject;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import ostrowski.combat.common.Character;
-import ostrowski.combat.common.CombatMap;
-import ostrowski.combat.common.enums.Enums;
-import ostrowski.protocol.SerializableObject;
 
 public class ServerStatus extends SerializableObject implements Enums
 {
@@ -64,8 +64,7 @@ public class ServerStatus extends SerializableObject implements Enums
    }
 
    public ArrayList<Character> getCombatants() {
-      ArrayList<Character> list = new ArrayList<>();
-      list.addAll(_combatants);
+      ArrayList<Character> list = new ArrayList<>(_combatants);
       return list;
    }
    public ArrayList<Character> getCombatantsWaitingToConnect() {

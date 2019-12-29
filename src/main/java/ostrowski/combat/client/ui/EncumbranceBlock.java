@@ -9,7 +9,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
-
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.CharacterWidget;
 import ostrowski.combat.common.Rules;
@@ -26,10 +25,8 @@ public class EncumbranceBlock extends Helper implements IUIBlock
    private Text _move;
 
    @SuppressWarnings("unused")
-   private CharacterWidget _display = null;
    public EncumbranceBlock(CharacterWidget display)
    {
-      _display = display;
    }
 
    @Override

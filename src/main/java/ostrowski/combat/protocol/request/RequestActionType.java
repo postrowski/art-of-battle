@@ -1,12 +1,12 @@
 package ostrowski.combat.protocol.request;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
 import ostrowski.combat.common.enums.Enums.Side;
 import ostrowski.combat.common.things.LimbType;
 import ostrowski.protocol.SyncRequest;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 public enum RequestActionType {
    OPT_NO_ACTION                      (0, 1, ""),
@@ -218,107 +218,107 @@ public enum RequestActionType {
       }
       return keys;
    }
-   static List<RequestActionType> forwardActions = Arrays.asList(OPT_LOCATION_ACTION_FORWARD_CLOSE,
-                                                                 OPT_LOCATION_ACTION_FORWARD_ASSIST,
-                                                                 OPT_LOCATION_ACTION_FORWARD_LOCK,
-                                                                 OPT_LOCATION_ACTION_FORWARD_OPEN,
-                                                                 OPT_LOCATION_ACTION_FORWARD_UNLOCK);
-   static List<RequestActionType> rightActions = Arrays.asList(OPT_LOCATION_ACTION_RIGHT_CLOSE,
-                                                               OPT_LOCATION_ACTION_RIGHT_ASSIST,
-                                                               OPT_LOCATION_ACTION_RIGHT_LOCK,
-                                                               OPT_LOCATION_ACTION_RIGHT_OPEN,
-                                                               OPT_LOCATION_ACTION_RIGHT_UNLOCK);
-   static List<RequestActionType> leftActions = Arrays.asList(OPT_LOCATION_ACTION_LEFT_CLOSE,
-                                                              OPT_LOCATION_ACTION_LEFT_ASSIST,
-                                                              OPT_LOCATION_ACTION_LEFT_LOCK,
-                                                              OPT_LOCATION_ACTION_LEFT_OPEN,
-                                                              OPT_LOCATION_ACTION_LEFT_UNLOCK);
-   static List<RequestActionType> closeActions = Arrays.asList(OPT_LOCATION_ACTION_LEFT_CLOSE,
-                                                              OPT_LOCATION_ACTION_RIGHT_CLOSE,
-                                                              OPT_LOCATION_ACTION_FORWARD_CLOSE);
-   static List<RequestActionType> assistActions = Arrays.asList(OPT_LOCATION_ACTION_LEFT_ASSIST,
-                                                                OPT_LOCATION_ACTION_RIGHT_ASSIST,
-                                                                OPT_LOCATION_ACTION_FORWARD_ASSIST);
-   static List<RequestActionType> lockActions = Arrays.asList(OPT_LOCATION_ACTION_LEFT_LOCK,
-                                                              OPT_LOCATION_ACTION_RIGHT_LOCK,
-                                                              OPT_LOCATION_ACTION_FORWARD_LOCK);
-   static List<RequestActionType> openActions = Arrays.asList(OPT_LOCATION_ACTION_LEFT_OPEN,
-                                                              OPT_LOCATION_ACTION_RIGHT_OPEN,
-                                                              OPT_LOCATION_ACTION_FORWARD_OPEN);
-   static List<RequestActionType> unlockActions = Arrays.asList(OPT_LOCATION_ACTION_LEFT_UNLOCK,
-                                                                OPT_LOCATION_ACTION_RIGHT_UNLOCK,
-                                                                OPT_LOCATION_ACTION_FORWARD_UNLOCK);
-   static List<RequestActionType> locationActions = Arrays.asList(OPT_LOCATION_ACTION_0,
-                                                                  OPT_LOCATION_ACTION_1,
-                                                                  OPT_LOCATION_ACTION_2,
-                                                                  OPT_LOCATION_ACTION_3,
-                                                                  OPT_LOCATION_ACTION_4,
-                                                                  OPT_LOCATION_ACTION_5,
-                                                                  OPT_LOCATION_ACTION_6,
-                                                                  OPT_LOCATION_ACTION_7,
-                                                                  OPT_LOCATION_ACTION_8,
-                                                                  OPT_LOCATION_ACTION_9,
-                                                                  OPT_LOCATION_ACTION_10,
-                                                                  OPT_LOCATION_ACTION_11,
-                                                                  OPT_LOCATION_ACTION_12,
-                                                                  OPT_LOCATION_ACTION_13,
-                                                                  OPT_LOCATION_ACTION_14,
-                                                                  OPT_LOCATION_ACTION_15,
-                                                                  OPT_LOCATION_ACTION_16,
-                                                                  OPT_LOCATION_ACTION_17,
-                                                                  OPT_LOCATION_ACTION_18,
-                                                                  OPT_LOCATION_ACTION_19);
-   static List<RequestActionType> readyEquipActions = Arrays.asList(OPT_EQUIP_UNEQUIP_READY_0,
-                                                                    OPT_EQUIP_UNEQUIP_READY_1,
-                                                                    OPT_EQUIP_UNEQUIP_READY_2,
-                                                                    OPT_EQUIP_UNEQUIP_READY_3,
-                                                                    OPT_EQUIP_UNEQUIP_READY_4,
-                                                                    OPT_EQUIP_UNEQUIP_READY_5,
-                                                                    OPT_EQUIP_UNEQUIP_READY_6,
-                                                                    OPT_EQUIP_UNEQUIP_READY_7,
-                                                                    OPT_EQUIP_UNEQUIP_READY_8,
-                                                                    OPT_EQUIP_UNEQUIP_READY_9,
-                                                                    OPT_EQUIP_UNEQUIP_READY_10,
-                                                                    OPT_EQUIP_UNEQUIP_READY_11,
-                                                                    OPT_EQUIP_UNEQUIP_READY_12,
-                                                                    OPT_EQUIP_UNEQUIP_READY_13,
-                                                                    OPT_EQUIP_UNEQUIP_READY_14,
-                                                                    OPT_EQUIP_UNEQUIP_READY_15,
-                                                                    OPT_EQUIP_UNEQUIP_READY_16,
-                                                                    OPT_EQUIP_UNEQUIP_READY_17,
-                                                                    OPT_EQUIP_UNEQUIP_READY_18,
-                                                                    OPT_EQUIP_UNEQUIP_READY_19);
-   static List<RequestActionType> applyEquipActions = Arrays.asList(OPT_EQUIP_UNEQUIP_APPLY_0,
-                                                                    OPT_EQUIP_UNEQUIP_APPLY_1,
-                                                                    OPT_EQUIP_UNEQUIP_APPLY_2,
-                                                                    OPT_EQUIP_UNEQUIP_APPLY_3,
-                                                                    OPT_EQUIP_UNEQUIP_APPLY_4,
-                                                                    OPT_EQUIP_UNEQUIP_APPLY_5,
-                                                                    OPT_EQUIP_UNEQUIP_APPLY_6,
-                                                                    OPT_EQUIP_UNEQUIP_APPLY_7,
-                                                                    OPT_EQUIP_UNEQUIP_APPLY_8,
-                                                                    OPT_EQUIP_UNEQUIP_APPLY_9,
-                                                                    OPT_EQUIP_UNEQUIP_APPLY_10,
-                                                                    OPT_EQUIP_UNEQUIP_APPLY_11,
-                                                                    OPT_EQUIP_UNEQUIP_APPLY_12,
-                                                                    OPT_EQUIP_UNEQUIP_APPLY_13,
-                                                                    OPT_EQUIP_UNEQUIP_APPLY_14,
-                                                                    OPT_EQUIP_UNEQUIP_APPLY_15,
-                                                                    OPT_EQUIP_UNEQUIP_APPLY_16,
-                                                                    OPT_EQUIP_UNEQUIP_APPLY_17,
-                                                                    OPT_EQUIP_UNEQUIP_APPLY_18,
-                                                                    OPT_EQUIP_UNEQUIP_APPLY_19);
+   static final List<RequestActionType> forwardActions    = Arrays.asList(OPT_LOCATION_ACTION_FORWARD_CLOSE,
+                                                                          OPT_LOCATION_ACTION_FORWARD_ASSIST,
+                                                                          OPT_LOCATION_ACTION_FORWARD_LOCK,
+                                                                          OPT_LOCATION_ACTION_FORWARD_OPEN,
+                                                                          OPT_LOCATION_ACTION_FORWARD_UNLOCK);
+   static final List<RequestActionType> rightActions      = Arrays.asList(OPT_LOCATION_ACTION_RIGHT_CLOSE,
+                                                                          OPT_LOCATION_ACTION_RIGHT_ASSIST,
+                                                                          OPT_LOCATION_ACTION_RIGHT_LOCK,
+                                                                          OPT_LOCATION_ACTION_RIGHT_OPEN,
+                                                                          OPT_LOCATION_ACTION_RIGHT_UNLOCK);
+   static final List<RequestActionType> leftActions       = Arrays.asList(OPT_LOCATION_ACTION_LEFT_CLOSE,
+                                                                          OPT_LOCATION_ACTION_LEFT_ASSIST,
+                                                                          OPT_LOCATION_ACTION_LEFT_LOCK,
+                                                                          OPT_LOCATION_ACTION_LEFT_OPEN,
+                                                                          OPT_LOCATION_ACTION_LEFT_UNLOCK);
+   static final List<RequestActionType> closeActions      = Arrays.asList(OPT_LOCATION_ACTION_LEFT_CLOSE,
+                                                                          OPT_LOCATION_ACTION_RIGHT_CLOSE,
+                                                                          OPT_LOCATION_ACTION_FORWARD_CLOSE);
+   static final List<RequestActionType> assistActions     = Arrays.asList(OPT_LOCATION_ACTION_LEFT_ASSIST,
+                                                                          OPT_LOCATION_ACTION_RIGHT_ASSIST,
+                                                                          OPT_LOCATION_ACTION_FORWARD_ASSIST);
+   static final List<RequestActionType> lockActions       = Arrays.asList(OPT_LOCATION_ACTION_LEFT_LOCK,
+                                                                          OPT_LOCATION_ACTION_RIGHT_LOCK,
+                                                                          OPT_LOCATION_ACTION_FORWARD_LOCK);
+   static final List<RequestActionType> openActions       = Arrays.asList(OPT_LOCATION_ACTION_LEFT_OPEN,
+                                                                          OPT_LOCATION_ACTION_RIGHT_OPEN,
+                                                                          OPT_LOCATION_ACTION_FORWARD_OPEN);
+   static final List<RequestActionType> unlockActions     = Arrays.asList(OPT_LOCATION_ACTION_LEFT_UNLOCK,
+                                                                          OPT_LOCATION_ACTION_RIGHT_UNLOCK,
+                                                                          OPT_LOCATION_ACTION_FORWARD_UNLOCK);
+   static final List<RequestActionType> locationActions   = Arrays.asList(OPT_LOCATION_ACTION_0,
+                                                                          OPT_LOCATION_ACTION_1,
+                                                                          OPT_LOCATION_ACTION_2,
+                                                                          OPT_LOCATION_ACTION_3,
+                                                                          OPT_LOCATION_ACTION_4,
+                                                                          OPT_LOCATION_ACTION_5,
+                                                                          OPT_LOCATION_ACTION_6,
+                                                                          OPT_LOCATION_ACTION_7,
+                                                                          OPT_LOCATION_ACTION_8,
+                                                                          OPT_LOCATION_ACTION_9,
+                                                                          OPT_LOCATION_ACTION_10,
+                                                                          OPT_LOCATION_ACTION_11,
+                                                                          OPT_LOCATION_ACTION_12,
+                                                                          OPT_LOCATION_ACTION_13,
+                                                                          OPT_LOCATION_ACTION_14,
+                                                                          OPT_LOCATION_ACTION_15,
+                                                                          OPT_LOCATION_ACTION_16,
+                                                                          OPT_LOCATION_ACTION_17,
+                                                                          OPT_LOCATION_ACTION_18,
+                                                                          OPT_LOCATION_ACTION_19);
+   static final List<RequestActionType> readyEquipActions = Arrays.asList(OPT_EQUIP_UNEQUIP_READY_0,
+                                                                          OPT_EQUIP_UNEQUIP_READY_1,
+                                                                          OPT_EQUIP_UNEQUIP_READY_2,
+                                                                          OPT_EQUIP_UNEQUIP_READY_3,
+                                                                          OPT_EQUIP_UNEQUIP_READY_4,
+                                                                          OPT_EQUIP_UNEQUIP_READY_5,
+                                                                          OPT_EQUIP_UNEQUIP_READY_6,
+                                                                          OPT_EQUIP_UNEQUIP_READY_7,
+                                                                          OPT_EQUIP_UNEQUIP_READY_8,
+                                                                          OPT_EQUIP_UNEQUIP_READY_9,
+                                                                          OPT_EQUIP_UNEQUIP_READY_10,
+                                                                          OPT_EQUIP_UNEQUIP_READY_11,
+                                                                          OPT_EQUIP_UNEQUIP_READY_12,
+                                                                          OPT_EQUIP_UNEQUIP_READY_13,
+                                                                          OPT_EQUIP_UNEQUIP_READY_14,
+                                                                          OPT_EQUIP_UNEQUIP_READY_15,
+                                                                          OPT_EQUIP_UNEQUIP_READY_16,
+                                                                          OPT_EQUIP_UNEQUIP_READY_17,
+                                                                          OPT_EQUIP_UNEQUIP_READY_18,
+                                                                          OPT_EQUIP_UNEQUIP_READY_19);
+   static final List<RequestActionType> applyEquipActions = Arrays.asList(OPT_EQUIP_UNEQUIP_APPLY_0,
+                                                                          OPT_EQUIP_UNEQUIP_APPLY_1,
+                                                                          OPT_EQUIP_UNEQUIP_APPLY_2,
+                                                                          OPT_EQUIP_UNEQUIP_APPLY_3,
+                                                                          OPT_EQUIP_UNEQUIP_APPLY_4,
+                                                                          OPT_EQUIP_UNEQUIP_APPLY_5,
+                                                                          OPT_EQUIP_UNEQUIP_APPLY_6,
+                                                                          OPT_EQUIP_UNEQUIP_APPLY_7,
+                                                                          OPT_EQUIP_UNEQUIP_APPLY_8,
+                                                                          OPT_EQUIP_UNEQUIP_APPLY_9,
+                                                                          OPT_EQUIP_UNEQUIP_APPLY_10,
+                                                                          OPT_EQUIP_UNEQUIP_APPLY_11,
+                                                                          OPT_EQUIP_UNEQUIP_APPLY_12,
+                                                                          OPT_EQUIP_UNEQUIP_APPLY_13,
+                                                                          OPT_EQUIP_UNEQUIP_APPLY_14,
+                                                                          OPT_EQUIP_UNEQUIP_APPLY_15,
+                                                                          OPT_EQUIP_UNEQUIP_APPLY_16,
+                                                                          OPT_EQUIP_UNEQUIP_APPLY_17,
+                                                                          OPT_EQUIP_UNEQUIP_APPLY_18,
+                                                                          OPT_EQUIP_UNEQUIP_APPLY_19);
 
-   static List<RequestActionType> prepareInitateSpellActions = Arrays.asList(OPT_PREPARE_INITATE_SPELL_1,
-                                                                             OPT_PREPARE_INITATE_SPELL_2,
-                                                                             OPT_PREPARE_INITATE_SPELL_3,
-                                                                             OPT_PREPARE_INITATE_SPELL_4,
-                                                                             OPT_PREPARE_INITATE_SPELL_5);
-   static List<RequestActionType> completePriestSpellActions = Arrays.asList(OPT_COMPLETE_PRIEST_SPELL_1,
-                                                                             OPT_COMPLETE_PRIEST_SPELL_2,
-                                                                             OPT_COMPLETE_PRIEST_SPELL_3,
-                                                                             OPT_COMPLETE_PRIEST_SPELL_4,
-                                                                             OPT_COMPLETE_PRIEST_SPELL_5);
+   static final List<RequestActionType> prepareInitateSpellActions = Arrays.asList(OPT_PREPARE_INITATE_SPELL_1,
+                                                                                   OPT_PREPARE_INITATE_SPELL_2,
+                                                                                   OPT_PREPARE_INITATE_SPELL_3,
+                                                                                   OPT_PREPARE_INITATE_SPELL_4,
+                                                                                   OPT_PREPARE_INITATE_SPELL_5);
+   static final List<RequestActionType> completePriestSpellActions = Arrays.asList(OPT_COMPLETE_PRIEST_SPELL_1,
+                                                                                   OPT_COMPLETE_PRIEST_SPELL_2,
+                                                                                   OPT_COMPLETE_PRIEST_SPELL_3,
+                                                                                   OPT_COMPLETE_PRIEST_SPELL_4,
+                                                                                   OPT_COMPLETE_PRIEST_SPELL_5);
    public boolean isHexOptionForward()       { return forwardActions.contains(this);             }
    public boolean isHexOptionRight()         { return rightActions.contains(this);               }
    public boolean isHexOptionLeft()          { return leftActions.contains(this);                }

@@ -74,12 +74,12 @@ public class CharacterGeneratorTest implements Enums {
          }
       }
    }
-   class SampleRaceData {
-      String raceName;
-      int avePoints;
-      int pointsStep;
-      int rowsToCover;
-      boolean ranged;
+   static class SampleRaceData {
+      final String  raceName;
+      final int     avePoints;
+      final int     pointsStep;
+      final int     rowsToCover;
+      final boolean ranged;
 
       public SampleRaceData(String raceName, int avePoints, int pointsStep, int rowsToCover, boolean ranged) {
          this.raceName   = raceName;
@@ -105,7 +105,7 @@ public class CharacterGeneratorTest implements Enums {
       System.out.println(convertCharacterToRow(new Character(), true, 6));
       for (SampleRaceData raceData : Arrays.asList(
 //                                    new SampleRaceData(Race.NAME_Kobold,    40,   4, 75, false),
-                                    new SampleRaceData(Race.NAME_Kobold,    40,  20, 15,  true),
+              new SampleRaceData(Race.NAME_Kobold, 40, 20, 15, true),
 //
 //                                    new SampleRaceData(Race.NAME_Goblin,     0,   0,  0, false),
 //                                    new SampleRaceData(Race.NAME_Goblin,    75,   5, 75, false),
@@ -124,12 +124,12 @@ public class CharacterGeneratorTest implements Enums {
 //
 //                                    new SampleRaceData(Race.NAME_Elf,        0,   0,  0, false),
 //                                    new SampleRaceData(Race.NAME_Elf,      175,  15, 35, false),
-                                    new SampleRaceData(Race.NAME_Elf,      175,  35, 10,  true),
+              new SampleRaceData(Race.NAME_Elf, 175, 35, 10, true),
 
 //                                    new SampleRaceData(Race.NAME_Wolf,       0,   0,  0, false),
 //                                    new SampleRaceData(Race.NAME_Wolf,      75,   5, 20, false),
 //                                    new SampleRaceData(Race.NAME_Warg,     100,   7, 20, false),
-                                    new SampleRaceData(Race.NAME_Minotaur, 235,  20, 25, false)
+              new SampleRaceData(Race.NAME_Minotaur, 235, 20, 25, false)
                                     )) {
          if (raceData.avePoints == 0) {
             System.out.println("\n</table>");
@@ -398,18 +398,18 @@ public class CharacterGeneratorTest implements Enums {
 
       StringBuilder attributes = new StringBuilder();
       for (Attribute attr : Attribute.values()) {
-         String attrStr = String.valueOf(character.getAttributeLevel(attr));
+         StringBuilder attrStr = new StringBuilder(String.valueOf(character.getAttributeLevel(attr)));
          int maxLen = 4;
          if (attr == Attribute.Strength) {
-            attrStr = strStr;
+            attrStr = new StringBuilder(strStr);
             maxLen = 6;
          }
          else if (attr == Attribute.Health) {
-            attrStr = htStr;
+            attrStr = new StringBuilder(htStr);
             maxLen = 6;
          }
          while (attrStr.length() < maxLen) {
-            attrStr = " " + attrStr;
+            attrStr.insert(0, " ");
          }
          attributes.append(attrStr);
       }
@@ -492,7 +492,7 @@ public class CharacterGeneratorTest implements Enums {
          else {
             rows[0].addTD(new TableData(skills.toString()).setRowSpan(rowsToUse));
          }
-         String equip = armor.getName() + ((shield == null) ? "" : "<br/>" + shield.getName()) + "<br/>";
+         StringBuilder equip = new StringBuilder(armor.getName() + ((shield == null) ? "" : "<br/>" + shield.getName()) + "<br/>");
          List<Thing> things = new ArrayList<>();
          Limb rightHand = character.getLimb(LimbType.HAND_RIGHT);
          Limb leftHand = character.getLimb(LimbType.HAND_LEFT);
@@ -516,13 +516,13 @@ public class CharacterGeneratorTest implements Enums {
                continue;
             }
             if (!first) {
-               equip += ", ";
+               equip.append(", ");
             }
             first = false;
-            equip += thing._name;
+            equip.append(thing._name);
          }
          HashMap<DefenseOption, Byte> defOptMap = defMap.get(RANGE.OUT_OF_RANGE);
-         rows[0].addTD(new TableData(equip).setRowSpan(rowsToUse));
+         rows[0].addTD(new TableData(equip.toString()).setRowSpan(rowsToUse));
          rows[0].addTD(new TableData(String.valueOf(character.getPassiveDefense(RANGE.OUT_OF_RANGE, false, distance))).setRowSpan(rowsToUse));
          rows[0].addTD(new TableData(String.valueOf(defOptMap.get(DefenseOption.DEF_RETREAT))).setRowSpan(rowsToUse));
          rows[0].addTD(new TableData(String.valueOf(defOptMap.get(DefenseOption.DEF_DODGE))).setRowSpan(rowsToUse));
@@ -608,11 +608,11 @@ public class CharacterGeneratorTest implements Enums {
       private final WeaponStyleAttack style;
       private final Skill skill;
       public byte baseSkill;
-      public byte adjustedSkill = (byte)0;
-      public byte actionsRequired;
-      public String damageStr;
-      public String styleName;
-      public boolean isShowable = false;
+      public       byte    adjustedSkill = (byte)0;
+      public final byte    actionsRequired;
+      public final String  damageStr;
+      public final String  styleName;
+      public       boolean isShowable = false;
       public WeaponStyleDesc(WeaponStyleAttack style, Character character, LimbType limbType) {
          this.style           = style;
          this.styleName       = style.getName();
@@ -674,7 +674,7 @@ public class CharacterGeneratorTest implements Enums {
          if (isOnlySkill) {
             description.append(" skill ").append(this.skill.getName()).append(": ").append(this.baseSkill);
          }
-         if (((singleSkillBaseLevel != null) ? singleSkillBaseLevel.byteValue() : this.baseSkill) != this.adjustedSkill) {
+         if (((singleSkillBaseLevel != null) ? singleSkillBaseLevel : this.baseSkill) != this.adjustedSkill) {
             description.append(" (adj. ").append(this.adjustedSkill).append(")");
          }
          description.append(" ").append(this.actionsRequired).append(" actions: ");
@@ -686,9 +686,9 @@ public class CharacterGeneratorTest implements Enums {
       private final Character character;
       private final Weapon weapon;
       private final LimbType limbType;
-      private SkillType singleSkillType = null;
-      public List<WeaponStyleDesc> styleList = new ArrayList<>();
-      public int baseSkill;
+      private      SkillType             singleSkillType = null;
+      public final List<WeaponStyleDesc> styleList       = new ArrayList<>();
+      public       int                   baseSkill;
       public int adjustedSkill;
       public Byte singleSkillBaseLevel = null;
 
@@ -736,7 +736,7 @@ public class CharacterGeneratorTest implements Enums {
             this.baseSkill = this.singleSkillBaseLevel;
             this.adjustedSkill = skillLevel;
             description.append(skill.getName()).append(": ").append(this.singleSkillBaseLevel);
-            if (this.singleSkillBaseLevel.byteValue() != skillLevel) {
+            if (this.singleSkillBaseLevel != skillLevel) {
                description.append(" (adj. ").append(skillLevel).append(")");
             }
             this.singleSkillBaseLevel = skillLevel;
@@ -883,7 +883,7 @@ public class CharacterGeneratorTest implements Enums {
          if (isAmbidexterous) {
             character.addAdvantage(Advantage.getAdvantage(Advantage.AMBIDEXTROUS));
          }
-         for (boolean offHand = false; !offHand; offHand = true) {
+         for (boolean offHand = false; offHand = !offHand; offHand = true) {
             int offHandPenalty = 0;
             character.getLimb(LimbType.HAND_LEFT).dropThing();
             character.getLimb(LimbType.HAND_RIGHT).dropThing();

@@ -1,18 +1,9 @@
 package ostrowski.combat.client.ui;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Spinner;
-import org.eclipse.swt.widgets.Text;
-
+import org.eclipse.swt.widgets.*;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.CharacterWidget;
 import ostrowski.combat.common.Rules;
@@ -22,10 +13,13 @@ import ostrowski.combat.common.enums.Enums;
 import ostrowski.combat.common.enums.SkillType;
 import ostrowski.ui.Helper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SkillsBlock extends Helper implements Enums, ModifyListener, IUIBlock
 {
-   CharacterWidget   _display;
-   private final Combo[]   _skillType     = new Combo[6];
+   final         CharacterWidget _display;
+   private final Combo[]         _skillType     = new Combo[6];
    private final Spinner[] _skillLevel    = new Spinner[_skillType.length];
    private final Text[]    _skillLevelAdj = new Text[_skillType.length];
    private final Text[]    _skillCost     = new Text[_skillType.length];
@@ -45,7 +39,7 @@ public class SkillsBlock extends Helper implements Enums, ModifyListener, IUIBlo
       createLabel(skillGroup, "Base Level", SWT.CENTER, 1, null);
       createLabel(skillGroup, "Adj.",       SWT.CENTER, 1, null);
       createLabel(skillGroup, "Cost",       SWT.CENTER, 1, null);
-      ArrayList<String> skillNames = new ArrayList<>();
+      List<String> skillNames = new ArrayList<>();
       skillNames.add("---");
       Attribute priorAttribute = null;
       for (SkillType element : SkillType.values()) {

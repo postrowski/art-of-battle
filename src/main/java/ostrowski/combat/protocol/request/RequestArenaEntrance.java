@@ -4,16 +4,6 @@
  */
 package ostrowski.combat.protocol.request;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import ostrowski.DebugBreak;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.enums.Enums;
@@ -21,6 +11,12 @@ import ostrowski.protocol.RequestOption;
 import ostrowski.protocol.SerializableFactory;
 import ostrowski.protocol.SyncRequest;
 import ostrowski.util.SemaphoreAutoLocker;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class RequestArenaEntrance extends SyncRequest
 {
@@ -160,11 +156,7 @@ public class RequestArenaEntrance extends SyncRequest
       }
    }
    private void addCharacterByTeam(Byte team, TeamMember teamMember) {
-      List<TeamMember> teamMembers = _mapTeamToListTeamMembers.get(team);
-      if (teamMembers == null) {
-         teamMembers = new ArrayList<>();
-         _mapTeamToListTeamMembers.put(team, teamMembers);
-      }
+      List<TeamMember> teamMembers = _mapTeamToListTeamMembers.computeIfAbsent(team, k -> new ArrayList<>());
       teamMembers.add(teamMember.clone());
    }
    public void rebuildQuestion() {
@@ -183,8 +175,7 @@ public class RequestArenaEntrance extends SyncRequest
       }
    }
    public List<TeamMember> getCharacterNamesByTeam(Byte team) {
-      List<TeamMember> characterNames = new ArrayList<>();
-      characterNames.addAll(_mapTeamToListTeamMembers.get(team));
+      List<TeamMember> characterNames = new ArrayList<>(_mapTeamToListTeamMembers.get(team));
       return characterNames;
    }
    public Byte getSelectedCharacterTeam() {

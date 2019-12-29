@@ -1,19 +1,14 @@
 package ostrowski.combat.common.orientations;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-
 import org.eclipse.swt.graphics.RGB;
-
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.DrawnObject;
 import ostrowski.combat.common.enums.Position;
-import ostrowski.combat.common.things.Hand;
-import ostrowski.combat.common.things.Head;
-import ostrowski.combat.common.things.Leg;
-import ostrowski.combat.common.things.Limb;
-import ostrowski.combat.common.things.LimbType;
+import ostrowski.combat.common.things.*;
 import ostrowski.combat.server.ArenaLocation;
+
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 public class OrientationDoubleQuadraped extends OrientationSerpentine
 {
@@ -38,7 +33,7 @@ public class OrientationDoubleQuadraped extends OrientationSerpentine
       int yOffset = narrowDiameter;
       int xOffset = 0;
       if (!loc.sameCoordinates(_coordinates.get(0))) {
-         yOffset = 0-narrowDiameter;
+         yOffset = -narrowDiameter;
       }
       charOutlines.offsetPoints(xOffset, yOffset);
       return charOutlines;
@@ -60,7 +55,7 @@ public class OrientationDoubleQuadraped extends OrientationSerpentine
          return 0;
       }
       if (limb instanceof Head) {
-         return 0-(size/4);
+         return -(size / 4);
       }
       return size/24;
    }
@@ -73,7 +68,7 @@ public class OrientationDoubleQuadraped extends OrientationSerpentine
          if (limb.getLocationSide() == Side.LEFT) {
             return size/10;
          }
-         return 0-(size/10);
+         return -(size / 10);
       }
       return super.getLimbOffsetX(limb, size, loc);
    }

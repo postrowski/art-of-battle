@@ -1,7 +1,5 @@
 package ostrowski.combat.common.spells.priest.information;
 
-import java.util.ArrayList;
-
 import ostrowski.combat.common.spells.priest.IPriestGroup;
 import ostrowski.combat.common.spells.priest.PriestSpell;
 import ostrowski.combat.common.spells.priest.evil.SpellDetectGood;
@@ -11,9 +9,11 @@ import ostrowski.combat.common.spells.priest.healing.SpellDetectPoison;
 import ostrowski.combat.common.spells.priest.nature.SpellSeekElement;
 import ostrowski.combat.common.spells.priest.nature.animal.SpellDetectLife;
 
+import java.util.ArrayList;
+
 public class PriestInformationSpell implements IPriestGroup
 {
-   static public ArrayList<PriestSpell> _spells = new ArrayList<>();
+   static public final ArrayList<PriestSpell> _spells = new ArrayList<>();
    static {
       _spells.add(new SpellDetectGood(PriestInformationSpell.class, 1));
       _spells.add(new SpellDetectEvil(PriestInformationSpell.class, 1));

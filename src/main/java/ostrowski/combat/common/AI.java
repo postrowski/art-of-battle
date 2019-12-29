@@ -4,77 +4,35 @@
 package ostrowski.combat.common;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
 import ostrowski.DebugBreak;
 import ostrowski.combat.client.CharacterDisplay;
 import ostrowski.combat.client.ServerConnection;
-import ostrowski.combat.common.enums.AI_Type;
-import ostrowski.combat.common.enums.Attribute;
-import ostrowski.combat.common.enums.DamageType;
-import ostrowski.combat.common.enums.DefenseOption;
-import ostrowski.combat.common.enums.Enums;
-import ostrowski.combat.common.enums.Facing;
-import ostrowski.combat.common.enums.Position;
-import ostrowski.combat.common.enums.SkillType;
+import ostrowski.combat.common.enums.*;
 import ostrowski.combat.common.orientations.Orientation;
-import ostrowski.combat.common.spells.IAreaSpell;
-import ostrowski.combat.common.spells.ICastInBattle;
-import ostrowski.combat.common.spells.IExpiringSpell;
-import ostrowski.combat.common.spells.IInstantaneousSpell;
-import ostrowski.combat.common.spells.IMissileSpell;
-import ostrowski.combat.common.spells.IRangedSpell;
-import ostrowski.combat.common.spells.IResistedSpell;
-import ostrowski.combat.common.spells.Spell;
+import ostrowski.combat.common.spells.*;
 import ostrowski.combat.common.spells.mage.MageSpell;
 import ostrowski.combat.common.spells.mage.SpellSpiderWeb;
 import ostrowski.combat.common.spells.priest.PriestSpell;
 import ostrowski.combat.common.spells.priest.evil.SpellMassFear;
 import ostrowski.combat.common.spells.priest.good.SpellCharmPerson;
 import ostrowski.combat.common.spells.priest.healing.SpellCureWound;
-import ostrowski.combat.common.things.Hand;
-import ostrowski.combat.common.things.Limb;
-import ostrowski.combat.common.things.LimbType;
-import ostrowski.combat.common.things.MissileWeapon;
-import ostrowski.combat.common.things.Potion;
-import ostrowski.combat.common.things.Shield;
-import ostrowski.combat.common.things.Thing;
-import ostrowski.combat.common.things.Weapon;
+import ostrowski.combat.common.things.*;
 import ostrowski.combat.common.weaponStyles.WeaponStyleAttack;
 import ostrowski.combat.common.weaponStyles.WeaponStyleAttackRanged;
 import ostrowski.combat.common.wounds.Wound;
-import ostrowski.combat.protocol.request.RequestAction;
-import ostrowski.combat.protocol.request.RequestActionOption;
-import ostrowski.combat.protocol.request.RequestActionType;
-import ostrowski.combat.protocol.request.RequestAttackStyle;
-import ostrowski.combat.protocol.request.RequestDefense;
-import ostrowski.combat.protocol.request.RequestEquipment;
-import ostrowski.combat.protocol.request.RequestGrapplingHoldMaintain;
-import ostrowski.combat.protocol.request.RequestLocation;
-import ostrowski.combat.protocol.request.RequestMovement;
-import ostrowski.combat.protocol.request.RequestPosition;
-import ostrowski.combat.protocol.request.RequestSingleTargetSelection;
-import ostrowski.combat.protocol.request.RequestSpellSelection;
-import ostrowski.combat.protocol.request.RequestSpellTypeSelection;
-import ostrowski.combat.protocol.request.RequestUseOfHeroPoint;
-import ostrowski.combat.server.Arena;
-import ostrowski.combat.server.ArenaCoordinates;
-import ostrowski.combat.server.ArenaLocation;
-import ostrowski.combat.server.Battle;
-import ostrowski.combat.server.CombatServer;
+import ostrowski.combat.protocol.request.*;
+import ostrowski.combat.server.*;
 import ostrowski.protocol.IRequestOption;
 import ostrowski.protocol.SerializableObject;
 import ostrowski.protocol.SyncRequest;
 import ostrowski.util.SemaphoreAutoTracker;
 
+import java.util.*;
+
 public class AI implements Enums
 {
    Character                 _self;
-   AI_Type                   _aiType;
+   final AI_Type _aiType;
 
    // This map is maintained for each AI bot, a map of each of the other characters, where
    // they are on the map. This map is only updated while the other characters are visible.
@@ -182,12 +140,13 @@ public class AI implements Enums
                      byte radius = ((IAreaSpell) currentSpell).getRadiusOfAffect();
                      List<ArenaCoordinates> friendLocations = new ArrayList<>();
                      List<ArenaCoordinates> enemyLocations = new ArrayList<>();
-                     for (Character character : map.getCombatants()) {
-                        if (character.isEnemy(_self)) {
-                           enemyLocations.addAll(character.getCoordinates());
-                        }
-                        else {
-                           friendLocations.addAll(character.getCoordinates());
+                     if (map != null) {
+                        for (Character character : map.getCombatants()) {
+                           if (character.isEnemy(_self)) {
+                              enemyLocations.addAll(character.getCoordinates());
+                           } else {
+                              friendLocations.addAll(character.getCoordinates());
+                           }
                         }
                      }
 
@@ -195,8 +154,8 @@ public class AI implements Enums
                      int bestScore = 0;
                      for (ArenaCoordinates coord : reqLoc.getSelectableCoordinates()) {
                         // Weight a friend as being 5 times more important to avoid than an enemy to hit.
-                        int score =      scoreLocation(map, coord, radius, enemyLocations)
-                                  - (5 * scoreLocation(map, coord, radius, friendLocations));
+                        int score =      scoreLocation(coord, radius, enemyLocations)
+                                  - (5 * scoreLocation(coord, radius, friendLocations));
                         if (score > bestScore) {
                            bestCoord = coord;
                            bestScore = score;
@@ -269,12 +228,12 @@ public class AI implements Enums
                debug = !debug;
 
                DebugBreak.debugBreak(_self.getName() + ": unable to decide what to do");
-            } while (debug == true);
+            } while (debug);
             return false;
          }
          if (inObj instanceof Character) {
             Character newChar = (Character) inObj;
-            Integer uniqueID = newChar._uniqueID;
+            int uniqueID = newChar._uniqueID;
             if (uniqueID == _self._uniqueID) {
                _self.copyData(newChar);
             }
@@ -288,13 +247,9 @@ public class AI implements Enums
                   }
                }
             }
-            if (newChar._uniqueID != _self._uniqueID) {
+            if (newChar._uniqueID != _self._uniqueID && (map != null)) {
                if ((_aiType== AI_Type.GOD) ||  map.canSee(newChar, _self, false/*considerFacing*/, false/*blockedByAnyStandingCharacter*/)) {
-                  Map<Integer, List<ArenaLocation>> myVisibilityMap = _mapToMapOfLocations.get(_self._uniqueID);
-                  if (myVisibilityMap == null) {
-                     myVisibilityMap = new HashMap<>();
-                     _mapToMapOfLocations.put(_self._uniqueID, myVisibilityMap);
-                  }
+                  Map<Integer, List<ArenaLocation>> myVisibilityMap = _mapToMapOfLocations.computeIfAbsent(_self._uniqueID, k -> new HashMap<>());
                   //Rules.diag("AI character " + _self.getName() + " sees " + newChar.getName() + " at " + newChar.getHeadCoordinates());
                   List<ArenaLocation> locs = map.getLocations(newChar);
                   myVisibilityMap.put(newChar._uniqueID, locs);
@@ -318,7 +273,7 @@ public class AI implements Enums
       return false;
    }
 
-   private static int scoreLocation(CombatMap map, ArenaCoordinates coord,
+   private static int scoreLocation(ArenaCoordinates coord,
                                     byte radius, List<ArenaCoordinates> locations) {
       int score = 0;
       for (ArenaCoordinates enemyCoord : locations) {
@@ -474,7 +429,7 @@ public class AI implements Enums
             Limb leftHand = _self.getLimb(LimbType.HAND_LEFT);
             if ((leftHand != null) && (!leftHand.isCrippled())) {
                Thing leftThing = leftHand.getHeldThing();
-               if ((leftThing != null) && (leftThing instanceof Shield)) {
+               if (leftThing instanceof Shield) {
                   // Don't drop the shield, because then we wouldn't be able to
                   // pickup the weapon we probably just dropped.
                   String applyName = "drop " + leftThing.getName();
@@ -618,7 +573,7 @@ public class AI implements Enums
             if (thing instanceof Potion) {
                Potion potion = (Potion) thing;
                if (potion.isBeneficial()) {
-                  boolean usePotion = false;
+                  boolean usePotion;
                   if (potionName == null) {
                      // a null potionName means use any non-healing, beneficial Potion:
                      usePotion = !potion.isHealing();
@@ -949,6 +904,7 @@ public class AI implements Enums
             else {
                if (myWeapon._attackStyles.length == 1) {
                   // This weapon can only be thrown.
+                  canThrow = false;
                }
                else {
                   Weapon altWeapon = _self.getAltWeapon();
@@ -956,6 +912,7 @@ public class AI implements Enums
                      if (altWeapon.getName().equals(myWeapon.getName())) {
                         // Our alternate weapon is the same as our primary weapon,
                         // we can throw the primary.
+                        canThrow = true;
                      }
                      else {
                         // Do we have another significant weapon other than this one?
@@ -1316,6 +1273,7 @@ public class AI implements Enums
                         for (IHolder holder : target.getHolders()) {
                            if (holder.getClass() == inateSpell.getClass()) {
                               useOdds = 0;
+                              break;
                            }
                         }
                      }
@@ -1350,7 +1308,7 @@ public class AI implements Enums
                }
             }
          }
-         Spell spell = selectSpellToCast(display, considerCastingTime, map, target);
+         Spell spell = selectSpellToCast(considerCastingTime, map, target);
          if (spell != null) {
             traceSb.append(", castSpell=").append(spell.getName());
             priorities.add(new RequestActionOption("", RequestActionType.OPT_BEGIN_SPELL, LimbType.BODY, true));
@@ -1489,7 +1447,7 @@ public class AI implements Enums
          // Make sure that if we say we should move, that we have a place we actually want to move to.
          boolean allowRanged = canThrow || myWeaponIsMissile;
          traceSb.append(", advAllowed");
-         if (shouldMove(map, display, target, true/*allowWander*/, allowRanged)) {
+         if (shouldMove(map, display, target, /*allowWander*/ allowRanged)) {
             traceSb.append(", move");
             if (!beingAimedAtBy.isEmpty()) {
                for (Character attacker : beingAimedAtBy) {
@@ -1560,7 +1518,7 @@ public class AI implements Enums
                Thing thing = Thing.getThing(itemName, null);
                if (thing instanceof Weapon) {
                   Weapon floorWeapon = (Weapon) thing;
-                  if ((floorWeapon != null) && (floorWeapon.isReal())) {
+                  if (floorWeapon.isReal()) {
                      byte floorWeaponSkillLevel = _self.getBestSkillLevel(floorWeapon);
                      if (floorWeaponSkillLevel > 0) {
                         byte myWeaponSkillLevel = (myWeapon == null) ? 0 : _self.getBestSkillLevel(myWeapon);
@@ -1639,17 +1597,14 @@ public class AI implements Enums
                      if ((myWeapon == null) || (!myWeapon.isOnlyTwoHanded())) {
                         // Is one available to pick up?
                         for (int i = 0; i < action.getActionCount(); i++) {
-                           IRequestOption answer = action.getReqOptions()[i];
-                           if (answer instanceof RequestActionOption) {
-                              RequestActionOption answerActOpt = (RequestActionOption) answer;
-                              if (answerActOpt.getValue().isLocationAction()) {
-                                 int index = answerActOpt.getValue().getIndexOfLocationAction();
-                                 String itemName = map.getPickupItemName(_self, action, index);
-                                 Shield floorShield = Shield.getShield(itemName, null);
-                                 if ((floorShield != null) && (floorShield.isReal())) {
-                                    traceSb.append(", pickupShield");
-                                    priorities.add(answerActOpt);
-                                 }
+                           RequestActionOption answer = action.getReqOptions()[i];
+                           if ((answer != null) && answer.getValue().isLocationAction()) {
+                              int index = answer.getValue().getIndexOfLocationAction();
+                              String itemName = map.getPickupItemName(_self, action, index);
+                              Shield floorShield = Shield.getShield(itemName, null);
+                              if ((floorShield != null) && (floorShield.isReal())) {
+                                 traceSb.append(", pickupShield");
+                                 priorities.add(answer);
                               }
                            }
                         }
@@ -1686,11 +1641,21 @@ public class AI implements Enums
          defenseTN = target.getPassiveDefense(range, false/*isGrappleAttack*/, curDist);
          byte defenseActions = target.getActionsAvailableThisRound(true/*usedForDefenseOnly*/);
          if (defenseActions > 1) {
-            byte minimumDamage = 0;
-            if (defenseActions > 1) {
-               // best defense we can offer is a 2-actions: dodge & block
-               DefenseOptions defOpts = new DefenseOptions(DefenseOption.DEF_DODGE, DefenseOption.DEF_LEFT);
-               defenseTN = target.getDefenseOptionTN(defOpts, minimumDamage , true/*includeWoundPenalty*/,
+            // best defense we can offer is a 2-actions: dodge & block
+            DefenseOptions defOpts = new DefenseOptions(DefenseOption.DEF_DODGE, DefenseOption.DEF_LEFT);
+            defenseTN = target.getDefenseOptionTN(defOpts, (byte) 0, true/*includeWoundPenalty*/,
+                                                  true/*includeHolds*/, true/*includePosition*/,
+                                                  true/*includeMassiveDamagePenalty*/,
+                                                  (byte) 0/*attackingWeaponsParryPenalty*/,
+                                                  spell instanceof IRangedSpell/*isRangedAttack*/,
+                                                  curDist, false/*isChargeAttack*/,
+                                                  false/*isGrappleAttack*/, spell.getDamageType(),
+                                                  false/*defenseAppliedAlready*/, range);
+            // TODO: what about magic defenses?
+         }
+         else {
+            DefenseOptions defOpts = new DefenseOptions(DefenseOption.DEF_DODGE);
+            byte dodgeTN = target.getDefenseOptionTN(defOpts, (byte) 0, true/*includeWoundPenalty*/,
                                                      true/*includeHolds*/, true/*includePosition*/,
                                                      true/*includeMassiveDamagePenalty*/,
                                                      (byte) 0/*attackingWeaponsParryPenalty*/,
@@ -1698,32 +1663,19 @@ public class AI implements Enums
                                                      curDist, false/*isChargeAttack*/,
                                                      false/*isGrappleAttack*/, spell.getDamageType(),
                                                      false/*defenseAppliedAlready*/, range);
-               // TODO: what about magic defenses?
-            }
-            else {
-               DefenseOptions defOpts = new DefenseOptions(DefenseOption.DEF_DODGE);
-               byte dodgeTN = target.getDefenseOptionTN(defOpts, minimumDamage , true/*includeWoundPenalty*/,
-                                                        true/*includeHolds*/, true/*includePosition*/,
-                                                        true/*includeMassiveDamagePenalty*/,
-                                                        (byte) 0/*attackingWeaponsParryPenalty*/,
-                                                        spell instanceof IRangedSpell/*isRangedAttack*/,
-                                                        curDist, false/*isChargeAttack*/,
-                                                        false/*isGrappleAttack*/, spell.getDamageType(),
-                                                        false/*defenseAppliedAlready*/, range);
-               defOpts = new DefenseOptions(DefenseOption.DEF_LEFT);
-               byte blockTN = target.getDefenseOptionTN(defOpts, minimumDamage , true/*includeWoundPenalty*/,
-                                                        true/*includeHolds*/, true/*includePosition*/,
-                                                        true/*includeMassiveDamagePenalty*/,
-                                                        (byte) 0/*attackingWeaponsParryPenalty*/,
-                                                        spell instanceof IRangedSpell/*isRangedAttack*/,
-                                                        curDist, false/*isChargeAttack*/,
-                                                        false/*isGrappleAttack*/, spell.getDamageType(),
-                                                        false/*defenseAppliedAlready*/, range);
-               defenseTN = (byte) Math.max(dodgeTN, blockTN);
-            }
-            // This is already factored in:
-            //defenseTN += Rules.getRangeDefenseAdjustmentPerAction(range) * defenseActions;
+            defOpts = new DefenseOptions(DefenseOption.DEF_LEFT);
+            byte blockTN = target.getDefenseOptionTN(defOpts, (byte) 0, true/*includeWoundPenalty*/,
+                                                     true/*includeHolds*/, true/*includePosition*/,
+                                                     true/*includeMassiveDamagePenalty*/,
+                                                     (byte) 0/*attackingWeaponsParryPenalty*/,
+                                                     spell instanceof IRangedSpell/*isRangedAttack*/,
+                                                     curDist, false/*isChargeAttack*/,
+                                                     false/*isGrappleAttack*/, spell.getDamageType(),
+                                                     false/*defenseAppliedAlready*/, range);
+            defenseTN = (byte) Math.max(dodgeTN, blockTN);
          }
+         // This is already factored in:
+         //defenseTN += Rules.getRangeDefenseAdjustmentPerAction(range) * defenseActions;
       }
       else if (spell instanceof IResistedSpell) {
          IResistedSpell resistedSpell = (IResistedSpell) spell;
@@ -1749,10 +1701,6 @@ public class AI implements Enums
          return castingDice.getOddsForTN(highestTN);
       }
       return 0;
-   }
-
-   public boolean canAndShouldHealSelfWithPotion() {
-      return _self.getWounds() > 3;
    }
 
    private byte desiredPowerForSpell(Spell spell) {
@@ -1869,7 +1817,8 @@ public class AI implements Enums
                byte styleDamage = attackStyle.getDamageMod();
                DamageType styleDamType = attackStyle.getDamageType();
                byte styleTime = attackStyle.getSpeed(_self.getAttributeLevel(Attribute.Strength));
-               byte targetResistant = target.getArmor().getBarrier(styleDamType);
+               Armor armor = target.getArmor();
+               byte targetResistant = (armor == null) ? 0 : armor.getBarrier(styleDamType);
                byte skillLevel = _self.getSkillLevel(attackStyle.getSkillType(), null, false/*sizeAdjust*/, true/*adjustForEncumbrance*/, true/*adjustForHolds*/);
                styleDamage -= targetResistant;
                // for every action saved, factor in 3 points of damage
@@ -1907,7 +1856,7 @@ public class AI implements Enums
                // If we are stepping to see why this happend, first consider if the requestMovement2 returned
                // true when it was called with a 'null' RequestMovement:
                boolean results = requestMovement2(null, map, display, target, true/*allowWander*/, allowRanged);
-               if (results || true) {
+               if (results) {
                   requestMovement2(reqMove, map, display, target, true/*allowWander*/, allowRanged);
                }
             }
@@ -1932,7 +1881,7 @@ public class AI implements Enums
       return true;
    }
 
-   private boolean shouldMove(CombatMap map, CharacterDisplay display, Character target, boolean allowWander, boolean allowRanged) {
+   private boolean shouldMove(CombatMap map, CharacterDisplay display, Character target, boolean allowRanged) {
       // If we are not standing, but we could, then stand first, instead of moving.
       if (!_self.isStanding()) {
          // Check how many actions we have, cause it would take 2 to switch positions
@@ -1987,7 +1936,7 @@ public class AI implements Enums
          // we can't move (maybe we under the effects of a paralyze spell?), don't try
          return false;
       }
-      return requestMovement2(null, map, display, target, allowWander, allowRanged);
+      return requestMovement2(null, map, display, target, true, allowRanged);
    }
 
    private List<Orientation> findPathToNearbyWeaponToPickUp(CombatMap map, StringBuilder importanceFactorBuffer) {
@@ -2153,7 +2102,8 @@ public class AI implements Enums
    }
 
    // This method return true if we should actually move, false if we should remain still.
-   private boolean requestMovement2(RequestMovement reqMove, CombatMap map, CharacterDisplay display, Character target, boolean allowWander, boolean allowRanged) {
+   private boolean requestMovement2(RequestMovement reqMove, CombatMap map, CharacterDisplay display, Character target,
+                                    boolean allowWander, boolean allowRanged) {
       Orientation desiredOrientation = null;
       // First check to see if we need to look for any available weapons that we could use.
       StringBuilder importanceFactorBuilder = new StringBuilder();
@@ -2191,7 +2141,7 @@ public class AI implements Enums
          }
          short desiredDistance = getDesiredDistance(target, false);
          if (target == null) {
-            target = findAllyThatCanSeeAnEnemy(display, map);
+            target = findAllyThatCanSeeAnEnemy(map);
             if (target == null) {
                if (allowWander && wander(reqMove, map)) {
                   return true;
@@ -2320,8 +2270,7 @@ public class AI implements Enums
             for (int testMovement = 1; testMovement < 4; testMovement++) {
                List<Orientation> validOrientationList = new ArrayList<>();
                List<Orientation> orientationList = reqMove.getOrientations();
-               for (int i = 0; i < orientationList.size(); i++) {
-                  Orientation possibleOrientation = orientationList.get(i);
+               for (Orientation possibleOrientation : orientationList) {
                   if (possibleOrientation.getHeadCoordinates().sameCoordinates(selfOrient.getHeadCoordinates())) {
                      if (selfOrient.getCostToEnter(possibleOrientation, _self, map) == testMovement) {
                         isFacing = false;
@@ -2665,7 +2614,7 @@ public class AI implements Enums
       return validOrientations;
    }
 
-   private Character findAllyThatCanSeeAnEnemy(CharacterDisplay display, CombatMap map) {
+   private Character findAllyThatCanSeeAnEnemy(CombatMap map) {
       // Find all our allies that we can see, and if any of them have targets, move toward the ally
       List<Character> allies = new ArrayList<>();
       List<Character> alliesVisible = new ArrayList<>();
@@ -2755,7 +2704,7 @@ public class AI implements Enums
                }
                else {
                   short distance = Arena.getMinDistance(allyThatKnowsAboutAnEnemy, _self);
-                  if ((closestAllyWithTarget == null) || (distance < closestDistance)) {
+                  if (distance < closestDistance) {
                      closestAllyWithTarget = allyThatKnowsAboutAnEnemy;
                      closestDistance = distance;
                   }
@@ -2899,8 +2848,8 @@ public class AI implements Enums
             int index = options[i].indexOf("(TN=");
             if (index != -1) {
                String tn = options[i].substring(index + "(TN=".length()).replace(')', ' ').trim();
-               int tnVal = Integer.valueOf(tn).intValue();
-               int adjTnVal = tnVal + 0;
+               int tnVal = Integer.valueOf(tn);
+               int adjTnVal = tnVal;
                int action = defOptions[i].getDefenseActionsUsed();
                if (defOptions[i].contains(DefenseOption.DEF_RIGHT)) {
                   adjTnVal -= penaltyRightArm;
@@ -2929,10 +2878,10 @@ public class AI implements Enums
          extraSkillRequired = (int) ((5 - expectedDamage) * 2);
          expectedDamage = 5;
       }
-      double safeRateIncreaseNeeded = .40;
-      double safeThreshold = .75;
-      double carefulRateIncreaseNeeded = .25;
-      double carefulThreshold = .50;
+      double safeRateIncreaseNeeded;
+      double safeThreshold;
+      double carefulRateIncreaseNeeded;
+      double carefulThreshold;
       if (expectedDamage <= 5) {
          // weak attack
          safeRateIncreaseNeeded = .45;
@@ -3500,10 +3449,10 @@ public class AI implements Enums
       int availableActionCount = request.getActionCount();
       int[] optionIds = request.getOptionIDs();
       boolean[] enableds = request.getEnableds();
-      for (int desiredAction = 0; desiredAction < priorities.size(); desiredAction++) {
+      for (Integer priority : priorities) {
          for (int availableAction = 0; availableAction < availableActionCount; availableAction++) {
             if (enableds[availableAction]) {
-               if (optionIds[availableAction] == (priorities.get(desiredAction)).intValue()) {
+               if (optionIds[availableAction] == priority) {
                   request.setAnswerByOptionIndex(availableAction);
                   return true;
                }
@@ -3631,7 +3580,7 @@ public class AI implements Enums
          }
          if (LOSpath != null) {
             //            Orientation startOrientation = fromChar.getOrientation();
-            //            List<Orientation> orientationPath = new ArrayList<Orientation>();
+            //            List<Orientation> orientationPath = new ArrayList<>();
             //            boolean nextOrientFound = false;
             //            for (ArenaLocation location : LOSpath) {
             //               nextOrientFound = false;
@@ -3650,7 +3599,7 @@ public class AI implements Enums
             //            if (nextOrientFound) {
             //               return orientationPath;
             //            }
-            if ((LOSpath != null) && (LOSpath.size() > 1)) {
+            if (LOSpath.size() > 1) {
                if (LOSpath.get(LOSpath.size() - 1).sameCoordinates(toLoc)) {
                   LOSpath.remove(LOSpath.size() - 1);
                }
@@ -3806,16 +3755,12 @@ public class AI implements Enums
       return (short) (defensive ? targetMaxRangeMelee+1 : selfMaxRange);
    }
 
-   public void updateTargetPriorities(List<Character> orderedEnemies, CharacterDisplay display) {
+   public void updateTargetPriorities(List<Character> orderedEnemies) {
       _targets = orderedEnemies;
    }
 
    private Character selectTarget(CharacterDisplay display, CombatMap map, boolean allowRangedAllack) {
-      Map<Integer, List<ArenaLocation>> myVisibilityMap = _mapToMapOfLocations.get(_self._uniqueID);
-      if (myVisibilityMap == null) {
-         myVisibilityMap = new HashMap<>();
-         _mapToMapOfLocations.put(_self._uniqueID, myVisibilityMap);
-      }
+      Map<Integer, List<ArenaLocation>> myVisibilityMap = _mapToMapOfLocations.computeIfAbsent(_self._uniqueID, k -> new HashMap<>());
       boolean canAttackUnseenTargets = (_aiType == AI_Type.GOD);
       Character target = null;
       if ((_targets == null) && (display != null)) {
@@ -4060,14 +4005,14 @@ public class AI implements Enums
    }
 
    private Spell selectSpellToCast(CharacterDisplay display, CombatMap map, Character target) {
-      Spell spell = selectSpellToCast(display, true/*considerCastingTime*/, map, target);
+      Spell spell = selectSpellToCast(true/*considerCastingTime*/, map, target);
       if (spell != null) {
          return spell;
       }
-      return selectSpellToCast(display, false, map, target);
+      return selectSpellToCast(false, map, target);
    }
 
-   private Spell selectSpellToCast(CharacterDisplay display, boolean considerCastingTime, CombatMap map, Character target) {
+   private Spell selectSpellToCast(boolean considerCastingTime, CombatMap map, Character target) {
 
       if ((_self.getCondition().getMageSpellPointsAvailable() == 0) &&
           (_self.getCondition().getPriestSpellPointsAvailable() == 0)) {
@@ -4205,7 +4150,7 @@ public class AI implements Enums
                               weight = woundReduction;
                            }
                         }
-                        else if (spell instanceof ostrowski.combat.common.spells.priest.healing.SpellCureWound) {
+                        else {
                            if (maxWound >= woundReduction) {
                               weight = woundReduction;
                            }
@@ -4256,7 +4201,6 @@ public class AI implements Enums
                   if (  (spell instanceof ostrowski.combat.common.spells.mage.SpellStrength)
                      || (spell instanceof ostrowski.combat.common.spells.priest.offensive.SpellStrength)
                      || (spell instanceof ostrowski.combat.common.spells.mage.SpellFlamingWeapon)
-                     || (spell instanceof ostrowski.combat.common.spells.mage.SpellFlamingMissileWeapon)
                      || (spell instanceof ostrowski.combat.common.spells.priest.offensive.SpellIncreaseDamage)) {
                      // without a weapon to attack with, these spells do me no good.
                      if (myWeap == null) {
@@ -4363,16 +4307,15 @@ public class AI implements Enums
                         validSpells.add(spell);
                      }
                      else if (spell instanceof SpellSpiderWeb) {
-                        if (target != null) {
-                           boolean alreadyInWeb = false;
-                           for (IHolder holder : target.getHolders()) {
-                              if (holder instanceof SpellSpiderWeb) {
-                                 alreadyInWeb = true;
-                              }
+                        boolean alreadyInWeb = false;
+                        for (IHolder holder : target.getHolders()) {
+                           if (holder instanceof SpellSpiderWeb) {
+                              alreadyInWeb = true;
+                              break;
                            }
-                           if (!alreadyInWeb) {
-                              validSpells.add(spell);
-                           }
+                        }
+                        if (!alreadyInWeb) {
+                           validSpells.add(spell);
                         }
                      }
                   }

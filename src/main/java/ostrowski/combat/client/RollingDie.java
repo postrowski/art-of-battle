@@ -1,7 +1,5 @@
 package ostrowski.combat.client;
 
-import java.util.ArrayList;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -11,27 +9,23 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Dialog;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-
+import org.eclipse.swt.widgets.*;
 import ostrowski.combat.common.Rules;
 import ostrowski.combat.server.CombatServer;
 import ostrowski.graphics.model.Tuple3;
 import ostrowski.graphics.objects3d.Thing;
 
+import java.util.ArrayList;
+
 public class RollingDie extends Dialog implements PaintListener
 {
    private Shell         _shell            = null;
  //  private final GLView  _view;
-   private final Display _display;
    private Thread        _animationThread  = null;
    //private TexturedObject _die;
-   private Point         _centerLoc        = new Point(0, 0);
-   public Point          _offsetFromParent = null; // if this is null, we are not pinned to the parent, otherwise we are.
-   public Thing          _die;
+   private      Point _centerLoc        = new Point(0, 0);
+   public final Point _offsetFromParent = null; // if this is null, we are not pinned to the parent, otherwise we are.
+   public       Thing _die;
    public static RollingDie _this;
 
    public RollingDie(Shell parentShell, int style) {
@@ -91,7 +85,7 @@ public class RollingDie extends Dialog implements PaintListener
 //         e.printStackTrace();
 //      }
 
-      _display = parentShell.getDisplay();
+      parentShell.getDisplay();
       //_animationThread.start();
       _animationThread = null;
    }
@@ -131,8 +125,8 @@ public class RollingDie extends Dialog implements PaintListener
       WEST(-1, 0),
       NORTHWEST(-1,-1);
 
-      public int _x;
-      public int _y;
+      public final int _x;
+      public final int _y;
       DIRS(int x, int y) {
          _x = x;
          _y = y;

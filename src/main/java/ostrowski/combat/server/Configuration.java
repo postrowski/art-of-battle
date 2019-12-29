@@ -3,28 +3,18 @@
  */
 package ostrowski.combat.server;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
-
+import org.eclipse.swt.widgets.*;
 import ostrowski.combat.common.RuleComposite;
 import ostrowski.ui.Helper;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Configuration implements SelectionListener
 {
@@ -38,17 +28,17 @@ public class Configuration implements SelectionListener
    static public boolean _useComplexTOUDice         = true;
    static public boolean _use3DMap                  = true;
    static public boolean _showChit                  = true;
-   static public int     _serverPort                = 1777;
-   private Button        _spellTnAffectedByMaButton = null;
-   private Button        _useSimpleDamageButton     = null;
+   static public int    _serverPort                = 1777;
+   private       Button _spellTnAffectedByMaButton = null;
+   private       Button _useSimpleDamageButton     = null;
    //private Button        _useSimpleDiceButton       = null;
    private Button        _useComplexTOUDiceButton   = null;
    private Button        _diceExtendedButton        = null;
    private Button        _diceSimpleButton          = null;
    private Button        _diceBellCurveButton       = null;
    private Button        _use3DMapButton            = null;
-   private Button        _showChitButton            = null;
-   private Text          _serverPortText            = null;
+   private Button _showChitButton = null;
+   private Text   _serverPortText = null;
 
    public static boolean isSpellTnAffectedByMa() {
       return _spellTnAffectedByMa;
@@ -99,7 +89,7 @@ public class Configuration implements SelectionListener
       Helper helper = new Helper();
       Composite leftGroup  = null;
       Group middleGroup    = null;
-      Composite rightGroup = null;
+      Composite rightGroup;
       if (isServer) {
          leftGroup   = helper.createGroup(topGridBlock, "Rule Tweaks", 1/*columns*/, false/*sameSize*/, 3/*hSpacing*/, 3/*vSpacing*/);
          middleGroup = helper.createGroup(topGridBlock, "Attack dice", 3/*columns*/, false/*sameSize*/, 3/*hSpacing*/, 3/*vSpacing*/);
@@ -132,12 +122,7 @@ public class Configuration implements SelectionListener
          serverPortLabel.setText("Server Port:");
          _serverPortText = new Text(rightGroup, (SWT.LEFT | SWT.BORDER));
          _serverPortText.setText(String.valueOf(_serverPort));
-         _serverPortText.addModifyListener(new ModifyListener() {
-            @Override
-            public void modifyText(ModifyEvent e) {
-               _serverPort = Integer.parseInt(_serverPortText.getText());
-            }
-         });
+         _serverPortText.addModifyListener(e -> _serverPort = Integer.parseInt(_serverPortText.getText()));
       }
 
       _use3DMapButton = new Button(rightGroup, SWT.CHECK);
@@ -248,12 +233,12 @@ public class Configuration implements SelectionListener
       File configFile = new File("Config.cnf");
       try (FileReader fileReader = new FileReader(configFile);
            BufferedReader input = new BufferedReader(fileReader)) {
-         String inputLine = null;
-         ArrayList<String> fileLines = new ArrayList<>();
+         List<String> fileLines = new ArrayList<>();
          try {
+            String inputLine;
             while ((inputLine = input.readLine()) != null) {
                String line = inputLine.trim();
-               if ((line != null) && (line.length() > 0)) {
+               if (line.length() > 0) {
                   fileLines.add(line);
                }
             }
@@ -278,7 +263,7 @@ public class Configuration implements SelectionListener
       }
    }
 
-   private static boolean readBoolean(ArrayList<String> fileLines, String name, boolean defaultValue) {
+   private static boolean readBoolean(List<String> fileLines, String name, boolean defaultValue) {
       String value = readString(fileLines, name);
       if (value == null) {
          return defaultValue;
@@ -286,7 +271,7 @@ public class Configuration implements SelectionListener
       return (value.equalsIgnoreCase("true"));
    }
 
-   private static String readString(ArrayList<String> fileLines, String name) {
+   private static String readString(List<String> fileLines, String name) {
       for (String line : fileLines) {
          if (line.startsWith(name)) {
             String remainder = line.substring(name.length()).trim();

@@ -1,24 +1,12 @@
 package ostrowski.combat.common.spells;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-
 import ostrowski.DebugBreak;
-import ostrowski.combat.common.Advantage;
 import ostrowski.combat.common.Character;
-import ostrowski.combat.common.DiceSet;
-import ostrowski.combat.common.Rules;
-import ostrowski.combat.common.SpecialDamage;
+import ostrowski.combat.common.*;
 import ostrowski.combat.common.enums.Attribute;
 import ostrowski.combat.common.enums.DamageType;
 import ostrowski.combat.common.enums.Enums;
@@ -37,6 +25,14 @@ import ostrowski.combat.server.Battle;
 import ostrowski.combat.server.BattleTerminatedException;
 import ostrowski.combat.server.Configuration;
 import ostrowski.protocol.SerializableObject;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author pnostrow
@@ -622,11 +618,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
          if (target == null) {
             target = _caster;
          }
-         List<Spell> spellList = spells.get(target);
-         if (spellList == null) {
-            spellList = new ArrayList<>();
-            spells.put(target, spellList);
-         }
+         List<Spell> spellList = spells.computeIfAbsent(target, k -> new ArrayList<>());
          spellList.add(this);
       }
       String message = sbDescription.toString();
@@ -674,7 +666,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
             sbDescription.append(actionsAdj).append("</td><td>").append(effectiveActions).append("-actions</td></tr>");
 
             castRoll -= woundsAndPain;
-            sbDescription.append("<tr><td>").append(0-woundsAndPain).append("</td><td>").append("pain and wounds</td></tr>");
+            sbDescription.append("<tr><td>").append(-woundsAndPain).append("</td><td>").append("pain and wounds</td></tr>");
 
             sbDescription.append("<tr><td>").append(castRoll).append("</td><td>roll result.</td></tr>");
             sbDescription.append("</table>");
@@ -690,7 +682,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
             sbDescription.append("<tr><td>").append(attrLevel).append("</td><td>").append(attribute.shortName).append("</td></tr>");
 
             castRoll -= woundsAndPain;
-            sbDescription.append(0-woundsAndPain).append("</td><td>").append("caster's pain and wounds.</td></tr>");
+            sbDescription.append(-woundsAndPain).append("</td><td>").append("caster's pain and wounds.</td></tr>");
 
             sbDescription.append("<tr><td>").append(castRoll).append("</td><td>roll result.</td></tr>");
             sbDescription.append("</table>");

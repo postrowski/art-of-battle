@@ -46,8 +46,5 @@ public class SpellSleep extends ResistedPriestSpell implements ICastInBattle
                                        EFFECT_KNOCKOUT,//effectMask,
                                        getTarget()), arena);
    }
-   @Override
-   public void removeEffects(Arena arena) {
-   }
 
 }

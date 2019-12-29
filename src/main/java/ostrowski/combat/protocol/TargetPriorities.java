@@ -4,19 +4,19 @@
  */
 package ostrowski.combat.protocol;
 
+import ostrowski.combat.common.Character;
+import ostrowski.combat.common.enums.Enums;
+import ostrowski.protocol.SerializableObject;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import ostrowski.combat.common.Character;
-import ostrowski.combat.common.enums.Enums;
-import ostrowski.protocol.SerializableObject;
-
 public class TargetPriorities extends SerializableObject implements Enums
 {
-   ArrayList<Integer> _orderedEnemyIDs = new ArrayList<>();
+   final ArrayList<Integer> _orderedEnemyIDs = new ArrayList<>();
    public TargetPriorities() {}
    public TargetPriorities(List<Character> enemyCharacters) {
       setEnemies(enemyCharacters);

@@ -2,7 +2,7 @@ package ostrowski.combat.common.html;
 
 public class HtmlBuilder
 {
-   public static int MAX_HTML_ROWS = 4;
+   public static final int MAX_HTML_ROWS = 4;
    public static String getCSSHeader() {
       StringBuilder sb = new StringBuilder();
       sb.append("<head>\n");

@@ -110,11 +110,6 @@ public class SpellCreateZombie extends PriestSpell implements ICastInBattle
          // TODO: how do we attach this to a new AI engine, if it was a player character?
       }
    }
-   @Override
-   public void removeEffects(Arena arena) {
-      // We don't need to do anything here, because the only way a zombie will be destroyed in
-      // the simulator is if it's killed or knocked out. So we don't need to kill it again.
-   }
 
 
 }

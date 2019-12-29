@@ -1,9 +1,5 @@
 package ostrowski.combat.client.ui;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -12,29 +8,19 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.Text;
-
+import org.eclipse.swt.widgets.*;
 import ostrowski.DebugBreak;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.CharacterWidget;
 import ostrowski.combat.common.enums.Attribute;
-import ostrowski.combat.common.things.Hand;
-import ostrowski.combat.common.things.Limb;
-import ostrowski.combat.common.things.LimbType;
-import ostrowski.combat.common.things.Potion;
-import ostrowski.combat.common.things.Shield;
-import ostrowski.combat.common.things.Thing;
-import ostrowski.combat.common.things.Weapon;
+import ostrowski.combat.common.things.*;
 import ostrowski.combat.common.weaponStyles.WeaponStyleAttack;
 import ostrowski.combat.common.weaponStyles.WeaponStyleAttackRanged;
 import ostrowski.ui.Helper;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 public class WeaponBlock extends Helper implements ModifyListener, IUIBlock, SelectionListener
 {
@@ -219,6 +205,7 @@ public class WeaponBlock extends Helper implements ModifyListener, IUIBlock, Sel
             for (String element : items) {
                if (element.equals(hand._limbType.name)) {
                   handFound = true;
+                  break;
                }
             }
             if (!handFound) {

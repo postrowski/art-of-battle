@@ -4,15 +4,12 @@
  */
 package ostrowski.combat.client.ui;
 
-import java.util.HashMap;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
-
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.CharacterWidget;
 import ostrowski.combat.common.DefenseOptions;
@@ -23,6 +20,8 @@ import ostrowski.combat.common.things.LimbType;
 import ostrowski.combat.common.things.Thing;
 import ostrowski.combat.common.things.Weapon;
 import ostrowski.ui.Helper;
+
+import java.util.HashMap;
 
 public class DefenseBlock extends Helper implements IUIBlock
 {
@@ -102,7 +101,7 @@ public class DefenseBlock extends Helper implements IUIBlock
    {
       byte sizeAdjustForRace = 0;
       if (character != null) {
-         sizeAdjustForRace = (byte) (0-character.getRace().getBonusToBeHit());
+         sizeAdjustForRace = (byte) (-character.getRace().getBonusToBeHit());
       }
       _sizeAdj.setText((sizeAdjustForRace>=0) ? ("+"+sizeAdjustForRace) : String.valueOf(sizeAdjustForRace));
       if (character != null) {

@@ -4,33 +4,28 @@
  */
 package ostrowski.combat.client.ui;
 
-import java.util.HashMap;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Text;
-
+import org.eclipse.swt.widgets.*;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.CharacterWidget;
 import ostrowski.combat.common.enums.DamageType;
 import ostrowski.combat.common.things.Armor;
 import ostrowski.ui.Helper;
 
+import java.util.HashMap;
+
 public class ArmorBlock extends Helper implements IUIBlock, ModifyListener
 {
-   CharacterWidget _display;
-   private Combo    _armorName;
-   private Text     _armorCost;
-   private Text     _armorLbs;
-   private Text     _armorPD;
-   private Text     _buildBase;
-   private final HashMap<DamageType, Text>  _build = new HashMap<>();
+   final         CharacterWidget           _display;
+   private       Combo                     _armorName;
+   private       Text                      _armorCost;
+   private       Text                      _armorLbs;
+   private       Text                      _armorPD;
+   private       Text                      _buildBase;
+   private final HashMap<DamageType, Text> _build = new HashMap<>();
    public ArmorBlock(CharacterWidget display)
    {
       _display = display;

@@ -13,17 +13,16 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
-
 import ostrowski.combat.client.CharacterDisplay;
 import ostrowski.ui.Helper;
 
 public class MessagesBlock extends Helper implements SelectionListener
 {
-   CharacterDisplay      _display;
-   private Browser       _messagesIn;
-   private StringBuilder _messageBuffer;
-   private Text          _messagesOut;
-   private Button        _sendMessageButton = null;
+   final   CharacterDisplay _display;
+   private Browser          _messagesIn;
+   private StringBuilder    _messageBuffer;
+   private Text             _messagesOut;
+   private Button           _sendMessageButton = null;
    public MessagesBlock(CharacterDisplay display)
    {
       _display = display;

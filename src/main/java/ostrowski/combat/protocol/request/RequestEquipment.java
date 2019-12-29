@@ -1,20 +1,21 @@
 package ostrowski.combat.protocol.request;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-
 import ostrowski.combat.common.enums.Enums;
 import ostrowski.combat.common.things.Hand;
 import ostrowski.combat.common.things.LimbType;
 import ostrowski.protocol.SyncRequest;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 public class RequestEquipment extends SyncRequest implements Enums {
 
-   ArrayList<String> _readyEqu    = new ArrayList<>();
-   ArrayList<String> _applyEqu    = new ArrayList<>();
-   ArrayList<LimbType> _hand = new ArrayList<>();
+   final List<String> _readyEqu = new ArrayList<>();
+   final List<String> _applyEqu = new ArrayList<>();
+   final ArrayList<LimbType> _hand     = new ArrayList<>();
    RequestAction _parentReq;
    public RequestEquipment() {
    }
@@ -107,7 +108,7 @@ public class RequestEquipment extends SyncRequest implements Enums {
          _hand.clear();
          int count = readInt(in);
          for (int i=0 ; i<count ; i++) {
-            Byte value = readByte(in);
+            byte value = readByte(in);
             _hand.add(LimbType.getByValue(value));
          }
       } catch (IOException e) {

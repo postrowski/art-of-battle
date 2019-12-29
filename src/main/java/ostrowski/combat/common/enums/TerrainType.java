@@ -1,8 +1,8 @@
 package ostrowski.combat.common.enums;
 
-import java.util.HashMap;
-
 import org.eclipse.swt.graphics.RGB;
+
+import java.util.HashMap;
 
 public enum TerrainType {
    FLOOR         (0x00,   1,   0,   0, new RGB(0xff, 0xff, 0xff), "Floor"),
@@ -43,8 +43,8 @@ public enum TerrainType {
       this.isWater = nam.contains("Water");
    }
 
-   public static int MASK = 0;
-   private static HashMap<Integer, TerrainType> MAP_TO_TERRAINS = new HashMap<>();
+   public static int                           MASK            = 0;
+   private static final HashMap<Integer, TerrainType> MAP_TO_TERRAINS = new HashMap<>();
    static {
       for (TerrainType ter : TerrainType.values()) {
          MAP_TO_TERRAINS.put(ter.value, ter);

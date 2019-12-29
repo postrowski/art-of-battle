@@ -1,20 +1,14 @@
 package ostrowski.combat.common.orientations;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-
 import org.eclipse.swt.graphics.RGB;
-
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.DrawnObject;
 import ostrowski.combat.common.Race;
-import ostrowski.combat.common.things.Head;
-import ostrowski.combat.common.things.Leg;
-import ostrowski.combat.common.things.Limb;
-import ostrowski.combat.common.things.LimbType;
-import ostrowski.combat.common.things.Tail;
-import ostrowski.combat.common.things.Wing;
+import ostrowski.combat.common.things.*;
 import ostrowski.combat.server.ArenaLocation;
+
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 public class OrientationReptilian extends OrientationSerpentine
 {
@@ -98,17 +92,17 @@ public class OrientationReptilian extends OrientationSerpentine
          int narrowDiameter = getBodyNarrowDiameter(size);
          switch (_coordinates.indexOf(loc)) {
             case 0: yOffset = narrowDiameter; break;
-            case 1: yOffset = 0-narrowDiameter; break;
-            case 2: yOffset = 0-(3*narrowDiameter); break;
+            case 1: yOffset = -narrowDiameter; break;
+            case 2: yOffset = -(3 * narrowDiameter); break;
          }
          return (int)(yOffset + (narrowDiameter*0.2));
       }
       if (limb instanceof Head) {
-         return 0-(size/10);
+         return -(size / 10);
       }
       if (limb instanceof Wing) {
          if (_baseSize == 2) {
-            return 0-(size/2);
+            return -(size / 2);
          }
       }
       if ((limb instanceof Leg) && (limb.getLocationPair() == Pair.SECOND)) {
@@ -133,7 +127,7 @@ public class OrientationReptilian extends OrientationSerpentine
          if (limb.getLocationSide() == Side.LEFT) {
             return base;
          }
-         return 0-base;
+         return -base;
       }
       return super.getLimbOffsetX(limb, size, loc);
    }

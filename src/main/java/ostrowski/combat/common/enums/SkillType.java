@@ -1,8 +1,8 @@
 package ostrowski.combat.common.enums;
 
-import java.util.HashMap;
-
 import ostrowski.combat.common.Skill.ArmsUsed;
+
+import java.util.HashMap;
 
 public enum SkillType {
    // Combat physical skills:
@@ -78,7 +78,7 @@ public enum SkillType {
       _armUseCount               = armCount;
       _isUnarmed                 = isUnarmed;
    }
-   static private HashMap<String, SkillType> _mapByName = new HashMap<>();
+   static private final HashMap<String, SkillType> _mapByName = new HashMap<>();
    static {
       for (SkillType type : values()) {
          _mapByName.put(type._name.toLowerCase(), type);

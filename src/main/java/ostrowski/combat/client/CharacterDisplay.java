@@ -1,8 +1,5 @@
 package ostrowski.combat.client;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.ModifyEvent;
@@ -10,37 +7,13 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
-
-import ostrowski.combat.client.ui.AIBlock;
-import ostrowski.combat.client.ui.ArenaMapBlock;
-import ostrowski.combat.client.ui.AttackBlock;
-import ostrowski.combat.client.ui.CharInfoBlock;
-import ostrowski.combat.client.ui.ConditionBlock;
-import ostrowski.combat.client.ui.ConnectionBlock;
-import ostrowski.combat.client.ui.IUIBlock;
-import ostrowski.combat.client.ui.MessagesBlock;
-import ostrowski.combat.client.ui.TargetPriorityBlock;
-import ostrowski.combat.common.AI;
+import org.eclipse.swt.widgets.*;
+import ostrowski.combat.client.ui.*;
 import ostrowski.combat.common.Character;
-import ostrowski.combat.common.CharacterFile;
-import ostrowski.combat.common.CharacterWidget;
-import ostrowski.combat.common.CombatMap;
-import ostrowski.combat.common.IMapListener;
-import ostrowski.combat.common.MouseOverCharacterInfoPopup;
-import ostrowski.combat.common.RuleComposite;
-import ostrowski.combat.common.Rules;
+import ostrowski.combat.common.*;
 import ostrowski.combat.common.enums.AI_Type;
 import ostrowski.combat.common.enums.Enums;
-import ostrowski.combat.protocol.BeginBattle;
-import ostrowski.combat.protocol.MapVisibility;
-import ostrowski.combat.protocol.MessageText;
-import ostrowski.combat.protocol.ServerStatus;
-import ostrowski.combat.protocol.TargetPriorities;
+import ostrowski.combat.protocol.*;
 import ostrowski.combat.protocol.request.RequestAttackStyle;
 import ostrowski.combat.protocol.request.RequestLocation;
 import ostrowski.combat.protocol.request.RequestMovement;
@@ -48,6 +21,9 @@ import ostrowski.combat.server.ArenaLocation;
 import ostrowski.combat.server.Configuration;
 import ostrowski.protocol.SyncRequest;
 import ostrowski.ui.Helper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /*
  * Created on May 5, 2006
@@ -59,13 +35,13 @@ import ostrowski.ui.Helper;
  */
 public class CharacterDisplay implements Enums, ModifyListener, IMapListener //, Listener
 {
-   public CharacterWidget            _charWidget          = null;
-   public CharacterFile              _charFile            = new CharacterFile("character.data");
+   public        CharacterWidget     _charWidget          = null;
+   public final  CharacterFile       _charFile            = new CharacterFile("character.data");
    // these object all implement the IUIBlock Interface:
    private final AttackBlock         _attackBlock         = new AttackBlock(this);
    private final CharInfoBlock       _charInfoBlock       = new CharInfoBlock(this);
    private final TargetPriorityBlock _targetPriorityBlock = new TargetPriorityBlock(this);
-   public ServerConnection           _serverConnection    = null;
+   public        ServerConnection    _serverConnection    = null;
    //private SpellsBlock         _spellsBlock         = new SpellsBlock(this);
    // these dont:
    private final ConditionBlock      _conditionBlock      = new ConditionBlock(this);
@@ -74,10 +50,10 @@ public class CharacterDisplay implements Enums, ModifyListener, IMapListener //,
    private final MessagesBlock       _messagesBlock       = new MessagesBlock(this);
    private final ArenaMapBlock       _arenaMapBlock       = new ArenaMapBlock();
    private final AIBlock             _aiBlock             = new AIBlock(this);
-   public  int                       _uniqueConnectionID  = -1;
+   public        int                 _uniqueConnectionID  = -1;
    private final List<SyncRequest>   _pendingRequests     = new ArrayList<>();
-   public Shell                      _shell;
-   public ArrayList<Helper>          _uiBlocks            = new ArrayList<>();
+   public        Shell               _shell;
+   public final  ArrayList<Helper>   _uiBlocks            = new ArrayList<>();
 
    transient private final MouseOverCharacterInfoPopup _mouseOverCharInfoPopup = new MouseOverCharacterInfoPopup();
 
@@ -454,7 +430,7 @@ public class CharacterDisplay implements Enums, ModifyListener, IMapListener //,
          _serverConnection.sendObject(targets, "server");
       }
       if (_charWidget._ai != null) {
-         _charWidget._ai.updateTargetPriorities(orderedEnemies, this);
+         _charWidget._ai.updateTargetPriorities(orderedEnemies);
       }
    }
 

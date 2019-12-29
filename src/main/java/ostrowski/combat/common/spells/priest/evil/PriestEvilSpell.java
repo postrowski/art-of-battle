@@ -1,14 +1,14 @@
 package ostrowski.combat.common.spells.priest.evil;
 
-import java.util.ArrayList;
-
 import ostrowski.combat.common.spells.priest.IPriestGroup;
 import ostrowski.combat.common.spells.priest.PriestSpell;
 import ostrowski.combat.common.spells.priest.demonic.SpellSummonHellHounds;
 
+import java.util.ArrayList;
+
 public class PriestEvilSpell implements IPriestGroup
 {
-   static public ArrayList<PriestSpell> _spells = new ArrayList<>();
+   static public final ArrayList<PriestSpell> _spells = new ArrayList<>();
    static {
       _spells.add(new SpellDarkness(PriestEvilSpell.class, 1));
       _spells.add(new SpellDetectGood(PriestEvilSpell.class, 1));

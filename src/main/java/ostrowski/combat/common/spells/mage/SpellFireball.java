@@ -75,7 +75,7 @@ public class SpellFireball extends MageSpell implements ICastInBattle
       }
       WeaponStyleAttack style = new WeaponStyleAttackThrown(0/*minSkill*/, 0/*penalty*/, damage, DieType.D6, DamageType.FIRE, 12/*rangeBase*/,  1/*hands*/);
       // Give it a non-zero cost, so it will quality as being real
-      Weapon fireball = new Weapon(0-power/*size*/, getCaster().getRace(), 0/*lbs*/, 1/*$*/, name, new WeaponStyle[] {style});
+      Weapon fireball = new Weapon(-power/*size*/, getCaster().getRace(), 0/*lbs*/, 1/*$*/, name, new WeaponStyle[] {style});
       SpecialDamage specDam = new SpecialDamage(SpecialDamage.MOD_EXPLODING | SpecialDamage.MOD_FLAMING);
       fireball.setSpecialDamageModifier(specDam, "");
       if (!hand.setHeldThing(fireball, getCaster())) {

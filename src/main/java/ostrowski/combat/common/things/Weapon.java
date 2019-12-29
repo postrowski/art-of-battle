@@ -1,35 +1,22 @@
 package ostrowski.combat.common.things;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-
 import org.eclipse.swt.graphics.RGB;
-
 import ostrowski.DebugBreak;
 import ostrowski.combat.common.Character;
-import ostrowski.combat.common.DrawnObject;
-import ostrowski.combat.common.Race;
+import ostrowski.combat.common.*;
 import ostrowski.combat.common.Race.Gender;
-import ostrowski.combat.common.Rules;
-import ostrowski.combat.common.Skill;
-import ostrowski.combat.common.SpecialDamage;
 import ostrowski.combat.common.enums.AttackType;
 import ostrowski.combat.common.enums.DamageType;
 import ostrowski.combat.common.enums.DieType;
 import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.html.HtmlBuilder;
-import ostrowski.combat.common.weaponStyles.WeaponStyle;
-import ostrowski.combat.common.weaponStyles.WeaponStyleAttack;
+import ostrowski.combat.common.weaponStyles.*;
 import ostrowski.combat.common.weaponStyles.WeaponStyleAttack.Charge;
-import ostrowski.combat.common.weaponStyles.WeaponStyleAttackGrapple;
-import ostrowski.combat.common.weaponStyles.WeaponStyleAttackMelee;
-import ostrowski.combat.common.weaponStyles.WeaponStyleAttackRanged;
-import ostrowski.combat.common.weaponStyles.WeaponStyleAttackThrown;
-import ostrowski.combat.common.weaponStyles.WeaponStyleCounterAttack;
-import ostrowski.combat.common.weaponStyles.WeaponStyleGrapplingParry;
-import ostrowski.combat.common.weaponStyles.WeaponStyleParry;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 /*
  * Created on May 3, 2006
@@ -490,7 +477,7 @@ public class Weapon extends Thing {
             sb.append(", slowStr: ").append(style.getSlowStr());
             sb.append(", fastStr: ").append(style.getFastStr());
             sb.append(", hands: ").append(style.getHandsRequired());
-            sb.append(", attackType: '").append(style.getAttackType().toString().charAt(0) + style.getAttackType().toString().toLowerCase().substring(1));
+            sb.append(", attackType: '").append(style.getAttackType().toString().charAt(0)).append(style.getAttackType().toString().toLowerCase().substring(1));
             sb.append("', damageDie: '").append(style.getVarianceDie());
             sb.append("', damageBonus: ").append(style.getDamage((byte) 0));
             sb.append(", damageType: '").append(style.getDamageType().shortname);
@@ -507,7 +494,7 @@ public class Weapon extends Thing {
    }
 
    public static List<String> getWeaponNames(boolean includeNaturalWeapons) {
-      ArrayList<String> list = new ArrayList<>();
+      List<String> list = new ArrayList<>();
       for (SizelessWeapon element : _weaponsList) {
          if (includeNaturalWeapons || element.isReal()) {
             list.add(element.getName());
@@ -562,7 +549,7 @@ public class Weapon extends Thing {
       sb.append("<div style=\"overflow: hidden;\" id=\"DivHeaderRow\">\n");
       sb.append("</div>\n");
       sb.append("<div style=\"overflow:scroll;overflow-x:hidden; border-width:0px; border-bottom:1px; border-style:solid;\" onscroll=\"OnScrollDiv(this)\" id=\"DivMainContent\">\n");
-      sb.append(getMeleeWeaponTable("TblWeapon"));
+      sb.append(getMeleeWeaponTable());
       sb.append("</div>");
       sb.append("<H3>Missile Weapons:</H3>");
       sb.append(getMissileThrownWeaponTable(true/*missile*/, false/*thrown*/));
@@ -572,9 +559,9 @@ public class Weapon extends Thing {
       return sb.toString();
    }
 
-   private static String getMeleeWeaponTable(String tableID) {
+   private static String getMeleeWeaponTable() {
       StringBuilder sb = new StringBuilder();
-      sb.append("<table id=\"").append(tableID).append("\" width='100%'>");
+      sb.append("<table id=\"TblWeapon\" width='100%'>");
       sb.append("<tr class=\"header-row\">");
       sb.append("<th>Weapon<br/>Name</th>");
       sb.append("<th>Skill<br/>Name</th>");

@@ -1,25 +1,17 @@
 package ostrowski.combat.common.spells.priest.nature;
 
-import java.util.ArrayList;
-
 import ostrowski.combat.common.spells.priest.IPriestGroup;
 import ostrowski.combat.common.spells.priest.PriestSpell;
-import ostrowski.combat.common.spells.priest.nature.animal.SpellAnimalForm;
-import ostrowski.combat.common.spells.priest.nature.animal.SpellDetectLife;
-import ostrowski.combat.common.spells.priest.nature.animal.SpellDragonForm;
-import ostrowski.combat.common.spells.priest.nature.animal.SpellPlague;
-import ostrowski.combat.common.spells.priest.nature.animal.SpellSummonSwarm;
+import ostrowski.combat.common.spells.priest.nature.animal.*;
 import ostrowski.combat.common.spells.priest.nature.plant.SpellEntangle;
 import ostrowski.combat.common.spells.priest.nature.plant.SpellGrowPlant;
-import ostrowski.combat.common.spells.priest.nature.weather.SpellFireStorm;
-import ostrowski.combat.common.spells.priest.nature.weather.SpellGaleWinds;
-import ostrowski.combat.common.spells.priest.nature.weather.SpellHurricane;
-import ostrowski.combat.common.spells.priest.nature.weather.SpellIceStorm;
-import ostrowski.combat.common.spells.priest.nature.weather.SpellSummonStorm;
+import ostrowski.combat.common.spells.priest.nature.weather.*;
+
+import java.util.ArrayList;
 
 public class PriestNatureSpell implements IPriestGroup
 {
-   static public ArrayList<PriestSpell> _spells = new ArrayList<>();
+   static public final ArrayList<PriestSpell> _spells = new ArrayList<>();
    static {
       _spells.add(new SpellSeekElement(PriestNatureSpell.class, 1));
       _spells.add(new SpellDetectLife(PriestNatureSpell.class, 1));

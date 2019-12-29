@@ -11,8 +11,9 @@ public enum DoorState {
    DoorState(int val) {
       value = val;
    }
-   public final int value;
-   private static HashMap<Integer, DoorState> MAP_TO_DOORSTATE = new HashMap<>();
+
+   public final         int                         value;
+   private static final HashMap<Integer, DoorState> MAP_TO_DOORSTATE = new HashMap<>();
    static {
       for (DoorState state : values()) {
          MAP_TO_DOORSTATE.put(state.value, state);

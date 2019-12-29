@@ -8,7 +8,6 @@ import ostrowski.combat.common.Character;
 import ostrowski.combat.common.html.Table;
 import ostrowski.combat.common.html.TableData;
 import ostrowski.combat.common.html.TableRow;
-import ostrowski.combat.server.Arena;
 
 public class SpellReverseMissile extends InstantaneousMageSpell
 {
@@ -50,13 +49,6 @@ public class SpellReverseMissile extends InstantaneousMageSpell
       return "";
    }
 
-   @Override
-   public void applyEffects(Arena arena) {
-      // TODO: missile attacks firer, mage's NIM to-hit roll (at actions of spell)
-   }
-   @Override
-   public void removeEffects(Arena arena) {
-   }
    @Override
    public TargetType getTargetType() {
       return TargetType.TARGET_SELF;
