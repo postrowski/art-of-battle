@@ -764,7 +764,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
             sb.append("\n");
          }
          first = false;
-         sb.append(thing.toString());
+         sb.append(thing);
       }
       sb.append("]");
       return sb.toString();

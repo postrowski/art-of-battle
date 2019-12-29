@@ -2883,7 +2883,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       }
       sb.append("\nHow do you want to defend yourself?");
       req.setMessage(sb.toString());
-      System.out.println("listOfListOfDefOptions = " + listOfListOfDefOptions.toString());
+      System.out.println("listOfListOfDefOptions = " + listOfListOfDefOptions);
 
       HashMap<Byte, TreeSet<DefenseOptions>> mapActionsToDefActions = new HashMap<>();
       addOptionForDefenseOptions(mapActionsToDefActions, listOfListOfDefOptions, actionsAvailableThisRound, new DefenseOptions());
@@ -3851,13 +3851,13 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          }
       }
       sb.append(", $").append(getTotalCost()).append(" spent");
-      sb.append(", skills: ").append(_skillsList.values().toString());
-      sb.append(", spells: ").append(_knownMageSpellsList.toString());
-      sb.append(", colleges: ").append(_knownCollegesList.toString());
-      sb.append(", advantages: ").append(_advList.toString());
+      sb.append(", skills: ").append(_skillsList.values());
+      sb.append(", spells: ").append(_knownMageSpellsList);
+      sb.append(", colleges: ").append(_knownCollegesList);
+      sb.append(", advantages: ").append(_advList);
       sb.append(", teamID: ").append(_teamID);
       sb.append(", aimDuration: ").append(_aimDuration);
-      sb.append(", condition: ").append(_condition.toString());
+      sb.append(", condition: ").append(_condition);
       return sb.toString();
    }
 
@@ -3897,16 +3897,16 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       }
       sb.append("<br>encumbrance level: ").append(Rules.getEncumbranceLevel(this));
       if (!_skillsList.isEmpty()) {
-         sb.append("<br>skills: ").append(_skillsList.values().toString());
+         sb.append("<br>skills: ").append(_skillsList.values());
       }
       if (!_knownMageSpellsList.isEmpty()) {
-         sb.append("<br>spells: ").append(_knownMageSpellsList.toString());
+         sb.append("<br>spells: ").append(_knownMageSpellsList);
       }
       if (!_knownCollegesList.isEmpty()) {
-         sb.append("<br>colleges: ").append(_knownCollegesList.toString());
+         sb.append("<br>colleges: ").append(_knownCollegesList);
       }
       if (!_advList.isEmpty()) {
-         sb.append("<br>advantages: ").append(_advList.toString());
+         sb.append("<br>advantages: ").append(_advList);
       }
       return sb.toString();
    }
@@ -4687,7 +4687,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
             berserkSaveDice = adjustDieRoll(berserkSaveDice, RollType.BERSERK_RESISTANCE, null/*target*/);
             int diceRoll = berserkSaveDice.roll(true/*allowExplodes*/);
             sb.append(getName()).append("'s pain causes a chance that he goes berserk.");
-            sb.append(" He rolls 2-actions IQ (").append(berserkSaveDice.toString());
+            sb.append(" He rolls 2-actions IQ (").append(berserkSaveDice);
             sb.append("), rolling ").append(berserkSaveDice.getLastDieRoll());
             sb.append(" = ").append(diceRoll);
             if (berserkSaveDice.lastRollRolledAllOnes()) {
@@ -4734,7 +4734,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
             sb.append(getName()).append("'s wound raises ").append(getHisHer()).append(" pain level to ").append(currentPain);
             sb.append("<br/>Since he has a '").append(_currentSpell.getName());
             sb.append("' spell, he must roll 2-actions against ").append(getHisHer()).append(" TOU of ").append(toughness);
-            sb.append(" (").append(magicSaveDice.toString()).append("), to avoid losing the spell. He rolls ");
+            sb.append(" (").append(magicSaveDice).append("), to avoid losing the spell. He rolls ");
             sb.append(magicSaveDice.getLastDieRoll()).append(" for a total of ").append(diceRoll).append(".<br/>");
             if (magicSaveDice.lastRollRolledAllOnes()) {
                sb.append(" The roll is all 1s, which always fails, so the spell is lost!");

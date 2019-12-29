@@ -52,7 +52,7 @@ public abstract class WeaponStyleAttack extends WeaponStyle
       return _varianceDice;
    }
    public String getDamageString(byte damBase) {
-      return "" + (_damageMod + damBase) + " + "+getVarianceDie().toString() + " " + _damageType.shortname;
+      return "" + (_damageMod + damBase) + " + " + getVarianceDie() + " " + _damageType.shortname;
    }
    public byte getDamage(byte damBase) {
       return (byte) (_damageMod + damBase);
@@ -79,7 +79,7 @@ public abstract class WeaponStyleAttack extends WeaponStyle
       StringBuilder sb = new StringBuilder();
       sb.append(super.toString());
       sb.append(", damageMod: ").append(_damageMod);
-      sb.append(", varianceDie: ").append(_varianceDice.toString());
+      sb.append(", varianceDie: ").append(_varianceDice);
       sb.append(", damageType: ").append(_damageType);
       sb.append(", attackType: ").append(_attackType);
       sb.append(", parryPenalty: ").append(_parryPenalty);

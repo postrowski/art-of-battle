@@ -228,7 +228,7 @@ public class AI implements Enums
                      if (threadLogger == null) {
                         threadLogger = new StringBuilder();
                      }
-                     threadLogger.append(req.toString());
+                     threadLogger.append(req);
                      threadLogger.append(" simpleResult=").append(reqSimple.getAnswer());
                      threadLogger.append(" smartResult=").append(reqSmart.getAnswer());
                      if (false) {
@@ -3054,7 +3054,7 @@ public class AI implements Enums
 
       StringBuilder threadLogger = (StringBuilder) CombatServer.getThreadStorage("thread logger");
       if (threadLogger != null) {
-         threadLogger.append(sb.toString()).append("\n");
+         threadLogger.append(sb).append("\n");
       }
       Rules.diag(sb.toString());
       List<Integer> priorities = new ArrayList<>();
