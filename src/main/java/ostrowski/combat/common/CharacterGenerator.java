@@ -932,10 +932,10 @@ public class CharacterGenerator implements Enums
          if (character.isAnimal() || character.hasAdvantage(Advantage.UNDEAD)) {
             Integer count = generatedAnimalsCount.get(raceName);
             if (count == null) {
-               count = Integer.valueOf(0);
+               count = 0;
             }
             character.setName(raceName + "-" + count.toString());
-            generatedAnimalsCount.put(raceName, Integer.valueOf(count.intValue() + 1));
+            generatedAnimalsCount.put(raceName, count.intValue() + 1);
          }
          else {
             character.setName(getName(arena, character.getGender() == Gender.MALE));

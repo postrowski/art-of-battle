@@ -76,7 +76,7 @@ public class SpellSpiderWeb extends MageSpell implements IHolder, IRangedSpell, 
    @Override
    public void applyEffects(Arena arena) {
       if (_excessSuccess >= 0) {
-         getTarget().setHoldLevel(this, Byte.valueOf(getHoldingLevel()));
+         getTarget().setHoldLevel(this, getHoldingLevel());
       }
    }
 
@@ -106,7 +106,7 @@ public class SpellSpiderWeb extends MageSpell implements IHolder, IRangedSpell, 
    public Byte getHoldingLevel() {
       byte casterSize = _caster == null ? 0 : _caster.getRace().getBuildModifier();
       byte targetSize = _target == null ? 0 : _target.getRace().getBuildModifier();
-      return Byte.valueOf((byte) (((((getPower() * 2) + (byte)(_excessSuccess/2)) - _holdReductionAmount) + casterSize) - targetSize));
+      return (byte) (((((getPower() * 2) + (byte) (_excessSuccess / 2)) - _holdReductionAmount) + casterSize) - targetSize);
    }
 
    public boolean reduceHoldingLevel(byte reductionAmount) {

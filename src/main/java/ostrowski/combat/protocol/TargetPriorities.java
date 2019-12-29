@@ -25,7 +25,7 @@ public class TargetPriorities extends SerializableObject implements Enums
    public void setEnemies(List<Character> enemyCharacters) {
       _orderedEnemyIDs.clear();
       for (Character enemy : enemyCharacters) {
-         _orderedEnemyIDs.add(Integer.valueOf(enemy._uniqueID));
+         _orderedEnemyIDs.add(enemy._uniqueID);
       }
    }
    public ArrayList<Integer> getOrderedEnemyIdsList() {

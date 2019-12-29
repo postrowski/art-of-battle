@@ -128,7 +128,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    }
 
    static void probabilityTest() {
-      DiceSet dice = new DiceSet("1d10±");
+      DiceSet dice = new DiceSet("1d10ï¿½");
       double odds = dice.getOddsForTN(-31);
       double odd[] = new double[40];
       for (int i=0 ; i<40 ; i++) {
@@ -403,7 +403,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
 
       _map.setZoomToFit();
       if (port != null) {
-         Configuration._serverPort = Integer.valueOf(port);
+         Configuration._serverPort = Integer.parseInt(port);
          // If the port was passed in on the command line, open it up.
          _autoStart  = true;
       }
@@ -487,7 +487,6 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    }
 
    /**
-    * @param display
     * @param mainGridBlock
     */
    private void buildBottomBlock(Composite mainGridBlock)
@@ -1685,7 +1684,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
                }
                int val = 0;
                if (validatedValue.length() > 0) {
-                  val = Integer.valueOf(validatedValue.toString());
+                  val = Integer.parseInt(validatedValue.toString());
                }
                setPseudoRandomNumberSeed(val);
             }
@@ -1805,7 +1804,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       if (!getShell().isDisposed()) {
          Display display = getShell().getDisplay();
          if (!display.isDisposed()) {
-            final Object synchObject = Integer.valueOf(0);
+            final Object synchObject = 0;
             display.asyncExec(new Runnable() {
                @Override
                public void run() {

@@ -106,7 +106,7 @@ public class AI implements Enums
          }
       }
 
-      Integer selfID = Integer.valueOf(_self._uniqueID);
+      Integer selfID = _self._uniqueID;
       Character newSelf = ServerConnection._charactersMap.get(selfID);
       if (newSelf != null) {
          _self = newSelf;
@@ -274,7 +274,7 @@ public class AI implements Enums
          }
          if (inObj instanceof Character) {
             Character newChar = (Character) inObj;
-            Integer uniqueID = Integer.valueOf(newChar._uniqueID);
+            Integer uniqueID = newChar._uniqueID;
             if (uniqueID == _self._uniqueID) {
                _self.copyData(newChar);
             }
@@ -290,14 +290,14 @@ public class AI implements Enums
             }
             if (newChar._uniqueID != _self._uniqueID) {
                if ((_aiType== AI_Type.GOD) ||  map.canSee(newChar, _self, false/*considerFacing*/, false/*blockedByAnyStandingCharacter*/)) {
-                  Map<Integer, List<ArenaLocation>> myVisibilityMap = _mapToMapOfLocations.get(Integer.valueOf(_self._uniqueID));
+                  Map<Integer, List<ArenaLocation>> myVisibilityMap = _mapToMapOfLocations.get(_self._uniqueID);
                   if (myVisibilityMap == null) {
                      myVisibilityMap = new HashMap<>();
-                     _mapToMapOfLocations.put(Integer.valueOf(_self._uniqueID), myVisibilityMap);
+                     _mapToMapOfLocations.put(_self._uniqueID, myVisibilityMap);
                   }
                   //Rules.diag("AI character " + _self.getName() + " sees " + newChar.getName() + " at " + newChar.getHeadCoordinates());
                   List<ArenaLocation> locs = map.getLocations(newChar);
-                  myVisibilityMap.put(Integer.valueOf(newChar._uniqueID), locs);
+                  myVisibilityMap.put(newChar._uniqueID, locs);
                   for (ArenaLocation loc : locs) {
                      loc.setKnownBy(_self._uniqueID, true);
                   }
@@ -563,7 +563,7 @@ public class AI implements Enums
       }
       outList.add(maxWound);
       outList.add(woundCount);
-      outList.add(Integer.valueOf(crippledLimb ? 1 : 0));
+      outList.add(crippledLimb ? 1 : 0);
    }
    public boolean findPotionIndexToUse(SyncRequest action, Character target,
                                        List<RequestActionOption> requestEquipmentPriorities) {
@@ -2732,7 +2732,7 @@ public class AI implements Enums
       // Break the allies down into two groups: those that know where enemies are, and those that don't.
       for (Character ally : allies) {
          // Does this ally know where an enemy is?
-         Map<Integer, List<ArenaLocation>> allysVisibilityMap = _mapToMapOfLocations.get(Integer.valueOf(ally._uniqueID));
+         Map<Integer, List<ArenaLocation>> allysVisibilityMap = _mapToMapOfLocations.get(ally._uniqueID);
          if (allysVisibilityMap != null) {
             boolean knowsAboutAnEnemy = false;
             for (Character enemy : enemies) {
@@ -2886,7 +2886,7 @@ public class AI implements Enums
       // prefer non-spell defenses over spell defense, since it uses spell points
       int penaltySpell = 1;
 
-      sb.append(defense.toString());
+      sb.append(defense);
       sb.append("\ncurDist=").append(curMinDist)
         .append(", desiredDistance=").append(desiredDistance)
         .append(", penaltyRightArm=").append(penaltyRightArm)
@@ -2931,7 +2931,7 @@ public class AI implements Enums
             }
          }
       }
-      bestActualTNPerAction.put(0, Integer.valueOf(pd));
+      bestActualTNPerAction.put(0, (int) pd);
       int bestDefAction = 0;
       int extraSkillRequired = 0;
       // only care about damage that cause a wound:
@@ -3821,10 +3821,10 @@ public class AI implements Enums
    }
 
    private Character selectTarget(CharacterDisplay display, CombatMap map, boolean allowRangedAllack) {
-      Map<Integer, List<ArenaLocation>> myVisibilityMap = _mapToMapOfLocations.get(Integer.valueOf(_self._uniqueID));
+      Map<Integer, List<ArenaLocation>> myVisibilityMap = _mapToMapOfLocations.get(_self._uniqueID);
       if (myVisibilityMap == null) {
          myVisibilityMap = new HashMap<>();
-         _mapToMapOfLocations.put(Integer.valueOf(_self._uniqueID), myVisibilityMap);
+         _mapToMapOfLocations.put(_self._uniqueID, myVisibilityMap);
       }
       boolean canAttackUnseenTargets = (_aiType == AI_Type.GOD);
       Character target = null;
@@ -3863,7 +3863,7 @@ public class AI implements Enums
 
                         if (!canAttackUnseenTargets) {
                            // If we haven't seen this enemy, don't raise his/her priority
-                           if (myVisibilityMap.get(Integer.valueOf(combatantJ._uniqueID)) == null) {
+                           if (myVisibilityMap.get(combatantJ._uniqueID) == null) {
                               continue;
                            }
                         }
@@ -3907,7 +3907,7 @@ public class AI implements Enums
       if (updateList) {
          List<Integer> orderedTargetIds = new ArrayList<>();
          for (int i = 0; i < (_targets.size() - 1); i++) {
-            orderedTargetIds.add(Integer.valueOf(_targets.get(i)._uniqueID));
+            orderedTargetIds.add(_targets.get(i)._uniqueID);
          }
          _self.setTargetPriorities(orderedTargetIds);
          // send a request back to the server changing our target priorities,
@@ -3917,7 +3917,7 @@ public class AI implements Enums
       }
       if (!canAttackUnseenTargets) {
          // If we haven't seen this enemy, don't attack him
-         if ((target != null) && (myVisibilityMap.get(Integer.valueOf(target._uniqueID)) == null)) {
+         if ((target != null) && (myVisibilityMap.get(target._uniqueID) == null)) {
             target = null;
          }
       }
@@ -3946,7 +3946,7 @@ public class AI implements Enums
          return 1000;
       }
       boolean targetVisible = true;
-      List<ArenaLocation> targetLocs = myTargetLocations.get(Integer.valueOf(target._uniqueID));
+      List<ArenaLocation> targetLocs = myTargetLocations.get(target._uniqueID);
       if (targetLocs == null) {
          // we don't know where this character is
          if (!canAttackUnseenTargets) {
@@ -3954,7 +3954,7 @@ public class AI implements Enums
          }
          // GOD AIs always know where a target is:
          targetLocs = map.getLocations(target);
-         myTargetLocations.put(Integer.valueOf(target._uniqueID), targetLocs);
+         myTargetLocations.put(target._uniqueID, targetLocs);
          targetVisible = false;
       }
       ArenaCoordinates targetCoord = targetLocs.get(0);

@@ -1657,9 +1657,9 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
          direction = 11;
       }
       for (int point = pointA; point != pointB; point = (point + direction) % 12) {
-         points.add(Integer.valueOf(point));
+         points.add(point);
       }
-      points.add(Integer.valueOf(pointB));
+      points.add(pointB);
       int[] shadowBounds = new int[points.size() * 2];
       int i = 0;
       for (Integer point : points) {

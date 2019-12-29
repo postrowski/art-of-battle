@@ -67,7 +67,7 @@ public class ServerConnection extends CombatSocket
       // First check for events that apply to the display:
       if (inObj instanceof Character) {
          Character newChar = (Character) inObj;
-         Integer uniqueID = Integer.valueOf(newChar._uniqueID);
+         Integer uniqueID = newChar._uniqueID;
          Character existingChar = _charactersMap.get(uniqueID);
          if (existingChar == null) {
             _charactersMap.put(uniqueID, newChar);

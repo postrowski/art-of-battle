@@ -985,7 +985,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
          return true;
       }
       if (viewerID >= 0) {
-         Integer viewerInt = Integer.valueOf(viewerID);
+         Integer viewerInt = viewerID;
          if (newVisibility ) {
             if ((map != null) && (viewerLoc != null)) {
                ArenaCoordinates visibleFrom = map.getFirstLocationInPath(this, viewerLoc);
@@ -1006,13 +1006,13 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
       return true;
    }
    public boolean getVisible(int viewerID) {
-      return _visibleTo.contains(Integer.valueOf(viewerID));
+      return _visibleTo.contains(viewerID);
    }
    public boolean isKnownBy(int viewerID) {
-      return (_viewedBy.contains(Integer.valueOf(viewerID)));
+      return (_viewedBy.contains(viewerID));
    }
    public boolean setKnownBy(int viewerID, boolean isKnown) {
-      Integer intVal = Integer.valueOf(viewerID);
+      Integer intVal = viewerID;
       if (isKnown) {
          if (_viewedBy.contains(intVal)) {
             return false;

@@ -486,7 +486,7 @@ public class DiceSet extends SerializableObject implements Enums
                chance += 1;
             }
          }
-         results = Double.valueOf(chance / dice);
+         results = chance / dice;
          _map.put(key, results);
       }
       return results.doubleValue();

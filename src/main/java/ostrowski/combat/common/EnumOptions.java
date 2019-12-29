@@ -50,13 +50,4 @@ public class EnumOptions <T> implements Cloneable
       _list.clear();
    }
 
-   public EnumOptions<T> logicAndWithSet(EnumOptions<T> availableOptions) {
-      EnumOptions<T> newDefOpts = new EnumOptions<>();
-      for (T defOpt : _list) {
-         if (availableOptions.contains(defOpt)) {
-            newDefOpts.add(defOpt);
-         }
-      }
-      return newDefOpts;
-   }
 }

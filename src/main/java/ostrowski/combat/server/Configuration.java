@@ -135,7 +135,7 @@ public class Configuration implements SelectionListener
          _serverPortText.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent e) {
-               _serverPort = Integer.valueOf(_serverPortText.getText());
+               _serverPort = Integer.parseInt(_serverPortText.getText());
             }
          });
       }
@@ -271,7 +271,7 @@ public class Configuration implements SelectionListener
          _showChit            = readBoolean(fileLines, "showChit",            _showChit);
          String serverPort    = readString(fileLines,  "serverPort");
          if (serverPort != null) {
-            _serverPort = Integer.valueOf(serverPort);
+            _serverPort = Integer.parseInt(serverPort);
          }
       } catch (IOException e1) {
          e1.printStackTrace();

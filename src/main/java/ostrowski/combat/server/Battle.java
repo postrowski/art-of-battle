@@ -1099,7 +1099,7 @@ public class Battle extends Thread implements Enums
                else {
                   // Set this as a dual grapple attack, so we know if a retreat must alter the location of the attacker
                   attack.setDualGrappleAttack();
-                  defender.setHoldLevel(attacker, Byte.valueOf(newHoldLevel));
+                  defender.setHoldLevel(attacker, newHoldLevel);
                   ArenaLocation attackingLimbLoc = attacker.getLimbLocation(attack.getLimb(), _arena.getCombatMap());
                   if (Arena.getShortestDistance(attackingLimbLoc, defender.getOrientation()) > 1) {
                      // Try to move the smaller character until the defender is adjacent to the attacking limb that grabbed him/her.
@@ -1259,7 +1259,8 @@ public class Battle extends Thread implements Enums
    /**
     * @param defender
     * @param defense
-    * @param attackMode
+    * @param attackParryPenalty
+    * @param distance
     * @param range
     * @param sb
     * @return
@@ -1724,7 +1725,7 @@ public class Battle extends Thread implements Enums
 
                                        Integer moved = movementTracker.get(actor);
                                        if (moved == null) {
-                                          moved = Integer.valueOf(0);
+                                          moved = 0;
                                        }
 
                                        if (destOrientation.equals(actor.getOrientation())) {
@@ -1743,7 +1744,7 @@ public class Battle extends Thread implements Enums
                                              if (destLimbCoord != null) {
                                                 ArenaCoordinates sourceLimbCoord = actor.getOrientation().getLimbCoordinates(limbType);
                                                 if (!destLimbCoord.sameCoordinates(sourceLimbCoord)) {
-                                                   moved = Integer.valueOf(moved.intValue() + 1);
+                                                   moved = moved.intValue() + 1;
                                                    break;
                                                 }
                                              }

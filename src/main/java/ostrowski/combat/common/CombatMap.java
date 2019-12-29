@@ -1040,7 +1040,8 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
     * This method returns a count of the number of character between the fromLoc and the toLoc, non-inclusive.
     * If a wall is present between the from and to locations, a -1 is returned.
     * @param fromLoc
-    * @param toLoc
+    * @param toCoord
+    * @param onlyCountStandingCharacters
     * @return
     */
    private int countCharactersBetween(ArenaLocation fromLoc, ArenaCoordinates toCoord, boolean onlyCountStandingCharacters) {
@@ -1143,8 +1144,8 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
 
    /**
     * This method returns a straight line of hexes from fromLoc to toLoc, regardless of terrain or obstacles.
-    * @param fromLoc
-    * @param toLoc
+    * @param fromCoord
+    * @param toCoord
     * @param trimPath
     * @return
     */
@@ -1343,8 +1344,8 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
    }
    /**
     * This method returns a straight line of hexes from fromLoc to toLoc, regardless of terrain or obstacles.
-    * @param fromLoc
-    * @param toLoc
+    * @param fromCoord
+    * @param toCoord
     * @param trimPath
     * @return
     */
@@ -1397,8 +1398,8 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
     * the head of the fromChar to the head of the toChar, regardless of obstacles and terrain,
     * but instead of computing the entire path, it returns just the location in the path that is
     * not the fromLoc (unless the fromLoc is equal to the toLoc)
-    * @param fromLoc
-    * @param toLoc
+    * @param fromChar
+    * @param toChar
     * @return
     */
    public ArenaLocation getFirstLocationInPath(Character fromChar, Character toChar) {
@@ -1690,7 +1691,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
          for (byte cur=0 ; cur<_startPoints[team].length ; cur++) {
             if (_startPoints[team][cur] != null) {
                if (_startPoints[team][cur].getCharacters().size() == 0) {
-                  teams.add(Byte.valueOf(team));
+                  teams.add(team);
                   // This break exits the cur for loop, putting us back into the team for loop
                   break;
                }

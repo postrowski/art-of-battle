@@ -1,0 +1,2809 @@
+
+12/26/19 21:31:50.809
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] unlocked that was not previously locked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = 0
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:277)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.serializeContentsToStream(ArenaLocation.java:375)
+	at ostrowski.combat.server.ArenaLocation.serializeToStream(ArenaLocation.java:346)
+	at ostrowski.protocol.ObjectChanged.serializeToStream(ObjectChanged.java:41)
+	at ostrowski.util.sockets.SocketConnector.sendObject(SocketConnector.java:217)
+	at ostrowski.combat.server.ClientProxy.sendObject(ClientProxy.java:32)
+	at ostrowski.combat.server.ClientProxy.monitoredObjectChanged(ClientProxy.java:111)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.util.MonitoringObject.monitoredObjectChanged(MonitoringObject.java:127)
+	at ostrowski.combat.common.ArenaLocationBook.monitoredObjectChanged(ArenaLocationBook.java:160)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.util.MonitoringObject.monitoredObjectChanged(MonitoringObject.java:127)
+	at ostrowski.combat.common.CombatMap.monitoredObjectChanged(CombatMap.java:2187)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.combat.server.ArenaLocation.notifyWatchers(ArenaLocation.java:931)
+	at ostrowski.combat.server.ArenaLocation.remove(ArenaLocation.java:315)
+	at ostrowski.combat.common.CombatMap.removeCharacter(CombatMap.java:261)
+	at ostrowski.combat.server.Arena.applyMovement(Arena.java:1063)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1751)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:50.809
+Possible Deadlock condition found:
+order violation: object AreanLocation_lock_this[2] locked, while attempting to lock object AreanLocation_lock_this[2].
+Object will be unlocked manually.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = 1
+	at ostrowski.util.Semaphore.checkForOrderViolation(Semaphore.java:350)
+	at ostrowski.util.Semaphore.track(Semaphore.java:220)
+	at ostrowski.util.SemaphoreAutoTracker.<init>(SemaphoreAutoTracker.java:9)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:454)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:856)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:791)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:743)
+	at ostrowski.combat.common.MapWidget2D.handleEvent(MapWidget2D.java:333)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Composite.WM_PAINT(Unknown Source)
+	at org.eclipse.swt.widgets.Control.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Canvas.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Display.windowProc(Unknown Source)
+	at org.eclipse.swt.internal.win32.OS.DispatchMessageW(Native Method)
+	at org.eclipse.swt.internal.win32.OS.DispatchMessage(Unknown Source)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Unknown Source)
+	at ostrowski.combat.client.MessageDialog.open(MessageDialog.java:92)
+	at ostrowski.combat.server.Arena$1.run(Arena.java:620)
+	at org.eclipse.swt.widgets.RunnableLock.run(Unknown Source)
+	at org.eclipse.swt.widgets.Synchronizer.runAsyncMessages(Unknown Source)
+	at org.eclipse.swt.widgets.Display.runAsyncMessages(Unknown Source)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Unknown Source)
+	at ostrowski.combat.server.CombatServer.execute(CombatServer.java:420)
+	at ostrowski.combat.server.CombatServer.main(CombatServer.java:126)
+	at ostrowski.combat.server.CombatServer.main(CombatServer.java:117)
+
+
+12/26/19 21:31:50.892
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.Semaphore.checkForOrderViolation(Semaphore.java:359)
+	at ostrowski.util.Semaphore.track(Semaphore.java:220)
+	at ostrowski.util.SemaphoreAutoTracker.<init>(SemaphoreAutoTracker.java:9)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:454)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:856)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:791)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:743)
+	at ostrowski.combat.common.MapWidget2D.handleEvent(MapWidget2D.java:333)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Composite.WM_PAINT(Unknown Source)
+	at org.eclipse.swt.widgets.Control.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Canvas.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Display.windowProc(Unknown Source)
+	at org.eclipse.swt.internal.win32.OS.DispatchMessageW(Native Method)
+	at org.eclipse.swt.internal.win32.OS.DispatchMessage(Unknown Source)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Unknown Source)
+	at ostrowski.combat.client.MessageDialog.open(MessageDialog.java:92)
+	at ostrowski.combat.server.Arena$1.run(Arena.java:620)
+	at org.eclipse.swt.widgets.RunnableLock.run(Unknown Source)
+	at org.eclipse.swt.widgets.Synchronizer.runAsyncMessages(Unknown Source)
+	at org.eclipse.swt.widgets.Display.runAsyncMessages(Unknown Source)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Unknown Source)
+	at ostrowski.combat.server.CombatServer.execute(CombatServer.java:420)
+	at ostrowski.combat.server.CombatServer.main(CombatServer.java:126)
+	at ostrowski.combat.server.CombatServer.main(CombatServer.java:117)
+
+
+12/26/19 21:31:50.893
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.serializeContentsToStream(ArenaLocation.java:375)
+	at ostrowski.combat.server.ArenaLocation.serializeToStream(ArenaLocation.java:346)
+	at ostrowski.protocol.ObjectChanged.serializeToStream(ObjectChanged.java:43)
+	at ostrowski.util.sockets.SocketConnector.sendObject(SocketConnector.java:217)
+	at ostrowski.combat.server.ClientProxy.sendObject(ClientProxy.java:32)
+	at ostrowski.combat.server.ClientProxy.monitoredObjectChanged(ClientProxy.java:111)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.util.MonitoringObject.monitoredObjectChanged(MonitoringObject.java:127)
+	at ostrowski.combat.common.ArenaLocationBook.monitoredObjectChanged(ArenaLocationBook.java:160)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.util.MonitoringObject.monitoredObjectChanged(MonitoringObject.java:127)
+	at ostrowski.combat.common.CombatMap.monitoredObjectChanged(CombatMap.java:2187)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.combat.server.ArenaLocation.notifyWatchers(ArenaLocation.java:931)
+	at ostrowski.combat.server.ArenaLocation.remove(ArenaLocation.java:315)
+	at ostrowski.combat.common.CombatMap.removeCharacter(CombatMap.java:261)
+	at ostrowski.combat.server.Arena.applyMovement(Arena.java:1063)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1751)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:50.899
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.addThing(ArenaLocation.java:240)
+	at ostrowski.combat.server.Arena.applyMovement(Arena.java:1067)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1751)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:50.900
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.common.ArenaLocationBook.monitoredObjectChanged(ArenaLocationBook.java:123)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.util.MonitoringObject.monitoredObjectChanged(MonitoringObject.java:127)
+	at ostrowski.combat.common.CombatMap.monitoredObjectChanged(CombatMap.java:2187)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.combat.server.ArenaLocation.notifyWatchers(ArenaLocation.java:931)
+	at ostrowski.combat.server.ArenaLocation.addThing(ArenaLocation.java:243)
+	at ostrowski.combat.server.Arena.applyMovement(Arena.java:1067)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1751)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:50.902
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.serializeContentsToStream(ArenaLocation.java:375)
+	at ostrowski.combat.server.ArenaLocation.serializeToStream(ArenaLocation.java:346)
+	at ostrowski.protocol.ObjectChanged.serializeToStream(ObjectChanged.java:43)
+	at ostrowski.util.sockets.SocketConnector.sendObject(SocketConnector.java:217)
+	at ostrowski.combat.server.ClientProxy.sendObject(ClientProxy.java:32)
+	at ostrowski.combat.server.ClientProxy.monitoredObjectChanged(ClientProxy.java:111)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.combat.common.ArenaLocationBook.notifyWatchers(ArenaLocationBook.java:88)
+	at ostrowski.combat.common.ArenaLocationBook.monitoredObjectChanged(ArenaLocationBook.java:137)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.util.MonitoringObject.monitoredObjectChanged(MonitoringObject.java:127)
+	at ostrowski.combat.common.CombatMap.monitoredObjectChanged(CombatMap.java:2187)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.combat.server.ArenaLocation.notifyWatchers(ArenaLocation.java:931)
+	at ostrowski.combat.server.ArenaLocation.addThing(ArenaLocation.java:243)
+	at ostrowski.combat.server.Arena.applyMovement(Arena.java:1067)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1751)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:50.906
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.serializeContentsToStream(ArenaLocation.java:375)
+	at ostrowski.combat.server.ArenaLocation.serializeToStream(ArenaLocation.java:346)
+	at ostrowski.protocol.ObjectChanged.serializeToStream(ObjectChanged.java:41)
+	at ostrowski.util.sockets.SocketConnector.sendObject(SocketConnector.java:217)
+	at ostrowski.combat.server.ClientProxy.sendObject(ClientProxy.java:32)
+	at ostrowski.combat.server.ClientProxy.monitoredObjectChanged(ClientProxy.java:111)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.util.MonitoringObject.monitoredObjectChanged(MonitoringObject.java:127)
+	at ostrowski.combat.common.ArenaLocationBook.monitoredObjectChanged(ArenaLocationBook.java:160)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.util.MonitoringObject.monitoredObjectChanged(MonitoringObject.java:127)
+	at ostrowski.combat.common.CombatMap.monitoredObjectChanged(CombatMap.java:2187)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.combat.server.ArenaLocation.notifyWatchers(ArenaLocation.java:931)
+	at ostrowski.combat.server.ArenaLocation.addThing(ArenaLocation.java:243)
+	at ostrowski.combat.server.Arena.applyMovement(Arena.java:1067)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1751)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:50.907
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.serializeContentsToStream(ArenaLocation.java:375)
+	at ostrowski.combat.server.ArenaLocation.serializeToStream(ArenaLocation.java:346)
+	at ostrowski.protocol.ObjectChanged.serializeToStream(ObjectChanged.java:43)
+	at ostrowski.util.sockets.SocketConnector.sendObject(SocketConnector.java:217)
+	at ostrowski.combat.server.ClientProxy.sendObject(ClientProxy.java:32)
+	at ostrowski.combat.server.ClientProxy.monitoredObjectChanged(ClientProxy.java:111)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.util.MonitoringObject.monitoredObjectChanged(MonitoringObject.java:127)
+	at ostrowski.combat.common.ArenaLocationBook.monitoredObjectChanged(ArenaLocationBook.java:160)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.util.MonitoringObject.monitoredObjectChanged(MonitoringObject.java:127)
+	at ostrowski.combat.common.CombatMap.monitoredObjectChanged(CombatMap.java:2187)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.combat.server.ArenaLocation.notifyWatchers(ArenaLocation.java:931)
+	at ostrowski.combat.server.ArenaLocation.addThing(ArenaLocation.java:243)
+	at ostrowski.combat.server.Arena.applyMovement(Arena.java:1067)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1751)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.011
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.common.CombatMap.recomputeKnownLocations(CombatMap.java:435)
+	at ostrowski.combat.server.Arena.applyMovement(Arena.java:1097)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1751)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.015
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canExit(ArenaLocation.java:505)
+	at ostrowski.combat.common.CombatMap.countCharactersBetween(CombatMap.java:1077)
+	at ostrowski.combat.common.CombatMap.hasLineOfSight(CombatMap.java:1003)
+	at ostrowski.combat.common.CombatMap.canSeeLocation(CombatMap.java:990)
+	at ostrowski.combat.common.CombatMap.canSee(CombatMap.java:980)
+	at ostrowski.combat.common.CombatMap.canSee(CombatMap.java:973)
+	at ostrowski.combat.common.CombatMap.canSee(CombatMap.java:953)
+	at ostrowski.combat.common.AI.processObject(AI.java:292)
+	at ostrowski.combat.server.Arena.sendEventToAllClients(Arena.java:863)
+	at ostrowski.combat.server.Arena.sendCharacterUpdate(Arena.java:962)
+	at ostrowski.combat.server.Arena.applyMovement(Arena.java:1098)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1751)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.016
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.CombatMap.updateCombatant(CombatMap.java:1606)
+	at ostrowski.combat.common.MapWidget.updateCombatant(MapWidget.java:445)
+	at ostrowski.combat.server.Arena.sendCharacterUpdate(Arena.java:964)
+	at ostrowski.combat.server.Arena.applyMovement(Arena.java:1098)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1751)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.017
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canExit(ArenaLocation.java:505)
+	at ostrowski.combat.server.ArenaLocation.canMoveBetween(ArenaLocation.java:490)
+	at ostrowski.combat.common.orientations.OrientationSerpentine.move(OrientationSerpentine.java:151)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleFutureOrientations(Orientation.java:383)
+	at ostrowski.combat.server.Arena.getAllRoutesFrom(Arena.java:1363)
+	at ostrowski.combat.server.Arena.getFutureMoves(Arena.java:1117)
+	at ostrowski.combat.server.Arena.getMoveableLocations(Arena.java:1108)
+	at ostrowski.combat.protocol.request.RequestAction.getNextQuestion(RequestAction.java:274)
+	at ostrowski.combat.server.Battle.getNextQuestionForAction(Battle.java:1916)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1804)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.019
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canExit(ArenaLocation.java:505)
+	at ostrowski.combat.server.ArenaLocation.canMoveBetween(ArenaLocation.java:490)
+	at ostrowski.combat.common.orientations.OrientationSerpentine.move(OrientationSerpentine.java:180)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleFutureOrientations(Orientation.java:383)
+	at ostrowski.combat.server.Arena.getAllRoutesFrom(Arena.java:1363)
+	at ostrowski.combat.server.Arena.getFutureMoves(Arena.java:1117)
+	at ostrowski.combat.server.Arena.getMoveableLocations(Arena.java:1108)
+	at ostrowski.combat.protocol.request.RequestAction.getNextQuestion(RequestAction.java:274)
+	at ostrowski.combat.server.Battle.getNextQuestionForAction(Battle.java:1916)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1804)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.020
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:856)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:791)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:743)
+	at ostrowski.combat.common.MapWidget2D.handleEvent(MapWidget2D.java:333)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Composite.WM_PAINT(Unknown Source)
+	at org.eclipse.swt.widgets.Control.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Canvas.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Display.windowProc(Unknown Source)
+	at org.eclipse.swt.internal.win32.OS.DispatchMessageW(Native Method)
+	at org.eclipse.swt.internal.win32.OS.DispatchMessage(Unknown Source)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Unknown Source)
+	at ostrowski.combat.client.MessageDialog.open(MessageDialog.java:92)
+	at ostrowski.combat.server.Arena$1.run(Arena.java:620)
+	at org.eclipse.swt.widgets.RunnableLock.run(Unknown Source)
+	at org.eclipse.swt.widgets.Synchronizer.runAsyncMessages(Unknown Source)
+	at org.eclipse.swt.widgets.Display.runAsyncMessages(Unknown Source)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Unknown Source)
+	at ostrowski.combat.server.CombatServer.execute(CombatServer.java:420)
+	at ostrowski.combat.server.CombatServer.main(CombatServer.java:126)
+	at ostrowski.combat.server.CombatServer.main(CombatServer.java:117)
+
+
+12/26/19 21:31:51.022
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:1041)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:791)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:743)
+	at ostrowski.combat.common.MapWidget2D.handleEvent(MapWidget2D.java:333)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Composite.WM_PAINT(Unknown Source)
+	at org.eclipse.swt.widgets.Control.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Canvas.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Display.windowProc(Unknown Source)
+	at org.eclipse.swt.internal.win32.OS.DispatchMessageW(Native Method)
+	at org.eclipse.swt.internal.win32.OS.DispatchMessage(Unknown Source)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Unknown Source)
+	at ostrowski.combat.client.MessageDialog.open(MessageDialog.java:92)
+	at ostrowski.combat.server.Arena$1.run(Arena.java:620)
+	at org.eclipse.swt.widgets.RunnableLock.run(Unknown Source)
+	at org.eclipse.swt.widgets.Synchronizer.runAsyncMessages(Unknown Source)
+	at org.eclipse.swt.widgets.Display.runAsyncMessages(Unknown Source)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Unknown Source)
+	at ostrowski.combat.server.CombatServer.execute(CombatServer.java:420)
+	at ostrowski.combat.server.CombatServer.main(CombatServer.java:126)
+	at ostrowski.combat.server.CombatServer.main(CombatServer.java:117)
+
+
+12/26/19 21:31:51.024
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.CombatMap.getCombatants(CombatMap.java:665)
+	at ostrowski.combat.common.AI.findPathToHideFromAttacker(AI.java:2147)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2190)
+	at ostrowski.combat.common.AI.requestMovement(AI.java:1902)
+	at ostrowski.combat.common.AI.processObject(AI.java:172)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.getNextQuestionForAction(Battle.java:1931)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1804)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.025
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.CombatMap.getCombatants(CombatMap.java:665)
+	at ostrowski.combat.common.AI.findAllyThatCanSeeAnEnemy(AI.java:2687)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2199)
+	at ostrowski.combat.common.AI.requestMovement(AI.java:1902)
+	at ostrowski.combat.common.AI.processObject(AI.java:172)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.getNextQuestionForAction(Battle.java:1931)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1804)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.027
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canExit(ArenaLocation.java:505)
+	at ostrowski.combat.common.CombatMap.countCharactersBetween(CombatMap.java:1077)
+	at ostrowski.combat.common.CombatMap.hasLineOfSight(CombatMap.java:1003)
+	at ostrowski.combat.common.CombatMap.canSeeLocation(CombatMap.java:990)
+	at ostrowski.combat.common.CombatMap.canSee(CombatMap.java:980)
+	at ostrowski.combat.common.CombatMap.canSee(CombatMap.java:973)
+	at ostrowski.combat.common.CombatMap.canSee(CombatMap.java:953)
+	at ostrowski.combat.common.AI.findAllyThatCanSeeAnEnemy(AI.java:2695)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2199)
+	at ostrowski.combat.common.AI.requestMovement(AI.java:1902)
+	at ostrowski.combat.common.AI.processObject(AI.java:172)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.getNextQuestionForAction(Battle.java:1931)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1804)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.028
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canExit(ArenaLocation.java:505)
+	at ostrowski.combat.server.ArenaLocation.canMoveBetween(ArenaLocation.java:490)
+	at ostrowski.combat.common.orientations.OrientationSerpentine.move(OrientationSerpentine.java:151)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleAdvanceOrientations(Orientation.java:322)
+	at ostrowski.combat.common.AI.wander(AI.java:2608)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2201)
+	at ostrowski.combat.common.AI.requestMovement(AI.java:1902)
+	at ostrowski.combat.common.AI.processObject(AI.java:172)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.getNextQuestionForAction(Battle.java:1931)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1804)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.029
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.CombatMap.getCombatants(CombatMap.java:665)
+	at ostrowski.combat.common.AI.findClosestAlly(AI.java:2805)
+	at ostrowski.combat.common.AI.wander(AI.java:2620)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2201)
+	at ostrowski.combat.common.AI.requestMovement(AI.java:1902)
+	at ostrowski.combat.common.AI.processObject(AI.java:172)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.getNextQuestionForAction(Battle.java:1931)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1804)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.031
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canExit(ArenaLocation.java:505)
+	at ostrowski.combat.common.CombatMap.countCharactersBetween(CombatMap.java:1077)
+	at ostrowski.combat.common.CombatMap.hasLineOfSight(CombatMap.java:1003)
+	at ostrowski.combat.common.CombatMap.canSeeLocation(CombatMap.java:990)
+	at ostrowski.combat.common.CombatMap.canSee(CombatMap.java:980)
+	at ostrowski.combat.common.CombatMap.canSee(CombatMap.java:973)
+	at ostrowski.combat.common.AI.wander(AI.java:2640)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2201)
+	at ostrowski.combat.common.AI.requestMovement(AI.java:1902)
+	at ostrowski.combat.common.AI.processObject(AI.java:172)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.getNextQuestionForAction(Battle.java:1931)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1804)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.034
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.remove(ArenaLocation.java:311)
+	at ostrowski.combat.common.CombatMap.removeCharacter(CombatMap.java:261)
+	at ostrowski.combat.server.Arena.applyMovement(Arena.java:1063)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1751)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.035
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.common.ArenaLocationBook.monitoredObjectChanged(ArenaLocationBook.java:123)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.util.MonitoringObject.monitoredObjectChanged(MonitoringObject.java:127)
+	at ostrowski.combat.common.CombatMap.monitoredObjectChanged(CombatMap.java:2187)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.combat.server.ArenaLocation.notifyWatchers(ArenaLocation.java:931)
+	at ostrowski.combat.server.ArenaLocation.remove(ArenaLocation.java:315)
+	at ostrowski.combat.common.CombatMap.removeCharacter(CombatMap.java:261)
+	at ostrowski.combat.server.Arena.applyMovement(Arena.java:1063)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1751)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.037
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.serializeContentsToStream(ArenaLocation.java:375)
+	at ostrowski.combat.server.ArenaLocation.serializeToStream(ArenaLocation.java:346)
+	at ostrowski.protocol.ObjectChanged.serializeToStream(ObjectChanged.java:43)
+	at ostrowski.util.sockets.SocketConnector.sendObject(SocketConnector.java:217)
+	at ostrowski.combat.server.ClientProxy.sendObject(ClientProxy.java:32)
+	at ostrowski.combat.server.ClientProxy.monitoredObjectChanged(ClientProxy.java:111)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.combat.common.ArenaLocationBook.notifyWatchers(ArenaLocationBook.java:88)
+	at ostrowski.combat.common.ArenaLocationBook.monitoredObjectChanged(ArenaLocationBook.java:137)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.util.MonitoringObject.monitoredObjectChanged(MonitoringObject.java:127)
+	at ostrowski.combat.common.CombatMap.monitoredObjectChanged(CombatMap.java:2187)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.combat.server.ArenaLocation.notifyWatchers(ArenaLocation.java:931)
+	at ostrowski.combat.server.ArenaLocation.remove(ArenaLocation.java:315)
+	at ostrowski.combat.common.CombatMap.removeCharacter(CombatMap.java:261)
+	at ostrowski.combat.server.Arena.applyMovement(Arena.java:1063)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1751)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.039
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.serializeContentsToStream(ArenaLocation.java:375)
+	at ostrowski.combat.server.ArenaLocation.serializeToStream(ArenaLocation.java:346)
+	at ostrowski.protocol.ObjectChanged.serializeToStream(ObjectChanged.java:41)
+	at ostrowski.util.sockets.SocketConnector.sendObject(SocketConnector.java:217)
+	at ostrowski.combat.server.ClientProxy.sendObject(ClientProxy.java:32)
+	at ostrowski.combat.server.ClientProxy.monitoredObjectChanged(ClientProxy.java:111)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.util.MonitoringObject.monitoredObjectChanged(MonitoringObject.java:127)
+	at ostrowski.combat.common.ArenaLocationBook.monitoredObjectChanged(ArenaLocationBook.java:160)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.util.MonitoringObject.monitoredObjectChanged(MonitoringObject.java:127)
+	at ostrowski.combat.common.CombatMap.monitoredObjectChanged(CombatMap.java:2187)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.combat.server.ArenaLocation.notifyWatchers(ArenaLocation.java:931)
+	at ostrowski.combat.server.ArenaLocation.remove(ArenaLocation.java:315)
+	at ostrowski.combat.common.CombatMap.removeCharacter(CombatMap.java:261)
+	at ostrowski.combat.server.Arena.applyMovement(Arena.java:1063)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1751)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.160
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canExit(ArenaLocation.java:505)
+	at ostrowski.combat.common.CombatMap.countCharactersBetween(CombatMap.java:1077)
+	at ostrowski.combat.common.CombatMap.hasLineOfSight(CombatMap.java:1003)
+	at ostrowski.combat.common.CombatMap.canSeeLocation(CombatMap.java:990)
+	at ostrowski.combat.common.CombatMap.canSee(CombatMap.java:980)
+	at ostrowski.combat.common.CombatMap.canSee(CombatMap.java:973)
+	at ostrowski.combat.common.CombatMap.canSee(CombatMap.java:953)
+	at ostrowski.combat.common.AI.processObject(AI.java:292)
+	at ostrowski.combat.server.Arena.sendEventToAllClients(Arena.java:863)
+	at ostrowski.combat.server.Arena.sendCharacterUpdate(Arena.java:962)
+	at ostrowski.combat.server.Battle.applyActions(Battle.java:558)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:402)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.161
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.CombatMap.updateCombatant(CombatMap.java:1606)
+	at ostrowski.combat.common.MapWidget.updateCombatant(MapWidget.java:445)
+	at ostrowski.combat.server.Arena.sendCharacterUpdate(Arena.java:964)
+	at ostrowski.combat.server.Battle.applyActions(Battle.java:558)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:402)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.164
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.CombatMap.onEndRound(CombatMap.java:2831)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:424)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.165
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.CombatMap.onNewRound(CombatMap.java:2818)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:256)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.176
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canExit(ArenaLocation.java:505)
+	at ostrowski.combat.server.ArenaLocation.canMoveBetween(ArenaLocation.java:490)
+	at ostrowski.combat.common.orientations.OrientationSerpentine.move(OrientationSerpentine.java:151)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleAdvanceOrientations(Orientation.java:322)
+	at ostrowski.combat.server.Arena.canAttack(Arena.java:1848)
+	at ostrowski.combat.common.Character.getActionRequest(Character.java:1034)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1616)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.178
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canExit(ArenaLocation.java:505)
+	at ostrowski.combat.common.CombatMap.countCharactersBetween(CombatMap.java:1077)
+	at ostrowski.combat.common.CombatMap.countCharactersBetween(CombatMap.java:1029)
+	at ostrowski.combat.server.Arena.hasLineOfSight(Arena.java:1761)
+	at ostrowski.combat.common.Character.getActionRequest(Character.java:1388)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1616)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.179
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canExit(ArenaLocation.java:505)
+	at ostrowski.combat.server.ArenaLocation.canMoveBetween(ArenaLocation.java:490)
+	at ostrowski.combat.common.orientations.OrientationSerpentine.move(OrientationSerpentine.java:151)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleAdvanceOrientations(Orientation.java:322)
+	at ostrowski.combat.common.Condition.getPossibleAdvanceOrientations(Condition.java:853)
+	at ostrowski.combat.common.Character.getActionRequest(Character.java:1618)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1616)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.181
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.addLocationActions(ArenaLocation.java:844)
+	at ostrowski.combat.common.CombatMap.addLocationActions(CombatMap.java:1759)
+	at ostrowski.combat.server.Arena.addLocationActions(Arena.java:1905)
+	at ostrowski.combat.common.Character.getActionRequest(Character.java:2051)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1616)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.182
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.common.CombatMap.getDoorInFacing(CombatMap.java:1905)
+	at ostrowski.combat.common.CombatMap.getDoorBetween(CombatMap.java:1867)
+	at ostrowski.combat.common.CombatMap.addAdjacentLocationAction(CombatMap.java:1779)
+	at ostrowski.combat.common.CombatMap.addLocationActions(CombatMap.java:1767)
+	at ostrowski.combat.server.Arena.addLocationActions(Arena.java:1905)
+	at ostrowski.combat.common.Character.getActionRequest(Character.java:2051)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1616)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.183
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.common.CombatMap.getDoorInFacing(CombatMap.java:1905)
+	at ostrowski.combat.common.CombatMap.getDoorBetween(CombatMap.java:1867)
+	at ostrowski.combat.common.CombatMap.addAdjacentLocationAction(CombatMap.java:1779)
+	at ostrowski.combat.common.CombatMap.addLocationActions(CombatMap.java:1770)
+	at ostrowski.combat.server.Arena.addLocationActions(Arena.java:1905)
+	at ostrowski.combat.common.Character.getActionRequest(Character.java:2051)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1616)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.184
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.common.CombatMap.getDoorInFacing(CombatMap.java:1905)
+	at ostrowski.combat.common.CombatMap.getDoorBetween(CombatMap.java:1867)
+	at ostrowski.combat.common.CombatMap.addAdjacentLocationAction(CombatMap.java:1779)
+	at ostrowski.combat.common.CombatMap.addLocationActions(CombatMap.java:1773)
+	at ostrowski.combat.server.Arena.addLocationActions(Arena.java:1905)
+	at ostrowski.combat.common.Character.getActionRequest(Character.java:2051)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1616)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.188
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.CombatMap.getCombatants(CombatMap.java:665)
+	at ostrowski.combat.common.AI.requestAction(AI.java:903)
+	at ostrowski.combat.common.AI.processObject(AI.java:122)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1633)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.189
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canExit(ArenaLocation.java:505)
+	at ostrowski.combat.server.ArenaLocation.canMoveBetween(ArenaLocation.java:490)
+	at ostrowski.combat.common.orientations.OrientationSerpentine.move(OrientationSerpentine.java:151)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleFutureOrientations(Orientation.java:383)
+	at ostrowski.combat.server.Arena.getAllRoutesFrom(Arena.java:1363)
+	at ostrowski.combat.server.Arena.getFutureMoves(Arena.java:1117)
+	at ostrowski.combat.server.Arena.getMoveableLocations(Arena.java:1108)
+	at ostrowski.combat.common.AI.findPathToHideFromAttacker(AI.java:2145)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2190)
+	at ostrowski.combat.common.AI.shouldMove(AI.java:1995)
+	at ostrowski.combat.common.AI.requestAction(AI.java:1494)
+	at ostrowski.combat.common.AI.processObject(AI.java:122)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1633)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.191
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canExit(ArenaLocation.java:505)
+	at ostrowski.combat.server.ArenaLocation.canMoveBetween(ArenaLocation.java:490)
+	at ostrowski.combat.common.orientations.OrientationSerpentine.move(OrientationSerpentine.java:180)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleFutureOrientations(Orientation.java:383)
+	at ostrowski.combat.server.Arena.getAllRoutesFrom(Arena.java:1363)
+	at ostrowski.combat.server.Arena.getFutureMoves(Arena.java:1117)
+	at ostrowski.combat.server.Arena.getMoveableLocations(Arena.java:1108)
+	at ostrowski.combat.common.AI.findPathToHideFromAttacker(AI.java:2145)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2190)
+	at ostrowski.combat.common.AI.shouldMove(AI.java:1995)
+	at ostrowski.combat.common.AI.requestAction(AI.java:1494)
+	at ostrowski.combat.common.AI.processObject(AI.java:122)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1633)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.192
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:587)
+	at ostrowski.combat.server.ArenaLocation.canMoveBetween(ArenaLocation.java:490)
+	at ostrowski.combat.common.orientations.OrientationSerpentine.move(OrientationSerpentine.java:180)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleFutureOrientations(Orientation.java:383)
+	at ostrowski.combat.server.Arena.getAllRoutesFrom(Arena.java:1363)
+	at ostrowski.combat.server.Arena.getFutureMoves(Arena.java:1117)
+	at ostrowski.combat.server.Arena.getMoveableLocations(Arena.java:1108)
+	at ostrowski.combat.common.AI.findPathToHideFromAttacker(AI.java:2145)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2190)
+	at ostrowski.combat.common.AI.shouldMove(AI.java:1995)
+	at ostrowski.combat.common.AI.requestAction(AI.java:1494)
+	at ostrowski.combat.common.AI.processObject(AI.java:122)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1633)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.197
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.CombatMap.getCombatants(CombatMap.java:665)
+	at ostrowski.combat.common.AI.findPathToHideFromAttacker(AI.java:2147)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2190)
+	at ostrowski.combat.common.AI.shouldMove(AI.java:1995)
+	at ostrowski.combat.common.AI.requestAction(AI.java:1494)
+	at ostrowski.combat.common.AI.processObject(AI.java:122)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1633)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.198
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.CombatMap.getCombatants(CombatMap.java:665)
+	at ostrowski.combat.common.AI.findAllyThatCanSeeAnEnemy(AI.java:2687)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2199)
+	at ostrowski.combat.common.AI.shouldMove(AI.java:1995)
+	at ostrowski.combat.common.AI.requestAction(AI.java:1494)
+	at ostrowski.combat.common.AI.processObject(AI.java:122)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1633)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.200
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canExit(ArenaLocation.java:505)
+	at ostrowski.combat.common.CombatMap.countCharactersBetween(CombatMap.java:1077)
+	at ostrowski.combat.common.CombatMap.hasLineOfSight(CombatMap.java:1003)
+	at ostrowski.combat.common.CombatMap.canSeeLocation(CombatMap.java:990)
+	at ostrowski.combat.common.CombatMap.canSee(CombatMap.java:980)
+	at ostrowski.combat.common.CombatMap.canSee(CombatMap.java:973)
+	at ostrowski.combat.common.CombatMap.canSee(CombatMap.java:953)
+	at ostrowski.combat.common.AI.findAllyThatCanSeeAnEnemy(AI.java:2695)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2199)
+	at ostrowski.combat.common.AI.shouldMove(AI.java:1995)
+	at ostrowski.combat.common.AI.requestAction(AI.java:1494)
+	at ostrowski.combat.common.AI.processObject(AI.java:122)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1633)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.208
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:587)
+	at ostrowski.combat.server.ArenaLocation.canMoveBetween(ArenaLocation.java:490)
+	at ostrowski.combat.common.orientations.OrientationSerpentine.move(OrientationSerpentine.java:180)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleFutureOrientations(Orientation.java:383)
+	at ostrowski.combat.server.Arena.getAllRoutesFrom(Arena.java:1363)
+	at ostrowski.combat.server.Arena.getFutureMoves(Arena.java:1117)
+	at ostrowski.combat.server.Arena.getMoveableLocations(Arena.java:1108)
+	at ostrowski.combat.protocol.request.RequestAction.getNextQuestion(RequestAction.java:274)
+	at ostrowski.combat.server.Battle.getNextQuestionForAction(Battle.java:1916)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1804)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.213
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canExit(ArenaLocation.java:505)
+	at ostrowski.combat.server.ArenaLocation.canMoveBetween(ArenaLocation.java:490)
+	at ostrowski.combat.server.Arena.canCharacterMove(Arena.java:1018)
+	at ostrowski.combat.server.Arena.applyMovement(Arena.java:1047)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1751)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.219
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:591)
+	at ostrowski.combat.common.CombatMap.countCharactersBetween(CombatMap.java:1087)
+	at ostrowski.combat.common.CombatMap.hasLineOfSight(CombatMap.java:1003)
+	at ostrowski.combat.common.ArenaLocationBook.recomputeVisibility(ArenaLocationBook.java:55)
+	at ostrowski.combat.common.ArenaLocationBook.monitoredObjectChanged(ArenaLocationBook.java:153)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.util.IMonitorableObject.notifyWatchers(IMonitorableObject.java:41)
+	at ostrowski.combat.common.Character.setOrientation(Character.java:5063)
+	at ostrowski.combat.server.Arena.applyMovement(Arena.java:1064)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1751)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.220
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacterCount(ArenaLocation.java:485)
+	at ostrowski.combat.common.CombatMap.countCharactersBetween(CombatMap.java:1107)
+	at ostrowski.combat.common.CombatMap.hasLineOfSight(CombatMap.java:1003)
+	at ostrowski.combat.common.ArenaLocationBook.recomputeVisibility(ArenaLocationBook.java:55)
+	at ostrowski.combat.common.ArenaLocationBook.monitoredObjectChanged(ArenaLocationBook.java:153)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.util.IMonitorableObject.notifyWatchers(IMonitorableObject.java:41)
+	at ostrowski.combat.common.Character.setOrientation(Character.java:5063)
+	at ostrowski.combat.server.Arena.applyMovement(Arena.java:1064)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1751)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.221
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canExit(ArenaLocation.java:505)
+	at ostrowski.combat.common.CombatMap.countCharactersBetween(CombatMap.java:1077)
+	at ostrowski.combat.common.CombatMap.hasLineOfSight(CombatMap.java:1003)
+	at ostrowski.combat.common.ArenaLocationBook.recomputeVisibility(ArenaLocationBook.java:55)
+	at ostrowski.combat.common.ArenaLocationBook.monitoredObjectChanged(ArenaLocationBook.java:153)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.util.IMonitorableObject.notifyWatchers(IMonitorableObject.java:41)
+	at ostrowski.combat.common.Character.setOrientation(Character.java:5063)
+	at ostrowski.combat.server.Arena.applyMovement(Arena.java:1064)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1751)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.338
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:591)
+	at ostrowski.combat.server.ArenaLocation.canMoveBetween(ArenaLocation.java:490)
+	at ostrowski.combat.common.orientations.OrientationSerpentine.move(OrientationSerpentine.java:180)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleFutureOrientations(Orientation.java:383)
+	at ostrowski.combat.server.Arena.getAllRoutesFrom(Arena.java:1363)
+	at ostrowski.combat.server.Arena.getFutureMoves(Arena.java:1117)
+	at ostrowski.combat.server.Arena.getMoveableLocations(Arena.java:1108)
+	at ostrowski.combat.protocol.request.RequestAction.getNextQuestion(RequestAction.java:274)
+	at ostrowski.combat.server.Battle.getNextQuestionForAction(Battle.java:1916)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1804)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.339
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:587)
+	at ostrowski.combat.server.ArenaLocation.costToEnter(ArenaLocation.java:617)
+	at ostrowski.combat.common.orientations.Orientation.getCostToEnter(Orientation.java:460)
+	at ostrowski.combat.server.Arena.getAllRoutesFrom(Arena.java:1379)
+	at ostrowski.combat.server.Arena.getFutureMoves(Arena.java:1117)
+	at ostrowski.combat.server.Arena.getMoveableLocations(Arena.java:1108)
+	at ostrowski.combat.protocol.request.RequestAction.getNextQuestion(RequestAction.java:274)
+	at ostrowski.combat.server.Battle.getNextQuestionForAction(Battle.java:1916)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1804)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.340
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:591)
+	at ostrowski.combat.server.ArenaLocation.costToEnter(ArenaLocation.java:617)
+	at ostrowski.combat.common.orientations.Orientation.getCostToEnter(Orientation.java:460)
+	at ostrowski.combat.server.Arena.getAllRoutesFrom(Arena.java:1379)
+	at ostrowski.combat.server.Arena.getFutureMoves(Arena.java:1117)
+	at ostrowski.combat.server.Arena.getMoveableLocations(Arena.java:1108)
+	at ostrowski.combat.protocol.request.RequestAction.getNextQuestion(RequestAction.java:274)
+	at ostrowski.combat.server.Battle.getNextQuestionForAction(Battle.java:1916)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1804)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.341
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.costToEnter(ArenaLocation.java:646)
+	at ostrowski.combat.common.orientations.Orientation.getCostToEnter(Orientation.java:460)
+	at ostrowski.combat.server.Arena.getAllRoutesFrom(Arena.java:1379)
+	at ostrowski.combat.server.Arena.getFutureMoves(Arena.java:1117)
+	at ostrowski.combat.server.Arena.getMoveableLocations(Arena.java:1108)
+	at ostrowski.combat.protocol.request.RequestAction.getNextQuestion(RequestAction.java:274)
+	at ostrowski.combat.server.Battle.getNextQuestionForAction(Battle.java:1916)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1804)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.344
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.CombatMap.getCombatants(CombatMap.java:665)
+	at ostrowski.combat.common.AI.findClosestAlly(AI.java:2805)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2204)
+	at ostrowski.combat.common.AI.requestMovement(AI.java:1902)
+	at ostrowski.combat.common.AI.processObject(AI.java:172)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.getNextQuestionForAction(Battle.java:1931)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1804)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.345
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:587)
+	at ostrowski.combat.server.ArenaLocation.canMoveBetween(ArenaLocation.java:490)
+	at ostrowski.combat.common.orientations.OrientationSerpentine.move(OrientationSerpentine.java:180)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleFutureOrientations(Orientation.java:383)
+	at ostrowski.combat.common.AI.travelLOSPath(AI.java:3735)
+	at ostrowski.combat.common.AI.findPath(AI.java:3668)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2359)
+	at ostrowski.combat.common.AI.requestMovement(AI.java:1902)
+	at ostrowski.combat.common.AI.processObject(AI.java:172)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.getNextQuestionForAction(Battle.java:1931)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1804)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.346
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:591)
+	at ostrowski.combat.server.ArenaLocation.canMoveBetween(ArenaLocation.java:490)
+	at ostrowski.combat.common.orientations.OrientationSerpentine.move(OrientationSerpentine.java:180)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleFutureOrientations(Orientation.java:383)
+	at ostrowski.combat.common.AI.travelLOSPath(AI.java:3735)
+	at ostrowski.combat.common.AI.findPath(AI.java:3668)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2359)
+	at ostrowski.combat.common.AI.requestMovement(AI.java:1902)
+	at ostrowski.combat.common.AI.processObject(AI.java:172)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.getNextQuestionForAction(Battle.java:1931)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1804)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.348
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.CombatMap.getCombatants(CombatMap.java:665)
+	at ostrowski.combat.common.AI.isOutInFrontOfAllies(AI.java:2544)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2417)
+	at ostrowski.combat.common.AI.requestMovement(AI.java:1902)
+	at ostrowski.combat.common.AI.processObject(AI.java:172)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.getNextQuestionForAction(Battle.java:1931)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1804)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.512
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:591)
+	at ostrowski.combat.server.ArenaLocation.canMoveBetween(ArenaLocation.java:490)
+	at ostrowski.combat.common.orientations.OrientationSerpentine.move(OrientationSerpentine.java:180)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleFutureOrientations(Orientation.java:383)
+	at ostrowski.combat.server.Arena.getAllRoutesFrom(Arena.java:1363)
+	at ostrowski.combat.server.Arena.getFutureMoves(Arena.java:1117)
+	at ostrowski.combat.server.Arena.getMoveableLocations(Arena.java:1108)
+	at ostrowski.combat.common.AI.findPathToHideFromAttacker(AI.java:2145)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2190)
+	at ostrowski.combat.common.AI.shouldMove(AI.java:1995)
+	at ostrowski.combat.common.AI.requestAction(AI.java:1494)
+	at ostrowski.combat.common.AI.processObject(AI.java:122)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1633)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.513
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:587)
+	at ostrowski.combat.server.ArenaLocation.costToEnter(ArenaLocation.java:617)
+	at ostrowski.combat.common.orientations.Orientation.getCostToEnter(Orientation.java:460)
+	at ostrowski.combat.server.Arena.getAllRoutesFrom(Arena.java:1379)
+	at ostrowski.combat.server.Arena.getFutureMoves(Arena.java:1117)
+	at ostrowski.combat.server.Arena.getMoveableLocations(Arena.java:1108)
+	at ostrowski.combat.common.AI.findPathToHideFromAttacker(AI.java:2145)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2190)
+	at ostrowski.combat.common.AI.shouldMove(AI.java:1995)
+	at ostrowski.combat.common.AI.requestAction(AI.java:1494)
+	at ostrowski.combat.common.AI.processObject(AI.java:122)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1633)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.514
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:591)
+	at ostrowski.combat.server.ArenaLocation.costToEnter(ArenaLocation.java:617)
+	at ostrowski.combat.common.orientations.Orientation.getCostToEnter(Orientation.java:460)
+	at ostrowski.combat.server.Arena.getAllRoutesFrom(Arena.java:1379)
+	at ostrowski.combat.server.Arena.getFutureMoves(Arena.java:1117)
+	at ostrowski.combat.server.Arena.getMoveableLocations(Arena.java:1108)
+	at ostrowski.combat.common.AI.findPathToHideFromAttacker(AI.java:2145)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2190)
+	at ostrowski.combat.common.AI.shouldMove(AI.java:1995)
+	at ostrowski.combat.common.AI.requestAction(AI.java:1494)
+	at ostrowski.combat.common.AI.processObject(AI.java:122)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1633)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.515
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.costToEnter(ArenaLocation.java:646)
+	at ostrowski.combat.common.orientations.Orientation.getCostToEnter(Orientation.java:460)
+	at ostrowski.combat.server.Arena.getAllRoutesFrom(Arena.java:1379)
+	at ostrowski.combat.server.Arena.getFutureMoves(Arena.java:1117)
+	at ostrowski.combat.server.Arena.getMoveableLocations(Arena.java:1108)
+	at ostrowski.combat.common.AI.findPathToHideFromAttacker(AI.java:2145)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2190)
+	at ostrowski.combat.common.AI.shouldMove(AI.java:1995)
+	at ostrowski.combat.common.AI.requestAction(AI.java:1494)
+	at ostrowski.combat.common.AI.processObject(AI.java:122)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1633)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.516
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:587)
+	at ostrowski.combat.server.ArenaLocation.canMoveBetween(ArenaLocation.java:490)
+	at ostrowski.combat.common.orientations.OrientationSerpentine.move(OrientationSerpentine.java:151)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleFutureOrientations(Orientation.java:383)
+	at ostrowski.combat.server.Arena.getAllRoutesFrom(Arena.java:1363)
+	at ostrowski.combat.server.Arena.getFutureMoves(Arena.java:1117)
+	at ostrowski.combat.server.Arena.getMoveableLocations(Arena.java:1108)
+	at ostrowski.combat.common.AI.findPathToHideFromAttacker(AI.java:2145)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2190)
+	at ostrowski.combat.common.AI.shouldMove(AI.java:1995)
+	at ostrowski.combat.common.AI.requestAction(AI.java:1494)
+	at ostrowski.combat.common.AI.processObject(AI.java:122)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1633)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.517
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:591)
+	at ostrowski.combat.server.ArenaLocation.canMoveBetween(ArenaLocation.java:490)
+	at ostrowski.combat.common.orientations.OrientationSerpentine.move(OrientationSerpentine.java:151)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleFutureOrientations(Orientation.java:383)
+	at ostrowski.combat.server.Arena.getAllRoutesFrom(Arena.java:1363)
+	at ostrowski.combat.server.Arena.getFutureMoves(Arena.java:1117)
+	at ostrowski.combat.server.Arena.getMoveableLocations(Arena.java:1108)
+	at ostrowski.combat.common.AI.findPathToHideFromAttacker(AI.java:2145)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2190)
+	at ostrowski.combat.common.AI.shouldMove(AI.java:1995)
+	at ostrowski.combat.common.AI.requestAction(AI.java:1494)
+	at ostrowski.combat.common.AI.processObject(AI.java:122)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1633)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.526
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:587)
+	at ostrowski.combat.server.ArenaLocation.canMoveBetween(ArenaLocation.java:490)
+	at ostrowski.combat.common.orientations.OrientationSerpentine.move(OrientationSerpentine.java:151)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleFutureOrientations(Orientation.java:383)
+	at ostrowski.combat.server.Arena.getAllRoutesFrom(Arena.java:1363)
+	at ostrowski.combat.server.Arena.getFutureMoves(Arena.java:1117)
+	at ostrowski.combat.server.Arena.getMoveableLocations(Arena.java:1108)
+	at ostrowski.combat.protocol.request.RequestAction.getNextQuestion(RequestAction.java:274)
+	at ostrowski.combat.server.Battle.getNextQuestionForAction(Battle.java:1916)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1804)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.527
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:591)
+	at ostrowski.combat.server.ArenaLocation.canMoveBetween(ArenaLocation.java:490)
+	at ostrowski.combat.common.orientations.OrientationSerpentine.move(OrientationSerpentine.java:151)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleFutureOrientations(Orientation.java:383)
+	at ostrowski.combat.server.Arena.getAllRoutesFrom(Arena.java:1363)
+	at ostrowski.combat.server.Arena.getFutureMoves(Arena.java:1117)
+	at ostrowski.combat.server.Arena.getMoveableLocations(Arena.java:1108)
+	at ostrowski.combat.protocol.request.RequestAction.getNextQuestion(RequestAction.java:274)
+	at ostrowski.combat.server.Battle.getNextQuestionForAction(Battle.java:1916)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1804)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.905
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:591)
+	at ostrowski.combat.server.ArenaLocation.canMoveBetween(ArenaLocation.java:490)
+	at ostrowski.combat.common.orientations.OrientationSerpentine.move(OrientationSerpentine.java:151)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleAdvanceOrientations(Orientation.java:322)
+	at ostrowski.combat.server.Arena.getAllRoutesFrom(Arena.java:1360)
+	at ostrowski.combat.server.Arena.getFutureMoves(Arena.java:1117)
+	at ostrowski.combat.server.Arena.getMoveableLocations(Arena.java:1108)
+	at ostrowski.combat.common.AI.findPathToHideFromAttacker(AI.java:2145)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2190)
+	at ostrowski.combat.common.AI.shouldMove(AI.java:1995)
+	at ostrowski.combat.common.AI.requestAction(AI.java:1494)
+	at ostrowski.combat.common.AI.processObject(AI.java:122)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1633)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 21:31:51.912
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:591)
+	at ostrowski.combat.server.ArenaLocation.canMoveBetween(ArenaLocation.java:490)
+	at ostrowski.combat.common.orientations.OrientationSerpentine.move(OrientationSerpentine.java:151)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleAdvanceOrientations(Orientation.java:322)
+	at ostrowski.combat.server.Arena.getAllRoutesFrom(Arena.java:1360)
+	at ostrowski.combat.server.Arena.getFutureMoves(Arena.java:1117)
+	at ostrowski.combat.server.Arena.getMoveableLocations(Arena.java:1108)
+	at ostrowski.combat.protocol.request.RequestAction.getNextQuestion(RequestAction.java:274)
+	at ostrowski.combat.server.Battle.getNextQuestionForAction(Battle.java:1916)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1804)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 22:26:24.357
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:587)
+	at ostrowski.combat.server.ArenaLocation.canMoveBetween(ArenaLocation.java:490)
+	at ostrowski.combat.common.orientations.OrientationSerpentine.move(OrientationSerpentine.java:151)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleAdvanceOrientations(Orientation.java:322)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:352)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:340)
+	at ostrowski.combat.common.Character.getActionRequest(Character.java:1622)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1616)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 22:26:24.528
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:591)
+	at ostrowski.combat.server.ArenaLocation.canMoveBetween(ArenaLocation.java:490)
+	at ostrowski.combat.common.orientations.OrientationSerpentine.move(OrientationSerpentine.java:151)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleAdvanceOrientations(Orientation.java:322)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:352)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:340)
+	at ostrowski.combat.common.Character.getActionRequest(Character.java:1622)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1616)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 22:26:24.529
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:587)
+	at ostrowski.combat.server.ArenaLocation.costToEnter(ArenaLocation.java:617)
+	at ostrowski.combat.common.orientations.Orientation.getCostToEnter(Orientation.java:460)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:359)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:340)
+	at ostrowski.combat.common.Character.getActionRequest(Character.java:1622)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1616)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 22:26:24.529
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:591)
+	at ostrowski.combat.server.ArenaLocation.costToEnter(ArenaLocation.java:617)
+	at ostrowski.combat.common.orientations.Orientation.getCostToEnter(Orientation.java:460)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:359)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:340)
+	at ostrowski.combat.common.Character.getActionRequest(Character.java:1622)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1616)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 22:26:24.530
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.costToEnter(ArenaLocation.java:646)
+	at ostrowski.combat.common.orientations.Orientation.getCostToEnter(Orientation.java:460)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:359)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:340)
+	at ostrowski.combat.common.Character.getActionRequest(Character.java:1622)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1616)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Battle.java:169)
+
+
+12/26/19 22:27:44.730
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:856)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:791)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:743)
+	at ostrowski.combat.common.MapWidget2D.handleEvent(MapWidget2D.java:333)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Composite.WM_PAINT(Unknown Source)
+	at org.eclipse.swt.widgets.Control.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Canvas.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Display.windowProc(Unknown Source)
+	at org.eclipse.swt.internal.win32.OS.DispatchMessageW(Native Method)
+	at org.eclipse.swt.internal.win32.OS.DispatchMessage(Unknown Source)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Unknown Source)
+	at ostrowski.combat.server.CombatServer.execute(CombatServer.java:420)
+	at ostrowski.combat.server.CombatServer.main(CombatServer.java:126)
+	at ostrowski.combat.server.CombatServer.main(CombatServer.java:117)
+
+
+12/26/19 22:27:44.732
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:1041)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:791)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:743)
+	at ostrowski.combat.common.MapWidget2D.handleEvent(MapWidget2D.java:333)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Composite.WM_PAINT(Unknown Source)
+	at org.eclipse.swt.widgets.Control.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Canvas.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Display.windowProc(Unknown Source)
+	at org.eclipse.swt.internal.win32.OS.DispatchMessageW(Native Method)
+	at org.eclipse.swt.internal.win32.OS.DispatchMessage(Unknown Source)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Unknown Source)
+	at ostrowski.combat.server.CombatServer.execute(CombatServer.java:420)
+	at ostrowski.combat.server.CombatServer.main(CombatServer.java:126)
+	at ostrowski.combat.server.CombatServer.main(CombatServer.java:117)
+
+
+12/26/19 22:27:47.946
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:856)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:791)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:743)
+	at ostrowski.combat.common.MapWidget2D.handleEvent(MapWidget2D.java:333)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Composite.WM_PAINT(Unknown Source)
+	at org.eclipse.swt.widgets.Control.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Canvas.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Display.windowProc(Unknown Source)
+	at org.eclipse.swt.internal.win32.OS.DefWindowProcW(Native Method)
+	at org.eclipse.swt.internal.win32.OS.DefWindowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Shell.callWindowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Control.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Canvas.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Decorations.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Shell.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Display.windowProc(Unknown Source)
+	at org.eclipse.swt.internal.win32.OS.DefWindowProcW(Native Method)
+	at org.eclipse.swt.internal.win32.OS.DefWindowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Shell.callWindowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Control.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Canvas.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Decorations.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Shell.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Display.windowProc(Unknown Source)
+	at org.eclipse.swt.internal.win32.OS.DispatchMessageW(Native Method)
+	at org.eclipse.swt.internal.win32.OS.DispatchMessage(Unknown Source)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Unknown Source)
+	at ostrowski.combat.server.CombatServer.execute(CombatServer.java:420)
+	at ostrowski.combat.server.CombatServer.main(CombatServer.java:126)
+	at ostrowski.combat.server.CombatServer.main(CombatServer.java:117)
+
+
+12/26/19 22:27:47.948
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:1041)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:791)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:743)
+	at ostrowski.combat.common.MapWidget2D.handleEvent(MapWidget2D.java:333)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Composite.WM_PAINT(Unknown Source)
+	at org.eclipse.swt.widgets.Control.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Canvas.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Display.windowProc(Unknown Source)
+	at org.eclipse.swt.internal.win32.OS.DefWindowProcW(Native Method)
+	at org.eclipse.swt.internal.win32.OS.DefWindowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Shell.callWindowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Control.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Canvas.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Decorations.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Shell.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Display.windowProc(Unknown Source)
+	at org.eclipse.swt.internal.win32.OS.DefWindowProcW(Native Method)
+	at org.eclipse.swt.internal.win32.OS.DefWindowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Shell.callWindowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Control.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Canvas.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Decorations.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Shell.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Display.windowProc(Unknown Source)
+	at org.eclipse.swt.internal.win32.OS.DispatchMessageW(Native Method)
+	at org.eclipse.swt.internal.win32.OS.DispatchMessage(Unknown Source)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Unknown Source)
+	at ostrowski.combat.server.CombatServer.execute(CombatServer.java:420)
+	at ostrowski.combat.server.CombatServer.main(CombatServer.java:126)
+	at ostrowski.combat.server.CombatServer.main(CombatServer.java:117)
+
+
+12/26/19 22:28:06.336
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:856)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:791)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:743)
+	at ostrowski.combat.common.MapWidget2D.handleEvent(MapWidget2D.java:333)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Composite.WM_PAINT(Unknown Source)
+	at org.eclipse.swt.widgets.Control.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Canvas.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Display.windowProc(Unknown Source)
+	at org.eclipse.swt.internal.win32.OS.TrackPopupMenu(Native Method)
+	at org.eclipse.swt.widgets.Menu._setVisible(Unknown Source)
+	at org.eclipse.swt.widgets.Display.runPopups(Unknown Source)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Unknown Source)
+	at ostrowski.combat.server.CombatServer.execute(CombatServer.java:420)
+	at ostrowski.combat.server.CombatServer.main(CombatServer.java:126)
+	at ostrowski.combat.server.CombatServer.main(CombatServer.java:117)
+
+
+12/26/19 22:28:06.337
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:1041)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:791)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:743)
+	at ostrowski.combat.common.MapWidget2D.handleEvent(MapWidget2D.java:333)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Composite.WM_PAINT(Unknown Source)
+	at org.eclipse.swt.widgets.Control.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Canvas.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Display.windowProc(Unknown Source)
+	at org.eclipse.swt.internal.win32.OS.TrackPopupMenu(Native Method)
+	at org.eclipse.swt.widgets.Menu._setVisible(Unknown Source)
+	at org.eclipse.swt.widgets.Display.runPopups(Unknown Source)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Unknown Source)
+	at ostrowski.combat.server.CombatServer.execute(CombatServer.java:420)
+	at ostrowski.combat.server.CombatServer.main(CombatServer.java:126)
+	at ostrowski.combat.server.CombatServer.main(CombatServer.java:117)
+
+
+12/26/19 22:49:19.467
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:856)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:791)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:743)
+	at ostrowski.combat.common.MapWidget2D.handleEvent(MapWidget2D.java:333)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Composite.WM_PAINT(Unknown Source)
+	at org.eclipse.swt.widgets.Control.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Canvas.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Display.windowProc(Unknown Source)
+	at org.eclipse.swt.internal.win32.OS.DispatchMessageW(Native Method)
+	at org.eclipse.swt.internal.win32.OS.DispatchMessage(Unknown Source)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Unknown Source)
+	at ostrowski.combat.server.CombatServer.execute(Unknown Source)
+	at ostrowski.combat.server.CombatServer.main(Unknown Source)
+	at ostrowski.combat.server.CombatServer.main(Unknown Source)
+
+
+12/26/19 22:49:19.551
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:1041)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:791)
+	at ostrowski.combat.common.MapWidget2D.drawHex(MapWidget2D.java:743)
+	at ostrowski.combat.common.MapWidget2D.handleEvent(MapWidget2D.java:333)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Unknown Source)
+	at org.eclipse.swt.widgets.Composite.WM_PAINT(Unknown Source)
+	at org.eclipse.swt.widgets.Control.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Canvas.windowProc(Unknown Source)
+	at org.eclipse.swt.widgets.Display.windowProc(Unknown Source)
+	at org.eclipse.swt.internal.win32.OS.DispatchMessageW(Native Method)
+	at org.eclipse.swt.internal.win32.OS.DispatchMessage(Unknown Source)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Unknown Source)
+	at ostrowski.combat.server.CombatServer.execute(Unknown Source)
+	at ostrowski.combat.server.CombatServer.main(Unknown Source)
+	at ostrowski.combat.server.CombatServer.main(Unknown Source)
+
+
+12/26/19 22:50:06.103
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.CombatMap.onEndRound(CombatMap.java:2831)
+	at ostrowski.combat.server.Battle.executeRound(Unknown Source)
+	at ostrowski.combat.server.Battle.executeTurn(Unknown Source)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:50:06.106
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.CombatMap.onNewRound(CombatMap.java:2818)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:256)
+	at ostrowski.combat.server.Battle.executeTurn(Unknown Source)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:50:06.363
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.CombatMap.getCombatants(CombatMap.java:665)
+	at ostrowski.combat.common.AI.requestAction(AI.java:903)
+	at ostrowski.combat.common.AI.processObject(AI.java:122)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1633)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Unknown Source)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:50:06.380
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.CombatMap.getCombatants(CombatMap.java:665)
+	at ostrowski.combat.common.AI.findPathToHideFromAttacker(AI.java:2147)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2190)
+	at ostrowski.combat.common.AI.shouldMove(AI.java:1995)
+	at ostrowski.combat.common.AI.requestAction(AI.java:1494)
+	at ostrowski.combat.common.AI.processObject(AI.java:122)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1633)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Unknown Source)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:50:06.383
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.CombatMap.getCombatants(CombatMap.java:665)
+	at ostrowski.combat.common.AI.findAllyThatCanSeeAnEnemy(AI.java:2687)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2199)
+	at ostrowski.combat.common.AI.shouldMove(AI.java:1995)
+	at ostrowski.combat.common.AI.requestAction(AI.java:1494)
+	at ostrowski.combat.common.AI.processObject(AI.java:122)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1633)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Unknown Source)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:50:06.403
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.CombatMap.getCombatants(CombatMap.java:665)
+	at ostrowski.combat.common.AI.findPathToHideFromAttacker(AI.java:2147)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2190)
+	at ostrowski.combat.common.AI.requestMovement(AI.java:1902)
+	at ostrowski.combat.common.AI.processObject(AI.java:172)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.getNextQuestionForAction(Battle.java:1931)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1804)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Unknown Source)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:50:06.407
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.CombatMap.getCombatants(CombatMap.java:665)
+	at ostrowski.combat.common.AI.findAllyThatCanSeeAnEnemy(AI.java:2687)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2199)
+	at ostrowski.combat.common.AI.requestMovement(AI.java:1902)
+	at ostrowski.combat.common.AI.processObject(AI.java:172)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.getNextQuestionForAction(Battle.java:1931)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1804)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Unknown Source)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:50:06.410
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.CombatMap.getCombatants(CombatMap.java:665)
+	at ostrowski.combat.common.AI.findClosestAlly(AI.java:2805)
+	at ostrowski.combat.common.AI.wander(AI.java:2620)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2201)
+	at ostrowski.combat.common.AI.requestMovement(AI.java:1902)
+	at ostrowski.combat.common.AI.processObject(AI.java:172)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.getNextQuestionForAction(Battle.java:1931)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1804)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Unknown Source)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:50:06.563
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.common.CombatMap.recomputeKnownLocations(CombatMap.java:435)
+	at ostrowski.combat.server.Arena.applyMovement(Arena.java:1097)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1751)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Unknown Source)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:50:06.595
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:591)
+	at ostrowski.combat.common.CombatMap.countCharactersBetween(CombatMap.java:1087)
+	at ostrowski.combat.common.CombatMap.hasLineOfSight(CombatMap.java:1003)
+	at ostrowski.combat.common.ArenaLocationBook.recomputeVisibility(ArenaLocationBook.java:55)
+	at ostrowski.combat.common.ArenaLocationBook.monitoredObjectChanged(ArenaLocationBook.java:153)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.util.IMonitorableObject.notifyWatchers(IMonitorableObject.java:41)
+	at ostrowski.combat.common.Character.setOrientation(Character.java:5063)
+	at ostrowski.combat.server.Arena.applyMovement(Arena.java:1064)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1751)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Unknown Source)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:50:06.597
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacterCount(ArenaLocation.java:485)
+	at ostrowski.combat.common.CombatMap.countCharactersBetween(CombatMap.java:1107)
+	at ostrowski.combat.common.CombatMap.hasLineOfSight(CombatMap.java:1003)
+	at ostrowski.combat.common.ArenaLocationBook.recomputeVisibility(ArenaLocationBook.java:55)
+	at ostrowski.combat.common.ArenaLocationBook.monitoredObjectChanged(ArenaLocationBook.java:153)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.util.IMonitorableObject.notifyWatchers(IMonitorableObject.java:41)
+	at ostrowski.combat.common.Character.setOrientation(Character.java:5063)
+	at ostrowski.combat.server.Arena.applyMovement(Arena.java:1064)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1751)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Unknown Source)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:50:06.600
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canExit(ArenaLocation.java:505)
+	at ostrowski.combat.common.CombatMap.countCharactersBetween(CombatMap.java:1077)
+	at ostrowski.combat.common.CombatMap.hasLineOfSight(CombatMap.java:1003)
+	at ostrowski.combat.common.ArenaLocationBook.recomputeVisibility(ArenaLocationBook.java:55)
+	at ostrowski.combat.common.ArenaLocationBook.monitoredObjectChanged(ArenaLocationBook.java:153)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.util.IMonitorableObject.notifyWatchers(IMonitorableObject.java:41)
+	at ostrowski.combat.common.Character.setOrientation(Character.java:5063)
+	at ostrowski.combat.server.Arena.applyMovement(Arena.java:1064)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1751)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Unknown Source)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:53:13.458
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.CombatMap.onEndRound(CombatMap.java:2831)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:424)
+	at ostrowski.combat.server.Battle.executeTurn(Unknown Source)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:53:15.836
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.CombatMap.onNewRound(CombatMap.java:2818)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:256)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:53:15.864
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.CombatMap.getCombatants(CombatMap.java:665)
+	at ostrowski.combat.common.AI.requestAction(AI.java:903)
+	at ostrowski.combat.common.AI.processObject(AI.java:122)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1633)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:53:15.869
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.CombatMap.getCombatants(CombatMap.java:665)
+	at ostrowski.combat.common.AI.findPathToHideFromAttacker(AI.java:2147)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2190)
+	at ostrowski.combat.common.AI.shouldMove(AI.java:1995)
+	at ostrowski.combat.common.AI.requestAction(AI.java:1494)
+	at ostrowski.combat.common.AI.processObject(AI.java:122)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1633)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:53:15.871
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.CombatMap.getCombatants(CombatMap.java:665)
+	at ostrowski.combat.common.AI.findAllyThatCanSeeAnEnemy(AI.java:2687)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2199)
+	at ostrowski.combat.common.AI.shouldMove(AI.java:1995)
+	at ostrowski.combat.common.AI.requestAction(AI.java:1494)
+	at ostrowski.combat.common.AI.processObject(AI.java:122)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1633)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:53:15.887
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.CombatMap.getCombatants(CombatMap.java:665)
+	at ostrowski.combat.common.AI.findPathToHideFromAttacker(AI.java:2147)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2190)
+	at ostrowski.combat.common.AI.requestMovement(AI.java:1902)
+	at ostrowski.combat.common.AI.processObject(AI.java:172)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.getNextQuestionForAction(Battle.java:1931)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1804)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:53:15.890
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.CombatMap.getCombatants(CombatMap.java:665)
+	at ostrowski.combat.common.AI.findAllyThatCanSeeAnEnemy(AI.java:2687)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2199)
+	at ostrowski.combat.common.AI.requestMovement(AI.java:1902)
+	at ostrowski.combat.common.AI.processObject(AI.java:172)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.getNextQuestionForAction(Battle.java:1931)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1804)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:53:15.892
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.CombatMap.getCombatants(CombatMap.java:665)
+	at ostrowski.combat.common.AI.findClosestAlly(AI.java:2805)
+	at ostrowski.combat.common.AI.wander(AI.java:2620)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2201)
+	at ostrowski.combat.common.AI.requestMovement(AI.java:1902)
+	at ostrowski.combat.common.AI.processObject(AI.java:172)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.getNextQuestionForAction(Battle.java:1931)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1804)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:53:16.014
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.common.CombatMap.recomputeKnownLocations(CombatMap.java:435)
+	at ostrowski.combat.server.Arena.applyMovement(Arena.java:1097)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1751)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:53:16.060
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:591)
+	at ostrowski.combat.common.CombatMap.countCharactersBetween(CombatMap.java:1087)
+	at ostrowski.combat.common.CombatMap.hasLineOfSight(CombatMap.java:1003)
+	at ostrowski.combat.common.ArenaLocationBook.recomputeVisibility(ArenaLocationBook.java:55)
+	at ostrowski.combat.common.ArenaLocationBook.monitoredObjectChanged(ArenaLocationBook.java:153)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.util.IMonitorableObject.notifyWatchers(IMonitorableObject.java:41)
+	at ostrowski.combat.common.Character.setOrientation(Character.java:5063)
+	at ostrowski.combat.server.Arena.applyMovement(Arena.java:1064)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1751)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:53:16.061
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacterCount(ArenaLocation.java:485)
+	at ostrowski.combat.common.CombatMap.countCharactersBetween(CombatMap.java:1107)
+	at ostrowski.combat.common.CombatMap.hasLineOfSight(CombatMap.java:1003)
+	at ostrowski.combat.common.ArenaLocationBook.recomputeVisibility(ArenaLocationBook.java:55)
+	at ostrowski.combat.common.ArenaLocationBook.monitoredObjectChanged(ArenaLocationBook.java:153)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.util.IMonitorableObject.notifyWatchers(IMonitorableObject.java:41)
+	at ostrowski.combat.common.Character.setOrientation(Character.java:5063)
+	at ostrowski.combat.server.Arena.applyMovement(Arena.java:1064)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1751)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:53:16.063
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canExit(ArenaLocation.java:505)
+	at ostrowski.combat.common.CombatMap.countCharactersBetween(CombatMap.java:1077)
+	at ostrowski.combat.common.CombatMap.hasLineOfSight(CombatMap.java:1003)
+	at ostrowski.combat.common.ArenaLocationBook.recomputeVisibility(ArenaLocationBook.java:55)
+	at ostrowski.combat.common.ArenaLocationBook.monitoredObjectChanged(ArenaLocationBook.java:153)
+	at ostrowski.util.MonitoredObject.notifyWatchers(MonitoredObject.java:104)
+	at ostrowski.util.IMonitorableObject.notifyWatchers(IMonitorableObject.java:41)
+	at ostrowski.combat.common.Character.setOrientation(Character.java:5063)
+	at ostrowski.combat.server.Arena.applyMovement(Arena.java:1064)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1751)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:53:16.379
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:587)
+	at ostrowski.combat.server.ArenaLocation.canMoveBetween(ArenaLocation.java:490)
+	at ostrowski.combat.common.orientations.OrientationSerpentine.move(OrientationSerpentine.java:151)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleAdvanceOrientations(Orientation.java:322)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:352)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:340)
+	at ostrowski.combat.common.Character.getActionRequest(Character.java:1622)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1616)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:53:16.381
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:591)
+	at ostrowski.combat.server.ArenaLocation.canMoveBetween(ArenaLocation.java:490)
+	at ostrowski.combat.common.orientations.OrientationSerpentine.move(OrientationSerpentine.java:151)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleAdvanceOrientations(Orientation.java:322)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:352)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:340)
+	at ostrowski.combat.common.Character.getActionRequest(Character.java:1622)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1616)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:53:16.382
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:587)
+	at ostrowski.combat.server.ArenaLocation.costToEnter(ArenaLocation.java:617)
+	at ostrowski.combat.common.orientations.Orientation.getCostToEnter(Orientation.java:460)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:359)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:340)
+	at ostrowski.combat.common.Character.getActionRequest(Character.java:1622)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1616)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:53:16.384
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:591)
+	at ostrowski.combat.server.ArenaLocation.costToEnter(ArenaLocation.java:617)
+	at ostrowski.combat.common.orientations.Orientation.getCostToEnter(Orientation.java:460)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:359)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:340)
+	at ostrowski.combat.common.Character.getActionRequest(Character.java:1622)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1616)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:53:16.387
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.costToEnter(ArenaLocation.java:646)
+	at ostrowski.combat.common.orientations.Orientation.getCostToEnter(Orientation.java:460)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:359)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:340)
+	at ostrowski.combat.common.Character.getActionRequest(Character.java:1622)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1616)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:53:51.900
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getCharacters(ArenaLocation.java:463)
+	at ostrowski.combat.common.CombatMap.onEndRound(CombatMap.java:2831)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:424)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:53:52.403
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:587)
+	at ostrowski.combat.server.ArenaLocation.canMoveBetween(ArenaLocation.java:490)
+	at ostrowski.combat.common.orientations.OrientationSerpentine.move(OrientationSerpentine.java:151)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleAdvanceOrientations(Orientation.java:322)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:352)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:340)
+	at ostrowski.combat.common.Character.getActionRequest(Character.java:1622)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1616)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:53:52.405
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:591)
+	at ostrowski.combat.server.ArenaLocation.canMoveBetween(ArenaLocation.java:490)
+	at ostrowski.combat.common.orientations.OrientationSerpentine.move(OrientationSerpentine.java:151)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleAdvanceOrientations(Orientation.java:322)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:352)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:340)
+	at ostrowski.combat.common.Character.getActionRequest(Character.java:1622)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1616)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:53:52.407
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:587)
+	at ostrowski.combat.server.ArenaLocation.costToEnter(ArenaLocation.java:617)
+	at ostrowski.combat.common.orientations.Orientation.getCostToEnter(Orientation.java:460)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:359)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:340)
+	at ostrowski.combat.common.Character.getActionRequest(Character.java:1622)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1616)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:53:52.409
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:591)
+	at ostrowski.combat.server.ArenaLocation.costToEnter(ArenaLocation.java:617)
+	at ostrowski.combat.common.orientations.Orientation.getCostToEnter(Orientation.java:460)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:359)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:340)
+	at ostrowski.combat.common.Character.getActionRequest(Character.java:1622)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1616)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:53:52.411
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.costToEnter(ArenaLocation.java:646)
+	at ostrowski.combat.common.orientations.Orientation.getCostToEnter(Orientation.java:460)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:359)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:365)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleChargePathsToTarget(Orientation.java:340)
+	at ostrowski.combat.common.Character.getActionRequest(Character.java:1622)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1616)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:53:52.424
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:591)
+	at ostrowski.combat.server.ArenaLocation.canMoveBetween(ArenaLocation.java:490)
+	at ostrowski.combat.common.orientations.OrientationSerpentine.move(OrientationSerpentine.java:151)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleAdvanceOrientations(Orientation.java:322)
+	at ostrowski.combat.server.Arena.getAllRoutesFrom(Arena.java:1360)
+	at ostrowski.combat.server.Arena.getFutureMoves(Arena.java:1117)
+	at ostrowski.combat.server.Arena.getMoveableLocations(Arena.java:1108)
+	at ostrowski.combat.common.AI.findPathToHideFromAttacker(AI.java:2145)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2190)
+	at ostrowski.combat.common.AI.shouldMove(AI.java:1995)
+	at ostrowski.combat.common.AI.requestAction(AI.java:1494)
+	at ostrowski.combat.common.AI.processObject(AI.java:122)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1633)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:53:52.426
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:587)
+	at ostrowski.combat.server.ArenaLocation.costToEnter(ArenaLocation.java:617)
+	at ostrowski.combat.common.orientations.Orientation.getCostToEnter(Orientation.java:460)
+	at ostrowski.combat.server.Arena.getAllRoutesFrom(Arena.java:1379)
+	at ostrowski.combat.server.Arena.getFutureMoves(Arena.java:1117)
+	at ostrowski.combat.server.Arena.getMoveableLocations(Arena.java:1108)
+	at ostrowski.combat.common.AI.findPathToHideFromAttacker(AI.java:2145)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2190)
+	at ostrowski.combat.common.AI.shouldMove(AI.java:1995)
+	at ostrowski.combat.common.AI.requestAction(AI.java:1494)
+	at ostrowski.combat.common.AI.processObject(AI.java:122)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1633)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:53:52.428
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:591)
+	at ostrowski.combat.server.ArenaLocation.costToEnter(ArenaLocation.java:617)
+	at ostrowski.combat.common.orientations.Orientation.getCostToEnter(Orientation.java:460)
+	at ostrowski.combat.server.Arena.getAllRoutesFrom(Arena.java:1379)
+	at ostrowski.combat.server.Arena.getFutureMoves(Arena.java:1117)
+	at ostrowski.combat.server.Arena.getMoveableLocations(Arena.java:1108)
+	at ostrowski.combat.common.AI.findPathToHideFromAttacker(AI.java:2145)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2190)
+	at ostrowski.combat.common.AI.shouldMove(AI.java:1995)
+	at ostrowski.combat.common.AI.requestAction(AI.java:1494)
+	at ostrowski.combat.common.AI.processObject(AI.java:122)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1633)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:53:52.429
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.costToEnter(ArenaLocation.java:646)
+	at ostrowski.combat.common.orientations.Orientation.getCostToEnter(Orientation.java:460)
+	at ostrowski.combat.server.Arena.getAllRoutesFrom(Arena.java:1379)
+	at ostrowski.combat.server.Arena.getFutureMoves(Arena.java:1117)
+	at ostrowski.combat.server.Arena.getMoveableLocations(Arena.java:1108)
+	at ostrowski.combat.common.AI.findPathToHideFromAttacker(AI.java:2145)
+	at ostrowski.combat.common.AI.requestMovement2(AI.java:2190)
+	at ostrowski.combat.common.AI.shouldMove(AI.java:1995)
+	at ostrowski.combat.common.AI.requestAction(AI.java:1494)
+	at ostrowski.combat.common.AI.processObject(AI.java:122)
+	at ostrowski.combat.server.Arena.sendObjectToCombatant(Arena.java:636)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1633)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:53:52.442
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:591)
+	at ostrowski.combat.server.ArenaLocation.canMoveBetween(ArenaLocation.java:490)
+	at ostrowski.combat.common.orientations.OrientationSerpentine.move(OrientationSerpentine.java:151)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleAdvanceOrientations(Orientation.java:322)
+	at ostrowski.combat.server.Arena.getAllRoutesFrom(Arena.java:1360)
+	at ostrowski.combat.server.Arena.getFutureMoves(Arena.java:1117)
+	at ostrowski.combat.server.Arena.getMoveableLocations(Arena.java:1108)
+	at ostrowski.combat.protocol.request.RequestAction.getNextQuestion(RequestAction.java:274)
+	at ostrowski.combat.server.Battle.getNextQuestionForAction(Battle.java:1916)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1804)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:53:52.443
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:587)
+	at ostrowski.combat.server.ArenaLocation.costToEnter(ArenaLocation.java:617)
+	at ostrowski.combat.common.orientations.Orientation.getCostToEnter(Orientation.java:460)
+	at ostrowski.combat.server.Arena.getAllRoutesFrom(Arena.java:1379)
+	at ostrowski.combat.server.Arena.getFutureMoves(Arena.java:1117)
+	at ostrowski.combat.server.Arena.getMoveableLocations(Arena.java:1108)
+	at ostrowski.combat.protocol.request.RequestAction.getNextQuestion(RequestAction.java:274)
+	at ostrowski.combat.server.Battle.getNextQuestionForAction(Battle.java:1916)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1804)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:53:52.444
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:591)
+	at ostrowski.combat.server.ArenaLocation.costToEnter(ArenaLocation.java:617)
+	at ostrowski.combat.common.orientations.Orientation.getCostToEnter(Orientation.java:460)
+	at ostrowski.combat.server.Arena.getAllRoutesFrom(Arena.java:1379)
+	at ostrowski.combat.server.Arena.getFutureMoves(Arena.java:1117)
+	at ostrowski.combat.server.Arena.getMoveableLocations(Arena.java:1108)
+	at ostrowski.combat.protocol.request.RequestAction.getNextQuestion(RequestAction.java:274)
+	at ostrowski.combat.server.Battle.getNextQuestionForAction(Battle.java:1916)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1804)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:53:52.445
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.costToEnter(ArenaLocation.java:646)
+	at ostrowski.combat.common.orientations.Orientation.getCostToEnter(Orientation.java:460)
+	at ostrowski.combat.server.Arena.getAllRoutesFrom(Arena.java:1379)
+	at ostrowski.combat.server.Arena.getFutureMoves(Arena.java:1117)
+	at ostrowski.combat.server.Arena.getMoveableLocations(Arena.java:1108)
+	at ostrowski.combat.protocol.request.RequestAction.getNextQuestion(RequestAction.java:274)
+	at ostrowski.combat.server.Battle.getNextQuestionForAction(Battle.java:1916)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1804)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:53:52.591
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:587)
+	at ostrowski.combat.server.ArenaLocation.canMoveBetween(ArenaLocation.java:490)
+	at ostrowski.combat.common.orientations.OrientationSerpentine.move(OrientationSerpentine.java:151)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleFutureOrientations(Orientation.java:383)
+	at ostrowski.combat.server.Arena.getAllRoutesFrom(Arena.java:1363)
+	at ostrowski.combat.server.Arena.getFutureMoves(Arena.java:1117)
+	at ostrowski.combat.server.Arena.getMoveableLocations(Arena.java:1108)
+	at ostrowski.combat.protocol.request.RequestAction.getNextQuestion(RequestAction.java:274)
+	at ostrowski.combat.server.Battle.getNextQuestionForAction(Battle.java:1916)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1804)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+
+
+12/26/19 22:53:52.593
+Possible Deadlock condition found:
+Object AreanLocation_lock_this[2] untracked more often than it was tracked.
+Name [order] = AreanLocation_lock_this[2], lock count = 0, wait count = 0, track count = -1
+	at ostrowski.util.Semaphore.untrack(Semaphore.java:290)
+	at ostrowski.util.SemaphoreAutoTracker.close(SemaphoreAutoTracker.java:15)
+	at ostrowski.combat.server.ArenaLocation.getBlockingDoorOrientations(ArenaLocation.java:206)
+	at ostrowski.combat.server.ArenaLocation.getWallsAndClosedDoors(ArenaLocation.java:707)
+	at ostrowski.combat.server.ArenaLocation.canEnter(ArenaLocation.java:591)
+	at ostrowski.combat.server.ArenaLocation.canMoveBetween(ArenaLocation.java:490)
+	at ostrowski.combat.common.orientations.OrientationSerpentine.move(OrientationSerpentine.java:151)
+	at ostrowski.combat.common.orientations.Orientation.getPossibleFutureOrientations(Orientation.java:383)
+	at ostrowski.combat.server.Arena.getAllRoutesFrom(Arena.java:1363)
+	at ostrowski.combat.server.Arena.getFutureMoves(Arena.java:1117)
+	at ostrowski.combat.server.Arena.getMoveableLocations(Arena.java:1108)
+	at ostrowski.combat.protocol.request.RequestAction.getNextQuestion(RequestAction.java:274)
+	at ostrowski.combat.server.Battle.getNextQuestionForAction(Battle.java:1916)
+	at ostrowski.combat.server.Battle.selectActions(Battle.java:1804)
+	at ostrowski.combat.server.Battle.executeRound(Battle.java:399)
+	at ostrowski.combat.server.Battle.executeTurn(Battle.java:243)
+	at ostrowski.combat.server.Battle.run(Unknown Source)
+

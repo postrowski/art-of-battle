@@ -165,7 +165,7 @@ public class Arena implements Enums, IMapListener
       boolean foundWaiting = false;
       boolean nameChanged = false;
       if (currentDupCount == null) {
-         _registeredNames.put(newCombatantsName, Integer.valueOf(1));
+         _registeredNames.put(newCombatantsName, 1);
       }
       else {
          // Look for a character with a matching _uniqueID
@@ -197,7 +197,7 @@ public class Arena implements Enums, IMapListener
                   }
                }
                int curCount = currentDupCount.intValue() + 1;
-               _registeredNames.put(newCombatantsName, Integer.valueOf(curCount));
+               _registeredNames.put(newCombatantsName, curCount);
                combatant.setName(newCombatantsName + "-" + curCount);
                nameChanged = true;
             }
@@ -402,7 +402,7 @@ public class Arena implements Enums, IMapListener
                   boolean sameTeam = (otherCombatant._teamID == combatant._teamID);
                   if ((!sameTeam) || (combatant._teamID == TEAM_INDEPENDENT)) {
                      targetPriorities.add(otherCombatant);
-                     targetPriorityIDs.add(Integer.valueOf(otherCombatant._uniqueID));
+                     targetPriorityIDs.add(otherCombatant._uniqueID);
                   }
                }
             }
@@ -1521,7 +1521,7 @@ public class Arena implements Enums, IMapListener
    }
    /**
     * This returns the distance from the head of the character to the location, in hexes
-    * @param loc
+    * @param coord
     * @param character
     * @return
     */
@@ -2112,7 +2112,7 @@ public class Arena implements Enums, IMapListener
             localCharactersList.appendChild(arenaDoc.createTextNode(newLine + "  "));
             localCharactersList.appendChild(localChar.getXmlObject(arenaDoc, true/*includeConditionData*/, newLine + "  "));
             if (localChar.stillFighting()) {
-               uniqueIDs.add(Integer.valueOf(localChar._uniqueID));
+               uniqueIDs.add(localChar._uniqueID);
             }
          }
          localCharactersList.appendChild(arenaDoc.createTextNode(newLine));
@@ -2120,7 +2120,7 @@ public class Arena implements Enums, IMapListener
             remoteCharactersList.appendChild(arenaDoc.createTextNode(newLine + "  "));
             remoteCharactersList.appendChild(remoteChar.getXmlObject(arenaDoc, true/*includeConditionData*/, newLine + "  "));
             if (remoteChar.stillFighting()) {
-               uniqueIDs.add(Integer.valueOf(remoteChar._uniqueID));
+               uniqueIDs.add(remoteChar._uniqueID);
             }
          }
          remoteCharactersList.appendChild(arenaDoc.createTextNode(newLine));
@@ -2132,7 +2132,7 @@ public class Arena implements Enums, IMapListener
                   aiCharXml.setAttribute("aiType", _mapCombatantToAI.get(aiChar).getAiType().name);
                   aiCharactersList.appendChild(aiCharXml);
                   if (aiChar.stillFighting()) {
-                     uniqueIDs.add(Integer.valueOf(aiChar._uniqueID));
+                     uniqueIDs.add(aiChar._uniqueID);
                   }
                }
             }
@@ -2283,7 +2283,7 @@ public class Arena implements Enums, IMapListener
                _mapProxyToCombatant.containsValue(combatant);
    }
    public AI_Type getAiType(Character combatant) {
-      if (_localCombatants.contains(combatant)) {
+      if (!_localCombatants.contains(combatant)) {
          AI ai = _mapCombatantToAI.get(combatant);
          if (ai != null) {
             return ai.getAiType();

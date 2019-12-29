@@ -55,19 +55,14 @@ public abstract class Orientation extends SerializableObject implements Enums, C
    @Override
    public Orientation clone() {
       try {
-         Orientation dup = this.getClass().getDeclaredConstructor().newInstance();
+         Orientation dup = (Orientation) super.clone();//this.getClass().getDeclaredConstructor().newInstance();
          dup.copyDataFrom(this);
          return dup;
-      } catch (InstantiationException |
-               IllegalAccessException |
-               IllegalArgumentException |
-               InvocationTargetException |
-               NoSuchMethodException |
-               SecurityException e) {
+      } catch (IllegalArgumentException | SecurityException | CloneNotSupportedException e) {
          e.printStackTrace();
+         DebugBreak.debugBreak();
+         return null;
       }
-      DebugBreak.debugBreak();
-      return null;
    }
 
    public void copyDataFrom(Orientation source) {
@@ -88,7 +83,7 @@ public abstract class Orientation extends SerializableObject implements Enums, C
       return _coordinates;
    }
    public ArenaCoordinates getHeadCoordinates() {
-      if ((_coordinates == null) || (_coordinates.size() == 0)) {
+      if (_coordinates.size() == 0) {
          DebugBreak.debugBreak();
          return null;
       }
@@ -180,17 +175,18 @@ public abstract class Orientation extends SerializableObject implements Enums, C
     * @param diag
     * @return
     */
-   public ArrayList<ArenaLocation> getLocationsForNewHeadLocation(Character character, ArenaLocation headLocation, Facing facing, CombatMap map, Diagnostics diag)
+   public List<ArenaLocation> getLocationsForNewHeadLocation(Character character, ArenaLocation headLocation,
+                                                             Facing facing, CombatMap map, Diagnostics diag)
    {
-      ArrayList<Limb> limbs = character.getLimbs();
-      ArrayList<ArenaLocation> newLocs = new ArrayList<>();
-      ArrayList<Byte> newFacingTwists = new ArrayList<>();
-      ArrayList<Facing> newFacings = new ArrayList<>();
+      List<Limb> limbs = character.getLimbs();
+      List<ArenaLocation> newLocs = new ArrayList<>();
+      List<Byte> newFacingTwists = new ArrayList<>();
+      List<Facing> newFacings = new ArrayList<>();
       if (facing == null) {
          DebugBreak.debugBreak();
       }
       newFacings.add(facing);
-      newFacingTwists.add(Byte.valueOf((byte)0));
+      newFacingTwists.add((byte) 0);
 
       for (Limb limb : limbs) {
          boolean locValid = false;
@@ -203,7 +199,7 @@ public abstract class Orientation extends SerializableObject implements Enums, C
                   }
                   newLocs.add(limbLoc);
                   newFacings.add(facing.turn(twist));
-                  newFacingTwists.add(Byte.valueOf(twist));
+                  newFacingTwists.add(twist);
                }
                // if this location is already in the list of locations, its a valid location.
                locValid = true;
@@ -219,7 +215,7 @@ public abstract class Orientation extends SerializableObject implements Enums, C
    }
    public boolean setHeadLocation(Character character, ArenaLocation headLocation, Facing facing, CombatMap map, Diagnostics diag, boolean allowTwisting)
    {
-      ArrayList<ArenaLocation> newLocs = getLocationsForNewHeadLocation(character, headLocation, facing, map, diag);
+      List<ArenaLocation> newLocs = getLocationsForNewHeadLocation(character, headLocation, facing, map, diag);
       if (newLocs == null) {
          return false;
       }
@@ -245,7 +241,7 @@ public abstract class Orientation extends SerializableObject implements Enums, C
       sb.append("facings: ").append(_facings);
       sb.append(", position: ").append(getPositionName());
       sb.append(", headloc: (");
-      if ((_coordinates != null) && (_coordinates.size()>0)) {
+      if (_coordinates.size() > 0) {
          sb.append(_coordinates.get(0)._x).append(",").append(_coordinates.get(0)._y);
       }
       sb.append(")");
@@ -253,8 +249,7 @@ public abstract class Orientation extends SerializableObject implements Enums, C
    }
    public DrawnObject getBodyOutlines(Character character, int wideDiameter, int narrowDiameter, ArenaLocation loc, int[] bounds, RGB foreground, RGB background)
    {
-      int pointCount = wideDiameter;
-      return DrawnObject.createElipse(wideDiameter, narrowDiameter, pointCount, foreground, background);
+      return DrawnObject.createElipse(wideDiameter, narrowDiameter, wideDiameter, foreground, background);
    }
    public DrawnObject getHeadOutlines(Character character, int size, ArenaLocation loc, RGB foreground, RGB background)
    {
@@ -264,9 +259,8 @@ public abstract class Orientation extends SerializableObject implements Enums, C
             if (getLimbCoordinates(limb._limbType).sameCoordinates(loc)) {
                int wideDiameter = getLimbWidth(limb._limbType, size);
                int narrowDiameter = getLimbLength(limb._limbType, size);
-               int pointCount = wideDiameter;
                Head head = (Head) limb;
-               DrawnObject headObj = DrawnObject.createElipse(wideDiameter, narrowDiameter, pointCount, foreground, background);
+               DrawnObject headObj = DrawnObject.createElipse(wideDiameter, narrowDiameter, wideDiameter, foreground, background);
                int xOffset = getLimbOffsetX(head, size, loc);
                int yOffset = getLimbOffsetY(head, size, loc);
                if ((xOffset != 0) || (yOffset != 0)) {
@@ -295,7 +289,7 @@ public abstract class Orientation extends SerializableObject implements Enums, C
       ArenaCoordinates headCoordinates = getLimbCoordinates(LimbType.HEAD);
       return map.getLocation(getLimbLocation(limbType, map, map.getLocation(headCoordinates), _facings));
    }
-   abstract public ArenaLocation getLimbLocation(LimbType limbType, CombatMap map, ArenaLocation headLocation, ArrayList<Facing> facings);
+   abstract public ArenaLocation getLimbLocation(LimbType limbType, CombatMap map, ArenaLocation headLocation, List<Facing> facings);
    abstract public ArenaCoordinates getLimbCoordinates(LimbType limbType);
 
    public Facing getFacing() {

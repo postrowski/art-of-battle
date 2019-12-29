@@ -53,7 +53,7 @@ public class RequestTarget extends SyncRequest
       _optionsTeam = new ArrayList<>();
       for (Character target : newOrder) {
          _options.add(new RequestOption(target.getName(), target._uniqueID, true));
-         _optionsTeam.add(Byte.valueOf(target._teamID));
+         _optionsTeam.add(target._teamID);
       }
    }
    public ArrayList<Character> getTargetCharacters() {
@@ -81,7 +81,7 @@ public class RequestTarget extends SyncRequest
          int index = 0;
          StringTokenizer st = new StringTokenizer(answer, ",");
          while (st.hasMoreTokens()) {
-            _options.set(index++, new RequestOption("", Integer.valueOf(st.nextToken()), true));
+            _options.set(index++, new RequestOption("", Integer.parseInt(st.nextToken()), true));
             // TODO: we currently don't copy the name or teamID
          }
       }

@@ -188,16 +188,16 @@ public class RequestMovement extends SyncRequest implements Enums
          for (Orientation futureOrientation : _futureOrientations) {
             Orientation sourceOrientation = _mapOfFutureOrientToSourceOrient.get(futureOrientation);
             if (sourceOrientation == null) {
-               futureOrientationsSourceIndexIntoFutureOrientations.add(Integer.valueOf(-1));
+               futureOrientationsSourceIndexIntoFutureOrientations.add(-1);
             }
             else {
                int indexIntoFutureOrientations = _futureOrientations.indexOf(sourceOrientation);
                if (indexIntoFutureOrientations != -1) {
-                  futureOrientationsSourceIndexIntoFutureOrientations.add(Integer.valueOf(indexIntoFutureOrientations));
+                  futureOrientationsSourceIndexIntoFutureOrientations.add(indexIntoFutureOrientations);
                }
                else {
                   DebugBreak.debugBreak();
-                  futureOrientationsSourceIndexIntoFutureOrientations.add(Integer.valueOf(-1));
+                  futureOrientationsSourceIndexIntoFutureOrientations.add(-1);
                }
             }
          }
