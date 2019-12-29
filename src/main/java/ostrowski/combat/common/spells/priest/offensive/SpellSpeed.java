@@ -49,7 +49,7 @@ public class SpellSpeed extends ExpiringPriestSpell implements ICastInBattle
                                             ""+getActionsChangePerTurnModifier(power),
                                             ""+getActionsChangePerRoundModifier(power)));
       }
-      sb.append(table.toString());
+      sb.append(table);
 
       return sb.toString();
    }

@@ -20,7 +20,7 @@ public class Table extends HtmlElement
    protected String getElementContents() {
       StringBuilder sb = new StringBuilder();
       for (TableRow tr : _data) {
-         sb.append(tr.toString());
+         sb.append(tr);
       }
       return sb.toString();
    }

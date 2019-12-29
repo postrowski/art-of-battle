@@ -61,7 +61,7 @@ public class EnterArena extends SerializableObject
    public String toString() {
       StringBuilder sb = new StringBuilder();
       sb.append("EnterArena: ");
-      sb.append(_character.toString());
+      sb.append(_character);
       sb.append(", entering: ").append(_entering);
       sb.append(", team: ").append(_team);
       sb.append(", indexOnTeam: ").append(_indexOnTeam);

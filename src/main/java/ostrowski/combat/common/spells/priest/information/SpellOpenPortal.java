@@ -31,17 +31,17 @@ public class SpellOpenPortal extends PriestSpell
                                        .addTD(new TableData(getDurationDescriptionForpower(p)))
                                        .addTD(new TableData(getDistanceDescriptionForpower(p)).setAlignLeft()));
       }
-      return "The '"+ getName() + "' spell opens a portal to any destination that is known by the Deity." +
+      return "The '" + getName() + "' spell opens a portal to any destination that is known by the Deity." +
              " The more power put into the spell, the further away the destination may be, and the longer the portal will remain open." +
              " The caster must allocate points for each duration and distance individually." +
              " The total cost of the spell is the sum of the duration power and the distance power." +
-             table.toString() +
+             table +
              "<br/> So a priest with 4 power points of effective power could open a portal" +
-             " to a location " + getDurationDescriptionForpower(1) + " away for "+getDistanceDescriptionForpower(3)+
-             ", or " + getDurationDescriptionForpower(2) + " away for "+getDistanceDescriptionForpower(2)+
-             ", or " + getDurationDescriptionForpower(3) + " away for "+getDistanceDescriptionForpower(1)+"." +
-             " As long as the portal is open, anyone may enter through the portal from either side,"+
-             " and will be transported at the speed of light to the other end of the portal."+
+             " to a location " + getDurationDescriptionForpower(1) + " away for " + getDistanceDescriptionForpower(3) +
+             ", or " + getDurationDescriptionForpower(2) + " away for " + getDistanceDescriptionForpower(2) +
+             ", or " + getDurationDescriptionForpower(3) + " away for " + getDistanceDescriptionForpower(1) + "." +
+             " As long as the portal is open, anyone may enter through the portal from either side," +
+             " and will be transported at the speed of light to the other end of the portal." +
              " The caster may choose to close the portal earlier than the duration, " +
              "but if the caster dies, the portal will remain open for the duration specified, unless closed by other spells." +
              " The portal acts just like a normal door, and spells and missile weapons may pass freely through this door unobstructed.";

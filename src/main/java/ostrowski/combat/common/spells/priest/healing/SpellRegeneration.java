@@ -40,7 +40,7 @@ public class SpellRegeneration extends PriestSpell implements ICastInBattle
       StringBuilder sb = new StringBuilder();
       sb.append("The 'Regeneration' spell causes a single lost body part on the subject to regrow.");
       sb.append(" The more power put into the spell, the quicker the limb is regrown.");
-      sb.append(table.toString());
+      sb.append(table);
       return sb.toString();
    }
    private static String getDescriptionForpower(int p) {

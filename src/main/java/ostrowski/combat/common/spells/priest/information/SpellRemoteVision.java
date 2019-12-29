@@ -31,15 +31,15 @@ public class SpellRemoteVision extends PriestSpell
                                        .addTD(new TableData(getDurationDescriptionForpower(p)))
                                        .addTD(new TableData(getDistanceDescriptionForpower(p)).setAlignLeft()));
       }
-      return "The '"+ getName() + "' spell opens a floating window that is connected to any destination that is known by the Deity." +
-      " The more power put into the spell, the further away the destination may be, and the longer the window will remain open." +
-      table.toString() +
-      "<br/> The caster may choose if the target location can observe the window." +
-      " If the caster allows it, then the window becomes like a video phone, passing only light and sounds in each direction."+
-      " If the caster denies it, observers at the target location will not see the window, nor know of its existence, without some form of a detect magic spell." +
-      " The caster may choose to close the portal earlier than the duration, " +
-      "but if the caster dies, the portal will remain open for the duration specified, unless closed by other spells." +
-      " Spells may not be cast through the window in either direction, nor can missile weapons pass through it.";
+      return "The '" + getName() + "' spell opens a floating window that is connected to any destination that is known by the Deity." +
+             " The more power put into the spell, the further away the destination may be, and the longer the window will remain open." +
+             table +
+             "<br/> The caster may choose if the target location can observe the window." +
+             " If the caster allows it, then the window becomes like a video phone, passing only light and sounds in each direction." +
+             " If the caster denies it, observers at the target location will not see the window, nor know of its existence, without some form of a detect magic spell." +
+             " The caster may choose to close the portal earlier than the duration, " +
+             "but if the caster dies, the portal will remain open for the duration specified, unless closed by other spells." +
+             " Spells may not be cast through the window in either direction, nor can missile weapons pass through it.";
    }
 
    private static String getDurationDescriptionForpower(int p) {

@@ -91,7 +91,7 @@ public class SpellFlamingWeapon extends ExpiringMageSpell implements ICastInBatt
       sb.append("The '").append(getName()).append("' spell causes the subject's primary weapon (or hands, if no weapon is held) to");
       sb.append(" ignite into flames. Any time the weapon hits an opponent, and penetrates the armor (does at least 1 point of damage)");
       sb.append(" then the flames of the weapon add additional pain and wounds, based upon the power of the spell:");
-      sb.append(table.toString());
+      sb.append(table);
       sb.append("<br/>This spell has no effect when cast on missile weapons, as the flames do not propagate to the missile.");
       sb.append(" Use the 'Flaming Missile Weapon' spell for that.");
       sb.append(" The '").append(getName()).append("' spell is suitable for casting on thrown weapons.");

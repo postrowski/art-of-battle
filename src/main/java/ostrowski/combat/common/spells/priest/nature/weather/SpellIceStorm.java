@@ -45,7 +45,7 @@ public class SpellIceStorm extends PriestSpell
                                             getDurationForPower(power) + " turns",
                                             getDamageForPower(power)));
       }
-      sb.append(table.toString());
+      sb.append(table);
       return sb.toString();
    }
    public static int getDurationForPower(int power) {

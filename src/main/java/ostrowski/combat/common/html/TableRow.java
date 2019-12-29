@@ -80,7 +80,7 @@ public class TableRow extends HtmlElement
    protected String getElementContents() {
       StringBuilder sb = new StringBuilder();
       for (TableData td : _data) {
-         sb.append(td.toString());
+         sb.append(td);
       }
       return sb.toString();
    }

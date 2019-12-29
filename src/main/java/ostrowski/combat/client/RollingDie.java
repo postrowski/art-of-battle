@@ -71,7 +71,7 @@ public class RollingDie extends Dialog implements PaintListener
 
             } catch (InterruptedException e) {
             } catch (IllegalMonitorStateException e) {
-               System.out.println(e.toString());
+               System.out.println(e);
             } finally {
                _animationThread = null;
             }

@@ -428,7 +428,7 @@ public class Condition extends SerializableObject implements Enums {
       _actionsAvailAudit.append("(").append(action.getActionsUsed()).append(" actions)");
       _actionsAvailable -= action.getActionsUsed();
       if (_actionsAvailable < 0) {
-         DebugBreak.debugBreak(actor.getName() + " has " + _actionsAvailable + " actions to use. Full audit (inclusive)=" + _actionsAvailAudit.toString());
+         DebugBreak.debugBreak(actor.getName() + " has " + _actionsAvailable + " actions to use. Full audit (inclusive)=" + _actionsAvailAudit);
          _actionsAvailable = 0;
       }
 //      if (action.isChangePosition()) {
@@ -713,7 +713,7 @@ public class Condition extends SerializableObject implements Enums {
       sb.append(", mageSpellPointsMax: ").append(_mageSpellPointsMax);
       sb.append(", priestSpellPointsAvailable: ").append(_priestSpellPointsAvailable);
       sb.append(", priestSpellPointsMax: ").append(_priestSpellPointsMax);
-      sb.append(", orientation: ").append(_orientation.toString());
+      sb.append(", orientation: ").append(_orientation);
       return sb.toString();
    }
    public void collapseFromPain(CombatMap map, Character actor)

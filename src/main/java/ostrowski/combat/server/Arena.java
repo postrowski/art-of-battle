@@ -596,7 +596,7 @@ public class Arena implements Enums, IMapListener
                      responseFoundInPlayback = true;
                   }
                   else {
-                     Rules.diag("Expected response to:\n" + response.toString() + "\nBut got response to:\n" + obj.toString());
+                     Rules.diag("Expected response to:\n" + response + "\nBut got response to:\n" + obj);
                      DebugBreak.debugBreak();
                   }
                }

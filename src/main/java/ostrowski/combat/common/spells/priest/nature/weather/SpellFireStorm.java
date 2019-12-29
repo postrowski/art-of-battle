@@ -45,7 +45,7 @@ public class SpellFireStorm extends PriestSpell
                                             getDurationForPower(power) + " turns",
                                             getDamageForPower(power).toString()));
       }
-      sb.append(table.toString());
+      sb.append(table);
       return sb.toString();
    }
 

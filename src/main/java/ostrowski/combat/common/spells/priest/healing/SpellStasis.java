@@ -32,7 +32,7 @@ public class SpellStasis extends PriestSpell
       }
       return "The '" + getName() + "' spell puts the subject into a state of suspended animation."+
              " The more power put into the spell, the deeper the statis is.<br/>" +
-             table.toString();
+             table;
    }
    private static String getDescriptionForpower(int p) {
       switch (p) {

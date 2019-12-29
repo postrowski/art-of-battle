@@ -39,7 +39,7 @@ public class SpellMagicShield extends ExpiringMageSpell implements ICastInBattle
       }
       return "The '" + getName() + "' spell creates a weightless magical shield in the caster's hand that can be used like a normal shield." +
              " The power put into the spell determines the size of the shield, and thus the PD of the shield." +
-             table.toString();
+             table;
    }
    private static String getDescriptionForpower(int p) {
       if ((p == 0) || (p >= Shield._shieldList.length)) {

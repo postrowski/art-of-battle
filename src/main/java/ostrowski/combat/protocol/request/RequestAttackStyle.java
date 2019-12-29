@@ -54,7 +54,7 @@ public class RequestAttackStyle extends SyncRequest implements Enums {
       }
       @Override
       public String toString() {
-         return " damageType=" + _damageType + ", attackType=" + _attackType + ", attackDice=" + _attackDice.toString();
+         return " damageType=" + _damageType + ", attackType=" + _attackType + ", attackDice=" + _attackDice;
       }
    }
 

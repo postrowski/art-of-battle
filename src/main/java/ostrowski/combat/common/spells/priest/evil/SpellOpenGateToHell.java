@@ -29,17 +29,17 @@ public class SpellOpenGateToHell extends PriestSpell
          table.addRow(new TableRow(p-1).addHeader("" + p + ((p==8 ? "+" : "")))
                                        .addTD(new TableData(getDescriptionForpower(p)).setAlignLeft()));
       }
-      return "The '"+ getName() + "' spell opens a portal directly into the plane of hell." +
-               " The more power put into the spell, the longer the portal will remain open." +
-               table.toString() +
-               "<br/> As long as the portal is open, anyone or anything may enter through the portal from either side,"+
-               " and will be transported instantly to the other end of the portal."+
-               " The caster may choose to close the portal earlier than the duration, " +
-               "but if the caster dies, the portal will remain open for the duration specified, unless closed by other spells." +
-               " A gate opened to hell will usually draw the attention of one or more devils or demons, which will use " +
-               "the gate to enter our world. Generally, gates to hell should only be opened within a pentagram, or other protective " +
-               " mechanism, so that the creatures that will come out can be controlled or at least contained." +
-               " Only a few casters have ever survived opening a gate to hell without such protections.";
+      return "The '" + getName() + "' spell opens a portal directly into the plane of hell." +
+             " The more power put into the spell, the longer the portal will remain open." +
+             table +
+             "<br/> As long as the portal is open, anyone or anything may enter through the portal from either side," +
+             " and will be transported instantly to the other end of the portal." +
+             " The caster may choose to close the portal earlier than the duration, " +
+             "but if the caster dies, the portal will remain open for the duration specified, unless closed by other spells." +
+             " A gate opened to hell will usually draw the attention of one or more devils or demons, which will use " +
+             "the gate to enter our world. Generally, gates to hell should only be opened within a pentagram, or other protective " +
+             " mechanism, so that the creatures that will come out can be controlled or at least contained." +
+             " Only a few casters have ever survived opening a gate to hell without such protections.";
    }
    private static String getDescriptionForpower(int p) {
       switch (p) {

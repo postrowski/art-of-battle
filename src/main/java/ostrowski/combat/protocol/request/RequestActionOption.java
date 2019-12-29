@@ -94,6 +94,6 @@ public class RequestActionOption extends SerializableObject implements IRequestO
 
    @Override
    public String toString() {
-      return _name + ": " + _actionType.toString() + " - " + _limbType.name;
+      return _name + ": " + _actionType + " - " + _limbType.name;
    }
 }

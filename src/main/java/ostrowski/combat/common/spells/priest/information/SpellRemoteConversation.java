@@ -31,15 +31,15 @@ public class SpellRemoteConversation extends PriestSpell
                                        .addTD(new TableData(getDurationDescriptionForpower(p)))
                                        .addTD(new TableData(getDistanceDescriptionForpower(p)).setAlignLeft()));
       }
-      return "The '"+ getName() + "' spell opens an invisible window to any person or creature that is known by the Deity." +
-      " The more power put into the spell, the further away the target may be, and the longer the window will remain open." +
-      table.toString() +
-      "<br/> The caster may choose if sounds from his location are sent to the destination location." +
-      " If the caster allows it, then the window becomes like a speaker phone, passing only sounds in each direction."+
-      " If the caster denies it, observers at the target location will not know of the windows existence, without some form of a detect magic spell." +
-      " The caster may choose to close the portal earlier than the duration, " +
-      "but if the caster dies, the portal will remain open for the duration specified, unless closed by other spells." +
-      " Only sound may pass through the window, and spells may not be cast through this window.";
+      return "The '" + getName() + "' spell opens an invisible window to any person or creature that is known by the Deity." +
+             " The more power put into the spell, the further away the target may be, and the longer the window will remain open." +
+             table +
+             "<br/> The caster may choose if sounds from his location are sent to the destination location." +
+             " If the caster allows it, then the window becomes like a speaker phone, passing only sounds in each direction." +
+             " If the caster denies it, observers at the target location will not know of the windows existence, without some form of a detect magic spell." +
+             " The caster may choose to close the portal earlier than the duration, " +
+             "but if the caster dies, the portal will remain open for the duration specified, unless closed by other spells." +
+             " Only sound may pass through the window, and spells may not be cast through this window.";
    }
    private static String getDurationDescriptionForpower(int p) {
       switch (p) {

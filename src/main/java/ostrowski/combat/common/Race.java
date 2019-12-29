@@ -761,7 +761,7 @@ public class Race implements Cloneable, Enums
          }
       }
       table.addRow(new TableRow().addTD("&nbsp;"));
-      sb.append(table.toString());
+      sb.append(table);
       sb.append("</div>");
       sb.append("</body>");
       return sb.toString();

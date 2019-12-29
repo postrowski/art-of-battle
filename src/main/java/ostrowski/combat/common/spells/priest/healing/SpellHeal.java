@@ -44,7 +44,7 @@ public class SpellHeal extends SpellCureSeriousWound
                                            ""+getWoundReduction(power),
                                            ""+getPainReduction(power)));
       }
-      sb.append(table.toString());
+      sb.append(table);
       return sb.toString();
    }
    @Override

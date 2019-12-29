@@ -45,11 +45,11 @@ public abstract class MissileMageSpell extends MageSpell implements IMissileSpel
    }
    @Override
    public String describeSpell() {
-      return "The '"+getName()+"' spell creates a "+getName()+" from the caster's hand, which immediately travels towards the target." +
-              " The missile may be dodged or blocked as any missile weapon. The attack roll is the same as the casting roll." +
-              "<br/>The damage done by the missile is " + _damageBase + " + " + _damagePerPower +"*(spell power) + " +
-              DiceSet.getSingleDie(_damageDieType).toString() + " in " + _damageType.shortname + " damage." +
-              " If the caster is larger or smaller than human, the caster's racial build adjustment is added to the damage done.";
+      return "The '" + getName() + "' spell creates a " + getName() + " from the caster's hand, which immediately travels towards the target." +
+             " The missile may be dodged or blocked as any missile weapon. The attack roll is the same as the casting roll." +
+             "<br/>The damage done by the missile is " + _damageBase + " + " + _damagePerPower + "*(spell power) + " +
+             DiceSet.getSingleDie(_damageDieType) + " in " + _damageType.shortname + " damage." +
+             " If the caster is larger or smaller than human, the caster's racial build adjustment is added to the damage done.";
    }
 
    @Override
@@ -64,7 +64,7 @@ public abstract class MissileMageSpell extends MageSpell implements IMissileSpel
    @Override
    public String explainDamage() {
       StringBuilder sb = new StringBuilder();
-      sb.append(_damageBase).append(" + ").append(_damagePerPower).append(" * ").append(getPower()).append(" (power points) + ").append(getDamageDice().toString());
+      sb.append(_damageBase).append(" + ").append(_damagePerPower).append(" * ").append(getPower()).append(" (power points) + ").append(getDamageDice());
       if (_caster != null) {
          byte size = _caster.getRace().getBuildModifier();
          sb.append(" ");

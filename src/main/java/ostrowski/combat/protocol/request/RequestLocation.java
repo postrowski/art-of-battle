@@ -123,7 +123,7 @@ public class RequestLocation extends SyncRequest
    {
       StringBuilder sb = new StringBuilder();
       sb.append("RequestLocation: ");
-      sb.append("selectableLoc:").append(_selectableCoordinates.toString()).append("\n");
+      sb.append("selectableLoc:").append(_selectableCoordinates).append("\n");
       sb.append(super.toString());
       return sb.toString();
    }

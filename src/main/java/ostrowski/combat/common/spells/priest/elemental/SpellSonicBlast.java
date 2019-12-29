@@ -62,7 +62,7 @@ public class SpellSonicBlast extends ResistedPriestSpell implements IRangedSpell
       sb.append(" For each point of power diverted into protecting those nearby, the radius of safety (which is 1-hex initially) will be doubled.");
       sb.append(" Therefore, spending 1 point of the spell's power on protection causes the safety radius to be 2 hexes (anyone in any hex adjacent to the caster's own hex will be safe.)");
       sb.append(" Spending 3 point of the spell's power on protection causes the safety radius to be 8 hexes (anyone within 7 hexes of the caster's hex will be safe.)");
-      sb.append(table.toString());
+      sb.append(table);
       sb.append(" Possible damage done by the spell is reduced by the range, with the power dropping by 1 power point every time the range increases.");
       sb.append(" Everyone within point-blank range (that is not within the protected radius) suffers the full power of this spell, as detailed in the above table.");
       sb.append(" Anyone within the short range distance from the caster suffers damage as if the spell had 1 less power than its casting power.");

@@ -109,7 +109,7 @@ public abstract class PriestSpell extends Spell
       for (byte affinity=1 ; affinity<=5 ; affinity++) {
          table.addRow(new TableRow(affinity-1, ""+affinity, affinity * 5, affinity *10,  affinity * 15, affinity * 20, affinity * 25));
       }
-      sb.append(table.toString());
+      sb.append(table);
 
       sb.append("</td><td style='border-width: 0px; padding:40px'>");
 
@@ -120,7 +120,7 @@ public abstract class PriestSpell extends Spell
       for (byte power=1 ; power<=8 ; power++) {
          table.addRow(new TableRow(power-1, ""+power, anySpell.describeDiceForPower(power)));
       }
-      sb.append(table.toString());
+      sb.append(table);
 
       sb.append("</td><td style='border-width: 0px; padding:40px'>");
 
@@ -149,7 +149,7 @@ public abstract class PriestSpell extends Spell
          }
          table.addRow(tableRow);
       }
-      sb.append(table.toString());
+      sb.append(table);
       sb.append("</td></tr></table>");
 
       sb.append("<H4>Spells in groups:</H4>");
@@ -180,7 +180,7 @@ public abstract class PriestSpell extends Spell
          }
          table.addRow(tableRow);
       }
-      sb.append(table.toString());
+      sb.append(table);
 
       sb.append("<H4>Priest Spell Grimiore:</H4>");
       sb.append(getSpellGrimioreForHTML());
@@ -245,7 +245,7 @@ public abstract class PriestSpell extends Spell
          }
       }
       if (problems.length() != 0) {
-         Rules.diag("Problems found:\n" + problems.toString());
+         Rules.diag("Problems found:\n" + problems);
          DebugBreak.debugBreak(problems.toString());
       }
    }
@@ -567,7 +567,7 @@ public abstract class PriestSpell extends Spell
          tr.addTD(_effectivePower);
          tr.addTD("Effective power");
          table.addRow(tr);
-         sbDescription.append(table.toString());
+         sbDescription.append(table);
          sbDescription.append("<br/>");
       }
       return _effectivePower;

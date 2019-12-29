@@ -51,7 +51,7 @@ public class SpellPlague extends PriestSpell
                                             ""+getDurationForPower(power),
                                    "" + getDamageChanceForPower(power)));
       }
-      sb.append(table.toString());
+      sb.append(table);
 //    sb.append("If desired, the casting priest may trade 1 power point from duration, creature type or swarm size for 1 point of any other attribute (duration, type or size).");
 //    sb.append(" So a power level 5 spell would normally create a ").append(getAreaDiameterForPower(5)).append(" hex diameter swarm of ").append(getCreatureTypesForPower(5).replaceAll(", ", " or "));
 //    sb.append(" that remain for ").append(getDurationForPower(5));

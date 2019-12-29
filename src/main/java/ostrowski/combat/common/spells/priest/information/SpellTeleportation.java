@@ -31,14 +31,14 @@ public class SpellTeleportation extends PriestSpell
                                        .addTD(new TableData(getNumberOfPeopleForpower(p, false)))
                                        .addTD(new TableData(getDistanceDescriptionForpower(p)).setAlignLeft()));
       }
-      return "The '"+ getName() + "' spell transports the subject(s) to any destination that is known by the deity."+
+      return "The '" + getName() + "' spell transports the subject(s) to any destination that is known by the deity." +
              " The more power put into the spell, the further away the location may be, and/or the more people (or things) that can be transported." +
              " Spell power must be spend on both number of people and distance separately." +
-             table.toString() +
-             "<br/> So a priest that spends 4 power points on a Teleportation spell may send"+
-             " "+getNumberOfPeopleForpower(1, true)+" "+getDistanceDescriptionForpower(3)+" away,"+
-             " or "+getNumberOfPeopleForpower(2, true)+" "+getDistanceDescriptionForpower(2)+" away,"+
-             " or "+getNumberOfPeopleForpower(3, true)+" "+getDistanceDescriptionForpower(1)+" away."+
+             table +
+             "<br/> So a priest that spends 4 power points on a Teleportation spell may send" +
+             " " + getNumberOfPeopleForpower(1, true) + " " + getDistanceDescriptionForpower(3) + " away," +
+             " or " + getNumberOfPeopleForpower(2, true) + " " + getDistanceDescriptionForpower(2) + " away," +
+             " or " + getNumberOfPeopleForpower(3, true) + " " + getDistanceDescriptionForpower(1) + " away." +
              " Items may be sent instead of people, so long as the weight of the item(s) does not exceed the weight of the allowed number of people, assuming 200 lbs. per person." +
              " So a level 4 spell could send 4 people, or 800 lbs. of equipment, or 2 people and 400 lbs. of equipment a distance of 1 mile.";
    }

@@ -38,7 +38,7 @@ public class SpellShockingGrasp extends ExpiringMageSpell implements ICastInBatt
       }
       sb.append(getPower()).append("-point electric field (");
       DiceSet damageDice = getDamage(getPower());
-      sb.append(damageDice.toString()).append(" electric damage)");
+      sb.append(damageDice).append(" electric damage)");
       return sb.toString();
    }
    private static DiceSet getDamage(byte power) {
@@ -87,7 +87,7 @@ public class SpellShockingGrasp extends ExpiringMageSpell implements ICastInBatt
          StringBuilder alterationExplanationBuffer = new StringBuilder();
          Wound electricWound = WoundChart.getWound(damageLevel, DamageType.ELECTRIC, defender, alterationExplanationBuffer);
          if (alterationExplanationBuffer.length() > 0) {
-            modificationsExplanation.append(" and is further reduced by ").append(alterationExplanationBuffer.toString());
+            modificationsExplanation.append(" and is further reduced by ").append(alterationExplanationBuffer);
          }
          modificationsExplanation.append(" which reduces the damage to ").append(electricWound.describeWound());
 

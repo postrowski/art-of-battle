@@ -28,7 +28,7 @@ public class SpellFlamingMissileWeapon extends SpellFlamingWeapon
       sb.append(" These flames automatically ignite any missile loaded into the weapon.");
       sb.append(" Any time the missile hits an opponent, and penetrates the armor (does at least 1 point of damage),");
       sb.append(" then the flames of the weapon add additional pain and wounds, based upon the power of the spell:");
-      sb.append(table.toString());
+      sb.append(table);
       sb.append("<br/>This spell has no effect when cast on melee weapons, or thrown weapons.");
       sb.append(" Use the 'Flaming Weapon' spell for that.");
       return sb.toString();

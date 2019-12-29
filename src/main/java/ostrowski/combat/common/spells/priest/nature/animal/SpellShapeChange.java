@@ -49,7 +49,7 @@ public abstract class SpellShapeChange extends ExpiringPriestSpell implements IC
       for (byte power=1 ; power<=8 ; power++) {
          table.addRow(new TableRow(power-1, "" + power, getShapeName(power)));
       }
-      sb.append(table.toString());
+      sb.append(table);
       return sb.toString();
    }
 

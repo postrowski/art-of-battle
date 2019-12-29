@@ -125,7 +125,7 @@ public class SpellCallLightning extends PriestSpell implements IRangedSpell, ICa
                   targetDice = new DiceSet("1d20");
                }
                int targetIndex = targetDice.roll(false/*allowExplodes*/);
-               sb.append("<br/>Rolls a ").append(targetDice.toString());
+               sb.append("<br/>Rolls a ").append(targetDice);
                sb.append(", rolling ").append(targetDice.getLastDieRoll());
                if (charsAtRange.size() < targetIndex) {
                   sb.append(", missing all other characters.");
@@ -150,7 +150,7 @@ public class SpellCallLightning extends PriestSpell implements IRangedSpell, ICa
             else {
                damageDice = getCaster().adjustDieRoll(damageDice, RollType.DAMAGE_SPELL, hitCharacter/*target*/);
                int damage = damageDice.roll(true/*allowExplodes*/);
-               sb.append(" Damage rolled is ").append(damageDice.toString());
+               sb.append(" Damage rolled is ").append(damageDice);
                sb.append(", rolling ").append(damageDice.getLastDieRoll());
                sb.append(", for a total of ").append(damage).append(" electrical damage.<br/>");
 
@@ -169,7 +169,7 @@ public class SpellCallLightning extends PriestSpell implements IRangedSpell, ICa
                   sb.append(hitCharacter.getName()).append(" suffers the following wound:<br/>");
                   sb.append(wound.describeWound());
                   if (alterationExplanationBuffer.length() > 0) {
-                     sb.append(", which is modified by ").append(alterationExplanationBuffer.toString());
+                     sb.append(", which is modified by ").append(alterationExplanationBuffer);
                   }
                   sb.append("<br/>");
 

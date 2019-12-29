@@ -487,7 +487,7 @@ public class CharacterGeneratorTest implements Enums {
          rows[0].addTD(new TableData(actions).setRowSpan(rowsToUse));
          rows[0].addTD(new TableData(painDice.toString()).setRowSpan(rowsToUse));
          if (advantages.length() > 0) {
-            rows[0].addTD(new TableData(skills.toString() + "<br/>" + advantages.toString()).setRowSpan(rowsToUse));
+            rows[0].addTD(new TableData(skills + "<br/>" + advantages).setRowSpan(rowsToUse));
          }
          else {
             rows[0].addTD(new TableData(skills.toString()).setRowSpan(rowsToUse));
@@ -599,7 +599,7 @@ public class CharacterGeneratorTest implements Enums {
       character.setName("" + maxStyles);
       StringBuilder sb = new StringBuilder();
       for (TableRow row : rows) {
-         sb.append(row.toString());
+         sb.append(row);
       }
       return sb.toString().replace("<br/></", "</").replaceAll("<br/>", "%");
    }

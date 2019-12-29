@@ -296,17 +296,17 @@ public abstract class MageSpell extends Spell implements Enums
             }
          }
          if (misssingCollegeProblems.length() != 0) {
-            problems.append(misssingCollegeProblems.toString()).append("\n");
+            problems.append(misssingCollegeProblems).append("\n");
          }
          if (misssingSpellProblems.length() != 0) {
-            problems.append(misssingSpellProblems.toString()).append("\n");
+            problems.append(misssingSpellProblems).append("\n");
          }
          if (spell.describeSpell() == null) {
             problems.append("Spell ").append(spell.getName()).append(" needs to return a string from describeSpell()\n");
          }
       }
       if (problems.length() != 0) {
-         Rules.diag("Problems found:\n" + problems.toString());
+         Rules.diag("Problems found:\n" + problems);
          DebugBreak.debugBreak();
       }
       //printSkillInGroups();
@@ -526,7 +526,7 @@ public abstract class MageSpell extends Spell implements Enums
       for (byte ma = 1; ma <= 5; ma++) {
          table.addRow(new TableRow(ma-1, ""+ma, ""+Rules.getMaxMageSpellPoint(ma)));
       }
-      sb.append(table.toString());
+      sb.append(table);
 
       sb.append("</td><td>");
       sb.append("<H4>Spell TNs:</H4>");
@@ -551,7 +551,7 @@ public abstract class MageSpell extends Spell implements Enums
          }
          table.addRow(row);
       }
-      sb.append(table.toString());
+      sb.append(table);
       sb.append("</td></tr></table>");
 
       sb.append("<H4>Mage Spell Grimiore:</H4>");
@@ -685,7 +685,7 @@ public abstract class MageSpell extends Spell implements Enums
       tr.addTD(spellTN);
       tr.addTD("spell Casting TN (power=" + getPower() +
                ", MA=" + _caster.getMagicalAptitude() + ")");
-      sbDescription.append(tr.toString());
+      sbDescription.append(tr);
       return spellTN;
    }
 
@@ -713,7 +713,7 @@ public abstract class MageSpell extends Spell implements Enums
                sb.append("(").append(range.getName()).append(" range)");
             }
             tr.addTD(sb.toString());
-            sbDescription.append(tr.toString());
+            sbDescription.append(tr);
          }
       }
       byte rangeAdjustedCastingTN = (byte) (castingTN + rangeTNAdjustment);
@@ -722,7 +722,7 @@ public abstract class MageSpell extends Spell implements Enums
          TableRow tr = new TableRow();
          tr.addTD(rangeAdjustedCastingTN);
          tr.addTD(new TableData("Range Adjusted Spell TN", true/*isBold*/));
-         sbDescription.append(tr.toString());
+         sbDescription.append(tr);
       }
       return rangeAdjustedCastingTN;
    }

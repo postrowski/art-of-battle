@@ -57,7 +57,7 @@ public class SpellIncreaseDamage extends ExpiringPriestSpell implements ICastInB
                                             ""+getWounds(power),
                                             ""+super.getDuration(power)));
       }
-      sb.append(table.toString());
+      sb.append(table);
       return sb.toString();
    }
    @Override

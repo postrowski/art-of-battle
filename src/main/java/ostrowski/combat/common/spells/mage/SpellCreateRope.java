@@ -59,7 +59,7 @@ public class SpellCreateRope extends MageSpell
          }
          table.addRow(row);
       }
-      sb.append(table.toString());
+      sb.append(table);
       return sb.toString();
    }
 

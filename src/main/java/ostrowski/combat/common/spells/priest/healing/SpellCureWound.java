@@ -50,7 +50,7 @@ public class SpellCureWound extends PriestSpell implements ICastInBattle
                                            ""+getWoundReduction(power),
                                            ""+getPainReduction(power)));
       }
-      sb.append(table.toString());
+      sb.append(table);
       return sb.toString();
    }
    @Override

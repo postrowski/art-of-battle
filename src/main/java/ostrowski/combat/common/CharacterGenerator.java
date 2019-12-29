@@ -929,7 +929,7 @@ public class CharacterGenerator implements Enums
             if (count == null) {
                count = 0;
             }
-            character.setName(raceName + "-" + count.toString());
+            character.setName(raceName + "-" + count);
             generatedAnimalsCount.put(raceName, count.intValue() + 1);
          }
          else {
@@ -937,7 +937,7 @@ public class CharacterGenerator implements Enums
          }
       }
       if (printCharacter) {
-         Rules.diag("Character generated: " + character.toString());
+         Rules.diag("Character generated: " + character);
       }
       return character;
    }

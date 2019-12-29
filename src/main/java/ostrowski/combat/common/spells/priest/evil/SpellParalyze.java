@@ -36,7 +36,7 @@ public class SpellParalyze extends ResistedPriestSpell implements ICastInBattle
          table.addRow(new TableRow(p-1).addHeader("" + p + ((p==5) ? "+" : ""))
                                        .addTD(new TableData(getDescriptionForpower(p)).setAlignLeft()));
       }
-      return "The '" + getName() + "' spell makes the subject unable to move."+ table.toString();
+      return "The '" + getName() + "' spell makes the subject unable to move." + table;
    }
    private static String getDescriptionForpower(int p) {
       switch (p) {

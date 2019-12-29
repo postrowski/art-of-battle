@@ -213,9 +213,9 @@ public class RequestMovement extends SyncRequest implements Enums
       StringBuilder sb = new StringBuilder();
       sb.append(super.toString());
       sb.append("RequestMovement: ");
-      sb.append(", futureOrientations:").append(_futureOrientations.toString());
-      sb.append(", cancelOrientations:").append(_cancelOrientations.toString());
-      sb.append(", completeOrientations:").append(_completeOrientations.toString());
+      sb.append(", futureOrientations:").append(_futureOrientations);
+      sb.append(", cancelOrientations:").append(_cancelOrientations);
+      sb.append(", completeOrientations:").append(_completeOrientations);
       sb.append(", actorID:").append(_actorID);
       return sb.toString();
    }

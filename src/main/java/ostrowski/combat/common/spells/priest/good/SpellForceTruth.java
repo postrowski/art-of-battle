@@ -33,7 +33,7 @@ public class SpellForceTruth extends PriestSpell
       }
       return "The '"+getName()+"' spell causes the subject to not be able to lie." +
              " The more effect power in the spell, the higher the effects are:"+
-             table.toString();
+             table;
    }
    private static String getDescriptionForpower(int p) {
       switch (p) {

@@ -35,19 +35,19 @@ public class SpellCreateZombie extends PriestSpell implements ICastInBattle
          table.addRow(new TableRow(p).addHeader("" + p)
                                      .addTD(new TableData(getDescriptionForpower(p)).setAlignLeft()));
       }
-      return "The '" + getName() + "' spell reanimates one corpse."+
+      return "The '" + getName() + "' spell reanimates one corpse." +
              " The zombie will obey the commands of its creator, even to the point of its own destruction." +
-             " The attributes of the zombie will be equal to that of the creature when it was alive, except for IQ, which will be 5 points lower."+
+             " The attributes of the zombie will be equal to that of the creature when it was alive, except for IQ, which will be 5 points lower." +
              " However, no attribute level can be higher that the effective power of the spell." +
              " Similarly, the skills of the zombie will be equal to their living level, but will not exceed " +
              "the effective power of the spell times two. " +
              " Zombies do not feel pain, but are impeded by wounds the same as living creatures are." +
-             " If the corpse used to create a zombie is missing any limbs, the zombie will also be missing the limb, "+
+             " If the corpse used to create a zombie is missing any limbs, the zombie will also be missing the limb, " +
              "and will be hampered appropriately." +
              " A zombie is dispelled when its wounds level reaches 10, or the spell expires." +
              " Zombies normally stay around for 1 hour, however, spell points may be allocated away from skills and attributes " +
              "to prolong the zombies existence:" +
-             table.toString() +
+             table +
              "For example, given the corpse of a fallen warrior who had a STR of 4 and a DEX of 2, and a sword and skill level of 5:" +
              " A priest with 3 levels of divine power could raise this zombie with its STR at 3, and DEX at 2, and skill levels of 5 for 1 hour." +
              " The same caster could instead spend two of its effective power points on duration, raising the zombie with a STR and DEX of 1 and skill levels of 2 for 1 day." +

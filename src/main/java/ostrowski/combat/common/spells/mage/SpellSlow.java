@@ -48,7 +48,7 @@ public class SpellSlow extends ResistedMageSpell implements ICastInBattle
                                             ""+(0-getActionsChangePerTurnModifier(power)),
                                             ""+(0-getActionsChangePerRoundModifier(power))));
       }
-      sb.append(table.toString());
+      sb.append(table);
       return sb.toString();
    }
 

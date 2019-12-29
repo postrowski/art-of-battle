@@ -42,7 +42,7 @@ public class SpellReverseMissile extends InstantaneousPriestSpell
               " So a 3-point effective power spell would use NIM - 8 + 9 + Divine Affinity, resulting in a NIM + 1 + Divine Affinity + d10±." +
               " The firer of the missile may dodge or block the missile as if the caster had fired the missile himself." +
               " Range effects (modifications to TN and to defense effectiveness) in place for the returning missile are the same as they were for the initial firing of the missile." +
-              table.toString();
+             table;
    }
    private static String getDescriptionForpower(int p) {
       switch (p) {

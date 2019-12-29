@@ -31,8 +31,8 @@ public class SpellReverseTime extends PriestSpell
                                        .addTD(new TableData(getDescriptionForpower(p)).setAlignLeft()));
       }
       return "The '" + getName() + "' sends the caster (or a chosen subject) back in time." +
-             " The power of the spell determines how far back in time the subject is sent:"+
-             table.toString() +
+             " The power of the spell determines how far back in time the subject is sent:" +
+             table +
              " If the caster wants to send more than one person back in time, the caster must spend more power." +
              " For each additional power point in the spell, the number of people sent back doubles." +
              " So if the caster spends an additional 2 power points, they could send 4 people back in time." +
@@ -41,7 +41,7 @@ public class SpellReverseTime extends PriestSpell
              " If that location is occupied at the past location, a nearby safe location will be chosen by the GM." +
              " Until the point in the future when the spell is cast, two instances of those sent will exist." +
              " The older of the two copies will know about the younger copy, but the younger will not know about the older copy (until they meet)." +
-             " It is up to the GM to resolve what happens if (and when) those sent into the past alter "+
+             " It is up to the GM to resolve what happens if (and when) those sent into the past alter " +
              "the time line such that they no longer need to be sent back in time from the future.";
    }
    private static String getDescriptionForpower(int p) {

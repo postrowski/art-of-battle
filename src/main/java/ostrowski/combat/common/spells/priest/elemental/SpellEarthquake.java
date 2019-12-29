@@ -33,7 +33,7 @@ public class SpellEarthquake extends ExpiringPriestSpell
       sb.append("The '").append(getName()).append("' spell shakes the ground violently for a period of time.");
       sb.append(" The effective power of the spell determines the duration and power of the shake.");
       sb.append(" The GM determines what actual damage occurs, and may require characters to take action to avoid being hit by falling objects, or falling themselves.");
-      sb.append(table.toString());
+      sb.append(table);
       return sb.toString();
    }
 

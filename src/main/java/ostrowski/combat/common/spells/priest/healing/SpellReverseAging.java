@@ -32,7 +32,7 @@ public class SpellReverseAging extends PriestSpell
       }
       return "The '" + getName() + "' spell reverses the effects of time, making the subject of the spell younger."+
              " The power of the spell determines how much age is removed from the subject:"+
-             table.toString();
+             table;
    }
    private static String getDescriptionForpower(int p) {
       switch (p) {

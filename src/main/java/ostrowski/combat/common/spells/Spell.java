@@ -170,7 +170,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
          }
          TableRow row = new TableRow(htmlRow++, spell.getName()).addTD(new TableData(descriptionBuffer.toString()).setAlignLeft());
          table.addRow(row);
-         sb.append("<br/><dt><b>").append(spell.getName()).append("</b></dt><dd>").append(descriptionBuffer.toString()).append("</dd>\n");
+         sb.append("<br/><dt><b>").append(spell.getName()).append("</b></dt><dd>").append(descriptionBuffer).append("</dd>\n");
       }
       sb.append("</dl>");
       if (formatForRuleBook) {
@@ -577,7 +577,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
                                                               sbCastingDescription);
       sbCastingDescription.append("</table>");
       if ((rangeAdjustedCastingTN != 0) || !isInate()) {
-         sbDescription.append(sbCastingDescription.toString());
+         sbDescription.append(sbCastingDescription);
       }
 
       _castingEffectiveness = EFFECTIVENESS_FAILURE;
@@ -653,7 +653,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
       _castRolledAllOnes = adjCastDice.lastRollRolledAllOnes();
       if ((adjCastDice.getDiceCount() > 0) || (_castRoll != 0)) {
          sbDescription.append("<br/>");
-         sbDescription.append(_caster.getName()).append(" rolls ").append(adjCastDice.toString());
+         sbDescription.append(_caster.getName()).append(" rolls ").append(adjCastDice);
          sbDescription.append(", rolling ").append(adjCastDice.getLastDieRoll());
          sbDescription.append(", for a total of ").append(castRoll);
          if (!Configuration.useExtendedDice() && (this instanceof MageSpell)) {
@@ -832,7 +832,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
       }
 
       sbDescription.append(" = ");
-      sbDescription.append(resistanceDice.toString()).append(", rolling");
+      sbDescription.append(resistanceDice).append(", rolling");
       sbDescription.append(resistanceDice.getLastDieRoll());
       if (magicResistanceAdv != null) {
          sbDescription.append(", plus ").append(magicResistanceBonus).append(" for having the 'Magic Resistance' advantage at level ").append(magicResistanceAdv.getLevel()).append(".");

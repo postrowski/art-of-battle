@@ -36,7 +36,7 @@ public class SpellFlight extends ExpiringMageSpell implements ICastInBattle
       for (byte power = 1; power < 8; power++) {
          table.addRow(new TableRow(power-1, ""+power, ""+getMovementRate(power)));
       }
-      sb.append(table.toString());
+      sb.append(table);
       sb.append("<br/>");
       sb.append("The subject of the spell may change their altitude my spending their movement in the vetical");
       sb.append(" direction, changing their altitude by (up to) 3 feet for each movement point spent. ");

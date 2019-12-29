@@ -101,7 +101,7 @@ public abstract class PriestMissileSpell extends PriestSpell implements IMissile
 
    @Override
    public String explainDamage() {
-      return getDamageDice().toString() + " (" + getEffectivePower() + " effective power points) ";
+      return getDamageDice() + " (" + getEffectivePower() + " effective power points) ";
    }
 
    @Override

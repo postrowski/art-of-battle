@@ -51,7 +51,7 @@ public class SpellControlMind extends ResistedMageSpell
       }
       return "The '" + getName() + "' spell allows the caster to control the thoughts and or actions of the subject. "+
               " The power put into the spell determines the level of mind control:" +
-              table.toString();
+             table;
    }
 
    private static String getDescriptionForpower(int p) {

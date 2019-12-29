@@ -177,7 +177,7 @@ public class Armor extends Thing {
           tr.addTD(armor.getWeight());
           table.addRow(tr);
        }
-       sb.append(table.toString());
+       sb.append(table);
        return sb.toString();
    }
    @Override

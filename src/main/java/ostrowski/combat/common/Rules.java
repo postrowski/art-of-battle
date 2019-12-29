@@ -308,7 +308,7 @@ public class Rules extends DebugBreak implements Enums
       sb.append(Thread.currentThread().getName()).append(": ");
       sb.append(diagCompName).append("-").append(output);
       sb.append("\n");
-      System.out.print(sb.toString());
+      System.out.print(sb);
 
       File file = new File("combat.log");
       long fileLength = file.exists() ? file.length() : 0;
@@ -655,9 +655,9 @@ public class Rules extends DebugBreak implements Enums
 
       sb.append("<body>");
       sb.append("<H3>Attributes:</H3>");
-      sb.append(attrTable.toString());
+      sb.append(attrTable);
       sb.append("<H3>Common Ranges adjusted for attibute levels:</H3>");
-      sb.append(rangeTable.toString());
+      sb.append(rangeTable);
       sb.append("For levels above 20: subtract 15, and double the range (i.e. ASTR=26 for a base range of 20 yields twice that of an ASTR or 11.");
       sb.append("<br/>A range of 20 adjusted for a ASTR of 11 is 33, so an ASTR of 26 would have an attribute adjust range of 66.) ");
       sb.append("<br/>For levels below -10: add 15, and halve the range.");
@@ -800,7 +800,7 @@ public class Rules extends DebugBreak implements Enums
          tr.addTD(getSkillCost(i));
          table.addRow(tr);
       }
-      sb.append(table.toString());
+      sb.append(table);
       sb.append("</body>");
       return sb.toString();
    }

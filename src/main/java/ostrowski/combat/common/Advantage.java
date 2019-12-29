@@ -418,7 +418,7 @@ public class Advantage extends SerializableObject implements Cloneable, Enums
                row.addTD(new TableData(adv._costs[i]).setAttribute("nowrap", "true"));
                table.addRow(row);
             }
-            sb.append(table.toString());
+            sb.append(table);
             sb.append("</td>");
          }
          else {

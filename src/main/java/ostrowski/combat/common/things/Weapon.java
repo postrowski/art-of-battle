@@ -538,7 +538,7 @@ public class Weapon extends Thing {
       sb.append(", size: ").append(_size);
       sb.append(", attacks:{");
       for (int i=0 ; i<_attackStyles.length ; i++) {
-         sb.append(i).append(':').append(_attackStyles[i].toString());
+         sb.append(i).append(':').append(_attackStyles[i]);
       }
       return sb.toString();
    }
@@ -749,7 +749,7 @@ public class Weapon extends Thing {
                   sb.append("<td>").append(String.valueOf(rangedAttack.getMinSkill())).append("</td>");
                   sb.append("<td class='alignLeft'>").append(rangedAttack.getPreparationStepsAsHTML("")).append("</td>");
                   sb.append("<td>").append(String.valueOf(rangedAttack.getDamageMod())).append("</td>");
-                  sb.append("<td>").append(rangedAttack.getVarianceDie().toString()).append("</td>");
+                  sb.append("<td>").append(rangedAttack.getVarianceDie()).append("</td>");
                   sb.append("<td>").append(rangedAttack.getDamageType().shortname).append("</td>");
                   sb.append("<td>").append(String.valueOf(rangedAttack.getRangeBase())).append("</td>");
                   sb.append("<td>").append(weap.getCost()).append("</td>");

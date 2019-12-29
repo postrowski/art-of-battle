@@ -39,7 +39,7 @@ public class SpellReverseMissile extends InstantaneousMageSpell
              " The caster adds in his/her skill with the Reverse Missile spell to his to-hit roll." +
              " The firer of the missile may dodge or block the missile as if the caster had fired the missile himself." +
              " Range effects (modifications to TN and to defense effectiveness) in place for the returning missile are the same as they were for the initial firing of the missile." +
-             table.toString();
+             table;
    }
    private static String getDescriptionForpower(int p) {
       switch (p) {

@@ -127,7 +127,7 @@ public class Shield extends Thing {
          tr.addTD(shield.getWeight());
          table.addRow(tr);
       }
-      sb.append(table.toString());
+      sb.append(table);
       return sb.toString();
    }
    @Override
