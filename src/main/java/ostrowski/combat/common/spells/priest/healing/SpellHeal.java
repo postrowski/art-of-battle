@@ -12,6 +12,7 @@ import ostrowski.combat.common.wounds.Wound;
 import ostrowski.combat.server.Arena;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SpellHeal extends SpellCureSeriousWound
 {
@@ -49,7 +50,7 @@ public class SpellHeal extends SpellCureSeriousWound
    }
    @Override
    public void applyEffects(Arena arena) {
-      ArrayList<Wound> wounds = new ArrayList<>(getTarget().getWoundsList());
+      List<Wound> wounds = new ArrayList<>(getTarget().getWoundsList());
       for (Wound wound : wounds) {
          // Find the highest wound that has a wound level equal-to or greater-than our woundReduction level.
          getTarget().cureWound(wound, getWoundReduction(), getBleedingReduction());

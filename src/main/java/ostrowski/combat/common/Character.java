@@ -59,7 +59,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    private Race                              _race                                       = null;
    private final HashMap<Attribute, Byte>    _attributes                                 = new HashMap<>();
    public final HashMap<LimbType, Limb>      _limbs                                      = new HashMap<>();
-   private final ArrayList<Thing>            _equipment                                  = new ArrayList<>();
+   private final List<Thing>            _equipment                                  = new ArrayList<>();
    private Armor                             _armor                                      = Armor.getArmor("", null);
    private final HashMap<SkillType, Skill>   _skillsList                                 = new HashMap<>();
    private List<MageSpell>                   _knownMageSpellsList                        = new ArrayList<>();
@@ -78,7 +78,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    private byte                              _aimDuration                                = 0;
    private final List<Spell>                 _activeSpellsList                           = new ArrayList<>();
 
-   private final ArrayList<Integer>          _orderedTargetIds                           = new ArrayList<>();
+   private final List<Integer>          _orderedTargetIds                           = new ArrayList<>();
 
    // location values
    public int                                _uniqueID                                   = -1;
@@ -96,7 +96,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    public static final String                YOU_ARE_BEING_TARGETED_BY                   = " \nYou are being targeted by ";
 
    public Character(String name, String raceName, Gender gender, byte[] atts, String armorName, HashMap<LimbType, Limb> limbs,
-                    ArrayList<Thing> equipment, Skill[] skills, MageSpell[] mageSpells, MageCollege[] colleges, Advantage[] advantages) {
+                    List<Thing> equipment, Skill[] skills, MageSpell[] mageSpells, MageCollege[] colleges, Advantage[] advantages) {
       _name = name;
       IMonitorableObject._monitoredObj._objectIDString = this.getClass().getName();
       IMonitoringObject._monitoringObj._objectIDString = this.getClass().getName();
@@ -152,7 +152,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       return _condition.isInCoordinates(loc);
    }
 
-   public ArrayList<ArenaCoordinates> getCoordinates() {
+   public List<ArenaCoordinates> getCoordinates() {
       return _condition.getCoordinates();
    }
 
@@ -168,8 +168,8 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       return getLimbLocation(action.getLimb(), map);
    }
 
-   public ArrayList<Limb> getLimbs() {
-      ArrayList<Limb> limbs = new ArrayList<>();
+   public List<Limb> getLimbs() {
+      List<Limb> limbs = new ArrayList<>();
       // Make sure we return a list that is in the same order as the LimbType array, so Head is return first.
       for (LimbType type : LimbType.values()) {
          Limb limb = _limbs.get(type);
@@ -367,7 +367,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    }
 
    public List<Skill> getSkillsList() {
-      ArrayList<Skill> skills = new ArrayList<>(_skillsList.values());
+      List<Skill> skills = new ArrayList<>(_skillsList.values());
       return skills;
    }
 
@@ -894,7 +894,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
             break;
          }
       }
-      ArrayList<Spell> inateSpells = _race.getInateSpells();
+      List<Spell> inateSpells = _race.getInateSpells();
       if ((inateSpells != null) && ( inateSpells.size() > 0)) {
          Skill baseSkill = getSkill(SkillType.Brawling);
          if (baseSkill != null) {
@@ -958,7 +958,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       return ((_condition.isConscious()) && (_condition.isAlive()));
    }
 
-   public RequestAction getActionRequest(Arena arena, Character delayedTarget, ArrayList<Character> charactersTargetingActor) {
+   public RequestAction getActionRequest(Arena arena, Character delayedTarget, List<Character> charactersTargetingActor) {
       boolean mustAdvance = false;
       Character target = arena.getCharacter(_targetID);
       if (delayedTarget != null) {
@@ -1551,7 +1551,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          boolean grappleAttackListed = false;
          boolean legAttackListed = false;
          boolean legAdvanceAttackListed = false;
-         ArrayList<Orientation> advOrients = _condition.getPossibleAdvanceOrientations(arena.getCombatMap());
+         List<Orientation> advOrients = _condition.getPossibleAdvanceOrientations(arena.getCombatMap());
          HashMap<Orientation, List<Orientation>> mapOrientationToNextOrientationsLeadingToChargeAttack = new HashMap<>();
          if (target != null) {
             if (getActionsAvailableThisRound(false/*usedForDefenseOnly*/) > 2) {
@@ -2058,7 +2058,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          //req.addOption(RequestAction.OPT_CHANGE_TARGET_PRIORITIES, "change target", (!isBerserking() && (delayedTarget == null)));
          if (!_condition.isCollapsed()) {
             if (_currentSpell == null) {
-               ArrayList<Spell> inateSpells = _race.getInateSpells();
+               List<Spell> inateSpells = _race.getInateSpells();
                if (inateSpells != null) {
                   //int optionId = RequestAction.OPT_PREPARE_INITATE_SPELL_1;
                   RequestActionType option = RequestActionType.OPT_PREPARE_INITATE_SPELL_1;
@@ -3331,7 +3331,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       }
 
       if (!computePdOnly) {
-         ArrayList<Spell> spells = getSpells();
+         List<Spell> spells = getSpells();
 
          for (Spell spell : spells) {
             if (spell instanceof IInstantaneousSpell) {
@@ -3416,15 +3416,15 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       return defBase;
    }
 
-   public ArrayList<Spell> getSpells() {
-      ArrayList<Spell> spells = new ArrayList<>();
+   public List<Spell> getSpells() {
+      List<Spell> spells = new ArrayList<>();
       spells.addAll(_knownMageSpellsList);
       spells.addAll(getPriestSpells());
       return spells;
    }
 
-   public ArrayList<PriestSpell> getPriestSpells() {
-      ArrayList<PriestSpell> spells = new ArrayList<>();
+   public List<PriestSpell> getPriestSpells() {
+      List<PriestSpell> spells = new ArrayList<>();
       List<String> deities = getPriestDeities();
       for (String deity : deities) {
          int deityAffinity = getAffinity(deity);
@@ -3533,7 +3533,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          for (Attribute att : Attribute.values()) {
             writeToStream(_attributes.get(att), out);
          }
-         ArrayList<Limb> limbs = new ArrayList<>(_limbs.values());
+         List<Limb> limbs = new ArrayList<>(_limbs.values());
          writeToStream(limbs, out);
 
          synchronized (_equipment) {
@@ -3556,7 +3556,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
 
    static public int readIntoListThing(List<Thing> data, DataInputStream in) throws IOException {
       data.clear();
-      ArrayList<SerializableObject> things = readIntoListSerializableObject(in);
+      List<SerializableObject> things = readIntoListSerializableObject(in);
       for (SerializableObject thing : things) {
          if (thing instanceof Thing) {
             data.add((Thing)thing);
@@ -3566,7 +3566,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    }
    static public int readIntoListSkill(List<Skill> data, DataInputStream in) throws IOException {
       data.clear();
-      ArrayList<SerializableObject> skills = readIntoListSerializableObject(in);
+      List<SerializableObject> skills = readIntoListSerializableObject(in);
       for (SerializableObject skill : skills) {
          if (skill instanceof Skill) {
             data.add((Skill)skill);
@@ -3576,7 +3576,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    }
    static public int readIntoListSpell(List<MageSpell> data, DataInputStream in) throws IOException {
       data.clear();
-      ArrayList<SerializableObject> spells = readIntoListSerializableObject(in);
+      List<SerializableObject> spells = readIntoListSerializableObject(in);
       for (SerializableObject spell : spells) {
          if (spell instanceof MageSpell) {
             data.add((MageSpell)spell);
@@ -3586,7 +3586,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    }
   static public int readIntoListColleges(List<MageCollege> data, DataInputStream in) throws IOException {
      data.clear();
-     ArrayList<SerializableObject> colleges = readIntoListSerializableObject(in);
+     List<SerializableObject> colleges = readIntoListSerializableObject(in);
      for (SerializableObject college : colleges) {
         if (college instanceof MageCollege) {
            data.add((MageCollege)college);
@@ -3596,7 +3596,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
   }
   static public int readIntoListAdvantage(List<Advantage> data, DataInputStream in) throws IOException {
       data.clear();
-      ArrayList<SerializableObject> advs = readIntoListSerializableObject(in);
+      List<SerializableObject> advs = readIntoListSerializableObject(in);
       for (SerializableObject adv : advs) {
          if (adv instanceof Advantage) {
             data.add((Advantage)adv);
@@ -3620,7 +3620,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          }
 
          _limbs.clear();
-         ArrayList<SerializableObject> things = readIntoListSerializableObject(in);
+         List<SerializableObject> things = readIntoListSerializableObject(in);
          for (SerializableObject thing : things) {
             if (thing instanceof Limb) {
                Limb newLimb = (Limb) thing;
@@ -3842,7 +3842,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       return sb.toString();
    }
 
-   public ArrayList<Integer> getOrderedTargetPriorites() {
+   public List<Integer> getOrderedTargetPriorites() {
       return _orderedTargetIds;
    }
 
@@ -4488,7 +4488,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    //      return serializeToString().hashCode();
    //   }
 
-   public ArrayList<Wound> getWoundsList() {
+   public List<Wound> getWoundsList() {
       return _condition.getWoundsList();
    }
 
@@ -4765,7 +4765,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                setTarget(action._targetSelection.getAnswerID());
             }
             else if (action._targetPriorities== null) {
-               ArrayList<Integer> orderedTargetIds = action._targetPriorities.getOrderedTargetIds();
+               List<Integer> orderedTargetIds = action._targetPriorities.getOrderedTargetIds();
                setTargetPriorities(orderedTargetIds);
             }
          }
@@ -4970,7 +4970,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       return false;
    }
 
-   //   public void setLocations(ArrayList<ArenaLocation> newLocations, byte newFacing, CombatMap map, Diagnostics diag)
+   //   public void setLocations(List<ArenaLocation> newLocations, byte newFacing, CombatMap map, Diagnostics diag)
    //   {
    //      Orientation originalOrientation = (Orientation) _condition.getOrientation().clone();
    //      if (_condition.setLocations(newLocations, newFacing, map, diag)) {
@@ -5076,9 +5076,9 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          }
       }
       if (uncrippledArm) {
-         ArrayList<Thing> equipment = getEquipment();
+         List<Thing> equipment = getEquipment();
          if (equipment.size() > 0) {
-            ArrayList<Thing> doneEqu = new ArrayList<>();
+            List<Thing> doneEqu = new ArrayList<>();
             for (Thing thing : equipment) {
                // If the character has multiple items of the same type, don't
                // re-ask the same questions for each one.
@@ -5201,8 +5201,8 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       return _limbs.get(limbType);
    }
 
-   public ArrayList<Hand> getArms() {
-      ArrayList<Hand> arms = new ArrayList<>();
+   public List<Hand> getArms() {
+      List<Hand> arms = new ArrayList<>();
       for (LimbType limbType : LimbType.values()) {
          if (limbType.isHand()) {
             Hand limb = (Hand) _limbs.get(limbType);
@@ -5854,7 +5854,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
 
    private String getDrawnObjectKey(int[] bounds, RGB background, RGB foreground, Orientation orientation) {
       StringBuilder sb = new StringBuilder();
-      ArrayList<Limb> limbs = getLimbs();
+      List<Limb> limbs = getLimbs();
       sb.append(limbs.size());
       for (Limb limb : limbs) {
          sb.append(limb.getHeldThingName());
@@ -5875,7 +5875,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    public void dropAllEquipment(Arena arena) {
       ArenaCoordinates headCoord = _condition.getOrientation().getHeadCoordinates();
       ArenaLocation headLoc = arena.getLocation(headCoord);
-      ArrayList<Thing> things = new ArrayList<>();
+      List<Thing> things = new ArrayList<>();
       synchronized (_equipment) {
          try (SemaphoreAutoLocker sal = new SemaphoreAutoLocker(_lock_equipment)) {
             while (_equipment.size() > 0) {
@@ -5978,8 +5978,8 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       _condition.awaken();
    }
 
-   public ArrayList<Thing> getEquipment() {
-      ArrayList<Thing> dupList = new ArrayList<>();
+   public List<Thing> getEquipment() {
+      List<Thing> dupList = new ArrayList<>();
       synchronized (_equipment) {
          try (SemaphoreAutoLocker sal = new SemaphoreAutoLocker(_lock_equipment)) {
             dupList.addAll(_equipment);
@@ -6074,7 +6074,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       return _placedIntoHoldThisTurn.contains(holder);
    }
 
-   private final ArrayList<IHolder> _placedIntoHoldThisTurn = new ArrayList<>();
+   private final List<IHolder> _placedIntoHoldThisTurn = new ArrayList<>();
    private final HashMap<IHolder, Byte> _heldPenalties    = new HashMap<>();
    private Character                _holdTarget = null;
 

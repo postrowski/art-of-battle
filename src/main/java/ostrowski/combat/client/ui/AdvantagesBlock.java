@@ -306,7 +306,7 @@ public class AdvantagesBlock extends Helper implements Enums, IUIBlock, ModifyLi
    }
 
    public void updateTabList() {
-      ArrayList<Control> tabList = new ArrayList<>();
+      List<Control> tabList = new ArrayList<>();
       for (int i=0 ; i<_advCombo.length ; i++) {
          tabList.add(_advCombo[i]);
          if (_advLevel[i].isEnabled()) {

@@ -1094,7 +1094,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
                      _combatantsButtons[team][cur].redraw();
                      if ((_map != null) && (_map instanceof MapWidget2D)){
                         if (oldStartLoc != null) {
-                           ArrayList<ArenaCoordinates> locs = new ArrayList<>();
+                           List<ArenaCoordinates> locs = new ArrayList<>();
                            locs.add(oldStartLoc);
                            ((MapWidget2D)_map).redraw(locs);
                         }
@@ -1434,7 +1434,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    @Override
    public void onMouseDown(ArenaLocation loc, Event event, double angleFromCenter, double normalizedDistFromCenter)
    {
-      ArrayList<ArenaCoordinates> locationsToRedraw = new ArrayList<>();
+      List<ArenaCoordinates> locationsToRedraw = new ArrayList<>();
       int selectedTabIndex = _tabFolder.getSelectionIndex();
       TabItem selectedTab = _tabFolder.getItem(selectedTabIndex);
       boolean redraw = false;
@@ -1466,7 +1466,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    public void onMouseUp(ArenaLocation loc, Event event, double angleFromCenter, double normalizedDistFromCenter) {
       //if (loc != null) {
 
-         ArrayList<ArenaCoordinates> locationsToRedraw = new ArrayList<>();
+         List<ArenaCoordinates> locationsToRedraw = new ArrayList<>();
 
          int selectedTabIndex = _tabFolder.getSelectionIndex();
          TabItem selectedTab = _tabFolder.getItem(selectedTabIndex);
@@ -1476,7 +1476,8 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
             redraw = true;
          }
          else if (selectedTab == _triggersTabItem) {
-            _triggersInterface.onMouseUp(loc, event, angleFromCenter, normalizedDistFromCenter, _map.getCombatMap(), locationsToRedraw);
+            _triggersInterface.onMouseUp(loc, event, angleFromCenter, normalizedDistFromCenter, _map.getCombatMap(),
+                                         locationsToRedraw);
             redraw = true;
          }
          else if (selectedTab == _combatantsTabItem) {
@@ -1709,7 +1710,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       }
    }
 
-   public void updateCombatants(final ArrayList<Character> combatants)
+   public void updateCombatants(final List<Character> combatants)
    {
       if (!getShell().isDisposed()) {
          Display display = getShell().getDisplay();
@@ -1846,7 +1847,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    public void keyReleased(KeyEvent arg0) {
       _map.keyReleased(arg0);
    }
-   public static final ArrayList<MapWidget3D> _widgets = new ArrayList<>();
+   public static final List<MapWidget3D> _widgets = new ArrayList<>();
 
    public static boolean _uses3dMap = false;
    public static void registerMapWidget3D(MapWidget3D mapWidget3D) {

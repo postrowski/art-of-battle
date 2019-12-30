@@ -78,7 +78,7 @@ public class ArenaMapBlock extends Helper
    public void updateCombatant(Character character) {
       _map.updateCombatant(character, true/*redraw*/);
    }
-   public void setRouteMap(HashMap<Orientation, Orientation> newMap, ArrayList<Orientation> path) {
+   public void setRouteMap(HashMap<Orientation, Orientation> newMap, List<Orientation> path) {
       _map.setRouteMap(newMap, path, true/*allowRedraw*/);
    }
    public void updateArenaLocation(ArenaLocation arenaLoc)

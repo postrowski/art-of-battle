@@ -1,6 +1,7 @@
 package ostrowski.combat.server;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -14,11 +15,11 @@ import ostrowski.combat.common.CombatMap;
 public class ArenaTrigger implements Cloneable
 {
    private String                      _name               = "";
-   private ArrayList<ArenaCoordinates> _triggerCoordinates = new ArrayList<>();
+   private List<ArenaCoordinates> _triggerCoordinates = new ArrayList<>();
    private boolean                     _onlyAffectsPlayers = true;
    private boolean                     _requiresEntireTeam = false;
    private boolean                     _enabled            = true;
-   private ArrayList<ArenaEvent>       _events             = new ArrayList<>();
+   private List<ArenaEvent>       _events             = new ArrayList<>();
 
    public ArenaTrigger(String name) {
       _name = name;
@@ -121,11 +122,11 @@ public class ArenaTrigger implements Cloneable
    public boolean getEnabled() {
       return _enabled;
    }
-   public ArrayList<ArenaEvent> getEvents() {
+   public List<ArenaEvent> getEvents() {
       return _events;
    }
 
-   public ArrayList<ArenaCoordinates> getTriggerCoordinates() {
+   public List<ArenaCoordinates> getTriggerCoordinates() {
       return _triggerCoordinates;
    }
    public boolean isTriggerAtLocation(ArenaCoordinates coord, Character mover) {

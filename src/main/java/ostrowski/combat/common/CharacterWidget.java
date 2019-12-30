@@ -38,7 +38,7 @@ public class CharacterWidget implements Enums, ModifyListener {
    private final SpellsBlock         _spellsBlock        = new SpellsBlock(this);
    // these don't:
    public        Character           _character          = null;
-   public final  ArrayList<IUIBlock> _uiBlocks           = new ArrayList<>();
+   public final  List<IUIBlock> _uiBlocks           = new ArrayList<>();
    private       int                 _uniqueConnectionID = -1;
    public        AI                  _ai;
    private       boolean             _blocksInitialized  = false;

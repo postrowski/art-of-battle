@@ -13,11 +13,12 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class RequestLocation extends SyncRequest
 {
-   ArrayList<ArenaCoordinates> _selectableCoordinates;
-   String _cursorResourceName;
+   List<ArenaCoordinates> _selectableCoordinates;
+   String                 _cursorResourceName;
 
    public RequestLocation() {
    }
@@ -37,8 +38,8 @@ public class RequestLocation extends SyncRequest
       }
       return false;
    }
-   public ArrayList<ArenaCoordinates> getSelectableCoordinates() {  return _selectableCoordinates;  }
-   public void setCoordinates(ArrayList<ArenaCoordinates> selectableCoordinates) {
+   public List<ArenaCoordinates> getSelectableCoordinates() {  return _selectableCoordinates;  }
+   public void setCoordinates(List<ArenaCoordinates> selectableCoordinates) {
       _selectableCoordinates = selectableCoordinates;
    }
    public short getLocX() { return _selectableCoordinates.get(getAnswerIndex())._x; }

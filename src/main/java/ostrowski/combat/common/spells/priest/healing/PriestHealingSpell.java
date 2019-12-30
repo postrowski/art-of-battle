@@ -4,10 +4,11 @@ import ostrowski.combat.common.spells.priest.IPriestGroup;
 import ostrowski.combat.common.spells.priest.PriestSpell;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PriestHealingSpell implements IPriestGroup
 {
-   static public final ArrayList<PriestSpell> _spells = new ArrayList<>();
+   static public final List<PriestSpell> _spells = new ArrayList<>();
    static {
       _spells.add(new SpellDiagnose(PriestHealingSpell.class, 1));
       _spells.add(new SpellDetectPoison(PriestHealingSpell.class, 1));

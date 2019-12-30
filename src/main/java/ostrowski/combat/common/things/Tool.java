@@ -1,6 +1,6 @@
 package ostrowski.combat.common.things;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.Race;
@@ -35,7 +35,7 @@ public class Tool extends Thing
    }
 
    @Override
-   public ArrayList<SkillType> getDefenseSkillTypes() {
+   public List<SkillType> getDefenseSkillTypes() {
       return null;
    }
 

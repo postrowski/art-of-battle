@@ -49,8 +49,8 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
    final         Semaphore            _lock_animationsPending   = new Semaphore("_lock_animationsPending", CombatSemaphore.CLASS_MAPWIDGET3D_animationsPending);
    final         Semaphore            _lock_animatedObjects     = new Semaphore("_lock_animatedObjects", CombatSemaphore.CLASS_MAPWIDGET3_animatedObjects);
    final         Semaphore            _lock_locationToObjectMap = new Semaphore("_lock_locationToObjectMap", CombatSemaphore.CLASS_MAPWIDGET3_locationToObjectMap);
-   private final ArrayList<HumanBody> _animationsPending        = new ArrayList<>();
-   private final ArrayList<HumanBody> _animatedObjects          = new ArrayList<>();
+   private final List<HumanBody> _animationsPending        = new ArrayList<>();
+   private final List<HumanBody> _animatedObjects          = new ArrayList<>();
    Thread _animationThread = null;
 
    private final transient MonitoredObject  _monitoredObj  = new MonitoredObject("MapWidget3D");
@@ -347,7 +347,7 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
 
    @Override
    public void onMouseMove(TexturedObject object, Event event, double angleFromCenter, double normalizedDistFromCenter) {
-      ArrayList<Orientation> newMouseOverOrientations = new ArrayList<>();
+      List<Orientation> newMouseOverOrientations = new ArrayList<>();
       ArenaLocation loc = (ArenaLocation) object._relatedObject;
       Orientation destinationOrientation = null;
       if (loc != null) {
@@ -651,8 +651,8 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
          _locationToObjectMap.put(loc, obj);
       }
       long walls = 0;
-      ArrayList<Door> doors = new ArrayList<>();
-      ArrayList<Object> things = new ArrayList<>();
+      List<Door> doors = new ArrayList<>();
+      List<Object> things = new ArrayList<>();
       if (isKnown)
       {
          synchronized (loc) {

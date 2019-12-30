@@ -601,7 +601,7 @@ public class TerrainInterface extends Helper implements SelectionListener, Modif
       }
    }
    public void onMouseDown(ArenaLocation loc, Event event, double angleFromCenter, double normalizedDistFromCenter,
-                           IMapWidget mapWidget, ArrayList<ArenaCoordinates> locationsToRedraw) {
+                           IMapWidget mapWidget, List<ArenaCoordinates> locationsToRedraw) {
       if (_currentTerrain > -1) {
          if (_lineActive || _wallLineActive) {
             _lineStart = loc;

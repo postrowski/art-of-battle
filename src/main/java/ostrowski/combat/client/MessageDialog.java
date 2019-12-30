@@ -1,6 +1,7 @@
 package ostrowski.combat.client;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
@@ -131,6 +132,6 @@ public class MessageDialog extends Dialog implements FocusListener{
       _topMessage = this;
    }
 
-   public static final ArrayList<MessageDialog> _activeMessages = new ArrayList<>();
-   public static MessageDialog _topMessage = null;
+   public static final List<MessageDialog> _activeMessages = new ArrayList<>();
+   public static       MessageDialog       _topMessage     = null;
 }

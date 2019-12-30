@@ -32,8 +32,8 @@ import java.util.List;
 
 public abstract class Orientation extends SerializableObject implements Enums, Cloneable, Comparable<Orientation>
 {
-   protected final ArrayList<ArenaCoordinates> _coordinates = new ArrayList<>();
-   protected final ArrayList<Facing>           _facings = new ArrayList<>();
+   protected final List<ArenaCoordinates> _coordinates = new ArrayList<>();
+   protected final List<Facing>           _facings = new ArrayList<>();
    private Position                            _position = Position.STANDING;
 
    @Override
@@ -63,7 +63,7 @@ public abstract class Orientation extends SerializableObject implements Enums, C
    public boolean isInLocation(ArenaCoordinates loc) {
       return _coordinates.contains(loc);
    }
-   public ArrayList<ArenaCoordinates> getCoordinates() {
+   public List<ArenaCoordinates> getCoordinates() {
       return _coordinates;
    }
    public ArenaCoordinates getHeadCoordinates() {
@@ -291,9 +291,9 @@ public abstract class Orientation extends SerializableObject implements Enums, C
 
    final byte[]    ADV_FACING_DELTA = new byte[] {0, 5, 5, 1, 1};
    final boolean[] ADV_ADVANCING    = new boolean[] {true, false, true, false, true};
-   public ArrayList<Orientation> getPossibleAdvanceOrientations(CombatMap map, boolean blockByCharacters)
+   public List<Orientation> getPossibleAdvanceOrientations(CombatMap map, boolean blockByCharacters)
    {
-      ArrayList<Orientation> possibleMoves = new ArrayList<>();
+      List<Orientation> possibleMoves = new ArrayList<>();
       for (int i=0 ; i<5 ; i++) {
          if (ADV_ADVANCING[i]) {
             Facing dir = getFacing().turn(ADV_FACING_DELTA[i]);
@@ -327,7 +327,7 @@ public abstract class Orientation extends SerializableObject implements Enums, C
          return true;
       }
       List<Orientation> orientationsToLeadToChargeAttacks = new ArrayList<>();
-      ArrayList<Orientation> orientations = getPossibleAdvanceOrientations(map, true/*blockByCharacters*/);
+      List<Orientation> orientations = getPossibleAdvanceOrientations(map, true/*blockByCharacters*/);
       boolean result = false;
       for (Orientation orient : orientations) {
          // If this advance orientation is just a in-place turn, skip it
@@ -352,9 +352,9 @@ public abstract class Orientation extends SerializableObject implements Enums, C
       }
       return false;
    }
-   public ArrayList<Orientation> getPossibleFutureOrientations(CombatMap map)
+   public List<Orientation> getPossibleFutureOrientations(CombatMap map)
    {
-      ArrayList<Orientation> possibleMoves = new ArrayList<>();
+      List<Orientation> possibleMoves = new ArrayList<>();
       // First consider all the move locations
       Facing dir=_facings.get(0);
       for (Facing dirDelta : Facing.values()) {
@@ -415,8 +415,8 @@ public abstract class Orientation extends SerializableObject implements Enums, C
       byte maxCostToEnter = 0;
       ArenaCoordinates fromCoord = null;
       ArenaCoordinates toCoord = null;
-      ArrayList<ArenaCoordinates> fromCoords = getCoordinates();
-      ArrayList<ArenaCoordinates> toCoords   = toOrientation.getCoordinates();
+      List<ArenaCoordinates> fromCoords = getCoordinates();
+      List<ArenaCoordinates> toCoords   = toOrientation.getCoordinates();
       if (fromCoords.size() != toCoords.size()) {
          // This is no a legal move (only a position change can do this),
          // so report this as 'can not enter'
@@ -496,8 +496,8 @@ public abstract class Orientation extends SerializableObject implements Enums, C
    public DrawnObject getWeaponOutlines(Character character, int size, ArenaLocation loc, RGB foreground, RGB background) {
       return getOutlines(character, size, loc, true/*weapon*/, foreground, background);
    }
-   public ArrayList<Limb> getLimbsToDrawAtLocation(Character character, ArenaLocation loc) {
-      ArrayList<Limb> limbs = new ArrayList<> ();
+   public List<Limb> getLimbsToDrawAtLocation(Character character, ArenaLocation loc) {
+      List<Limb> limbs = new ArrayList<> ();
       for (Limb limb : character.getLimbs()) {
          if (shouldDraw(limb)) {
             if (getLimbCoordinates(limb._limbType).sameCoordinates(loc)) {
@@ -830,7 +830,7 @@ public abstract class Orientation extends SerializableObject implements Enums, C
       return false;
    }
    public boolean canAttack(Character attacker, Character defender, CombatMap map, boolean allowRanged, boolean onlyChargeTypes) {
-      ArrayList<Limb> limbs = attacker.getLimbs();
+      List<Limb> limbs = attacker.getLimbs();
       ArenaLocation headLoc = map.getLocation(getHeadCoordinates());
       if (getAttackPenaltyForTerrain(attacker, map, null/*terrainNames*/) > 10) {
          return false;

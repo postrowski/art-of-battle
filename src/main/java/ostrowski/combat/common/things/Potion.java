@@ -73,7 +73,7 @@ public class Potion extends Thing implements Cloneable
    }
 
    @Override
-   public ArrayList<SkillType> getDefenseSkillTypes() {
+   public List<SkillType> getDefenseSkillTypes() {
       return null;
    }
 

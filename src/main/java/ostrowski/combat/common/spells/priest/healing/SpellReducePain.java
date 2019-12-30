@@ -35,17 +35,17 @@ public class SpellReducePain extends PriestSpell implements ICastInBattle
    @Override
    public void applyEffects(Arena arena) {
       getTarget().applyWound(new Wound(getPower(),
-                                  Location.BODY,
+                                       Location.BODY,
                                   getName() + " spell",
-                                  0-getPainReduction(),//painLevel
-                                  0,//wounds
-                                  0,//bleedRate
-                                  0,//armPenalty
-                                  0,//movePenalty
-                                  0,//knockedDownDist,
-                                  DamageType.GENERAL,
-                                  0,//effectMask,
-                                  getTarget()), arena);
+                                       -getPainReduction(),//painLevel
+                                       0,//wounds
+                                       0,//bleedRate
+                                       0,//armPenalty
+                                       0,//movePenalty
+                                       0,//knockedDownDist,
+                                       DamageType.GENERAL,
+                                       0,//effectMask,
+                                       getTarget()), arena);
    }
    private byte getPainReduction() {
       return (byte)(getPower() *3);

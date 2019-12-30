@@ -45,7 +45,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
    private ArenaLocation[][]          _startPoints              = new ArenaLocation[_teamCount][_maxCombatantsPerTeam];
    private String[][]                 _stockAiName              = new String[_teamCount][_maxCombatantsPerTeam];
    private String[][]                 _stockCharName            = new String[_teamCount][_maxCombatantsPerTeam];
-   private final ArrayList<ArenaTrigger> _triggers              = new ArrayList<>();
+   private final List<ArenaTrigger> _triggers              = new ArrayList<>();
    private ArenaTrigger               _selectedTrigger;
    transient private Diagnostics      _diag;
 
@@ -73,7 +73,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
          }
       }
    }
-   public ArrayList<ArenaTrigger> getTriggers() {
+   public List<ArenaTrigger> getTriggers() {
       return _triggers;
    }
    public void setSize(short newX, short newY) {
@@ -618,8 +618,8 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       }
       return false;
    }
-   public ArrayList<Character> getCombatants() {
-      ArrayList<Character> list = new ArrayList<>();
+   public List<Character> getCombatants() {
+      List<Character> list = new ArrayList<>();
       for (short col = 0 ; col<_sizeX ; col++) {
           for (short row = (short)(col%2) ; row<_sizeY ; row += 2) {
               List<Character> characters = _locations[col][row].getCharacters();
@@ -640,8 +640,8 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
          }
       }
    }
-   public ArrayList<ArenaLocation> getLocationsWithObjects() {
-     ArrayList<ArenaLocation> list = new ArrayList<>();
+   public List<ArenaLocation> getLocationsWithObjects() {
+     List<ArenaLocation> list = new ArrayList<>();
      for (short col = 0 ; col<_sizeX ; col++) {
          for (short row = (short)(col%2) ; row<_sizeY ; row += 2) {
             ArenaLocation location = _locations[col][row];
@@ -1844,7 +1844,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
    private static Door getDoorInFacing(ArenaLocation loc, Facing dirToOtherLoc, boolean includeHalfAngles) {
       synchronized (loc) {
          try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(loc._lock_this)) {
-            ArrayList<Door> doors = loc.getDoors();
+            List<Door> doors = loc.getDoors();
             if (doors.isEmpty()) {
                return null;
             }
@@ -2171,7 +2171,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       }
       return false;
    }
-   public Document getXmlObject(ArrayList<Integer> includeKnownByUniqueIDInfo) {
+   public Document getXmlObject(List<Integer> includeKnownByUniqueIDInfo) {
       // Create a builder factory
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       factory.setValidating(true/*validating*/);
@@ -2188,7 +2188,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       }
       return mapDoc;
    }
-   public Element getXmlObject(Document parentDoc, ArrayList<Integer> includeKnownByUniqueIDInfo, String newLine) {
+   public Element getXmlObject(Document parentDoc, List<Integer> includeKnownByUniqueIDInfo, String newLine) {
       Element mainElement = parentDoc.createElement("Arena");
       mainElement.setAttribute("Name", getName());
       mainElement.setAttribute("level", String.valueOf(getLevel()));
@@ -2424,7 +2424,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       _stockCharName = new String[_teamCount][_maxCombatantsPerTeam];
 
       _triggers.clear();
-      ArrayList<Integer> includeKnownByUniqueIDInfo = null;
+      List<Integer> includeKnownByUniqueIDInfo = null;
 
       NodeList children = mapDoc.getChildNodes();
       for (int i=0 ; i<children.getLength() ; i++) {
@@ -2659,8 +2659,8 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
        }
        return null;
    }
-   public ArrayList<ArenaLocation> getAdjacentLocations(ArenaLocation location) {
-      ArrayList<ArenaLocation> locs = new ArrayList<>();
+   public List<ArenaLocation> getAdjacentLocations(ArenaLocation location) {
+      List<ArenaLocation> locs = new ArrayList<>();
       for (Facing facing : Facing.values()) {
          ArenaLocation loc = ArenaLocation.getForwardMovement(location, facing, this);
          if (loc != null) {

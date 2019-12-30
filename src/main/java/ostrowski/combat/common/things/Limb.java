@@ -8,6 +8,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.swt.graphics.RGB;
 import org.w3c.dom.Document;
@@ -36,7 +37,7 @@ public abstract class Limb extends Thing implements Cloneable {
 
     // penalties are positive integers so a 2 means a -2 to actions.
     // A negative value means no use possible, such as a severed limb.
-    private ArrayList<Wound> _wounds = new ArrayList<>();
+    private List<Wound> _wounds = new ArrayList<>();
     private byte  _attackStyle  = 0;
     private byte  _actionsNeededToReady   = 0;
 
@@ -220,8 +221,9 @@ public abstract class Limb extends Thing implements Cloneable {
    }
    @SuppressWarnings("unchecked")
    public void copyDataInto(Limb dest) {
-      dest._wounds            = (ArrayList<Wound>) _wounds.clone();
-      dest._attackStyle       = _attackStyle;
+      dest._wounds               = new ArrayList<>();
+      dest._wounds.addAll(_wounds);
+      dest._attackStyle          = _attackStyle;
       dest._actionsNeededToReady = _actionsNeededToReady;
    }
    @SuppressWarnings("unused")
@@ -348,7 +350,7 @@ public abstract class Limb extends Thing implements Cloneable {
       return 0;
    }
    @Override
-   public ArrayList<SkillType> getDefenseSkillTypes() {
+   public List<SkillType> getDefenseSkillTypes() {
       return null;
    }
 }

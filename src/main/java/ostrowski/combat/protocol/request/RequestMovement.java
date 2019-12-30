@@ -143,7 +143,7 @@ public class RequestMovement extends SyncRequest implements Enums
          _futureOrientations = new ArrayList<>();
          _cancelOrientations = new ArrayList<>();
          _completeOrientations = new ArrayList<>();
-         ArrayList<Integer> futureOrientationsSourceIndexIntoFutureOrientations = new ArrayList<>();
+         List<Integer> futureOrientationsSourceIndexIntoFutureOrientations = new ArrayList<>();
          _actorID = readInt(in);
          readIntoListOrientation(_selectedPath, in);
          readIntoListOrientation(_futureOrientations, in);
@@ -183,7 +183,7 @@ public class RequestMovement extends SyncRequest implements Enums
          writeListOrientationToStream(_futureOrientations, out);
          writeListOrientationToStream(_cancelOrientations, out);
          writeListOrientationToStream(_completeOrientations, out);
-         ArrayList<Integer> futureOrientationsSourceIndexIntoFutureOrientations = new ArrayList<> ();
+         List<Integer> futureOrientationsSourceIndexIntoFutureOrientations = new ArrayList<> ();
          for (Orientation futureOrientation : _futureOrientations) {
             Orientation sourceOrientation = _mapOfFutureOrientToSourceOrient.get(futureOrientation);
             if (sourceOrientation == null) {
@@ -234,8 +234,8 @@ public class RequestMovement extends SyncRequest implements Enums
       }
       return false;
    }
-   public ArrayList<Orientation> getRouteToFutureOrientation(Orientation futureOrientation) {
-      ArrayList<Orientation> path = new ArrayList<>();
+   public List<Orientation> getRouteToFutureOrientation(Orientation futureOrientation) {
+      List<Orientation> path = new ArrayList<>();
       while (futureOrientation != null) {
          path.add(futureOrientation);
          futureOrientation = _mapOfFutureOrientToSourceOrient.get(futureOrientation);
@@ -265,7 +265,7 @@ public class RequestMovement extends SyncRequest implements Enums
    }
    static private Orientation getBestOrientation(ArenaLocation loc, double angleFromCenter, double normalizedDistFromCenter, List<Orientation> orientations) {
       Facing facing = getFacingFromAngle(angleFromCenter);
-      ArrayList<Orientation> orientationsAtLocation = new ArrayList<>();
+      List<Orientation> orientationsAtLocation = new ArrayList<>();
       for (Orientation orient : orientations) {
          if (orient.getHeadCoordinates().sameCoordinates(loc)) {
             if (orient.getFacing() == facing) {
@@ -284,7 +284,7 @@ public class RequestMovement extends SyncRequest implements Enums
       // orientation that is 1 facing change away, then look for one
       // that is 2 facing changes away.
       for (int facingDif = 1 ; facingDif <= 2 ; facingDif++) {
-         ArrayList<Orientation> orientationsFacing = new ArrayList<>();
+         List<Orientation> orientationsFacing = new ArrayList<>();
          for (Orientation orient : orientationsAtLocation) {
             if ((orient.getFacing() == facing.turn(facingDif)) ||
                 (orient.getFacing().turn(facingDif) == facing)) {
@@ -325,8 +325,8 @@ public class RequestMovement extends SyncRequest implements Enums
       return Facing._8_OCLOCK;
    }
 
-   public ArrayList<ArenaCoordinates> getFutureCoordinates() {
-      ArrayList<ArenaCoordinates> locations = new ArrayList<>();
+   public List<ArenaCoordinates> getFutureCoordinates() {
+      List<ArenaCoordinates> locations = new ArrayList<>();
       for (Orientation orient : _futureOrientations) {
          locations.add(orient.getHeadCoordinates());
       }

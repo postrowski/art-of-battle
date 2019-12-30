@@ -8,6 +8,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.enums.DamageType;
@@ -97,7 +98,7 @@ public class Wall extends Thing implements Enums
    }
 
    @Override
-   public ArrayList<SkillType> getDefenseSkillTypes() {
+   public List<SkillType> getDefenseSkillTypes() {
       return null;
    }
 }

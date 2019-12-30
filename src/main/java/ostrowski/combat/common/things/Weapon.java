@@ -190,8 +190,8 @@ public class Weapon extends Thing {
       return null;
    }
    @Override
-   public ArrayList<SkillType> getDefenseSkillTypes() {
-      ArrayList<SkillType> results = new ArrayList<>();
+   public List<SkillType> getDefenseSkillTypes() {
+      List<SkillType> results = new ArrayList<>();
       for (WeaponStyleParry element : _parryStyles) {
          results.add(element._skillType);
       }
@@ -530,8 +530,8 @@ public class Weapon extends Thing {
       return sb.toString();
    }
 
-   private static ArrayList<Weapon> getWeaponListForRace(Race race) {
-      ArrayList<Weapon> list = new ArrayList<>();
+   private static List<Weapon> getWeaponListForRace(Race race) {
+      List<Weapon> list = new ArrayList<>();
       for (SizelessWeapon weapon : _weaponsList) {
          Weapon copy = weapon.clone();
          copy.setRacialBase(race);
@@ -582,7 +582,7 @@ public class Weapon extends Thing {
       sb.append("</tr>\n");
 
       int weapIndex=-1;
-      ArrayList<Weapon> humanWeapons = getWeaponListForRace(Race.getRace(Race.NAME_Human, Gender.MALE));
+      List<Weapon> humanWeapons = getWeaponListForRace(Race.getRace(Race.NAME_Human, Gender.MALE));
       for (Weapon weap : humanWeapons) {
          weapIndex++;
          int rowCount = weap.getAttackStyles().length + weap.getParryStyles().length;

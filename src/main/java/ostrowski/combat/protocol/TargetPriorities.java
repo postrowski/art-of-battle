@@ -16,7 +16,7 @@ import java.util.List;
 
 public class TargetPriorities extends SerializableObject implements Enums
 {
-   final ArrayList<Integer> _orderedEnemyIDs = new ArrayList<>();
+   final List<Integer> _orderedEnemyIDs = new ArrayList<>();
    public TargetPriorities() {}
    public TargetPriorities(List<Character> enemyCharacters) {
       setEnemies(enemyCharacters);
@@ -28,7 +28,7 @@ public class TargetPriorities extends SerializableObject implements Enums
          _orderedEnemyIDs.add(enemy._uniqueID);
       }
    }
-   public ArrayList<Integer> getOrderedEnemyIdsList() {
+   public List<Integer> getOrderedEnemyIdsList() {
       return _orderedEnemyIDs;
    }
    @Override

@@ -115,7 +115,7 @@ public class Advantage extends SerializableObject implements Cloneable, Enums
    // make a reference to the Rules object before we get into the static initializer, because that
    // makes a reference to the PriestSpells, which need the Rules object to already have been loaded.
    static final        String               _dummy   = Rules.diagCompName;
-   public static final ArrayList<Advantage> _advList = new ArrayList<>();
+   public static final List<Advantage> _advList = new ArrayList<>();
    static {
       _advList.add(new Advantage(ABSOLUTE_DIRECTION,  false, new String[] {}, new int[] { 5},       new String[] {}, new String[] {}, "Absolute Direction lets the bearer know which direction north is at all times, even when underground. These individuals will almost never become lost."));
       _advList.add(new Advantage(ABSOLUTE_TIMING,     false, new String[] {}, new int[] { 5},       new String[] {}, new String[] {}, "Absolute Timing allows the bearer to know exactly what of day it is at all times. They are also extremely accurate at estimating length of time."));

@@ -419,12 +419,12 @@ public class WeaponBlock extends Helper implements ModifyListener, IUIBlock, Sel
    }
 
    private void updateUnarmedWeapons(Character character) {
-      ArrayList<Weapon> weapons = new ArrayList<>();
-      ArrayList<WeaponStyleAttack> attackStyles = new ArrayList<>();
+      List<Weapon> weapons = new ArrayList<>();
+      List<WeaponStyleAttack> attackStyles = new ArrayList<>();
       int itemsPerStyle = 0;
       byte charStr = (_display._character == null) ? 0 : _display._character.getAttributeLevel(Attribute.Strength);
       byte damBase = (_display._character == null) ? 0 : _display._character.getPhysicalDamageBase();
-      ArrayList<Limb> limbs = character.getLimbs();
+      List<Limb> limbs = character.getLimbs();
       for (Limb limb : limbs) {
          Weapon weapon = limb.getWeapon(character);
          if (weapon != null) {

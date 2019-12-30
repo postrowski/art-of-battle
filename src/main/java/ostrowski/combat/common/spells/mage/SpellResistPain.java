@@ -36,7 +36,7 @@ public class SpellResistPain extends MageSpell implements ICastInBattle
       getTarget().applyWound(new Wound(getPower(),
                                        Location.BODY,
                                        getName() + " spell",
-                                       0-getPower(),//painLevel
+                                       -getPower(),//painLevel
                                        0,//wounds
                                        0,//bleedRate
                                        0,//armPenalty

@@ -305,13 +305,13 @@ public abstract class MageSpell extends Spell implements Enums
       //printSkillInGroups();
    }
 //   private static void printSkillInGroups() {
-//      ArrayList<ArrayList<MageSpell>> listOfGroupedSpells = new ArrayList<>();
-//      ArrayList<MageSpell> spellsToGroup = new ArrayList<>();
+//      List<ArrayList<MageSpell>> listOfGroupedSpells = new ArrayList<>();
+//      List<MageSpell> spellsToGroup = new ArrayList<>();
 //      spellsToGroup.addAll(_spellsList);
 //      while (spellsToGroup.size() > 0) {
 //         MageSpell spellToGroup = spellsToGroup.remove(0);
-//         ArrayList<MageSpell> preProcessedGroup = new ArrayList<>();
-//         ArrayList<MageSpell> postProcessedGroup = new ArrayList<>();
+//         List<MageSpell> preProcessedGroup = new ArrayList<>();
+//         List<MageSpell> postProcessedGroup = new ArrayList<>();
 //         preProcessedGroup.add(spellToGroup);
 //         while (preProcessedGroup.size() > 0) {
 //            MageSpell spellToProcess = preProcessedGroup.remove(0);
@@ -344,7 +344,7 @@ public abstract class MageSpell extends Spell implements Enums
 //      }
 //
 //      int n=0;
-//      for (ArrayList<MageSpell> groupedSpells : listOfGroupedSpells) {
+//      for (List<MageSpell> groupedSpells : listOfGroupedSpells) {
 //         System.out.println("Spell Group " + n++ + ":");
 //         for (int level=0 ; level<10 ; level++) {
 //            for (MageSpell groupedSpell : groupedSpells) {

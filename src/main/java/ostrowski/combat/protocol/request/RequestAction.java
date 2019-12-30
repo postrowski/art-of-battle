@@ -291,7 +291,7 @@ public class RequestAction extends SyncRequest implements Enums
             if (newTargetUniqueID != -1) {
                actor.setTarget(newTargetUniqueID);
             }
-            ArrayList<Character> charactersTargetingActor = arena._battle.getCharactersAimingAtCharacter(actor);
+            List<Character> charactersTargetingActor = arena._battle.getCharactersAimingAtCharacter(actor);
             nextReq = actor.getActionRequest(arena, null/*delayedTarget*/, charactersTargetingActor);
             nextReq.copyDataInto(this);
             nextReq = this;
@@ -303,7 +303,7 @@ public class RequestAction extends SyncRequest implements Enums
          //         else {
          //            // make sure the new order is in place before we ask for the next action.
          //            actor.setTargetPriorities(_targetPriorities.getOrderedTargetIds());
-         //            ArrayList<Character> charactersTargetingActor = arena._battle.getCharactersAimingAtCharacter(actor);
+         //            List<Character> charactersTargetingActor = arena._battle.getCharactersAimingAtCharacter(actor);
          //            nextReq = actor.getActionRequest(arena, null/*delayedTarget*/, charactersTargetingActor);
          //            nextReq.copyDataInto(this);
          //            nextReq = this;
@@ -332,7 +332,7 @@ public class RequestAction extends SyncRequest implements Enums
                ArenaCoordinates actorCoords = actor.getOrientation().getHeadCoordinates();
                CombatMap map = arena.getCombatMap();
                ArenaLocation curLoc = map.getLocation(actorCoords);
-               ArrayList<ArenaCoordinates> visibleLocationsInRange = new ArrayList<>();
+               List<ArenaCoordinates> visibleLocationsInRange = new ArrayList<>();
                short maxRange = _spell.getMaxRange(actor);
                short minRange = _spell.getMinRange(actor);
                for (short col = 0 ; col<map.getSizeX() ; col++) {

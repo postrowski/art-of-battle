@@ -3,12 +3,13 @@ package ostrowski.combat.common;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import ostrowski.protocol.SerializableObject;
 
 public class MultiLevelCombatMap extends SerializableObject implements Cloneable {
 
-   ArrayList<CombatMap> _levels = new ArrayList<>();
+   List<CombatMap> _levels = new ArrayList<>();
 
    @Override
    public void serializeToStream(DataOutputStream out) {

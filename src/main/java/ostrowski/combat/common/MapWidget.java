@@ -364,8 +364,8 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
    protected static final Object TYPE_event        = new Object();
    protected static final Object TYPE_trigger      = new Object();
 
-   protected ArrayList<Object> getTypeAndLabels(ArenaLocation loc) {
-      ArrayList<Object> typesAndLabels = new ArrayList<>();
+   protected List<Object> getTypeAndLabels(ArenaLocation loc) {
+      List<Object> typesAndLabels = new ArrayList<>();
 
       String label = loc.getLabel();
       if (label == null) {
@@ -376,7 +376,7 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
             typesAndLabels.add(TYPE_label);
             typesAndLabels.add(label);
          }
-         ArrayList<Object> things = new ArrayList<>(loc.getThings());
+         List<Object> things = new ArrayList<>(loc.getThings());
 
          for (Object thing : things) {
             if (thing instanceof Character) {

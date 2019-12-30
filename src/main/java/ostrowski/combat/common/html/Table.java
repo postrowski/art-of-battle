@@ -1,10 +1,11 @@
 package ostrowski.combat.common.html;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Table extends HtmlElement
 {
-   public final ArrayList<TableRow> _data = new ArrayList<>();
+   public final List<TableRow> _data = new ArrayList<>();
    public Table() {
    }
 

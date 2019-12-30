@@ -67,8 +67,8 @@ public class Shield extends Thing {
       return null;
    }
    @Override
-   public ArrayList<SkillType> getDefenseSkillTypes() {
-      ArrayList<SkillType> results = new ArrayList<>();
+   public List<SkillType> getDefenseSkillTypes() {
+      List<SkillType> results = new ArrayList<>();
       results.add(SkillType.Shield);
       return results;
    }
@@ -180,8 +180,8 @@ public class Shield extends Thing {
       return obj;
    }
 
-   public static ArrayList<Shield> getShieldListForRace(Race race) {
-      ArrayList<Shield> list = new ArrayList<>();
+   public static List<Shield> getShieldListForRace(Race race) {
+      List<Shield> list = new ArrayList<>();
       for (Shield shield : _shieldList) {
          Shield copy = shield.clone();
          copy.setRacialBase(race);

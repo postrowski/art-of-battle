@@ -69,7 +69,7 @@ public class Armor extends Thing {
    @Override
    public String getActiveDefenseName() { return null; }
    @Override
-   public ArrayList<SkillType> getDefenseSkillTypes() { return null;}
+   public List<SkillType> getDefenseSkillTypes() { return null;}
    @Override
    public byte getBestDefenseOption(Character wielder, LimbType useHand, boolean canUse2Hands, DamageType damType,
                                     boolean isGrappleAttack, short distance) {
@@ -182,8 +182,8 @@ public class Armor extends Thing {
    }
    @Override
    public String getDefenseName(boolean tensePast, Character defender) { return ""; }
-   public static ArrayList<Armor> getArmorListForRace(Race race) {
-      ArrayList<Armor> list = new ArrayList<>();
+   public static List<Armor> getArmorListForRace(Race race) {
+      List<Armor> list = new ArrayList<>();
       for (Armor armor : _armorList) {
          Armor copy = armor.clone();
          copy.setRacialBase(race);

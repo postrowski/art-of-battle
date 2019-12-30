@@ -157,7 +157,7 @@ public class Battle extends Thread implements Enums
    }
 
    private boolean                 _terminateBattle = false;
-   private final ArrayList<Object> _waitingObjects  = new ArrayList<>();
+   private final List<Object> _waitingObjects  = new ArrayList<>();
 
    public void terminateBattle() {
       _terminateBattle = true;
@@ -264,7 +264,7 @@ public class Battle extends Thread implements Enums
                   }
                }
                if (!inserted) {
-                  ArrayList<Character> newInnerList = new ArrayList<>();
+                  List<Character> newInnerList = new ArrayList<>();
                   newInnerList.add(combatant);
                   outerList.add(newInnerList);
                }
@@ -1105,7 +1105,7 @@ public class Battle extends Thread implements Enums
             sb.append(defender.getName()).append(" is thrown ").append(throwDistDice).append(" hexes, rolling ").append(throwDistDice.getLastDieRoll());
             CombatMap map = _arena.getCombatMap();
             while (throwDist-- > 0) {
-               ArrayList<Orientation> possibleMoves = defender.getOrientation().getPossibleAdvanceOrientations(map, true);
+               List<Orientation> possibleMoves = defender.getOrientation().getPossibleAdvanceOrientations(map, true);
                if (possibleMoves.isEmpty()) {
                   // we must have hit a wall, assess damage
                   Wound wound = new Wound((byte)5,
@@ -1577,7 +1577,7 @@ public class Battle extends Thread implements Enums
             // continue to wait, unless he re-asks to wait more.
             clearWaitingForAttackMap(actor);
 
-            ArrayList<Character> charactersTargetingActor = getCharactersAimingAtCharacter(actor);
+            List<Character> charactersTargetingActor = getCharactersAimingAtCharacter(actor);
             Rules.diag("Battle:selectActions for actor " + actor.getName() + ", aimed at by: " + charactersTargetingActor);
             RequestAction actReq = actor.getActionRequest(_arena, null/*delayedTarget*/, charactersTargetingActor);
             Rules.diag("Battle:selectActions for actor " + actor.getName() + ", actReq= " + actReq);
@@ -1804,7 +1804,7 @@ public class Battle extends Thread implements Enums
    private void checkForWaitingCharactersToAttack(Map<Character, RequestAction> results, List<Character> allCombatants,
                                                   List<SyncRequest> resultsQueue, List<SyncRequest> waitingList,
                                                   List<Character> actedCombatants, Character actor) {
-      ArrayList<Character> newAttackers = getAttackerWaitingToAttack(actor);
+      List<Character> newAttackers = getAttackerWaitingToAttack(actor);
       for (Character attacker : newAttackers) {
          // If we waited for an opportunity on our last round, and someone
          // moved into range in the next round, we will have no actions left to act
@@ -1924,13 +1924,13 @@ public class Battle extends Thread implements Enums
     * @param actor
     * @return
     */
-   private ArrayList<Character> getAttackerWaitingToAttack(Character actor) {
-      ArrayList<Character> newAttackers = new ArrayList<>();
+   private List<Character> getAttackerWaitingToAttack(Character actor) {
+      List<Character> newAttackers = new ArrayList<>();
       synchronized (_waitingToAttack) {
          try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_waitingToAttack)) {
             for (Character attacker : _waitingToAttack) {
                if (attacker.stillFighting()) {
-                  ArrayList<Integer> orderedTargets = attacker.getOrderedTargetPriorites();
+                  List<Integer> orderedTargets = attacker.getOrderedTargetPriorites();
                   for (Integer uniqueId : orderedTargets) {
                      if (uniqueId == actor._uniqueID) {
                         if (attacker.getOrientation().canAttack(attacker, actor, _arena.getCombatMap(), false/*allowRanged*/, false/*onlyChargeTypes*/)) {
@@ -2271,8 +2271,8 @@ public class Battle extends Thread implements Enums
       }
    }
 
-   public ArrayList<Character> getCharactersAimingAtCharacter(Character target) {
-      ArrayList<Character> results = new ArrayList<>();
+   public List<Character> getCharactersAimingAtCharacter(Character target) {
+      List<Character> results = new ArrayList<>();
       if (target != null) {
          synchronized (_aimingCharacters) {
             try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_aimingCharacters)) {

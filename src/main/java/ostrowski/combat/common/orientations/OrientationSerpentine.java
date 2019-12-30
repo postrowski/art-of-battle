@@ -114,8 +114,8 @@ public abstract class OrientationSerpentine extends Orientation
       }
       return facingAtPoint;
    }
-   static public ArrayList<ArenaCoordinates> computeLocationsRequiredForFacings(ArrayList<Facing> newFacings, ArenaCoordinates headCoords) {
-      ArrayList<ArenaCoordinates> newCoordinates = new ArrayList<>();
+   static public List<ArenaCoordinates> computeLocationsRequiredForFacings(List<Facing> newFacings, ArenaCoordinates headCoords) {
+      List<ArenaCoordinates> newCoordinates = new ArrayList<>();
       ArenaCoordinates coord = headCoords;
       newCoordinates.add(coord);
       for (int i=1 ; i<newFacings.size() ; i++) {
@@ -309,7 +309,7 @@ public abstract class OrientationSerpentine extends Orientation
    }
 
 //   @Override
-//   public boolean setLocations(ArrayList<ArenaLocation> newLocations, byte newFacing, CombatMap map, Diagnostics diag)
+//   public boolean setLocations(List<ArenaLocation> newLocations, byte newFacing, CombatMap map, Diagnostics diag)
 //   {
 //      boolean result = super.setLocations(newLocations, newFacing, map, diag);
 //      for (ArenaLocation loc : _coordinates) {

@@ -373,8 +373,8 @@ public class Arena implements Enums, IMapListener
 
    public void recomputeTargetForCharacter(Character combatant, Character combatantSwitchingSides/*unused*/)
    {
-      ArrayList<Character> targetPriorities = new ArrayList<>();
-      ArrayList<Integer> targetPriorityIDs = new ArrayList<>();
+      List<Character> targetPriorities = new ArrayList<>();
+      List<Integer> targetPriorityIDs = new ArrayList<>();
       synchronized (_combatants) {
          try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_combatants)) {
             for (Character otherCombatant : _combatants) {
@@ -549,7 +549,7 @@ public class Arena implements Enums, IMapListener
    public static final int PLAYBACK_MODE_RECORD = 1;
    public static final int PLAYBACK_MODE_PLAY   = 2;
    public       int                    _playbackMode    = PLAYBACK_MODE_OFF;
-   public final ArrayList<SyncRequest> _recordedActions = null;//new ArrayList<>();
+   public final List<SyncRequest> _recordedActions = null;//new ArrayList<>();
    public       int                    _playbackIndex   = 0;
 
    public boolean sendObjectToCombatant(final Character combatant, SerializableObject obj) {
@@ -629,8 +629,8 @@ public class Arena implements Enums, IMapListener
    }
    /**
     */
-   private final ArrayList<SyncRequest> _locationRequests = new ArrayList<>();
-   public static final ArrayList<RequestUserInput> _activeRequestUserInputs = new ArrayList<>();
+   private final List<SyncRequest> _locationRequests = new ArrayList<>();
+   public static final List<RequestUserInput> _activeRequestUserInputs = new ArrayList<>();
 
    private void askLocalPlayer(final SyncRequest req, final boolean allowBackup, final Character combatant)
    {
@@ -763,14 +763,14 @@ public class Arena implements Enums, IMapListener
    }
 
    public void sendMessageTextToParticipants(String message, Character char1, Character char2) {
-      ArrayList<Character> participants = new ArrayList<>();
+      List<Character> participants = new ArrayList<>();
       participants.add(char1);
       if (char1 != char2) {
          participants.add(char2);
       }
       sendMessageTextToParticipants(message, participants);
    }
-   public void sendMessageTextToParticipants(String message, ArrayList<Character> participants) {
+   public void sendMessageTextToParticipants(String message, List<Character> participants) {
       // send this message to each of the involved parties (attacker & defender)
       // but the message content is currently in HTML, and we can't display that
       // in a popup yet, so for now we manually convert it out of HTML:
@@ -799,7 +799,7 @@ public class Arena implements Enums, IMapListener
       message = message.replaceAll("</td>", "");
       message = message.replaceAll("</tr>", "");
       message = message.replaceAll("</table>", "\n");
-      ArrayList<ClientProxy> proxiesSentTo = new ArrayList<>();
+      List<ClientProxy> proxiesSentTo = new ArrayList<>();
       for (Character participant : participants) {
          if ((participant != null) && (participant.getAIType() != null)) {
             ClientProxy proxy = _mapCombatantToProxy.get(participant);
@@ -1094,7 +1094,7 @@ public class Arena implements Enums, IMapListener
                        character, mapOfFutureOrientToSourceOrient, null/*target*/, null/*toLoc*/, false/*allowRanged*/,
                        false/*onlyChargeTypes*/, null/*itemsToPickupUsingSkill*/, considerUnknownLocations);
       validOrientations.addAll(mapOfFutureOrientToSourceOrient.keySet());
-//      ArrayList<Orientation> possibleOrientations = curOrientation.getPossibleFutureOrientations(map);
+//      List<Orientation> possibleOrientations = curOrientation.getPossibleFutureOrientations(map);
 //      for (Orientation orient : possibleOrientations) {
 //         if (orient.equals(curOrientation)) {
 //            if (!validOrientations.contains(orient)) {
@@ -1135,7 +1135,7 @@ public class Arena implements Enums, IMapListener
                                               List<SkillType> itemsToPickupUsingSkill, boolean considerUnknownLocations) {
       // movesInRound is an ArrayList of [HashMap that key a location, with a value of where it comes from].
       // The index in the movesInRound list is how many movement points it will take to get there.
-      ArrayList<HashMap<Orientation, Orientation >> movesInRound = new ArrayList<>();
+      List<HashMap<Orientation, Orientation >> movesInRound = new ArrayList<>();
       HashMap<Orientation, Orientation > routeFromThisRound = new HashMap<>();
       // With 0 movement points spent, we start out at startOrientation
       routeFromThisRound.put(startOrientation, null);
@@ -1194,7 +1194,7 @@ public class Arena implements Enums, IMapListener
                // Sort this list, so it is not ordered by ID, which is non-deterministic, and therefore not
                // reproducible when we go to playback a scenario
                TreeSet<Orientation> sortedLocations = new TreeSet<> (routeFromThisRound.keySet());
-               ArrayList<Orientation> moveDestinationsPossibleThisRound = new ArrayList<>(sortedLocations);
+               List<Orientation> moveDestinationsPossibleThisRound = new ArrayList<>(sortedLocations);
                // Now, iterate over all the possible Orientations that start took us 'currentMove' movement points to reach
                while (moveDestinationsPossibleThisRound.size() > 0) {
                   // randomly choose a location to move from. This causes a more natural movement when used by AI.
@@ -1327,7 +1327,7 @@ public class Arena implements Enums, IMapListener
                   }
 
                   // Now find out where we can go from this new location.
-                  ArrayList<Orientation> testLocs;
+                  List<Orientation> testLocs;
                   // If we haven't moved more than 2 moves so far, consider moves that include backing up
                   // If we have moved than 2 moves so far, we should be able trim down our search set by
                   // only considering advancing moves.
@@ -1636,8 +1636,8 @@ public class Arena implements Enums, IMapListener
       }
    }
 
-   public ArrayList<Character> getEnemies(Character attacker, boolean includeFallenFoes) {
-      ArrayList<Character> enemies = new ArrayList<>();
+   public List<Character> getEnemies(Character attacker, boolean includeFallenFoes) {
+      List<Character> enemies = new ArrayList<>();
       synchronized (_combatants) {
          try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_combatants)) {
             for (Character enemy : _combatants) {
@@ -1657,7 +1657,7 @@ public class Arena implements Enums, IMapListener
    }
    public Character getBestTarget(Character attacker, boolean attackerIsAdvancing)
    {
-      ArrayList<Integer> orderedTargets = attacker.getOrderedTargetPriorites();
+      List<Integer> orderedTargets = attacker.getOrderedTargetPriorites();
       if (orderedTargets == null) {
          return null;
       }
@@ -1741,7 +1741,7 @@ public class Arena implements Enums, IMapListener
       //Character movedAttacker = (Character) attacker.clone();
       Character movedAttacker = attacker;
       Orientation curOrientation = attacker.getOrientation();
-      ArrayList<Orientation> possibleMoves = curOrientation.getPossibleAdvanceOrientations(getCombatMap(), true/*blockByCharacters*/);
+      List<Orientation> possibleMoves = curOrientation.getPossibleAdvanceOrientations(getCombatMap(), true/*blockByCharacters*/);
       for (Orientation orient : possibleMoves) {
          if (canCharacterMove(attacker, orient)) {
             if (attackFromLimb != null) {
@@ -2056,7 +2056,7 @@ public class Arena implements Enums, IMapListener
          mainElement.setAttribute("PseudoRandomNumberUseCount", String.valueOf(CombatServer.getPseudoRandomNumberUseCount()));
          arenaDoc.appendChild(mainElement);
 
-         ArrayList<Integer> uniqueIDs = new ArrayList<>();
+         List<Integer> uniqueIDs = new ArrayList<>();
          mainElement.appendChild(arenaDoc.createTextNode(newLine));
          mainElement.appendChild(_battle.getXmlObject(arenaDoc));
          mainElement.appendChild(arenaDoc.createTextNode(newLine));

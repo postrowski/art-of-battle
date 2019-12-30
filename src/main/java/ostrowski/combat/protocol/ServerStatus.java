@@ -63,12 +63,12 @@ public class ServerStatus extends SerializableObject implements Enums
       }
    }
 
-   public ArrayList<Character> getCombatants() {
-      ArrayList<Character> list = new ArrayList<>(_combatants);
+   public List<Character> getCombatants() {
+      List<Character> list = new ArrayList<>(_combatants);
       return list;
    }
-   public ArrayList<Character> getCombatantsWaitingToConnect() {
-      ArrayList<Character> list = new ArrayList<>();
+   public List<Character> getCombatantsWaitingToConnect() {
+      List<Character> list = new ArrayList<>();
       for (Character chr : _combatants) {
          if (_combatantsWaitingByID.contains(chr._uniqueID)) {
             list.add(chr);

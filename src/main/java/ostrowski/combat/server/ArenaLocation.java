@@ -33,9 +33,9 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    public final Semaphore   _lock_this = new Semaphore("AreanLocation_lock_this", CombatSemaphore.CLASS_ARENALOCATION_this);
    private      TerrainType _terrain   = TerrainType.FLOOR;
    private   long                  _data                    = _terrain.value;
-   private   ArrayList<Object>     _things                  = new ArrayList<>();
-   private   ArrayList<Door>       _doors                   = new ArrayList<>();
-   private   ArrayList<IAreaSpell> _activeSpells            = new ArrayList<>();
+   private   List<Object>     _things                  = new ArrayList<>();
+   private   List<Door>       _doors                   = new ArrayList<>();
+   private   List<IAreaSpell> _activeSpells            = new ArrayList<>();
    private   HashSet<Integer>      _visibleTo               = new HashSet<>();
    private   HashSet<Integer>      _viewedBy                = new HashSet<>();
    public    HashMap<Integer, ArenaCoordinates> _visibleToCharacterFromLoc  = new HashMap<>();
@@ -85,7 +85,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
       }
    }
    public List<IAreaSpell> getActiveSpells() {
-      ArrayList<IAreaSpell> activeSpells = new ArrayList<>();
+      List<IAreaSpell> activeSpells = new ArrayList<>();
       // Check for any spells that have expired
       for (IAreaSpell spell : _activeSpells) {
          if (((Spell)spell).getDuration() != 0) {
@@ -157,7 +157,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
       }
    }
 
-   public ArrayList<Door> getDoors() {
+   public List<Door> getDoors() {
       return _doors;
    }
    public void addDoor(Door door) {
@@ -239,7 +239,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
       }
       return false;
    }
-   public ArrayList<Object> getThings() {
+   public List<Object> getThings() {
       return _things;
    }
    public void clearItems() {

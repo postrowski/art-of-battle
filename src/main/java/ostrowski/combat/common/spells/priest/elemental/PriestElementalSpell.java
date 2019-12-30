@@ -6,10 +6,11 @@ import ostrowski.combat.common.spells.priest.nature.SpellSeekElement;
 import ostrowski.combat.common.spells.priest.nature.weather.SpellHurricane;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PriestElementalSpell implements IPriestGroup
 {
-   static public final ArrayList<PriestSpell> _spells = new ArrayList<>();
+   static public final List<PriestSpell> _spells = new ArrayList<>();
    static {
       _spells.add(new SpellSeekElement(PriestElementalSpell.class, 1)); // find nearest water, air, earth or fire. power determines range & sensitivity.
       _spells.add(new SpellCreateElement(PriestElementalSpell.class, 2)); // create water, air, earth or fire, volume determined by power

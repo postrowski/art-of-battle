@@ -78,9 +78,9 @@ public class Race implements Cloneable, Enums
    private       byte                     _armCount         = 2;
    private       byte                     _wingCount        = 0;
    private       Orientation              _baseOrientation  = null;
-   private final List<String>        _racialProperties = new ArrayList<>();
-   private final List<String>        _racialAdvsNames  = new ArrayList<>();
-   private final ArrayList<Spell>         _inateSpells      = new ArrayList<>();
+   private final List<String>             _racialProperties = new ArrayList<>();
+   private final List<String>             _racialAdvsNames  = new ArrayList<>();
+   private final List<Spell>              _inateSpells      = new ArrayList<>();
    private       Armor                    _naturalArmor;
    private       boolean                  _isAquatic        = false;
    private       boolean                  _isAnimal         = false;
@@ -102,7 +102,7 @@ public class Race implements Cloneable, Enums
       return Rules.getAttCost((byte) (attLevel - _attributeMods.get(att)));
    }
 
-   public ArrayList<Spell> getInateSpells() {
+   public List<Spell> getInateSpells() {
       return _inateSpells;
    }
 
@@ -262,8 +262,8 @@ public class Race implements Cloneable, Enums
       return (byte) ((hasProperty(PROPERTIES_TAIL)) ? 1 : 0);
    }
 
-   final ArrayList<LimbType> _limbSet = new ArrayList<>();
-   public ArrayList<LimbType> getLimbSet() {
+   final List<LimbType> _limbSet = new ArrayList<>();
+   public List<LimbType> getLimbSet() {
       if (_limbSet.isEmpty()) {
          for (LimbType limbType : LimbType.values()) {
             if (limbType.isHead() && (limbType.setId <= _headCount)) {
@@ -530,7 +530,7 @@ public class Race implements Cloneable, Enums
    }
 
    public static List<Gender> getGendersForRace(String raceName) {
-      ArrayList<Gender> list = new ArrayList<>();
+      List<Gender> list = new ArrayList<>();
       for (Race race : _raceList) {
          if (raceName.equals(race.getName())) {
             list.add(race._gender);
@@ -766,13 +766,11 @@ public class Race implements Cloneable, Enums
    }
 
    public List<String> getRacialPropertiesList() {
-      List<String> propList = new ArrayList<>();
-      propList.addAll(propList);
-      return propList;
+      return new ArrayList<>(_racialProperties);
    }
 
    public List<Advantage> getAdvantagesList() {
-      ArrayList<Advantage> advList = new ArrayList<>();
+      List<Advantage> advList = new ArrayList<>();
       for (String advName : _racialAdvsNames) {
          Advantage adv = Advantage.getAdvantage(advName);
          if (adv != null) {

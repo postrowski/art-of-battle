@@ -201,7 +201,7 @@ public class CharacterGenerator implements Enums
 
       boolean noEquip = false;
       boolean weaponSheathed = false;
-      ArrayList<Weapon> weapons = new ArrayList<>();
+      List<Weapon> weapons = new ArrayList<>();
       Armor requiredArmor = null;
       Shield requiredShield = null;
       int maxExpenditure = -1;
@@ -992,10 +992,10 @@ public class CharacterGenerator implements Enums
       double maxPercentageOfTotalPoint = 0.5 + ((CombatServer.random() + CombatServer.random() + CombatServer.random() + CombatServer.random()) / 8.0);
       int maxPointsForStrength = (int) (pointsLeft * maxPercentageOfTotalPoint);
       // randomize the list of attack styles:
-      ArrayList<WeaponStyleAttack> styleList = new ArrayList<>(Arrays.asList(primaryWeapon.getAttackStyles()));
-      ArrayList<WeaponStyleAttack> randomizedStyleListThrust = new ArrayList<>();
-      ArrayList<WeaponStyleAttack> randomizedStyleListSwing = new ArrayList<>();
-      ArrayList<WeaponStyleAttack> randomizedStyleListOther = new ArrayList<>();
+      List<WeaponStyleAttack> styleList = new ArrayList<>(Arrays.asList(primaryWeapon.getAttackStyles()));
+      List<WeaponStyleAttack> randomizedStyleListThrust = new ArrayList<>();
+      List<WeaponStyleAttack> randomizedStyleListSwing = new ArrayList<>();
+      List<WeaponStyleAttack> randomizedStyleListOther = new ArrayList<>();
       while (!styleList.isEmpty()) {
          WeaponStyleAttack style = styleList.remove((int) (styleList.size() * CombatServer.random()));
          if (style.getAttackType() == AttackType.THRUST) {
@@ -1009,7 +1009,7 @@ public class CharacterGenerator implements Enums
          }
       }
       // check swing types first, 80% of the time
-      ArrayList<WeaponStyleAttack> randomizedStyleList = new ArrayList<>();
+      List<WeaponStyleAttack> randomizedStyleList = new ArrayList<>();
       if (CombatServer.random() < .8) {
          randomizedStyleList.addAll(randomizedStyleListSwing);
          randomizedStyleList.addAll(randomizedStyleListThrust);
@@ -1077,8 +1077,8 @@ public class CharacterGenerator implements Enums
    private static void computeBestArmorAndShield(Character character, byte shieldLevel, byte desiredEncLevel, Armor requiredArmor, Shield requiredShield,
                                                  int maxExpenditure) {
       // These lists must be sorted by weight so we can find the best armor for our carrying limit:
-      ArrayList<Armor> armors = Armor.getArmorListForRace(character.getRace());
-      ArrayList<Shield> shields = Shield.getShieldListForRace(character.getRace());
+      List<Armor> armors = Armor.getArmorListForRace(character.getRace());
+      List<Shield> shields = Shield.getShieldListForRace(character.getRace());
       double elvenArmorOdds = 0;
       if (character.getRace().getName() == Race.NAME_Elf) {
          elvenArmorOdds = 0.90;
@@ -1105,7 +1105,7 @@ public class CharacterGenerator implements Enums
       }
 
       if (!armorNamesToRemove.isEmpty()) {
-         ArrayList<Armor> armorsToRemove = new ArrayList<>();
+         List<Armor> armorsToRemove = new ArrayList<>();
          for (Armor armor : armors) {
             if (armorNamesToRemove.contains(armor.getName())) {
                armorsToRemove.add(armor);

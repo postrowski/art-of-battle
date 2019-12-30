@@ -15,13 +15,14 @@ import ostrowski.combat.common.things.LimbType;
 import ostrowski.combat.server.CombatServer;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 
 
 public class StatusChit extends Dialog implements PaintListener
 {
    private static final HashMap<String, Point> LOCATION_BY_CHARACTER_NAME = new HashMap<>();
-   private final        ArrayList<TextWheel>   _textWheels                = new ArrayList<>();
+   private final        List<TextWheel>   _textWheels                = new ArrayList<>();
    private              Shell                  _shell                     = null;
 
    public String            _name;
@@ -474,7 +475,7 @@ class TextWheel {
 
    public static Region getRegion(double radius, Point center, double startAngle, double stopAngle) {
       radius += 0.5;
-      ArrayList<Point> points = new ArrayList<>();
+      List<Point> points = new ArrayList<>();
       points.add(center);
       double stepInRadians = 1.0/radius;
       for (double angle = startAngle ; angle < stopAngle ; angle += stepInRadians) {

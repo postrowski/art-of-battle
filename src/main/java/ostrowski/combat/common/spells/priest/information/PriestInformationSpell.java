@@ -10,10 +10,11 @@ import ostrowski.combat.common.spells.priest.nature.SpellSeekElement;
 import ostrowski.combat.common.spells.priest.nature.animal.SpellDetectLife;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PriestInformationSpell implements IPriestGroup
 {
-   static public final ArrayList<PriestSpell> _spells = new ArrayList<>();
+   static public final List<PriestSpell> _spells = new ArrayList<>();
    static {
       _spells.add(new SpellDetectGood(PriestInformationSpell.class, 1));
       _spells.add(new SpellDetectEvil(PriestInformationSpell.class, 1));

@@ -2,6 +2,7 @@ package ostrowski.combat.common.things;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import ostrowski.DebugBreak;
 import ostrowski.combat.common.enums.Enums.Location;
@@ -106,8 +107,8 @@ public enum LimbType {
        return null;
     }
     private final static HashMap<Byte, LimbType>    _typeByValue = new HashMap<>();
-    private final static HashMap<String, LimbType>  _typeByName  = new HashMap<>();
-    public  final static ArrayList<LimbType>        _armTypes    = new ArrayList<>();
+    private final static HashMap<String, LimbType> _typeByName = new HashMap<>();
+    public  final static List<LimbType>            _armTypes   = new ArrayList<>();
 
     static {
        for (LimbType type : values()) {

@@ -11,10 +11,11 @@ import ostrowski.combat.common.spells.priest.evil.SpellOpenGateToHell;
 import ostrowski.combat.common.spells.priest.offensive.SpellSpeed;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PriestDemonicSpell implements IPriestGroup
 {
-   static public final ArrayList<PriestSpell> _spells = new ArrayList<>();
+   static public final List<PriestSpell> _spells = new ArrayList<>();
    static {
       // All Demons can have these:
       _spells.add(new SpellArmor(PriestDemonicSpell.class, 2));            // defensive

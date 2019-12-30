@@ -12,11 +12,12 @@ import ostrowski.protocol.SyncRequest;
 import ostrowski.util.SemaphoreAutoLocker;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 public class RequestTarget extends SyncRequest
 {
-   private ArrayList<Byte> _optionsTeam;
+   private List<Byte> _optionsTeam;
 
    public RequestTarget() {
       _message = "Please select your target, in order of priority." +
@@ -26,8 +27,8 @@ public class RequestTarget extends SyncRequest
    public boolean isCancelable() {
       return false;
    }
-   public ArrayList<Integer> getOrderedTargetIds() {
-      ArrayList<Integer> ids = new ArrayList<>();
+   public List<Integer> getOrderedTargetIds() {
+      List<Integer> ids = new ArrayList<>();
       for (IRequestOption opt : _options) {
          ids.add(opt.getIntValue());
       }
@@ -48,7 +49,7 @@ public class RequestTarget extends SyncRequest
          }
       }
    }
-   public void setOrderedTargetIds(ArrayList<Character> newOrder) {
+   public void setOrderedTargetIds(List<Character> newOrder) {
       _options  = new ArrayList<>();
       _optionsTeam = new ArrayList<>();
       for (Character target : newOrder) {
@@ -56,8 +57,8 @@ public class RequestTarget extends SyncRequest
          _optionsTeam.add(target._teamID);
       }
    }
-   public ArrayList<Character> getTargetCharacters() {
-      ArrayList<Character> targets = new ArrayList<>();
+   public List<Character> getTargetCharacters() {
+      List<Character> targets = new ArrayList<>();
       for (int i=0 ; i<_options.size() ; i++) {
          Character target = new Character();
          target.setName(_options.get(i).getName());

@@ -21,7 +21,7 @@ import java.util.List;
 public class TargetPrioritiesWidget extends Helper implements SelectionListener
 {
    public org.eclipse.swt.widgets.List _priorityList = null;
-   private ArrayList<Character>        _combatants   = null;
+   private List<Character>        _combatants   = null;
    private Button                      _upButton     = null;
    private Button                      _dnButton     = null;
    private CharacterDisplay            _display      = null;
@@ -230,8 +230,8 @@ public class TargetPrioritiesWidget extends Helper implements SelectionListener
          }
       }
    }
-   public ArrayList<Character> getOrderedEnemies() {
-      ArrayList<Character> orderedEnemies = new ArrayList<>();
+   public List<Character> getOrderedEnemies() {
+      List<Character> orderedEnemies = new ArrayList<>();
       for (Character combatant : _combatants) {
          if (combatant == null) {
             // The 'null' entry corresponds to the "friend below this" entry.

@@ -8,10 +8,11 @@ import ostrowski.combat.common.spells.priest.nature.plant.SpellGrowPlant;
 import ostrowski.combat.common.spells.priest.nature.weather.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PriestNatureSpell implements IPriestGroup
 {
-   static public final ArrayList<PriestSpell> _spells = new ArrayList<>();
+   static public final List<PriestSpell> _spells = new ArrayList<>();
    static {
       _spells.add(new SpellSeekElement(PriestNatureSpell.class, 1));
       _spells.add(new SpellDetectLife(PriestNatureSpell.class, 1));

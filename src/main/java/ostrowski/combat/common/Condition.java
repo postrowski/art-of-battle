@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 /*
  * Created on May 3, 2006
@@ -69,7 +70,7 @@ public class Condition extends SerializableObject implements Enums {
    private short _priestSpellPointsAvailable = 0;
    private short _mageSpellPointsAvailable   = 0;
 
-   private ArrayList<Wound> _woundsList = new ArrayList<>();
+   private List<Wound> _woundsList = new ArrayList<>();
 
    public Condition() {
       // ctor used for all Serializable objects
@@ -709,7 +710,7 @@ public class Condition extends SerializableObject implements Enums {
       _collapsed = true;
       setPosition(Position.PRONE_BACK, map, actor);
    }
-   public ArrayList<Wound> getWoundsList() {
+   public List<Wound> getWoundsList() {
       return _woundsList;
    }
    public String healWound(Wound woundToCure, byte woundReduction, byte bleedingReduction)
@@ -810,7 +811,7 @@ public class Condition extends SerializableObject implements Enums {
    public boolean isInCoordinates(ArenaCoordinates loc) {
       return _orientation.isInLocation(loc);
    }
-   public ArrayList<ArenaCoordinates> getCoordinates() {
+   public List<ArenaCoordinates> getCoordinates() {
       if (_orientation == null) {
          return new ArrayList<>();
       }
@@ -825,13 +826,13 @@ public class Condition extends SerializableObject implements Enums {
    public ArenaCoordinates getLimbCoordinates(LimbType limbType) {
       return _orientation.getLimbCoordinates(limbType);
    }
-   public ArrayList<Orientation> getPossibleAdvanceOrientations(CombatMap map) {
+   public List<Orientation> getPossibleAdvanceOrientations(CombatMap map) {
       return _orientation.getPossibleAdvanceOrientations(map, true/*blockByCharacters*/);
    }
    public boolean setHeadLocation(Character character, ArenaLocation headLocation, Facing facing, CombatMap map, Diagnostics diag) {
       return _orientation.setHeadLocation(character, headLocation, facing, map, diag, true/*allowTwisting*/);
    }
-//   public boolean setLocations(ArrayList<ArenaLocation> newLocations, byte newFacing, CombatMap map, Diagnostics diag) {
+//   public boolean setLocations(List<ArenaLocation> newLocations, byte newFacing, CombatMap map, Diagnostics diag) {
 //      return _orientation.setLocations(newLocations, newFacing, map, diag);
 //   }
    public boolean setOrientation(Orientation destination) {

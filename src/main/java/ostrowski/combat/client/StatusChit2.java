@@ -1,6 +1,7 @@
 package ostrowski.combat.client;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -16,7 +17,7 @@ import org.eclipse.swt.widgets.Shell;
 public class StatusChit2 extends Dialog implements PaintListener
 {
    private static Point LOCATION = null;
-   private final ArrayList<TextWheel> _textWheels = new ArrayList<>();
+   private final List<TextWheel> _textWheels = new ArrayList<>();
    private Shell _shell = null;
 
    private TextWheel _initiative;

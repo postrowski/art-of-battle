@@ -48,8 +48,8 @@ public class Tester
    //      map.serializeFromFile(new File("arenas\\town.xml"));
    //      ArenaLocation fromLoc = map.getLocation((short)5, (short)45);
    //      ArenaLocation toLoc = map.getLocation((short)15, (short)49);
-   //      ArrayList<ArenaLocation> path1 = map.getPath(fromLoc, toLoc, false/*trimPath*/);
-   //      ArrayList<ArenaLocation> path2 = map.getPath(toLoc, fromLoc, false/*trimPath*/);
+   //      List<ArenaLocation> path1 = map.getPath(fromLoc, toLoc, false/*trimPath*/);
+   //      List<ArenaLocation> path2 = map.getPath(toLoc, fromLoc, false/*trimPath*/);
    //      path1.size();
    //      path2.size();
    //   }

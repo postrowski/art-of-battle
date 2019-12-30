@@ -51,7 +51,7 @@ public class ArenaEvent implements Cloneable
    String                   _eventName                           = "";
    String                   _eventType                           = EVENT_TYPE_DISPLAY_MESSAGE_PUBLICLY;
    String                   _eventData                           = "";
-   ArrayList<ArenaCoordinates> _eventLocations                   = null;
+   List<ArenaCoordinates> _eventLocations                   = null;
 
    public ArenaEvent(String name) {
       _eventName = name;
@@ -335,7 +335,7 @@ public class ArenaEvent implements Cloneable
          CombatMap map = arena.getCombatMap();
          // if we come back to this map, make sure we don't re-create the original players
          map.clearCharacterStartingLocations();
-         final ArrayList<Character> team = new ArrayList<>();
+         final List<Character> team = new ArrayList<>();
          final byte teamID = triggeringCharacter._teamID;
          for (Character combatant : arena.getCombatants()) {
             if (combatant._teamID == teamID) {
@@ -369,7 +369,7 @@ public class ArenaEvent implements Cloneable
                            arena.setCombatMap(newMap, true/*clearCombatants*/);
                         }
                         arena.addStockCombatants();
-                        ArrayList<ArenaCoordinates> locations = new ArrayList<>();
+                        List<ArenaCoordinates> locations = new ArrayList<>();
                         for (Character teamMember : team) {
                            // make sure we never run out of locations, even if we re-use them twice.
                            if (locations.isEmpty()) {

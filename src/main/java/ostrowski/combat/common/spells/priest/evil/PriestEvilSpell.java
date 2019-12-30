@@ -5,10 +5,11 @@ import ostrowski.combat.common.spells.priest.PriestSpell;
 import ostrowski.combat.common.spells.priest.demonic.SpellSummonHellHounds;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PriestEvilSpell implements IPriestGroup
 {
-   static public final ArrayList<PriestSpell> _spells = new ArrayList<>();
+   static public final List<PriestSpell> _spells = new ArrayList<>();
    static {
       _spells.add(new SpellDarkness(PriestEvilSpell.class, 1));
       _spells.add(new SpellDetectGood(PriestEvilSpell.class, 1));

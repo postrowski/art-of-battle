@@ -53,7 +53,7 @@ public class CharacterDisplay implements Enums, ModifyListener, IMapListener //,
    public        int                 _uniqueConnectionID  = -1;
    private final List<SyncRequest>   _pendingRequests     = new ArrayList<>();
    public        Shell               _shell;
-   public final  ArrayList<Helper>   _uiBlocks            = new ArrayList<>();
+   public final  List<Helper>   _uiBlocks            = new ArrayList<>();
 
    transient private final MouseOverCharacterInfoPopup _mouseOverCharInfoPopup = new MouseOverCharacterInfoPopup();
 
@@ -173,7 +173,7 @@ public class CharacterDisplay implements Enums, ModifyListener, IMapListener //,
          _aiBlock.setAI(true);
       }
 
-      //      ArrayList<Control> tabArray = new ArrayList();
+      //      List<Control> tabArray = new ArrayList();
       //      _connectionBlock.getTabItems(tabArray);
       //      Control[] tabList = new Control[tabArray.size()];
       //      arenaData.setTabList(tabArray.toArray(tabList));

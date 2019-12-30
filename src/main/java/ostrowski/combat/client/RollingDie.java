@@ -16,6 +16,7 @@ import ostrowski.graphics.model.Tuple3;
 import ostrowski.graphics.objects3d.Thing;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RollingDie extends Dialog implements PaintListener
 {
@@ -92,7 +93,7 @@ public class RollingDie extends Dialog implements PaintListener
 
    public static Region getRegion(double radius, Point center, double startAngle, double stopAngle) {
       radius += 0.5;
-      ArrayList<Point> points = new ArrayList<>();
+      List<Point> points = new ArrayList<>();
       points.add(center);
       double stepInRadians = 1.0/radius;
       for (double angle = startAngle ; angle < stopAngle ; angle += stepInRadians) {

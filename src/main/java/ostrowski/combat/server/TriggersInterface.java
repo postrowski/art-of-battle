@@ -19,7 +19,7 @@ import java.util.Collection;
 public class TriggersInterface extends Helper implements SelectionListener, ModifyListener, PaintListener
 {
    private CombatMap  _map;
-   private final ArrayList<IMapWidget> _mapWidgets = new ArrayList<>();
+   private final java.util.List<IMapWidget> _mapWidgets = new ArrayList<>();
    private List       _triggersList;
    private Button     _addTrigger;
    private Button     _setTriggerLocationsButton;
@@ -58,7 +58,7 @@ public class TriggersInterface extends Helper implements SelectionListener, Modi
       _map = map;
       _triggersList.removeAll();
       if (map != null) {
-         ArrayList<ArenaTrigger> triggers = map.getTriggers();
+         java.util.List<ArenaTrigger> triggers = map.getTriggers();
          if ((triggers != null) && (triggers.size() > 0)) {
             for (ArenaTrigger trigger : triggers) {
                _triggersList.add(trigger.getName());
@@ -341,7 +341,7 @@ public class TriggersInterface extends Helper implements SelectionListener, Modi
       }
 
       if (contains2Dmap){
-         ArrayList<ArenaCoordinates> locs = new ArrayList<>();
+         java.util.List<ArenaCoordinates> locs = new ArrayList<>();
          if (oldTrigger != null) {
             locs.addAll(oldTrigger.getTriggerCoordinates());
             for (ArenaEvent event : oldTrigger.getEvents()) {
@@ -378,7 +378,7 @@ public class TriggersInterface extends Helper implements SelectionListener, Modi
       setEventEnabled(false);
 
       if (trigger != null) {
-         ArrayList<ArenaEvent> events = trigger.getEvents();
+         java.util.List<ArenaEvent> events = trigger.getEvents();
          boolean eventsExist = ((events != null) && (events.size() > 0));
          if (eventsExist) {
             ArenaEvent firstEvent = null;
@@ -493,9 +493,10 @@ public class TriggersInterface extends Helper implements SelectionListener, Modi
    }
 
    public void onMouseDown(ArenaLocation loc, Event event, double angleFromCenter, double normalizedDistFromCenter,
-                           IMapWidget mapWidget, ArrayList<ArenaCoordinates> locationsToRedraw) {
+                           IMapWidget mapWidget, java.util.List<ArenaCoordinates> locationsToRedraw) {
    }
-   public void onMouseUp(ArenaLocation loc, Event mouseUpEvent, double angleFromCenter, double normalizedDistFromCenter, CombatMap combatMap, ArrayList<ArenaCoordinates> locationsToRedraw) {
+   public void onMouseUp(ArenaLocation loc, Event mouseUpEvent, double angleFromCenter, double normalizedDistFromCenter,
+                         CombatMap combatMap, java.util.List<ArenaCoordinates> locationsToRedraw) {
       if (loc == null) {
          return;
       }

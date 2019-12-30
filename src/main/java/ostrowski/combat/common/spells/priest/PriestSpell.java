@@ -90,7 +90,7 @@ public abstract class PriestSpell extends Spell
 
    @SuppressWarnings("unchecked")
    public static String generateHtmlTablePriestSpells() {
-      ArrayList<PriestSpell>[] spellsInGroup = new ArrayList[GROUP_NAMES.size()];
+      List<PriestSpell>[] spellsInGroup = new ArrayList[GROUP_NAMES.size()];
       StringBuilder sb = new StringBuilder();
       sb.append(HtmlBuilder.getHTMLHeader());
       sb.append("<body>");
@@ -240,7 +240,7 @@ public abstract class PriestSpell extends Spell
    }
    static {
       StringBuilder problems = new StringBuilder();
-      ArrayList<PriestSpell> allSpells = getSpellsInGroup(null);
+      List<PriestSpell> allSpells = getSpellsInGroup(null);
       for (PriestSpell spell : allSpells) {
          if (spell.describeSpell() == null) {
             problems.append("Spell ").append(spell.getName()).append(" needs to return a string from describeSpell()\n");
@@ -291,8 +291,8 @@ public abstract class PriestSpell extends Spell
       return spells;
    }
 
-   static public ArrayList<PriestSpell> getSpellsInGroup(String group) {
-      ArrayList<PriestSpell> spells = new ArrayList<>();
+   static public List<PriestSpell> getSpellsInGroup(String group) {
+      List<PriestSpell> spells = new ArrayList<>();
       if ((group == null) || (group.equals(GROUP_OFFENSIVE))) {
          spells.addAll(PriestOffensiveSpell._spells);
       }

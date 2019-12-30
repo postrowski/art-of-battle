@@ -4,13 +4,14 @@ import org.eclipse.swt.graphics.*;
 import ostrowski.DebugBreak;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DrawnObject
 {
-   private ArrayList<Point> _points = new ArrayList<>();
-   private RGB _fgRGB;
-   private RGB _bgRGB;
-   private final ArrayList<DrawnObject> _children = new ArrayList<>();
+   private       List<Point> _points = new ArrayList<>();
+   private       RGB         _fgRGB;
+   private       RGB               _bgRGB;
+   private final List<DrawnObject> _children = new ArrayList<>();
 
    public DrawnObject(RGB fgRGB, RGB bgRGB) {
       _fgRGB = fgRGB;//==null) ? null : new RGB(fgRGB.red, fgRGB.green, fgRGB.blue);
@@ -161,7 +162,7 @@ public class DrawnObject
       // This will let us catch the case where one line goes from below the min to above the max.
       boolean minTest=false;
       do {
-         ArrayList<Point> newPoints = new ArrayList<>();
+         List<Point> newPoints = new ArrayList<>();
          Point prevPoint = null;
          int skipsAllowed = _points.size();
          Point lastAddedPoint = null;
@@ -333,7 +334,7 @@ public class DrawnObject
    public int getPointCount() {
       return _points.size();
    }
-   public ArrayList<Point> getPoints() {
+   public List<Point> getPoints() {
       return _points;
    }
 }

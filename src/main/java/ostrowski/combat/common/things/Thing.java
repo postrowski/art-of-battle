@@ -26,6 +26,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Comparator;
 
 public abstract class Thing extends SerializableObject implements Cloneable, Enums
@@ -84,7 +85,7 @@ public abstract class Thing extends SerializableObject implements Cloneable, Enu
    }
    public byte getPassiveDefense()   { return _passiveDefense; }
    public abstract String getActiveDefenseName();
-   public abstract ArrayList<SkillType> getDefenseSkillTypes();
+   public abstract List<SkillType> getDefenseSkillTypes();
    public abstract byte getBestDefenseOption(Character wielder, LimbType useHand, boolean canUse2Hands,
                                              DamageType damType, boolean isGrappleAttack, short distance);
    public boolean canDefendAgainstRangedWeapons() { return false;}

@@ -233,7 +233,7 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
    @SuppressWarnings("unchecked")
    public void updateCharacterFromDisplay(Character character)
    {
-      ArrayList<MageCollege> newColleges = new ArrayList<>();
+      List<MageCollege> newColleges = new ArrayList<>();
       for (int i=0 ; i<_collegeCombo.length ; i++) {
          String collegeName = _collegeCombo[i].getText();
          _collegeComboData[i] = collegeName;
@@ -254,8 +254,8 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
             }
          }
       }
-      ArrayList<MageSpell> newSpells = new ArrayList<>();
-      ArrayList<Class<MageSpell>> newSpellClasses = new ArrayList<>();
+      List<MageSpell> newSpells = new ArrayList<>();
+      List<Class<MageSpell>> newSpellClasses = new ArrayList<>();
       for (int i=0 ; i<_spellCombo.length ; i++) {
          String spellName = _spellCombo[i].getText();
          _spellComboData[i] = spellName;
