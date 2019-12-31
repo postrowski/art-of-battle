@@ -21,7 +21,7 @@ import java.util.List;
 /*
  * Created on May 4, 2006
  */
-public class Wound extends SerializableObject implements Enums
+public class Wound extends SerializableObject implements Enums, Cloneable
 {
    byte           _damage                = 0;
    DamageType     _damageType            = DamageType.BLUNT;
@@ -58,8 +58,9 @@ public class Wound extends SerializableObject implements Enums
    byte _penaltyMove     = 0;
    byte _knockedBackDist = 0;
 
-   public Wound(byte damage, Location location, String description, int painLevel, int wounds, int bleedRate, int armPenalty, int movePenalty,
-                int knockedDownDist, DamageType damageType, long effectsMask, Character target) {
+   public Wound(byte damage, Location location, String description, int painLevel, int wounds, int bleedRate,
+                int armPenalty, int movePenalty, int knockedDownDist, DamageType damageType, long effectsMask,
+                Character target) {
       _damage = damage;
       _description = description;
       _effectsMask = effectsMask;
@@ -647,5 +648,13 @@ public class Wound extends SerializableObject implements Enums
    }
    public String getInvalidReason() {
       return _invalidReason;
+   }
+
+   public Wound clone() {
+      try {
+         return (Wound) super.clone();
+      } catch (CloneNotSupportedException e) {
+         return null;
+      }
    }
 }

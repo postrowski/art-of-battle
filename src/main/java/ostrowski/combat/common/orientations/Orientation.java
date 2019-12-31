@@ -32,14 +32,16 @@ import java.util.List;
 
 public abstract class Orientation extends SerializableObject implements Enums, Cloneable, Comparable<Orientation>
 {
-   protected final List<ArenaCoordinates> _coordinates = new ArrayList<>();
-   protected final List<Facing>           _facings = new ArrayList<>();
-   private Position                            _position = Position.STANDING;
+   protected List<ArenaCoordinates> _coordinates = new ArrayList<>();
+   protected List<Facing>           _facings     = new ArrayList<>();
+   private   Position               _position    = Position.STANDING;
 
    @Override
    public Orientation clone() {
       try {
          Orientation dup = (Orientation) super.clone();//this.getClass().getDeclaredConstructor().newInstance();
+         dup._facings     = new ArrayList<>();
+         dup._coordinates = new ArrayList<>();
          dup.copyDataFrom(this);
          return dup;
       } catch (IllegalArgumentException | SecurityException | CloneNotSupportedException e) {
@@ -168,6 +170,7 @@ public abstract class Orientation extends SerializableObject implements Enums, C
       List<Facing> newFacings = new ArrayList<>();
       if (facing == null) {
          DebugBreak.debugBreak();
+         return null;
       }
       newFacings.add(facing);
       newFacingTwists.add((byte) 0);
@@ -277,7 +280,7 @@ public abstract class Orientation extends SerializableObject implements Enums, C
    abstract public ArenaCoordinates getLimbCoordinates(LimbType limbType);
 
    public Facing getFacing() {
-      return _facings.get(0);
+      return _facings.isEmpty() ? null: _facings.get(0);
    }
    public Facing getFacing(ArenaCoordinates loc) {
       for (int i=0 ; i<getCoordinates().size() ; i++) {
@@ -328,7 +331,6 @@ public abstract class Orientation extends SerializableObject implements Enums, C
       }
       List<Orientation> orientationsToLeadToChargeAttacks = new ArrayList<>();
       List<Orientation> orientations = getPossibleAdvanceOrientations(map, true/*blockByCharacters*/);
-      boolean result = false;
       for (Orientation orient : orientations) {
          // If this advance orientation is just a in-place turn, skip it
          if (orient.getHeadCoordinates().sameCoordinates(getHeadCoordinates())) {
@@ -342,13 +344,12 @@ public abstract class Orientation extends SerializableObject implements Enums, C
             }
             if (orient.getPossibleChargePathsToTarget(map, mover, target, (byte)(movementRemaining - costToEnter), mapOrientationToNextOrientations, depth+1, newTurns)) {
                orientationsToLeadToChargeAttacks.add(orient);
-               result = true;
             }
          }
       }
       if (orientationsToLeadToChargeAttacks.size() > 0) {
          mapOrientationToNextOrientations.put(this, orientationsToLeadToChargeAttacks);
-         return result;
+         return true;
       }
       return false;
    }
@@ -652,6 +653,9 @@ public abstract class Orientation extends SerializableObject implements Enums, C
    public void drawCharacter(GC gc, Device display, int[] bounds, ArenaLocation loc, int background, int foreground, Character character)
    {
       Facing facing = getFacing();
+      if (facing == null) {
+         return;
+      }
       int[] frontBounds = null;
       if (loc.sameCoordinates(character.getHeadCoordinates())) {
          frontBounds = getFacingDimensions(bounds, facing);

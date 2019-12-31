@@ -4287,27 +4287,27 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                }
                String name = attr.getNamedItem("Name").getNodeValue();
                Node node = attr.getNamedItem("Level");
-               String level = ((node != null) ? node.getNodeValue() : null);
+               byte level = (node != null) ? Byte.parseByte(node.getNodeValue()) : 0;
                node = attr.getNamedItem("LevelName");
-               String levelName = ((node != null) ? node.getNodeValue() : null);
+               String levelName = ((node != null) ? node.getNodeValue() : "");
 
                if (child.getNodeName().equals("Skills")) {
                   SkillType skillType = SkillType.getSkillTypeByName(name);
                   if (skillType != null) {
-                     _skillsList.put(skillType, new Skill(skillType, Byte.parseByte(level)));
+                     _skillsList.put(skillType, new Skill(skillType, level));
                   }
                }
                else if (child.getNodeName().equals("Spells")) {
                   MageSpell spell = MageSpell.getSpell(name);
                   if (spell != null) {
-                     spell.setLevel(Byte.parseByte(level));
+                     spell.setLevel(level);
                      _knownMageSpellsList.add(spell);
                   }
                }
                else if (child.getNodeName().equals("Colleges")) {
                   MageCollege college = MageCollege.getCollege(name);
                   if (college != null) {
-                     college.setLevel(Byte.parseByte(level));
+                     college.setLevel(level);
                      _knownCollegesList.add(college);
                   }
                }
@@ -4322,10 +4322,10 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                            // code of conduct had 4 elements added to the front of the list of levels
                            // at the same time as the 'levelName' attribute was added.
                            // so if we don't have a 'levelName', then the level's have changed:
-                           adv.setLevel((byte) (Byte.parseByte(level) + 4));
+                           adv.setLevel((byte) (level + 4));
                         }
                         else {
-                           adv.setLevel(Byte.parseByte(level));
+                           adv.setLevel(level);
                         }
                      }
                      _advList.add(adv);
@@ -5537,7 +5537,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          else if (noPain) {
             alterationExplanationBuffer.append(" feels no pain.");
          }
-         else if (noBlood) {
+         else {// if (noBlood) {
             alterationExplanationBuffer.append(" does not bleed.");
          }
          wound = altWound;
@@ -5706,18 +5706,16 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
 
    public String describeActiveSpells() {
       StringBuilder sb = new StringBuilder();
-      if (_activeSpellsList != null) {
-         for (Spell spell : _activeSpellsList) {
-            String effects = spell.describeEffects(this, false/*firstTime*/);
-            if (effects != null) {
-               if (sb.length() == 0) {
-                  sb.append("<br/>");
-                  sb.append(getName());
-                  sb.append(" is under the effects of the following spells:");
-               }
-               sb.append("<br>    '").append(spell.getName()).append("' in effect for ");
-               sb.append(spell.getDuration()).append(" more turns: ").append(effects);
+      for (Spell spell : _activeSpellsList) {
+         String effects = spell.describeEffects(this, false/*firstTime*/);
+         if (effects != null) {
+            if (sb.length() == 0) {
+               sb.append("<br/>");
+               sb.append(getName());
+               sb.append(" is under the effects of the following spells:");
             }
+            sb.append("<br>    '").append(spell.getName()).append("' in effect for ");
+            sb.append(spell.getDuration()).append(" more turns: ").append(effects);
          }
       }
       return sb.toString();
@@ -5734,10 +5732,15 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       }
       ArenaCoordinates thisHeadCoord = getHeadCoordinates();
       ArenaCoordinates otherHeadCoord = otherChar.getHeadCoordinates();
-      if ((thisHeadCoord == null) && (otherHeadCoord != null)) {
-         return -1;
+      if (thisHeadCoord == null) {
+         if (otherHeadCoord != null) {
+            return -1;
+         }
+         if (otherHeadCoord == null) {
+            return 0;
+         }
       }
-      if ((thisHeadCoord != null) && (otherHeadCoord == null)) {
+      else if (otherHeadCoord == null) {
          return 1;
       }
       return thisHeadCoord.compareTo(otherHeadCoord);

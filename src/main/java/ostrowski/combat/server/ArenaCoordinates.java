@@ -52,7 +52,9 @@ public class ArenaCoordinates extends SerializableObject implements Enums, Compa
    @Override
    public ArenaCoordinates clone() {
       try {
-         return (ArenaCoordinates) super.clone();
+         ArenaCoordinates dup = (ArenaCoordinates) super.clone();
+         dup.copyData(this);
+         return dup;
       } catch (CloneNotSupportedException e) {
          return null;
       }

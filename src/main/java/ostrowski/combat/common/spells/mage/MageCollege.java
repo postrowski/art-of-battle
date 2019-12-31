@@ -16,8 +16,8 @@ import java.util.List;
 
 public class MageCollege extends SerializableObject implements Enums
 {
-   public static final List<String>                 _nameList = new ArrayList<>();
-   public static final HashMap<String, MageCollege> _colleges = new HashMap<>();
+   public static List<String>                 _nameList = new ArrayList<>();
+   public static HashMap<String, MageCollege> _colleges = new HashMap<>();
 
    private String                             _name;
    private byte                               _level;
@@ -78,7 +78,10 @@ public class MageCollege extends SerializableObject implements Enums
    @Override
    public MageCollege clone() {
       try {
-         return (MageCollege) super.clone();
+         MageCollege dup = (MageCollege) super.clone();
+         dup._nameList = new ArrayList<>(this._nameList);
+         dup._colleges = new HashMap<>(this._colleges);
+         return dup;
       } catch (CloneNotSupportedException e) {
          DebugBreak.debugBreak("clone error");
          return null;

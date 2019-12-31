@@ -14,11 +14,11 @@ import ostrowski.combat.common.CombatMap;
 
 public class ArenaTrigger implements Cloneable
 {
-   private String                      _name               = "";
+   private String                 _name               = "";
    private List<ArenaCoordinates> _triggerCoordinates = new ArrayList<>();
-   private boolean                     _onlyAffectsPlayers = true;
-   private boolean                     _requiresEntireTeam = false;
-   private boolean                     _enabled            = true;
+   private boolean                _onlyAffectsPlayers = true;
+   private boolean                _requiresEntireTeam = false;
+   private boolean                _enabled            = true;
    private List<ArenaEvent>       _events             = new ArrayList<>();
 
    public ArenaTrigger(String name) {
@@ -197,15 +197,16 @@ public class ArenaTrigger implements Cloneable
    public ArenaTrigger clone() {
       try {
          ArenaTrigger dup = (ArenaTrigger) super.clone();
+         dup._events = new ArrayList<>();
          dup._triggerCoordinates = new ArrayList<>();
+
+         for (ArenaEvent event : _events) {
+            dup._events.add(event.clone());
+         }
          for (ArenaCoordinates coord : _triggerCoordinates) {
             if (coord != null) {
                dup._triggerCoordinates.add(coord.clone());
             }
-         }
-         dup._events = new ArrayList<>();
-         for (ArenaEvent event : _events) {
-            dup._events.add(event.clone());
          }
          return dup;
       } catch (CloneNotSupportedException e) {

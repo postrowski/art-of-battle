@@ -675,6 +675,10 @@ public class Condition extends SerializableObject implements Enums {
       duplicate._mageSpellPointsMax         = _mageSpellPointsMax;
       duplicate._priestSpellPointsAvailable = _priestSpellPointsAvailable;
       duplicate._priestSpellPointsMax       = _priestSpellPointsMax;
+      duplicate._woundsList = new ArrayList<>();
+      for (Wound wound : this._woundsList) {
+         duplicate._woundsList.add(wound.clone());
+      }
       duplicate.setOrientation(_orientation.clone());
       return duplicate;
    }

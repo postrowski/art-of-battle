@@ -1238,28 +1238,27 @@ public class Battle extends Thread implements Enums
                                RANGE range, RequestAction attack, StringBuilder sb) {
       // When we get here, the defense has already been applied to the defender, so their weapon may look
       // unready. Make sure this doesn't interfere with the defense resolution.
-      boolean defenseAppliedAlready = true;
       byte baseTN = defender.getDefenseTN(defense, false/*includeWoundPenalty*/, false/*includeHolds*/,
                                           false/*includePosition*/, false/*includeMassiveDamagePenalty*/,
-                                          (byte) 0/*parryPenalty*/, defenseAppliedAlready, distance, RANGE.OUT_OF_RANGE);
+                                          (byte) 0/*parryPenalty*/, true, distance, RANGE.OUT_OF_RANGE);
       byte holdTN = defender.getDefenseTN(defense, false/*includeWoundPenalty*/, true/*includeHolds*/,
                                           false/*includePosition*/, false/*includeMassiveDamagePenalty*/,
-                                          (byte) 0/*parryPenalty*/, defenseAppliedAlready, distance, RANGE.OUT_OF_RANGE);
+                                          (byte) 0/*parryPenalty*/, true, distance, RANGE.OUT_OF_RANGE);
       byte postnTN = defender.getDefenseTN(defense, false/*includeWoundPenalty*/, true/*includeHolds*/,
                                            true/*includePosition*/, false/*includeMassiveDamagePenalty*/,
-                                           (byte) 0/*parryPenalty*/, defenseAppliedAlready, distance, RANGE.OUT_OF_RANGE);
+                                           (byte) 0/*parryPenalty*/, true, distance, RANGE.OUT_OF_RANGE);
       byte rangeTN = defender.getDefenseTN(defense, false/*includeWoundPenalty*/, true/*includeHolds*/,
                                            true/*includePosition*/, false/*includeMassiveDamagePenalty*/,
-                                           (byte) 0/*parryPenalty*/, defenseAppliedAlready, distance, range);
+                                           (byte) 0/*parryPenalty*/, true, distance, range);
       byte parryTN = defender.getDefenseTN(defense, false/*includeWoundPenalty*/, true/*includeHolds*/,
                                            true/*includePosition*/, false/*includeMassiveDamagePenalty*/,
-                                           attackParryPenalty, defenseAppliedAlready, distance, range);
+                                           attackParryPenalty, true, distance, range);
       byte woundTN = defender.getDefenseTN(defense, true/*includeWoundPenalty*/, true/*includeHolds*/,
                                            true/*includePosition*/, false/*includeMassiveDamagePenalty*/,
-                                           attackParryPenalty, defenseAppliedAlready, distance, range);
+                                           attackParryPenalty, true, distance, range);
       byte finalTN = defender.getDefenseTN(defense, true/*includeWoundPenalty*/, true/*includeHolds*/,
                                            true/*includePosition*/, true/*includeMassiveDamagePenalty*/,
-                                           attackParryPenalty, defenseAppliedAlready, distance, range);
+                                           attackParryPenalty, true, distance, range);
       byte holdAdjustment = (byte) (holdTN - baseTN);
       byte postnAdjustment = (byte) (postnTN - holdTN);
       byte rangeAdjustment = (byte) (rangeTN - postnTN);
@@ -2180,7 +2179,7 @@ public class Battle extends Thread implements Enums
                      berserkSaveDice = combatant.adjustDieRoll(berserkSaveDice, RollType.BERSERK_RECOVERY, null/*target*/);
                      int diceRoll = berserkSaveDice.roll(true/*allowExplodes*/);
                      events.append(combatant.getName()).append("'s target (");
-                     events.append(target.getName()).append(" is no longer fighting, so ");
+                     events.append(target != null ? target.getName() : "").append(") is no longer fighting, so ");
                      events.append(combatant.getHeShe()).append(" has a chance that he recovers from being berserk.<br/>");
                      events.append(combatant.getName()).append(" rolls 1-action IQ (").append(berserkSaveDice);
                      events.append("), rolling ").append(berserkSaveDice.getLastDieRoll());

@@ -1614,9 +1614,7 @@ public class CharacterGenerator implements Enums
             }
          }
       }
-      for (String weaponName : removeWeapons) {
-         appropriateWeapons.remove(weaponName);
-      }
+      appropriateWeapons.removeAll(removeWeapons);
       if (appropriateWeapons.isEmpty()) {
          appropriateWeapons.add(Weapon.NAME_Punch);
          if (maxExpenditure > Weapon.getWeapon(Weapon.NAME_Club, racialBase).getCost()) {

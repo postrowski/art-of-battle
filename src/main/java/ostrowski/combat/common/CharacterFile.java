@@ -46,10 +46,12 @@ public class CharacterFile
       File sourceDir = new File(_directory);
       if (sourceDir.exists() && sourceDir.isDirectory()) {
          File[] charFiles = sourceDir.listFiles();
-         for (File charFile : charFiles) {
-            Character newChar = new Character();
-            if (newChar.serializeFromFile(charFile)) {
-               putCharacter(newChar);
+         if (charFiles != null) {
+            for (File charFile : charFiles) {
+               Character newChar = new Character();
+               if (newChar.serializeFromFile(charFile)) {
+                  putCharacter(newChar);
+               }
             }
          }
       }

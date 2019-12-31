@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Arena Name="huge field2" height="76" hideViewFromLocalPlayers="true" level="0" width="55">
+<?xml version="1.0" encoding="UTF-8"?><Arena Name="huge field2" height="76" hideViewFromLocalPlayers="true" level="0" width="55">
   <rows>
     <row id="0">1:1:1:1:1:1:8:1:1:1:1:1:1:1:1:2:2:2:2:1:1:1:1:1:1:8:8:1:</row>
     <row id="1">1:1:1:1:1:8:8:1:1:1:1:1:1:1:2:2:2:2:2:1:1:1:1:1:8:8:8:</row>
@@ -81,28 +80,28 @@
   
   <teams count="4" maxCombatantsPerTeam="15">
     <team id="0">
-      <combatant AI="AI - Norm" charName="? 250 Human" id="0" startX="20" startY="72"/>
-      <combatant AI="AI - Norm" charName="? 250 Human" id="1" startX="22" startY="72"/>
-      <combatant AI="AI - Norm" charName="? 250 Human" id="2" startX="24" startY="72"/>
-      <combatant AI="AI - Norm" charName="" id="3"/>
-      <combatant AI="AI - Norm" charName="" id="4"/>
-      <combatant AI="AI - Norm" charName="" id="5"/>
-      <combatant AI="AI - Norm" charName="" id="6"/>
-      <combatant AI="AI - Norm" charName="" id="7"/>
-      <combatant AI="AI - Norm" charName="" id="8"/>
-      <combatant AI="AI - Norm" charName="" id="9"/>
-      <combatant AI="AI - Norm" charName="" id="10"/>
-      <combatant AI="AI - Norm" charName="" id="11"/>
-      <combatant AI="AI - Norm" charName="" id="12"/>
-      <combatant AI="AI - Norm" charName="" id="13"/>
-      <combatant AI="AI - Norm" charName="" id="14"/>
+      <combatant AI="Local" charName="? 250 Human" id="0" startX="20" startY="72"/>
+      <combatant AI="Local" charName="? 250 Human" id="1" startX="22" startY="72"/>
+      <combatant AI="Local" charName="? 250 Human" id="2" startX="24" startY="72"/>
+      <combatant AI="Norm" charName="" id="3"/>
+      <combatant AI="Norm" charName="" id="4"/>
+      <combatant AI="Norm" charName="" id="5"/>
+      <combatant AI="Norm" charName="" id="6"/>
+      <combatant AI="Norm" charName="" id="7"/>
+      <combatant AI="Norm" charName="" id="8"/>
+      <combatant AI="Norm" charName="" id="9"/>
+      <combatant AI="Norm" charName="" id="10"/>
+      <combatant AI="Norm" charName="" id="11"/>
+      <combatant AI="Norm" charName="" id="12"/>
+      <combatant AI="Norm" charName="" id="13"/>
+      <combatant AI="Norm" charName="" id="14"/>
     </team>
     <team id="1">
-      <combatant AI="AI - Norm" charName="? warg 100" id="0" startX="30" startY="2"/>
-      <combatant AI="AI - Norm" charName="? warg 100" id="1" startX="27" startY="3"/>
-      <combatant AI="AI - Norm" charName="? warg 100" id="2" startX="32" startY="4"/>
-      <combatant AI="AI - Norm" charName="? warg 100" id="3" startX="25" startY="3"/>
-      <combatant AI="AI - Norm" charName="? warg 100" id="4" startX="36" startY="4"/>
+      <combatant AI="Norm" charName="? warg 100" id="0" startX="30" startY="2"/>
+      <combatant AI="Norm" charName="? warg 100" id="1" startX="27" startY="3"/>
+      <combatant AI="Norm" charName="? warg 100" id="2" startX="32" startY="4"/>
+      <combatant AI="Norm" charName="? warg 100" id="3" startX="25" startY="3"/>
+      <combatant AI="Norm" charName="? warg 100" id="4" startX="36" startY="4"/>
       <combatant AI="Off" charName="" id="5"/>
       <combatant AI="Off" charName=" " id="6"/>
       <combatant AI="Off" charName="" id="7"/>

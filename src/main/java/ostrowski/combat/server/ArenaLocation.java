@@ -30,19 +30,19 @@ import java.util.*;
 
 public class ArenaLocation extends ArenaCoordinates implements IMonitorableObject, Enums
 {
-   public final Semaphore   _lock_this = new Semaphore("AreanLocation_lock_this", CombatSemaphore.CLASS_ARENALOCATION_this);
-   private      TerrainType _terrain   = TerrainType.FLOOR;
-   private   long                  _data                    = _terrain.value;
-   private   List<Object>     _things                  = new ArrayList<>();
-   private   List<Door>       _doors                   = new ArrayList<>();
-   private   List<IAreaSpell> _activeSpells            = new ArrayList<>();
-   private   HashSet<Integer>      _visibleTo               = new HashSet<>();
-   private   HashSet<Integer>      _viewedBy                = new HashSet<>();
-   public    HashMap<Integer, ArenaCoordinates> _visibleToCharacterFromLoc  = new HashMap<>();
-   private   String                _label                   = null;
-   transient MonitoredObject       _monitoredProxy          = null;
-   private   boolean               _selectable              = true;
-   public static final String      PICKUP                   = "pickup ";
+   public final        Semaphore                          _lock_this                 = new Semaphore("AreanLocation_lock_this", CombatSemaphore.CLASS_ARENALOCATION_this);
+   private             TerrainType                        _terrain                   = TerrainType.FLOOR;
+   private             long                               _data                      = _terrain.value;
+   private             List<Object>                       _things                    = new ArrayList<>();
+   private             List<Door>                         _doors                     = new ArrayList<>();
+   private             List<IAreaSpell>                   _activeSpells              = new ArrayList<>();
+   private             HashSet<Integer>                   _visibleTo                 = new HashSet<>();
+   private             HashSet<Integer>                   _viewedBy                  = new HashSet<>();
+   public              HashMap<Integer, ArenaCoordinates> _visibleToCharacterFromLoc = new HashMap<>();
+   private             String                             _label                     = null;
+   transient           MonitoredObject                    _monitoredProxy            = null;
+   private             boolean                            _selectable                = true;
+   public static final String                             PICKUP                     = "pickup ";
 
    public ArenaLocation(short x, short y) {
       super(x,y);
@@ -107,14 +107,16 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    private void copyDataUnsafe(ArenaLocation source)
    {
       super.copyData(source);
-      _data  = source._data;
+      _things                    = new ArrayList<>();
+      _doors                     = new ArrayList<>();
+      _activeSpells              = new ArrayList<>();
+      _visibleTo                 = new HashSet<>();
+      _viewedBy                  = new HashSet<>();
+      _visibleToCharacterFromLoc = new HashMap<>();
+
+      _data    = source._data;
       _terrain = source._terrain;
-      _doors = new ArrayList<>();
-      for (Door door : source._doors) {
-         _doors.add(door.clone());
-      }
-      _label = source._label;
-      _things = new ArrayList<>();
+      _label   = source._label;
       for (int i=0 ; i<source._things.size() ; i++) {
          // Clone the object, if possible
          Object thing = source._things.get(i);
@@ -131,20 +133,17 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
             _things.add(thing);
          }
       }
-      _visibleTo = new HashSet<>();
-      _visibleToCharacterFromLoc = new HashMap<>();
-      _viewedBy = new HashSet<>();
-      if (source._visibleTo != null) {
-         _visibleTo.addAll(source._visibleTo);
+      for (Door door : source._doors) {
+         _doors.add(door.clone());
       }
-      if (source._visibleToCharacterFromLoc != null) {
-         for (Integer charId : source._visibleToCharacterFromLoc.keySet()) {
-            ArenaCoordinates visFrom = source._visibleToCharacterFromLoc.get(charId);
-            _visibleToCharacterFromLoc.put(charId, new ArenaCoordinates(visFrom._x, visFrom._y));
-         }
+      for (IAreaSpell spell : source._activeSpells) {
+         _activeSpells.add((IAreaSpell) spell.clone());
       }
-      if (source._viewedBy != null) {
-         _viewedBy.addAll(source._viewedBy);
+      _visibleTo.addAll(source._visibleTo);
+      _viewedBy.addAll(source._viewedBy);
+      for (Integer charId : source._visibleToCharacterFromLoc.keySet()) {
+         ArenaCoordinates visFrom = source._visibleToCharacterFromLoc.get(charId);
+         _visibleToCharacterFromLoc.put(charId, new ArenaCoordinates(visFrom._x, visFrom._y));
       }
    }
 
@@ -260,7 +259,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
       // First report any character in this location.
       synchronized (this) {
          try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_this)) {
-            for (int i=0 ; i<4 ; i++) {
+            for (int i=1 ; i<=4 ; i++) {
                for (Object thing : _things) {
                   if (thing != otherThan) {
                      switch (i) {
@@ -383,24 +382,22 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
             _things.clear();
             for (int i=0 ; i<count ; i++) {
                String objID = SerializableObject.readString(in);
-               if (objID != null) {
-                  if (objID.equals("ObjStr")) {
-                     String object = readString(in);
-                     Weapon weap = Weapon.getWeapon(object, null);
-                     if (weap.isUnarmedStyle()) {
-                        if (object != null) {
-                           _things.add(object);
-                        }
-                     }
-                     else {
-                        _things.add(weap);
+               if (objID.equals("ObjStr")) {
+                  String object = readString(in);
+                  Weapon weap = Weapon.getWeapon(object, null);
+                  if (weap.isUnarmedStyle()) {
+                     if (object != null) {
+                        _things.add(object);
                      }
                   }
-                  else if (objID.equals("ObjChr")) {
-                     SerializableObject inObj = SerializableFactory.readObject(objID, in);
-                     if ((inObj != null) && (inObj instanceof Character)) {
-                        _things.add(inObj);
-                     }
+                  else {
+                     _things.add(weap);
+                  }
+               }
+               else if (objID.equals("ObjChr")) {
+                  SerializableObject inObj = SerializableFactory.readObject(objID, in);
+                  if (inObj instanceof Character) {
+                     _things.add(inObj);
                   }
                }
             }
@@ -412,7 +409,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
                   for (Door existingDoor : _doors) {
                      if (existingDoor._orientation == ((Door) obj)._orientation) {
                         alreadyExists = true;
-                        continue;
+                        break;
                      }
                   }
                   if (!alreadyExists) {
@@ -473,6 +470,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    public boolean canExit(ArenaCoordinates toCoord) {
       if (toCoord == null) {
          DebugBreak.debugBreak();
+         return false;
       }
 
       if (toCoord.sameCoordinates(this))  {

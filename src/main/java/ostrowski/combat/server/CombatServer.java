@@ -78,7 +78,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    }
 
    static void probabilityTest() {
-      DiceSet dice = new DiceSet("1d10ï¿½");
+      DiceSet dice = new DiceSet("1d10±");
       double odds = dice.getOddsForTN(-31);
       double[] odd = new double[40];
       for (int i=0 ; i<40 ; i++) {

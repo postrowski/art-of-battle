@@ -565,7 +565,7 @@ public abstract class MageSpell extends Spell implements Enums
       descriptionBuffer.append("<br/><b>Prerequisites:</b>");
       //String prereqs = getPrerequisiteNames();
       String prereqs = getImmediatePrerequisiteNames();
-      if ((prereqs == null) || (prereqs.trim().length() == 0)) {
+      if (prereqs.trim().length() == 0) {
          prereqs = "<i>None.</i>";
       }
       descriptionBuffer.append(prereqs);

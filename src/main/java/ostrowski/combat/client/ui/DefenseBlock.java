@@ -131,7 +131,7 @@ public class DefenseBlock extends Helper implements IUIBlock
          HashMap<DefenseOption, Text> baseDefMapToText = _baseDefenseOpt.get(range);
          for (DefenseOption defOption : baseDefMapToText.keySet()) {
             String value = "";
-            if (defOption != null) {
+            if ((defOption != null) && (defBase != null)) {
                value = String.valueOf(defBase.get(range).get(defOption));
             }
             baseDefMapToText.get(defOption).setText(value);
@@ -154,41 +154,45 @@ public class DefenseBlock extends Helper implements IUIBlock
             }
          }
       }
-      Limb leftArm = character.getLimb(LimbType.HAND_LEFT);
-      Limb rightArm = character.getLimb(LimbType.HAND_RIGHT);
-      boolean leftDefenseRanged  = ((character != null) && (leftArm != null)) && (leftArm.canDefendAgainstRangedWeapons());
-      boolean rightDefenseRanged = ((character != null) && (rightArm != null)) && (rightArm.canDefendAgainstRangedWeapons());
-      boolean leftDefense  = ((character != null) && (leftArm != null)) && (leftArm.canDefend(character, false/*rangedAttack*/, (short) 0/*distance*/, false/*attackIsCharge*/, false/*grappleAttack*/, DamageType.NONE, false));
-      boolean rightDefense = ((character != null) && (rightArm != null)) && (rightArm.canDefend(character, false/*rangedAttack*/, (short) 0/*distance*/, false/*attackIsCharge*/, false/*grappleAttack*/, DamageType.NONE, false));
-      // If we are holding a two handed weapon, we can't use the left defense:
-      if ((character != null) && (rightArm != null) && leftDefense) {
-         Thing rightThing = rightArm.getHeldThing();
-         if (rightThing instanceof Weapon) {
-            Weapon rightWeapon = (Weapon) rightThing;
-            if (rightWeapon.isOnlyTwoHanded()) {
+      if (character != null) {
+         Limb leftArm = character.getLimb(LimbType.HAND_LEFT);
+         Limb rightArm = character.getLimb(LimbType.HAND_RIGHT);
+         boolean leftDefenseRanged = (leftArm != null) && leftArm.canDefendAgainstRangedWeapons();
+         boolean rightDefenseRanged = (rightArm != null) && rightArm.canDefendAgainstRangedWeapons();
+         boolean leftDefense = (leftArm != null) && (leftArm.canDefend(character, false/*rangedAttack*/,
+                                                                       (short) 0/*distance*/, false/*attackIsCharge*/,
+                                                                       false/*grappleAttack*/, DamageType.NONE, false));
+         boolean rightDefense = (rightArm != null) && (rightArm.canDefend(character, false/*rangedAttack*/,
+                                                                          (short) 0/*distance*/, false/*attackIsCharge*/,
+                                                                          false/*grappleAttack*/, DamageType.NONE, false));
+         // If we are holding a two handed weapon, we can't use the left defense:
+         if ((rightArm != null) && leftDefense) {
+            Thing rightThing = rightArm.getHeldThing();
+            if ((rightThing instanceof Weapon) &&
+                ((Weapon) rightThing).isOnlyTwoHanded()) {
                leftDefense = false;
             }
          }
-      }
-      // disable/enable all block defenses:
-      for (RANGE range : RANGE.values()) {
-         boolean isRanged = range != RANGE.OUT_OF_RANGE;
-         HashMap<DefenseOption, Text> mapBaseDefOptToTn = _baseDefenseOpt.get(range);
-         mapBaseDefOptToTn.get(DefenseOption.DEF_LEFT).setVisible(leftDefense && (!isRanged || leftDefenseRanged));
-         mapBaseDefOptToTn.get(DefenseOption.DEF_RIGHT).setVisible(rightDefense && (!isRanged || rightDefenseRanged));
-         mapBaseDefOptToTn.get(DefenseOption.DEF_RETREAT).setVisible(true);
+         // disable/enable all block defenses:
+         for (RANGE range : RANGE.values()) {
+            boolean isRanged = range != RANGE.OUT_OF_RANGE;
+            HashMap<DefenseOption, Text> mapBaseDefOptToTn = _baseDefenseOpt.get(range);
+            mapBaseDefOptToTn.get(DefenseOption.DEF_LEFT).setVisible(leftDefense && (!isRanged || leftDefenseRanged));
+            mapBaseDefOptToTn.get(DefenseOption.DEF_RIGHT).setVisible(rightDefense && (!isRanged || rightDefenseRanged));
+            mapBaseDefOptToTn.get(DefenseOption.DEF_RETREAT).setVisible(true);
 
-         for (DefenseOptions defOptionToShow : OPTIONS_TO_SHOW.keySet()) {
-            boolean visible = true;
-            if (defOptionToShow.contains(DefenseOption.DEF_LEFT) && (!leftDefense || (isRanged && !leftDefenseRanged))) {
-               visible = false;
-            }
-            if (defOptionToShow.contains(DefenseOption.DEF_RIGHT) && (!rightDefense || (isRanged && !rightDefenseRanged))) {
-               visible = false;
-            }
-            HashMap<DefenseOptions, Text> mapDefOptsToTn = _defenseOpts.get(range);
-            if ((mapDefOptsToTn != null) && (mapDefOptsToTn.containsKey(defOptionToShow))) {
-               mapDefOptsToTn.get(defOptionToShow).setVisible(visible);
+            for (DefenseOptions defOptionToShow : OPTIONS_TO_SHOW.keySet()) {
+               boolean visible = true;
+               if (defOptionToShow.contains(DefenseOption.DEF_LEFT) && (!leftDefense || (isRanged && !leftDefenseRanged))) {
+                  visible = false;
+               }
+               if (defOptionToShow.contains(DefenseOption.DEF_RIGHT) && (!rightDefense || (isRanged && !rightDefenseRanged))) {
+                  visible = false;
+               }
+               HashMap<DefenseOptions, Text> mapDefOptsToTn = _defenseOpts.get(range);
+               if ((mapDefOptsToTn != null) && (mapDefOptsToTn.containsKey(defOptionToShow))) {
+                  mapDefOptsToTn.get(defOptionToShow).setVisible(visible);
+               }
             }
          }
       }

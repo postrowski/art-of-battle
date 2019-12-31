@@ -77,15 +77,12 @@ public class RightClickPopupMenu
          if (shell == null) {
             return;
          }
-         if (_moveFromLocation == null) {
-            if ((_popupMenu == null) || _popupMenu.isDisposed()) {
-               createMainMenu(shell);
-            }
+
+         if ((_popupMenu == null) || _popupMenu.isDisposed()) {
+            createMainMenu(shell);
          }
-         else {
-            if ((_moveToPopupMenu == null) || _moveToPopupMenu.isDisposed()) {
-               createMoveToMenu(shell);
-            }
+         if ((_moveToPopupMenu == null) || _moveToPopupMenu.isDisposed()) {
+            createMoveToMenu(shell);
          }
 
          _popupMenu.setVisible(false);
@@ -193,13 +190,13 @@ public class RightClickPopupMenu
    }
    private void createMoveToMenu(Shell shell) {
       _moveToPopupMenu = new Menu(shell);
-      createMenu(_popupMenu, "Relocate to here, facing 12 O'Clock", e -> completeMove(Facing.NOON), SWT.NONE);
-      createMenu(_popupMenu, "Relocate to here, facing  2 O'Clock", e -> completeMove(Facing._2_OCLOCK), SWT.NONE);
-      createMenu(_popupMenu, "Relocate to here, facing  4 O'Clock", e -> completeMove(Facing._4_OCLOCK), SWT.NONE);
-      createMenu(_popupMenu, "Relocate to here, facing  6 O'Clock", e -> completeMove(Facing._6_OCLOCK), SWT.NONE);
-      createMenu(_popupMenu, "Relocate to here, facing  8 O'Clock", e -> completeMove(Facing._8_OCLOCK), SWT.NONE);
-      createMenu(_popupMenu, "Relocate to here, facing 10 O'Clock", e -> completeMove(Facing._10_OCLOCK), SWT.NONE);
-      createMenu(_popupMenu, "Cancel Relocation", e -> _moveFromLocation = null, SWT.NONE);
+      createMenu(_moveToPopupMenu, "Relocate to here, facing 12 O'Clock", e -> completeMove(Facing.NOON), SWT.NONE);
+      createMenu(_moveToPopupMenu, "Relocate to here, facing  2 O'Clock", e -> completeMove(Facing._2_OCLOCK), SWT.NONE);
+      createMenu(_moveToPopupMenu, "Relocate to here, facing  4 O'Clock", e -> completeMove(Facing._4_OCLOCK), SWT.NONE);
+      createMenu(_moveToPopupMenu, "Relocate to here, facing  6 O'Clock", e -> completeMove(Facing._6_OCLOCK), SWT.NONE);
+      createMenu(_moveToPopupMenu, "Relocate to here, facing  8 O'Clock", e -> completeMove(Facing._8_OCLOCK), SWT.NONE);
+      createMenu(_moveToPopupMenu, "Relocate to here, facing 10 O'Clock", e -> completeMove(Facing._10_OCLOCK), SWT.NONE);
+      createMenu(_moveToPopupMenu, "Cancel Relocation", e -> _moveFromLocation = null, SWT.NONE);
    }
 
    private void completeMove(Facing facing) {

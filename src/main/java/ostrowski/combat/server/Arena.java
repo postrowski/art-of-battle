@@ -545,12 +545,12 @@ public class Arena implements Enums, IMapListener
       return null;
    }
 
-   public static final int PLAYBACK_MODE_OFF    = 0;
-   public static final int PLAYBACK_MODE_RECORD = 1;
-   public static final int PLAYBACK_MODE_PLAY   = 2;
-   public       int                    _playbackMode    = PLAYBACK_MODE_OFF;
-   public final List<SyncRequest> _recordedActions = null;//new ArrayList<>();
-   public       int                    _playbackIndex   = 0;
+   public static final int               PLAYBACK_MODE_OFF    = 0;
+   public static final int               PLAYBACK_MODE_RECORD = 1;
+   public static final int               PLAYBACK_MODE_PLAY   = 2;
+   public              int               _playbackMode        = PLAYBACK_MODE_OFF;
+   public              List<SyncRequest> _recordedActions     = null;//new ArrayList<>();
+   public              int               _playbackIndex       = 0;
 
    public boolean sendObjectToCombatant(final Character combatant, SerializableObject obj) {
       ClientProxy proxy = (_mapCombatantToProxy.get(combatant));
@@ -887,7 +887,7 @@ public class Arena implements Enums, IMapListener
    public void disconnectAllClients() {
       synchronized(_proxyList) {
          try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_proxyList)) {
-            while (_proxyList.size() < 0) {
+            while (!_proxyList.isEmpty()) {
                ClientProxy disconnectingProxy = _proxyList.remove(0);
                disconnectClient(disconnectingProxy);
                disconnectingProxy.shutdown();
@@ -2164,7 +2164,7 @@ public class Arena implements Enums, IMapListener
                      // TODO: how do we reconnect to a remote player?
                      addCombatant(character, null/*AIEngineType*/, false/*setInitiativeAndSpendActions*/);
                   }
-                  else if (name.equals("aiCharacters")) {
+                  else { // name.equals("aiCharacters")
                      String aiType = AI_Type.NORM.name;
                      NamedNodeMap attributes = child.getAttributes();
                      if (attributes != null) {
@@ -2248,7 +2248,7 @@ public class Arena implements Enums, IMapListener
    }
 
    public boolean doLocalPlayersExist() {
-      return (_localCombatants != null) && !_localCombatants.isEmpty();
+      return !_localCombatants.isEmpty();
    }
 
    public boolean isRemotelyControlled(Character combatant) {

@@ -1025,26 +1025,24 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
                && (selectionOrientations.size() > 0)
                && isMouseOver
                && (mouseOverCharacter != null)) {
-         if (mouseOverCharacter != null) {
-            Orientation selectionOrientation = selectionOrientations.get(0);
+         Orientation selectionOrientation = selectionOrientations.get(0);
 //            completionOrientations = new ArrayList<>();
 //            completionOrientations.add(mouseOverCharacter.getOrientation());
-            boolean drawCheckMark = (completionOrientations != null) && completionOrientations.contains(selectionOrientation);
-            boolean drawCancelMark = (cancelOrientations != null) && cancelOrientations.contains(selectionOrientation);
-            if (drawCheckMark || drawCancelMark) {
-               if (selectionOrientation.isInLocation(loc)) {
-                  selectionOrientation.drawCharacter(gc, display, bounds, loc, background, foreground, mouseOverCharacter);
-               }
-               if (drawCheckMark) {
-                  drawCheckMark(gc, display, bounds);
-               }
-               else {
-                  drawCancelMark(gc, display, bounds);
-               }
-            } else {
-               if (selectionOrientation.isInLocation(loc)) {
-                  selectionOrientation.drawCharacter(gc, display, bounds, loc, futureBackground, futureForeground, mouseOverCharacter);
-               }
+         boolean drawCheckMark = (completionOrientations != null) && completionOrientations.contains(selectionOrientation);
+         boolean drawCancelMark = (cancelOrientations != null) && cancelOrientations.contains(selectionOrientation);
+         if (drawCheckMark || drawCancelMark) {
+            if (selectionOrientation.isInLocation(loc)) {
+               selectionOrientation.drawCharacter(gc, display, bounds, loc, background, foreground, mouseOverCharacter);
+            }
+            if (drawCheckMark) {
+               drawCheckMark(gc, display, bounds);
+            }
+            else {
+               drawCancelMark(gc, display, bounds);
+            }
+         } else {
+            if (selectionOrientation.isInLocation(loc)) {
+               selectionOrientation.drawCharacter(gc, display, bounds, loc, futureBackground, futureForeground, mouseOverCharacter);
             }
          }
       }
@@ -1065,8 +1063,10 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
             }
          }
       }
-      if ((selectionOrientations != null) && (selectionOrientations.size() > 0)
-           && !isMouseOver && (mouseOverCharacter != null)) {
+      if ((selectionOrientations != null) &&
+          (selectionOrientations.size() > 0) &&
+          !isMouseOver &&
+          (mouseOverCharacter != null)) {
          for (Orientation selectionOrientation : selectionOrientations) {
             if (selectionOrientation == null) {
                DebugBreak.debugBreak();

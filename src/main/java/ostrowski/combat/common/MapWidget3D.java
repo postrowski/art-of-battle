@@ -762,18 +762,11 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
                         if (weapon != null) {
                            try {
                               float lengthFactor = 1.0f;
-                              ostrowski.graphics.objects3d.Thing thing3d = new ostrowski.graphics.objects3d.Thing(weapon, null/*weaponPart*/, _view,
-                                                                                                                  false/*_invertNormals*/, lengthFactor,
-                                                                                                                  lengthFactor);
-                              if (thing3d != null) {
-                                 objHex.addTexturedObject(thing3d);
-                              }
-//                              else {
-//                                 ObjModel weaponModel = ObjLoader.loadObj("res/weapons/" + weapon.name() + ".obj", _view, lengthFactor, lengthFactor);
-//                                 if (weaponModel != null) {
-//                                    objHex.addObject(weaponModel._data);
-//                                 }
-//                              }
+                              ostrowski.graphics.objects3d.Thing thing3d;
+                              thing3d = new ostrowski.graphics.objects3d.Thing(weapon, null/*weaponPart*/,
+                                                                               _view, false/*_invertNormals*/,
+                                                                               lengthFactor, lengthFactor);
+                              objHex.addTexturedObject(thing3d);
                            } catch (IOException e) {
                               e.printStackTrace();
                            }
@@ -783,19 +776,12 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
                         ostrowski.graphics.objects3d.Thing.Shield shield = convertShield((Shield) thing);
                         try {
                            float lengthFactor = 1f;
-                           ostrowski.graphics.objects3d.Thing thing3d = new ostrowski.graphics.objects3d.Thing(shield, _view, false/*_invertNormals*/,
-                                                                                                               lengthFactor, lengthFactor);
+                           ostrowski.graphics.objects3d.Thing thing3d;
+                           thing3d = new ostrowski.graphics.objects3d.Thing(shield, _view, false/*_invertNormals*/,
+                                                                            lengthFactor, lengthFactor);
 //                           thing3d = new ostrowski.graphics.objects3d.Thing(ostrowski.graphics.objects3d.Thing.Dice.d12,
 //                                                                            _view, lengthFactor * 60, "");
-                           if (thing3d != null) {
-                              objHex.addTexturedObject(thing3d);
-                           }
-//                           else {
-//                              ObjModel weaponModel = ObjLoader.loadObj("res/weapons/" + shield.name() + ".obj", _view, lengthFactor, lengthFactor);
-//                              if (weaponModel != null) {
-//                                 objHex.addObject(weaponModel._data);
-//                              }
-//                           }
+                           objHex.addTexturedObject(thing3d);
                         } catch (IOException e) {
                            e.printStackTrace();
                         }
@@ -815,8 +801,11 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
          return null;
       }
       String shieldName = thing.getName();
-      if ((shieldName == Shield.NAME_Buckler) || (shieldName == Shield.NAME_Small) || (shieldName == Shield.NAME_Medium) || (shieldName == Shield.NAME_Large)
-          || (shieldName == Shield.NAME_Tower)) {
+      if ((shieldName == Shield.NAME_Buckler) ||
+          (shieldName == Shield.NAME_Small) ||
+          (shieldName == Shield.NAME_Medium) ||
+          (shieldName == Shield.NAME_Large) ||
+          (shieldName == Shield.NAME_Tower)) {
          shieldName = shieldName.replace(" ", "");
          shieldName = shieldName.replace("-", "");
          return ostrowski.graphics.objects3d.Thing.Shield.valueOf(shieldName);
@@ -829,21 +818,35 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
          return null;
       }
       String weaponName = thing.getName();
-      if ((weaponName == Weapon.NAME_Axe)                  || (weaponName == Weapon.NAME_BastardSword)
-          || (weaponName == Weapon.NAME_BastardSword_Fine) || (weaponName == Weapon.NAME_Broadsword)
-          || (weaponName == Weapon.NAME_Club)              || (weaponName == Weapon.NAME_Dagger)
-          || (weaponName == Weapon.NAME_Flail)             || (weaponName == Weapon.NAME_GreatAxe)
-          || (weaponName == Weapon.NAME_Halberd)           || (weaponName == Weapon.NAME_Javelin)
-          || (weaponName == Weapon.NAME_Katana)            || (weaponName == Weapon.NAME_Katana_Fine)
-          || (weaponName == Weapon.NAME_Knife)             || (weaponName == Weapon.NAME_Longsword)
-          || (weaponName == Weapon.NAME_Longsword_Fine)    || (weaponName == Weapon.NAME_Mace)
-          || (weaponName == Weapon.NAME_Maul)              || (weaponName == Weapon.NAME_MorningStar)
-          || (weaponName == Weapon.NAME_Nunchucks)         || (weaponName == Weapon.NAME_PickAxe)
-          || (weaponName == Weapon.NAME_Quarterstaff)      || (weaponName == Weapon.NAME_Rapier)
-          || (weaponName == Weapon.NAME_Sabre)             || (weaponName == Weapon.NAME_Shortsword)
-          || (weaponName == Weapon.NAME_Spear)             || (weaponName == Weapon.NAME_ThrowingAxe)
-          || (weaponName == Weapon.NAME_TwoHandedSword)    || (weaponName == Weapon.NAME_TwoHandedSword_Fine)
-          || (weaponName == Weapon.NAME_WarHammer)) {
+      if ((weaponName == Weapon.NAME_Axe)                 ||
+          (weaponName == Weapon.NAME_BastardSword)        ||
+          (weaponName == Weapon.NAME_BastardSword_Fine)   ||
+          (weaponName == Weapon.NAME_Broadsword)          ||
+          (weaponName == Weapon.NAME_Club)                ||
+          (weaponName == Weapon.NAME_Dagger)              ||
+          (weaponName == Weapon.NAME_Flail)               ||
+          (weaponName == Weapon.NAME_GreatAxe)            ||
+          (weaponName == Weapon.NAME_Halberd)             ||
+          (weaponName == Weapon.NAME_Javelin)             ||
+          (weaponName == Weapon.NAME_Katana)              ||
+          (weaponName == Weapon.NAME_Katana_Fine)         ||
+          (weaponName == Weapon.NAME_Knife)               ||
+          (weaponName == Weapon.NAME_Longsword)           ||
+          (weaponName == Weapon.NAME_Longsword_Fine)      ||
+          (weaponName == Weapon.NAME_Mace)                ||
+          (weaponName == Weapon.NAME_Maul)                ||
+          (weaponName == Weapon.NAME_MorningStar)         ||
+          (weaponName == Weapon.NAME_Nunchucks)           ||
+          (weaponName == Weapon.NAME_PickAxe)             ||
+          (weaponName == Weapon.NAME_Quarterstaff)        ||
+          (weaponName == Weapon.NAME_Rapier)              ||
+          (weaponName == Weapon.NAME_Sabre)               ||
+          (weaponName == Weapon.NAME_Shortsword)          ||
+          (weaponName == Weapon.NAME_Spear)               ||
+          (weaponName == Weapon.NAME_ThrowingAxe)         ||
+          (weaponName == Weapon.NAME_TwoHandedSword)      ||
+          (weaponName == Weapon.NAME_TwoHandedSword_Fine) ||
+          (weaponName == Weapon.NAME_WarHammer)) {
          if (weaponName.endsWith("_Fine")) {
             weaponName = weaponName.substring(0, weaponName.length() - 5);
          }

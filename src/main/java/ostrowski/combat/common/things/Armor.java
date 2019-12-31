@@ -62,6 +62,7 @@ public class Armor extends Thing {
             }
          }
       }
+      assert NO_ARMOR != null;
       Armor armor = NO_ARMOR.clone();
       armor.setRacialBase(racialBase);
       return armor;
