@@ -31,7 +31,6 @@ import java.util.List;
 public class Rules extends DebugBreak implements Enums
 {
    static {
-      SerializableFactory.registerClass("String", String.class);
       SerializableFactory.registerClass("Advant", Advantage.class);
       SerializableFactory.registerClass("AreCoo", ArenaCoordinates.class);
       SerializableFactory.registerClass("AreLoc", ArenaLocation.class);
@@ -209,6 +208,7 @@ public class Rules extends DebugBreak implements Enums
       SerializableFactory.registerClass("SrvSts", ServerStatus.class);
       SerializableFactory.registerClass("ReqAct", RequestAction.class);
       SerializableFactory.registerClass("ReqAcO", RequestActionOption.class);
+      SerializableFactory.registerClass("DefOpt", DefenseOptions.class);
       SerializableFactory.registerClass("ReqArE", RequestArenaEntrance.class);
       SerializableFactory.registerClass("ReqSty", RequestAttackStyle.class);
       SerializableFactory.registerClass("ReqDef", RequestDefense.class);

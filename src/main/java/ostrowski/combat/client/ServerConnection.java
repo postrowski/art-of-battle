@@ -32,7 +32,7 @@ public class ServerConnection extends CombatSocket
    }
 
    @Override
-   public void processRecievedObject(final SerializableObject inObj)
+   public void processReceivedObject(final SerializableObject inObj)
    {
       // we can't modify any UI element from another thread,
       // so we must use the Display.asyncExec() method:
@@ -41,14 +41,14 @@ public class ServerConnection extends CombatSocket
          display.asyncExec(new Runnable() {
             @Override
             public void run() {
-               processRecievedObjectInUIThread(inObj);
+               processReceivedObjectInUIThread(inObj);
             }
          });
       }
    }
 
    public static final HashMap<Integer, Character> _charactersMap = new HashMap<>();
-   public void processRecievedObjectInUIThread(SerializableObject inObj) {
+   public void processReceivedObjectInUIThread(SerializableObject inObj) {
       if (_display._shell.isDisposed()) {
          return;
       }

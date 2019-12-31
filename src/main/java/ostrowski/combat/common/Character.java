@@ -640,7 +640,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    public Wound modifyWoundFromDefense(Wound originalWound) {
       Wound newWound = originalWound;
       for (Spell spell : _activeSpellsList) {
-         newWound = spell.modifyDamageRecieved(newWound);
+         newWound = spell.modifyDamageReceived(newWound);
       }
       return newWound;
    }

@@ -531,7 +531,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
       return wound;
    }
 
-   public Wound modifyDamageRecieved(Wound wound) {
+   public Wound modifyDamageReceived(Wound wound) {
       return wound;
    }
 

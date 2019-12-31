@@ -256,8 +256,8 @@ public class DefenseOptions extends EnumOptions<DefenseOption> implements Compar
    @Override
    public void serializeToStream(DataOutputStream out) {
       try {
-         SerializableObject.writeToStream(getIntValue(), out);
-         SerializableObject.writeToStream(getName(), out);
+         writeToStream(this.getIntValue(), out);
+         writeToStream(this.getName(), out);
       } catch (IOException e) {
          e.printStackTrace();
          DebugBreak.debugBreak();
@@ -266,8 +266,8 @@ public class DefenseOptions extends EnumOptions<DefenseOption> implements Compar
    @Override
    public void serializeFromStream(DataInputStream in) {
       try {
-         this.setAnswerID(SerializableObject.readInteger(in));
-         this.setAnswerStr(SerializableObject.readString(in));
+         this.setAnswerID(readInteger(in));
+         this.setAnswerStr(readString(in));
       } catch (IOException e) {
          e.printStackTrace();
          DebugBreak.debugBreak();

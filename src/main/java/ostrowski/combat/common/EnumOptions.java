@@ -1,9 +1,11 @@
 package ostrowski.combat.common;
 
+import ostrowski.protocol.SerializableObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class EnumOptions <T> implements Cloneable
+public abstract class EnumOptions <T> extends SerializableObject implements Cloneable
 {
    protected final List<T> _list = new ArrayList<>();
    protected EnumOptions() {}

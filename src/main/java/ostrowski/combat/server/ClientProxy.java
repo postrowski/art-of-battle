@@ -48,9 +48,9 @@ public class ClientProxy extends CombatSocket implements IMonitoringObject {
     public void setClientName(String clientName) { _name = clientName; setName(_name+"-ClientProxy");}
 
     @Override
-   public void processRecievedObject(SerializableObject inObj)
+   public void processReceivedObject(SerializableObject inObj)
     {
-       Rules.diag("recieved msg from " + _name + ": " + inObj);
+       Rules.diag("received msg from " + _name + ": " + inObj);
        if (inObj instanceof MessageText) {
           MessageText msgText = (MessageText)inObj;
           _arena.sendEventToAllClients(msgText);
