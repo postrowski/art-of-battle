@@ -7,6 +7,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolTip;
 
 import ostrowski.combat.client.ui.CharInfoBlock;
+import ostrowski.combat.common.things.Thing;
 import ostrowski.combat.server.ArenaLocation;
 
 public class MouseOverCharacterInfoPopup
@@ -35,9 +36,31 @@ public class MouseOverCharacterInfoPopup
             boolean first = true;
             for (Character ch : loc.getCharacters()) {
                if (!first) {
-                  sb.append("\n------------\n");
+                  sb.append("\n-----------------\n");
                }
                sb.append(CharInfoBlock.getToolTipSummary(ch));
+               first = false;
+            }
+            boolean firstThing = true;
+            for (Object thing : loc.getThings()) {
+               if (!(thing instanceof Character)) {
+                  if (!first) {
+                     if (firstThing) {
+                        sb.append("\n=================\n");
+                        firstThing = false;
+                     }
+                     else {
+                        sb.append("\n-----------------\n");
+                     }
+                  }
+                  if (thing instanceof Thing) {
+                     Thing thg = (Thing) thing;
+                     sb.append(thg.getName());
+                  }
+                  else {
+                     sb.append(thing);
+                  }
+               }
             }
             _popupMessage.setMessage(sb.toString());
             _popupMessage.setLocation(Display.getCurrent().getCursorLocation().x,

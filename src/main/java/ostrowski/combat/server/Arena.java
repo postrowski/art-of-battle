@@ -907,9 +907,9 @@ public class Arena implements Enums, IMapListener
       sendServerStatus(proxy);
 
       Map<Byte, List<TeamMember>> availableCombatantNamesByTeams = null;
-      if ((_battle._turnCount == 1 ) &&
-          (_battle._roundCount == 1 ) &&
-          (_battle._phaseCount == 1 )) {
+      if ((_battle == null) || ( (_battle._turnCount == 1 ) &&
+                                (_battle._roundCount == 1 ) &&
+                                (_battle._phaseCount == 1 ))) {
          // battle is not yet in progress.
          availableCombatantNamesByTeams = _combatMap.getRemoteTeamMembersByTeams();
       }

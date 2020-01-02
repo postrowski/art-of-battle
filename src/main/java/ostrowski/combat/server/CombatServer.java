@@ -1158,27 +1158,19 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
          newAI = newAI.replace("AI - ", "");
       }
       Combo nameCombo = _combatantsName[team][cur];
-      if (_REMOTE_AI_NAME.equals(newAI) || _INACTIVE_AI_NAME.equals(newAI)) {
-         if (_map != null) {
-            CombatMap combatMap = _map.getCombatMap();
-            if (combatMap != null) {
-               combatMap.setStockCharacter(null, newAI, team, cur);
-            }
-         }
-         if (nameCombo != null) {
+      if (nameCombo != null) {
+         if (_INACTIVE_AI_NAME.equals(newAI)) {
             nameCombo.setText("");
             nameCombo.setEnabled(false);
          }
-      }
-      else {
-         if (nameCombo != null) {
-            if (_map != null) {
-               CombatMap combatMap = _map.getCombatMap();
-               if (combatMap != null) {
-                  combatMap.setStockCharacter(nameCombo.getText(), newAI, team, cur);
-               }
-            }
+         else {
             nameCombo.setEnabled(true);
+         }
+         if (_map != null) {
+            CombatMap combatMap = _map.getCombatMap();
+            if (combatMap != null) {
+               combatMap.setStockCharacter(nameCombo.getText(), newAI, team, cur);
+            }
          }
       }
       refreshSaveButton();

@@ -141,18 +141,16 @@ public class CharInfoBlock extends Helper implements IUIBlock, ModifyListener
          if (sb.length() > 0) {
             sb.append("   ");
          }
-         StringBuilder attrName = new StringBuilder();
-         attrName.append(att.shortName.charAt(0));
-         attrName.append(att.shortName.substring(1).toLowerCase());
 
+         String attrName = att.shortName.charAt(0) + att.shortName.substring(1).toLowerCase();
          sb.append(attrName);
          sb.append(':');
          sb.append((target == null) ? 0 : target.getAttributeLevel(att));
          if ((att == Attribute.Strength) && (target != null) && (target.getAdjustedStrength() != target.getAttributeLevel(Attribute.Strength))) {
-            sb.append("(").append((target == null) ? 0 : target.getAdjustedStrength()).append(")");
+            sb.append("(").append(target.getAdjustedStrength()).append(")");
          }
          else if ((att == Attribute.Health) && (target != null) && (target.getBuildBase() != target.getAttributeLevel(Attribute.Health))) {
-            sb.append("(").append((target == null) ? 0 : target.getBuildBase()).append(")");
+            sb.append("(").append(target.getBuildBase()).append(")");
          }
          else {
             sb.append("   ");
@@ -218,7 +216,7 @@ public class CharInfoBlock extends Helper implements IUIBlock, ModifyListener
       _buildImp.setText(String.valueOf(target.getBuild(DamageType.IMP)));
       _buildCut.setText(String.valueOf(target.getBuild(DamageType.CUT)));
       _buildBlunt.setText(String.valueOf(target.getBuild(DamageType.BLUNT)));
-      _painAndWounds.setText(getPainAndWoundsText(target));
+      _painAndWounds.setText(getPainAndWoundsText(target, false));
 
       _magicPoints.setText(target.getCondition().getMageSpellPointsAvailable() + " / " + target.getCondition().getPriestSpellPointsAvailable());
       _raceName.setText(target.getRace().getName());
@@ -246,7 +244,7 @@ public class CharInfoBlock extends Helper implements IUIBlock, ModifyListener
       return actions.toString();
    }
 
-   public static String getPainAndWoundsText(Character target) {
+   public static String getPainAndWoundsText(Character target, boolean extendedText) {
       if (!target.getCondition().isAlive()) {
          return "DEAD";
       }
@@ -261,12 +259,34 @@ public class CharInfoBlock extends Helper implements IUIBlock, ModifyListener
       Limb leftHand = target.getLimb(LimbType.HAND_LEFT);
       StringBuilder sb = new StringBuilder();
       byte pain = target.getPainPenalty(false/*accountForBerserking*/);
-      sb.append(pain);
+      if (extendedText) {
+         if (pain> 0) {
+            sb.append("pain ").append(pain);
+         }
+      }
+      else {
+         sb.append(pain);
+      }
       if ((pain > 0) && target.isBerserking()) {
-         sb.append("(0)");
+         if (extendedText) {
+            sb.append("(0 for Berserking)");
+         }
+         else {
+            sb.append("(0)");
+         }
       }
       int wounds = target.getWounds();
-      sb.append(" / ").append(wounds);
+      if (extendedText) {
+         if (wounds> 0) {
+            if (pain > 0) {
+               sb.append(", ");
+            }
+            sb.append("wounds ").append(wounds);
+         }
+      }
+      else {
+         sb.append(" / ").append(wounds);
+      }
       if (wounds > 0) {
          sb.append(" (");
          boolean first = true;
@@ -281,31 +301,58 @@ public class CharInfoBlock extends Helper implements IUIBlock, ModifyListener
       }
       if (leftHand != null) {
          if (leftHand.isCrippled()) {
-            sb.append("!");
+            if (extendedText) {
+               sb.append("\nleft hand crippled");
+            } else {
+               sb.append("!");
+            }
          }
          else {
             byte leftPenalty = leftHand.getWoundPenalty();
-            while (leftPenalty-- > 0) {
-               sb.append("`");
+            if (extendedText) {
+               if (leftPenalty > 0) {
+                  sb.append("\nleft hand penalty ").append(leftPenalty);
+               }
+            } else {
+               while (leftPenalty-- > 0) {
+                  sb.append("`");
+               }
             }
          }
       }
 
       if (rightHand != null) {
          if (rightHand.isCrippled()) {
-            sb.append("!");
+            if (extendedText) {
+               sb.append("\nright hand crippled");
+            } else {
+               sb.append("!");
+            }
          }
          else {
             byte rightPenalty = rightHand.getWoundPenalty();
-            while (rightPenalty-- > 0) {
-               sb.append("'");
+            if (extendedText) {
+               if (rightPenalty > 0) {
+                  sb.append("\nright hand penalty ").append(rightPenalty);
+               }
+            } else {
+               while (rightPenalty-- > 0) {
+                  sb.append("'");
+               }
             }
          }
       }
 
       byte movePenalty = target.getCondition().getPenaltyMove();
-      while (movePenalty-- > 0) {
-         sb.append(",");
+      if (extendedText) {
+         if (movePenalty > 0) {
+            sb.append("\nmovement penalty ").append(movePenalty);
+         }
+      }
+      else {
+         while (movePenalty-- > 0) {
+            sb.append(",");
+         }
       }
 
       return sb.toString();
@@ -435,7 +482,7 @@ public class CharInfoBlock extends Helper implements IUIBlock, ModifyListener
       sb.append("\n    ").append(getAttrString1(target));
       sb.append("\n    ").append(getAttrString2(target));
 
-      sb.append("\n  pain/wounds:   ").append(getPainAndWoundsText(target));
+      sb.append("\n  pain/wounds:   ").append(getPainAndWoundsText(target, true));
       if (target.getWeapon() != null) {
          sb.append("\n  ").append(target.getWeapon().getName()).append(": ").append(getReadyTime(rightHand));
       }
