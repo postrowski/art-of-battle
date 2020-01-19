@@ -7,6 +7,9 @@ package ostrowski.combat.common.enums;
  *
  */
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author Paul
  *
@@ -113,7 +116,19 @@ public interface Enums {
       BERSERK_RESISTANCE, // to avoid going into a berserking rage
       BERSERK_RECOVERY, // to allow the berserker to come out of their rage
       MAGIC_RESISTANCE,
-      BREAK_FREE
+      BREAK_FREE;
+
+      public String toString() {
+         if (!nameMap.containsKey(this)) {
+            String name = name().replaceAll("_", " ").toLowerCase();
+            StringBuilder sb = new StringBuilder();
+            sb.append(Character.toUpperCase(name.charAt(0)));
+            sb.append(name.subSequence(1, name.length()));
+            nameMap.put(this, sb.toString());
+         }
+         return nameMap.get(this);
+      }
+      private static Map<RollType, String> nameMap = new HashMap<>();
    }
 
 }

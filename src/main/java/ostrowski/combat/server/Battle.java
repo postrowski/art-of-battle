@@ -668,7 +668,7 @@ public class Battle extends Thread implements Enums
       byte nim = actor.getAttributeLevel(Attribute.Nimbleness);
       Attribute bestAttr = str > nim ? Attribute.Strength : Attribute.Nimbleness;
       DiceSet dice = Rules.getDice((byte) Math.max(str, nim), action.getActionsUsed(), bestAttr/*attribute*/);
-      int roll = dice.roll(true/*allowExplodes*/);
+      int roll = dice.roll(true/*allowExplodes*/, actor, RollType.BREAK_FREE);
       int wrestlingSkill = 0;
       int aikidoSkill = 0;
       int brawlingSkill = 0;
@@ -922,7 +922,7 @@ public class Battle extends Thread implements Enums
 
       dice = attacker.adjustDieRoll(dice, RollType.ATTACK_TO_HIT, defender/*target*/);
       sb.append(attacker.getName()).append(" rolls ").append(dice);
-      int roll = dice.roll(true/*allowExplodes*/);
+      int roll = dice.roll(true/*allowExplodes*/, attacker, RollType.ATTACK_TO_HIT);
       sb.append(", rolling ").append(dice.getLastDieRoll());
       byte adjSkill = attacker.getAdjustedWeaponSkill(attack.getLimb(), attackStyle, attack.isGrappleAttack(),
                                                       attack.isCounterAttack(), false/*accountForHandPenalty*/, false/*adjustForHolds*/);
@@ -1101,7 +1101,7 @@ public class Battle extends Thread implements Enums
          else if (attack.isCounterAttackThrow()) {
             // Throw the opponent.
             DiceSet throwDistDice = new DiceSet(1, 1, 0, 0, 0, 0, 0, 0, 1.0);
-            int throwDist = throwDistDice.roll(true/*allowExplodes*/);
+            int throwDist = throwDistDice.roll(true/*allowExplodes*/, attacker, RollType.ATTACK_TO_HIT);
             sb.append(defender.getName()).append(" is thrown ").append(throwDistDice).append(" hexes, rolling ").append(throwDistDice.getLastDieRoll());
             CombatMap map = _arena.getCombatMap();
             while (throwDist-- > 0) {
@@ -1130,7 +1130,7 @@ public class Battle extends Thread implements Enums
             }
 
             DiceSet sideUpDice = new DiceSet(0, 1, 0, 0, 0, 0, 0, 0, 1.0);
-            int sideUp = sideUpDice.roll(false/*allowExplodes*/);
+            int sideUp = sideUpDice.roll(false/*allowExplodes*/, attacker, RollType.ATTACK_TO_HIT);
             sb.append(" To determine facing, a d4 is rolled, rolling ").append(sideUpDice.getLastDieRoll());
             if (sideUp > 2) {
                sb.append(", so the defender will be face-down.");
@@ -1379,7 +1379,7 @@ public class Battle extends Thread implements Enums
                              boolean isCharge) throws BattleTerminatedException {
       String damageTypeString = damageType.fullname;
       damageDie = attacker.adjustDieRoll(damageDie, RollType.DAMAGE_ATTACK, defender/*target*/);
-      int damageRoll = damageDie.roll(true/*allowExplodes*/);
+      int damageRoll = damageDie.roll(true/*allowExplodes*/, attacker, RollType.DAMAGE_ATTACK);
       sb.append(attacker.getName()).append("'s ").append(attackingWeaponName);
       sb.append(" does ").append(damageExplanation);
       sb.append(" ").append(damageTypeString).append(".<br/>");
@@ -2032,7 +2032,7 @@ public class Battle extends Thread implements Enums
             if ((painLevel > 0) || hasWounds) {
                painDice = Rules.getPainReductionDice(combatant.getAttributeLevel(Attribute.Toughness));
                painDice = combatant.adjustDieRoll(painDice, RollType.PAIN_RECOVERY, null/*target*/);
-               painReduction = (byte) (painDice.roll(true/*allowExplodes*/));
+               painReduction = (byte) (painDice.roll(true/*allowExplodes*/, combatant, RollType.PAIN_RECOVERY));
                if (painReduction < 0) {
                   painReduction = 0;
                }
@@ -2044,7 +2044,7 @@ public class Battle extends Thread implements Enums
                }
             }
             initiativeDice = combatant.adjustDieRoll(initiativeDice, RollType.INITIATIVE, null/*target*/);
-            int initiativeRoll = initiativeDice.roll(false/*allowExplodes*/);
+            int initiativeRoll = initiativeDice.roll(false/*allowExplodes*/, combatant, RollType.INITIATIVE);
             combatant.reducePain(painReduction);
             reducedPainLevel = combatant.getPainPenalty(false/*accountForBerserking*/);
             combatant.setInitiativeActionsAndMovementForNewTurn(initiativeRoll);
@@ -2177,7 +2177,7 @@ public class Battle extends Thread implements Enums
                      byte iq = combatant.getAttributeLevel(Attribute.Intelligence);
                      DiceSet berserkSaveDice = Rules.getDice(iq, (byte) 1/*actions*/, Attribute.Intelligence);
                      berserkSaveDice = combatant.adjustDieRoll(berserkSaveDice, RollType.BERSERK_RECOVERY, null/*target*/);
-                     int diceRoll = berserkSaveDice.roll(true/*allowExplodes*/);
+                     int diceRoll = berserkSaveDice.roll(true/*allowExplodes*/, combatant, RollType.BERSERK_RECOVERY);
                      events.append(combatant.getName()).append("'s target (");
                      events.append(target != null ? target.getName() : "").append(") is no longer fighting, so ");
                      events.append(combatant.getHeShe()).append(" has a chance that he recovers from being berserk.<br/>");

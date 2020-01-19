@@ -641,7 +641,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
       }
       DiceSet adjCastDice = getCaster().adjustDieRoll(castDice, RollType.SPELL_CASTING, null/*target*/);
       byte woundsAndPain = getCaster().getWoundsAndPainPenalty();
-      int castRoll = adjCastDice.roll(true/*allowExplodes*/);
+      int castRoll = adjCastDice.roll(true/*allowExplodes*/, getCaster(), RollType.SPELL_CASTING);
       _castRolledAllOnes = adjCastDice.lastRollRolledAllOnes();
       if ((adjCastDice.getDiceCount() > 0) || (_castRoll != 0)) {
          sbDescription.append("<br/>");
@@ -788,7 +788,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
       byte resistanceAttributeLevel = resistedThis.getResistanceAttribute(_target);
       DiceSet resistanceDice = resistedThis.getResistanceDice(_target);
       resistanceDice = getTarget().adjustDieRoll(resistanceDice, RollType.MAGIC_RESISTANCE, null/*target*/);
-      int resistanceRoll = resistanceDice.roll(true/*allowExplodes*/);
+      int resistanceRoll = resistanceDice.roll(true/*allowExplodes*/, getTarget(), RollType.MAGIC_RESISTANCE);
       byte magicResistanceBonus = 0;
       Advantage magicResistanceAdv = null;
       if (this instanceof MageSpell) {

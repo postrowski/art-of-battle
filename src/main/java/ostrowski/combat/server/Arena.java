@@ -125,7 +125,7 @@ public class Arena implements Enums, IMapListener
       addCombatant(combatant, false/*checkForAutoStart*/);
       if (setInitiativeAndSpendActions) {
          DiceSet initiativeDice = Rules.getInitiativeDieType();
-         int initiativeRoll = initiativeDice.roll(false/*allowExplodes*/);
+         int initiativeRoll = initiativeDice.roll(false/*allowExplodes*/, combatant, RollType.INITIATIVE);
          combatant.setInitiativeActionsAndMovementForNewTurn(initiativeRoll);
          // slow the new guy down, so he doesn't show up in round 5 with 5 actions left....
          for (int i=1 ; i<_battle._roundCount ; i++) {
@@ -243,7 +243,7 @@ public class Arena implements Enums, IMapListener
 
       if (!combatant.hasInitiativeAndActionsEverBeenInitialized()) {
          DiceSet initiativeDice = Rules.getInitiativeDieType();
-         int initiativeRoll = initiativeDice.roll(false/*allowExplodes*/);
+         int initiativeRoll = initiativeDice.roll(false/*allowExplodes*/, combatant, RollType.INITIATIVE);
          combatant.setInitiativeActionsAndMovementForNewTurn(initiativeRoll);
       }
 

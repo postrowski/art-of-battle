@@ -2,6 +2,7 @@ package ostrowski.combat.common;
 
 import ostrowski.combat.common.enums.DieType;
 import ostrowski.combat.common.enums.Enums;
+import ostrowski.combat.protocol.DieRoll;
 import ostrowski.combat.server.CombatServer;
 import ostrowski.protocol.SerializableObject;
 
@@ -9,10 +10,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.security.InvalidParameterException;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.StringTokenizer;
-import java.util.TreeSet;
+import java.util.*;
 
 /*
  * Created on May 3, 2006
@@ -176,16 +174,30 @@ public class DiceSet extends SerializableObject implements Enums
       return (total * _multiplier) / 2.0;
    }
 
-   public int roll(boolean allowExplodes) {
+   public int roll(boolean allowExplodes, Character actor, RollType rollType) {
+      Map<DieType, List<List<Integer>>> results = new HashMap<>();
+      int roll = roll(allowExplodes, results);
+      if ((CombatServer._this != null) && (actor != null)) {
+         DieRoll dieRoll = new DieRoll(actor, 0/*dieColor*/, allowExplodes, rollType, results);
+         CombatServer._this.getArena().sendEventToAllClients(dieRoll);
+      }
+      return roll;
+   }
+   private int roll(boolean allowExplodes, Map<DieType, List<List<Integer>>> results) {
+      results.clear();
       _lastRollIsAllOnes = true;
       _lastDieRolls = new StringBuilder();
       _lastDieRolls.append("{ ");
       int sum = _diceCount.get(DieType.D1);
       boolean dieActuallyRolled = false;
       for (DieType dieType : new DieType[] { DieType.D4, DieType.D6, DieType.D8, DieType.D10, DieType.D12, DieType.D20, DieType.Dbell}) {
+         List<List<Integer>> rollDataThisDieType = new ArrayList<>();
+         results.put(dieType, rollDataThisDieType);
          for (int die = 0; die < _diceCount.get(dieType); die++) {
             dieActuallyRolled = true;
-            int dieRoll = rollDie(allowExplodes /*up*/, allowExplodes /*down*/, dieType);
+            List<Integer> fullRollData = new ArrayList<>();
+            rollDataThisDieType.add(fullRollData);
+            int dieRoll = rollDie(allowExplodes /*up*/, allowExplodes /*down*/, dieType, fullRollData);
             sum += dieRoll;
             if ((dieRoll != 1) || (dieType == DieType.Dbell)) {
                _lastRollIsAllOnes = false;
@@ -206,9 +218,10 @@ public class DiceSet extends SerializableObject implements Enums
       return (int) Math.floor((sum * _multiplier) + .4999999);
    }
 
-   private int rollDie(boolean allowExplodesUp, boolean allowExplodesDown, DieType dieType) {
+   private int rollDie(boolean allowExplodesUp, boolean allowExplodesDown, DieType dieType, List<Integer> fullRollData) {
       int sides = dieType.getSides();
       int roll = (int) (Math.floor(CombatServer.random() * sides)) + 1;
+      fullRollData.add(roll);
       int modRoll = roll;
       if (dieType == DieType.Dbell) {
          if (roll == 11) {
@@ -244,11 +257,11 @@ public class DiceSet extends SerializableObject implements Enums
       if (allowExplodesUp || (dieType == DieType.Dbell)) {
          if (allowExplodesUp && (roll == dieType.getSides())) {
             _lastDieRolls.append("+");
-            return modRoll + rollDie(allowExplodesUp, allowExplodesDown, dieType);
+            return modRoll + rollDie(allowExplodesUp, allowExplodesDown, dieType, fullRollData);
          }
          if ((roll == 11) && (dieType == DieType.Dbell)) {
             _lastDieRolls.append("-");
-            return modRoll + rollDie(allowExplodesUp, allowExplodesDown, dieType);
+            return modRoll + rollDie(allowExplodesUp, allowExplodesDown, dieType, fullRollData);
          }
       }
       return modRoll;

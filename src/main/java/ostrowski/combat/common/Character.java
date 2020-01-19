@@ -4614,7 +4614,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
             byte iq = getAttributeLevel(Attribute.Intelligence);
             DiceSet berserkSaveDice = Rules.getDice(iq, (byte) 2/*action*/, Attribute.Intelligence);
             berserkSaveDice = adjustDieRoll(berserkSaveDice, RollType.BERSERK_RESISTANCE, null/*target*/);
-            int diceRoll = berserkSaveDice.roll(true/*allowExplodes*/);
+            int diceRoll = berserkSaveDice.roll(true/*allowExplodes*/, this, RollType.BERSERK_RESISTANCE);
             sb.append(getName()).append("'s pain causes a chance that he goes berserk.");
             sb.append(" He rolls 2-actions IQ (").append(berserkSaveDice);
             sb.append("), rolling ").append(berserkSaveDice.getLastDieRoll());
@@ -4657,7 +4657,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
             byte toughness = getAttributeLevel(Attribute.Toughness);
             DiceSet magicSaveDice = Rules.getDice(toughness, (byte) 2/*action*/, Attribute.Toughness);
             magicSaveDice = adjustDieRoll(magicSaveDice, RollType.PAIN_CONCENTRATION, null/*target*/);
-            int diceRoll = magicSaveDice.roll(true/*allowExplodes*/);
+            int diceRoll = magicSaveDice.roll(true/*allowExplodes*/, this, RollType.PAIN_CONCENTRATION);
 
             sb.append("<br/>");
             sb.append(getName()).append("'s wound raises ").append(getHisHer()).append(" pain level to ").append(currentPain);

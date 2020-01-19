@@ -74,7 +74,7 @@ public class SpellShockingGrasp extends ExpiringMageSpell implements ICastInBatt
       DiceSet damageDice = getDamage(getPower());
       damageDice = attacker.adjustDieRoll(damageDice, RollType.DAMAGE_SPELL, attacker/*target*/);
       modificationsExplanation.append("The 'Shocking Grasp' spell does ").append(damageDice).append(" electric damage.<br/>");
-      byte damageLevel = (byte) damageDice.roll(true/*allowExplodes*/);
+      byte damageLevel = (byte) damageDice.roll(true/*allowExplodes*/, attacker, RollType.DAMAGE_SPELL);
       byte bldElectric = defender.getBuild(DamageType.ELECTRIC);
       modificationsExplanation.append(attacker.getName()).append(" rolls ").append(damageDice.getLastDieRoll()).append("<br/>");
       modificationsExplanation.append(defender.getName()).append("'s build-electric is ").append(bldElectric);

@@ -75,7 +75,7 @@ public class SpellCallLightning extends PriestSpell implements IRangedSpell, ICa
             case 7: sb.append("<br/>The eigth bolt rolls a ");   break;
          }
          DiceSet dice = new DiceSet(0, 0, 0, 0, 0, 1, 0, 0/*dBell*/, 1.0);
-         int roll = dice.roll(false/*allowExplodes*/);
+         int roll = dice.roll(false/*allowExplodes*/, getCaster(), RollType.SPELL_CASTING);
          sb.append(dice.getLastDieRoll());
          Character hitCharacter = null;
          if (roll <= getCastingLevel()) {
@@ -85,7 +85,7 @@ public class SpellCallLightning extends PriestSpell implements IRangedSpell, ICa
          else {
             sb.append(" which is above ").append(getCaster().getHisHer()).append(" affinity level of ").append(getCastingLevel()).append(" so the bolt misses the target.");
             DiceSet distDice = new DiceSet("1d4");
-            int distance = distDice.roll(false/*allowExplodes*/);
+            int distance = distDice.roll(false/*allowExplodes*/, getCaster(), RollType.SPELL_CASTING);
             sb.append(" a d4 is rolled, rolling a ").append(distance);
             List<Character> charsAtRange =  new ArrayList<>();
             for (Character other : arena.getCombatants()) {
@@ -124,7 +124,7 @@ public class SpellCallLightning extends PriestSpell implements IRangedSpell, ICa
                if (distance == 4) {
                   targetDice = new DiceSet("1d20");
                }
-               int targetIndex = targetDice.roll(false/*allowExplodes*/);
+               int targetIndex = targetDice.roll(false/*allowExplodes*/, getCaster(), RollType.SPELL_CASTING);
                sb.append("<br/>Rolls a ").append(targetDice);
                sb.append(", rolling ").append(targetDice.getLastDieRoll());
                if (charsAtRange.size() < targetIndex) {
@@ -149,7 +149,7 @@ public class SpellCallLightning extends PriestSpell implements IRangedSpell, ICa
             }
             else {
                damageDice = getCaster().adjustDieRoll(damageDice, RollType.DAMAGE_SPELL, hitCharacter/*target*/);
-               int damage = damageDice.roll(true/*allowExplodes*/);
+               int damage = damageDice.roll(true/*allowExplodes*/, getCaster(), RollType.DAMAGE_SPELL);
                sb.append(" Damage rolled is ").append(damageDice);
                sb.append(", rolling ").append(damageDice.getLastDieRoll());
                sb.append(", for a total of ").append(damage).append(" electrical damage.<br/>");

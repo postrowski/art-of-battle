@@ -206,6 +206,7 @@ public class Rules extends DebugBreak implements Enums
       SerializableFactory.registerClass("OriQua", OrientationSingleQuadraped.class);
       SerializableFactory.registerClass("OriWng", OrientationSingleWinged.class);
       SerializableFactory.registerClass("SrvSts", ServerStatus.class);
+      SerializableFactory.registerClass("DieRol", DieRoll.class);
       SerializableFactory.registerClass("ReqAct", RequestAction.class);
       SerializableFactory.registerClass("ReqAcO", RequestActionOption.class);
       SerializableFactory.registerClass("DefOpt", DefenseOptions.class);
@@ -487,10 +488,6 @@ public class Rules extends DebugBreak implements Enums
 
    public static DiceSet getInitiativeDieType() {
       return new DiceSet(0, 1, 0, 0, 0, 0, 0, 0/*dBell*/, 1.0);
-   }
-
-   public static int rollInitiativeDie() {
-      return getInitiativeDieType().roll(false/*allowExplodes*/);
    }
 
    public static byte getParryTime(byte thrustTime, byte swingTime) {

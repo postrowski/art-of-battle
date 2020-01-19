@@ -14,6 +14,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import ostrowski.combat.common.DiceSet;
+import ostrowski.combat.common.enums.Enums;
 
 import java.util.*;
 
@@ -93,7 +94,7 @@ public class Tester
       for (i=0 ; i< 100000 ; i++)
       {
          for (DiceSet dice : diceSet) {
-            int roll = dice.roll(true);
+            int roll = dice.roll(true, null, Enums.RollType.INITIATIVE);
             Integer val = accumulatorNoNegs.get(dice);
             if (roll > 0 ) {
                val += roll;

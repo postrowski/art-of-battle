@@ -132,7 +132,7 @@ public class SpellWallOfFire extends ExpiringMageSpell implements IAreaSpell, IC
       StringBuilder sb = new StringBuilder();
       // roll 1d6 per time in hex
       DiceSet damageDice = new DiceSet(0, 0, timeInHex, 0, 0, 0, 0, 0/*dBell*/, 1.0);
-      int damage = damageDice.roll(true/*allowExplodes*/);
+      int damage = damageDice.roll(true/*allowExplodes*/, getCaster(), RollType.DAMAGE_SPELL);
       sb.append("Damage rolled is ").append(damageDice);
       sb.append(", rolling ").append(damageDice.getLastDieRoll());
       sb.append(", for a total of ").append(damage).append(" fire damage.<br/>");
