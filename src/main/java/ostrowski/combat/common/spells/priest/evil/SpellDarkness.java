@@ -24,7 +24,10 @@ public class SpellDarkness extends PriestSpell
    @Override
    public String describeSpell() {
       return "The '" + getName() + "' spell causes the all light that enters an area to be absorbed and blocked out." +
-             " The more power put into the spell, the brighter the light that can be absorbed, the longer the spell lasts, and the larger the area affected";
+             " The size of the area depends upon the power put into the spell." +
+             " A 1 power point spell blocks light in 1 hex, up to 10 feet high. Each additional point increases the radius for the area by 1, or doubles the height." +
+             " So a 4 power point spell will cover all hexes within 3 hexes of the center hex." +
+             " For 1 additional power point, the spell may be extended to include light outside of the visible range, such as infrared-red (heat) and ultraviolet (radiation).";
    }
 
    @Override

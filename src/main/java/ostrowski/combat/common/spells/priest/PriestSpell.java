@@ -184,8 +184,9 @@ public abstract class PriestSpell extends Spell
 
    protected static String getSpellGrimioreForHTML() {
       SortedSet<PriestSpell> spells = new TreeSet<>();
-      for (int col = 0; col < GROUPS.length; col++) {
-         spells.addAll(getSpellsInGroup(GROUP_NAMES.get(col)));
+      for (int col = 0; col < GROUP_NAMES.size(); col++) {
+         List<PriestSpell> groupSpells = getSpellsInGroup(GROUP_NAMES.get(col));
+         spells.addAll(groupSpells);
       }
       return getSpellGrimioreForHTML(spells);
    }
@@ -196,6 +197,7 @@ public abstract class PriestSpell extends Spell
                                                                        PriestOffensiveSpell.class,
                                                                        PriestGoodSpell.class,
                                                                        PriestHealingSpell.class,
+                                                                       PriestElementalSpell.class,
                                                                        PriestInformationSpell.class,
                                                                        PriestNatureSpell.class,
                                                                        PriestDemonicSpell.class,

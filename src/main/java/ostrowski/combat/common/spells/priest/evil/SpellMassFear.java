@@ -29,6 +29,9 @@ public class SpellMassFear extends ResistedPriestSpell implements IRangedSpell, 
 
    public byte getPenalty() {
       Advantage divineAff = _caster.getAdvantage(Advantage.DIVINE_AFFINITY_ + getDeity());
+      if (divineAff == null && isInate()) {
+         return (byte) (-this.getAffinity());
+      }
       // advantages have a 0-base index, so a level of 0 means 1 point of affinity
       return (byte) (-divineAff.getLevel() - 1);
    }

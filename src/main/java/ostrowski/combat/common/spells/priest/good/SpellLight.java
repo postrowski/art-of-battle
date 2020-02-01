@@ -24,7 +24,9 @@ public class SpellLight extends PriestSpell
    @Override
    public String describeSpell() {
       return "The '" + getName() + "' spell causes the object upon which it is cast to glow." +
-             " The more power put into the spell, the brighter the light, and the longer the spell lasts.";
+             " A 1 power point light spell will last for 12 minutes, with brightness equal to 1 candle." +
+             " Each additional point of power can either increase the duration by a factor of 5," +
+             " or it can increase the brightness by a factor 10.";
    }
 
    @Override

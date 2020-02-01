@@ -706,9 +706,8 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
          }
       }
       boolean showKnownButNotVisibleChars = false;
-      // If we have a character within 3 hexes of us, always show them, even if they are behind us.
       if (_selfLoc != null) {
-         if (ArenaCoordinates.getDistance(_selfLoc, loc) < 4) {
+         if (ArenaCoordinates.getDistance(_selfLoc, loc) <= Rules.getAutoVisibleDistance()) {
             showKnownButNotVisibleChars = true;
          }
       }

@@ -92,9 +92,13 @@ public class DieRoll extends SerializableObject implements Enums
       }
       sb.append(" Type:").append(_rollType.toString());
       for (Map.Entry<DieType, List<List<Integer>>> e : _results.entrySet()) {
+         List<List<Integer>> listList = e.getValue();
+         if (listList == null || listList.isEmpty()) {
+            continue;
+         }
          sb.append(" DieType ").append(e.getKey()).append(": ");
          boolean firstA = true;
-         for (List<Integer> results : e.getValue()) {
+         for (List<Integer> results : listList) {
             if (!firstA) {
                sb.append(", ");
             }

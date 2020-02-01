@@ -168,36 +168,36 @@ public class RequestAction extends SyncRequest implements Enums
       return (_answer != null) && (getAttackActions(false/*considerSpellAsAttack*/) > 0);
    }
 
-   public boolean isCharge()             { return ((RequestActionOption)_answer).getValue().isCharge(); }
-   public boolean isAdvance()            { return ((RequestActionOption)_answer).getValue().isAdvance(); }
-   public boolean isEvasiveMove()        { return ((RequestActionOption)_answer).getValue().isEvasiveMove(); }
+   public boolean isCharge()             { return (_answer != null) && ((RequestActionOption)_answer).getValue().isCharge(); }
+   public boolean isAdvance()            { return (_answer != null) && ((RequestActionOption)_answer).getValue().isAdvance(); }
+   public boolean isEvasiveMove()        { return (_answer != null) && ((RequestActionOption)_answer).getValue().isEvasiveMove(); }
    public boolean isRetreat()            { return false; }
-   public boolean isReadyWeapon()        { return ((RequestActionOption)_answer).getValue().isReadyWeapon(); }
-   public boolean isChangePosition()     { return ((RequestActionOption)_answer).getValue().isChangePosition();}
-   public boolean isEquipUnequip()       { return ((RequestActionOption)_answer).getValue().isEquipUnequip(); }
-   public boolean isChangeTargets()      { return ((RequestActionOption)_answer).getValue().isChangeTargets(); }
-   public boolean isBeginSpell()         { return ((RequestActionOption)_answer).getValue().isBeginSpell(); }
-   public boolean isPrepareInateSpell()  { return ((RequestActionOption)_answer).getValue().isPrepareInateSpell();}
-   public boolean isContinueSpell()      { return ((RequestActionOption)_answer).getValue().isContinueSpell();}
-   public boolean isChannelEnergy()      { return ((RequestActionOption)_answer).getValue().isChannelEnergy(); }
-   public boolean isMaintainSpell()      { return ((RequestActionOption)_answer).getValue().isMaintainSpell(); }
-   public boolean isDiscardSpell()       { return ((RequestActionOption)_answer).getValue().isDiscardSpell();}
-   public boolean isCompleteMageSpell()  { return ((RequestActionOption)_answer).getValue().isCompleteMageSpell(); }
-   public boolean isCompletePriestSpell(){ return((RequestActionOption)_answer).getValue().isCompletePriestSpell(); }
-   public boolean isCompleteSpell()      { return ((RequestActionOption)_answer).getValue().isCompleteSpell(); }
-   public boolean isApplyItem()          { return ((RequestActionOption)_answer).getValue().isApplyItem(); }
-   public boolean isFinalDefense()       { return ((RequestActionOption)_answer).getValue().isFinalDefense(); }
-   public boolean isTargetEnemy()        { return ((RequestActionOption)_answer).getValue().isTargetEnemy(); }
-   public boolean isPrepareRanged()      { return ((RequestActionOption)_answer).getValue().isPrepareRanged(); }
-   public boolean isWaitForAttack()      { return ((RequestActionOption)_answer).getValue().isWaitForAttack();}
+   public boolean isReadyWeapon()        { return (_answer != null) && ((RequestActionOption)_answer).getValue().isReadyWeapon(); }
+   public boolean isChangePosition()     { return (_answer != null) && ((RequestActionOption)_answer).getValue().isChangePosition();}
+   public boolean isEquipUnequip()       { return (_answer != null) && ((RequestActionOption)_answer).getValue().isEquipUnequip(); }
+   public boolean isChangeTargets()      { return (_answer != null) && ((RequestActionOption)_answer).getValue().isChangeTargets(); }
+   public boolean isBeginSpell()         { return (_answer != null) && ((RequestActionOption)_answer).getValue().isBeginSpell(); }
+   public boolean isPrepareInateSpell()  { return (_answer != null) && ((RequestActionOption)_answer).getValue().isPrepareInateSpell();}
+   public boolean isContinueSpell()      { return (_answer != null) && ((RequestActionOption)_answer).getValue().isContinueSpell();}
+   public boolean isChannelEnergy()      { return (_answer != null) && ((RequestActionOption)_answer).getValue().isChannelEnergy(); }
+   public boolean isMaintainSpell()      { return (_answer != null) && ((RequestActionOption)_answer).getValue().isMaintainSpell(); }
+   public boolean isDiscardSpell()       { return (_answer != null) && ((RequestActionOption)_answer).getValue().isDiscardSpell();}
+   public boolean isCompleteMageSpell()  { return (_answer != null) && ((RequestActionOption)_answer).getValue().isCompleteMageSpell(); }
+   public boolean isCompletePriestSpell(){ return (_answer != null) && ((RequestActionOption)_answer).getValue().isCompletePriestSpell(); }
+   public boolean isCompleteSpell()      { return (_answer != null) && ((RequestActionOption)_answer).getValue().isCompleteSpell(); }
+   public boolean isApplyItem()          { return (_answer != null) && ((RequestActionOption)_answer).getValue().isApplyItem(); }
+   public boolean isFinalDefense()       { return (_answer != null) && ((RequestActionOption)_answer).getValue().isFinalDefense(); }
+   public boolean isTargetEnemy()        { return (_answer != null) && ((RequestActionOption)_answer).getValue().isTargetEnemy(); }
+   public boolean isPrepareRanged()      { return (_answer != null) && ((RequestActionOption)_answer).getValue().isPrepareRanged(); }
+   public boolean isWaitForAttack()      { return (_answer != null) && ((RequestActionOption)_answer).getValue().isWaitForAttack();}
    public boolean isPickupItem(Character actor, Arena arena) {
-      if (((RequestActionOption)_answer).getValue().isLocationAction()) {
+      if ((_answer != null) && ((RequestActionOption)_answer).getValue().isLocationAction()) {
          return arena.isPickupItem(actor, this);
       }
       return false;
    }
    public boolean isLocationAction(Character actor, Arena arena) {
-      if (((RequestActionOption)_answer).getValue().isAnyLocationAction()) {
+      if ((_answer != null) && ((RequestActionOption)_answer).getValue().isAnyLocationAction()) {
          return arena.isLocationAction(actor, this);
       }
       return false;

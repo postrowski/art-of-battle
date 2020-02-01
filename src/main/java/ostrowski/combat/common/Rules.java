@@ -1110,4 +1110,8 @@ public class Rules extends DebugBreak implements Enums
       return adjustedLevel;
    }
 
+   public static short getAutoVisibleDistance() {
+      // If we have a character within 3 hexes of us, always show them, even if they are behind us.
+      return 3;
+   }
 }

@@ -259,6 +259,7 @@ public class ArenaEvent implements Cloneable
             else {
                team = Enums.TEAM_ALPHA;
             }
+            newChar._teamID = team;
          }
          // try each of the locations in the location list until we find one that is unoccupied
          for (ArenaCoordinates location : _eventLocations) {

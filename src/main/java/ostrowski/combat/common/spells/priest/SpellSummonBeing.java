@@ -50,6 +50,7 @@ public abstract class SpellSummonBeing extends ExpiringPriestSpell implements IC
       int pointTotal = getBaseCharPoints() + (getPower() * getCharPointsPerPowerPoint());
       String charSoruce = pointTotal + "  " + summonedTypeRaceName();
       Character summonedBeing = CharacterGenerator.generateRandomCharacter(charSoruce, arena, true/*printCharacter*/);
+      summonedBeing._teamID = _caster._teamID;
       ArenaLocation loc = ArenaLocation.getForwardMovement(getCaster().getHeadCoordinates(), getCaster().getFacing(), arena.getCombatMap());
       loc = loc.clone();
       int count = 0;

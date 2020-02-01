@@ -4314,7 +4314,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                else if (child.getNodeName().equals("Advantages")) {
                   Advantage adv = Advantage.getAdvantage(name);
                   if (adv != null) {
-                     if (levelName != null) {
+                     if (levelName != null && !levelName.isEmpty()) {
                         adv.setLevelByName(levelName);
                      }
                      else {

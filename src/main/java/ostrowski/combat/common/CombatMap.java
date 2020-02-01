@@ -1589,55 +1589,51 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
              }
           }
        }
-       if (!characterChangedLocations) {
-          // the character didn't move
-          return;
-       }
-// TODO: figure out how to get the neighboring hexes to the new locations
-//       // most likely, the character was just 1-hex away before this move
-//       // so first just check the neighboring hexes
-//       for (int col=(newCharacter._locX-1) ; col<=(newCharacter._locX+1) ; col++) {
-//          if ((col >= 0) && (col<_sizeX)) {
-//             for (int row=(newCharacter._locY-1) ; row<=(newCharacter._locY+1); row+=2) {
-//                if (col == newCharacter._locX) {
-//                   if (row==(newCharacter._locY-1)) {
-//                      row--;
-//                   }
-//                   else if (row==(newCharacter._locY+1)) {
-//                      row++;
-//                   }
-//                }
-//                if ((row >= 0) && (row<_sizeY)) {
-//                   List<Character> characters = _locations[col][row].getCharacters();
-//                   for (Character charInHex : characters) {
-//                      if (charInHex._uniqueID == newCharacter._uniqueID) {
-//                         if ((newCharacter._locX != col) || (newCharacter._locY != row)) {
-//                            _locations[col][row].remove(charInHex);
-//                            return;
-//                         }
-//                      }
-//                   }
-//                }
-//             }
-//          }
-//       }
+      // get the neighboring hexes to the new locations
+      // most likely, the character was just 1-hex away before this move
+      // so first just check the neighboring hexes
+      Set<ArenaLocation> adjacentLocations = new HashSet<>();
+      for (ArenaLocation newLoc : newCharLocs) {
+         adjacentLocations.add(getLocation((short) (newLoc._x - 1), (short) (newLoc._y - 1)));
+         adjacentLocations.add(getLocation((short) (newLoc._x - 1), (short) (newLoc._y + 1)));
+         adjacentLocations.add(getLocation((short) (newLoc._x + 1), (short) (newLoc._y - 1)));
+         adjacentLocations.add(getLocation((short) (newLoc._x + 1), (short) (newLoc._y + 1)));
+         adjacentLocations.add(getLocation(newLoc._x, (short) (newLoc._y - 2)));
+         adjacentLocations.add(getLocation(newLoc._x, (short) (newLoc._y + 2)));
+      }
+      adjacentLocations.removeAll(newCharLocs);
+      int foundCount = 0;
+      for (ArenaLocation loc : adjacentLocations) {
+         if (loc != null) {
+            List<Character> characters = loc.getCharacters();
+            for (Character charInHex : characters) {
+               if (charInHex._uniqueID == newCharacter._uniqueID) {
+                  loc.remove(charInHex);
+                  foundCount++;
+               }
+            }
+         }
+      }
 
-       // find the old character location.
-       for (short col=0 ; col<_sizeX ; col++) {
-          for (short row=(short)(col%2) ; row<_sizeY; row+=2) {
-             List<Character> characters = _locations[col][row].getCharacters();
-             for (Character charInHex : characters) {
-                if (charInHex._uniqueID == newCharacter._uniqueID) {
-                   if (!newCharLocs.contains(_locations[col][row])) {
-                      _locations[col][row].remove(charInHex);
-                      for (IAreaSpell spell : _locations[col][row].getActiveSpells()) {
-                         spell.affectCharacterOnExit(newCharacter);
-                      }
-                   }
-                }
-             }
-          }
-       }
+      if ((foundCount >= newCharLocs.size()) || !characterChangedLocations) {
+         return;
+      }
+      // find the old character location, searching everywhere!
+      for (short col=0 ; col<_sizeX ; col++) {
+         for (short row=(short)(col%2) ; row<_sizeY; row+=2) {
+            List<Character> characters = _locations[col][row].getCharacters();
+            for (Character charInHex : characters) {
+               if (charInHex._uniqueID == newCharacter._uniqueID) {
+                  if (!newCharLocs.contains(_locations[col][row])) {
+                     _locations[col][row].remove(charInHex);
+                     for (IAreaSpell spell : _locations[col][row].getActiveSpells()) {
+                        spell.affectCharacterOnExit(newCharacter);
+                     }
+                  }
+               }
+            }
+         }
+      }
    }
 
    public List<Byte> getTeamsAvailable()
