@@ -10,7 +10,6 @@ import ostrowski.DebugBreak;
 import ostrowski.combat.common.enums.DefenseOption;
 import ostrowski.combat.protocol.request.RequestAction;
 import ostrowski.protocol.IRequestOption;
-import ostrowski.protocol.SerializableObject;
 
 public class DefenseOptions extends EnumOptions<DefenseOption> implements Comparable<DefenseOptions>, IRequestOption
 {
@@ -180,7 +179,7 @@ public class DefenseOptions extends EnumOptions<DefenseOption> implements Compar
 
    @Override
    public int compareTo(DefenseOptions other) {
-      return Integer.valueOf(this.getIntValue()).compareTo(other.getIntValue());
+      return Integer.compare(this.getIntValue(), other.getIntValue());
    }
    public int getDefenseCounterDefenseActions() {
       if (contains(DefenseOption.DEF_COUNTER_DEFENSE_3)) {

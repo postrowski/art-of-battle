@@ -163,28 +163,28 @@ public abstract class WeaponStyleAttack extends WeaponStyle
          return false;
       }
       WeaponStyleAttack otherStyle = (WeaponStyleAttack) other;
-      if (otherStyle._damageMod != otherStyle._damageMod) {
+      if (this._damageMod != otherStyle._damageMod) {
          return false;
       }
-      if (!otherStyle._varianceDice.equals(otherStyle._varianceDice)) {
+      if (!this._varianceDice.equals(otherStyle._varianceDice)) {
          return false;
       }
-      if (otherStyle._damageType != otherStyle._damageType) {
+      if (this._damageType != otherStyle._damageType) {
          return false;
       }
-      if (otherStyle._attackType != otherStyle._attackType) {
+      if (this._attackType != otherStyle._attackType) {
          return false;
       }
-      if (otherStyle._parryPenalty != otherStyle._parryPenalty) {
+      if (this._parryPenalty != otherStyle._parryPenalty) {
          return false;
       }
-      if (otherStyle._chargeType != otherStyle._chargeType) {
+      if (this._chargeType != otherStyle._chargeType) {
          return false;
       }
-      if (otherStyle._minRange != otherStyle._minRange) {
+      if (this._minRange != otherStyle._minRange) {
          return false;
       }
-      return otherStyle._maxRange == otherStyle._maxRange;
+      return this._maxRange == otherStyle._maxRange;
    }
    public boolean canCharge(boolean isMounted, boolean hasFourLegs) {
       if (_chargeType == Charge.Never) {

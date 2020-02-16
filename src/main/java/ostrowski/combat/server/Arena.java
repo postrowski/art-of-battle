@@ -548,9 +548,9 @@ public class Arena implements Enums, IMapListener
    public static final int               PLAYBACK_MODE_OFF    = 0;
    public static final int               PLAYBACK_MODE_RECORD = 1;
    public static final int               PLAYBACK_MODE_PLAY   = 2;
-   public              int               _playbackMode        = PLAYBACK_MODE_OFF;
-   public              List<SyncRequest> _recordedActions     = null;//new ArrayList<>();
-   public              int               _playbackIndex       = 0;
+   public       int               _playbackMode    = PLAYBACK_MODE_OFF;
+   public final List<SyncRequest> _recordedActions = null;//new ArrayList<>();
+   public       int               _playbackIndex   = 0;
 
    public boolean sendObjectToCombatant(final Character combatant, SerializableObject obj) {
       ClientProxy proxy = (_mapCombatantToProxy.get(combatant));
@@ -1375,7 +1375,7 @@ public class Arena implements Enums, IMapListener
                               }
                               // make sure our movesInRound Array is large enough to hold this future round:
                               while (movesInRound.size() <= newPathLength) {
-                                 movesInRound.add(new HashMap<Orientation, Orientation>());
+                                 movesInRound.add(new HashMap<>());
                               }
                               // Put it in the slot for the movement points it would cost us to reach.
                               (movesInRound.get(newPathLength)).put(futureOrient, destOrientation);
@@ -1739,18 +1739,17 @@ public class Arena implements Enums, IMapListener
    private Orientation getAdvancementMoveOrientation(Character attacker, Character defender, Limb attackFromLimb) {
       // no need to clone this, since movedAttacker is never modified
       //Character movedAttacker = (Character) attacker.clone();
-      Character movedAttacker = attacker;
       Orientation curOrientation = attacker.getOrientation();
       List<Orientation> possibleMoves = curOrientation.getPossibleAdvanceOrientations(getCombatMap(), true/*blockByCharacters*/);
       for (Orientation orient : possibleMoves) {
          if (canCharacterMove(attacker, orient)) {
             if (attackFromLimb != null) {
-               if (orient.canLimbAttack(movedAttacker, defender, attackFromLimb, getCombatMap(), false/*allowRanged*/, false/*onlyChargeTypes*/)) {
+               if (orient.canLimbAttack(attacker, defender, attackFromLimb, getCombatMap(), false/*allowRanged*/, false/*onlyChargeTypes*/)) {
                   return orient;
                }
             }
             else {
-               if (orient.canAttack(movedAttacker, defender, getCombatMap(), false/*allowRanged*/, false/*onlyChargeTypes*/)) {
+               if (orient.canAttack(attacker, defender, getCombatMap(), false/*allowRanged*/, false/*onlyChargeTypes*/)) {
                   return orient;
                }
             }
@@ -2233,12 +2232,7 @@ public class Arena implements Enums, IMapListener
 
          if (_autoRunBlock.battleEnded(teamAlive)) {
             _combatMap = _autoRunMap.clone();
-            CombatServer._this.getShell().getDisplay().asyncExec(new Runnable() {
-               @Override
-               public void run() {
-                  restart();
-               }
-            });
+            CombatServer._this.getShell().getDisplay().asyncExec(this::restart);
          }
          else {
             _autoRunBlock = null;

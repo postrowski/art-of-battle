@@ -730,8 +730,7 @@ public abstract class MageSpell extends Spell implements Enums
                                  StringBuilder sbDescription) {
       // attack (cast) information:
       byte spellActions = getActionsUsed(attack);
-      DiceSet castDice = getCastDice(spellActions, range);
-      return castDice;
+      return getCastDice(spellActions, range);
    }
 
    public byte getActionsUsed(RequestAction attack) {

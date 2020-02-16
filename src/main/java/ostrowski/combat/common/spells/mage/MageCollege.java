@@ -41,6 +41,7 @@ public class MageCollege extends SerializableObject implements Enums
 
    public MageCollege(MageCollege source) {
       _name = source._name;
+      _level = source._level;
    }
 
    public MageCollege(String name) {

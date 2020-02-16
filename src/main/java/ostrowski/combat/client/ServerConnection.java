@@ -217,12 +217,7 @@ public class ServerConnection extends CombatSocket
       // so we must use the Display.asyncExec() method:
       if (!_display._shell.isDisposed()) {
          Display display = _display._shell.getDisplay();
-         display.asyncExec(new Runnable() {
-            @Override
-            public void run() {
-               _display.handleConnect();
-            }
-         });
+         display.asyncExec(_display::handleConnect);
       }
    }
 
@@ -232,12 +227,7 @@ public class ServerConnection extends CombatSocket
       // so we must use the Display.asyncExec() method:
       if (!_display._shell.isDisposed()) {
          Display display = _display._shell.getDisplay();
-         display.asyncExec(new Runnable() {
-            @Override
-            public void run() {
-               _display.handleDisconnect();
-            }
-         });
+         display.asyncExec(_display::handleDisconnect);
       }
    }
 

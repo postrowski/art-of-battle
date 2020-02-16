@@ -199,8 +199,7 @@ public class Race implements Cloneable, Enums
    }
 
    public Orientation getBaseOrientation() {
-      Orientation orientation = _baseOrientation.clone();
-      return orientation;
+      return _baseOrientation.clone();
    }
 
    private static byte getPropertyCount(String racialProperty, int loc) {

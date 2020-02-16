@@ -440,15 +440,15 @@ public class Weapon extends Thing {
        new MissileWeaponBase(1, 3, 100, NAME_StaffSling,    SkillType.StaffSling, 1, 0,   7,  DieType.D6, DamageType.BLUNT, 20,  2, new String[] {"Spin sling", "Load stone in staff sling", "Ready stone"}),
        };
        // sort this array, so they can be listed in alphabetical order
-       Arrays.sort(_weaponsList, new Comparator<SizelessWeapon>() {
-           @Override
-         public int compare(SizelessWeapon o1, SizelessWeapon o2) {
-               return o1.getName().compareTo(o2.getName());
-           }
-       });
-       Arrays.sort(_specialWeaponsList, new Comparator<SizelessWeapon>() {
+       Arrays.sort(_weaponsList, new Comparator<>() {
           @Override
-         public int compare(SizelessWeapon o1, SizelessWeapon o2) {
+          public int compare(SizelessWeapon o1, SizelessWeapon o2) {
+             return o1.getName().compareTo(o2.getName());
+          }
+       });
+       Arrays.sort(_specialWeaponsList, new Comparator<>() {
+          @Override
+          public int compare(SizelessWeapon o1, SizelessWeapon o2) {
              return o1.getName().compareTo(o2.getName());
           }
        });

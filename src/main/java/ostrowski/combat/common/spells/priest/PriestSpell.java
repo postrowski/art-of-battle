@@ -184,8 +184,8 @@ public abstract class PriestSpell extends Spell
 
    protected static String getSpellGrimioreForHTML() {
       SortedSet<PriestSpell> spells = new TreeSet<>();
-      for (int col = 0; col < GROUP_NAMES.size(); col++) {
-         List<PriestSpell> groupSpells = getSpellsInGroup(GROUP_NAMES.get(col));
+      for (String groupName : GROUP_NAMES) {
+         List<PriestSpell> groupSpells = getSpellsInGroup(groupName);
          spells.addAll(groupSpells);
       }
       return getSpellGrimioreForHTML(spells);

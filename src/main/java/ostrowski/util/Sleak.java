@@ -44,12 +44,7 @@ public class Sleak
       });
       text = new Text(shell, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
       canvas = new Canvas(shell, SWT.BORDER);
-      canvas.addListener(SWT.Paint, new Listener() {
-         @Override
-         public void handleEvent(Event event) {
-            paintCanvas(event);
-         }
-      });
+      canvas.addListener(SWT.Paint, this::paintCanvas);
       check = new Button(shell, SWT.CHECK);
       check.setText("Stack");
       check.addListener(SWT.Selection, new Listener() {

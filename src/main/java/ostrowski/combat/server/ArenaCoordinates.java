@@ -73,13 +73,7 @@ public class ArenaCoordinates extends SerializableObject implements Enums, Compa
       if (_x > arg0._x) {
          return 1;
       }
-      if (_y < arg0._y) {
-         return -1;
-      }
-      if (_y > arg0._y) {
-         return 1;
-      }
-      return 0;
+      return Short.compare(_y, arg0._y);
    }
 
    public boolean sameCoordinates(ArenaCoordinates otherCoord) {

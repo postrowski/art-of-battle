@@ -7,7 +7,6 @@ package ostrowski.combat.common.things;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import ostrowski.combat.common.Character;

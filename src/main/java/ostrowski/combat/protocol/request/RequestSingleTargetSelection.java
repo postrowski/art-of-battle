@@ -131,15 +131,7 @@ public class RequestSingleTargetSelection extends SyncRequest implements Enums
       Comparator< ? super Character> sortOnDistance = new Comparator<>() {
          @Override
          public int compare(Character o1, Character o2) {
-            short dist1 = Arena.getMinDistance(requestor, o1);
-            short dist2 = Arena.getMinDistance(requestor, o2);
-            if (dist1 == dist2) {
-               return 0;
-            }
-            if (dist1 > dist2) {
-               return 1;
-            }
-            return -1;
+            return Short.compare(Arena.getMinDistance(requestor, o1), Arena.getMinDistance(requestor, o2));
          }
       };
       Collections.sort(targets, sortOnDistance );

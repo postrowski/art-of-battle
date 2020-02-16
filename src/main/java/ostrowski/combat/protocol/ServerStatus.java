@@ -64,8 +64,7 @@ public class ServerStatus extends SerializableObject implements Enums
    }
 
    public List<Character> getCombatants() {
-      List<Character> list = new ArrayList<>(_combatants);
-      return list;
+      return new ArrayList<>(_combatants);
    }
    public List<Character> getCombatantsWaitingToConnect() {
       List<Character> list = new ArrayList<>();

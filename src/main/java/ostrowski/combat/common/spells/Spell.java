@@ -252,8 +252,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
             byte rangeDeterminingAttribute = caster.getAttributeLevel(getCastingAttribute());
             byte buildModifier = caster.getRace().getBuildModifier();
             byte sizeAdjustedAttr = (byte) (rangeDeterminingAttribute + buildModifier);
-            short rangeBaseAdjusted = (short) Math.round(rangeBase * Rules.getRangeAdjusterForAdjustedStr(sizeAdjustedAttr));
-            return rangeBaseAdjusted;
+            return (short) Math.round(rangeBase * Rules.getRangeAdjusterForAdjustedStr(sizeAdjustedAttr));
          }
          return rangeBase;
       }

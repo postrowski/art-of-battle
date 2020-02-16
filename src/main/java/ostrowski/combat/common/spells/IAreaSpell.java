@@ -19,5 +19,5 @@ public interface IAreaSpell extends Cloneable
    void affectCharacterOnActivation(Character chr);
    void affectCharacterOnDeactivation(Character chr);
 
-   public Spell clone();
+   Spell clone();
 }

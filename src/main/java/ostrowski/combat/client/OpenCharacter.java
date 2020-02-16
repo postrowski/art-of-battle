@@ -318,26 +318,25 @@ public class OpenCharacter extends Dialog implements MouseListener
          strStr += " (" + character.getAdjustedStrength() + ")";
          htStr += " (" + character.getBuildBase() + ")";
       }
-      String[] rowStrs = new String[] { character.getName(),
-                                 String.valueOf(character.getPointTotal()),
-                                 character.getRace().getName(),
-                                 character.getRace().getGender()._name,
-                                 strStr,
-                                 htStr,
-                                 String.valueOf(character.getAttributeLevel(Attribute.Toughness)),
-                                 String.valueOf(character.getAttributeLevel(Attribute.Intelligence)),
-                                 String.valueOf(character.getAttributeLevel(Attribute.Nimbleness)),
-                                 String.valueOf(character.getAttributeLevel(Attribute.Dexterity)),
-                                 String.valueOf(character.getAttributeLevel(Attribute.Social)),
-                                 skills.toString(),
-                                 (rightHandThing == null) ? "" : rightHandThing.getName(),
-                                 (leftHandThing == null) ? "" : leftHandThing.getName(),
-                                 (armor == null) ? Armor.NAME_NoArmor : armor.getName(),
-                                 (wealth == null) ? "$" : String.valueOf(wealth.getLevelName()),
-                                 (MA == null) ? "" : String.valueOf(MA.getLevel()),
-                                 (deity == null) ? "" : (deity + ":" + priest.getLevelName()),
-                                 advantages.toString()};
-      return rowStrs;
+      return new String[] {character.getName(),
+                           String.valueOf(character.getPointTotal()),
+                           character.getRace().getName(),
+                           character.getRace().getGender()._name,
+                           strStr,
+                           htStr,
+                           String.valueOf(character.getAttributeLevel(Attribute.Toughness)),
+                           String.valueOf(character.getAttributeLevel(Attribute.Intelligence)),
+                           String.valueOf(character.getAttributeLevel(Attribute.Nimbleness)),
+                           String.valueOf(character.getAttributeLevel(Attribute.Dexterity)),
+                           String.valueOf(character.getAttributeLevel(Attribute.Social)),
+                           skills.toString(),
+                           (rightHandThing == null) ? "" : rightHandThing.getName(),
+                           (leftHandThing == null) ? "" : leftHandThing.getName(),
+                           (armor == null) ? Armor.NAME_NoArmor : armor.getName(),
+                           (wealth == null) ? "$" : String.valueOf(wealth.getLevelName()),
+                           (MA == null) ? "" : String.valueOf(MA.getLevel()),
+                           (deity == null) ? "" : (deity + ":" + priest.getLevelName()),
+                           advantages.toString()};
    }
 
    int     _currentSortColumn = -1;

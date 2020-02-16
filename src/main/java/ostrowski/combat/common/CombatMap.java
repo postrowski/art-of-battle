@@ -2646,14 +2646,12 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
            factory.setValidating(validating);
 
            // Create the builder and parse the file
-           Document doc = factory.newDocumentBuilder().parse(sourceFile);
-           return doc;
+          return factory.newDocumentBuilder().parse(sourceFile);
        } catch (SAXException e) {
            // A parsing error occurred; the xml input is not valid
-       } catch (ParserConfigurationException e) {
-       } catch (IOException e) {
+       } catch (ParserConfigurationException | IOException e) {
        }
-       return null;
+      return null;
    }
    public List<ArenaLocation> getAdjacentLocations(ArenaLocation location) {
       List<ArenaLocation> locs = new ArrayList<>();

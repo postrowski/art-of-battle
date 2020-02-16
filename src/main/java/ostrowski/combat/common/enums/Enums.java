@@ -128,7 +128,7 @@ public interface Enums {
          }
          return nameMap.get(this);
       }
-      private static Map<RollType, String> nameMap = new HashMap<>();
+      private static final Map<RollType, String> nameMap = new HashMap<>();
    }
 
 }

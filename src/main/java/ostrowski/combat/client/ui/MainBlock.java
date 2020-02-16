@@ -48,7 +48,6 @@ public class MainBlock extends Helper implements ModifyListener, SelectionListen
       Group topGroup = createGroup(parent, "", 6/*columns*/, false, 3/*hSpacing*/, 3/*vSpacing*/);
 
       createLabel(topGroup, "Name:", SWT.LEFT, 2/*hSpan*/, null);
-      List<String> namesList = new ArrayList<>(_charFile.getCharacterNames());
       _name = createText(topGroup, "", true/*editable*/, 2/*hSpan*/);
       _points = createText(topGroup, "0 points", false, 2/*hSpan*/);
 

@@ -147,12 +147,7 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
                      }
                   }
                   Thread.sleep(10);
-                  Display.getDefault().asyncExec(new Runnable() {
-                     @Override
-                     public void run() {
-                        redraw();
-                     }
-                  });
+                  Display.getDefault().asyncExec(MapWidget3D.this::redraw);
                }
             } catch (InterruptedException e) {
             } catch (IllegalMonitorStateException e) {

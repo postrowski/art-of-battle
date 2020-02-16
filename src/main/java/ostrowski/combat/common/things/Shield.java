@@ -43,7 +43,7 @@ public class Shield extends Thing {
                }
             }
          }
-         if (name.indexOf(" Shield") == -1) {
+         if (!name.contains(" Shield")) {
             return getShield(name + " Shield", racialBase);
          }
          if (name.startsWith("Magic ")) {

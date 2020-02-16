@@ -5,11 +5,8 @@
 package ostrowski.combat.protocol;
 
 import ostrowski.combat.common.Character;
-import ostrowski.combat.common.CombatMap;
-import ostrowski.combat.common.DiceSet;
 import ostrowski.combat.common.enums.DieType;
 import ostrowski.combat.common.enums.Enums;
-import ostrowski.graphics.objects3d.Thing;
 import ostrowski.protocol.SerializableObject;
 
 import java.io.DataInputStream;

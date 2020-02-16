@@ -345,12 +345,7 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
          if (!canvas.isDisposed()) {
             Display display = canvas.getDisplay();
             if (!display.isDisposed()) {
-               display.asyncExec(new Runnable() {
-                  @Override
-                  public void run() {
-                     redraw();
-                  }
-               });
+               display.asyncExec(this::redraw);
             }
          }
       }

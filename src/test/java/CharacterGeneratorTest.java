@@ -178,11 +178,12 @@ public class CharacterGeneratorTest implements Enums {
                   delta += raceData.pointsStep;
                }
             }
-            Collections.sort(chars, new Comparator<Character>() {
+            Collections.sort(chars, new Comparator<>() {
                @Override
                public int compare(Character o1, Character o2) {
                   return Integer.compare(o1.getPointTotal(), o2.getPointTotal());
-               }});
+               }
+            });
             for (Character character : chars) {
                System.out.println(convertCharacterToRow(character, false, maxRowsToUse));
             }
@@ -293,11 +294,12 @@ public class CharacterGeneratorTest implements Enums {
       List<Skill> skillsList = character.getSkillsList();
       int totalSkillCount = skillsList.size();
       // Sort the skills by highest skill level.
-      Collections.sort(skillsList, new Comparator<Skill>() {
+      Collections.sort(skillsList, new Comparator<>() {
          @Override
          public int compare(Skill o1, Skill o2) {
             return Byte.compare(o2.getLevel(), o1.getLevel());
-         }});
+         }
+      });
 
       Skill primaryWeaponSkill   = (weaponPrime == null) ? null : character.getBestSkill(weaponPrime);
       Skill secondaryWeaponSkill =   (weaponAlt == null) ? null : character.getBestSkill(weaponAlt);
@@ -750,7 +752,7 @@ public class CharacterGeneratorTest implements Enums {
             }
          }
          // list the attack types corresponding to the higher skill level first:
-         Collections.sort(this.styleList, new Comparator<WeaponStyleDesc>() {
+         Collections.sort(this.styleList, new Comparator<>() {
             @Override
             public int compare(WeaponStyleDesc o1, WeaponStyleDesc o2) {
                if (o1.style._skillType.getName().equals(o2.style._skillType.getName())) {
@@ -762,7 +764,8 @@ public class CharacterGeneratorTest implements Enums {
                   return 0;
                }
                return l1 > l2 ? -1 : 1;
-            }});
+            }
+         });
          // unarmed skills need to also list the damage from kicks:
          if (!(this.weapon.isReal() || (this.limbType != LimbType.HAND_RIGHT))) {
             Limb leg = this.character.getLimb(LimbType.LEG_RIGHT);

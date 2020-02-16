@@ -2848,7 +2848,7 @@ public class AI implements Enums
             int index = options[i].indexOf("(TN=");
             if (index != -1) {
                String tn = options[i].substring(index + "(TN=".length()).replace(')', ' ').trim();
-               int tnVal = Integer.valueOf(tn);
+               int tnVal = Integer.parseInt(tn);
                int adjTnVal = tnVal;
                int action = defOptions[i].getDefenseActionsUsed();
                if (defOptions[i].contains(DefenseOption.DEF_RIGHT)) {

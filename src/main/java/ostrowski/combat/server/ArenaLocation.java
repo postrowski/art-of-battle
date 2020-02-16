@@ -464,8 +464,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    }
 
    public static boolean canMoveBetween(ArenaLocation fromLoc, ArenaLocation toLoc, boolean blockByCharacters) {
-      boolean canMove1 = fromLoc.canExit(toLoc) && toLoc.canEnter(fromLoc, blockByCharacters);
-      return canMove1;
+      return fromLoc.canExit(toLoc) && toLoc.canEnter(fromLoc, blockByCharacters);
    }
    public boolean canExit(ArenaCoordinates toCoord) {
       if (toCoord == null) {

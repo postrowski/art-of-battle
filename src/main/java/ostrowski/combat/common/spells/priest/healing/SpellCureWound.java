@@ -55,7 +55,7 @@ public class SpellCureWound extends PriestSpell implements ICastInBattle
    }
    @Override
    public void applyEffects(Arena arena) {
-      SortedSet<Wound> sortedWounds = new TreeSet<>(new Comparator<Wound>() {
+      SortedSet<Wound> sortedWounds = new TreeSet<>(new Comparator<>() {
          @Override
          public int compare(Wound wound1, Wound wound2) {
             if ((wound1.getPenaltyMove() == -1) == (wound2.getPenaltyMove() == -1)) {
@@ -65,13 +65,7 @@ public class SpellCureWound extends PriestSpell implements ICastInBattle
                         if (wound1.getWounds() == wound2.getWounds()) {
                            if (wound1.getPenaltyMove() == wound2.getPenaltyMove()) {
                               if (wound1.getBleedRate() == wound2.getBleedRate()) {
-                                 if (wound1.getLevel() == wound2.getLevel()) {
-                                    return 0;
-                                 }
-                                 if (wound1.getLevel() < wound2.getLevel()) {
-                                    return -1;
-                                 }
-                                 return 1;
+                                 return Byte.compare(wound1.getLevel(), wound2.getLevel());
                               }
                               if (wound1.getBleedRate() < wound2.getBleedRate()) {
                                  return -1;

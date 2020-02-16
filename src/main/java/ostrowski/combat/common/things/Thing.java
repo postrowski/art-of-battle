@@ -25,7 +25,6 @@ import ostrowski.protocol.SerializableObject;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Comparator;
 
@@ -144,8 +143,7 @@ public abstract class Thing extends SerializableObject implements Cloneable, Enu
          int damage = 5 + (power * 5);
          WeaponStyleAttack style = new WeaponStyleAttackThrown(0/*minSkill*/, 0/*penalty*/, damage, DieType.D6, DamageType.FIRE, 12/*rangeBase*/,  1/*hands*/);
          // Give it a non-zero cost, so it will not quality as not being real
-         Weapon fireball = new Weapon(-power/*size*/, racialBase, 0/*lbs*/, 1/*$*/, thingName, new WeaponStyle[] {style});
-         return fireball;
+         return new Weapon(-power/*size*/, racialBase, 0/*lbs*/, 1/*$*/, thingName, new WeaponStyle[] {style});
       }
 
       if (allowTool) {

@@ -175,8 +175,7 @@ public class RequestArenaEntrance extends SyncRequest
       }
    }
    public List<TeamMember> getCharacterNamesByTeam(Byte team) {
-      List<TeamMember> characterNames = new ArrayList<>(_mapTeamToListTeamMembers.get(team));
-      return characterNames;
+      return new ArrayList<>(_mapTeamToListTeamMembers.get(team));
    }
    public Byte getSelectedCharacterTeam() {
       int i = 0;

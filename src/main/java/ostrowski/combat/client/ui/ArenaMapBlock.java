@@ -18,7 +18,6 @@ import ostrowski.combat.server.CombatServer;
 import ostrowski.ui.Helper;
 import ostrowski.util.Diagnostics;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 

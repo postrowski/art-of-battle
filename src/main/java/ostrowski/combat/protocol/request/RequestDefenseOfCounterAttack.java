@@ -34,17 +34,9 @@ public class RequestDefenseOfCounterAttack extends RequestDefense implements Enu
    @Override
    public void serializeFromStream(DataInputStream in) {
       super.serializeFromStream(in);
-      try {
-      } catch (Exception e) {
-         e.printStackTrace();
-      }
    }
    @Override
    public void serializeToStream(DataOutputStream out) {
       super.serializeToStream(out);
-      try {
-      } catch (Exception e) {
-         e.printStackTrace();
-      }
    }
 }

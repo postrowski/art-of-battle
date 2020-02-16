@@ -127,9 +127,6 @@ public class OrientationSingleSpider extends OrientationSingleQuadraped
    }
    @Override
    public boolean shouldDraw(Limb limb) {
-      if ((limb == null) || (limb.isSevered())) {
-         return false;
-      }
-      return true;
+      return (limb != null) && (!limb.isSevered());
    }
 }

@@ -367,8 +367,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    }
 
    public List<Skill> getSkillsList() {
-      List<Skill> skills = new ArrayList<>(_skillsList.values());
-      return skills;
+      return new ArrayList<>(_skillsList.values());
    }
 
    public void setSkillsList(List<Skill> newSkills) {
@@ -1562,28 +1561,28 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          }
          // Sort the list for the order to show in the options list
          List<Limb> sortedLimbs = _limbs.values().stream()
-                  .sorted(new Comparator<Limb>() {
-            @Override
-            public int compare(Limb limbA, Limb limbB) {
-               LimbType limbAtype = limbA._limbType;
-               LimbType limbBtype = limbB._limbType;
-               if (limbA == limbB) {
-                  return 0;
-               }
-               if ((limbAtype.isHead() && !limbBtype.isHead()) ||
-                   (limbAtype.isHand() && !limbBtype.isHand()) ||
-                   (limbAtype.isWing() && !limbBtype.isWing()) ||
-                   (limbAtype.isBody() && !limbBtype.isBody()) ||
-                   (limbAtype.isTail() && !limbBtype.isTail()) ||
-                   (limbAtype.isLeg()  && !limbBtype.isLeg())) {
-                  return -1;
-               }
-               if (((limbAtype.side == Side.RIGHT) && (limbBtype.side != Side.RIGHT))) {
-                  return -1;
-               }
-               return Integer.compare(limbAtype.setId, limbBtype.setId);
-            }
-         }).collect(Collectors.toList());
+                  .sorted(new Comparator<>() {
+                     @Override
+                     public int compare(Limb limbA, Limb limbB) {
+                        LimbType limbAtype = limbA._limbType;
+                        LimbType limbBtype = limbB._limbType;
+                        if (limbA == limbB) {
+                           return 0;
+                        }
+                        if ((limbAtype.isHead() && !limbBtype.isHead()) ||
+                            (limbAtype.isHand() && !limbBtype.isHand()) ||
+                            (limbAtype.isWing() && !limbBtype.isWing()) ||
+                            (limbAtype.isBody() && !limbBtype.isBody()) ||
+                            (limbAtype.isTail() && !limbBtype.isTail()) ||
+                            (limbAtype.isLeg() && !limbBtype.isLeg())) {
+                           return -1;
+                        }
+                        if (((limbAtype.side == Side.RIGHT) && (limbBtype.side != Side.RIGHT))) {
+                           return -1;
+                        }
+                        return Integer.compare(limbAtype.setId, limbBtype.setId);
+                     }
+                  }).collect(Collectors.toList());
          for (Limb limb : sortedLimbs) {
             // adjust the listed distance of each of our limb locations
             if (target != null) {
@@ -2830,9 +2829,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
 
          TreeSet<DefenseOptions> defActions = mapActionsToDefActions.get(actions);
          if (defActions != null) {
-            Iterator<DefenseOptions> iter = defActions.iterator();
-            while (iter.hasNext()) {
-               DefenseOptions defAction = iter.next();
+            for (DefenseOptions defAction : defActions) {
                addDefenseOption(req, defAction, availActions, attackingWeaponsParryPenalty, range, minDistance, attack);
             }
          }
@@ -4275,8 +4272,10 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                }
             }
          }
-         else if ((child.getNodeName().equals("Skills")) || (child.getNodeName().equals("Spells")) || (child.getNodeName().equals("Colleges"))
-                  || (child.getNodeName().equals("Advantages"))) {
+         else if ((child.getNodeName().equals("Skills")) ||
+                  (child.getNodeName().equals("Spells")) ||
+                  (child.getNodeName().equals("Colleges")) ||
+                  (child.getNodeName().equals("Advantages"))) {
             // These elements all have children below, that have a similar structure: <??? level="?" Name="?"/>
             NodeList grandChildren = child.getChildNodes();
             for (int i = 0; i < grandChildren.getLength(); i++) {
@@ -4464,12 +4463,10 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          factory.setValidating(validating);
 
          // Create the builder and parse the file
-         Document doc = factory.newDocumentBuilder().parse(sourceFile);
-         return doc;
+         return factory.newDocumentBuilder().parse(sourceFile);
       } catch (SAXException e) {
          // A parsing error occurred; the xml input is not valid
-      } catch (ParserConfigurationException e) {
-      } catch (IOException e) {
+      } catch (ParserConfigurationException | IOException e) {
       }
       return null;
    }
@@ -5605,8 +5602,8 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       if (RequestSpellTypeSelection.SPELL_TYPE_MAGE.equals(spellType)) {
          return new RequestSpellSelection(_knownMageSpellsList, this);
       }
-      String deity = spellType;
-      return new RequestSpellSelection(PriestSpell.getSpellsForDeity(deity, getAffinity(deity), true/*addNullBetweenGroups*/), this);
+      return new RequestSpellSelection(PriestSpell.getSpellsForDeity(spellType, getAffinity(spellType),
+                                                                     true/*addNullBetweenGroups*/), this);
    }
 
    public void completeTurn(Arena arena) {

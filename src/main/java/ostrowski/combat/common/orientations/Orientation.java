@@ -166,14 +166,12 @@ public abstract class Orientation extends SerializableObject implements Enums, C
    {
       List<Limb> limbs = character.getLimbs();
       List<ArenaLocation> newLocs = new ArrayList<>();
-      List<Byte> newFacingTwists = new ArrayList<>();
       List<Facing> newFacings = new ArrayList<>();
       if (facing == null) {
          DebugBreak.debugBreak();
          return null;
       }
       newFacings.add(facing);
-      newFacingTwists.add((byte) 0);
 
       for (Limb limb : limbs) {
          boolean locValid = false;
@@ -186,7 +184,6 @@ public abstract class Orientation extends SerializableObject implements Enums, C
                   }
                   newLocs.add(limbLoc);
                   newFacings.add(facing.turn(twist));
-                  newFacingTwists.add(twist);
                }
                // if this location is already in the list of locations, its a valid location.
                locValid = true;
