@@ -312,9 +312,9 @@ public class DrawnObject
 
      if( dyLine == 0 ) {
         // These are parallel lines, so they meet at all overlapping points, or never at all.
-        if (p1.y == y) {
-           //throw new MultipleIntersectionException();
-        }
+//        if (p1.y == y) {
+//           throw new MultipleIntersectionException();
+//        }
         return null;
      }
 

@@ -685,29 +685,28 @@ public class Condition extends SerializableObject implements Enums {
 
    @Override
    public String toString() {
-      StringBuilder sb = new StringBuilder();
-      sb.append(", actionsAvailable: ").append(_actionsAvailable);
-      sb.append(", pain: ").append(_penaltyPain);
-      sb.append(", wounds: ").append(_wounds);
-      sb.append(", bleed: ").append(_bleedRate);
-      sb.append(", movePenalty: ").append(_penaltyMove);
-      sb.append(", actionsSpent: ").append(_actionsSpentThisRound);
-      sb.append(", initiative: ").append(_initiative);
-      sb.append(", attackedThisRound: ").append(_attackedThisRound);
-      sb.append(", defensesOptionsTakenThisRound: ").append(_defenseOptionsTakenThisRound);
-      sb.append(", movementAvailableThisRound: ").append(_movementAvailableThisRound);
-      sb.append(", movementAvailableEachRound:").append(_movementAvailableEachRound);
-      sb.append(", moveComplete: ").append(_moveComplete);
-      sb.append(", movingEvasively:").append(_movingEvasively);
-      sb.append(", collapsed: ").append(_collapsed);
-      sb.append(", isConscious: ").append(_isConscious);
-      sb.append(", isAlive: ").append(_isAlive);
-      sb.append(", mageSpellPointsAvailable: ").append(_mageSpellPointsAvailable);
-      sb.append(", mageSpellPointsMax: ").append(_mageSpellPointsMax);
-      sb.append(", priestSpellPointsAvailable: ").append(_priestSpellPointsAvailable);
-      sb.append(", priestSpellPointsMax: ").append(_priestSpellPointsMax);
-      sb.append(", orientation: ").append(_orientation);
-      return sb.toString();
+      String sb = ", actionsAvailable: " + _actionsAvailable +
+                  ", pain: " + _penaltyPain +
+                  ", wounds: " + _wounds +
+                  ", bleed: " + _bleedRate +
+                  ", movePenalty: " + _penaltyMove +
+                  ", actionsSpent: " + _actionsSpentThisRound +
+                  ", initiative: " + _initiative +
+                  ", attackedThisRound: " + _attackedThisRound +
+                  ", defensesOptionsTakenThisRound: " + _defenseOptionsTakenThisRound +
+                  ", movementAvailableThisRound: " + _movementAvailableThisRound +
+                  ", movementAvailableEachRound:" + _movementAvailableEachRound +
+                  ", moveComplete: " + _moveComplete +
+                  ", movingEvasively:" + _movingEvasively +
+                  ", collapsed: " + _collapsed +
+                  ", isConscious: " + _isConscious +
+                  ", isAlive: " + _isAlive +
+                  ", mageSpellPointsAvailable: " + _mageSpellPointsAvailable +
+                  ", mageSpellPointsMax: " + _mageSpellPointsMax +
+                  ", priestSpellPointsAvailable: " + _priestSpellPointsAvailable +
+                  ", priestSpellPointsMax: " + _priestSpellPointsMax +
+                  ", orientation: " + _orientation;
+      return sb;
    }
    public void collapseFromPain(CombatMap map, Character actor)
    {
@@ -877,6 +876,7 @@ public class Condition extends SerializableObject implements Enums {
       mainElement.setAttribute("movingEvasively",               String.valueOf(_movingEvasively));
       mainElement.setAttribute("movedLastAction",               String.valueOf(_movedLastAction));
       mainElement.setAttribute("collapsed",                     String.valueOf(_collapsed));
+      mainElement.setAttribute("penaltyPain",                   String.valueOf(_penaltyPain));
       mainElement.setAttribute("isConscious",                   String.valueOf(_isConscious));
       mainElement.setAttribute("isAlive",                       String.valueOf(_isAlive));
       mainElement.setAttribute("priestSpellPointsMax",          String.valueOf(_priestSpellPointsMax));
@@ -922,6 +922,7 @@ public class Condition extends SerializableObject implements Enums {
       _movingEvasively               = Boolean.parseBoolean(attributes.getNamedItem("movingEvasively").getNodeValue());
       _movedLastAction               = Boolean.parseBoolean(attributes.getNamedItem("movedLastAction").getNodeValue());
       _collapsed                     = Boolean.parseBoolean(attributes.getNamedItem("collapsed").getNodeValue());
+      _penaltyPain                   = Byte.parseByte(attributes.getNamedItem("penaltyPain").getNodeValue());
       _isConscious                   = Boolean.parseBoolean(attributes.getNamedItem("isConscious").getNodeValue());
       _isAlive                       = Boolean.parseBoolean(attributes.getNamedItem("isAlive").getNodeValue());
       _priestSpellPointsMax          = Short.parseShort(attributes.getNamedItem("priestSpellPointsMax").getNodeValue());

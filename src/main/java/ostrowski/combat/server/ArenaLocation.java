@@ -40,7 +40,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    private             HashSet<Integer>                   _viewedBy                  = new HashSet<>();
    public              HashMap<Integer, ArenaCoordinates> _visibleToCharacterFromLoc = new HashMap<>();
    private             String                             _label                     = null;
-   transient           MonitoredObject                    _monitoredProxy            = null;
+   transient           MonitoredObject                    _monitoredProxy;
    private             boolean                            _selectable                = true;
    public static final String                             PICKUP                     = "pickup ";
 
@@ -384,14 +384,13 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
                String objID = SerializableObject.readString(in);
                if (objID.equals("ObjStr")) {
                   String object = readString(in);
-                  Weapon weap = Weapon.getWeapon(object, null);
-                  if (weap.isUnarmedStyle()) {
-                     if (object != null) {
+                  Weapon weap = Weapons.getWeapon(object, null);
+                  if (weap != null) {
+                     if (weap.isUnarmedStyle()) {
                         _things.add(object);
+                     } else {
+                        _things.add(weap);
                      }
-                  }
-                  else {
-                     _things.add(weap);
                   }
                }
                else if (objID.equals("ObjChr")) {
@@ -576,7 +575,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
          return 100;
       }
 
-      byte entryCost = 0;
+      byte entryCost;
       if (canEnter(fromLoc, true/*blockByCharacters*/)) {
          boolean isPenalizedInWater = mover.isPenalizedInWater();
          if (_terrain.isWater && !isPenalizedInWater) {

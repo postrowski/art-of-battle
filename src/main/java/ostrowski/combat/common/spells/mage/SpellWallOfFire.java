@@ -12,6 +12,7 @@ import ostrowski.combat.common.spells.IAreaSpell;
 import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.wounds.Wound;
 import ostrowski.combat.common.wounds.WoundChart;
+import ostrowski.combat.common.wounds.WoundCharts;
 import ostrowski.combat.server.Arena;
 import ostrowski.combat.server.ArenaCoordinates;
 import ostrowski.combat.server.ArenaLocation;
@@ -37,10 +38,9 @@ public class SpellWallOfFire extends ExpiringMageSpell implements IAreaSpell, IC
    @Override
    public String describeEffects(Character defender, boolean firstTime) {
       if (firstTime) {
-         StringBuilder sb = new StringBuilder();
-         sb.append(getCasterName()).append(" creates a wall of fire (level ").append(getPower());
-         sb.append("), with a radius equal to the casting power of ").append(getPower());
-         return sb.toString();
+         String sb = getCasterName() + " creates a wall of fire (level " + getPower() +
+                     "), with a radius equal to the casting power of " + getPower();
+         return sb;
       }
       return null;
    }
@@ -123,16 +123,21 @@ public class SpellWallOfFire extends ExpiringMageSpell implements IAreaSpell, IC
       return getPower();
    }
 
-   private static final HashMap<Character, Integer> timeInHexPerCharacter = new HashMap<>();
+   private final HashMap<Character, Integer> timeInHexPerCharacter = new HashMap<>();
    private void applyDamage(Character charToTakeDamage) {
       Integer timeInHex = timeInHexPerCharacter.remove(charToTakeDamage);
-      if (timeInHex > 3) {
+      if (timeInHex == null) {
+         timeInHex = 1;
+      }
+      else if (timeInHex > 3) {
          timeInHex = 3;
       }
       StringBuilder sb = new StringBuilder();
       // roll 1d6 per time in hex
       DiceSet damageDice = new DiceSet(0, 0, timeInHex, 0, 0, 0, 0, 0/*dBell*/, 1.0);
-      int damage = damageDice.roll(true/*allowExplodes*/, getCaster(), RollType.DAMAGE_SPELL);
+      String rollMessage = getCasterName() + ", " + charToTakeDamage.getName() + " is in the area of effect of your " +
+                           getName() + " spell, roll damage.";
+      int damage = damageDice.roll(true/*allowExplodes*/, getCaster(), RollType.DAMAGE_SPELL, rollMessage);
       sb.append("Damage rolled is ").append(damageDice);
       sb.append(", rolling ").append(damageDice.getLastDieRoll());
       sb.append(", for a total of ").append(damage).append(" fire damage.<br/>");
@@ -152,7 +157,7 @@ public class SpellWallOfFire extends ExpiringMageSpell implements IAreaSpell, IC
       else {
          sb.append(", reducing the damage to ").append(reducedDamage).append("<br/>");
 
-         Wound wound = WoundChart.getWound(reducedDamage, DamageType.FIRE, charToTakeDamage, alterationExplanationBuffer);
+         Wound wound = WoundCharts.getWound(reducedDamage, DamageType.FIRE, charToTakeDamage, alterationExplanationBuffer);
          sb.append(charToTakeDamage.getName()).append(" suffers the following wound:<br/>");
          sb.append(wound.describeWound());
          if (alterationExplanationBuffer.length() > 0) {

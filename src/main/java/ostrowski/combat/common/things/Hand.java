@@ -50,12 +50,12 @@ public class Hand extends Limb {
    @Override
    public boolean setHeldThing(Thing thing, Character self) {
       if (thing != null) {
-         if (thing.getRacialBase() == null) {
-            //DebugBreak.debugBreak(thing.getName() + "Thing has no racial base.");
-         }
-         else if (!self.getRace().getName().equals(thing.getRacialBase().getName())) {
-           // Rules.debugBreak();
-         }
+//         if (thing.getRacialBase() == null) {
+//            //DebugBreak.debugBreak(thing.getName() + "Thing has no racial base.");
+//         }
+//         else if (!self.getRace().getName().equals(thing.getRacialBase().getName())) {
+//           // Rules.debugBreak();
+//         }
          if (thing.getName().equals(Weapon.NAME_KarateKick)) {
             DebugBreak.debugBreak();
          }
@@ -99,14 +99,10 @@ public class Hand extends Limb {
          }
       }
       Hand otherHand = (Hand) self.getLimb(_limbType.getPairedType());
-      if (otherHand._heldThing != null) {
-         if (otherHand._heldThing instanceof Weapon) {
-            Weapon otherHandWeapon = (Weapon) otherHand._heldThing;
-            if (otherHandWeapon != null) {
-               if (otherHandWeapon.isOnlyTwoHanded()) {
-                  otherHand.setActionsNeededToReady((byte) 1);
-               }
-            }
+      if ((otherHand._heldThing != null) && (otherHand._heldThing instanceof Weapon)) {
+         Weapon otherHandWeapon = (Weapon) otherHand._heldThing;
+         if ((otherHandWeapon != null) && (otherHandWeapon.isOnlyTwoHanded())) {
+            otherHand.setActionsNeededToReady((byte) 1);
          }
       }
 
@@ -116,29 +112,25 @@ public class Hand extends Limb {
    public byte getPreparedState() { return _preparedState; }
    public void setPreparedState(byte state) { _preparedState = state; }
    public void prepareState(byte actions) {
-      if (_heldThing != null) {
-         if (_heldThing instanceof Weapon) {
-            _preparedState -= actions;
-            if (_preparedState < 0) {
-               _preparedState = 0;
-            }
+      if ((_heldThing != null) && _heldThing instanceof Weapon) {
+         _preparedState -= actions;
+         if (_preparedState < 0) {
+            _preparedState = 0;
          }
       }
    }
    public String getWeaponPrepareState() {
-      if (_heldThing != null) {
-         if (_heldThing instanceof Weapon) {
-            Weapon weap = (Weapon)_heldThing;
-            WeaponStyleAttackRanged rangedStyle;
-            if (_heldThing instanceof MissileWeapon) {
-               rangedStyle = (WeaponStyleAttackRanged)weap.getAttackStyle(0);
-            }
-            else {
-               rangedStyle = weap.getThrownAttackStyle();
-            }
-            if (rangedStyle != null) {
-               return rangedStyle.getPreparationStepName(weap.getName(), _preparedState);
-            }
+      if ((_heldThing != null) && _heldThing instanceof Weapon) {
+         Weapon weap = (Weapon)_heldThing;
+         WeaponStyleAttackRanged rangedStyle;
+         if (_heldThing instanceof MissileWeapon) {
+            rangedStyle = (WeaponStyleAttackRanged)weap.getAttackStyle(0);
+         }
+         else {
+            rangedStyle = weap.getThrownAttackStyle();
+         }
+         if (rangedStyle != null) {
+            return rangedStyle.getPreparationStepName(weap.getName(), _preparedState);
          }
       }
       return "";
@@ -178,7 +170,7 @@ public class Hand extends Limb {
       if (_heldThing == null) {
          if (self != null) {
             if (self.getRace().hasProperty(Race.PROPERTIES_CLAWS)) {
-               return Weapon.getWeapon(Weapon.NAME_Claws, self.getRace());
+               return Weapons.getWeapon(Weapon.NAME_Claws, self.getRace());
             }
             if (self.hasAdvantage(Race.PROPERTIES_0_ARMS)) {
                //Rules.debugBreak();
@@ -197,7 +189,7 @@ public class Hand extends Limb {
                }
             }
          }
-         return Weapon.getWeapon(Weapon.NAME_Punch, self.getRace());
+         return Weapons.getWeapon(Weapon.NAME_Punch, self.getRace());
       }
       if (_heldThing instanceof Weapon) {
          return (Weapon) _heldThing;
@@ -408,7 +400,7 @@ public class Hand extends Limb {
                }
             }
          }
-         Weapon punch = Weapon.getWeapon(Weapon.NAME_Punch, defender.getRace());
+         Weapon punch = Weapons.getWeapon(Weapon.NAME_Punch, defender.getRace());
 
          WeaponStyleParry[] parrySkills = punch.getParryStyles();
          byte bestLevel = -1;
@@ -465,7 +457,7 @@ public class Hand extends Limb {
          if (_attackedThisRound) {
             return false;
          }
-         Weapon punch = Weapon.getWeapon(Weapon.NAME_Punch, defender.getRace());
+         Weapon punch = Weapons.getWeapon(Weapon.NAME_Punch, defender.getRace());
          for (WeaponStyleCounterAttack parrySkill : punch._counterattackStyles) {
             if (parrySkill.getName().toLowerCase().contains("grab") == grab) {
                SkillType styleType = parrySkill.getSkillType();
@@ -593,7 +585,7 @@ public class Hand extends Limb {
              (character.getSkillLevel(SkillType.Boxing, null, false/*sizeAdjust*/, false/*adjustForEncumbrance*/, false/*adjustForHolds*/) != 0) ||
              (character.getSkillLevel(SkillType.Brawling, null, false/*sizeAdjust*/, false/*adjustForEncumbrance*/, false/*adjustForHolds*/) != 0) ||
              (character.getSkillLevel(SkillType.Wrestling, null, false/*sizeAdjust*/, false/*adjustForEncumbrance*/, false/*adjustForHolds*/) != 0);
-//      Weapon punch = Weapon.getWeapon("punch");
+//      Weapon punch = Weapons.getWeapon("punch");
 //      return punch.getActiveDefenseName().equals("parry");
    }
    public static byte getHandIndex(Pair armPair, Side armSide)

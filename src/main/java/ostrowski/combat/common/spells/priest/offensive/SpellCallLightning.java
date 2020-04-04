@@ -10,6 +10,7 @@ import ostrowski.combat.common.spells.priest.IPriestGroup;
 import ostrowski.combat.common.spells.priest.PriestSpell;
 import ostrowski.combat.common.wounds.Wound;
 import ostrowski.combat.common.wounds.WoundChart;
+import ostrowski.combat.common.wounds.WoundCharts;
 import ostrowski.combat.server.Arena;
 import ostrowski.combat.server.BattleTerminatedException;
 
@@ -75,7 +76,8 @@ public class SpellCallLightning extends PriestSpell implements IRangedSpell, ICa
             case 7: sb.append("<br/>The eigth bolt rolls a ");   break;
          }
          DiceSet dice = new DiceSet(0, 0, 0, 0, 0, 1, 0, 0/*dBell*/, 1.0);
-         int roll = dice.roll(false/*allowExplodes*/, getCaster(), RollType.SPELL_CASTING);
+         String rollMessage = getCasterName() + ", roll to cast your " + this.getName() + " spell.";
+         int roll = dice.roll(false/*allowExplodes*/, getCaster(), RollType.SPELL_CASTING, rollMessage);
          sb.append(dice.getLastDieRoll());
          Character hitCharacter = null;
          if (roll <= getCastingLevel()) {
@@ -85,7 +87,8 @@ public class SpellCallLightning extends PriestSpell implements IRangedSpell, ICa
          else {
             sb.append(" which is above ").append(getCaster().getHisHer()).append(" affinity level of ").append(getCastingLevel()).append(" so the bolt misses the target.");
             DiceSet distDice = new DiceSet("1d4");
-            int distance = distDice.roll(false/*allowExplodes*/, getCaster(), RollType.SPELL_CASTING);
+            rollMessage = getCasterName() + ", roll to see how far from your target the bolt lands (in hexes).";
+            int distance = distDice.roll(false/*allowExplodes*/, getCaster(), RollType.SPELL_CASTING, rollMessage);
             sb.append(" a d4 is rolled, rolling a ").append(distance);
             List<Character> charsAtRange =  new ArrayList<>();
             for (Character other : arena.getCombatants()) {
@@ -124,7 +127,9 @@ public class SpellCallLightning extends PriestSpell implements IRangedSpell, ICa
                if (distance == 4) {
                   targetDice = new DiceSet("1d20");
                }
-               int targetIndex = targetDice.roll(false/*allowExplodes*/, getCaster(), RollType.SPELL_CASTING);
+               rollMessage = "There are " + charsAtRange.size() + " characters at that distance. Roll less than or equal to " +
+                         charsAtRange.size() + " on a " + targetDice.toString() + " to hit one of them.";
+               int targetIndex = targetDice.roll(false/*allowExplodes*/, getCaster(), RollType.SPELL_CASTING, rollMessage);
                sb.append("<br/>Rolls a ").append(targetDice);
                sb.append(", rolling ").append(targetDice.getLastDieRoll());
                if (charsAtRange.size() < targetIndex) {
@@ -149,7 +154,8 @@ public class SpellCallLightning extends PriestSpell implements IRangedSpell, ICa
             }
             else {
                damageDice = getCaster().adjustDieRoll(damageDice, RollType.DAMAGE_SPELL, hitCharacter/*target*/);
-               int damage = damageDice.roll(true/*allowExplodes*/, getCaster(), RollType.DAMAGE_SPELL);
+               rollMessage = getCasterName() + ", roll for damage from your " + getName() + " spell.";
+               int damage = damageDice.roll(true/*allowExplodes*/, getCaster(), RollType.DAMAGE_SPELL, rollMessage);
                sb.append(" Damage rolled is ").append(damageDice);
                sb.append(", rolling ").append(damageDice.getLastDieRoll());
                sb.append(", for a total of ").append(damage).append(" electrical damage.<br/>");
@@ -165,7 +171,7 @@ public class SpellCallLightning extends PriestSpell implements IRangedSpell, ICa
                   sb.append(", reducing the damage to ").append(reducedDamage).append("<br/>");
 
                   StringBuilder alterationExplanationBuffer = new StringBuilder();
-                  Wound wound = WoundChart.getWound(reducedDamage, DamageType.ELECTRIC, hitCharacter, alterationExplanationBuffer);
+                  Wound wound = WoundCharts.getWound(reducedDamage, DamageType.ELECTRIC, hitCharacter, alterationExplanationBuffer);
                   sb.append(hitCharacter.getName()).append(" suffers the following wound:<br/>");
                   sb.append(wound.describeWound());
                   if (alterationExplanationBuffer.length() > 0) {

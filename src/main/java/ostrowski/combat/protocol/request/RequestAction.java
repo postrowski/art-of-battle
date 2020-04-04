@@ -216,7 +216,6 @@ public class RequestAction extends SyncRequest implements Enums
                   if (target != null) {
                      HashMap<Orientation, List<Orientation>> mapOrientationToNextOrientationsLeadingToChargeAttack = new HashMap<>();
                      List<Orientation> validDestinations = new ArrayList<>();
-                     List<Orientation> orientationsThatCanAttack = new ArrayList<>();
                      HashMap<Orientation, Orientation> mapOfFutureOrientToSourceOrient = new HashMap<>();
                      actor.getOrientation().getPossibleChargePathsToTarget(arena.getCombatMap(), actor, target,
                                                                            actor.getAvailableMovement(false/*movingEvasively*/),
@@ -227,11 +226,8 @@ public class RequestAction extends SyncRequest implements Enums
                            for (Orientation orient : destOrientationList) {
                               validDestinations.add(orient);
                               List<Orientation> nextOrients = mapOrientationToNextOrientationsLeadingToChargeAttack.get(orient);
-                              if (nextOrients == null) {
+                              if (nextOrients != null) {
                                  // this orientation has no place to move forward, so it must be able to attack the target from here
-                                 orientationsThatCanAttack.add(orient);
-                              }
-                              else {
                                  for (Orientation nextOrient : nextOrients) {
                                     mapOfFutureOrientToSourceOrient.put(nextOrient, orient);
                                  }
@@ -423,8 +419,9 @@ public class RequestAction extends SyncRequest implements Enums
    public byte getAttackActions(boolean considerSpellAsAttack) { return ((RequestActionOption)_answer).getValue().getAttackActions(considerSpellAsAttack); }
    public byte getActionsUsed()
    {
-      return ((RequestActionOption)_answer).getValue().getActionsUsed((_equipmentRequest != null) ?
-                                                                                                   _equipmentRequest.getActionsUsed() : 1);
+      return ((RequestActionOption)_answer).getValue()
+                                           .getActionsUsed((_equipmentRequest != null) ?
+                                                           _equipmentRequest.getActionsUsed() : 1);
    }
    public String getActionDescription(Character actor, Character target, Arena arena) {
       switch (((RequestActionOption)_answer).getValue()) {
@@ -451,7 +448,7 @@ public class RequestAction extends SyncRequest implements Enums
          case OPT_READY_3                 :
          case OPT_READY_4                 :
          case OPT_READY_5                 : return actor.getName() + " readies "+actor.getHisHer()+" " + actor.getLimb(getLimb()).getHeldThingName() + "("+getActionsUsed()+"-actions).";
-         case OPT_ON_GAURD                  : return actor.getName() + " remains poised, on gaurd.";
+         case OPT_ON_GAURD                : return actor.getName() + " remains poised, on gaurd.";
          case OPT_FINAL_DEFENSE_1         :
          case OPT_FINAL_DEFENSE_2         :
          case OPT_FINAL_DEFENSE_3         :
@@ -556,19 +553,18 @@ public class RequestAction extends SyncRequest implements Enums
    @Override
    public String toString()
    {
-      StringBuilder sb = new StringBuilder(super.toString());
-      sb.append(", actorID = ").append(_actorID);
-      sb.append(", equReq = ").append(_equipmentRequest);
-      sb.append(", movReq = ").append(_movementRequest);
-      sb.append(", posReq = ").append(_positionRequest);
-      sb.append(", styReq = ").append(_styleRequest);
-      sb.append(", targetPriorities = ").append(_targetPriorities);
-      sb.append(", spellTypeSelectionRequest = ").append(_spellTypeSelectionRequest);
-      sb.append(", spellSelectionRequest = ").append(_spellSelectionRequest);
-      sb.append(", targetSelection = ").append(_targetSelection);
-      sb.append(", targetID = ").append(_targetID);
-      sb.append(", hand = ").append(_limbType);
-      return sb.toString();
+      String sb = super.toString() + ", actorID = " + _actorID +
+                  ", equReq = " + _equipmentRequest +
+                  ", movReq = " + _movementRequest +
+                  ", posReq = " + _positionRequest +
+                  ", styReq = " + _styleRequest +
+                  ", targetPriorities = " + _targetPriorities +
+                  ", spellTypeSelectionRequest = " + _spellTypeSelectionRequest +
+                  ", spellSelectionRequest = " + _spellSelectionRequest +
+                  ", targetSelection = " + _targetSelection +
+                  ", targetID = " + _targetID +
+                  ", hand = " + _limbType;
+      return sb;
    }
 
    public RANGE getRange(Character attacker, short distanceInHexes) {
@@ -592,7 +588,7 @@ public class RequestAction extends SyncRequest implements Enums
          }
       }
       WeaponStyleAttack attackingWeapon = getAttackStyle(attacker);
-      if ((attackingWeapon == null) || !(attackingWeapon instanceof WeaponStyleAttackRanged)) {
+      if (!(attackingWeapon instanceof WeaponStyleAttackRanged)) {
          return RANGE.OUT_OF_RANGE;
       }
       WeaponStyleAttackRanged rangedAttack = (WeaponStyleAttackRanged) attackingWeapon;

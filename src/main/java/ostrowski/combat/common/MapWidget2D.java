@@ -33,7 +33,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
 
    private final Canvas     _canvas;
 
-   private static ImageData ZOOM_CONTROL_IMAGE_DATA  = null;
+   private static ImageData ZOOM_CONTROL_IMAGE_DATA;
    private static Image     ZOOM_CONTROL_IMAGE       = null;
 
    private static Point     ZOOM_IN_BUTTON_CENTER    = null;
@@ -831,7 +831,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
             }
          }
       }
-      int background = 0xffffff;
+      int background;
       if (character != null) {
          byte teamId = character._teamID;
          if (!character.stillFighting()) {
@@ -906,8 +906,8 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
          int newBlue  = (((background & 0x0000ff) *3)/4) & 0x0000ff;
          background = newRed + newGreen + newBlue;
       }
-      Color bgColor = null;
-      Color fgColor = null;
+      Color bgColor;
+      Color fgColor;
       if (cachedColorsMap != null) {
          bgColor = cachedColorsMap.get(background);
          fgColor = cachedColorsMap.get(foreground);
@@ -942,7 +942,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
 //         gc.setBackgroundPattern(new Pattern(display, dither));
 //         gc.setForegroundPattern(new Pattern(display, dither));
 
-         Pattern notCurrentlyVisibleFillPattern = null;
+         Pattern notCurrentlyVisibleFillPattern;
          if (cachedPatternMap != null) {
             notCurrentlyVisibleFillPattern = cachedPatternMap.get(bgColor);
             if (notCurrentlyVisibleFillPattern == null) {

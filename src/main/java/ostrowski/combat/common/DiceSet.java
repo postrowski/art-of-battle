@@ -3,7 +3,9 @@ package ostrowski.combat.common;
 import ostrowski.combat.common.enums.DieType;
 import ostrowski.combat.common.enums.Enums;
 import ostrowski.combat.protocol.DieRoll;
+import ostrowski.combat.protocol.request.RequestDieRoll;
 import ostrowski.combat.server.CombatServer;
+import ostrowski.combat.server.Configuration;
 import ostrowski.protocol.SerializableObject;
 
 import java.io.DataInputStream;
@@ -174,10 +176,25 @@ public class DiceSet extends SerializableObject implements Enums
       return (total * _multiplier) / 2.0;
    }
 
+   @Deprecated
    public int roll(boolean allowExplodes, Character actor, RollType rollType) {
+      return roll(allowExplodes, actor, rollType, null);
+   }
+   public int roll(boolean allowExplodes, Character actor, RollType rollType, String messageToRoller) {
       Map<DieType, List<List<Integer>>> results = new HashMap<>();
       int roll = roll(allowExplodes, results);
       if ((CombatServer._this != null) && (actor != null)) {
+         if (Configuration.rollDice() && messageToRoller != null && !messageToRoller.isEmpty()) {
+            RequestDieRoll requestDieRoll = new RequestDieRoll(messageToRoller, this, rollType);
+            CombatServer._this.getArena().sendObjectToCombatant(actor, requestDieRoll);
+            while (!requestDieRoll.isAnswered()) {
+               try {
+                  Thread.sleep(100);
+               } catch (InterruptedException e) {
+                  e.printStackTrace();
+               }
+            }
+         }
          DieRoll dieRoll = new DieRoll(actor, 0/*dieColor*/, allowExplodes, rollType, results);
          CombatServer._this.getArena().sendEventToAllClients(dieRoll);
       }
@@ -349,7 +366,7 @@ public class DiceSet extends SerializableObject implements Enums
          return false;
       }
       for (DieType dieType : DieType.values()) {
-         if (_diceCount.get(dieType) != other._diceCount.get(dieType)) {
+         if (!_diceCount.get(dieType).equals(other._diceCount.get(dieType))) {
             return false;
          }
       }
@@ -532,7 +549,7 @@ public class DiceSet extends SerializableObject implements Enums
          getAllowedDice();
       }
 
-      double difference = 1000;
+      double difference;
       double previousDifference = 1000;
       DiceSet previousDiceSet = null;
       for (DiceSet dice : _diceAllowed) {

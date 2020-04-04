@@ -267,10 +267,8 @@ public class Wound extends SerializableObject implements Enums, Cloneable
          }
       }
       if (((_wounds - _healedWounds) == 0) && ((_bleedRate - _healedBleedRate) == 0)) {
-         if ((_penaltyArm == -2) || (_penaltyMove == -2) ) {
-            // Severed limbs are not re-grown by a cureWound spell.
-         }
-         else {
+         // Severed limbs are not re-grown by a cureWound spell.
+         if ((_penaltyArm != -2) && (_penaltyMove != -2)) {
             // If all the wounds and bleeding have been stopped,
             // then the would is cured, so don't let any of the effect (crippling, etc.) continue to affect
             _effectsMask = 0;

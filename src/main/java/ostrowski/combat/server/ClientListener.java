@@ -12,7 +12,7 @@ import ostrowski.combat.common.Rules;
 public class ClientListener extends Thread
 {
    ServerSocket _serverSocket;
-   CombatServer _server               = null;
+   CombatServer _server;
    boolean      _keepRunning          = true;
    public ClientListener(CombatServer server) {
       _server = server;

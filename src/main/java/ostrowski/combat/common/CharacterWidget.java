@@ -32,7 +32,7 @@ public class CharacterWidget implements Enums, ModifyListener {
    private final DefenseBlock        _defenseBlock       = new DefenseBlock(this);
    private final DiceBlock           _diceBlock          = new DiceBlock(this);
    private final SkillsBlock         _skillsBlock        = new SkillsBlock(this);
-   private       MainBlock           _topBlock           = null;
+   private       MainBlock           _topBlock;
    private final WeaponBlock         _weaponBlock        = new WeaponBlock(this);
    private final EncumbranceBlock    _encumbranceBlock   = new EncumbranceBlock(this);
    private final SpellsBlock         _spellsBlock        = new SpellsBlock(this);

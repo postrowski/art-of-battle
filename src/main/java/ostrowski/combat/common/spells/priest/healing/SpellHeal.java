@@ -16,7 +16,6 @@ import java.util.List;
 
 public class SpellHeal extends SpellCureSeriousWound
 {
-   @SuppressWarnings("hiding")
    public static final String NAME = "Heal";
    public SpellHeal() {}
 

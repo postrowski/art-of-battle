@@ -75,7 +75,7 @@ public class WeaponBlock extends Helper implements ModifyListener, IUIBlock, Sel
          }
       }
       equipmentNames.add("---");
-      equipmentNames.addAll(Weapon.getWeaponNames(false/*includeNaturalWeapons*/));
+      equipmentNames.addAll(Weapons.getWeaponNames(false/*includeNaturalWeapons*/));
       equipmentNames.add("---");
       equipmentNames.addAll(Shield.getShieldNames());
       equipmentNames.add("---");
@@ -297,7 +297,7 @@ public class WeaponBlock extends Helper implements ModifyListener, IUIBlock, Sel
 
       Thing selectedEqu = Thing.getThing(_equipment[_selectedEqu].getText(), character.getRace());
       Weapon weap = null;
-      if ((selectedEqu != null) && (selectedEqu instanceof Weapon) && selectedEqu.isReal()){
+      if ((selectedEqu instanceof Weapon) && selectedEqu.isReal()){
          weap = (Weapon) selectedEqu;
       }
 

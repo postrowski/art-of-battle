@@ -29,12 +29,11 @@ public class SpellEarthquake extends ExpiringPriestSpell
       for (byte power=1 ; power<8 ; power++) {
          table.addRow(new TableRow(power-1, ""+power).addTD(new TableData(getEffects(power)).setAlignLeft()));
       }
-      StringBuilder sb = new StringBuilder();
-      sb.append("The '").append(getName()).append("' spell shakes the ground violently for a period of time.");
-      sb.append(" The effective power of the spell determines the duration and power of the shake.");
-      sb.append(" The GM determines what actual damage occurs, and may require characters to take action to avoid being hit by falling objects, or falling themselves.");
-      sb.append(table);
-      return sb.toString();
+      String sb = "The '" + getName() + "' spell shakes the ground violently for a period of time." +
+                  " The effective power of the spell determines the duration and power of the shake." +
+                  " The GM determines what actual damage occurs, and may require characters to take action to avoid being hit by falling objects, or falling themselves." +
+                  table;
+      return sb;
    }
 
    private static String getEffects(int power) {

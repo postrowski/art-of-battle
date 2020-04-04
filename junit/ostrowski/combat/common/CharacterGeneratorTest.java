@@ -71,7 +71,7 @@ public class CharacterGeneratorTest implements Enums {
       byte shieldSkillLevel = 5;
       Armor armor = Armor.getArmor(armorName);
       Shield shield = Shield.getShield(shieldName);
-      Weapon weapon = Weapon.getWeapon(weaponName);
+      Weapon weapon = Weapons.getWeapon(weaponName);
       byte nim = 4;
       byte str = 5;
       Character character = CharacterGenerator.generateRandomCharacter("? 200 Human STR:" + str

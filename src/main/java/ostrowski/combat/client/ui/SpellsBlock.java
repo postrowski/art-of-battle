@@ -18,6 +18,7 @@ import ostrowski.combat.common.enums.Enums;
 import ostrowski.combat.common.spells.IRangedSpell;
 import ostrowski.combat.common.spells.mage.MageCollege;
 import ostrowski.combat.common.spells.mage.MageSpell;
+import ostrowski.combat.common.spells.mage.MageSpells;
 import ostrowski.combat.common.spells.priest.PriestSpell;
 import ostrowski.combat.common.spells.priest.ResistedPriestSpell;
 import ostrowski.ui.Helper;
@@ -151,7 +152,7 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
             createLabel(page, "Time", SWT.CENTER, 1, null);
             createLabel(page, "Range base", SWT.CENTER, 1, null);
             createLabel(page, "Cost", SWT.CENTER, 1, null);
-            List<String> spellNames = MageSpell.getSpellNames();
+            List<String> spellNames = MageSpells.getSpellNames();
             spellNames.add(0, "---");
             List<String> familiarities = new ArrayList<>();
             familiarities.add(MageSpell.FAM_UNFAMILIAR);
@@ -260,7 +261,7 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
          String spellName = _spellCombo[i].getText();
          _spellComboData[i] = spellName;
          if (!spellName.equals("---")) {
-            MageSpell spell = MageSpell.getSpell(spellName);
+            MageSpell spell = MageSpells.getSpell(spellName);
             if (spell != null) {
                spell.setFamiliarity(_spellFamiliarity[i].getText());
 //               spell.setLevel(getValidSpellRange((byte) _spellLevel[i].getSelection()));

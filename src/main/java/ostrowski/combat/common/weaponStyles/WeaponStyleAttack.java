@@ -75,15 +75,14 @@ public abstract class WeaponStyleAttack extends WeaponStyle
    @Override
    public String toString()
    {
-      StringBuilder sb = new StringBuilder();
-      sb.append(super.toString());
-      sb.append(", damageMod: ").append(_damageMod);
-      sb.append(", varianceDie: ").append(_varianceDice);
-      sb.append(", damageType: ").append(_damageType);
-      sb.append(", attackType: ").append(_attackType);
-      sb.append(", parryPenalty: ").append(_parryPenalty);
-      sb.append(", chargeType: ").append(_chargeType);
-      return sb.toString();
+      String sb = super.toString() +
+                  ", damageMod: " + _damageMod +
+                  ", varianceDie: " + _varianceDice +
+                  ", damageType: " + _damageType +
+                  ", attackType: " + _attackType +
+                  ", parryPenalty: " + _parryPenalty +
+                  ", chargeType: " + _chargeType;
+      return sb;
    }
    public short getMaxRange()
    {

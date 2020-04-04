@@ -22,11 +22,11 @@ public class Tail extends Limb
    public Weapon getWeapon(Character character)
    {
       if (character.hasAdvantage(Race.PROPERTIES_TAIL)) {
-         return Weapon.getWeapon(Weapon.NAME_TailStrike, character.getRace());
+         return Weapons.getWeapon(Weapon.NAME_TailStrike, character.getRace());
       }
       return null;
    }
-//   static Weapon _tailStrike = Weapon.getWeapon(Weapon.NAME_TailStrike);
+//   static Weapon _tailStrike = Weapons.getWeapon(Weapon.NAME_TailStrike);
 
    @Override
    public DrawnObject drawThing(int narrowDiameter, int size, RGB foreground, RGB background) {

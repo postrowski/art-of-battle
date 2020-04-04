@@ -88,7 +88,7 @@ public class ArenaCoordinates extends SerializableObject implements Enums, Compa
 
    @Override
    public boolean equals(Object obj) {
-      if ((obj != null) && (obj instanceof ArenaCoordinates)) {
+      if ((obj instanceof ArenaCoordinates)) {
          return sameCoordinates((ArenaCoordinates) obj);
       }
       return false;

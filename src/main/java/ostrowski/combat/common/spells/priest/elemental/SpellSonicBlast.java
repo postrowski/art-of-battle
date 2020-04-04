@@ -52,23 +52,22 @@ public class SpellSonicBlast extends ResistedPriestSpell implements IRangedSpell
          row.addTD(getTN(getTNDeath(power)));
          table.addRow(row);
       }
-      StringBuilder sb = new StringBuilder();
-      sb.append("The '").append(getName()).append("' spell causes a pressure waves of air, centered on (but not effecting) the caster.");
-      sb.append(" At low power, this creates an audible boom.");
-      sb.append(" At higher power, this pressure wave can disorient or even kill nearby characters.");
-      sb.append(" High power pressure waves are also capable of pushing objects down and away from the caster.");
-      sb.append(" Normally, the pressure wave affects anything outside the caster's personal hex, however, if the caster");
-      sb.append(" wishes to protect others nearby, he/she may use some of the power of the spell into protecting those nearby.");
-      sb.append(" For each point of power diverted into protecting those nearby, the radius of safety (which is 1-hex initially) will be doubled.");
-      sb.append(" Therefore, spending 1 point of the spell's power on protection causes the safety radius to be 2 hexes (anyone in any hex adjacent to the caster's own hex will be safe.)");
-      sb.append(" Spending 3 point of the spell's power on protection causes the safety radius to be 8 hexes (anyone within 7 hexes of the caster's hex will be safe.)");
-      sb.append(table);
-      sb.append(" Possible damage done by the spell is reduced by the range, with the power dropping by 1 power point every time the range increases.");
-      sb.append(" Everyone within point-blank range (that is not within the protected radius) suffers the full power of this spell, as detailed in the above table.");
-      sb.append(" Anyone within the short range distance from the caster suffers damage as if the spell had 1 less power than its casting power.");
-      sb.append(" Anyone in medium range suffers damage as if the spell had 2 less power than it casting power.");
-      sb.append(" Anyone in long range suffers damage as if the spell had 3 less power than it casting power.");
-      return sb.toString();
+      String sb = "The '" + getName() + "' spell causes a pressure waves of air, centered on (but not effecting) the caster." +
+                  " At low power, this creates an audible boom." +
+                  " At higher power, this pressure wave can disorient or even kill nearby characters." +
+                  " High power pressure waves are also capable of pushing objects down and away from the caster." +
+                  " Normally, the pressure wave affects anything outside the caster's personal hex, however, if the caster" +
+                  " wishes to protect others nearby, he/she may use some of the power of the spell into protecting those nearby." +
+                  " For each point of power diverted into protecting those nearby, the radius of safety (which is 1-hex initially) will be doubled." +
+                  " Therefore, spending 1 point of the spell's power on protection causes the safety radius to be 2 hexes (anyone in any hex adjacent to the caster's own hex will be safe.)" +
+                  " Spending 3 point of the spell's power on protection causes the safety radius to be 8 hexes (anyone within 7 hexes of the caster's hex will be safe.)" +
+                  table +
+                  " Possible damage done by the spell is reduced by the range, with the power dropping by 1 power point every time the range increases." +
+                  " Everyone within point-blank range (that is not within the protected radius) suffers the full power of this spell, as detailed in the above table." +
+                  " Anyone within the short range distance from the caster suffers damage as if the spell had 1 less power than its casting power." +
+                  " Anyone in medium range suffers damage as if the spell had 2 less power than it casting power." +
+                  " Anyone in long range suffers damage as if the spell had 3 less power than it casting power.";
+      return sb;
    }
 
    public String getDescriptionForPower(int power) {

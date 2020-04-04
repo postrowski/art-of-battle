@@ -80,6 +80,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    static void probabilityTest() {
       DiceSet dice = new DiceSet("1d10±");
       double odds = dice.getOddsForTN(-31);
+      @SuppressWarnings("unused")
       double[] odd = new double[40];
       for (int i=0 ; i<40 ; i++) {
          odd[i] = dice.getOddsForTN(i-10);
@@ -144,7 +145,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    private final Semaphore                  _lock_pausePlayControl = new Semaphore("CombatServer_pausePalyControl",
                                                                                    CombatSemaphore.CLASS_COMBATSERVER_pausePlayControl);
 
-   public        CharacterWidget _charWidget    = null;
+   public        CharacterWidget _charWidget;
    public final  CharacterFile   _charFile      = new CharacterFile("Character.data");
    private final CharInfoBlock   _charInfoBlock = new CharInfoBlock(null);
    private Button                           _hideViewFromLocalPlayersButton;
@@ -780,7 +781,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       _openButton.addSelectionListener(this);
    }
    private void setOpenButtonText(boolean start) {
-      Color bgColor = null;
+      Color bgColor;
       if (start) {
          _openButton.setText("Start Battle");
          bgColor = new Color(_openButton.getDisplay(), 128, 255, 128);
@@ -794,7 +795,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
 
    public void setMap(String arenaName)
    {
-      CombatMap map = null;
+      CombatMap map;
       if (_nameToArenaMap != null) {
          map = _nameToArenaMap.get(arenaName.toLowerCase());
       }
@@ -1525,7 +1526,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       if (sourceFile.exists() && sourceFile.canRead()) {
          try (FileReader fileReader = new FileReader(sourceFile);
               BufferedReader input = new BufferedReader(fileReader)) {
-            String inputLine = null;
+            String inputLine;
             while ((inputLine = input.readLine()) != null) {
                CombatMap newCombatMap = new CombatMap();
                if (newCombatMap.serializeFromString(inputLine)) {
@@ -1565,7 +1566,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
 
    public void writeNamedArenaMapToFile(String arenaName, boolean overwriteExistingFile) {
       CombatMap map = _nameToArenaMap.get(arenaName.toLowerCase());
-      writeNamedArenaMapToFile(map.getName(), overwriteExistingFile);
+      writeArenaMapToFile(map, overwriteExistingFile);
    }
 
    String _currentMapFileName = null;

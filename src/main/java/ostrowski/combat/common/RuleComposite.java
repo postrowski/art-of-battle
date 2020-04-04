@@ -18,7 +18,9 @@ import ostrowski.combat.common.spells.priest.PriestSpell;
 import ostrowski.combat.common.things.Armor;
 import ostrowski.combat.common.things.Shield;
 import ostrowski.combat.common.things.Weapon;
+import ostrowski.combat.common.things.Weapons;
 import ostrowski.combat.common.wounds.WoundChart;
+import ostrowski.combat.common.wounds.WoundCharts;
 import ostrowski.combat.server.Configuration;
 import ostrowski.ui.Helper;
 
@@ -125,30 +127,29 @@ public class RuleComposite extends Composite
      if (_rulesBrowser == null) {
         return;
      }
-     StringBuilder sb = new StringBuilder();
-     sb.append(HtmlBuilder.getHTMLHeader());
-     sb.append("<body>");
-     sb.append("<table class='Hidden'><tr><td>");
-     sb.append(Armor.generateHtmlTable());
-     sb.append("</td><td valign='Top'>");
-     sb.append(Shield.generateHtmlTable());
-     sb.append("</td></tr></table>");
-     sb.append("</body>");
-     _rulesBrowser[BROWSER_ARMOR_SHIELDS].setText(sb.toString());
+     String sb = HtmlBuilder.getHTMLHeader() +
+                 "<body>" +
+                 "<table class='Hidden'><tr><td>" +
+                 Armor.generateHtmlTable() +
+                 "</td><td valign='Top'>" +
+                 Shield.generateHtmlTable() +
+                 "</td></tr></table>" +
+                 "</body>";
+     _rulesBrowser[BROWSER_ARMOR_SHIELDS].setText(sb);
      _rulesBrowser[BROWSER_RACES].setText(Race.generateHtmlTable());
      _rulesBrowser[BROWSER_SKILLS].setText(Rules.generateSkillsHtmlTable());
      _rulesBrowser[BROWSER_ATTRIBUTES].setText(Rules.generateAttributesHtmlTable());
      _rulesBrowser[BROWSER_ADVANTAGES].setText(Advantage.generateHtmlTable());
      _rulesBrowser[BROWSER_SPELLS_MAGE].setText(MageSpell.generateHtmlTableMageSpells());
      _rulesBrowser[BROWSER_SPELLS_PRIEST].setText(PriestSpell.generateHtmlTablePriestSpells());
-     _rulesBrowser[BROWSER_WEAPONS].setText(Weapon.generateHtmlTable());
+     _rulesBrowser[BROWSER_WEAPONS].setText(Weapons.generateHtmlTable());
 
      for (DamageType damType : DamageType.values()) {
         if (damType != DamageType.NONE) {
-           _rulesWoundsBrowser.get(damType).setText(WoundChart.generateHtmlTable(damType));
+           _rulesWoundsBrowser.get(damType).setText(WoundCharts.generateHtmlTable(damType));
         }
      }
-     _rulesWoundsBrowser.get(DamageType.GENERAL).setText(WoundChart.generateCombinedHtmlTable());
+     _rulesWoundsBrowser.get(DamageType.GENERAL).setText(WoundCharts.generateCombinedHtmlTable());
      _rulesBrowser[BROWSER_MISC].setText(Rules.generateMiscHtmlTable());
   }
 }

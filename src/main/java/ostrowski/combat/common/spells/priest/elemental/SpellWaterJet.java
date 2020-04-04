@@ -18,11 +18,10 @@ public class SpellWaterJet extends PriestMissileSpell
 
    @Override
    public String describeSpellPreamble() {
-      StringBuilder sb = new StringBuilder();
-      sb.append("The '").append(getName()).append("' causes a jet of water to shoot from the caster hand.");
-      sb.append(" The effective power of the spell determines the maximum effective distance the water shoots, and the damage done.");
-      sb.append(" The jet shoots out in a straight line determined by the caster.");
-      return sb.toString();
+      String sb = "The '" + getName() + "' causes a jet of water to shoot from the caster hand." +
+                  " The effective power of the spell determines the maximum effective distance the water shoots, and the damage done." +
+                  " The jet shoots out in a straight line determined by the caster.";
+      return sb;
    }
 
 }

@@ -1,19 +1,19 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Character Gender="Male" Name="Knight" Race="Human">
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Knight" Race="Human">
   <Attributes DEX="4" HT="1" IQ="-2" NIM="0" SOC="2" STR="2" TOU="4"/>
   <Equipment Armor="Plate Mail">
-    <Hand Name="right hand">Longsword</Hand>
+    <Hand Name="right hand"/>
     <Hand Name="left hand">Tower Shield</Hand>
     <Belt>Potion:Healing</Belt>
+    <Belt>Knife</Belt>
   </Equipment>
   <Skills>
-    <Skill Level="6" Name="Shield"/>
+    <Skill Level="1" Name="Riding"/>
     <Skill Level="6" Name="Sword"/>
-    <Skill Level="1" Name="Brawling"/>
+    <Skill Level="6" Name="Shield"/>
     <Skill Level="2" Name="Knife"/>
   </Skills>
   <Advantages>
-    <Advantage LevelName="$5000" Name="Wealth"/>
+    <Advantage LevelName="$5,000" Name="Wealth"/>
     <Advantage LevelName="Major" Name="Code of Conduct"/>
   </Advantages>
 </Character>

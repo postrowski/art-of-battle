@@ -14,7 +14,7 @@ import ostrowski.combat.common.CombatMap;
 
 public class ArenaTrigger implements Cloneable
 {
-   private String                 _name               = "";
+   private String                 _name;
    private List<ArenaCoordinates> _triggerCoordinates = new ArrayList<>();
    private boolean                _onlyAffectsPlayers = true;
    private boolean                _requiresEntireTeam = false;

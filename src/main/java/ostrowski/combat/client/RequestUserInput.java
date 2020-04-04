@@ -16,6 +16,7 @@ import ostrowski.combat.common.Character;
 import ostrowski.combat.common.IMapWidget;
 import ostrowski.combat.common.TargetPrioritiesWidget;
 import ostrowski.combat.protocol.request.RequestTarget;
+import ostrowski.combat.server.Arena;
 import ostrowski.combat.server.CombatServer;
 import ostrowski.combat.server.Configuration;
 import ostrowski.protocol.SyncRequest;
@@ -98,6 +99,7 @@ public class RequestUserInput extends Dialog implements KeyListener, FocusListen
       body.setLayout(layout);
 
       if (message != null) {
+         message = Arena.convertFromHtmlToText(message);
          int loc = message.indexOf("\n");
          while (loc != -1) {
             addLabel(message.substring(0, loc), body);

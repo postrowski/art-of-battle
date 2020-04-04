@@ -209,14 +209,13 @@ public class RequestMovement extends SyncRequest implements Enums
    @Override
    public String toString()
    {
-      StringBuilder sb = new StringBuilder();
-      sb.append(super.toString());
-      sb.append("RequestMovement: ");
-      sb.append(", futureOrientations:").append(_futureOrientations);
-      sb.append(", cancelOrientations:").append(_cancelOrientations);
-      sb.append(", completeOrientations:").append(_completeOrientations);
-      sb.append(", actorID:").append(_actorID);
-      return sb.toString();
+      String sb = super.toString() +
+                  "RequestMovement: " +
+                  ", futureOrientations:" + _futureOrientations +
+                  ", cancelOrientations:" + _cancelOrientations +
+                  ", completeOrientations:" + _completeOrientations +
+                  ", actorID:" + _actorID;
+      return sb;
    }
 
    public boolean setOrientation(ArenaLocation loc, double angleFromCenter, double normalizedDistFromCenter) {
@@ -355,7 +354,7 @@ public class RequestMovement extends SyncRequest implements Enums
    }
 
    public boolean moveByKeystroke(KeyEvent arg0, CombatMap map) {
-      Orientation currentOrientation = null;
+      Orientation currentOrientation;
       if (_completeOrientations.size() == 1) {
          currentOrientation = _completeOrientations.get(0);
       }

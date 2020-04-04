@@ -219,6 +219,7 @@ public class TerrainInterface extends Helper implements SelectionListener, Modif
          }
       }
       else if (e.widget == _isLocked) {
+         // nothing to do?
       }
       else if (e.widget == _clearButton) {
          _fillActive = false;

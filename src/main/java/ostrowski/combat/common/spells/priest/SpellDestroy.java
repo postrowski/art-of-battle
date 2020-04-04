@@ -7,6 +7,7 @@ import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.IRangedSpell;
 import ostrowski.combat.common.wounds.Wound;
 import ostrowski.combat.common.wounds.WoundChart;
+import ostrowski.combat.common.wounds.WoundCharts;
 import ostrowski.combat.server.Arena;
 
 public abstract class SpellDestroy extends ResistedPriestSpell implements IRangedSpell, ICastInBattle
@@ -50,7 +51,7 @@ public abstract class SpellDestroy extends ResistedPriestSpell implements IRange
       byte damage = getDamageAmount();
       if (damage > 0) {
          StringBuilder alterationExplanationBuffer = new StringBuilder();
-         Wound wound = WoundChart.getWound(damage, DamageType.ELECTRIC, getTarget(), alterationExplanationBuffer);
+         Wound wound = WoundCharts.getWound(damage, DamageType.ELECTRIC, getTarget(), alterationExplanationBuffer);
          StringBuilder damageExplanationButtfer = new StringBuilder();
          damageExplanationButtfer.append(getTargetName()).append(" takes damage from the ").append(getName()).append(" spell: ").append(wound.describeEffects());
          if(alterationExplanationBuffer.length()>0) {

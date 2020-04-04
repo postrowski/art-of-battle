@@ -78,8 +78,6 @@ public class ServerStatus extends SerializableObject implements Enums
 
    @Override
    public String toString() {
-      StringBuilder sb = new StringBuilder();
-      sb.append("ServerStatus.");
-      return sb.toString();
+      return "ServerStatus.";
    }
 }

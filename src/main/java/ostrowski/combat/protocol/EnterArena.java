@@ -59,12 +59,11 @@ public class EnterArena extends SerializableObject
 
    @Override
    public String toString() {
-      StringBuilder sb = new StringBuilder();
-      sb.append("EnterArena: ");
-      sb.append(_character);
-      sb.append(", entering: ").append(_entering);
-      sb.append(", team: ").append(_team);
-      sb.append(", indexOnTeam: ").append(_indexOnTeam);
-      return sb.toString();
+      String sb = "EnterArena: " +
+                  _character +
+                  ", entering: " + _entering +
+                  ", team: " + _team +
+                  ", indexOnTeam: " + _indexOnTeam;
+      return sb;
    }
 }

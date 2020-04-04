@@ -15,7 +15,7 @@ import ostrowski.ui.Helper;
 
 public class TargetPriorityBlock extends Helper implements IUIBlock
 {
-   public TargetPrioritiesWidget _priorityWidget = null;
+   public TargetPrioritiesWidget _priorityWidget;
 
    public TargetPriorityBlock(CharacterDisplay display) {
       _priorityWidget = new TargetPrioritiesWidget(null, display);

@@ -19,8 +19,8 @@ import ostrowski.combat.server.Arena;
 public abstract class ExpiringMageSpell extends MageSpell implements IExpiringSpell
 {
    protected short     _duration                  = -1;
-   protected short     _baseExpirationTimeInTurns = 0;
-   protected short     _bonusTimeInTurnsPerPower  = 0;
+   protected short     _baseExpirationTimeInTurns;
+   protected short     _bonusTimeInTurnsPerPower;
    public ExpiringMageSpell(){
       this("", (short)0, (short)0, null, null);
    }
@@ -55,12 +55,11 @@ public abstract class ExpiringMageSpell extends MageSpell implements IExpiringSp
    }
    @Override
    public String describeActiveSpell() {
-      StringBuilder sb = new StringBuilder();
-      sb.append(getTargetName()).append(" is under the effects of a ");
-      sb.append(getPower()).append("-point power ");
-      sb.append(getName()).append(" spell, which has");
-      sb.append(_duration).append(" turns left.");
-      return sb.toString();
+      String sb = getTargetName() + " is under the effects of a " +
+                  getPower() + "-point power " +
+                  getName() + " spell, which has" +
+                  _duration + " turns left.";
+      return sb;
    }
 
    /**

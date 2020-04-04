@@ -35,7 +35,7 @@ import java.util.List;
  */
 public class CharacterDisplay implements Enums, ModifyListener, IMapListener //, Listener
 {
-   public        CharacterWidget     _charWidget          = null;
+   public        CharacterWidget     _charWidget;
    public final  CharacterFile       _charFile            = new CharacterFile("character.data");
    // these object all implement the IUIBlock Interface:
    private final AttackBlock         _attackBlock         = new AttackBlock(this);

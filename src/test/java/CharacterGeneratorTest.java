@@ -30,13 +30,7 @@ import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.html.TableData;
 import ostrowski.combat.common.html.TableRow;
 import ostrowski.combat.common.spells.priest.evil.SpellFear;
-import ostrowski.combat.common.things.Armor;
-import ostrowski.combat.common.things.Limb;
-import ostrowski.combat.common.things.LimbType;
-import ostrowski.combat.common.things.Potion;
-import ostrowski.combat.common.things.Shield;
-import ostrowski.combat.common.things.Thing;
-import ostrowski.combat.common.things.Weapon;
+import ostrowski.combat.common.things.*;
 import ostrowski.combat.common.weaponStyles.WeaponStyleAttack;
 import ostrowski.combat.common.weaponStyles.WeaponStyleAttackMissile;
 import ostrowski.combat.common.weaponStyles.WeaponStyleAttackRanged;
@@ -178,7 +172,7 @@ public class CharacterGeneratorTest implements Enums {
                   delta += raceData.pointsStep;
                }
             }
-            Collections.sort(chars, new Comparator<>() {
+            chars.sort(new Comparator<>() {
                @Override
                public int compare(Character o1, Character o2) {
                   return Integer.compare(o1.getPointTotal(), o2.getPointTotal());
@@ -210,6 +204,7 @@ public class CharacterGeneratorTest implements Enums {
       byte dex = character.getAttributeLevel(Attribute.Dexterity);
       WeaponDesc weaponDescPrime = null;
       WeaponDesc weaponDescAlt = null;
+      @SuppressWarnings("unused")
       StringBuilder equipment = new StringBuilder();
       Shield shield = null;
       Weapon weaponPrime = null;
@@ -294,7 +289,7 @@ public class CharacterGeneratorTest implements Enums {
       List<Skill> skillsList = character.getSkillsList();
       int totalSkillCount = skillsList.size();
       // Sort the skills by highest skill level.
-      Collections.sort(skillsList, new Comparator<>() {
+      skillsList.sort(new Comparator<>() {
          @Override
          public int compare(Skill o1, Skill o2) {
             return Byte.compare(o2.getLevel(), o1.getLevel());
@@ -398,6 +393,7 @@ public class CharacterGeneratorTest implements Enums {
 
       DiceSet painDice = Rules.getPainReductionDice(character.getAttributeLevel(Attribute.Toughness));
 
+      @SuppressWarnings("unused")
       StringBuilder attributes = new StringBuilder();
       for (Attribute attr : Attribute.values()) {
          StringBuilder attrStr = new StringBuilder(String.valueOf(character.getAttributeLevel(attr)));
@@ -752,7 +748,7 @@ public class CharacterGeneratorTest implements Enums {
             }
          }
          // list the attack types corresponding to the higher skill level first:
-         Collections.sort(this.styleList, new Comparator<>() {
+         this.styleList.sort(new Comparator<>() {
             @Override
             public int compare(WeaponStyleDesc o1, WeaponStyleDesc o2) {
                if (o1.style._skillType.getName().equals(o2.style._skillType.getName())) {
@@ -866,7 +862,7 @@ public class CharacterGeneratorTest implements Enums {
                                                                        null/*arena*/, false/*printCharacter*/);
       Armor armor = Armor.getArmor(armorName, character.getRace());
       Shield shield = Shield.getShield(shieldName, character.getRace());
-      Weapon weapon = Weapon.getWeapon(weaponName, character.getRace());
+      Weapon weapon = Weapons.getWeapon(weaponName, character.getRace());
       character.setSkillLevel(weapon.getAttackStyle(0).getSkillType(), weaponSkillLevel);
       character.setSkillLevel(shield.getDefenseSkillTypes().get(0), shieldSkillLevel);
       assertTrue("Wrong strength", character.getAttributeLevel(Attribute.Strength) == str);

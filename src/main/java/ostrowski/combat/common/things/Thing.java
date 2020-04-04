@@ -97,7 +97,7 @@ public abstract class Thing extends SerializableObject implements Cloneable, Enu
          return null;
       }
 
-      Weapon weap = Weapon.getWeapon(thingName, racialBase);
+      Weapon weap = Weapons.getWeapon(thingName, racialBase);
       if ((weap != null) &&
           (weap.isReal() || thingName.equalsIgnoreCase(Weapon.NAME_Punch) ||
                             thingName.equalsIgnoreCase(Weapon.NAME_KarateKick) ||
@@ -192,7 +192,7 @@ public abstract class Thing extends SerializableObject implements Cloneable, Enu
       if (other == null) {
          return false;
       }
-      if (_name           != other._name) {
+      if (!_name.equals(other._name)) {
          return false;
       }
       if (_cost           != other._cost) {

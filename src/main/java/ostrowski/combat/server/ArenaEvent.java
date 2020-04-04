@@ -48,7 +48,7 @@ public class ArenaEvent implements Cloneable
       EVENT_TYPES.add(EVENT_TYPE_TELEPORT);
    }
 
-   String                   _eventName                           = "";
+   String                   _eventName;
    String                   _eventType                           = EVENT_TYPE_DISPLAY_MESSAGE_PUBLICLY;
    String                   _eventData                           = "";
    List<ArenaCoordinates> _eventLocations                   = null;
@@ -400,8 +400,8 @@ public class ArenaEvent implements Cloneable
          // return true to indicate that this TriggerEvent caused the mover to stop moving.
          return true;
       }
-      else if (_eventType.equals(EVENT_TYPE_TRAP)) {
-      }
+//      else if (_eventType.equals(EVENT_TYPE_TRAP)) {
+//      }
       return false;
    }
    static public HashMap<String, CombatMap> _savedMaps = new HashMap<>();

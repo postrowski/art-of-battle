@@ -139,18 +139,17 @@ public class DefenseBlock extends Helper implements IUIBlock
 
          HashMap<DefenseOptions, Text> defMapToText = _defenseOpts.get(range);
          for (DefenseOptions defOptions : defMapToText.keySet()) {
-            if (character==null) {
-               defMapToText.get(defOptions).setText("");
+            Text text = defMapToText.get(defOptions);
+            if (character == null) {
+               text.setText("");
             }
             else {
-               defMapToText.get(defOptions).setText(String.valueOf(character.getBaseDefenseOptionTN(defBase,
-                                                                                           defOptions,
-                                                                                           range,
-                                                                                           false/*isGrappleAttack*/,
-                                                                                           DamageType.NONE,
-                                                                                           false/*includeWoundPenalty*/,
-                                                                                           false/*includePosition*/,
-                                                                                           false/*includeHolds*/)));
+               text.setText(String.valueOf(character.getBaseDefenseOptionTN(defBase, defOptions, range,
+                                                                            false/*isGrappleAttack*/,
+                                                                            DamageType.NONE,
+                                                                            false/*includeWoundPenalty*/,
+                                                                            false/*includePosition*/,
+                                                                            false/*includeHolds*/)));
             }
          }
       }

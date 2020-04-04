@@ -57,11 +57,11 @@ public enum SkillType {
    Tracking          ("Tracking",          false, false, Attribute.Intelligence, ArmsUsed.None, false);
 
    public String           _name;
-   public Attribute        _attributeBase            = null;
+   public Attribute        _attributeBase;
    public ArmsUsed         _armUseCount;
-   public boolean          _isAdjustedForSize        = true;
-   public boolean          _isAdjustedForEncumbrance = true;
-   public boolean          _isUnarmed                = false;
+   public boolean          _isAdjustedForSize;
+   public boolean          _isAdjustedForEncumbrance;
+   public boolean          _isUnarmed;
 
    public String getName()                   { return _name;}
    public ArmsUsed getArmUseCount()          { return _armUseCount; }

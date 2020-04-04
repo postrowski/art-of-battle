@@ -22,6 +22,7 @@ import ostrowski.combat.common.weaponStyles.WeaponStyleAttack;
 import ostrowski.combat.common.weaponStyles.WeaponStyleAttackRanged;
 import ostrowski.combat.common.wounds.Wound;
 import ostrowski.combat.common.wounds.WoundChart;
+import ostrowski.combat.common.wounds.WoundCharts;
 import ostrowski.combat.protocol.BeginBattle;
 import ostrowski.combat.protocol.request.*;
 import ostrowski.protocol.IRequestOption;
@@ -32,17 +33,14 @@ import ostrowski.util.SemaphoreAutoTracker;
 
 import java.util.*;
 
-public class Battle extends Thread implements Enums
-{
-   public Arena        _arena                     = null;
-   int                 _turnCount                 = 1;
-   int                 _roundCount                = 1;
-   int                 _phaseCount                = 1;
-
+public class Battle extends Thread implements Enums {
+   public Arena _arena;
+   int _turnCount  = 1;
+   int _roundCount = 1;
+   int _phaseCount = 1;
    public boolean      _startMidTurn              = false;
    public boolean      _resetMessageBufferOnStart = true;
-   public CombatServer _combatServer              = null;
-   public Object       _pausePlayControl          = new Object();
+   public CombatServer _combatServer;
    public int          _turnPause                 = 1000;
    public int          _roundPause                = 1000;
    public int          _phasePause                = 1000;
@@ -87,12 +85,12 @@ public class Battle extends Thread implements Enums
    }
 
    private void checkForPause() {
-      /*synchronized (_waitingObjects)*/{
+      /*synchronized (_waitingObjects)*/
+      {
          Rules.diag("### inside lock checkForPause, of waitingList = @" + Integer.toHexString(_waitingObjects.hashCode()) + ": " + _waitingObjects);
          if (_turnCount > _turnPause) {
             _combatServer.waitForPlay(_waitingObjects);
-         }
-         else if (_turnCount == _turnPause) {
+         } else if (_turnCount == _turnPause) {
             if (_roundCount > _roundPause) {
                _combatServer.waitForPlay(_waitingObjects);
             }
@@ -156,12 +154,13 @@ public class Battle extends Thread implements Enums
       CombatServer.resetPseudoRandomNumberGenerator();
    }
 
-   private boolean                 _terminateBattle = false;
+   private       boolean      _terminateBattle = false;
    private final List<Object> _waitingObjects  = new ArrayList<>();
 
    public void terminateBattle() {
       _terminateBattle = true;
-      /*synchronized (_waitingObjects)*/{
+      /*synchronized (_waitingObjects)*/
+      {
          Rules.diag("### inside lock terminateBattle, of waitingList = @" + Integer.toHexString(_waitingObjects.hashCode()) + ": " + _waitingObjects);
          while (_waitingObjects.size() > 0) {
             Object element = _waitingObjects.remove(0);
@@ -306,8 +305,7 @@ public class Battle extends Thread implements Enums
                            }
                            if (weapons.contains(weap.getName())) {
                               printHands = true;
-                           }
-                           else {
+                           } else {
                               weapons.add(weap.getName());
                            }
                         }
@@ -341,8 +339,7 @@ public class Battle extends Thread implements Enums
                                     //   sb.append(rangedStyle.getPreparationStepName(heldThing.getName(), hand.getPreparedState()));
                                     //else
                                     sb.append("ready");
-                                 }
-                                 else {
+                                 } else {
                                     sb.append(weaponState).append(" actions");
                                  }
                               }
@@ -402,7 +399,7 @@ public class Battle extends Thread implements Enums
    private void applyActions(Map<Character, RequestAction> results,
                              Map<Character, List<Wound>> wounds,
                              Map<Character, List<Spell>> spells)
-            throws BattleTerminatedException {
+           throws BattleTerminatedException {
       TreeSet<Character> actors = new TreeSet<>(results.keySet());
       for (Character actor : actors) {
          RequestAction action = results.get(actor);
@@ -411,8 +408,7 @@ public class Battle extends Thread implements Enums
          }
          if (action.isWaitForAttack()) {
             addWaitingForAttack(actor);
-         }
-         else {
+         } else {
             clearWaitingForAttackMap(actor);
          }
          Spell currentSpell = actor.getCurrentSpell(false/*eraseCurrentSpell*/);
@@ -456,25 +452,46 @@ public class Battle extends Thread implements Enums
          Character target = _arena.getCharacter(targetID);
          boolean spellResolved = false;
          if (action.isCompleteSpell()) {
-            if (currentSpell.affectsMultipleTargets()) {
-               Spell spell = actor.getCurrentSpell(true/*eraseCurrentSpell*/);
-               spellResolved = true;
-               for (Character combatant : _arena.getCombatants()) {
-                  if (spell.canTarget(actor, combatant) == null) {
-                     // beneficial spells only affect allies,
-                     // and non beneficial spells only affect enemies.
-                     if (spell.isBeneficial() != actor.isEnemy(combatant)) {
-                        if (action.isDefendable()) {
-                           resolveDefendableAction(actor, action, combatant/*target*/, wounds, spells);
-                        }
-                        else {
-                           spell.setTarget(combatant);
-                           spell.completeSpell();
-                           spell.resolveSpell(action, null/*defense*/, spells, wounds, this);
+            if (currentSpell != null) {
+               if (!currentSpell.affectsMultipleTargets()) {
+                  if (target != null) {
+                     if (currentSpell.canTarget(actor, target) == null) {
+                        // beneficial spells only affect allies,
+                        // and non beneficial spells only affect enemies.
+                        if (currentSpell.isBeneficial() != actor.isEnemy(target)) {
+                           if (action.isDefendable()) {
+                              resolveDefendableAction(actor, action, target, wounds, spells);
+                           } else {
+                              currentSpell.setTarget(target);
+                              currentSpell.completeSpell();
+                              currentSpell.resolveSpell(action, null/*defense*/, spells, wounds, this);
+                           }
+                           spellResolved = true;
                         }
                      }
                   }
                }
+               else { // currentSpell.affectsMultipleTargets()
+                  for (Character combatant : _arena.getCombatants()) {
+                     if (currentSpell.canTarget(actor, combatant) == null) {
+                        // beneficial spells only affect allies,
+                        // and non beneficial spells only affect enemies.
+                        if (currentSpell.isBeneficial() != actor.isEnemy(combatant)) {
+                           if (action.isDefendable()) {
+                              resolveDefendableAction(actor, action, combatant/*target*/, wounds, spells);
+                           } else {
+                              currentSpell.setTarget(combatant);
+                              currentSpell.completeSpell();
+                              currentSpell.resolveSpell(action, null/*defense*/, spells, wounds, this);
+                           }
+                           spellResolved = true;
+                        }
+                     }
+                  }
+               }
+            }
+            if (spellResolved) {
+               actor.getCurrentSpell(true/*eraseCurrentSpell*/);
             }
          }
          if (!spellResolved) {
@@ -487,8 +504,7 @@ public class Battle extends Thread implements Enums
                else if (action.isRetreat()) {
                   ArenaLocation attackFromLocation = actor.getAttackFromLocation(action, _arena.getCombatMap());
                   _arena.moveToFrom(actor, null, attackFromLocation, null/*attackFromLimb*/);
-               }
-               else if (action.isTargetEnemy()) {
+               } else if (action.isTargetEnemy()) {
                   addAimingCharacter(actor, target);
                }
             }
@@ -514,16 +530,14 @@ public class Battle extends Thread implements Enums
                itemIndex = reqActOpt.getValue().getIndexOfLocationAction();
             }
             Object thing = _arena.pickupItem(actor, action, itemIndex, _combatServer._diag);
-            if (!actor.pickupObject(thing))
-            {
+            if (!actor.pickupObject(thing)) {
                actor.getLimbLocation(action.getLimb(), _arena.getCombatMap()).addThing(thing);
                // The ArenaLocation is a monitoredObject, it will report
                // the change to any watcher of the location.
                //else
                //   _arena.sendServerStatus(null, false/*fullMap*/, false/*recomputeVisibility*/);
             }
-         }
-         else {
+         } else {
             // add the original locations of the target to the list of locations
             // that must be redrawn
             Collection<ArenaCoordinates> locationsToRedraw = new ArrayList<>(actor.getCoordinates());
@@ -543,7 +557,7 @@ public class Battle extends Thread implements Enums
    private void resolveDefendableAction(Character actor, RequestAction action, Character target,
                                         Map<Character, List<Wound>> wounds,
                                         Map<Character, List<Spell>> spells)
-              throws BattleTerminatedException {
+           throws BattleTerminatedException {
       // add the original locations of the target to the list of locations
       // that must be redrawn
       Collection<ArenaCoordinates> targetsLocationsToRedraw = new ArrayList<>(target.getCoordinates());
@@ -573,13 +587,12 @@ public class Battle extends Thread implements Enums
       }
       //               if (action.isChannelEnergy()) {
       //               }
-      boolean actionSuccessful = false;
+      boolean actionSuccessful;
       if (action.isCompleteSpell()) {
          Spell spell = actor.getCurrentSpell(true/*eraseCurrentSpell*/);
          spell.setTarget(target);
          actionSuccessful = spell.resolveSpell(action, defense, spells, wounds, this);
-      }
-      else {
+      } else {
          actionSuccessful = resolveAttack(actor, action, target, defense, wounds);
       }
       // If this is a successful grapple attack, and the defender retreated,
@@ -594,8 +607,7 @@ public class Battle extends Thread implements Enums
                _arena.moveToFrom(actor, target, null, null/*attackFromLimb*/);
             }
          }
-      }
-      else {
+      } else {
          if (defense.getDefenseOptions().isCounterAttack()) {
             // Apply the counter-attack
             resolveCounterAttack(target, defense, actor, wounds, targetsLocationsToRedraw);
@@ -607,6 +619,7 @@ public class Battle extends Thread implements Enums
 
       _arena.sendCharacterUpdate(target, targetsLocationsToRedraw);
    }
+
    private void resolveCounterAttack(Character counterAttacker, RequestDefense defense, Character counterAttackTarget,
                                      Map<Character, List<Wound>> wounds,
                                      Collection<ArenaCoordinates> targetsLocationsToRedraw) throws BattleTerminatedException {
@@ -618,12 +631,11 @@ public class Battle extends Thread implements Enums
       DefenseOptions defOpts = defense.getDefenseOptions();
       if (defOpts.isCounterAttackGrab()) {
          // This is a grab
-         counterAttack.addOption(new RequestActionOption("Counter attack grab (1-action)",  RequestActionType.OPT_COUNTER_ATTACK_GRAB_1,  limbType, (actionsUsed == 1)/*enabled*/));
-         counterAttack.addOption(new RequestActionOption("Counter attack grab (2-action)",  RequestActionType.OPT_COUNTER_ATTACK_GRAB_2,  limbType, (actionsUsed == 2)/*enabled*/));
-         counterAttack.addOption(new RequestActionOption("Counter attack grab (3-action)",  RequestActionType.OPT_COUNTER_ATTACK_GRAB_3,  limbType, (actionsUsed == 3)/*enabled*/));
+         counterAttack.addOption(new RequestActionOption("Counter attack grab (1-action)", RequestActionType.OPT_COUNTER_ATTACK_GRAB_1, limbType, (actionsUsed == 1)/*enabled*/));
+         counterAttack.addOption(new RequestActionOption("Counter attack grab (2-action)", RequestActionType.OPT_COUNTER_ATTACK_GRAB_2, limbType, (actionsUsed == 2)/*enabled*/));
+         counterAttack.addOption(new RequestActionOption("Counter attack grab (3-action)", RequestActionType.OPT_COUNTER_ATTACK_GRAB_3, limbType, (actionsUsed == 3)/*enabled*/));
          counterAttack.setAnswerByOptionIndex(actionsUsed - 1);
-      }
-      else if (defOpts.isCounterAttackThrow()) {
+      } else if (defOpts.isCounterAttackThrow()) {
          // This is a throw
          counterAttack.addOption(new RequestActionOption("Counter attack throw (1-action)", RequestActionType.OPT_COUNTER_ATTACK_THROW_1, limbType, (actionsUsed == 1)/*enabled*/));
          counterAttack.addOption(new RequestActionOption("Counter attack throw (2-action)", RequestActionType.OPT_COUNTER_ATTACK_THROW_2, limbType, (actionsUsed == 2)/*enabled*/));
@@ -648,17 +660,13 @@ public class Battle extends Thread implements Enums
       byte nim = counterAttackTarget.getAttributeLevel(Attribute.Nimbleness);
       byte enc = Rules.getEncumbranceLevel(counterAttackTarget);
       byte TN = (byte) ((nim - enc - 10) + (actionsCount * 5));
-      boolean success = false;
+      boolean success;
       if (actionsCount == 0) {
          // Auto-success
          success = true;
-      }
-      else {
+      } else {
          //
          success = (TN > 7);
-      }
-      if (success) {
-         // roll a D4 for distance
       }
    }
 
@@ -668,14 +676,16 @@ public class Battle extends Thread implements Enums
       byte nim = actor.getAttributeLevel(Attribute.Nimbleness);
       Attribute bestAttr = str > nim ? Attribute.Strength : Attribute.Nimbleness;
       DiceSet dice = Rules.getDice((byte) Math.max(str, nim), action.getActionsUsed(), bestAttr/*attribute*/);
-      int roll = dice.roll(true/*allowExplodes*/, actor, RollType.BREAK_FREE);
+      String rollMessage = actor.getName() + ", your " + bestAttr.name() + " will be used to break free (" +
+                           action.getActionsUsed() + " actions), roll to attempt the escape.";
+      int roll = dice.roll(true/*allowExplodes*/, actor, RollType.BREAK_FREE, rollMessage);
       int wrestlingSkill = 0;
       int aikidoSkill = 0;
       int brawlingSkill = 0;
       if (!(holder instanceof Spell)) {
          wrestlingSkill = actor.getSkillLevel(SkillType.Wrestling, null, false/*sizeAdjust*/, true/*adjustForEncumbrance*/, false/*adjustForHolds*/);
-         aikidoSkill    = actor.getSkillLevel(SkillType.Aikido,    null, false/*sizeAdjust*/, true/*adjustForEncumbrance*/, false/*adjustForHolds*/);
-         brawlingSkill  = actor.getSkillLevel(SkillType.Brawling,  null, false/*sizeAdjust*/, true/*adjustForEncumbrance*/, false/*adjustForHolds*/);
+         aikidoSkill = actor.getSkillLevel(SkillType.Aikido, null, false/*sizeAdjust*/, true/*adjustForEncumbrance*/, false/*adjustForHolds*/);
+         brawlingSkill = actor.getSkillLevel(SkillType.Brawling, null, false/*sizeAdjust*/, true/*adjustForEncumbrance*/, false/*adjustForHolds*/);
       }
       int skill = Math.max(wrestlingSkill, Math.max(aikidoSkill, brawlingSkill));
       int skillPenalty = 0; // TODO: ??
@@ -692,8 +702,7 @@ public class Battle extends Thread implements Enums
       sb.append(" (").append(action.getActionsUsed()).append("-actions ");
       if (str > nim) {
          sb.append("STR of ").append(str);
-      }
-      else {
+      } else {
          sb.append("NIM of ").append(nim);
       }
       sb.append("), rolling ").append(dice.getLastDieRoll());
@@ -704,11 +713,9 @@ public class Battle extends Thread implements Enums
          sb.append(" (");
          if (skill == wrestlingSkill) {
             sb.append(SkillType.Wrestling.getName());
-         }
-         else if (skill == aikidoSkill) {
+         } else if (skill == aikidoSkill) {
             sb.append(SkillType.Aikido.getName());
-         }
-         else if (skill == brawlingSkill) {
+         } else {// (skill == brawlingSkill)
             sb.append(SkillType.Brawling.getName());
          }
          sb.append(")");
@@ -736,11 +743,9 @@ public class Battle extends Thread implements Enums
       if (dice.lastRollRolledAllOnes()) {
          sb.append("<tr><td colspan=2>automatic failure (all 1s)</td></tr>");
          escape = false;
-      }
-      else if (escape) {
+      } else if (escape) {
          sb.append("<tr><td colspan=2>successful escape</td></tr>");
-      }
-      else {
+      } else {
          sb.append("<tr><td colspan=2>unsuccessful escape</td></tr>");
       }
       sb.append("</table>");
@@ -751,7 +756,8 @@ public class Battle extends Thread implements Enums
 
    private void sendRequestToCombatant(Character combatant, SyncRequest request) throws BattleTerminatedException {
       _arena.sendObjectToCombatant(combatant, request);
-      /*synchronized (_waitingObjects)*/{
+      /*synchronized (_waitingObjects)*/
+      {
          Rules.diag("### inside lock applyActions, of waitingList = @" + Integer.toHexString(_waitingObjects.hashCode()) + ": " + _waitingObjects);
          synchronized (request) {
             try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(request._lockThis)) {
@@ -764,6 +770,7 @@ public class Battle extends Thread implements Enums
                      _waitingObjects.add(request);
                      request.wait();
                   } catch (InterruptedException e) {
+                     // shouldn't get here
                   } finally {
                      Rules.diag("### done waiting in applyActions, for response in @" + Integer.toHexString(request.hashCode()) + ": " + request);
                      _waitingObjects.remove(request);
@@ -830,11 +837,9 @@ public class Battle extends Thread implements Enums
       WeaponStyleAttack attackMode;
       if (attack.isCounterAttack()) {
          attackMode = attackingWeapon.getCounterAttackStyle(attackStyle);
-      }
-      else if (attack.isGrappleAttack()) {
+      } else if (attack.isGrappleAttack()) {
          attackMode = attackingWeapon.getGrappleStyle(attackStyle);
-      }
-      else {
+      } else {
          attackMode = attackingWeapon.getAttackStyle(attackStyle);
       }
 
@@ -864,17 +869,14 @@ public class Battle extends Thread implements Enums
       if (grappleAttack) {
          if (attack.isAdvance()) {
             sb.append(" advances to grab ");
-         }
-         else {
+         } else {
             sb.append(" grabs ");
          }
          sb.append(defender.getName()).append(".");
-      }
-      else if (attack.isRanged()) {
+      } else if (attack.isRanged()) {
          if (isThrowWeapon) {
             sb.append(" throws ").append(attacker.getHisHer()).append(" ").append(attackingWeapon.getName());
-         }
-         else {
+         } else {
             sb.append(" fires ").append(attacker.getHisHer()).append(" ").append(attackingWeapon.getName());
          }
          if (attackMode.getMaxAttackActions() > 1) {
@@ -883,17 +885,14 @@ public class Battle extends Thread implements Enums
          sb.append(" at ").append(defender.getName());
          sb.append(" after aiming for ").append(aimActions).append(" rounds (effectively making a ");
          sb.append(attackActions).append("-action attack.)");
-      }
-      else {
+      } else {
          if (attack.isAdvance()) {
             if (attack.isCharge()) {
                sb.append(" charges to attack ");
-            }
-            else {
+            } else {
                sb.append(" advances to attack ");
             }
-         }
-         else {
+         } else {
             sb.append(" attacks ");
          }
          sb.append(defender.getName());
@@ -909,20 +908,18 @@ public class Battle extends Thread implements Enums
       DiceSet dice = null;
       if (Configuration.useExtendedDice()) {
          dice = attack._styleRequest.getAttackDice();
-      }
-      else if (Configuration.useSimpleDice()) {
+      } else if (Configuration.useSimpleDice()) {
          dice = new DiceSet(0/*d1*/, 0/*d4*/, 0/*d6*/, 0/*d8*/, 1/*d10*/, 0/*d12*/, 0/*d20*/, 0/*dBell*/, 1.0/*multiplier*/);
-      }
-      else if (Configuration.useBellCurveDice()) {
+      } else if (Configuration.useBellCurveDice()) {
          dice = new DiceSet(0/*d1*/, 0/*d4*/, 0/*d6*/, 0/*d8*/, 0/*d10*/, 0/*d12*/, 0/*d20*/, 1/*dBell*/, 1.0/*multiplier*/);
-      }
-      else {
+      } else {
          DebugBreak.debugBreak("unknown dice configuration type");
       }
 
       dice = attacker.adjustDieRoll(dice, RollType.ATTACK_TO_HIT, defender/*target*/);
       sb.append(attacker.getName()).append(" rolls ").append(dice);
-      int roll = dice.roll(true/*allowExplodes*/, attacker, RollType.ATTACK_TO_HIT);
+      String rollMessage = attacker.getName() + ", roll to attack " + defender.getName();
+      int roll = dice.roll(true/*allowExplodes*/, attacker, RollType.ATTACK_TO_HIT, rollMessage);
       sb.append(", rolling ").append(dice.getLastDieRoll());
       byte adjSkill = attacker.getAdjustedWeaponSkill(attack.getLimb(), attackStyle, attack.isGrappleAttack(),
                                                       attack.isCounterAttack(), false/*accountForHandPenalty*/, false/*adjustForHolds*/);
@@ -938,8 +935,7 @@ public class Battle extends Thread implements Enums
             sb.append("+");
          }
          sb.append(actionAdjustment).append("</td><td>").append(attackActions).append("-action attack</td></tr>");
-      }
-      else {
+      } else {
          sb.append("<tr><td>+").append(adjSkill).append("</td><td>skill</td></tr>");
       }
 
@@ -1004,25 +1000,21 @@ public class Battle extends Thread implements Enums
       if (dice.lastRollRolledAllOnes()) {
          sb.append("<tr><td colspan=2>automatic miss - all 1s rolled!</td></tr>");
          hit = false;
-      }
-      else {
+      } else {
          if (hit) {
             bonusDamage = Rules.getDamageBonusForSkillExcess((byte) (result - finalTN));
             holdLevel = Rules.getHoldLevelForSkillExcess((byte) (result - finalTN));
             if (grappleAttack) {
                sb.append("<tr><td><b>").append(holdLevel).append("</b></td>");
                sb.append("<td>target grabbed, hold level</td></tr>");
-            }
-            else if (attack.isCounterAttackThrow()) {
+            } else if (attack.isCounterAttackThrow()) {
                sb.append("<tr><td><b>").append(holdLevel).append("</b></td>");
                sb.append("<td>target throw attempt success margin</td></tr>");
-            }
-            else {
+            } else {
                sb.append("<tr><td><b>").append(bonusDamage).append("</b></td>");
                sb.append("<td>target hit, bonus damage</td></tr>");
             }
-         }
-         else {
+         } else {
             sb.append("<tr><td colspan=2>target missed</td></tr>");
          }
       }
@@ -1045,8 +1037,8 @@ public class Battle extends Thread implements Enums
             byte newHoldLevel = (byte) (holdLevel + holdModifier);
             if (holdModifier != 0) {
                sb.append(" Due to the size difference between the attacker (").append(attacker.getRace().getBuildModifier()).append(") and defender (").append(
-                                                                                                                                                               defender.getRace().getBuildModifier()).append(
-                                                                                                                                                                                                             ") the hold is modified by ");
+                       defender.getRace().getBuildModifier()).append(
+                       ") the hold is modified by ");
                if (holdModifier > 0) {
                   sb.append("+");
                }
@@ -1054,8 +1046,7 @@ public class Battle extends Thread implements Enums
                if (newHoldLevel < 0) {
                   sb.append(", which negates the hold completely.<br/>");
                   hit = false;
-               }
-               else {
+               } else {
                   sb.append(" to a new level of ").append(newHoldLevel).append(".<br/>");
                }
             }
@@ -1064,8 +1055,7 @@ public class Battle extends Thread implements Enums
                   sb.append("New hold level is less than or equal to the current hold level of ").append(currentHoldLevel);
                   sb.append(" so this grab is ineffective.<br/>");
                   hit = false;
-               }
-               else {
+               } else {
                   // Set this as a dual grapple attack, so we know if a retreat must alter the location of the attacker
                   attack.setDualGrappleAttack();
                   defender.setHoldLevel(attacker, newHoldLevel);
@@ -1080,8 +1070,7 @@ public class Battle extends Thread implements Enums
                               break;
                            }
                         }
-                     }
-                     else {
+                     } else {
                         // Move the attacker closer to the defender:
                         for (Orientation newOrientation : attacker.getOrientation().getPossibleFutureOrientations(_arena.getCombatMap())) {
                            attackingLimbLoc = newOrientation.getLimbLocation(attack.getLimb(), _arena.getCombatMap());
@@ -1097,18 +1086,18 @@ public class Battle extends Thread implements Enums
                   }
                }
             }
-         }
-         else if (attack.isCounterAttackThrow()) {
+         } else if (attack.isCounterAttackThrow()) {
             // Throw the opponent.
             DiceSet throwDistDice = new DiceSet(1, 1, 0, 0, 0, 0, 0, 0, 1.0);
-            int throwDist = throwDistDice.roll(true/*allowExplodes*/, attacker, RollType.ATTACK_TO_HIT);
+            rollMessage = attacker.getName() + ", roll to see how far you've thrown " + defender.getName();
+            int throwDist = throwDistDice.roll(true/*allowExplodes*/, attacker, RollType.ATTACK_TO_HIT, rollMessage);
             sb.append(defender.getName()).append(" is thrown ").append(throwDistDice).append(" hexes, rolling ").append(throwDistDice.getLastDieRoll());
             CombatMap map = _arena.getCombatMap();
             while (throwDist-- > 0) {
                List<Orientation> possibleMoves = defender.getOrientation().getPossibleAdvanceOrientations(map, true);
                if (possibleMoves.isEmpty()) {
                   // we must have hit a wall, assess damage
-                  Wound wound = new Wound((byte)5,
+                  Wound wound = new Wound((byte) 5,
                                           Location.BODY,
                                           "Counter-attack Throw",
                                           3,//painLevel
@@ -1130,53 +1119,54 @@ public class Battle extends Thread implements Enums
             }
 
             DiceSet sideUpDice = new DiceSet(0, 1, 0, 0, 0, 0, 0, 0, 1.0);
-            int sideUp = sideUpDice.roll(false/*allowExplodes*/, attacker, RollType.ATTACK_TO_HIT);
+            rollMessage = attacker.getName() + ", roll to determine if " + defender.getName() +
+                          " is facing up or down after the throw. 1 or 2 = face up, 3 or 4 = face down.";
+            int sideUp = sideUpDice.roll(false/*allowExplodes*/, attacker, RollType.ATTACK_TO_HIT, rollMessage);
             sb.append(" To determine facing, a d4 is rolled, rolling ").append(sideUpDice.getLastDieRoll());
             if (sideUp > 2) {
                sb.append(", so the defender will be face-down.");
                defender.getCondition().setPosition(Position.PRONE_FRONT, _arena.getCombatMap(), defender);
-            }
-            else {
+            } else {
                sb.append(", so the defender will be face-up.");
                defender.getCondition().setPosition(Position.PRONE_BACK, _arena.getCombatMap(), defender);
             }
-               /* Defensive Grab:
-                *   When attacked, the Aikido practitioner may counter-attack using this grab.
-                *   This grab follows the same rules as a normal grab, such as a wrestler would do.
-                *   Unlike a wrestler's grab, this grab always starts out as an arm grab,
-                *   meaning that the held attacker cannot use their weapon arm for any purpose
-                *   until they break free, or the holder switches to another hold.
-                */
+            /* Defensive Grab:
+             *   When attacked, the Aikido practitioner may counter-attack using this grab.
+             *   This grab follows the same rules as a normal grab, such as a wrestler would do.
+             *   Unlike a wrestler's grab, this grab always starts out as an arm grab,
+             *   meaning that the held attacker cannot use their weapon arm for any purpose
+             *   until they break free, or the holder switches to another hold.
+             */
 
-               /* Defensive Throw:
-                *   When attacked, the Aikido practitioner may counter-attack using this throw.
-                *   If successful, this counter-attack causes the assailant to be thrown a few hexes
-                *   (use a d4 to determine) in a direction chosen by the Aikido practitioner.
-                *   The Aikido practitioner must declare the direction before the distance die is rolled.
-                *      The thrower rolls his counter attack against which the assailant may dodge or retreat,
-                *      but their PD does not add into their defense TN. Furthermore, the assailant must
-                *      subtract their Enc level from their defense TN.
-                *
-                *   The thrower rolls his counter-attack against a TN of 7. If successful,
-                *   the opponent may defend against the throw, using any unspent actions for this round,
-                *   however, defense against a throw is handled in a different manner:
-                *   The assailant (who is being thrown) declares the number of actions he is allocating to the defense,
-                *   and rolls a battle die (d10±) to which he or she adds their NIM attribute,
-                *   minus their current encumbrance level.
-                *   If the assailant defended using 1 action, they subtract 5 from this roll. If they used 3 actions,
-                *   they add 5 to this roll. Note that since the assailant attacked this round, it will be impossible
-                *   for them to still have 3 actions available for defense, unless they are under the influence of
-                *   some type of magic giving them more than 3 actions per round. If the assailant’s total roll results
-                *   a number equal to or higher than the difference between the Aikido practitioner’s counter-attack roll
-                *   and his counter-attack TN (of 7), the defense is successful. If the assailant has no actions left to
-                *   be spent on the defense, and the counter-attack is successful, the assailant is thrown automatically.
-                *   If the assailant makes his/her NIM roll, they are moved, but only half the distance (rounded down).
-                *   If the assailant fails their NIM roll, they are thrown the full distance, and are on the ground
-                *   (GM randomly decides face up or down). If the assailant fails their roll, and they are thrown into
-                *   a wall, or other obstacle, the GM may assess damage as he/she sees fit. The GM should determine facing,
-                *   taking into account the NIM roll. If the NIM roll is very good (over 5 points more than needed),
-                *   the assailant may choose his own facing.
-                */
+            /* Defensive Throw:
+             *   When attacked, the Aikido practitioner may counter-attack using this throw.
+             *   If successful, this counter-attack causes the assailant to be thrown a few hexes
+             *   (use a d4 to determine) in a direction chosen by the Aikido practitioner.
+             *   The Aikido practitioner must declare the direction before the distance die is rolled.
+             *      The thrower rolls his counter attack against which the assailant may dodge or retreat,
+             *      but their PD does not add into their defense TN. Furthermore, the assailant must
+             *      subtract their Enc level from their defense TN.
+             *
+             *   The thrower rolls his counter-attack against a TN of 7. If successful,
+             *   the opponent may defend against the throw, using any unspent actions for this round,
+             *   however, defense against a throw is handled in a different manner:
+             *   The assailant (who is being thrown) declares the number of actions he is allocating to the defense,
+             *   and rolls a battle die (d10±) to which he or she adds their NIM attribute,
+             *   minus their current encumbrance level.
+             *   If the assailant defended using 1 action, they subtract 5 from this roll. If they used 3 actions,
+             *   they add 5 to this roll. Note that since the assailant attacked this round, it will be impossible
+             *   for them to still have 3 actions available for defense, unless they are under the influence of
+             *   some type of magic giving them more than 3 actions per round. If the assailant’s total roll results
+             *   a number equal to or higher than the difference between the Aikido practitioner’s counter-attack roll
+             *   and his counter-attack TN (of 7), the defense is successful. If the assailant has no actions left to
+             *   be spent on the defense, and the counter-attack is successful, the assailant is thrown automatically.
+             *   If the assailant makes his/her NIM roll, they are moved, but only half the distance (rounded down).
+             *   If the assailant fails their NIM roll, they are thrown the full distance, and are on the ground
+             *   (GM randomly decides face up or down). If the assailant fails their roll, and they are thrown into
+             *   a wall, or other obstacle, the GM may assess damage as he/she sees fit. The GM should determine facing,
+             *   taking into account the NIM roll. If the NIM roll is very good (over 5 points more than needed),
+             *   the assailant may choose his own facing.
+             */
          }
          if (!attack.isCounterAttackThrow() && !grappleAttack) {
             byte baseDamage = attackMode.getDamage(attacker.getPhysicalDamageBase());
@@ -1185,11 +1175,9 @@ public class Battle extends Thread implements Enums
             String damageDieExplanation = damageDie.toString();
             if (damageDieExplanation.startsWith("+") || damageDieExplanation.isEmpty()) {
                damageExplanation += " " + damageDieExplanation;
-            }
-            else {
+            } else {
                damageExplanation += " + " + damageDieExplanation;
             }
-
             resolveDamage(attacker, defender, attackingWeapon.getName(), damageExplanation, baseDamage,
                           bonusDamage, damageDie, attackMode.getDamageType(),
                           attackingWeapon.getSpecialDamageModifier(),
@@ -1197,6 +1185,12 @@ public class Battle extends Thread implements Enums
                           (byte) (result - finalTN), attack.isCharge());
          }
       }
+      String message = sb.toString();
+      if (!message.isEmpty()) {
+         _arena.sendMessageTextToAllClients(message, false/*popUp*/);
+         _arena.sendMessageTextToParticipants(message, attacker, defender);
+      }
+
       if (isThrowWeapon) {
          attacker.getLimb(attack.getLimb()).setHeldThing(null, attacker);
          attacker.updateWeapons();
@@ -1217,9 +1211,6 @@ public class Battle extends Thread implements Enums
             }
          }
       }
-      String message = sb.toString();
-      _arena.sendMessageTextToAllClients(message, false/*popUp*/);
-      _arena.sendMessageTextToParticipants(message, attacker, defender );
       attacker.clearAimDuration();
       return hit;
    }
@@ -1342,8 +1333,7 @@ public class Battle extends Thread implements Enums
                sb.append("</td><td>range ");
                if (rangeAdjustment > 0) {
                   sb.append("bonus");
-               }
-               else {
+               } else {
                   sb.append("penalty");
                }
                sb.append(" for ").append(range.getName()).append(" range.</td></tr>");
@@ -1355,11 +1345,9 @@ public class Battle extends Thread implements Enums
             sb.append(tnBonusForMovement).append("</td>");
             if (defender.isMovingEvasively()) {
                sb.append("<td>moving evasively</td></tr>");
-            }
-            else if (defender.hasMovedLastAction()) {
+            } else if (defender.hasMovedLastAction()) {
                sb.append("<td>moving</td></tr>");
-            }
-            else {
+            } else {
                sb.append("<td>not moving</td></tr>");
             }
          }
@@ -1377,9 +1365,25 @@ public class Battle extends Thread implements Enums
                              SpecialDamage specialDamageModifier, String specialDamageModifierExplanation,
                              StringBuilder sb, Map<Character, List<Wound>> wounds, byte attackSuccessRollOverTN,
                              boolean isCharge) throws BattleTerminatedException {
+
+      String rollMessage = attacker.getName() + ", roll to damage against " + defender.getName();
+      if (Configuration.rollDice()) {
+         // If we are rolling dice, then we need to send the attack message out now,
+         // followed by the damage roll.
+         rollMessage = sb.toString();
+         if (!rollMessage.isEmpty()) {
+            _arena.sendMessageTextToAllClients(rollMessage, false/*popUp*/);
+            // To the parties involved, send the message as a popup message:
+            // No need to send the message to the attacker, they will see the message as they roll damage dice.
+            _arena.sendMessageTextToParticipants(rollMessage, defender, null);
+         }
+         sb.setLength(0);
+         sb.append(attacker.getName()).append(" successfully attacked ").append(defender.getName()).append(".<br/>");
+      }
+
       String damageTypeString = damageType.fullname;
       damageDie = attacker.adjustDieRoll(damageDie, RollType.DAMAGE_ATTACK, defender/*target*/);
-      int damageRoll = damageDie.roll(true/*allowExplodes*/, attacker, RollType.DAMAGE_ATTACK);
+      int damageRoll = damageDie.roll(true/*allowExplodes*/, attacker, RollType.DAMAGE_ATTACK, rollMessage);
       sb.append(attacker.getName()).append("'s ").append(attackingWeaponName);
       sb.append(" does ").append(damageExplanation);
       sb.append(" ").append(damageTypeString).append(".<br/>");
@@ -1426,13 +1430,12 @@ public class Battle extends Thread implements Enums
 //         }
 //      }
 //      else {
-      byte defenderBuild = 0;
+      byte defenderBuild;
       if ((specialDamageModifier.getBits() & SpecialDamage.MOD_NO_ARMOR) != 0) {
          sb.append(specialDamageModifierExplanation).append(" armor has no effect ");
          defenderBuild = defender.getBuildBase();
          sb.append(defender.getName()).append(" has a base build of ").append(defenderBuild);
-      }
-      else {
+      } else {
          defenderBuild = defender.getBuild(damageType);
          sb.append(defender.getName()).append(" has a build vs. ").append(damageTypeString);
          sb.append(" of ").append(defenderBuild);
@@ -1443,7 +1446,7 @@ public class Battle extends Thread implements Enums
       }
 //      }
       StringBuilder sbWoundModExplanation = new StringBuilder();
-      Wound wound = null;
+      Wound wound;
       if (reducedDamage < 0) {
          // If the damage done is less than zero, some spells may still cause an effect (Shocking Grasp, for instance)
          wound = attacker.modifyWoundFromAttack(null/*wound*/, defender, attackingWeaponName, sbWoundModExplanation);
@@ -1453,8 +1456,7 @@ public class Battle extends Thread implements Enums
          sb.append("<br/>Although the damage done is below zero, ").append(attacker.getName());
          sb.append(" touched the defender, and spells in effect cause the following wound:");
          sb.append(sbWoundModExplanation).append("<br/>");
-      }
-      else {
+      } else {
          sb.append(", reducing the damage to ").append(reducedDamage).append("<br/>");
          byte maxDamageForTNSuccess = Rules.getMaxAppliedDamageForTNSuccess(attackSuccessRollOverTN, reducedDamage);
          if (reducedDamage > maxDamageForTNSuccess) {
@@ -1462,7 +1464,7 @@ public class Battle extends Thread implements Enums
             sb.append(" points, the maximum damage allowed is ").append(maxDamageForTNSuccess).append(".<br/>");
             reducedDamage = maxDamageForTNSuccess;
          }
-         wound = WoundChart.getWound(reducedDamage, damageType, defender, sbWoundModExplanation);
+         wound = WoundCharts.getWound(reducedDamage, damageType, defender, sbWoundModExplanation);
          wound.setSpecialDamageModifier(specialDamageModifier);
          wound = attacker.modifyWoundFromAttack(wound, defender, attackingWeaponName, sbWoundModExplanation);
          if (wound.isCrippling() || wound.isKnockOut()) {
@@ -1494,13 +1496,12 @@ public class Battle extends Thread implements Enums
                         for (IHolder holder : defender.getHolders()) {
                            if (preamble) {
                               sb.append(" Applying the Hero Point removed");
-                           }
-                           else {
+                           } else {
                               sb.append(" and");
                            }
                            sb.append(" the level-").append(defender.getHoldLevel(holder))
                              .append(" hold from ").append(holder.getName());
-                           defender.setHoldLevel(holder, (byte)0);
+                           defender.setHoldLevel(holder, (byte) 0);
                            preamble = false;
                         }
                         return;
@@ -1519,8 +1520,7 @@ public class Battle extends Thread implements Enums
          if (sbWoundModExplanation.length() > 0) {
             if (specialDamageModifierExplanation.length() > 0) {
                sb.append("<br/>and also modified by: ");
-            }
-            else {
+            } else {
                sb.append("Wound modified by: ");
             }
             sb.append(sbWoundModExplanation);
@@ -1535,8 +1535,7 @@ public class Battle extends Thread implements Enums
       }
       if (holdStrength >= (5 * knockBack)) {
          knockBack = 0;
-      }
-      else {
+      } else {
          // release any holds he has, or is held by:
          defender.releaseHold();
          for (IHolder holder : defender.getHolders()) {
@@ -1555,8 +1554,8 @@ public class Battle extends Thread implements Enums
    }
 
    private boolean selectActions(List<Character> activeCombatants, Map<Character,
-                                 RequestAction> results, List<Character> allCombatants)
-                 throws BattleTerminatedException {
+           RequestAction> results, List<Character> allCombatants)
+           throws BattleTerminatedException {
       // First, ask each character to declare their action for this round, but don't wait for the response yet.
       List<SyncRequest> resultsQueue = new ArrayList<>();
       List<SyncRequest> waitingList = new ArrayList<>();
@@ -1569,8 +1568,8 @@ public class Battle extends Thread implements Enums
          // Also, if a character has already attacked because he was waiting
          // for an opportunity to attack, and he got the opportunity.
          if (actor.stillFighting()
-                  && (actor.getActionsAvailableThisRound(false/*usedForDefenseOnly*/) > 0)
-                  && (!actor.getCondition().hasAttackedThisRound())) {
+             && (actor.getActionsAvailableThisRound(false/*usedForDefenseOnly*/) > 0)
+             && (!actor.getCondition().hasAttackedThisRound())) {
             Rules.diag("Battle:selectActions for actor " + actor.getName() + " is still fighting");
             // remove the actor from this list so he doesn't
             // continue to wait, unless he re-asks to wait more.
@@ -1588,8 +1587,7 @@ public class Battle extends Thread implements Enums
                   resultsQueue.notifyAll();
                }
                Rules.diag("Battle:selectActions for actor " + actor.getName() + " - single action found: " + actReq.getAnswer());
-            }
-            else {
+            } else {
                // More than one entry is available to select:
                synchronized (resultsQueue) {
                   Rules.diag("setting results Queue to " + resultsQueue);
@@ -1605,8 +1603,7 @@ public class Battle extends Thread implements Enums
                               resultsQueue.add(actReq);
                               resultsQueue.notifyAll();
                            }
-                        }
-                        else {
+                        } else {
                            Rules.diag("Battle:selectActions for actor " + actor.getName() + " - will wait for response.");
                            waitingList.add(actReq);
                         }
@@ -1614,8 +1611,7 @@ public class Battle extends Thread implements Enums
                   }
                }
             }
-         }
-         else {
+         } else {
             Rules.diag("Battle:selectActions for actor " + actor.getName() + " is no longer fighting");
          }
       }
@@ -1631,7 +1627,8 @@ public class Battle extends Thread implements Enums
       // Secondly, wait for every response, and if an action requires more information
       // (such as a movement or attack style), get the subsequent action(s).
       HashMap<Character, Integer> movementTracker = new HashMap<>();
-      /*synchronized (_waitingObjects)*/{
+      /*synchronized (_waitingObjects)*/
+      {
          Rules.diag("### inside lock selectActions, of waitingList = @" + Integer.toHexString(_waitingObjects.hashCode()) + ": " + _waitingObjects);
          synchronized (resultsQueue) {
             Rules.diag("### inside lock of resultsQueue (=" + resultsQueue + "), waitingList.size() = " + waitingList.size());
@@ -1665,7 +1662,7 @@ public class Battle extends Thread implements Enums
                      for (Character actor : actedCombatants) {
                         RequestAction actReq = results.get(actor);
                         if (actReq != null) {
-                           if (   (obj == actReq)
+                           if ((obj == actReq)
                                || (obj == actReq._equipmentRequest)
                                || (obj == actReq._movementRequest)
                                || (obj == actReq._locationSelection)
@@ -1698,8 +1695,7 @@ public class Battle extends Thread implements Enums
                                           actor.setMoveComplete();
                                           // don't increment the 'moved' variable,
                                           // since this wasn't really a move.
-                                       }
-                                       else {
+                                       } else {
                                           // Look for any limb that changed location. If any one changed,
                                           // mark it as a single movement, regardless of how far it moved,
                                           // or how many limbs moved.
@@ -1720,8 +1716,7 @@ public class Battle extends Thread implements Enums
                                        }
                                        movementTracker.put(actor, moved);
                                     }
-                                 }
-                                 else { // (actReq.isAttack() && actReq.isAdvance()) == true
+                                 } else { // (actReq.isAttack() && actReq.isAdvance()) == true
                                     Character target = _arena.getCharacter(actReq._targetID);
                                     // move forward such that the attacking weapon is in range of the target
                                     Limb limb = actor.getLimb(actReq.getLimb());
@@ -1748,21 +1743,18 @@ public class Battle extends Thread implements Enums
                                                 } catch (InterruptedException e) {
                                                    e.printStackTrace();
                                                 }
-                                             }
-                                             else {
+                                             } else {
                                                 break;
                                              }
                                           }
                                        }
-                                    }
-                                    else {
+                                    } else {
                                        _arena.moveToFrom(actor, target, null/*retreatFromLoc*/, limb/*attackFromLimb*/);
                                     }
                                  }
                                  checkForAimLossDueToMovement(actor);
                                  checkForWaitingCharactersToAttack(results, allCombatants, resultsQueue, waitingList, actedCombatants, actor);
-                              }
-                              else if (obj == actReq._targetPriorities) {
+                              } else if (obj == actReq._targetPriorities) {
                                  actor.applyAction(actReq, _arena);
                               }
 
@@ -1784,8 +1776,7 @@ public class Battle extends Thread implements Enums
          Integer movement = movementTracker.get(mover);
          if (mover.getPosition() == Position.STANDING) {
             _arena.sendMessageTextToAllClients(mover.getName() + " moves " + movement + " hexes.", false/*popUp*/);
-         }
-         else {
+         } else {
             _arena.sendMessageTextToAllClients(mover.getName() + " crawls " + movement + " hexes.", false/*popUp*/);
          }
       }
@@ -1847,8 +1838,7 @@ public class Battle extends Thread implements Enums
                   }
                }
             }
-         }
-         else // if (delayedAttackReq.getActionCount() == 1)
+         } else // if (delayedAttackReq.getActionCount() == 1)
          {
             // The attacker has only one way to attack, just do it
             delayedAttackReq.setAnswerByOptionIndex(0);
@@ -1900,14 +1890,12 @@ public class Battle extends Thread implements Enums
                   resultsQueue.add(req);
                   resultsQueue.notifyAll();
                }
-            }
-            else {
+            } else {
                waitingList.add(req);
             }
-         }
-         else {
+         } else {
             if (req.getActionCount() == 0) {
-               req.addOption(new RequestActionOption("no action", RequestActionType.OPT_NO_ACTION, LimbType.BODY ,true));
+               req.addOption(new RequestActionOption("no action", RequestActionType.OPT_NO_ACTION, LimbType.BODY, true));
                //req.addOption(ACTION_NONE, "no action", true);
             }
             req.setAnswerByOptionIndex(0);
@@ -2010,19 +1998,17 @@ public class Battle extends Thread implements Enums
             if (showDeadOrUnconscious) {
                events.append(combatant.getName()).append(" is dead.<br/>");
             }
-         }
-         else if (!combatant.getCondition().isConscious()) {
+         } else if (!combatant.getCondition().isConscious()) {
             if (showDeadOrUnconscious) {
                events.append(combatant.getName()).append(" is unconscious.<br/>");
             }
-         }
-         else {
+         } else {
             DiceSet initiativeDice = Rules.getInitiativeDieType();
             DiceSet painDice = null;
             byte painReduction = 0;
             byte woundReduction = 0;
             byte painLevel = combatant.getPainPenalty(false/*accountForBerserking*/);
-            byte reducedPainLevel = painLevel;
+            byte reducedPainLevel;
             boolean hasWounds = false;
             if (combatant.isRegenerative()) {
                // If the combatant isn't regenerative, don't worry about wounds
@@ -2032,7 +2018,9 @@ public class Battle extends Thread implements Enums
             if ((painLevel > 0) || hasWounds) {
                painDice = Rules.getPainReductionDice(combatant.getAttributeLevel(Attribute.Toughness));
                painDice = combatant.adjustDieRoll(painDice, RollType.PAIN_RECOVERY, null/*target*/);
-               painReduction = (byte) (painDice.roll(true/*allowExplodes*/, combatant, RollType.PAIN_RECOVERY));
+               String rollMessage = combatant.getName() + ", roll to reduce your pain level from " + painLevel;
+               painReduction = (byte) (painDice.roll(true/*allowExplodes*/, combatant,
+                                                     RollType.PAIN_RECOVERY, rollMessage));
                if (painReduction < 0) {
                   painReduction = 0;
                }
@@ -2044,7 +2032,9 @@ public class Battle extends Thread implements Enums
                }
             }
             initiativeDice = combatant.adjustDieRoll(initiativeDice, RollType.INITIATIVE, null/*target*/);
-            int initiativeRoll = initiativeDice.roll(false/*allowExplodes*/, combatant, RollType.INITIATIVE);
+            String rollMessage = combatant.getName() + ", roll for initiative.";
+            int initiativeRoll = initiativeDice.roll(false/*allowExplodes*/, combatant,
+                                                     RollType.INITIATIVE, rollMessage);
             combatant.reducePain(painReduction);
             reducedPainLevel = combatant.getPainPenalty(false/*accountForBerserking*/);
             combatant.setInitiativeActionsAndMovementForNewTurn(initiativeRoll);
@@ -2070,15 +2060,13 @@ public class Battle extends Thread implements Enums
                if (painReduction > 0) {
                   events.append(", reducing pain from ").append(painLevel);
                   events.append(" to ").append(reducedPainLevel);
-               }
-               else if (reducedPainLevel > 0) {
+               } else if (reducedPainLevel > 0) {
                   events.append(", leaving ").append(combatant.getHisHer()).append(" pain at ").append(reducedPainLevel);
                }
                if (woundReduction > 0) {
                   if (painReduction > 0) {
                      events.append(" and ");
-                  }
-                  else {
+                  } else {
                      events.append(", ");
                   }
                   events.append("regenerating ").append(woundReduction).append(" wound");
@@ -2098,8 +2086,8 @@ public class Battle extends Thread implements Enums
                   }
                   events.append(magicalBurn.getPain()).append(" points of pain");
                   if (reducedPainLevel > 0) {
-                     events.append(", bring ").append(combatant.getHisHer()).append(" pain total to ").append(
-                                                                                                              combatant.getPainPenalty(false/*accountForBerserking*/));
+                     events.append(", bring ").append(combatant.getHisHer()).append(" pain total to ")
+                           .append(combatant.getPainPenalty(false/*accountForBerserking*/));
                   }
                   events.append(".<br/>");
                }
@@ -2107,8 +2095,7 @@ public class Battle extends Thread implements Enums
                   events.append(combatant.getName()).append(" collapses from the pain.<br/>");
                   combatant.collapseFromPain(_arena.getCombatMap());
                }
-            }
-            else {
+            } else {
                if (combatant.getWounds() > 0) {
                   events.append(combatant.getName()).append(" has ");
                   events.append(combatant.getWounds()).append(" wounds.");
@@ -2116,19 +2103,19 @@ public class Battle extends Thread implements Enums
                StringBuilder limbWounds = new StringBuilder();
                for (Limb limb : combatant.getLimbs()) {
                   if (limb.isSevered()) {
-                     if (limbWounds.length()>0) {
+                     if (limbWounds.length() > 0) {
                         limbWounds.append(", ");
                      }
                      limbWounds.append(limb.getName()).append(": severed");
                   }
                   if (limb.isCrippled()) {
-                     if (limbWounds.length()>0) {
+                     if (limbWounds.length() > 0) {
                         limbWounds.append(", ");
                      }
                      limbWounds.append(limb.getName()).append(": crippled");
                   }
                   if (limb.getWoundPenalty() > 0) {
-                     if (limbWounds.length()>0) {
+                     if (limbWounds.length() > 0) {
                         limbWounds.append(", ");
                      }
                      limbWounds.append(limb.getName()).append(": penalty of ").append(limb.getWoundPenalty());
@@ -2137,12 +2124,11 @@ public class Battle extends Thread implements Enums
                if (limbWounds.length() > 0) {
                   if (combatant.getWounds() > 0) {
                      events.append(" and the following limb penalties: ").append(limbWounds);
-                  }
-                  else {
+                  } else {
                      events.append(combatant.getName()).append(" has the following limb penalties: ").append(limbWounds);
                   }
                }
-               if ((combatant.getWounds() > 0)  || (limbWounds.length() > 0)){
+               if ((combatant.getWounds() > 0) || (limbWounds.length() > 0)) {
                   events.append(".<br/>");
                }
             }
@@ -2177,7 +2163,8 @@ public class Battle extends Thread implements Enums
                      byte iq = combatant.getAttributeLevel(Attribute.Intelligence);
                      DiceSet berserkSaveDice = Rules.getDice(iq, (byte) 1/*actions*/, Attribute.Intelligence);
                      berserkSaveDice = combatant.adjustDieRoll(berserkSaveDice, RollType.BERSERK_RECOVERY, null/*target*/);
-                     int diceRoll = berserkSaveDice.roll(true/*allowExplodes*/, combatant, RollType.BERSERK_RECOVERY);
+                     rollMessage = combatant.getName() + ", roll end your berserking state.";
+                     int diceRoll = berserkSaveDice.roll(true/*allowExplodes*/, combatant, RollType.BERSERK_RECOVERY, rollMessage);
                      events.append(combatant.getName()).append("'s target (");
                      events.append(target != null ? target.getName() : "").append(") is no longer fighting, so ");
                      events.append(combatant.getHeShe()).append(" has a chance that he recovers from being berserk.<br/>");
@@ -2194,24 +2181,20 @@ public class Battle extends Thread implements Enums
                         if (originalTeamID != null) {
                            combatant._teamID = originalTeamID;
                         }
-                     }
-                     else {
+                     } else {
                         if (anyTeam) {
                            events.append(", which is all '1's, so he will attack the near person, even if on the same team!<br/>");
                            if (combatant._teamID != TEAM_INDEPENDENT) {
                               _berserkingCharactersOriginalTeamID.put(combatant._uniqueID, combatant._teamID);
                               combatant._teamID = TEAM_INDEPENDENT;
                            }
-                        }
-                        else {
+                        } else {
                            events.append(", which is below the new pain level of ").append(newPain);
                            events.append(" +3 (").append(newPain + 3).append("), so ").append(combatant.getName()).append(" remains berserk.<br/>");
                         }
 
                         Character newTarget = _arena.getNearestTarget(combatant, anyTeam);
-                        if (newTarget == null) {
-                        }
-                        else {
+                        if (newTarget != null) {
                            events.append("The next nearest target is ").append(newTarget.getName());
                            events.append(", so ").append(combatant.getName());
                            events.append(" is now targeting ").append(newTarget.getName());
@@ -2276,15 +2259,14 @@ public class Battle extends Thread implements Enums
          synchronized (_aimingCharacters) {
             try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_aimingCharacters)) {
                TreeSet<Character> aimers = new TreeSet<>(_aimingCharacters.keySet());
-               for (Iterator<Character> iter = aimers.iterator(); iter.hasNext();) {
+               for (Iterator<Character> iter = aimers.iterator(); iter.hasNext(); ) {
                   Character aimer = iter.next();
                   if (aimer.stillFighting()) {
                      Character aimersTarget = _aimingCharacters.get(aimer);
                      if ((aimersTarget != null) && (aimersTarget._uniqueID == target._uniqueID)) {
                         results.add(aimer);
                      }
-                  }
-                  else {
+                  } else {
                      iter.remove();
                   }
                }

@@ -37,8 +37,6 @@ public class SpellCreateRope extends MageSpell
       for (int power=1 ; power<=6 ; power++) {
          header2.addHeader(""+power);
       }
-      for (byte power=1 ; power<8 ; power++) {
-      }
 
       int htmlRow=0;
       for (int weight=25 ; weight <= 1600 ; weight *= 2) {

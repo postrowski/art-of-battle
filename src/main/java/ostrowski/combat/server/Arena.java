@@ -24,6 +24,7 @@ import ostrowski.combat.common.enums.Facing;
 import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.orientations.Orientation;
 import ostrowski.combat.common.spells.IAreaSpell;
+import ostrowski.combat.common.spells.Spell;
 import ostrowski.combat.common.things.Limb;
 import ostrowski.combat.common.things.LimbType;
 import ostrowski.combat.common.things.Shield;
@@ -67,8 +68,8 @@ public class Arena implements Enums, IMapListener
    private final Map<Character, ClientProxy> _mapCombatantToProxy = new HashMap<>();
    private final Map<ClientProxy, Character> _mapProxyToCombatant = new HashMap<>();
    public  Battle                          _battle              = null;
-   private CombatServer                    _server              = null;
-   private CombatMap                       _combatMap           = null;
+   private CombatServer                    _server;
+   private CombatMap                       _combatMap;
    private CombatMap                       _autoRunMap          = null;
    private AutoRunBlock                    _autoRunBlock        = null;
 
@@ -124,9 +125,6 @@ public class Arena implements Enums, IMapListener
       }
       addCombatant(combatant, false/*checkForAutoStart*/);
       if (setInitiativeAndSpendActions) {
-         DiceSet initiativeDice = Rules.getInitiativeDieType();
-         int initiativeRoll = initiativeDice.roll(false/*allowExplodes*/, combatant, RollType.INITIATIVE);
-         combatant.setInitiativeActionsAndMovementForNewTurn(initiativeRoll);
          // slow the new guy down, so he doesn't show up in round 5 with 5 actions left....
          for (int i=1 ; i<_battle._roundCount ; i++) {
             combatant.endRound();
@@ -241,10 +239,14 @@ public class Arena implements Enums, IMapListener
       // (We can't do this until after we set the combatant's _uniqueID)
       _combatMap.recomputeKnownLocations(combatant, false/*basedOnFacing*/, false/*setVisibility*/, null/*locsToRedraw*/);
 
-      if (!combatant.hasInitiativeAndActionsEverBeenInitialized()) {
-         DiceSet initiativeDice = Rules.getInitiativeDieType();
-         int initiativeRoll = initiativeDice.roll(false/*allowExplodes*/, combatant, RollType.INITIATIVE);
-         combatant.setInitiativeActionsAndMovementForNewTurn(initiativeRoll);
+      if ((_battle != null) && (_battle._turnCount > 1 || _battle._roundCount > 1 || _battle._phaseCount > 1)) {
+         if (!combatant.hasInitiativeAndActionsEverBeenInitialized()) {
+            DiceSet initiativeDice = Rules.getInitiativeDieType();
+            String rollMessage = combatant.getName() + ", roll for initiative.";
+            int initiativeRoll = initiativeDice.roll(false/*allowExplodes*/, combatant,
+                                                     RollType.INITIATIVE, rollMessage);
+            combatant.setInitiativeActionsAndMovementForNewTurn(initiativeRoll);
+         }
       }
 
       synchronized (_combatants) {
@@ -461,12 +463,9 @@ public class Arena implements Enums, IMapListener
                      if (++aliveCount == 1) {
                         teamAlive = combatant._teamID;
                      }
-                     else {
-                        if ((teamAlive == TEAM_INDEPENDENT) ||
-                                 (teamAlive != combatant._teamID)  ||
-                                 (combatant._teamID == TEAM_INDEPENDENT))  {
-                           return true;
-                        }
+                     else if ((teamAlive != combatant._teamID) ||
+                              (combatant._teamID == TEAM_INDEPENDENT))  {
+                        return true;
                      }
                   }
                }
@@ -638,16 +637,16 @@ public class Arena implements Enums, IMapListener
          synchronized (_locationRequests) {
             try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_locationRequests)) {
                Rules.diag("askLocalPlayer, _locationRequest.size=" + _locationRequests.size());
-               if (_locationRequests.size() > 0) {
-                 // DebugBreak.debugBreak("multiple local player requests at once");
-               }
+               //if (_locationRequests.size() > 0) {
+               //   DebugBreak.debugBreak("multiple local player requests at once");
+               //}
                _locationRequests.add(req);
             }
          }
       }
       if (!_server.getShell().isDisposed()) {
          Display display = _server.getShell().getDisplay();
-         display.asyncExec(new Runnable() {
+         Runnable askQuestionRunnable = new Runnable() {
             @Override
             public void run() {
                // Hide the hexes that the player can't see
@@ -661,8 +660,7 @@ public class Arena implements Enums, IMapListener
                      _recordedActions.add(req);
                      _playbackIndex++;
                   }
-               }
-               else if (req instanceof RequestMovement) {
+               } else if (req instanceof RequestMovement) {
                   RequestMovement reqMove = (RequestMovement) req;
                   // selectHex does its own redraw(), so we avoid calling that before calling selectHex
                   _server._map.requestMovement(reqMove);
@@ -671,8 +669,7 @@ public class Arena implements Enums, IMapListener
                      _recordedActions.add(req);
                      _playbackIndex++;
                   }
-               }
-               else {
+               } else {
                   _server._map.redraw();
                   RequestUserInput reqUI = new RequestUserInput(_server.getShell(),
                                                                 SWT.ICON_QUESTION | SWT.MODELESS,
@@ -689,12 +686,9 @@ public class Arena implements Enums, IMapListener
                   while (!_activeRequestUserInputs.isEmpty()) {
                      // Set another open dialog to have focus
                      RequestUserInput next = _activeRequestUserInputs.get(0);
-                     if (next._shell.isDisposed())
-                     {
+                     if (next._shell.isDisposed()) {
                         _activeRequestUserInputs.remove(next);
-                     }
-                     else
-                     {
+                     } else {
                         next._shell.setFocus();
                         break;
                      }
@@ -702,10 +696,9 @@ public class Arena implements Enums, IMapListener
 
                   if (answer != null) {
                      if (answer instanceof Integer) {
-                         req.setAnswerByOptionIndex(((Integer) answer));
-                     }
-                     else {
-                         req.setCustAnswer((String) answer);
+                        req.setAnswerByOptionIndex(((Integer) answer));
+                     } else {
+                        req.setCustAnswer((String) answer);
                      }
                   }
                   // Since the player has made his/her choice,
@@ -726,15 +719,21 @@ public class Arena implements Enums, IMapListener
                            lastAction = _recordedActions.remove(_recordedActions.size() - 1);
                         }
                         restart();
-                     }
-                     else {
+                     } else {
                         _recordedActions.add(req);
                         _playbackIndex++;
                      }
                   }
                }
             }
-         });
+         };
+         // If we are on the UI thread, just do this now, otherwise we have to do it asynchronously
+         if (Thread.currentThread().getName().equalsIgnoreCase("Main")) {
+            askQuestionRunnable.run();
+         }
+         else {
+            display.asyncExec(askQuestionRunnable);
+         }
 
 //         synchronized (waitLock) {
 //            try {
@@ -764,9 +763,13 @@ public class Arena implements Enums, IMapListener
 
    public void sendMessageTextToParticipants(String message, Character char1, Character char2) {
       List<Character> participants = new ArrayList<>();
-      participants.add(char1);
+      if (char1 != null) {
+         participants.add(char1);
+      }
       if (char1 != char2) {
-         participants.add(char2);
+         if (char2 != null) {
+            participants.add(char2);
+         }
       }
       sendMessageTextToParticipants(message, participants);
    }
@@ -786,19 +789,7 @@ public class Arena implements Enums, IMapListener
 //+"   </tr>\n"
 //+"</table><br/><table border=1><tr><td colspan=2><b>spell succeeded</b></td></tr></table><br/>Darryl, the Orc Lord is now blessed, and all rolls will be at a +4";
 
-      message = message.replaceAll("[\n\t]", "");
-      message = message.replaceAll("<br/>", "\n");
-      message = message.replaceAll("<span[^>]*>", "");
-      message = message.replaceAll("</span>", "");
-      message = message.replaceAll(" *<table[^>]*>(<tr>)*</table>", ""); // empty table case
-      message = message.replaceAll(" *<table[^>]*>", "");
-      message = message.replaceAll(" *<tr[^>]*>", "\n");
-      message = message.replaceAll(" *<td[^>]*>", "\t");
-      message = message.replaceAll("<b>", "");
-      message = message.replaceAll("</b>", "");
-      message = message.replaceAll("</td>", "");
-      message = message.replaceAll("</tr>", "");
-      message = message.replaceAll("</table>", "\n");
+      message = convertFromHtmlToText(message.replaceAll("[\n\t]", ""));
       List<ClientProxy> proxiesSentTo = new ArrayList<>();
       for (Character participant : participants) {
          if ((participant != null) && (participant.getAIType() != null)) {
@@ -812,6 +803,26 @@ public class Arena implements Enums, IMapListener
          sendMessageTextToClient(message, participant, true/*popup*/);
       }
    }
+
+   public static String convertFromHtmlToText(String message) {
+      return message.replaceAll("<br/>", "\n")
+                    .replaceAll("<span[^>]*>", "")
+                    .replaceAll("</span>", "")
+                    .replaceAll(" *<table[^>]*>(<tr>)*</table>", "") // empty table case
+                    .replaceAll(" *<table[^>]*>", "")
+                    .replaceAll(" *<tr[^>]*>", "\n")
+                    .replaceAll(" *<td[^>]*>", "\t")
+                    .replaceAll("<b>", "")
+                    .replaceAll("</b>", "")
+                    .replaceAll("</td>", "")
+                    .replaceAll("</tr>", "")
+                    .replaceAll("<h[123456]>", "")
+                    .replaceAll("<H[123456]>", "")
+                    .replaceAll("</h[123456]>", "")
+                    .replaceAll("</H[123456]>", "")
+                    .replaceAll("</table>", "\n");
+   }
+
    public void sendMessageTextToAllClients(String message, boolean popUp) {
       MessageText msgText = new MessageText("Server", message, null, popUp, true/*isPublic*/);
       sendEventToAllClients(msgText);
@@ -906,7 +917,7 @@ public class Arena implements Enums, IMapListener
       proxy.sendObject(_combatMap);
       sendServerStatus(proxy);
 
-      Map<Byte, List<TeamMember>> availableCombatantNamesByTeams = null;
+      Map<Byte, List<TeamMember>> availableCombatantNamesByTeams;
       if ((_battle == null) || ( (_battle._turnCount == 1 ) &&
                                 (_battle._roundCount == 1 ) &&
                                 (_battle._phaseCount == 1 ))) {
@@ -953,7 +964,7 @@ public class Arena implements Enums, IMapListener
       }
    }
    public boolean moveToFrom(Character mover, Character toChar, ArenaLocation retreatFromLocation, Limb attackFromLimb) {
-      Orientation newOrientation = null;
+      Orientation newOrientation;
       if (retreatFromLocation != null) {
          newOrientation = getRetreatMoveOrientation(mover, retreatFromLocation);
       }
@@ -1091,8 +1102,9 @@ public class Arena implements Enums, IMapListener
          mapOfFutureOrientToSourceOrient = new HashMap<>();
       }
       getAllRoutesFrom(curOrientation, map, movementAllowance, movementAllowance, firstMoveOfRound,
-                       character, mapOfFutureOrientToSourceOrient, null/*target*/, null/*toLoc*/, false/*allowRanged*/,
-                       false/*onlyChargeTypes*/, null/*itemsToPickupUsingSkill*/, considerUnknownLocations);
+                       character, mapOfFutureOrientToSourceOrient, null/*target*/, null/*toLoc*/,
+                       false/*allowRanged*/,false/*onlyChargeTypes*/, 0,
+                       null/*itemsToPickupUsingSkill*/, considerUnknownLocations);
       validOrientations.addAll(mapOfFutureOrientToSourceOrient.keySet());
 //      List<Orientation> possibleOrientations = curOrientation.getPossibleFutureOrientations(map);
 //      for (Orientation orient : possibleOrientations) {
@@ -1131,7 +1143,7 @@ public class Arena implements Enums, IMapListener
                                               int maxMovement, byte movePerRound, boolean firstMoveOfRound,
                                               Character mover, Map<Orientation, Orientation> bestFromMap,
                                               Character target, ArenaCoordinates toLoc, boolean allowRanged,
-                                              boolean onlyChargeTypes,
+                                              boolean onlyChargeTypes, int costToEnterFireHexes,
                                               List<SkillType> itemsToPickupUsingSkill, boolean considerUnknownLocations) {
       // movesInRound is an ArrayList of [HashMap that key a location, with a value of where it comes from].
       // The index in the movesInRound list is how many movement points it will take to get there.
@@ -1175,7 +1187,7 @@ public class Arena implements Enums, IMapListener
 
       //Orientation testOrientation = mover.getOrientation();
 
-      boolean unexploredMovesExists = false;
+      boolean unexploredMovesExists;
       int devianceAllowance=0;
       do {
          if ((target != null) || (toLoc != null)) {
@@ -1352,6 +1364,14 @@ public class Arena implements Enums, IMapListener
                            }
 
                            byte costToEnter = destOrientation.getCostToEnter(futureOrient, mover, map);
+                           if (costToEnterFireHexes > 0) {
+                              for (ArenaCoordinates coord : futureOrient.getCoordinates()) {
+                                 ArenaLocation loc = map.getLocation(coord);
+                                 for (IAreaSpell spell : loc.getActiveSpells()) {
+                                    costToEnter += costToEnterFireHexes;
+                                 }
+                              }
+                           }
                            if (costToEnter >= 100) {
                               // ignore Orientations we can't enter (perhaps another character or a wall is in the way)
                               continue;
@@ -1586,7 +1606,7 @@ public class Arena implements Enums, IMapListener
          for (byte cur=0 ; cur<stockCharacters.length; cur++) {
             if ((stockAIName[cur] != null) && (stockAIName[cur].length() > 0) && (!stockAIName[cur].equalsIgnoreCase("Off"))) {
                if ((stockCharacters[cur] != null) && (stockCharacters[cur].length() > 0)) {
-                  Character stockCharacter = null;
+                  Character stockCharacter;
                   if (stockCharacters[cur].startsWith("? ")) {
                      if (!_characterGenerated) {
                         _characterGenerated = true;
@@ -2146,11 +2166,10 @@ public class Arena implements Enums, IMapListener
       for (int index=0 ; index<children.getLength() ; index++) {
          Node child = children.item(index);
          String name = child.getNodeName();
-         if (_battle.serializeFromXmlObject(child)) {
-         }
-         else if ((name.equals("localCharacters")) ||
-                  (name.equals("remoteCharacters")) ||
-                  (name.equals("aiCharacters"))) {
+         if (!_battle.serializeFromXmlObject(child) &&
+                 (name.equals("localCharacters")  ||
+                  name.equals("remoteCharacters") ||
+                  name.equals("aiCharacters"))) {
             NodeList grandChildren = child.getChildNodes();
             for (int i=0 ; i<grandChildren.getLength() ; i++) {
                Node grandChild = grandChildren.item(i);

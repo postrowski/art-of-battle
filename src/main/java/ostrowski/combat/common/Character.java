@@ -73,7 +73,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    private byte                              _damageBase;
 
    // active values:
-   private Condition                         _condition                                  = null;
+   private Condition                         _condition;
    public int                                _targetID                                   = -1;
    private byte                              _aimDuration                                = 0;
    private final List<Spell>                 _activeSpellsList                           = new ArrayList<>();
@@ -915,7 +915,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
             return;
          }
       }
-      MageSpell spell = MageSpell.getSpell(spellName);
+      MageSpell spell = MageSpells.getSpell(spellName);
       spell.setLevel(spellLevel);
       _knownMageSpellsList.add(spell);
    }
@@ -1108,9 +1108,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                         sb.append(" to re-ready before you may attack.");
                      }
                   }
-                  else {
-                     // arm crippled, or no weapon.
-                  }
+                  // else arm crippled, or no weapon.
                }
             }
             boolean showPain = false;
@@ -1638,7 +1636,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                                       && (maxDistanceToTarget >= weap.getWeaponMinRange(false/*allowRanged*/, false/*onlyChargeTypes*/, this));
 
                WeaponStyleAttackRanged rangedStyle = weap.getRangedStyle();
-               boolean inRange = true;
+               boolean inRange;
                boolean canPrepare = (limb instanceof Hand) && ((Hand) limb).canPrepare();
                if (canPrepare) {
                   if (limb.isCrippled()) {
@@ -2031,7 +2029,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
             RequestEquipment reqEquip = getEquipmentRequest();
             int enabledCount = reqEquip.getEnabledCount(false/*includeCancelAction*/);
             if (enabledCount > 0) {
-               String singleItemAction = null;
+               String singleItemAction;
                if (enabledCount == 1) {
                   singleItemAction = reqEquip.getSingleEnabledAction();
                   req.addOption(new RequestActionOption("[un]equip gear or weapons: " + singleItemAction, RequestActionType.OPT_EQUIP_UNEQUIP, LimbType.BODY, true/*enabled*/));
@@ -2175,11 +2173,9 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                                           case 2: actionType = RequestActionType.OPT_COMPLETE_SPELL_2; break;
                                           case 3: actionType = RequestActionType.OPT_COMPLETE_SPELL_3; break;
                                        }
-                                       StringBuilder actionStr = new StringBuilder();
-                                       actionStr.append("complete spell (").append(action).append("-actions)");
                                        boolean enabled = (spellIsInRange && hasLineOfSightToTarget) ||
                                                          _currentSpell.isBeneficial() || !_currentSpell.requiresTargetToCast();
-                                       req.addOption(new RequestActionOption(actionStr.toString(), actionType, LimbType.BODY, enabled));
+                                       req.addOption(new RequestActionOption("complete spell (" + action + "-actions)", actionType, LimbType.BODY, enabled));
                                        //req.addOption(actionID, actionStr.toString(), enabled);
                                     }
                                  }
@@ -2199,7 +2195,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                               }
                            }
 
-                           int divinePower = 0;
+                           int divinePower;
                            // inate spells don't need divine power. They have their maximum power
                            // set as their 'power' attribute.
                            if (!_currentSpell.isInate()) {
@@ -2322,7 +2318,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
 
    public Weapon getAltWeapon() {
       for (Thing equipment : getEquipment()) {
-         if ((equipment != null) && (equipment instanceof Weapon)) {
+         if ((equipment instanceof Weapon)) {
             if (((Weapon) equipment).isUnarmedStyle()) {
                return (Weapon) equipment;
             }
@@ -2372,24 +2368,28 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          if (!holdingWeapon) {
             if (minDistance > 2) {
                tooFarForMartialArtsDefence = true;
-               Weapon unarmedWeapon = _limbs.get(LimbType.HAND_RIGHT).getWeapon(this);
-               if (unarmedWeapon != null) {
-                  for (WeaponStyleAttack attackStyle : unarmedWeapon._attackStyles) {
-                     if (attackStyle._skillType == SkillType.Brawling) {
-                        martialArtsSkill = SkillType.Brawling;
-                        break;
-                     }
-                  }
-                  for (WeaponStyleAttack attackStyle : unarmedWeapon._attackStyles) {
-                     if (attackStyle._skillType == SkillType.Karate) {
-                        martialArtsSkill = SkillType.Karate;
-                        break;
-                     }
-                  }
-                  for (WeaponStyleAttack attackStyle : unarmedWeapon._attackStyles) {
-                     if (attackStyle._skillType == SkillType.Aikido) {
-                        martialArtsSkill = SkillType.Aikido;
-                        break;
+               Limb hand = _limbs.get(LimbType.HAND_RIGHT);
+               if (hand == null) { hand = _limbs.get(LimbType.HAND_LEFT); }
+               if (hand == null) { hand = _limbs.get(LimbType.HAND_RIGHT_2); }
+               if (hand == null) { hand = _limbs.get(LimbType.HAND_LEFT_2); }
+               if (hand == null) { hand = _limbs.get(LimbType.HAND_RIGHT_3); }
+               if (hand == null) { hand = _limbs.get(LimbType.HAND_LEFT_3); }
+               if (hand != null) {
+                  Weapon unarmedWeapon = hand.getWeapon(this);
+                  if (unarmedWeapon != null) {
+                     for (WeaponStyleAttack attackStyle : unarmedWeapon._attackStyles) {
+                        if (attackStyle._skillType == SkillType.Aikido) {
+                           martialArtsSkill = SkillType.Aikido;
+                           break;
+                        }
+                        if (attackStyle._skillType == SkillType.Karate) {
+                           martialArtsSkill = SkillType.Karate;
+                           break;
+                        }
+                        if (attackStyle._skillType == SkillType.Brawling) {
+                           martialArtsSkill = SkillType.Brawling;
+                           break;
+                        }
                      }
                   }
                }
@@ -2512,7 +2512,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                // missile spells return 'false' to the isReal() call
                sb.append(attackingWeapon.getName());
             }
-            else {
+            else if (attackMode != null) {
                sb.append(attackMode.getName());
             }
          }
@@ -2649,7 +2649,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          }
          sb.append(".");
       }
-      if (tooFarForMartialArtsDefence) {
+      if (tooFarForMartialArtsDefence && (martialArtsSkill != null)) {
          sb.append("\nYou are too far away from the attacker defend with your ")
            .append(martialArtsSkill.name()).append(" skill.");
       }
@@ -2893,12 +2893,11 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          }
          //return null;
       }
-      StringBuilder sb = new StringBuilder();
-      sb.append(getName()).append(", ").append(escapingCharacter.getName());
-      sb.append(" is trying to break free of your level-").append(escapingCharacter.getHoldLevel(this));
-      sb.append(" hold, using ").append(escape.getActionsUsed()).append(" actions.\n");
-      sb.append(" How many actions do you want to use to maintain your hold on ").append(escapingCharacter.getHimHer()).append("?");
-      maintReq.setMessage(sb.toString());
+      String sb = getName() + ", " + escapingCharacter.getName() +
+                  " is trying to break free of your level-" + escapingCharacter.getHoldLevel(this) +
+                  " hold, using " + escape.getActionsUsed() + " actions.\n" +
+                  " How many actions do you want to use to maintain your hold on " + escapingCharacter.getHimHer() + "?";
+      maintReq.setMessage(sb);
 
       maintReq.addMaintainHoldOptions(maxActions, this, escapingCharacter, skill, getWoundsAndPainPenalty());
       return maintReq;
@@ -3118,7 +3117,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          DebugBreak.debugBreak();
          return;
       }
-      IInstantaneousSpell spellDefenseUsed = null;
+      IInstantaneousSpell spellDefenseUsed;
       //      if ( attack.isCompleteSpell()) {
       //         spellDefenseUsed = _bestDefensiveSpell_spell;
       //      }
@@ -3701,7 +3700,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       }
       _knownMageSpellsList = new ArrayList<>();
       for (MageSpell sourceSpell : source._knownMageSpellsList) {
-         MageSpell spell = MageSpell.getSpell(sourceSpell.getName());
+         MageSpell spell = MageSpells.getSpell(sourceSpell.getName());
          spell.setLevel(sourceSpell.getLevel());
          _knownMageSpellsList.add(spell);
       }
@@ -3745,7 +3744,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       _isBerserking = source._isBerserking;
       _hasInitiativeAndActionsEverBeenInitialized = source._hasInitiativeAndActionsEverBeenInitialized;
       // computed values:
-      resetSpellPoints();
+      //resetSpellPoints();
       updateWeapons();
    }
 
@@ -3917,8 +3916,8 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    }
 
    public boolean serializeFromString(String source) {
-      String attributes = "";
-      String handsString = "";
+      String attributes;
+      String handsString;
       StringTokenizer st = new StringTokenizer(source, SEPARATOR_MAIN);
       if (!st.hasMoreElements()) {
          return false;
@@ -4000,7 +3999,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                _skillsList.put(skillType, new Skill(skillType, Byte.parseByte(level)));
             }
             else {
-               MageSpell spell = MageSpell.getSpell(name);
+               MageSpell spell = MageSpells.getSpell(name);
                if (spell != null) {
                   spell.setLevel(Byte.parseByte(level));
                   _knownMageSpellsList.add(spell);
@@ -4297,7 +4296,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                   }
                }
                else if (child.getNodeName().equals("Spells")) {
-                  MageSpell spell = MageSpell.getSpell(name);
+                  MageSpell spell = MageSpells.getSpell(name);
                   if (spell != null) {
                      spell.setLevel(level);
                      _knownMageSpellsList.add(spell);
@@ -4518,7 +4517,9 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          }
       }
       if (modifiedWound.isSeveredArm() || modifiedWound.isSeveredLeg() || modifiedWound.isSeveredWing()) {
-         loc.addThing(_race.createSeveredLimb(modifiedWound.getLimb()));
+         if (loc != null) {
+            loc.addThing(_race.createSeveredLimb(modifiedWound.getLimb()));
+         }
       }
 
       if (modifiedWound.isSeveredLeg()) {
@@ -4569,10 +4570,8 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                   }
                }
             }
-            if (thingDropped != null) {
-               if (thingDropped.isReal()) {
-                  loc.addThing(thingDropped);
-               }
+            if ((thingDropped != null) && thingDropped.isReal() && (loc != null)) {
+               loc.addThing(thingDropped);
             }
          }
       }
@@ -4582,7 +4581,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          for (Limb limb : getLimbs()) {
             if (limb instanceof Hand) {
                Thing weap = limb.getHeldThing();
-               if ((weap != null) && (weap.isReal())) {
+               if ((weap != null) && weap.isReal() && (loc != null)) {
                   Thing thingDropped = limb.dropThing();
                   loc.addThing(thingDropped);
                   break;
@@ -4611,13 +4610,17 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
             byte iq = getAttributeLevel(Attribute.Intelligence);
             DiceSet berserkSaveDice = Rules.getDice(iq, (byte) 2/*action*/, Attribute.Intelligence);
             berserkSaveDice = adjustDieRoll(berserkSaveDice, RollType.BERSERK_RESISTANCE, null/*target*/);
-            int diceRoll = berserkSaveDice.roll(true/*allowExplodes*/, this, RollType.BERSERK_RESISTANCE);
+            String rollMessage = getName() + ", because of your new pain level (" + newPain +
+                                 "), you must roll your IQ (" + iq + ") + d10± against a TN of " +
+                                 newPain + " to avoid going berserk!";
+            int diceRoll = berserkSaveDice.roll(true/*allowExplodes*/, this,
+                                                RollType.BERSERK_RESISTANCE, rollMessage);
             sb.append(getName()).append("'s pain causes a chance that he goes berserk.");
             sb.append(" He rolls 2-actions IQ (").append(berserkSaveDice);
             sb.append("), rolling ").append(berserkSaveDice.getLastDieRoll());
             sb.append(" = ").append(diceRoll);
             if (berserkSaveDice.lastRollRolledAllOnes()) {
-               sb.append(", which is all ones, so ").append(getName()).append(" automattically goes berserk!");
+               sb.append(", which is all ones, so ").append(getName()).append(" automatically goes berserk!");
                _isBerserking = true;
             }
             else if (diceRoll >= newPain) {
@@ -4654,7 +4657,12 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
             byte toughness = getAttributeLevel(Attribute.Toughness);
             DiceSet magicSaveDice = Rules.getDice(toughness, (byte) 2/*action*/, Attribute.Toughness);
             magicSaveDice = adjustDieRoll(magicSaveDice, RollType.PAIN_CONCENTRATION, null/*target*/);
-            int diceRoll = magicSaveDice.roll(true/*allowExplodes*/, this, RollType.PAIN_CONCENTRATION);
+            String rollMessage = getName() + ", because of your new pain level (" + currentPain +
+                                 "), you must roll your TOU (" + toughness + ") + d10± against a TN of " +
+                                 currentPain + " to avoid losing your " +
+                                 _currentSpell.getName() + " spell.";
+            int diceRoll = magicSaveDice.roll(true/*allowExplodes*/, this,
+                                              RollType.PAIN_CONCENTRATION, rollMessage);
 
             sb.append("<br/>");
             sb.append(getName()).append("'s wound raises ").append(getHisHer()).append(" pain level to ").append(currentPain);
@@ -4674,7 +4682,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                sb.append(" The roll succeeds, so the spell is not lost.");
             }
          }
-         if (spellLost && (sb != null)) {
+         if (spellLost) {
             Wound newWound = _currentSpell.getFailureBurnWound();
             _currentSpell = null;
             if (newWound != null) {
@@ -4685,9 +4693,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
             }
          }
       }
-      if (arena != null) {
-         arena.sendMessageTextToAllClients(sb.toString(), false/*popUp*/);
-      }
+      arena.sendMessageTextToAllClients(sb.toString(), false/*popUp*/);
 
       // notify any watchers of any changes to this character
       ObjectChanged changeNotif = new ObjectChanged(origChar, this);
@@ -4754,7 +4760,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          }
       }
       else if (action.isChangeTargets()) {
-         if ((action == null) || ((action._targetPriorities == null) && (action._targetSelection == null))) {
+         if ((action._targetPriorities == null) && (action._targetSelection == null)) {
             DebugBreak.debugBreak();
          }
          else {
@@ -5698,7 +5704,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    }
 
    public boolean isEnemy(Character other) {
-      return (other._teamID != _teamID) || (other._teamID == TEAM_INDEPENDENT) || (_teamID == TEAM_INDEPENDENT);
+      return (other._teamID != _teamID) || (_teamID == TEAM_INDEPENDENT);
    }
 
    public String describeActiveSpells() {
@@ -5733,9 +5739,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          if (otherHeadCoord != null) {
             return -1;
          }
-         if (otherHeadCoord == null) {
-            return 0;
-         }
+         return 0;
       }
       else if (otherHeadCoord == null) {
          return 1;
@@ -5979,13 +5983,11 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    }
 
    public List<Thing> getEquipment() {
-      List<Thing> dupList = new ArrayList<>();
       synchronized (_equipment) {
          try (SemaphoreAutoLocker sal = new SemaphoreAutoLocker(_lock_equipment)) {
-            dupList.addAll(_equipment);
+            return new ArrayList<>(_equipment);
          }
       }
-      return dupList;
    }
 
    public void clearEquipmentList() {

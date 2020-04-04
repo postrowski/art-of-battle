@@ -401,7 +401,7 @@ public class Rules extends DebugBreak implements Enums
          DebugBreak.debugBreak();
          throw new IllegalArgumentException("actions (" + actions + ") may only be 1, 2 or 3.");
       }
-      double[] expectedValues = null;
+      double[] expectedValues;
       switch (attributeLevel) {
          // These numbers are not completely linear, or even in ascending order, because the expected value
          // doesn't account for negative numbers being truncated to zero, which is very significant for the
@@ -898,28 +898,27 @@ public class Rules extends DebugBreak implements Enums
    }
 
    public static String generateMiscHtmlTable() {
-      StringBuilder sb = new StringBuilder();
-      sb.append(HtmlBuilder.getHTMLHeader());
-      sb.append("<body>");
-      sb.append("<table class='Hidden'>");
-      sb.append("<tr><td class='alignLeft'>");
-      sb.append(generateChargeDamageTable());
-      sb.append("</td><td class='alignLeft'>");
-      sb.append(generatePositionAdjustmentTable());
-      sb.append(generateRangeAdjustmentTable());
 
-      sb.append("<h4>Target Movement Adjustments:</h4>");
-      sb.append("<table class=\"Hidden\">");
-      sb.append("<tr><td class='alignLeft'>PD Adjustment for target moving:</td><td> +").append(Rules.getTNBonusForMovement(RANGE.LONG, false)).append("</td></tr>");
-      sb.append("<tr><td class='alignLeft'>PD Adjustment for target moving evasively:</td><td> +").append(Rules.getTNBonusForMovement(RANGE.LONG, true)).append("</td></tr>");
-      sb.append("</table>");
-      sb.append("</td><td class='alignLeft'>");
-      sb.append("<h4>Weapon Size Adjustments:</h4>");
-      sb.append(generateSizeAdjustmentTable());
-      sb.append("</td></tr>");
-      sb.append("</table>");
-      sb.append("</body>");
-      return sb.toString();
+      String sb = HtmlBuilder.getHTMLHeader() +
+                  "<body>" +
+                  "<table class='Hidden'>" +
+                  "<tr><td class='alignLeft'>" +
+                  generateChargeDamageTable() +
+                  "</td><td class='alignLeft'>" +
+                  generatePositionAdjustmentTable() +
+                  generateRangeAdjustmentTable() +
+                  "<h4>Target Movement Adjustments:</h4>" +
+                  "<table class=\"Hidden\">" +
+                  "<tr><td class='alignLeft'>PD Adjustment for target moving:</td><td> +" + Rules.getTNBonusForMovement(RANGE.LONG, false) + "</td></tr>" +
+                  "<tr><td class='alignLeft'>PD Adjustment for target moving evasively:</td><td> +" + Rules.getTNBonusForMovement(RANGE.LONG, true) + "</td></tr>" +
+                  "</table>" +
+                  "</td><td class='alignLeft'>" +
+                  "<h4>Weapon Size Adjustments:</h4>" +
+                  generateSizeAdjustmentTable() +
+                  "</td></tr>" +
+                  "</table>" +
+                  "</body>";
+      return sb;
    }
 
    public static byte getTNBonusForActions(byte numberOfActionsToAttack) {

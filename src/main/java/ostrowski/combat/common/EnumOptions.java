@@ -17,7 +17,7 @@ public abstract class EnumOptions <T> extends SerializableObject implements Clon
       }
    }
 
-   public void add(@SuppressWarnings("unchecked") T... opts) {
+   public void add(T... opts) {
       for (T opt : opts) {
          if (!_list.contains(opt)) {
             _list.add(opt);

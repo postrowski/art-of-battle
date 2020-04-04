@@ -357,58 +357,62 @@ public class RightClickPopupMenu
       return null;
    }
 
-   static private void openDialog(Display shell, String title, String prompt, String contents,
+   static private void openDialog(Display display, String title, String prompt, String contents,
                                     boolean multiline, IActOnTextResults actOnResult) {
-      final Shell dialog = new Shell (shell, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-      dialog.setText(title);
+      final Shell shell = new Shell (display, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | SWT.RESIZE);
+      shell.setText(title);
       FormLayout formLayout = new FormLayout ();
       formLayout.marginWidth = 10;
       formLayout.marginHeight = 10;
       formLayout.spacing = 10;
-      dialog.setLayout (formLayout);
+      shell.setLayout (formLayout);
 
-      Label label = new Label (dialog, SWT.NONE);
-      label.setText (prompt);
-      FormData data = new FormData ();
-      label.setLayoutData (data);
-
-      Button cancel = new Button (dialog, SWT.PUSH);
-      cancel.setText ("Cancel");
-      data = new FormData ();
-      data.width = 60;
-      data.right = new FormAttachment (100, 0);
-      data.bottom = new FormAttachment (100, 0);
-      cancel.setLayoutData (data);
-      cancel.addListener(SWT.Selection, e -> dialog.close());
-
-      int style = SWT.BORDER;
-      if (multiline) {
-         style = SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL;
+      Label label = new Label (shell, SWT.NONE);
+      {
+         label.setText(prompt);
+         FormData labelFormData = new FormData();
+         labelFormData.left = new FormAttachment(0); // left side of parent window
+         label.setLayoutData(labelFormData);
       }
-      final Text text = new Text(dialog, style);
-      data = new FormData ();
-      data.width = 200;
-      data.left = new FormAttachment (label, 0, SWT.DEFAULT);
-      data.right = new FormAttachment (100, 0);
-      data.top = new FormAttachment (label, 0, SWT.CENTER);
-      data.bottom = new FormAttachment (cancel, 0, SWT.DEFAULT);
-      text.setLayoutData (data);
-      text.setText(contents);
+      Button cancel = new Button(shell, SWT.PUSH);
+      {
+         cancel.setText("Cancel");
+         FormData cancelFormData = new FormData();
+         cancelFormData.width = 60;
+         cancelFormData.right = new FormAttachment(100); // right side of button attaches at far right of window
+         cancelFormData.bottom = new FormAttachment(100); // bottom side of button attaches at bottom of window
+         cancel.setLayoutData(cancelFormData);
+         cancel.addListener(SWT.Selection, e -> shell.close());
+      }
 
-      Button ok = new Button (dialog, SWT.PUSH);
-      ok.setText ("OK");
-      data = new FormData ();
-      data.width = 60;
-      data.right = new FormAttachment (cancel, 0, SWT.DEFAULT);
-      data.bottom = new FormAttachment (100, 0);
-      ok.setLayoutData (data);
-      ok.addListener(SWT.Selection, e -> {
-         actOnResult.doAction(text.getText());
-         dialog.close();
-      });
-
-      dialog.setDefaultButton (ok);
-      dialog.pack ();
-      dialog.open ();
+      int style = SWT.BORDER | ((multiline) ? (SWT.MULTI | SWT.WRAP | SWT.V_SCROLL) : 0);
+      Text text = new Text(shell, style);
+      {
+         FormData textFormData = new FormData();
+         textFormData.width = ((contents != null) && contents.length() > 200) ? 500 : 200;
+         textFormData.left = new FormAttachment(label, 0, SWT.RIGHT); // left side of text attached to right side of label
+         textFormData.right = new FormAttachment(100); // right side of dialog
+         //textFormData.top = new FormAttachment(label, 0, SWT.CENTER);
+         textFormData.top = new FormAttachment(0); // top attaches to top of dialog
+         textFormData.bottom = new FormAttachment(cancel, 0, SWT.TOP);
+         text.setLayoutData(textFormData);
+         text.setText(contents);
+      }
+      {
+         Button ok = new Button (shell, SWT.PUSH);
+         ok.setText ("OK");
+         FormData okFormData = new FormData();
+         okFormData.width = 60;
+         okFormData.right = new FormAttachment(cancel, 0, SWT.DEFAULT);
+         okFormData.bottom = new FormAttachment(100, 0);
+         ok.setLayoutData(okFormData);
+         ok.addListener(SWT.Selection, e -> {
+            actOnResult.doAction(text.getText());
+            shell.close();
+         });
+         shell.setDefaultButton (ok);
+      }
+      shell.pack ();
+      shell.open ();
    }
 }

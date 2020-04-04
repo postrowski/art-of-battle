@@ -79,13 +79,12 @@ public class SpellFireball extends MageSpell implements ICastInBattle
       SpecialDamage specDam = new SpecialDamage(SpecialDamage.MOD_EXPLODING | SpecialDamage.MOD_FLAMING);
       fireball.setSpecialDamageModifier(specDam, "");
       if (!hand.setHeldThing(fireball, getCaster())) {
-         StringBuilder sb = new StringBuilder();
-         sb.append(getCasterName());
-         sb.append(" drops ");
-         sb.append(getCaster().getHisHer()).append(" ");
-         sb.append(getCaster().getLimb(LimbType.HAND_RIGHT).getHeldThingName());
-         sb.append(" in order to hold the created fireball.");
-         arena.sendMessageTextToAllClients(sb.toString(), false/*popUp*/);
+         String sb = getCasterName() +
+                     " drops " +
+                     getCaster().getHisHer() + " " +
+                     getCaster().getLimb(LimbType.HAND_RIGHT).getHeldThingName() +
+                     " in order to hold the created fireball.";
+         arena.sendMessageTextToAllClients(sb, false/*popUp*/);
          Thing thingDropped = hand.dropThing();
          getCaster().getLimbLocation(hand._limbType, arena.getCombatMap()).addThing(thingDropped);
          hand.setHeldThing(fireball, getCaster());

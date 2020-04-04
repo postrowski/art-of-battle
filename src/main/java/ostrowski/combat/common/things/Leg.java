@@ -22,11 +22,11 @@ public class Leg extends Limb
    {
       if (character.isAnimal()) {
          if (character.getRace().hasProperty(Race.PROPERTIES_CLAWS)) {
-            return Weapon.getWeapon(Weapon.NAME_Claws, character.getRace());
+            return Weapons.getWeapon(Weapon.NAME_Claws, character.getRace());
          }
          return null;
       }
-      return Weapon.getWeapon(Weapon.NAME_KarateKick, character.getRace());
+      return Weapons.getWeapon(Weapon.NAME_KarateKick, character.getRace());
    }
 
    @Override

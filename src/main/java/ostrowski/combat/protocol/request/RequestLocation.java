@@ -122,11 +122,10 @@ public class RequestLocation extends SyncRequest
    @Override
    public String toString()
    {
-      StringBuilder sb = new StringBuilder();
-      sb.append("RequestLocation: ");
-      sb.append("selectableLoc:").append(_selectableCoordinates).append("\n");
-      sb.append(super.toString());
-      return sb.toString();
+      String sb = "RequestLocation: " +
+                  "selectableLoc:" + _selectableCoordinates + "\n" +
+                  super.toString();
+      return sb;
    }
 
 }

@@ -18,7 +18,7 @@ import ostrowski.util.Diagnostics;
 
 public abstract class OrientationSerpentine extends Orientation
 {
-   public byte _baseSize = 0;
+   public byte _baseSize;
    protected byte _maxBendAllowed = 1;
    public OrientationSerpentine(int baseSize) {
       super();

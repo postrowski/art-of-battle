@@ -24,7 +24,7 @@ public class RollingDie extends Dialog implements PaintListener
  //  private final GLView  _view;
    private Thread        _animationThread  = null;
    //private TexturedObject _die;
-   private      Point _centerLoc        = new Point(0, 0);
+   private      Point _centerLoc;
    public final Point _offsetFromParent = null; // if this is null, we are not pinned to the parent, otherwise we are.
    public       Thing _die;
    public static RollingDie _this;
@@ -64,8 +64,7 @@ public class RollingDie extends Dialog implements PaintListener
                   }
                });
 
-            } catch (InterruptedException e) {
-            } catch (IllegalMonitorStateException e) {
+            } catch (InterruptedException | IllegalMonitorStateException e) {
                System.out.println(e);
             } finally {
                _animationThread = null;

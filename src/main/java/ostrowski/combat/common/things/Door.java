@@ -38,7 +38,7 @@ public class Door extends Wall implements Enums
       if (_doorState    != other._doorState) {
          return false;
       }
-      if (_keyCode      != other._keyCode) {
+      if (!_keyCode.equals(other._keyCode)) {
          return false;
       }
       return super.equals(other);

@@ -18,7 +18,7 @@ import ostrowski.ui.Helper;
 
 public class AIBlock extends Helper implements IUIBlock, ModifyListener {
 
-   CharacterDisplay _display = null;
+   CharacterDisplay _display;
    private Combo _aiSelection;
 
    public AIBlock(CharacterDisplay display) {

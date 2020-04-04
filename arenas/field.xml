@@ -40,8 +40,8 @@
   
   <teams count="4" maxCombatantsPerTeam="15">
     <team id="0">
-      <combatant AI="Local" charName="Conan" id="0" startX="9" startY="31"/>
-      <combatant AI="Local" charName="? 300 Orc" id="1" startX="13" startY="29"/>
+      <combatant AI="Norm" charName="Conan" id="0" startX="9" startY="31"/>
+      <combatant AI="Norm" charName="? 200 Orc" id="1" startX="13" startY="29"/>
       <combatant AI="Off" charName="" id="2"/>
       <combatant AI="Off" charName="" id="3"/>
       <combatant AI="Off" charName=" " id="4"/>

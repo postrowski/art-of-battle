@@ -24,7 +24,7 @@ public class TargetPrioritiesWidget extends Helper implements SelectionListener
    private List<Character>        _combatants   = null;
    private Button                      _upButton     = null;
    private Button                      _dnButton     = null;
-   private CharacterDisplay            _display      = null;
+   private CharacterDisplay            _display;
    private int                         _selfUniqueID = -1;
    private byte                        _selfTeamID   = -1;
 
@@ -210,6 +210,7 @@ public class TargetPrioritiesWidget extends Helper implements SelectionListener
          if (combatant._teamID == teamId) {
             _combatants.remove(i);
             _priorityList.remove(i);
+            i--;
             _combatants.add(combatant);
             _priorityList.add(combatant.getName());
          }

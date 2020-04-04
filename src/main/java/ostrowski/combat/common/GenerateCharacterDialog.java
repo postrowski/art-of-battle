@@ -2,6 +2,7 @@ package ostrowski.combat.common;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -25,8 +26,8 @@ import ostrowski.ui.Helper;
 public class GenerateCharacterDialog extends Dialog implements ModifyListener {
    private final Shell _shell;
    public boolean _cancelSelected = false;
-   Combo _generationPointsCombo = null;
-   Combo _racesCombo = null;
+   Combo _generationPointsCombo;
+   Combo _racesCombo;
    static int _generationPoints = 200;
    private String _race;
    private final Text _equipmentTextBox;
@@ -55,12 +56,7 @@ public class GenerateCharacterDialog extends Dialog implements ModifyListener {
 
       helper.createLabel(body, "Select a race for this character:", SWT.LEFT, 1, null);
       _racesCombo = helper.createCombo(body, 0/*style*/, 1/*hSpan*/, races );
-      if (defaultRace != null) {
-         _racesCombo.setText(defaultRace);
-      }
-      else {
-         _racesCombo.setText(Race.NAME_Human);
-      }
+      _racesCombo.setText(Objects.requireNonNullElse(defaultRace, Race.NAME_Human));
       _race = _racesCombo.getText();
 
       helper.createLabel(body, "Enter all equipment for this character:", SWT.LEFT, 2, null);

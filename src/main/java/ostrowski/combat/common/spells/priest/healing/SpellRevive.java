@@ -31,14 +31,13 @@ public class SpellRevive extends PriestSpell implements ICastInBattle
    }
    @Override
    public String describeSpell() {
-      StringBuilder sb = new StringBuilder();
-      sb.append("The '").append(getName()).append("' spell revives an unconscious or sleeping subject.");
-      sb.append(" To be effective, the caster needs only one point of effective power.");
-      sb.append(" The subject will remain awake until they are again knocked out, or fall asleep naturally.");
-      sb.append(" If the subject has more than 10 wounds, they will fall back unconscious after 1 turn.");
-      sb.append(" For each point over 1, then subject will remain awake for twice as long. So at 3 power, the subject will stay awake for 4 turns.");
-      sb.append(" At 4 power, the subject will stay awake for 8 turns, and so on.");
-      return sb.toString();
+      String sb = "The '" + getName() + "' spell revives an unconscious or sleeping subject." +
+                  " To be effective, the caster needs only one point of effective power." +
+                  " The subject will remain awake until they are again knocked out, or fall asleep naturally." +
+                  " If the subject has more than 10 wounds, they will fall back unconscious after 1 turn." +
+                  " For each point over 1, then subject will remain awake for twice as long. So at 3 power, the subject will stay awake for 4 turns." +
+                  " At 4 power, the subject will stay awake for 8 turns, and so on.";
+      return sb;
    }
    @Override
    public void applyEffects(Arena arena) {

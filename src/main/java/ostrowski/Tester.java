@@ -90,11 +90,11 @@ public class Tester
          accumulatorWithNegs.put(set, 0);
          nonZeroRollsCount.put(set, 0);
       }
-      int i=0;
+      int i;
       for (i=0 ; i< 100000 ; i++)
       {
          for (DiceSet dice : diceSet) {
-            int roll = dice.roll(true, null, Enums.RollType.INITIATIVE);
+            int roll = dice.roll(true, null, Enums.RollType.INITIATIVE, "testing");
             Integer val = accumulatorNoNegs.get(dice);
             if (roll > 0 ) {
                val += roll;
@@ -109,7 +109,7 @@ public class Tester
       System.out.println("die type\tchanceNoZero\taverageNoNegs\taverageWithNegs\texpected roll");
       for (Integer count : counts) {
          for (DiceSet set : diceSet) {
-            if (accumulatorNoNegs.get(set) == count) {
+            if (accumulatorNoNegs.get(set).equals(count)) {
                StringBuilder name = new StringBuilder(set.toString());
                while (name.length() < 6) {
                   name.insert(0, " ");

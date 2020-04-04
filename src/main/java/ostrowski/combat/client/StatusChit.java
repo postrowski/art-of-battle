@@ -27,7 +27,7 @@ public class StatusChit extends Dialog implements PaintListener
 
    public String            _name;
    private static final int NAME_FONT_SIZE = 20;
-   private Point            _nameCenterLoc = new Point(0,0);
+   private Point            _nameCenterLoc;
 
    private final TextWheel _position;
    private final TextWheel _posAdj;
@@ -294,7 +294,7 @@ class TextWheel {
    private final Point  _textCenterLoc  = new Point(0, 0);
    private final Point  _center         = new Point(0, 0);
    private       int    _centerAngle    = 0;
-   private       int    _angleWidth     = 0;
+   private       int    _angleWidth;
 
    public TextWheel(double radiusPercentage, double percentClockwiseAlongEdge,
                     double percentBlocking, int angleOpen, Edge edge,

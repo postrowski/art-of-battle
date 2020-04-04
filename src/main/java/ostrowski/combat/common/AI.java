@@ -111,7 +111,9 @@ public class AI implements Enums
                      if (rangedStyle != null) {
                         RANGE range = rangedStyle.getRangeForDistance(currentDist, _self.getAttributeLevel(Attribute.Strength));
                         if ((range != RANGE.LONG) && (range != RANGE.OUT_OF_RANGE)) {
-                           allowRanged = true;
+                           // If we don't have a decent backup weapon, don't throw
+                           // away our current weapon.
+                           allowRanged = !rangedStyle.isThrown() || (getBestAltWeapon(myWeapon) != null);
                         }
                      }
                      if (!allowRanged) {
@@ -168,8 +170,8 @@ public class AI implements Enums
                   return false;
                }
                else if (req instanceof RequestDefense) {
-                  RequestDefense reqSimple = null;
-                  RequestDefense reqSmart = null;
+                  RequestDefense reqSimple;
+                  RequestDefense reqSmart;
                   if (_aiType == AI_Type.SIMPLE) { // use old (simple) defense determination
                      reqSmart = new RequestDefense();
                      reqSimple = (RequestDefense) req;
@@ -213,6 +215,11 @@ public class AI implements Enums
                else if (req instanceof RequestUseOfHeroPoint) {
                   RequestUseOfHeroPoint reqHeroPoint = (RequestUseOfHeroPoint) req;
                   reqHeroPoint.setAnswerUseHeroPoint();
+                  return true;
+               }
+               else if (req instanceof RequestDieRoll) {
+                  RequestDieRoll reqHeroPoint = (RequestDieRoll) req;
+                  reqHeroPoint.setAnswerByOptionIndex(0);
                   return true;
                }
                else if (req instanceof RequestGrapplingHoldMaintain) {
@@ -1287,7 +1294,7 @@ public class AI implements Enums
                      }
                      useOdds = getChanceOfSpellSuccess(inateSpell, target, myActionsThisRound, effectiveDistance, currentPain);
                      for (Spell curSpell : target.getActiveSpells()) {
-                        if (curSpell.getName() == inateSpell.getName()) {
+                        if (curSpell.getName().equals(inateSpell.getName())) {
                            useOdds = 0.0;
                            break;
                         }
@@ -2015,9 +2022,12 @@ public class AI implements Enums
 
       Map<Orientation, Orientation> bestFromMap = new HashMap<>();
       Orientation startOrientation = _self.getOrientation();
-      Orientation destinationOrientation = Arena.getAllRoutesFrom(startOrientation, map, 10/*maxMovement*/, _self.getMovementRate(),
-                                                                  !_self.hasMovedThisRound(), _self, bestFromMap, null/*target*/, null/*toLoc*/,
-                                                                  false/*allowRanged*/, false/*onlyChargeTypes*/, skillTypesToUse/*itemsToPickupUsingSkill*/,
+      Orientation destinationOrientation = Arena.getAllRoutesFrom(startOrientation, map, 10/*maxMovement*/,
+                                                                  _self.getMovementRate(), !_self.hasMovedThisRound(),
+                                                                  _self, bestFromMap, null/*target*/,
+                                                                  null/*toLoc*/, false/*allowRanged*/,
+                                                                  false/*onlyChargeTypes*/, 25,
+                                                                  skillTypesToUse/*itemsToPickupUsingSkill*/,
                                                                   (_aiType == AI_Type.GOD)/*considerUnknownLocations*/);
       List<Orientation> route = convertBestFromMapToBestRouteTo(startOrientation, bestFromMap, destinationOrientation);
       if (route != null) {
@@ -2544,7 +2554,7 @@ public class AI implements Enums
       if (reqMove == null) {
          return true;
       }
-      Orientation selectedOrientation = null;
+      Orientation selectedOrientation;
       // prefer to wander forward, if possible
       List<Orientation> possibleMoves = _self.getOrientation().getPossibleAdvanceOrientations(map, true/*blockByCharacters*/);
       // If we couldn't continue forward, consider all moves, including those that mean turning around or backing up
@@ -3069,9 +3079,9 @@ public class AI implements Enums
       if (defenseActions > 3) {
          defenseActions = 3;
       }
-      DefenseOption primaryDef   = DefenseOption.DEF_DODGE;
-      DefenseOption secondaryDef = DefenseOption.DEF_RIGHT;
-      DefenseOption tertiaryDef  = DefenseOption.DEF_LEFT;
+      DefenseOption primaryDef;
+      DefenseOption secondaryDef;
+      DefenseOption tertiaryDef;
       boolean rangedAttack = defense.isRangedAttack();
       boolean grappleAttack = defense.isGrapple();
       boolean chargeAttack = defense.isChargeAttack();
@@ -3085,7 +3095,7 @@ public class AI implements Enums
                                                                              grappleAttack, defense.getDamageType());
       byte dodgeTN = Rules.getDodgeLevel(_self.getAttributeLevel(Attribute.Nimbleness));
       byte magicTN = 0;
-      IInstantaneousSpell bestDefSpell = null;
+      IInstantaneousSpell bestDefSpell;
       if (defense.isRangedAttack()) {
          bestDefSpell = _self._bestDefensiveSpell_ranged;
       }
@@ -3361,10 +3371,8 @@ public class AI implements Enums
                   baseDefensesToUse.remove(DefenseOption.DEF_DODGE);
                   baseDefensesToUse.add(DefenseOption.DEF_RETREAT);
                }
-               else if (baseDefensesToUse.contains(DefenseOption.DEF_RETREAT)) {
-                  // If we already have a retreat, don't add the dodge
-               }
-               else {
+               // If we already have a retreat, don't add the dodge
+               else if (!baseDefensesToUse.contains(DefenseOption.DEF_RETREAT)) {
                   // we have neither a dodge nor a retreat yet, add the dodge
                   baseDefensesToUse.add(DefenseOption.DEF_DODGE);
                }
@@ -3687,9 +3695,12 @@ public class AI implements Enums
    private List<Orientation> getBestRouteTo(Orientation startOrientation, Character target, ArenaCoordinates toLoc, CombatMap map, byte movementRate,
                                                  boolean allowRanged) {
       Map<Orientation, Orientation> bestFromMap = new HashMap<>();
-      Orientation destinationOrientation = Arena.getAllRoutesFrom(startOrientation, map, 256/*maxMovement*/, movementRate, !_self.hasMovedThisRound(), _self,
-                                                                  bestFromMap, target, toLoc, allowRanged, false/*onlyChargeTypes*/,
-                                                                  null/*itemsToPickupUsingSkill*/, _aiType == AI_Type.GOD/*considerUnknownLocations*/);
+      Orientation destinationOrientation = Arena.getAllRoutesFrom(startOrientation, map, 256/*maxMovement*/,
+                                                                  movementRate, !_self.hasMovedThisRound(), _self,
+                                                                  bestFromMap, target, toLoc, allowRanged,
+                                                                  false/*onlyChargeTypes*/, 25,
+                                                                  null/*itemsToPickupUsingSkill*/,
+                                                                  _aiType == AI_Type.GOD/*considerUnknownLocations*/);
       return convertBestFromMapToBestRouteTo(startOrientation, bestFromMap, destinationOrientation);
    }
 
@@ -3971,7 +3982,7 @@ public class AI implements Enums
           boolean targetHoldingMissileWeapon = false;
           for (Limb limb : target.getLimbs()) {
               Thing heldThing = limb.getHeldThing();
-              if ((heldThing != null) && (heldThing instanceof MissileWeapon)) {
+              if ((heldThing instanceof MissileWeapon)) {
                   targetHoldingMissileWeapon = true;
                   break;
               }

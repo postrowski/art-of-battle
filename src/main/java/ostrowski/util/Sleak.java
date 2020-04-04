@@ -238,19 +238,17 @@ public class Sleak
       //    return;
       // }
       if (object instanceof Image) {
-         if (((Image) object).isDisposed()) {
-            return;
+         Image object1 = (Image) object;
+         if (!object1.isDisposed()) {
+            gc.drawImage(object1, 0, 0);
          }
-         gc.drawImage((Image) object, 0, 0);
-         return;
       }
-      if (object instanceof Region) {
-         if (((Region) object).isDisposed()) {
-            return;
+      else if (object instanceof Region) {
+         Region object1 = (Region) object;
+         if (!object1.isDisposed()) {
+            String string = object1.getBounds().toString();
+            gc.drawString(string, 0, 0);
          }
-         String string = ((Region) object).getBounds().toString();
-         gc.drawString(string, 0, 0);
-         return;
       }
    }
 

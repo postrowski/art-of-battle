@@ -29,7 +29,7 @@ public class CharacterFile
       if (sourceFile.exists() && sourceFile.canRead()) {
          try (FileReader fileReader = new FileReader(sourceFile);
               BufferedReader input = new BufferedReader(fileReader)) {
-            String inputLine = null;
+            String inputLine;
             while ((inputLine = input.readLine()) != null) {
                Character newChar = new Character();
                if (newChar.serializeFromString(inputLine)) {

@@ -8,6 +8,7 @@ import ostrowski.combat.common.enums.Enums;
 import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.spells.mage.MageCollege;
 import ostrowski.combat.common.spells.mage.MageSpell;
+import ostrowski.combat.common.spells.mage.MageSpells;
 import ostrowski.combat.common.things.*;
 import ostrowski.combat.common.weaponStyles.WeaponStyleAttack;
 import ostrowski.combat.server.Arena;
@@ -298,7 +299,7 @@ public class CharacterGenerator implements Enums
                            requiredSkills.put(skillType, level);
                         }
                         else {
-                           MageSpell mageSpell = MageSpell.getSpell(name);
+                           MageSpell mageSpell = MageSpells.getSpell(name);
                            if (mageSpell != null) {
                               byte level = Byte.parseByte(value);
                               mageSpell.setFamiliarity(MageSpell.FAM_KNOWN);
@@ -413,7 +414,7 @@ public class CharacterGenerator implements Enums
       pointsLeft = points - character.getPointTotal();
 
       if (noEquip) {
-         primaryWeapon = Weapon.getWeapon(Weapon.NAME_Punch, character.getRace());
+         primaryWeapon = Weapons.getWeapon(Weapon.NAME_Punch, character.getRace());
          requiredArmor = Armor.getArmor(Armor.NAME_NoArmor, character.getRace());
          requiredShield = Shield.getShield(Shield.NAME_None, character.getRace());
       }
@@ -445,7 +446,7 @@ public class CharacterGenerator implements Enums
          primaryWeapon = head.getWeapon(character);
       }
       if (primaryWeapon == null) {
-         primaryWeapon = Weapon.getWeapon(Weapon.NAME_Punch, character.getRace());
+         primaryWeapon = Weapons.getWeapon(Weapon.NAME_Punch, character.getRace());
       }
 
       Skill weaponSkill = new Skill(primaryWeapon.getAttackStyle(0).getSkillType(), (byte)0);
@@ -486,7 +487,7 @@ public class CharacterGenerator implements Enums
             if (!primaryWeapon.isOnlyTwoHanded()) {
                Hand leftHand = (Hand) character.getLimb(LimbType.HAND_LEFT);
                if (leftHand != null) {
-                  leftHand.setHeldThing(Weapon.getWeapon(primaryWeapon.getName(), character.getRace()), character);
+                  leftHand.setHeldThing(Weapons.getWeapon(primaryWeapon.getName(), character.getRace()), character);
                }
             }
          }
@@ -616,7 +617,7 @@ public class CharacterGenerator implements Enums
          if (missileWeapon) {
             throwWeapon = true;
             // Have at least one additional throwable weapon
-            character.addEquipment(Weapon.getWeapon(primaryWeapon.getName(), character.getRace()));
+            character.addEquipment(Weapons.getWeapon(primaryWeapon.getName(), character.getRace()));
          }
          if (throwWeapon) {
             byte desiredThrowLevel = getSkillLevel(points / 5, pointsLeft / 5);
@@ -730,9 +731,9 @@ public class CharacterGenerator implements Enums
          haveKnifeChance = Math.max(0d, Math.min(95d, points));
       }
 
-      boolean hasKnife = (primaryWeapon.getName() == Weapon.NAME_Knife);
+      boolean hasKnife = (primaryWeapon.getName().equals(Weapon.NAME_Knife));
       if (haveKnifeChance > (CombatServer.random() * 100)) {
-         Weapon knife = Weapon.getWeapon(Weapon.NAME_Knife, character.getRace());
+         Weapon knife = Weapons.getWeapon(Weapon.NAME_Knife, character.getRace());
          if (!hasKnife) {
             if (weightAvailable > knife.getAdjustedWeight()) {
                if ((unarmedCombatType == null) || (pointsLeft > 6)) {
@@ -767,13 +768,13 @@ public class CharacterGenerator implements Enums
          character.getEquipment();
          if (primaryWeapon.isThrowable()) {
             if (weightAvailable > primaryWeapon.getAdjustedWeight()) {
-               throwableWeapon = Weapon.getWeapon(primaryWeapon.getName(), character.getRace());
+               throwableWeapon = Weapons.getWeapon(primaryWeapon.getName(), character.getRace());
             }
          }
          if (throwableWeapon == null) {
             // Consider a knife, if they know how to use it
             if (character.getSkill(SkillType.Knife) != null) {
-               Weapon knife = Weapon.getWeapon(Weapon.NAME_Knife, character.getRace());
+               Weapon knife = Weapons.getWeapon(Weapon.NAME_Knife, character.getRace());
                if (weightAvailable > knife.getAdjustedWeight()) {
                   throwableWeapon = knife;
                }
@@ -1080,10 +1081,10 @@ public class CharacterGenerator implements Enums
       List<Armor> armors = Armor.getArmorListForRace(character.getRace());
       List<Shield> shields = Shield.getShieldListForRace(character.getRace());
       double elvenArmorOdds = 0;
-      if (character.getRace().getName() == Race.NAME_Elf) {
+      if (character.getRace().getName().equals(Race.NAME_Elf)) {
          elvenArmorOdds = 0.90;
       }
-      else if (character.getRace().getName() == Race.NAME_HalfElf) {
+      else if (character.getRace().getName().equals(Race.NAME_HalfElf)) {
          elvenArmorOdds = 0.45;
       }
 
@@ -1098,7 +1099,7 @@ public class CharacterGenerator implements Enums
          // only elves & 1/2 elves should wear elven chainmail
          armorNamesToRemove.add(Armor.NAME_ElvenChain);
       }
-      if ((character.getRace().getName() != Race.NAME_Dwarf) && (character.getRace().getName() != Race.NAME_Gnome)) {
+      if ((!character.getRace().getName().equals(Race.NAME_Dwarf)) && (!character.getRace().getName().equals(Race.NAME_Gnome))) {
          // only dwarves and gnomes wear mithril:
          armorNamesToRemove.add(Armor.NAME_Mithril);
          armorNamesToRemove.add(Armor.NAME_DwarvenScale);
@@ -1469,7 +1470,7 @@ public class CharacterGenerator implements Enums
          getBestWeaponForStrength((byte) (str - 1), missileWeapon, appropriateWeapons, allowTwoHanded, maxExpenditure, racialBase);
       }
       String weaponName = appropriateWeapons.get((int) (appropriateWeapons.size() * CombatServer.random()));
-      return Weapon.getWeapon(weaponName, racialBase);
+      return Weapons.getWeapon(weaponName, racialBase);
    }
 
    private static void getBestWeaponForStrength(byte str, boolean missileWeapon, List<String> appropriateWeapons, boolean allowTwoHanded,
@@ -1592,15 +1593,15 @@ public class CharacterGenerator implements Enums
       List<String> removeWeapons = new ArrayList<>();
       if (!allowTwoHanded) {
          for (String weaponName : appropriateWeapons) {
-            Weapon weap = Weapon.getWeapon(weaponName, racialBase);
+            Weapon weap = Weapons.getWeapon(weaponName, racialBase);
             if (weap.isOnlyTwoHanded() || weap.getName().equals(Weapon.NAME_Katana)) {
                removeWeapons.add(weaponName);
             }
-            else if ((weaponName == Weapon.NAME_BastardSword) && (str < 8)) {
+            else if ((weaponName.equals(Weapon.NAME_BastardSword)) && (str < 8)) {
                // Bastard swords should only be used one-handed if we have a STR of 8 of greater
                removeWeapons.add(weaponName);
             }
-            else if ((weaponName == Weapon.NAME_Katana) && (str < 1)) {
+            else if ((weaponName.equals(Weapon.NAME_Katana)) && (str < 1)) {
                // Katanas should only be used one-handed if we have a STR of 1 of greater
                removeWeapons.add(weaponName);
             }
@@ -1608,7 +1609,7 @@ public class CharacterGenerator implements Enums
       }
       if (maxExpenditure >= 0) {
          for (String weaponName : appropriateWeapons) {
-            Weapon weap = Weapon.getWeapon(weaponName, racialBase);
+            Weapon weap = Weapons.getWeapon(weaponName, racialBase);
             if (weap.getCost() > maxExpenditure) {
                removeWeapons.add(weaponName);
             }
@@ -1617,7 +1618,7 @@ public class CharacterGenerator implements Enums
       appropriateWeapons.removeAll(removeWeapons);
       if (appropriateWeapons.isEmpty()) {
          appropriateWeapons.add(Weapon.NAME_Punch);
-         if (maxExpenditure > Weapon.getWeapon(Weapon.NAME_Club, racialBase).getCost()) {
+         if (maxExpenditure > Weapons.getWeapon(Weapon.NAME_Club, racialBase).getCost()) {
             appropriateWeapons.add(Weapon.NAME_Club);
          }
       }

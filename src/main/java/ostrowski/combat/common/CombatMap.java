@@ -481,7 +481,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
                      // This hex is not completely blocked, so it's visible
                      // figure out the hex that is one hex closer to us, and use that as our fromLoc.
                      // This is computed based on the centerAngle from us to the location.
-                     ArenaLocation fromLoc = null;
+                     ArenaLocation fromLoc;
                      if ((xAbsDelta == 0) && (yAbsDelta == 0)) {
                         fromLoc = loc;
                      }
@@ -1953,8 +1953,8 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
          Facing curFacing = actor.getFacing();
          String answer = actionReq.getAnswer();
 
-         Door door = null;
-         ArenaLocation toLoc = null;
+         Door door;
+         ArenaLocation toLoc;
          boolean includeHalfAngles = false;
          Facing toLocFacing = curFacing;
          if (answer.endsWith(TO_YOUR_FRONT)) {
@@ -2571,7 +2571,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
                   Door door = null;
                   if (grandChild.getNodeName().equals("item")) {
                      name = attributes.getNamedItem("name").getNodeValue();
-                     Race raceBase = null;
+                     Race raceBase;
                      Node raceNode = attributes.getNamedItem("raceBase");
                      if (raceNode != null) {
                         raceBase = Race.getRace(raceNode.getNodeValue(), Gender.MALE);

@@ -13,8 +13,8 @@ import ostrowski.combat.server.Configuration;
 
 public abstract class ResistedMageSpell extends ExpiringMageSpell implements IResistedSpell
 {
-   protected Attribute _resistedAtt  = null;
-   protected byte _resistedActions = 1;
+   protected Attribute _resistedAtt;
+   protected byte _resistedActions;
 
    @SuppressWarnings("rawtypes")
    protected ResistedMageSpell(String name, Attribute resistedAtt, byte resistedActions, boolean expires,

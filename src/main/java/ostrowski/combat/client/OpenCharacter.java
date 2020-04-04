@@ -374,7 +374,7 @@ public class OpenCharacter extends Dialog implements MouseListener
          for (int j = i + 1; j < _table.getItemCount(); j++) {
             TableItem rowJ = _table.getItem(j);
             String textJ = rowJ.getText(columnIndex);
-            boolean swap = false;
+            boolean swap;
             int intJ = 0;
             if (treatAsInteger) {
                intJ = Integer.parseInt(textJ);

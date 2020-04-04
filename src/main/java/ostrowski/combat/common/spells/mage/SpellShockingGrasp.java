@@ -12,6 +12,7 @@ import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.things.Weapon;
 import ostrowski.combat.common.wounds.Wound;
 import ostrowski.combat.common.wounds.WoundChart;
+import ostrowski.combat.common.wounds.WoundCharts;
 
 public class SpellShockingGrasp extends ExpiringMageSpell implements ICastInBattle
 {
@@ -46,17 +47,16 @@ public class SpellShockingGrasp extends ExpiringMageSpell implements ICastInBatt
 
    @Override
    public String describeSpell() {
-      StringBuilder sb = new StringBuilder();
-      sb.append("The '").append(getName()).append("' spell causes the caster's hands to shimmer in electricity.");
-      sb.append(" Any time the caster touches another person (friend or foe) with their hand, ");
-      sb.append("the electricity sparks to that person, causing 1d6 of electric damage per point of power put into the spell. ");
-      sb.append(" The touch of the caster may be dodged, or retreated from, but blocking or parrying the touch will still ");
-      sb.append("trigger the electric damage, though the block or parry may prevent any damage from the punch itself.");
-      sb.append(" If the caster's touch results in any damage (from a punch, for instance), the damage done from this spell causes its own separate wound. ");
-      sb.append(" Once the spell sparks to another person, it fades away and is lost. ");
-      sb.append(" If the caster does not touch anyone in a round, the caster must spend one action maintaining the spell, ");
-      sb.append("or it will fade away harmlessly.");
-      return sb.toString();
+      String sb = "The '" + getName() + "' spell causes the caster's hands to shimmer in electricity." +
+                  " Any time the caster touches another person (friend or foe) with their hand, " +
+                  "the electricity sparks to that person, causing 1d6 of electric damage per point of power put into the spell. " +
+                  " The touch of the caster may be dodged, or retreated from, but blocking or parrying the touch will still " +
+                  "trigger the electric damage, though the block or parry may prevent any damage from the punch itself." +
+                  " If the caster's touch results in any damage (from a punch, for instance), the damage done from this spell causes its own separate wound. " +
+                  " Once the spell sparks to another person, it fades away and is lost. " +
+                  " If the caster does not touch anyone in a round, the caster must spend one action maintaining the spell, " +
+                  "or it will fade away harmlessly.";
+      return sb;
    }
 
    @Override
@@ -74,7 +74,9 @@ public class SpellShockingGrasp extends ExpiringMageSpell implements ICastInBatt
       DiceSet damageDice = getDamage(getPower());
       damageDice = attacker.adjustDieRoll(damageDice, RollType.DAMAGE_SPELL, attacker/*target*/);
       modificationsExplanation.append("The 'Shocking Grasp' spell does ").append(damageDice).append(" electric damage.<br/>");
-      byte damageLevel = (byte) damageDice.roll(true/*allowExplodes*/, attacker, RollType.DAMAGE_SPELL);
+      String rollMessage = attacker.getName() + ", roll damage for the " + this.getName() +
+                           " spell against " + defender.getName() + ".";
+      byte damageLevel = (byte) damageDice.roll(true/*allowExplodes*/, attacker, RollType.DAMAGE_SPELL, rollMessage);
       byte bldElectric = defender.getBuild(DamageType.ELECTRIC);
       modificationsExplanation.append(attacker.getName()).append(" rolls ").append(damageDice.getLastDieRoll()).append("<br/>");
       modificationsExplanation.append(defender.getName()).append("'s build-electric is ").append(bldElectric);
@@ -84,7 +86,7 @@ public class SpellShockingGrasp extends ExpiringMageSpell implements ICastInBatt
       }
       else {
          StringBuilder alterationExplanationBuffer = new StringBuilder();
-         Wound electricWound = WoundChart.getWound(damageLevel, DamageType.ELECTRIC, defender, alterationExplanationBuffer);
+         Wound electricWound = WoundCharts.getWound(damageLevel, DamageType.ELECTRIC, defender, alterationExplanationBuffer);
          if (alterationExplanationBuffer.length() > 0) {
             modificationsExplanation.append(" and is further reduced by ").append(alterationExplanationBuffer);
          }

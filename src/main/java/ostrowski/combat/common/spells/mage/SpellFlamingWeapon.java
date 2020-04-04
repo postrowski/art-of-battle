@@ -86,15 +86,14 @@ public class SpellFlamingWeapon extends ExpiringMageSpell implements ICastInBatt
       for (byte power = 1; power < 8; power++) {
          table.addRow(new TableRow(power-1, ""+power, ""+getPain(power), ""+getWounds(power)));
       }
-      StringBuilder sb = new StringBuilder();
-      sb.append("The '").append(getName()).append("' spell causes the subject's primary weapon (or hands, if no weapon is held) to");
-      sb.append(" ignite into flames. Any time the weapon hits an opponent, and penetrates the armor (does at least 1 point of damage)");
-      sb.append(" then the flames of the weapon add additional pain and wounds, based upon the power of the spell:");
-      sb.append(table);
-      sb.append("<br/>This spell has no effect when cast on missile weapons, as the flames do not propagate to the missile.");
-      sb.append(" Use the 'Flaming Missile Weapon' spell for that.");
-      sb.append(" The '").append(getName()).append("' spell is suitable for casting on thrown weapons.");
-      return sb.toString();
+      String sb = "The '" + getName() + "' spell causes the subject's primary weapon (or hands, if no weapon is held) to" +
+                  " ignite into flames. Any time the weapon hits an opponent, and penetrates the armor (does at least 1 point of damage)" +
+                  " then the flames of the weapon add additional pain and wounds, based upon the power of the spell:" +
+                  table +
+                  "<br/>This spell has no effect when cast on missile weapons, as the flames do not propagate to the missile." +
+                  " Use the 'Flaming Missile Weapon' spell for that." +
+                  " The '" + getName() + "' spell is suitable for casting on thrown weapons.";
+      return sb;
    }
 
    protected byte getWounds(byte power) {

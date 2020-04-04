@@ -121,10 +121,9 @@ public interface Enums {
       public String toString() {
          if (!nameMap.containsKey(this)) {
             String name = name().replaceAll("_", " ").toLowerCase();
-            StringBuilder sb = new StringBuilder();
-            sb.append(Character.toUpperCase(name.charAt(0)));
-            sb.append(name.subSequence(1, name.length()));
-            nameMap.put(this, sb.toString());
+            String sb = String.valueOf(Character.toUpperCase(name.charAt(0))) +
+                        name.subSequence(1, name.length());
+            nameMap.put(this, sb);
          }
          return nameMap.get(this);
       }

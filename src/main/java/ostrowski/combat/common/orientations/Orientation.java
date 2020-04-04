@@ -411,8 +411,8 @@ public abstract class Orientation extends SerializableObject implements Enums, C
          return 0;
       }
       byte maxCostToEnter = 0;
-      ArenaCoordinates fromCoord = null;
-      ArenaCoordinates toCoord = null;
+      ArenaCoordinates fromCoord;
+      ArenaCoordinates toCoord;
       List<ArenaCoordinates> fromCoords = getCoordinates();
       List<ArenaCoordinates> toCoords   = toOrientation.getCoordinates();
       if (fromCoords.size() != toCoords.size()) {
@@ -513,7 +513,7 @@ public abstract class Orientation extends SerializableObject implements Enums, C
    }
    protected DrawnObject getOutlines(Character character, int size, ArenaLocation loc, boolean weapon, RGB foreground, RGB background) {
       int wideDiameter = size;
-      int narrowDiameter = (int) (wideDiameter * .65);
+      int narrowDiameter;
 
       DrawnObject limbOutlines = new DrawnObject(foreground, background);
       DrawnObject weaponOutlines = new DrawnObject(foreground, background);
@@ -679,13 +679,6 @@ public abstract class Orientation extends SerializableObject implements Enums, C
    public void applyWound(Wound wound, CombatMap map, Character actor) {
    }
    public void setPosition(Position newPosition, CombatMap map, Character actor) {
-      if (_position == newPosition) {
-         return;
-      }
-
-      if (_position != Position.PRONE_BACK) {
-         // change position from single hex to double hex
-      }
       _position = newPosition;
    }
    public Position getPosition()                        { return _position; }

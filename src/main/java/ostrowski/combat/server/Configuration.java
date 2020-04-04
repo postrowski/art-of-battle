@@ -28,6 +28,7 @@ public class Configuration implements SelectionListener
    static public boolean _useComplexTOUDice         = true;
    static public boolean _use3DMap                  = true;
    static public boolean _showChit                  = true;
+   static public boolean _rollDice                  = true;
    static public int    _serverPort                = 1777;
    private       Button _spellTnAffectedByMaButton = null;
    private       Button _useSimpleDamageButton     = null;
@@ -38,6 +39,7 @@ public class Configuration implements SelectionListener
    private Button        _diceBellCurveButton       = null;
    private Button        _use3DMapButton            = null;
    private Button _showChitButton = null;
+   private Button _rollDiceButton = null;
    private Text   _serverPortText = null;
 
    public static boolean isSpellTnAffectedByMa() {
@@ -66,6 +68,9 @@ public class Configuration implements SelectionListener
    }
    public static boolean showChit() {
       return _showChit;
+   }
+   public static boolean rollDice() {
+      return _rollDice;
    }
    public static int serverPort() {
       return _serverPort;
@@ -117,6 +122,16 @@ public class Configuration implements SelectionListener
       _showChitButton.addSelectionListener(this);
       _showChitButton.setText("Show Game Chit");
 
+      _rollDiceButton = new Button(rightGroup, SWT.CHECK);
+      _rollDiceButton.setSelection(_rollDice);
+      _rollDiceButton.addSelectionListener(this);
+      _rollDiceButton.setText("Roll Dice");
+
+      _use3DMapButton = new Button(rightGroup, SWT.CHECK);
+      _use3DMapButton.setSelection(_use3DMap);
+      _use3DMapButton.addSelectionListener(this);
+      _use3DMapButton.setText("Use 3D Map (requires restart)");
+
       if (isServer) {
          Label serverPortLabel = new Label(rightGroup, SWT.NONE);
          serverPortLabel.setText("Server Port:");
@@ -124,11 +139,6 @@ public class Configuration implements SelectionListener
          _serverPortText.setText(String.valueOf(_serverPort));
          _serverPortText.addModifyListener(e -> _serverPort = Integer.parseInt(_serverPortText.getText()));
       }
-
-      _use3DMapButton = new Button(rightGroup, SWT.CHECK);
-      _use3DMapButton.setSelection(_use3DMap);
-      _use3DMapButton.addSelectionListener(this);
-      _use3DMapButton.setText("Use 3D Map (requires restart)");
 
       if (middleGroup != null) {
          _diceExtendedButton  = Helper.createRadioButton(middleGroup, "Complex set", null, this);
@@ -165,6 +175,7 @@ public class Configuration implements SelectionListener
 
    @Override
    public void widgetSelected(SelectionEvent e) {
+      boolean updateRules = true;
       if ((e.widget == _spellTnAffectedByMaButton) && (_spellTnAffectedByMaButton != null)) {
          _spellTnAffectedByMa = _spellTnAffectedByMaButton.getSelection();
       }
@@ -192,12 +203,18 @@ public class Configuration implements SelectionListener
       }
       else if (e.widget == _use3DMapButton) {
          _use3DMap = _use3DMapButton.getSelection();
+         updateRules = false;
       }
       else if (e.widget == _showChitButton) {
          _showChit = _showChitButton.getSelection();
+         updateRules = false;
+      }
+      else if (e.widget == _rollDiceButton) {
+         _rollDice = _rollDiceButton.getSelection();
+         updateRules = false;
       }
       writeToFile();
-      if (_ruleComposite != null) {
+      if ((_ruleComposite != null) && updateRules) {
          _ruleComposite.updateRulesSection();
       }
    }
@@ -221,6 +238,8 @@ public class Configuration implements SelectionListener
          writeBoolean(out, "use3DMap", _use3DMap);
          out.write("\n");
          writeBoolean(out, "showChit", _showChit);
+         out.write("\n");
+         writeBoolean(out, "rollDice", _rollDice);
          out.write("\n");
          writeString(out, "serverPort", String.valueOf(_serverPort));
          out.write("\n");
@@ -254,6 +273,7 @@ public class Configuration implements SelectionListener
          _useComplexTOUDice   = readBoolean(fileLines, "useComplexTOUDice",   _useComplexTOUDice);
          _use3DMap            = readBoolean(fileLines, "use3DMap",            _use3DMap);
          _showChit            = readBoolean(fileLines, "showChit",            _showChit);
+         _rollDice            = readBoolean(fileLines, "rollDice",            _rollDice);
          String serverPort    = readString(fileLines,  "serverPort");
          if (serverPort != null) {
             _serverPort = Integer.parseInt(serverPort);

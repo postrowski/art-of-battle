@@ -67,9 +67,7 @@ public abstract class HtmlElement
       indentDepth--;
       if (lastWriteDepth != indentDepth) {
          sb.append("\n");
-         for (int i=0 ; i<indentDepth ; i++) {
-            sb.append("\t");
-         }
+         sb.append("\t".repeat(Math.max(0, indentDepth)));
       }
       sb.append("</").append(getElementName()).append(">");
       // restore the last write depth

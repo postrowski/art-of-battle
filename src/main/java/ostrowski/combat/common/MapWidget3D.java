@@ -334,7 +334,7 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
    public void onMouseDown(TexturedObject object, Event event, double angleFromCenter, double normalizedDistFromCenter) {
       clearMouseOverBodies();
       for (IMapListener listener : _listeners) {
-         if ((object._relatedObject != null) && (object._relatedObject instanceof ArenaLocation)) {
+         if ((object._relatedObject instanceof ArenaLocation)) {
             listener.onMouseDown((ArenaLocation) object._relatedObject, event, angleFromCenter, normalizedDistFromCenter);
          }
       }
@@ -436,7 +436,7 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
    @Override
    public void onMouseDrag(TexturedObject object, Event event, double angleFromCenter, double normalizedDistFromCenter) {
       for (IMapListener listener : _listeners) {
-         if ((object._relatedObject != null) && (object._relatedObject instanceof ArenaLocation)) {
+         if ((object._relatedObject instanceof ArenaLocation)) {
             listener.onMouseDrag((ArenaLocation) object._relatedObject, event, angleFromCenter, normalizedDistFromCenter);
          }
       }
@@ -445,7 +445,7 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
    @Override
    public void onMouseUp(TexturedObject object, Event event, double angleFromCenter, double normalizedDistFromCenter) {
       for (IMapListener listener : _listeners) {
-         if ((object._relatedObject != null) && (object._relatedObject instanceof ArenaLocation)) {
+         if ((object._relatedObject instanceof ArenaLocation)) {
             listener.onMouseUp((ArenaLocation) object._relatedObject, event, angleFromCenter, normalizedDistFromCenter);
          }
       }
@@ -706,7 +706,7 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
                      addCharacterToHex(_view, loc, objHex, chr, chr.getOrientation(), false/*isGhost*/);
                   }
                   // even for non-head locations, fill in the floor under every hex of the character
-                  int floorColor = SWT.COLOR_GRAY;
+                  int floorColor;
                   if (chr._teamID == Enums.TEAM_ALPHA) {
                      floorColor = chr.stillFighting() ? SWT.COLOR_GREEN : SWT.COLOR_DARK_GREEN;
                   }
@@ -727,7 +727,7 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
                         String raceName = "human";
                         Texture humanTexture = _textureByRaceName.get(raceName);
                         HumanBody human = new HumanBody(humanTexture, _view, 1.0f/*lengthFactor*/, 1.0f/*widthFactor*/, raceName, true/*isMale*/);
-                        TexturedObject limb = null;
+                        TexturedObject limb;
                         if (thing instanceof Hand) {
                            limb = human.getModelHand(true/*rightSide*/);
                         }
@@ -796,11 +796,11 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
          return null;
       }
       String shieldName = thing.getName();
-      if ((shieldName == Shield.NAME_Buckler) ||
-          (shieldName == Shield.NAME_Small) ||
-          (shieldName == Shield.NAME_Medium) ||
-          (shieldName == Shield.NAME_Large) ||
-          (shieldName == Shield.NAME_Tower)) {
+      if ((shieldName.equals(Shield.NAME_Buckler)) ||
+          (shieldName.equals(Shield.NAME_Small)) ||
+          (shieldName.equals(Shield.NAME_Medium)) ||
+          (shieldName.equals(Shield.NAME_Large)) ||
+          (shieldName.equals(Shield.NAME_Tower))) {
          shieldName = shieldName.replace(" ", "");
          shieldName = shieldName.replace("-", "");
          return ostrowski.graphics.objects3d.Thing.Shield.valueOf(shieldName);
@@ -813,35 +813,35 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
          return null;
       }
       String weaponName = thing.getName();
-      if ((weaponName == Weapon.NAME_Axe)                 ||
-          (weaponName == Weapon.NAME_BastardSword)        ||
-          (weaponName == Weapon.NAME_BastardSword_Fine)   ||
-          (weaponName == Weapon.NAME_Broadsword)          ||
-          (weaponName == Weapon.NAME_Club)                ||
-          (weaponName == Weapon.NAME_Dagger)              ||
-          (weaponName == Weapon.NAME_Flail)               ||
-          (weaponName == Weapon.NAME_GreatAxe)            ||
-          (weaponName == Weapon.NAME_Halberd)             ||
-          (weaponName == Weapon.NAME_Javelin)             ||
-          (weaponName == Weapon.NAME_Katana)              ||
-          (weaponName == Weapon.NAME_Katana_Fine)         ||
-          (weaponName == Weapon.NAME_Knife)               ||
-          (weaponName == Weapon.NAME_Longsword)           ||
-          (weaponName == Weapon.NAME_Longsword_Fine)      ||
-          (weaponName == Weapon.NAME_Mace)                ||
-          (weaponName == Weapon.NAME_Maul)                ||
-          (weaponName == Weapon.NAME_MorningStar)         ||
-          (weaponName == Weapon.NAME_Nunchucks)           ||
-          (weaponName == Weapon.NAME_PickAxe)             ||
-          (weaponName == Weapon.NAME_Quarterstaff)        ||
-          (weaponName == Weapon.NAME_Rapier)              ||
-          (weaponName == Weapon.NAME_Sabre)               ||
-          (weaponName == Weapon.NAME_Shortsword)          ||
-          (weaponName == Weapon.NAME_Spear)               ||
-          (weaponName == Weapon.NAME_ThrowingAxe)         ||
-          (weaponName == Weapon.NAME_TwoHandedSword)      ||
-          (weaponName == Weapon.NAME_TwoHandedSword_Fine) ||
-          (weaponName == Weapon.NAME_WarHammer)) {
+      if ((weaponName.equals(Weapon.NAME_Axe)) ||
+          (weaponName.equals(Weapon.NAME_BastardSword)) ||
+          (weaponName.equals(Weapon.NAME_BastardSword_Fine)) ||
+          (weaponName.equals(Weapon.NAME_Broadsword)) ||
+          (weaponName.equals(Weapon.NAME_Club)) ||
+          (weaponName.equals(Weapon.NAME_Dagger)) ||
+          (weaponName.equals(Weapon.NAME_Flail)) ||
+          (weaponName.equals(Weapon.NAME_GreatAxe)) ||
+          (weaponName.equals(Weapon.NAME_Halberd)) ||
+          (weaponName.equals(Weapon.NAME_Javelin)) ||
+          (weaponName.equals(Weapon.NAME_Katana)) ||
+          (weaponName.equals(Weapon.NAME_Katana_Fine)) ||
+          (weaponName.equals(Weapon.NAME_Knife)) ||
+          (weaponName.equals(Weapon.NAME_Longsword)) ||
+          (weaponName.equals(Weapon.NAME_Longsword_Fine)) ||
+          (weaponName.equals(Weapon.NAME_Mace)) ||
+          (weaponName.equals(Weapon.NAME_Maul)) ||
+          (weaponName.equals(Weapon.NAME_MorningStar)) ||
+          (weaponName.equals(Weapon.NAME_Nunchucks)) ||
+          (weaponName.equals(Weapon.NAME_PickAxe)) ||
+          (weaponName.equals(Weapon.NAME_Quarterstaff)) ||
+          (weaponName.equals(Weapon.NAME_Rapier)) ||
+          (weaponName.equals(Weapon.NAME_Sabre)) ||
+          (weaponName.equals(Weapon.NAME_Shortsword)) ||
+          (weaponName.equals(Weapon.NAME_Spear)) ||
+          (weaponName.equals(Weapon.NAME_ThrowingAxe)) ||
+          (weaponName.equals(Weapon.NAME_TwoHandedSword)) ||
+          (weaponName.equals(Weapon.NAME_TwoHandedSword_Fine)) ||
+          (weaponName.equals(Weapon.NAME_WarHammer))) {
          if (weaponName.endsWith("_Fine")) {
             weaponName = weaponName.substring(0, weaponName.length() - 5);
          }
@@ -852,13 +852,13 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
          weaponName = weaponName.replace("-", "");
          return ostrowski.graphics.objects3d.Thing.Weapon.valueOf(weaponName);
       }
-      if (weaponName == Weapon.NAME_BowShortbow) {
+      if (weaponName.equals(Weapon.NAME_BowShortbow)) {
          return ostrowski.graphics.objects3d.Thing.Weapon.Shortbow_idle;
       }
-      if (weaponName == Weapon.NAME_BowLongbow) {
+      if (weaponName.equals(Weapon.NAME_BowLongbow)) {
          return ostrowski.graphics.objects3d.Thing.Weapon.Longbow_idle;
       }
-      if (weaponName == Weapon.NAME_BowComposite) {
+      if (weaponName.equals(Weapon.NAME_BowComposite)) {
          return ostrowski.graphics.objects3d.Thing.Weapon.Bow_idle;
       }
 
@@ -1036,7 +1036,7 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
       if (chr.getArmor().isReal()) {
          human.setArmor(chr.getArmor().getName());
       }
-      else if (chr.getArmor().getName() == ostrowski.combat.common.things.Armor.NAME_NoArmor) {
+      else if (chr.getArmor().getName().equals(Armor.NAME_NoArmor)) {
          human.setArmor("No Armor");
       }
       else {

@@ -21,7 +21,7 @@ public class WoundChartBlunt extends WoundChart {
          if (damageLevel<0) {
             return new Wound((byte)0, Wound.Location.MISSED, "missed",   0, 0, 0, 0, 0, 0, DamageType.BLUNT, EFFECT_NONE, target);
          }
-         Wound wound = null;
+         Wound wound;
          switch (damageLevel) {                                                                    //  pn wn bl ar mv dist  type     effects
             case  0:  wound = new Wound(damageLevel, Wound.Location.WEAPON, "hit",                      0, 0, 0, 0, 0, 0, DamageType.BLUNT, EFFECT_WEAPON_UNREADY, target); break;
             case  1:  wound = new Wound(damageLevel, Wound.Location.ARM,  "minor blow",                 2, 0, 0, 0, 0, 0, DamageType.BLUNT, EFFECT_NONE, target); break;

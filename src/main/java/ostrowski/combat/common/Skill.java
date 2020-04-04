@@ -60,9 +60,7 @@ public class Skill extends SerializableObject implements Cloneable, Enums {
    @Override
    public String toString()
    {
-      StringBuilder sb = new StringBuilder();
-      sb.append("Skill: {").append(_type._name).append(" = ").append(_level).append('}');
-      return sb.toString();
+      return "Skill: {" + _type._name + " = " + _level + '}';
    }
 
    @Override

@@ -116,13 +116,9 @@ public class SpellSpiderWeb extends MageSpell implements IHolder, IRangedSpell, 
 
    @Override
    public void setHoldTarget(Character holdTarget) {
-      if (holdTarget == null) {
-         // This is called when the target breaks free of the hold
-      }
-      else {
-         if (holdTarget != getTarget()) {
-            DebugBreak.debugBreak();
-         }
+      // holdTarget == null when the target breaks free of the hold
+      if ((holdTarget != null) && (holdTarget != getTarget())) {
+         DebugBreak.debugBreak();
       }
    }
 

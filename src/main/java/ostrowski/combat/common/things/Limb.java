@@ -219,7 +219,6 @@ public abstract class Limb extends Thing implements Cloneable {
    public String getHeldThingName() {
       return null;
    }
-   @SuppressWarnings("unchecked")
    public void copyDataInto(Limb dest) {
       dest._wounds               = new ArrayList<>();
       dest._wounds.addAll(_wounds);

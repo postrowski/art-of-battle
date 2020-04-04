@@ -4,7 +4,6 @@ import ostrowski.combat.common.spells.priest.IPriestGroup;
 
 public class SpellCharmMonster extends SpellCharmPerson
 {
-   @SuppressWarnings("hiding")
    public static final String NAME = "Charm Monster";
    public SpellCharmMonster() {
    }

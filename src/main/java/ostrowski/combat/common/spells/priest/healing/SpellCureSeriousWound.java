@@ -9,7 +9,6 @@ import ostrowski.combat.common.spells.priest.IPriestGroup;
 
 public class SpellCureSeriousWound extends SpellCureWound
 {
-   @SuppressWarnings("hiding")
    public static final String NAME = "Cure Serious Wound";
    public SpellCureSeriousWound() {}
 
