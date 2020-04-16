@@ -218,26 +218,27 @@ public class Weapons {
             return null;
          }
       }
-      return getWeapon(Weapon.NAME_Punch, racialBase).clone();
+      Weapon weapon = getWeapon(Weapon.NAME_Punch, racialBase);
+      return (weapon == null) ? null : weapon.clone();
    }
 
    public static String generateHtmlTable() {
-      StringBuilder sb = new StringBuilder();
-      sb.append(HtmlBuilder.getHTMLHeader("TblWeapon", 600, 44));
-      sb.append("<body>\n");
-      sb.append("<H4>Weapon data:</H4>\n");
-      sb.append("<H3>Melee Weapons:</H3>\n");
-      sb.append("<div style=\"overflow: hidden;\" id=\"DivHeaderRow\">\n");
-      sb.append("</div>\n");
-      sb.append("<div style=\"overflow:scroll;overflow-x:hidden; border-width:0px; border-bottom:1px; border-style:solid;\" onscroll=\"OnScrollDiv(this)\" id=\"DivMainContent\">\n");
-      sb.append(getMeleeWeaponTable());
-      sb.append("</div>");
-      sb.append("<H3>Missile Weapons:</H3>");
-      sb.append(getMissileThrownWeaponTable(true/*missile*/, false/*thrown*/));
-      sb.append("<H3>Thrown Weapons:</H3>");
-      sb.append(getMissileThrownWeaponTable(false/*missile*/, true/*thrown*/));
-      sb.append("</body>");
-      return sb.toString();
+      String sb = HtmlBuilder.getHTMLHeader("TblWeapon", 600, 44) +
+                  "<body>\n" +
+                  "<H4>Weapon data:</H4>\n" +
+                  "<H3>Melee Weapons:</H3>\n" +
+                  "<div style=\"overflow: hidden;\" id=\"DivHeaderRow\">\n" +
+                  "</div>\n" +
+                  "<div style=\"overflow:scroll;overflow-x:hidden; border-width:0px; border-bottom:1px; border-style:solid;\"" +
+                  " onscroll=\"OnScrollDiv(this)\" id=\"DivMainContent\">\n" +
+                  getMeleeWeaponTable() +
+                  "</div>" +
+                  "<H3>Missile Weapons:</H3>" +
+                  getMissileThrownWeaponTable(true/*missile*/, false/*thrown*/) +
+                  "<H3>Thrown Weapons:</H3>" +
+                  getMissileThrownWeaponTable(false/*missile*/, true/*thrown*/) +
+                  "</body>";/*missile*//*thrown*//*missile*//*thrown*/
+      return sb;
    }
 
    private static String getMeleeWeaponTable() {

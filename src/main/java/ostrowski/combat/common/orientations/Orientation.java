@@ -676,53 +676,22 @@ public abstract class Orientation extends SerializableObject implements Enums, C
          charOutline.draw(gc, display);
       }
    }
-   public void applyWound(Wound wound, CombatMap map, Character actor) {
-   }
    public void setPosition(Position newPosition, CombatMap map, Character actor) {
       _position = newPosition;
    }
    public Position getPosition()                        { return _position; }
-   public boolean isStanding()                          { return (_position == Position.STANDING); }
 
    public int getAvailablePositions() {
-      int actionsAllowed = 0;
-      {
-         if ((_position != Position.STANDING) &&
-             (_position != Position.PRONE_BACK) &&
-             (_position != Position.PRONE_FRONT)) {
-            actionsAllowed |= ACTION_STAND;
-         }
-
-         if ((_position != Position.KNEELING) &&
-             (_position != Position.PRONE_BACK)) {
-            actionsAllowed |= ACTION_KNEEL;
-         }
-
-         if ((_position != Position.CROUCHING) &&
-             (_position != Position.PRONE_BACK) &&
-             (_position != Position.PRONE_FRONT)) {
-            actionsAllowed |= ACTION_CROUCH;
-         }
-
-         if ((_position != Position.SITTING) &&
-             (_position != Position.PRONE_FRONT)) {
-            actionsAllowed |= ACTION_SIT;
-         }
-
-         if ((_position != Position.PRONE_BACK) &&
-             (_position != Position.STANDING)) {
-            actionsAllowed |= ACTION_LAYDOWN_BACK;
-         }
-
-         if ((_position != Position.PRONE_FRONT) &&
-             (_position != Position.SITTING)) {
-            actionsAllowed |= ACTION_LAYDOWN_FRONT;
-         }
+      switch (_position) {
+         case STANDING:    return                ACTION_KNEEL | ACTION_CROUCH | ACTION_SIT |                       ACTION_LAYDOWN_FRONT | ACTION_POSITION;
+         case PRONE_BACK:  return                                               ACTION_SIT |                       ACTION_LAYDOWN_FRONT | ACTION_POSITION;
+         case PRONE_FRONT: return                ACTION_KNEEL |                              ACTION_LAYDOWN_BACK                        | ACTION_POSITION;
+         case KNEELING:    return ACTION_STAND |                ACTION_CROUCH | ACTION_SIT | ACTION_LAYDOWN_BACK | ACTION_LAYDOWN_FRONT | ACTION_POSITION;
+         case SITTING:     return ACTION_STAND | ACTION_KNEEL | ACTION_CROUCH |              ACTION_LAYDOWN_BACK                        | ACTION_POSITION;
+         case CROUCHING:   return ACTION_STAND | ACTION_KNEEL |                 ACTION_SIT | ACTION_LAYDOWN_BACK | ACTION_LAYDOWN_FRONT | ACTION_POSITION;
       }
-      if (actionsAllowed != 0) {
-         actionsAllowed |= ACTION_POSITION;
-      }
-      return actionsAllowed;
+      DebugBreak.debugBreak("Unhandled position " + _position);
+      return 0;
    }
 
    @Override

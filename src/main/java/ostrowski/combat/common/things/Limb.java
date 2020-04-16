@@ -318,9 +318,6 @@ public abstract class Limb extends Thing implements Cloneable {
       return null;
    }
 
-   public short getWeaponMaxRange(Character character) {
-      return getWeaponMaxRange(character, true/*allowRanged*/, false/*onlyChargeTypes*/);
-   }
    public short getWeaponMaxRange(Character character, boolean allowRanged, boolean onlyChargeTypes) {
       Weapon weap = getWeapon(character);
       if (weap != null) {

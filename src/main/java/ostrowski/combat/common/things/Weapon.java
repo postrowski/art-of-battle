@@ -766,7 +766,8 @@ public class Weapon extends Thing {
 
       int armCount = -1;
       for (WeaponStyleAttackGrapple grapple : _grapplingStyles ) {
-         if (self.getSkillLevel(grapple.getSkillType(), null, false/*sizeAdjust*/, true/*adjustForEncumbrance*/, true/*adjustForHolds*/) >= grapple.getMinSkill()) {
+         if (self.getSkillLevel(grapple.getSkillType(), null, false/*sizeAdjust*/,
+                                true/*adjustForEncumbrance*/, true/*adjustForHolds*/) >= grapple.getMinSkill()) {
             if (armCount == -1) {
                armCount = self.getUncrippledArmCount(true/*reduceCountForTwoHandedWeaponsHeld*/);
             }
@@ -788,7 +789,7 @@ interface SizelessWeapon extends Cloneable {
    boolean isReal();
    double getWeight();
    int getCost();
-   WeaponStyleParry[] getParryStyles();
+
    WeaponStyleAttack[] getAttackStyles();
 }
 
@@ -816,10 +817,7 @@ class MissileWeaponBase extends MissileWeapon implements SizelessWeapon
       super(size, null/*racialBase*/, weight, cost, name, skillType, minSkill, skillPenalty, damageMod,
             varianceDie, damageType, rangeBase, handsRequired, preparationSteps);
    }
-   public MissileWeaponBase(int size, double weight, int cost, String name, WeaponStyle style)
-   {
-      super(size, null/*racialBase*/, weight, cost, name, style);
-   }
+
    @Override
    public Weapon copyWithRace(Race racialBase) {
       setRacialBase(racialBase);

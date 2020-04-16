@@ -23,10 +23,10 @@ public class SpellDragonForm extends SpellShapeChange
       switch (effectivePower) {
          case 1: return Race.NAME_Baby_Dragon;
          case 2: return Race.NAME_Small_Dragon;
-         case 3: return Race.NAME_Dragon;
+         case 3:
          case 4: return Race.NAME_Dragon;
          case 5: return Race.NAME_Large_Dragon;
-         case 6: return Race.NAME_Huge_Dragon;
+         case 6:
          case 7: return Race.NAME_Huge_Dragon;
          case 8: return Race.NAME_Ancient_Dragon;
       }

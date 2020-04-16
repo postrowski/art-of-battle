@@ -174,9 +174,7 @@ public class RequestArenaEntrance extends SyncRequest
          }
       }
    }
-   public List<TeamMember> getCharacterNamesByTeam(Byte team) {
-      return new ArrayList<>(_mapTeamToListTeamMembers.get(team));
-   }
+
    public Byte getSelectedCharacterTeam() {
       int i = 0;
       for (Map.Entry<Byte, List<TeamMember>> team : _mapTeamToListTeamMembers.entrySet()) {
@@ -188,10 +186,7 @@ public class RequestArenaEntrance extends SyncRequest
       }
       return null;
    }
-   public String getSelectedCharacterName() {
-      TeamMember teamMember = getSelectedTeamMember();
-      return (teamMember == null) ? null : teamMember._name;
-   }
+
    public byte getSelectedCharacterTeamPosition() {
       TeamMember teamMember = getSelectedTeamMember();
       return (teamMember == null) ? -1 : teamMember._teamPosition;
@@ -213,9 +208,7 @@ public class RequestArenaEntrance extends SyncRequest
       }
       return null;
    }
-   public Character getSelectedNewCharacter() {
-      return _newCharacter;
-   }
+
    public void setSelectedCharacter(Character character) {
       _newCharacter = character;
    }

@@ -54,14 +54,6 @@ public class DieRoll extends Dialog implements KeyListener, FocusListener, Contr
       return style;
    }
 
-   protected static int checkImageStyle(int style) {
-      if ((style & SWT.ICON_ERROR) == SWT.ICON_ERROR) {
-         return SWT.ICON_ERROR;
-      }
-
-      return SWT.NONE;
-   }
-
    public void setTitle(String string) {
       super.setText(string);
       _shell.setText(string);
@@ -115,6 +107,7 @@ public class DieRoll extends Dialog implements KeyListener, FocusListener, Contr
    }
 
    public void focusGained() {
+      // don't care
    }
    @Override
    public void keyPressed(KeyEvent arg0) {

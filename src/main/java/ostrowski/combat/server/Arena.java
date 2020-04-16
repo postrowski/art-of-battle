@@ -67,9 +67,9 @@ public class Arena implements Enums, IMapListener
    private final Set<Character>              _localCombatants     = new HashSet<>();
    private final Map<Character, ClientProxy> _mapCombatantToProxy = new HashMap<>();
    private final Map<ClientProxy, Character> _mapProxyToCombatant = new HashMap<>();
-   public  Battle                          _battle              = null;
-   private CombatServer                    _server;
-   private CombatMap                       _combatMap;
+   public        Battle       _battle              = null;
+   private final CombatServer _server;
+   private       CombatMap    _combatMap;
    private CombatMap                       _autoRunMap          = null;
    private AutoRunBlock                    _autoRunBlock        = null;
 
@@ -1930,7 +1930,9 @@ public class Arena implements Enums, IMapListener
    @Override
    public void onRightMouseDown(ArenaLocation loc, Event event, double angleFromCenter, double normalizedDistFromCenter)
    {
-      _characterMenuPopup.onRightMouseDown(loc, event, angleFromCenter, normalizedDistFromCenter);
+      if (CombatServer._isServer) {
+         _characterMenuPopup.onRightMouseDown(loc, event, angleFromCenter, normalizedDistFromCenter);
+      }
       Rules.diag("Arena:onRightMouseDown (" + event.x + "," + event.y + "), event.button=" + event.button);
    }
    @Override

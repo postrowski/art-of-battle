@@ -18,7 +18,7 @@ public class ClientProxy extends CombatSocket implements IMonitoringObject {
    public final MonitoringObject _monitoringObject;
    Arena _arena;
    public         String _name         = "";
-   private        int    _clientID;
+   private final  int    _clientID;
    static private int    _nextServerID = 1;
 
     static public void setNextServerID(int nextServerID) { _nextServerID = nextServerID;}

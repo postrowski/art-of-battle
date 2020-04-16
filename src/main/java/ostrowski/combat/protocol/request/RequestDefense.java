@@ -148,10 +148,6 @@ public class RequestDefense extends SyncRequest implements Enums
       return getDefenseOptions().contains(DefenseOption.DEF_RETREAT);
    }
 
-   public static byte getDefenseMagicPointsUsed(int defOption) {
-      return getDefenseOptions(defOption).getDefenseMagicPointsUsed();
-   }
-
    public static byte getDefenseCounterActions(int defOption) {
       return getDefenseOptions(defOption).getDefenseCounterActions();
    }

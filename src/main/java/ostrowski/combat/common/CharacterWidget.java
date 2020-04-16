@@ -31,9 +31,9 @@ public class CharacterWidget implements Enums, ModifyListener {
    private final AttributesBlock     _attributesBlock    = new AttributesBlock(this);
    private final DefenseBlock        _defenseBlock       = new DefenseBlock(this);
    private final DiceBlock           _diceBlock          = new DiceBlock(this);
-   private final SkillsBlock         _skillsBlock        = new SkillsBlock(this);
-   private       MainBlock           _topBlock;
-   private final WeaponBlock         _weaponBlock        = new WeaponBlock(this);
+   private final SkillsBlock _skillsBlock        = new SkillsBlock(this);
+   private final MainBlock   _topBlock;
+   private final WeaponBlock _weaponBlock        = new WeaponBlock(this);
    private final EncumbranceBlock    _encumbranceBlock   = new EncumbranceBlock(this);
    private final SpellsBlock         _spellsBlock        = new SpellsBlock(this);
    // these don't:
@@ -120,7 +120,7 @@ public class CharacterWidget implements Enums, ModifyListener {
       Composite middleBlock = Helper.createComposite(midRightBlock, 1, GridData.FILL_BOTH);
       Composite rightBlock = Helper.createComposite(midRightBlock, 1, GridData.FILL_BOTH);
 
-                                     _topBlock.buildBlock(leftBlock);
+      _topBlock.buildBlock(leftBlock);
       if (_attributesBlock != null) {
          _attributesBlock.buildBlock(leftBlock);
       }

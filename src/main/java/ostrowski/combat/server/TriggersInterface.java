@@ -51,8 +51,8 @@ public class TriggersInterface extends Helper implements SelectionListener, Modi
    public void setMap(IMapWidget mapWidget) {
       if (mapWidget != null) {
          _mapWidgets.add(mapWidget);
+         setMap(mapWidget.getCombatMap());
       }
-      setMap(mapWidget.getCombatMap());
    }
    public void setMap(CombatMap map) {
       _map = map;
@@ -270,9 +270,8 @@ public class TriggersInterface extends Helper implements SelectionListener, Modi
             // select the last item in the list
             int index = _eventsList.getItemCount()-1;
             _eventsList.select(index);
-            ArenaTrigger trigger = null;
             if (_map != null) {
-               _map.setSelectedTrigger(trigger);
+               _map.setSelectedTrigger(null);
             }
             for (IMapWidget mapWidget : _mapWidgets) {
                mapWidget.redraw();
@@ -389,10 +388,8 @@ public class TriggersInterface extends Helper implements SelectionListener, Modi
                _eventsList.add(event.getName());
             }
             _eventsList.setSelection(0);
-            if (firstEvent != null) {
-               setEvent(firstEvent);
-               setEventEnabled(true);
-            }
+            setEvent(firstEvent);
+            setEventEnabled(true);
          }
       }
    }
@@ -483,12 +480,8 @@ public class TriggersInterface extends Helper implements SelectionListener, Modi
          int xOffset = (event.width-extent.x)/2;
          int yOffset = (event.height-extent.y)/2;
          event.gc.drawText(text, xOffset, yOffset);
-         if (bgColor != null) {
-            bgColor.dispose();
-         }
-         if (fgColor != null) {
-            fgColor.dispose();
-         }
+         bgColor.dispose();
+         fgColor.dispose();
       }
    }
 

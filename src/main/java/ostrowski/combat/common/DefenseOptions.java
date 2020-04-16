@@ -74,20 +74,6 @@ public class DefenseOptions extends EnumOptions<DefenseOption> implements Compar
       return 0;
    }
 
-   public List<Integer> getListOfValues() {
-      List<Integer> set = new ArrayList<>();
-      for (DefenseOption opt : _list) {
-         set.add(opt.getValue());
-      }
-      return set;
-   }
-
-   public void addAll(DefenseOptions options) {
-      for (DefenseOption opt : options._list) {
-         add(opt);
-      }
-   }
-
    public boolean isDefensesValid() {
       boolean counterAttacking = false;
       for (DefenseOption opt1 : _list) {
@@ -221,9 +207,7 @@ public class DefenseOptions extends EnumOptions<DefenseOption> implements Compar
    public String getName() {
       return _name;
    }
-   public void setName(String name) {
-      this._name = name;
-   }
+
    @Override
    public boolean isEnabled() {
       return _enabled;

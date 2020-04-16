@@ -863,8 +863,12 @@ public class CharacterGeneratorTest implements Enums {
       Armor armor = Armor.getArmor(armorName, character.getRace());
       Shield shield = Shield.getShield(shieldName, character.getRace());
       Weapon weapon = Weapons.getWeapon(weaponName, character.getRace());
-      character.setSkillLevel(weapon.getAttackStyle(0).getSkillType(), weaponSkillLevel);
-      character.setSkillLevel(shield.getDefenseSkillTypes().get(0), shieldSkillLevel);
+      if (weapon != null) {
+         character.setSkillLevel(weapon.getAttackStyle(0).getSkillType(), weaponSkillLevel);
+      }
+      if (shield != null) {
+         character.setSkillLevel(shield.getDefenseSkillTypes().get(0), shieldSkillLevel);
+      }
       assertTrue("Wrong strength", character.getAttributeLevel(Attribute.Strength) == str);
       assertTrue("Wrong nimbleness", character.getAttributeLevel(Attribute.Nimbleness) == nim);
       assertTrue("Wrong armor", character.getArmor().getName().equals(armorName));

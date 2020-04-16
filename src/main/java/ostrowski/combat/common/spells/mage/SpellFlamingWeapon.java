@@ -66,15 +66,15 @@ public class SpellFlamingWeapon extends ExpiringMageSpell implements ICastInBatt
          int wounds = getWounds(getPower());
          int pain = getPain(getPower());
          if (wounds > 0) {
-            if (wounds > 0) {
-               sb.append("+");
+            sb.append("+").append(wounds).append(" wounds");
+            if (pain > 0) {
+               sb.append(", and");
             }
-            sb.append(wounds).append(" wounds, and ");
          }
          if (pain > 0) {
-            sb.append("+");
+            sb.append("+").append(pain).append(" pain");
          }
-         sb.append(pain).append(" pain.)");
+         sb.append(".)");
       }
       return sb.toString();
    }
@@ -86,60 +86,41 @@ public class SpellFlamingWeapon extends ExpiringMageSpell implements ICastInBatt
       for (byte power = 1; power < 8; power++) {
          table.addRow(new TableRow(power-1, ""+power, ""+getPain(power), ""+getWounds(power)));
       }
-      String sb = "The '" + getName() + "' spell causes the subject's primary weapon (or hands, if no weapon is held) to" +
-                  " ignite into flames. Any time the weapon hits an opponent, and penetrates the armor (does at least 1 point of damage)" +
-                  " then the flames of the weapon add additional pain and wounds, based upon the power of the spell:" +
-                  table +
-                  "<br/>This spell has no effect when cast on missile weapons, as the flames do not propagate to the missile." +
-                  " Use the 'Flaming Missile Weapon' spell for that." +
-                  " The '" + getName() + "' spell is suitable for casting on thrown weapons.";
-      return sb;
+      return "The '" + getName() + "' spell causes the subject's primary weapon (or hands, if no weapon is held) to" +
+             " ignite into flames. Any time the weapon hits an opponent, and penetrates the armor (does at least 1 point of damage)" +
+             " then the flames of the weapon add additional pain and wounds, based upon the power of the spell:" +
+             table +
+             "<br/>This spell has no effect when cast on missile weapons, as the flames do not propagate to the missile." +
+             " Use the 'Flaming Missile Weapon' spell for that." +
+             " The '" + getName() + "' spell is suitable for casting on thrown weapons.";
    }
 
    protected byte getWounds(byte power) {
       switch (power) {
          case 0:
-            return 0;
-         case 1:
-            return 0;
+         case 1: return 0;
          case 2:
-            return 1;
-         case 3:
-            return 1;
+         case 3: return 1;
          case 4:
-            return 2;
-         case 5:
-            return 2;
+         case 5: return 2;
          case 6:
-            return 3;
-         case 7:
-            return 3;
-         case 8:
-            return 4;
+         case 7: return 3;
+         case 8: return 4;
       }
       return 0;
    }
 
    protected byte getPain(byte power) {
       switch (power) {
-         case 0:
-            return 2;
+         case 0: return 2;
          case 1:
-            return 3;
-         case 2:
-            return 3;
+         case 2: return 3;
          case 3:
-            return 4;
-         case 4:
-            return 4;
+         case 4: return 4;
          case 5:
-            return 5;
-         case 6:
-            return 5;
-         case 7:
-            return 6;
-         case 8:
-            return 6;
+         case 6: return 5;
+         case 7: 
+         case 8: return 6;
       }
       return 0;
    }

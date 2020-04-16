@@ -152,21 +152,14 @@ public class Shield extends Thing {
       if (!isReal()) {
          return null;
       }
-      double width = 1.0;
-           if (_name.equals(NAME_Buckler)) {
-            width = 0.6;
-         }
-         else if (_name.equals(NAME_Small)) {
-         width = 0.75;
-      }
-      else if (_name.equals(NAME_Medium)) {
-         width = 1.0;
-      }
-      else if (_name.equals(NAME_Large)) {
-         width = 1.2;
-      }
-      else if (_name.equals(NAME_Tower)) {
-         width = 1.5;
+      double width;
+      switch (_name) {
+         case NAME_Buckler: width = 0.6;  break;
+         case NAME_Small:   width = 0.75; break;
+         case NAME_Medium:  width = 1.0;  break;
+         case NAME_Large:   width = 1.2;  break;
+         case NAME_Tower:   width = 1.5;  break;
+         default:           width = 1.0;
       }
 
       DrawnObject obj = new DrawnObject(foreground, background);

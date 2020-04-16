@@ -53,11 +53,10 @@ public abstract class ExpiringPriestSpell extends PriestSpell implements IExpiri
       return _bonusTimeInTurnsPerPower;
    }
    public String describeActiveSpell() {
-      String sb = getTargetName() + " is under the effects of a " +
-                  getPower() + "-point power " +
-                  getName() + " spell, which has" +
-                  _duration + " turns left.";
-      return sb;
+      return getTargetName() + " is under the effects of a " +
+             getPower() + "-point power " +
+             getName() + " spell, which has" +
+             _duration + " turns left.";
    }
 
    /**

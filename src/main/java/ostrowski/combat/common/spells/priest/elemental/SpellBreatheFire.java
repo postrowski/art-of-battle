@@ -18,10 +18,9 @@ public class SpellBreatheFire extends PriestMissileSpell
 
    @Override
    public String describeSpellPreamble() {
-      String sb = "The '" + getName() + "' causes a cone of fire to erupt from the caster mouth." +
-                  " The effective power of the spell determines the maximum effective distance the flame shoots, and the damage done." +
-                  " The flame shoots out in a straight line determined by the caster.";
-      return sb;
+      return "The '" + getName() + "' causes a cone of fire to erupt from the caster mouth." +
+             " The effective power of the spell determines the maximum effective distance the flame shoots, and the damage done." +
+             " The flame shoots out in a straight line determined by the caster.";
    }
 
 //   @Override

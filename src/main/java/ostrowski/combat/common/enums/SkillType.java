@@ -64,10 +64,9 @@ public enum SkillType {
    public boolean          _isUnarmed;
 
    public String getName()                   { return _name;}
-   public ArmsUsed getArmUseCount()          { return _armUseCount; }
+
    public Attribute getAttributeBase()       { return _attributeBase; }
-   public boolean isAdjustedForSize()        { return _isAdjustedForSize; }
-   public boolean isAdjustedForEncumbrance() { return _isAdjustedForEncumbrance; }
+
    public boolean isUnarmed()                { return _isUnarmed; }
 
    SkillType(String name, boolean isAdjForSize, boolean isAdjustedForEncumbrance, Attribute attributeBase, ArmsUsed armCount, boolean isUnarmed) {

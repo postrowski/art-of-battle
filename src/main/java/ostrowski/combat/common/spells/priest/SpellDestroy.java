@@ -52,13 +52,16 @@ public abstract class SpellDestroy extends ResistedPriestSpell implements IRange
       if (damage > 0) {
          StringBuilder alterationExplanationBuffer = new StringBuilder();
          Wound wound = WoundCharts.getWound(damage, DamageType.ELECTRIC, getTarget(), alterationExplanationBuffer);
-         StringBuilder damageExplanationButtfer = new StringBuilder();
-         damageExplanationButtfer.append(getTargetName()).append(" takes damage from the ").append(getName()).append(" spell: ").append(wound.describeEffects());
-         if(alterationExplanationBuffer.length()>0) {
-            damageExplanationButtfer.append(", which is modified by ").append(alterationExplanationBuffer);
+         if (wound != null) {
+            StringBuilder damageExplanationBuffer = new StringBuilder();
+            damageExplanationBuffer.append(getTargetName()).append(" takes damage from the ")
+                                   .append(getName()).append(" spell: ").append(wound.describeEffects());
+            if (alterationExplanationBuffer.length() > 0) {
+               damageExplanationBuffer.append(", which is modified by ").append(alterationExplanationBuffer);
+            }
+            arena.sendMessageTextToAllClients(damageExplanationBuffer.toString(), false/*popUp*/);
+            getTarget().applyWound(wound, arena);
          }
-         arena.sendMessageTextToAllClients(damageExplanationButtfer.toString(), false/*popUp*/);
-         getTarget().applyWound(wound, arena);
       }
    }
 

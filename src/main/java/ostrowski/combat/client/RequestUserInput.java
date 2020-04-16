@@ -98,16 +98,14 @@ public class RequestUserInput extends Dialog implements KeyListener, FocusListen
       layout.verticalSpacing = 3;
       body.setLayout(layout);
 
-      if (message != null) {
-         message = Arena.convertFromHtmlToText(message);
-         int loc = message.indexOf("\n");
-         while (loc != -1) {
-            addLabel(message.substring(0, loc), body);
-            message = message.substring(loc+1);
-            loc = message.indexOf("\n");
-         }
-         addLabel(message, body);
+      message = Arena.convertFromHtmlToText(message);
+      int loc = message.indexOf("\n");
+      while (loc != -1) {
+         addLabel(message.substring(0, loc), body);
+         message = message.substring(loc+1);
+         loc = message.indexOf("\n");
       }
+      addLabel(message, body);
       addLabel("", body);
 
       Group optionsGroup = new Group(body, SWT.LEFT);
@@ -334,10 +332,6 @@ public class RequestUserInput extends Dialog implements KeyListener, FocusListen
    public void setTitle(String string) {
       super.setText(string);
       _shell.setText(string);
-   }
-
-   public String getMessage() {
-      return _message;
    }
 
    /*

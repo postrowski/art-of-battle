@@ -98,13 +98,12 @@ public abstract class OrientationSerpentine extends Orientation
    static public List<Facing> computeFacingsRequiredForLocations(List<? extends ArenaCoordinates> coordinates,
                                                                  Facing headFacing, int maxBendAllowed) {
       List<Facing> facingAtPoint = new ArrayList<>();
-      Facing prevFacing = headFacing;
-      facingAtPoint.add(prevFacing);
+      facingAtPoint.add(headFacing);
       for (int i=1 ; i<coordinates.size() ; i++) {
          Facing facing = ArenaCoordinates.getFacingToLocation(coordinates.get(i), coordinates.get(i-1));
          facingAtPoint.add(facing);
 
-         byte bend = (byte) Math.abs(prevFacing.value - facing.value);
+         byte bend = (byte) Math.abs(headFacing.value - facing.value);
          if (bend > 3) {
             bend = (byte) (6-bend);
          }
@@ -275,14 +274,12 @@ public abstract class OrientationSerpentine extends Orientation
             }
             newOrientation._facings.set(index, newFacing);
             List<ArenaCoordinates> newCoords = computeLocationsRequiredForFacings(newOrientation._facings, newOrientation._coordinates.get(0));
-            if (newCoords != null) {
-               newOrientation._coordinates.clear();
-               newOrientation._coordinates.addAll(newCoords);
+            newOrientation._coordinates.clear();
+            newOrientation._coordinates.addAll(newCoords);
 
-               for (int i=0 ; i<_coordinates.size() ; i++) {
-                  if (ArenaCoordinates.getDistance(newOrientation._coordinates.get(i), _coordinates.get(i)) > 1) {
-                     return null;
-                  }
+            for (int i=0 ; i<_coordinates.size() ; i++) {
+               if (ArenaCoordinates.getDistance(newOrientation._coordinates.get(i), _coordinates.get(i)) > 1) {
+                  return null;
                }
             }
          }

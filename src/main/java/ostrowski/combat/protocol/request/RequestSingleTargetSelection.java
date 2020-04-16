@@ -180,7 +180,7 @@ public class RequestSingleTargetSelection extends SyncRequest implements Enums
                      if (range != RANGE.OUT_OF_RANGE) {
                         description.append(" range");
                      }
-                     if (enabled && (range == RANGE.OUT_OF_RANGE)) {
+                     if (range == RANGE.OUT_OF_RANGE) {
                         enabled = false;
                      }
                   }

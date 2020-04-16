@@ -38,14 +38,6 @@ public class RequestGrapplingHoldMaintain extends SyncRequest implements Enums
       return false;
    }
 
-   public int getEscaperID() {
-      return _escaperID;
-   }
-
-   public byte getEscapeActions() {
-      return _escapeActions;
-   }
-
    public RequestActionType getActionType() {
       if (_answer instanceof RequestActionOption) {
          RequestActionOption reqActOpt = (RequestActionOption) _answer;
@@ -63,10 +55,6 @@ public class RequestGrapplingHoldMaintain extends SyncRequest implements Enums
          return actType.getActionsUsed((byte)0);
       }
       return (byte) getAnswerIndex();
-   }
-
-   public int getMaintenanceActions() {
-      return getActionsUsed();
    }
 
    public void addMaintainHoldOptions(int maxActions, IHolder holder, Character escaper, int skill, byte holdersPainPenalty) {

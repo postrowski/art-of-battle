@@ -111,7 +111,7 @@ public abstract class Thing extends SerializableObject implements Cloneable, Enu
       }
 
       Armor armor = Armor.getArmor(thingName, racialBase);
-      if ((armor != null) && (armor.isReal())) {
+      if (armor.isReal()) {
          return armor;
       }
 
@@ -138,7 +138,7 @@ public abstract class Thing extends SerializableObject implements Cloneable, Enu
             power = 5;
          }
          else if (thingName.startsWith("Level-")) {
-            power = Integer.parseInt(thingName.substring("Level-".length(), 1));
+            power = Integer.parseInt(thingName.substring("Level-".length(), "Level-".length()+1));
          }
          int damage = 5 + (power * 5);
          WeaponStyleAttack style = new WeaponStyleAttackThrown(0/*minSkill*/, 0/*penalty*/, damage, DieType.D6, DamageType.FIRE, 12/*rangeBase*/,  1/*hands*/);

@@ -49,10 +49,6 @@ public class MissileWeapon extends Weapon
    {
       return true;
    }
-   public RANGE getRange(short distanceToTarget, byte adjustedStrength)
-   {
-      return ((WeaponStyleAttackMissile) _attackStyles[0]).getRangeForDistance(distanceToTarget, adjustedStrength);
-   }
 
    @Override
    public void copyData(Thing source) {

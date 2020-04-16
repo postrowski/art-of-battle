@@ -417,15 +417,6 @@ public class DiceSet extends SerializableObject implements Enums
       }
    }
 
-   public double getChanceOfAllOnes() {
-      if (_diceCount.get(DieType.Dbell) > 0) {
-         return 1.0 / (Math.pow(12, _diceCount.get(DieType.Dbell)));
-      }
-
-      return 1.0 / (Math.pow(4, _diceCount.get(DieType.D4)) * Math.pow(6, _diceCount.get(DieType.D6)) * Math.pow(8, _diceCount.get(DieType.D8))
-                    * Math.pow(10, _diceCount.get(DieType.D10)) * Math.pow(12, _diceCount.get(DieType.D12)) * Math.pow(20, _diceCount.get(DieType.D20)));
-   }
-
    public double getOddsForTN(double TN) {
       return getOddsForTN(_diceCount.get(DieType.D4), _diceCount.get(DieType.D6), _diceCount.get(DieType.D8), _diceCount.get(DieType.D10),
                           _diceCount.get(DieType.D12), _diceCount.get(DieType.D20), _diceCount.get(DieType.Dbell), TN - _diceCount.get(DieType.D1), // TN
@@ -648,9 +639,13 @@ public class DiceSet extends SerializableObject implements Enums
                for (byte diceCount2 = (byte) 1; diceCount2 <= (6 - diceCount1); diceCount2++) {
 
                   DiceSet dice = DiceSet.getGroupDice(die1, diceCount1);
-                  dice = dice.addDie(DiceSet.getGroupDice(die2, diceCount2));
-                  if (dice.isInRange()) {
-                     _diceAllowed.add(dice);
+                  if (dice != null) {
+                     dice = dice.addDie(DiceSet.getGroupDice(die2, diceCount2));
+                     if (dice != null) {
+                        if (dice.isInRange()) {
+                           _diceAllowed.add(dice);
+                        }
+                     }
                   }
                }
             }

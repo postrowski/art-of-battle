@@ -16,11 +16,9 @@ public class RequestEquipment extends SyncRequest implements Enums {
    final List<String> _readyEqu = new ArrayList<>();
    final List<String> _applyEqu = new ArrayList<>();
    final List<LimbType> _hand     = new ArrayList<>();
-   RequestAction _parentReq;
    public RequestEquipment() {
    }
    public RequestEquipment(RequestAction parentReq) {
-      _parentReq = parentReq;
    }
 
    public LimbType getLimb() {

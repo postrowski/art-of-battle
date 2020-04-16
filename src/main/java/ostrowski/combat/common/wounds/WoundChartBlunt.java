@@ -62,7 +62,6 @@ public class WoundChartBlunt extends WoundChart {
             case 36:  wound = new Wound(damageLevel, Wound.Location.NECK, "skull & spine crushed",      0, 0, 0, 0, 0, 1, DamageType.BLUNT, EFFECT_DEATH, target); break;
             case 37:  wound = new Wound(damageLevel, Wound.Location.BODY, "decapitation",               0, 0, 0, 0, 0, 1, DamageType.BLUNT, EFFECT_DEATH | EFFECT_DECAPITATE, target); break;
             case 38:  wound = new Wound(damageLevel, Wound.Location.BODY, "decapitation",               0, 0, 0, 0, 0, 1, DamageType.BLUNT, EFFECT_DEATH | EFFECT_DECAPITATE, target); break;
-            case 39:  wound = new Wound(damageLevel, Wound.Location.HEAD, "skull smashed through body", 0, 0, 0, 0, 0, 0, DamageType.BLUNT, EFFECT_DEATH, target); break;
             default:  wound = new Wound(damageLevel, Wound.Location.HEAD, "skull smashed through body", 0, 0, 0, 0, 0, 0, DamageType.BLUNT, EFFECT_DEATH, target); break;
          }
          if (wound.isValid()) {

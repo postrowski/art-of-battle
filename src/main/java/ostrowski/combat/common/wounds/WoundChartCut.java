@@ -63,7 +63,6 @@ public class WoundChartCut extends WoundChart {
             case 36:  wound = new Wound(damageLevel, Wound.Location.NECK, "decapitation",               0, 0, 0, 0, 0, 0, DamageType.CUT, EFFECT_DEATH, target); break;
             case 37:  wound = new Wound(damageLevel, Wound.Location.BODY, "cleaved in half at waist",   0, 0, 0, 0, 0, 0, DamageType.CUT, EFFECT_DEATH, target); break;
             case 38:  wound = new Wound(damageLevel, Wound.Location.BODY, "cleaved in half at waist",   0, 0, 0, 0, 0, 0, DamageType.CUT, EFFECT_DEATH, target); break;
-            case 39:  wound = new Wound(damageLevel, Wound.Location.HEAD, "split from head to toe",     0, 0, 0, 0, 0, 0, DamageType.CUT, EFFECT_DEATH, target); break;
             default:  wound = new Wound(damageLevel, Wound.Location.HEAD, "split from head to toe",     0, 0, 0, 0, 0, 0, DamageType.CUT, EFFECT_DEATH, target); break;
          }
          if (wound.isValid()) {

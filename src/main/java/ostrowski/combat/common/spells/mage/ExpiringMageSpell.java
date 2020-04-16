@@ -41,7 +41,6 @@ public abstract class ExpiringMageSpell extends MageSpell implements IExpiringSp
    public short getDuration() {
       return _duration;
    }
-   @Override
    public boolean isExpired() {
       return _duration <= 0;
    }
@@ -55,11 +54,10 @@ public abstract class ExpiringMageSpell extends MageSpell implements IExpiringSp
    }
    @Override
    public String describeActiveSpell() {
-      String sb = getTargetName() + " is under the effects of a " +
-                  getPower() + "-point power " +
-                  getName() + " spell, which has" +
-                  _duration + " turns left.";
-      return sb;
+      return getTargetName() + " is under the effects of a " +
+             getPower() + "-point power " +
+             getName() + " spell, which has" +
+             _duration + " turns left.";
    }
 
    /**

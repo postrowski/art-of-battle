@@ -140,6 +140,7 @@ public class Advantage extends SerializableObject implements Cloneable, Enums
          String[] exclusions = new String[PriestSpell._deities.size()];
          int i=0;
          for (String otherDeity : PriestSpell._deities) {
+            //noinspection StringEquality
             if (otherDeity != deity) {
                exclusions[i++] = DIVINE_AFFINITY_ + otherDeity;
             }

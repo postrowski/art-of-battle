@@ -456,10 +456,6 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
       return _monitoredObj.getObjectIDString();
    }
 
-   public Vector<IMonitoringObject> getSnapShotOfWatchers() {
-      return _monitoredObj.getSnapShotOfWatchers();
-   }
-
    @Override
    public boolean registerMonitoredObject(IMonitorableObject watchedObject, Diagnostics diag) {
       return _monitoringObj.registerMonitoredObject(watchedObject, diag);
@@ -570,23 +566,21 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
             updateHumanFromCharacter(newChr, newChr.getOrientation(), human);
          }
 
-         if (human != null) {
-            if (!oldChr.getHeadCoordinates().sameCoordinates(newChr.getHeadCoordinates())) {
-               ObjHex oldHex = _characterIdToObjHex.get(oldChr._uniqueID);
-               synchronized (oldHex._lock_humans) {
-                  oldHex._lock_humans.check();
-                  oldHex._humans.remove(human);
-               }
-               synchronized (_locationToObjectMap) {
-                  try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_locationToObjectMap)) {
-                     TexturedObject newHex = _locationToObjectMap.get(newChr.getHeadCoordinates());
-                     if (newHex != null) {
-                        for (ObjModel model : newHex._models) {
-                           ObjHex objHex = (ObjHex) model._data;
-                           synchronized (oldHex._lock_humans) {
-                              objHex._lock_humans.check();
-                              objHex._humans.add(human);
-                           }
+         if (!oldChr.getHeadCoordinates().sameCoordinates(newChr.getHeadCoordinates())) {
+            ObjHex oldHex = _characterIdToObjHex.get(oldChr._uniqueID);
+            synchronized (oldHex._lock_humans) {
+               oldHex._lock_humans.check();
+               oldHex._humans.remove(human);
+            }
+            synchronized (_locationToObjectMap) {
+               try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_locationToObjectMap)) {
+                  TexturedObject newHex = _locationToObjectMap.get(newChr.getHeadCoordinates());
+                  if (newHex != null) {
+                     for (ObjModel model : newHex._models) {
+                        ObjHex objHex = (ObjHex) model._data;
+                        synchronized (oldHex._lock_humans) {
+                           objHex._lock_humans.check();
+                           objHex._humans.add(human);
                         }
                      }
                   }
@@ -842,9 +836,6 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
           (weaponName.equals(Weapon.NAME_TwoHandedSword)) ||
           (weaponName.equals(Weapon.NAME_TwoHandedSword_Fine)) ||
           (weaponName.equals(Weapon.NAME_WarHammer))) {
-         if (weaponName.endsWith("_Fine")) {
-            weaponName = weaponName.substring(0, weaponName.length() - 5);
-         }
          if (weaponName.endsWith(", Fine")) {
             weaponName = weaponName.substring(0, weaponName.length() - 6);
          }
@@ -1009,8 +1000,8 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
                   }
                   switch (state) {
                      case 0: rightHandHeldThingName += "_ready"; break; // bow drawn
-                     case 1: rightHandHeldThingName += "_idle"; break;  // arrow notched
-                     case 2: rightHandHeldThingName += "_idle"; break;  // arrow ready
+                     case 1: // arrow notched
+                     case 2: // arrow ready
                      case 3: rightHandHeldThingName += "_idle"; break;  // bow unready
                   }
                }

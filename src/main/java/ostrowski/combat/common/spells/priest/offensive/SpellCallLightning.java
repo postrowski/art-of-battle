@@ -115,29 +115,24 @@ public class SpellCallLightning extends PriestSpell implements IRangedSpell, ICa
                   sb.append(chr.getName());
                }
                DiceSet targetDice = null;
-               if (distance == 1) {
-                  targetDice = new DiceSet("1d6");
+               switch (distance) {
+                  case 1: targetDice = new DiceSet("1d6");  break;
+                  case 2: targetDice = new DiceSet("1d12"); break;
+                  case 3: targetDice = new DiceSet("1d20"); break;
+                  case 4: targetDice = new DiceSet("1d20"); break;
                }
-               if (distance == 2) {
-                  targetDice = new DiceSet("1d12");
-               }
-               if (distance == 3) {
-                  targetDice = new DiceSet("1d20");
-               }
-               if (distance == 4) {
-                  targetDice = new DiceSet("1d20");
-               }
-               rollMessage = "There are " + charsAtRange.size() + " characters at that distance. Roll less than or equal to " +
-                         charsAtRange.size() + " on a " + targetDice.toString() + " to hit one of them.";
-               int targetIndex = targetDice.roll(false/*allowExplodes*/, getCaster(), RollType.SPELL_CASTING, rollMessage);
-               sb.append("<br/>Rolls a ").append(targetDice);
-               sb.append(", rolling ").append(targetDice.getLastDieRoll());
-               if (charsAtRange.size() < targetIndex) {
-                  sb.append(", missing all other characters.");
-               }
-               else {
-                  hitCharacter = charsAtRange.get(targetIndex);
-                  sb.append(" which hits ").append(hitCharacter.getName());
+               if (targetDice != null) {
+                  rollMessage = "There are " + charsAtRange.size() + " characters at that distance. Roll less than or equal to " +
+                                charsAtRange.size() + " on a " + targetDice.toString() + " to hit one of them.";
+                  int targetIndex = targetDice.roll(false/*allowExplodes*/, getCaster(), RollType.SPELL_CASTING, rollMessage);
+                  sb.append("<br/>Rolls a ").append(targetDice);
+                  sb.append(", rolling ").append(targetDice.getLastDieRoll());
+                  if (charsAtRange.size() < targetIndex) {
+                     sb.append(", missing all other characters.");
+                  } else {
+                     hitCharacter = charsAtRange.get(targetIndex);
+                     sb.append(" which hits ").append(hitCharacter.getName());
+                  }
                }
             }
          }

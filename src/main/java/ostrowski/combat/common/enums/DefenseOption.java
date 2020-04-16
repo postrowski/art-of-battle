@@ -105,13 +105,6 @@ public enum DefenseOption {
       }
       return points.byteValue();
    }
-   public byte getDefenseCounterActionsUsed() {
-      Integer points = _DEFENSE_COUNTER_POINTS_USED.get(this);
-      if (points == null) {
-         return 0;
-      }
-      return points.byteValue();
-   }
 
    public String getName(boolean pastTense, Character actor, RequestAction attack) {
       int magicActions = getDefenseMagicPointsUsed();
@@ -186,14 +179,7 @@ public enum DefenseOption {
       return defName;
 
    }
-   public static DefenseOption getByValue(int value) {
-      for (DefenseOption opt : DefenseOption.values()) {
-         if (opt.value == value) {
-            return opt;
-         }
-      }
-      return null;
-   }
+
    public boolean isCounterAttackGrab() {
       return (this == DEF_COUNTER_GRAB_1) ||
              (this == DEF_COUNTER_GRAB_2) ||

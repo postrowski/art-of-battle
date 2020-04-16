@@ -22,13 +22,12 @@ public class SpellFlamingMissileWeapon extends SpellFlamingWeapon
       for (byte power = 1; power < 8; power++) {
          table.addRow(new TableRow(power-1, ""+power, ""+getPain(power), ""+getWounds(power)));
       }
-      String sb = "The '" + getName() + "' spell causes the subject's missile weapon to ignite into flames." +
-                  " These flames automatically ignite any missile loaded into the weapon." +
-                  " Any time the missile hits an opponent, and penetrates the armor (does at least 1 point of damage)," +
-                  " then the flames of the weapon add additional pain and wounds, based upon the power of the spell:" +
-                  table +
-                  "<br/>This spell has no effect when cast on melee weapons, or thrown weapons." +
-                  " Use the 'Flaming Weapon' spell for that.";
-      return sb;
+      return "The '" + getName() + "' spell causes the subject's missile weapon to ignite into flames." +
+             " These flames automatically ignite any missile loaded into the weapon." +
+             " Any time the missile hits an opponent, and penetrates the armor (does at least 1 point of damage)," +
+             " then the flames of the weapon add additional pain and wounds, based upon the power of the spell:" +
+             table +
+             "<br/>This spell has no effect when cast on melee weapons, or thrown weapons." +
+             " Use the 'Flaming Weapon' spell for that.";
    }
 }

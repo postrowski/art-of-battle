@@ -47,9 +47,6 @@ public class Skill extends SerializableObject implements Cloneable, Enums {
    public boolean isAdjustedForSize()        { return _type._isAdjustedForSize;  }
    public boolean isAdjustedForEncumbrance() { return _type._isAdjustedForEncumbrance; }
 
-   public boolean isOffHand()   {
-      return (_type == SkillType.Shield);
-   }
    public byte getPenaltyForEncumbranceLevel(byte encumbranceLevel) {
       if (_type._isAdjustedForEncumbrance) {
          return encumbranceLevel;

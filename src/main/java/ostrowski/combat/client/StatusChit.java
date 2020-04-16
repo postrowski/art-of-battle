@@ -26,8 +26,8 @@ public class StatusChit extends Dialog implements PaintListener
    private              Shell                  _shell                     = null;
 
    public String            _name;
-   private static final int NAME_FONT_SIZE = 20;
-   private Point            _nameCenterLoc;
+   private static final int   NAME_FONT_SIZE = 20;
+   private final        Point _nameCenterLoc;
 
    private final TextWheel _position;
    private final TextWheel _posAdj;
@@ -221,9 +221,6 @@ public class StatusChit extends Dialog implements PaintListener
       if (parentRect.intersects(thisRect)) {
          _offsetFromParent = new Point(thisRect.x - parentRect.x,
                                        thisRect.y - parentRect.y);
-         if (_offsetFromParent.y < 0) {
-            _offsetFromParent.y = _offsetFromParent.y;
-         }
       }
       else {
          _offsetFromParent = null;
@@ -293,8 +290,8 @@ class TextWheel {
    private final int    _textFontSize;
    private final Point  _textCenterLoc  = new Point(0, 0);
    private final Point  _center         = new Point(0, 0);
-   private       int    _centerAngle    = 0;
-   private       int    _angleWidth;
+   private       int _centerAngle    = 0;
+   private final int _angleWidth;
 
    public TextWheel(double radiusPercentage, double percentClockwiseAlongEdge,
                     double percentBlocking, int angleOpen, Edge edge,

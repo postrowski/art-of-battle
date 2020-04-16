@@ -14,7 +14,6 @@ import ostrowski.combat.common.things.LimbType;
 import ostrowski.ui.Helper;
 
 public class ConditionBlock extends Helper implements IUIBlock {
-   final   CharacterDisplay _display;
    private Text             _initiative;
    private Text             _moveAvail;
    private Text             _position;
@@ -29,7 +28,6 @@ public class ConditionBlock extends Helper implements IUIBlock {
    private Text             _weaponReady;
 
    public ConditionBlock(CharacterDisplay display) {
-      _display = display;
    }
 
    @Override

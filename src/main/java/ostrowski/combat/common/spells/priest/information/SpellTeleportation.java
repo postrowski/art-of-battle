@@ -64,7 +64,7 @@ public class SpellTeleportation extends PriestSpell
          case 4: return "1,000 miles";
          case 5: return "Anywhere on the same planet";
          case 6: return "Anywhere in the same dimensional plane";
-         case 7: return "Anywhere";
+         case 7:
          case 8: return "Anywhere";
       }
       return "";

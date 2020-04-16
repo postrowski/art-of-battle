@@ -29,17 +29,17 @@ public class SpellIncreaseDamage extends ExpiringPriestSpell implements ICastInB
       sb.append(getTargetName());
       sb.append(" will do additional damage: ");
       int wounds = getWounds(getPower());
-      int pain   = getPain(getPower());
-      if (wounds>0) {
-         if (wounds>0) {
-            sb.append("+");
+      int pain = getPain(getPower());
+      if (wounds > 0) {
+         sb.append("+").append(wounds).append(" wounds");
+         if (pain > 0) {
+            sb.append(", and");
          }
-         sb.append(wounds).append(" wounds, and ");
       }
-      if (pain>0) {
-         sb.append("+");
+      if (pain > 0) {
+         sb.append("+").append(pain).append(" pain");
       }
-      sb.append(pain).append(" pain.)");
+      sb.append(".)");
       return sb.toString();
    }
    @Override
@@ -104,11 +104,11 @@ public class SpellIncreaseDamage extends ExpiringPriestSpell implements ICastInB
    {
       switch (power) {
          case 1: return 0;
-         case 2: return 1;
+         case 2:
          case 3: return 1;
-         case 4: return 2;
+         case 4:
          case 5: return 2;
-         case 6: return 3;
+         case 6:
          case 7: return 3;
          case 8: return 4;
       }
@@ -118,13 +118,13 @@ public class SpellIncreaseDamage extends ExpiringPriestSpell implements ICastInB
    private static byte getPain(byte power)
    {
       switch (power) {
-         case 1: return 3;
+         case 1:
          case 2: return 3;
-         case 3: return 4;
+         case 3:
          case 4: return 4;
-         case 5: return 5;
+         case 5:
          case 6: return 5;
-         case 7: return 6;
+         case 7:
          case 8: return 6;
       }
       return 0;

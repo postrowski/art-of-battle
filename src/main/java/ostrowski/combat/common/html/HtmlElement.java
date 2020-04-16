@@ -11,9 +11,7 @@ public abstract class HtmlElement
       setAttribute("class", className);
       return this;
    }
-   public String getClassName() {
-      return getAttributeValue("class");
-   }
+
    public String getID() {
       return getAttributeValue("id");
    }

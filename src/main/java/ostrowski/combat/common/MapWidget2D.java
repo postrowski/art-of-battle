@@ -33,8 +33,8 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
 
    private final Canvas     _canvas;
 
-   private static ImageData ZOOM_CONTROL_IMAGE_DATA;
-   private static Image     ZOOM_CONTROL_IMAGE       = null;
+   private static final ImageData ZOOM_CONTROL_IMAGE_DATA;
+   private static       Image     ZOOM_CONTROL_IMAGE       = null;
 
    private static Point     ZOOM_IN_BUTTON_CENTER    = null;
    private static Point     ZOOM_OUT_BUTTON_CENTER   = null;
@@ -1786,6 +1786,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
    public int[] getHexDimensions(ArenaCoordinates coord) {
       if (coord == null) {
          DebugBreak.debugBreak();
+         return new int[0];
       }
       return getHexDimensions((short) (coord._x - _left), (short) (coord._y - _top), _sizePerHex, 0/*offsetX*/, 0/*offsetY*/, true/*cacheResults*/);
    }
@@ -1834,9 +1835,8 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       int[] hexDims = mapColumnToHexDims.get(column);
       if (hexDims == null) {
          double[] hexDimensions = getHexBaseDimensions(sizePerHex);
-         double sizeX = sizePerHex;
          double sizeY = (sizePerHex * 71d) / 81; // set aspect ratio
-         double locX = sizeX * ((column *  0.75) + .5);
+         double locX = (double) sizePerHex * ((column * 0.75) + .5);
          double locY = ((row+1) * sizeY) / 2;
          hexDims = new int[] { (int) Math.round(hexDimensions[0] + locX), (int) Math.round(hexDimensions[1] + locY),
                                (int) Math.round(hexDimensions[2] + locX), (int) Math.round(hexDimensions[3] + locY),
@@ -1879,11 +1879,10 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
    public static double[] getHexBaseDimensions(int sizePerHex) {
       double[] results = MAP_OF_HEX_SIZES_TO_BASE_DIMENSIONS.get(sizePerHex);
       if (results == null) {
-         double sizeX = sizePerHex;
          double sizeY = (sizePerHex * 71d) / 81; // set aspect ratio
          double halfY = sizeY / 2;
-         double halfX = sizeX / 2;
-         double quartX = sizeX / 4;
+         double halfX = (double) sizePerHex / 2;
+         double quartX = (double) sizePerHex / 4;
          results = new double[] {  -halfX, 0,      // leftmost point  0
                                   -quartX, halfY,  // left-bottom     1
                                    quartX, halfY,  // right-bottom    2

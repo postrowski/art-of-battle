@@ -79,10 +79,7 @@ public class MageCollege extends SerializableObject implements Enums
    @Override
    public MageCollege clone() {
       try {
-         MageCollege dup = (MageCollege) super.clone();
-         dup._nameList = new ArrayList<>(this._nameList);
-         dup._colleges = new HashMap<>(this._colleges);
-         return dup;
+         return (MageCollege) super.clone();
       } catch (CloneNotSupportedException e) {
          DebugBreak.debugBreak("clone error");
          return null;
@@ -107,20 +104,6 @@ public class MageCollege extends SerializableObject implements Enums
       } catch (IOException e) {
          e.printStackTrace();
       }
-   }
-
-   public static MageCollege serializeCollegeFromStream(DataInputStream in) {
-      MageCollege college = null;
-      try {
-         String name = readString(in);
-         college = getCollege(name);
-         college.serializeFromStream(in);
-         // _resistedAtt, _prerequisiteSpellNames & _attributeMod don't need to be serialized,
-         // because they are constant for a given spell (defined by its name).
-      } catch (IOException e) {
-         e.printStackTrace();
-      }
-      return college;
    }
 
    @Override

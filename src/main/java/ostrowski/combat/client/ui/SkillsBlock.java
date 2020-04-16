@@ -145,8 +145,8 @@ public class SkillsBlock extends Helper implements Enums, ModifyListener, IUIBlo
 
          _skillLevelAdj[nextInsertIndex].setText("[" + adjustedLevel + "]");
          _skillCost[nextInsertIndex].setText("(" + Rules.getSkillCost(skill.getLevel()) + ")");
-         _skillType[nextInsertIndex].setEnabled(character != null);
-         _skillLevel[nextInsertIndex].setEnabled(character != null);
+         _skillType[nextInsertIndex].setEnabled(true);
+         _skillLevel[nextInsertIndex].setEnabled(true);
          nextInsertIndex++;
       }
       for (int i=0; i < (_skillType.length-1); i++) {

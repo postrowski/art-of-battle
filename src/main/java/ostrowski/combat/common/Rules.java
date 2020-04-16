@@ -899,26 +899,25 @@ public class Rules extends DebugBreak implements Enums
 
    public static String generateMiscHtmlTable() {
 
-      String sb = HtmlBuilder.getHTMLHeader() +
-                  "<body>" +
-                  "<table class='Hidden'>" +
-                  "<tr><td class='alignLeft'>" +
-                  generateChargeDamageTable() +
-                  "</td><td class='alignLeft'>" +
-                  generatePositionAdjustmentTable() +
-                  generateRangeAdjustmentTable() +
-                  "<h4>Target Movement Adjustments:</h4>" +
-                  "<table class=\"Hidden\">" +
-                  "<tr><td class='alignLeft'>PD Adjustment for target moving:</td><td> +" + Rules.getTNBonusForMovement(RANGE.LONG, false) + "</td></tr>" +
-                  "<tr><td class='alignLeft'>PD Adjustment for target moving evasively:</td><td> +" + Rules.getTNBonusForMovement(RANGE.LONG, true) + "</td></tr>" +
-                  "</table>" +
-                  "</td><td class='alignLeft'>" +
-                  "<h4>Weapon Size Adjustments:</h4>" +
-                  generateSizeAdjustmentTable() +
-                  "</td></tr>" +
-                  "</table>" +
-                  "</body>";
-      return sb;
+      return HtmlBuilder.getHTMLHeader() +
+             "<body>" +
+             "<table class='Hidden'>" +
+             "<tr><td class='alignLeft'>" +
+             generateChargeDamageTable() +
+             "</td><td class='alignLeft'>" +
+             generatePositionAdjustmentTable() +
+             generateRangeAdjustmentTable() +
+             "<h4>Target Movement Adjustments:</h4>" +
+             "<table class=\"Hidden\">" +
+             "<tr><td class='alignLeft'>PD Adjustment for target moving:</td><td> +" + Rules.getTNBonusForMovement(RANGE.LONG, false) + "</td></tr>" +
+             "<tr><td class='alignLeft'>PD Adjustment for target moving evasively:</td><td> +" + Rules.getTNBonusForMovement(RANGE.LONG, true) + "</td></tr>" +
+             "</table>" +
+             "</td><td class='alignLeft'>" +
+             "<h4>Weapon Size Adjustments:</h4>" +
+             generateSizeAdjustmentTable() +
+             "</td></tr>" +
+             "</table>" +
+             "</body>";
    }
 
    public static byte getTNBonusForActions(byte numberOfActionsToAttack) {
@@ -969,16 +968,16 @@ public class Rules extends DebugBreak implements Enums
       }
       else if (armCount == 4) {
          switch (hand) {
-            case HAND_LEFT:    return 2;
+            case HAND_LEFT:
             case HAND_RIGHT_2: return 2;
             case HAND_LEFT_2:  return 3;
          }
       }
       else if (armCount == 6) {
          switch (hand) {
-            case HAND_LEFT:    return 1;
+            case HAND_LEFT:
             case HAND_RIGHT_2: return 1;
-            case HAND_LEFT_2:  return 2;
+            case HAND_LEFT_2:
             case HAND_RIGHT_3: return 2;
             case HAND_LEFT_3:  return 3;
          }

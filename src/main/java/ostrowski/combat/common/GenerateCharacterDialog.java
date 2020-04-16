@@ -26,9 +26,9 @@ import ostrowski.ui.Helper;
 public class GenerateCharacterDialog extends Dialog implements ModifyListener {
    private final Shell _shell;
    public boolean _cancelSelected = false;
-   Combo _generationPointsCombo;
-   Combo _racesCombo;
-   static int _generationPoints = 200;
+   final  Combo   _generationPointsCombo;
+   final  Combo   _racesCombo;
+   static int     _generationPoints = 200;
    private String _race;
    private final Text _equipmentTextBox;
    private String _equipment = "";

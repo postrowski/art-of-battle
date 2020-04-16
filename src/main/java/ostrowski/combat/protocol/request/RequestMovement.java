@@ -209,13 +209,12 @@ public class RequestMovement extends SyncRequest implements Enums
    @Override
    public String toString()
    {
-      String sb = super.toString() +
-                  "RequestMovement: " +
-                  ", futureOrientations:" + _futureOrientations +
-                  ", cancelOrientations:" + _cancelOrientations +
-                  ", completeOrientations:" + _completeOrientations +
-                  ", actorID:" + _actorID;
-      return sb;
+      return super.toString() +
+             "RequestMovement: " +
+             ", futureOrientations:" + _futureOrientations +
+             ", cancelOrientations:" + _cancelOrientations +
+             ", completeOrientations:" + _completeOrientations +
+             ", actorID:" + _actorID;
    }
 
    public boolean setOrientation(ArenaLocation loc, double angleFromCenter, double normalizedDistFromCenter) {

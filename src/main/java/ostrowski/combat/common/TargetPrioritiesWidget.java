@@ -23,9 +23,9 @@ public class TargetPrioritiesWidget extends Helper implements SelectionListener
    public org.eclipse.swt.widgets.List _priorityList = null;
    private List<Character>        _combatants   = null;
    private Button                      _upButton     = null;
-   private Button                      _dnButton     = null;
-   private CharacterDisplay            _display;
-   private int                         _selfUniqueID = -1;
+   private       Button           _dnButton     = null;
+   private final CharacterDisplay _display;
+   private       int              _selfUniqueID = -1;
    private byte                        _selfTeamID   = -1;
 
    public TargetPrioritiesWidget(Character self, CharacterDisplay display) {

@@ -4,7 +4,6 @@ import ostrowski.combat.common.Character;
 
 public interface IInstantaneousSpell
 {
-   byte getIncantationTime();
    boolean canDefendAgainstMeleeAttacks();
    boolean canDefendAgainstRangedAttacks();
    boolean canDefendAgainstSpells();

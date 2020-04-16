@@ -42,8 +42,7 @@ public class RequestLocation extends SyncRequest
    public void setCoordinates(List<ArenaCoordinates> selectableCoordinates) {
       _selectableCoordinates = selectableCoordinates;
    }
-   public short getLocX() { return _selectableCoordinates.get(getAnswerIndex())._x; }
-   public short getLocY() { return _selectableCoordinates.get(getAnswerIndex())._y; }
+
    @Override
    public int getActionCount() {
       return _selectableCoordinates.size();
@@ -122,10 +121,9 @@ public class RequestLocation extends SyncRequest
    @Override
    public String toString()
    {
-      String sb = "RequestLocation: " +
-                  "selectableLoc:" + _selectableCoordinates + "\n" +
-                  super.toString();
-      return sb;
+      return "RequestLocation: " +
+             "selectableLoc:" + _selectableCoordinates + "\n" +
+             super.toString();
    }
 
 }

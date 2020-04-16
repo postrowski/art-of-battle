@@ -62,7 +62,7 @@ public class SpellPlague extends PriestSpell
    }
    private static String getDamageChanceForPower(int power) {
       switch (power) {
-         case  1: return "---";
+         case  1:
          case  2: return "---";
          case  3: return "1/20";
          case  4: return "1/12";

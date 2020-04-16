@@ -11,7 +11,6 @@ import ostrowski.combat.common.enums.DamageType;
 import ostrowski.combat.common.spells.IAreaSpell;
 import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.wounds.Wound;
-import ostrowski.combat.common.wounds.WoundChart;
 import ostrowski.combat.common.wounds.WoundCharts;
 import ostrowski.combat.server.Arena;
 import ostrowski.combat.server.ArenaCoordinates;
@@ -38,9 +37,8 @@ public class SpellWallOfFire extends ExpiringMageSpell implements IAreaSpell, IC
    @Override
    public String describeEffects(Character defender, boolean firstTime) {
       if (firstTime) {
-         String sb = getCasterName() + " creates a wall of fire (level " + getPower() +
-                     "), with a radius equal to the casting power of " + getPower();
-         return sb;
+         return getCasterName() + " creates a wall of fire (level " + getPower() +
+                "), with a radius equal to the casting power of " + getPower();
       }
       return null;
    }
@@ -158,17 +156,19 @@ public class SpellWallOfFire extends ExpiringMageSpell implements IAreaSpell, IC
          sb.append(", reducing the damage to ").append(reducedDamage).append("<br/>");
 
          Wound wound = WoundCharts.getWound(reducedDamage, DamageType.FIRE, charToTakeDamage, alterationExplanationBuffer);
-         sb.append(charToTakeDamage.getName()).append(" suffers the following wound:<br/>");
-         sb.append(wound.describeWound());
-         if (alterationExplanationBuffer.length() > 0) {
-            sb.append(", which is modified by ").append(alterationExplanationBuffer);
+         if (wound != null) {
+            sb.append(charToTakeDamage.getName()).append(" suffers the following wound:<br/>");
+            sb.append(wound.describeWound());
+            if (alterationExplanationBuffer.length() > 0) {
+               sb.append(", which is modified by ").append(alterationExplanationBuffer);
+            }
+            sb.append("<br/>");
+            List<Wound> woundsList = new ArrayList<>();
+            woundsList.add(wound);
+            Map<Character, List<Wound>> wounds = new HashMap<>();
+            wounds.put(charToTakeDamage, woundsList);
+            _arena._battle.applyWounds(wounds);
          }
-         sb.append("<br/>");
-         List<Wound> woundsList = new ArrayList<>();
-         woundsList.add(wound);
-         Map<Character, List<Wound>> wounds = new HashMap<>();
-         wounds.put(charToTakeDamage, woundsList);
-         _arena._battle.applyWounds(wounds);
       }
       _arena.sendMessageTextToAllClients(sb.toString(), false/*popUp*/);
       sb.setLength(0);

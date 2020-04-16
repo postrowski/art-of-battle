@@ -24,31 +24,14 @@ public class DrawnObject
       }
       _children.add(child);
    }
-   public void addPoint(Point newPoint) {
-      _points.add(newPoint);
-   }
+
    public void addPoint(int x, int y) {
       _points.add(new Point(x,y));
    }
    public void addPoint(double x, double y) {
       _points.add(new Point((int)(Math.round(x)), (int)(Math.round(y))));
    }
-   public void setForeground(RGB fgRGB, boolean includeChildren) {
-      _fgRGB = fgRGB;//==null) ? null : new RGB(fgRGB.red, fgRGB.green, fgRGB.blue);
-      if (includeChildren) {
-         for (DrawnObject child : _children) {
-            child.setForeground(fgRGB, includeChildren);
-         }
-      }
-   }
-   public void setBackground(RGB bgRGB, boolean includeChildren) {
-      _bgRGB = bgRGB;//==null) ? null : new RGB(bgRGB.red, bgRGB.green, bgRGB.blue);
-      if (includeChildren) {
-         for (DrawnObject child : _children) {
-            child.setBackground(bgRGB, includeChildren);
-         }
-      }
-   }
+
    public void draw(GC gc, Device display) {
       Color bgColor = (_bgRGB == null) ? null : new Color(display, _bgRGB);
       Color fgColor = (_fgRGB == null) ? null : new Color(display, _fgRGB);
@@ -333,8 +316,5 @@ public class DrawnObject
    }
    public int getPointCount() {
       return _points.size();
-   }
-   public List<Point> getPoints() {
-      return _points;
    }
 }

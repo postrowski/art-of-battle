@@ -269,24 +269,25 @@ public class WeaponBlock extends Helper implements ModifyListener, IUIBlock, Sel
             _equipment[i].setEnabled(true);
             _buttons[i].setEnabled(true);
             _location[i].setEnabled(true);
-            Thing heldThing = Thing.getThing(equName, character.getRace());
-            if ((heldThing != null) && (character != null)) {
-               if (heldThing.isReal()) {
-                  _equCost[i].setText(String.valueOf(heldThing.getCost()));
-                  if ((heldThing.getRacialBase() == null) || (!character.getRace().getName().equals(heldThing.getRacialBase().getName()))) {
-                     DebugBreak.debugBreak();
+            if (character != null) {
+               Thing heldThing = Thing.getThing(equName, character.getRace());
+               if (heldThing != null) {
+                  if (heldThing.isReal()) {
+                     _equCost[i].setText(String.valueOf(heldThing.getCost()));
+                     if ((heldThing.getRacialBase() == null) || (!character.getRace().getName().equals(heldThing.getRacialBase().getName()))) {
+                        DebugBreak.debugBreak();
+                     }
+                     _equLbs[i].setText(String.valueOf(heldThing.getAdjustedWeight()));
+                  } else {
+                     _equCost[i].setText("---");
+                     _equLbs[i].setText("0");
+                     if (equName.equalsIgnoreCase(Weapon.NAME_HeadButt) || equName.equalsIgnoreCase(Weapon.NAME_KarateKick)) {
+                        _location[i].setText(BELT);
+                        _location[i].setEnabled(true);
+                     }
                   }
                   _equLbs[i].setText(String.valueOf(heldThing.getAdjustedWeight()));
                }
-               else {
-                  _equCost[i].setText("---");
-                  _equLbs[i].setText("0");
-                  if (equName.equalsIgnoreCase(Weapon.NAME_HeadButt) || equName.equalsIgnoreCase(Weapon.NAME_KarateKick)) {
-                     _location[i].setText(BELT);
-                     _location[i].setEnabled(true);
-                  }
-               }
-               _equLbs[i].setText(String.valueOf(heldThing.getAdjustedWeight()));
             }
          }
       }
@@ -295,7 +296,7 @@ public class WeaponBlock extends Helper implements ModifyListener, IUIBlock, Sel
          _buttons[--_selectedEqu].setSelection(true);
       }
 
-      Thing selectedEqu = Thing.getThing(_equipment[_selectedEqu].getText(), character.getRace());
+      Thing selectedEqu = Thing.getThing(_equipment[_selectedEqu].getText(), (character != null) ? character.getRace() : null);
       Weapon weap = null;
       if ((selectedEqu instanceof Weapon) && selectedEqu.isReal()){
          weap = (Weapon) selectedEqu;
@@ -409,11 +410,11 @@ public class WeaponBlock extends Helper implements ModifyListener, IUIBlock, Sel
 //      _folder.getItems()[1].getControl().setEnabled(has1Handed);
 //      _folder.getItems()[2].getControl().setEnabled(has2Handed);
 //      _folder.getItems()[3].getControl().setEnabled(hasRanged);
-      _armorLbs.setText((character==null) ? "" : String.valueOf(character.getWeightArmor()));
-      _armorCost.setText(((character==null) ? "" : String.valueOf(character.getArmor().getCost())));
+      _armorLbs.setText((character == null) ? "" : String.valueOf(character.getWeightArmor()));
+      _armorCost.setText(((character == null) ? "" : String.valueOf(character.getArmor().getCost())));
 
-      _totalLbs.setText((character==null) ? "" : String.valueOf(character.getWeightCarried()));
-      _totalCost.setText(((character==null) ? "" : String.valueOf(character.getTotalCost())));
+      _totalLbs.setText((character == null) ? "" : String.valueOf(character.getWeightCarried()));
+      _totalCost.setText(((character == null) ? "" : String.valueOf(character.getTotalCost())));
       updateLocations();
       updateUnarmedWeapons(character);
    }
@@ -548,7 +549,11 @@ public class WeaponBlock extends Helper implements ModifyListener, IUIBlock, Sel
                   if (weap.isOnlyTwoHanded()) {
                      for (LimbType limbType : self.getRace().getLimbSet()) {
                         if (selectedHand.equals(limbType.name)) {
-                           String pairHand = limbType.getPairedType().name;
+                           LimbType pairedType = limbType.getPairedType();
+                           String pairHand = null;
+                           if (pairedType != null) {
+                              pairHand = pairedType.name;
+                           }
                            if (locationNames.contains(pairHand)) {
                               locationNames.remove(pairHand);
                            }

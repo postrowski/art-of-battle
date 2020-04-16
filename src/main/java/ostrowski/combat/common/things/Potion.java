@@ -53,9 +53,6 @@ public class Potion extends Thing implements Cloneable
       return new Potion(_name, _strength, _duration, _cost, _background);
    }
 
-   public byte getStrength() {
-      return _strength;
-   }
    @Override
    public String getActiveDefenseName() {
       return null;

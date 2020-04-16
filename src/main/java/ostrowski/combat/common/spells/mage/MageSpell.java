@@ -30,9 +30,9 @@ public abstract class MageSpell extends Spell implements Enums
    public final static String FAM_KNOWN             = "known";
    public final static String FAM_MEMORIZED         = "memorized";
 
-   public Class<MageSpell>[]  _prerequisiteSpells;
-   public MageCollege[]       _prerequisiteColleges;
-   protected HashMap<Attribute, Byte>      _attributeMod         = new HashMap<>();
+   public       Class<MageSpell>[]       _prerequisiteSpells;
+   public final MageCollege[]            _prerequisiteColleges;
+   protected    HashMap<Attribute, Byte> _attributeMod         = new HashMap<>();
 
    public MageSpell() {
       this("", null, null);
@@ -57,10 +57,10 @@ public abstract class MageSpell extends Spell implements Enums
 
    public void setFamiliarity(String familiarity) {
       _level = 0;
-      if (FAM_UNFAMILIAR.equals(familiarity)) {
-         _level = 0;
-      }
-      else if (FAM_KNOWN.equals(familiarity)) {
+//      if (FAM_UNFAMILIAR.equals(familiarity)) {
+//         _level = 0;
+//      }
+      if (FAM_KNOWN.equals(familiarity)) {
          _level = 1;
       }
       else if (FAM_MEMORIZED.equals(familiarity)) {
@@ -112,31 +112,6 @@ public abstract class MageSpell extends Spell implements Enums
    //      return 100;
    //   }
 
-   static public String getRequirementString(byte level) {
-      switch (level) {
-         case 1:
-            return "both hands, spoken words and large gestures";
-         case 2:
-         case 3:
-            return "both hands and spoken words";
-         case 4:
-            return "both hands or one hand with spoken words";
-         case 5:
-            return "both hands or one hand with quiet words";
-         case 6:
-            return "only one hand";
-         case 7:
-            return "only three fingers";
-         case 8:
-            return "only two fingers";
-         case 9:
-            return "only one finger";
-         case 10:
-            return "only thought";
-      }
-      return null;
-   }
-
    @Override
    public Wound channelEnergy(byte additionalPower) {
       byte currentBurnLevel = getBurnLevel();
@@ -150,17 +125,7 @@ public abstract class MageSpell extends Spell implements Enums
       return null;
    }
 
-   /**
-    * Spells that alter attributes return values from this method that directly apply to the
-    * target character.
-    * @param attribute
-    * @return
-    */
-   public byte getAttributeMod(Attribute attribute) {
-      return _attributeMod.get(attribute);
-   }
-
-//   private static void printSkillInGroups() {
+   //   private static void printSkillInGroups() {
 //      List<ArrayList<MageSpell>> listOfGroupedSpells = new ArrayList<>();
 //      List<MageSpell> spellsToGroup = new ArrayList<>();
 //      spellsToGroup.addAll(_spellsList);
@@ -231,19 +196,6 @@ public abstract class MageSpell extends Spell implements Enums
       return minSkill;
    }
 
-   public int getPrerequisiteLevel() {
-      int level = 0;
-      for (Class<MageSpell> prereqClass : this._prerequisiteSpells) {
-         for (MageSpell element : MageSpells._spellsList) {
-            if (element.getClass() == prereqClass) {
-               level = Math.max(level, (element.getPrerequisiteLevel() + 1));
-               break;
-            }
-         }
-      }
-      return level;
-   }
-
    public byte getKnowledgePenalty(Character character) {
       byte penalty = 0;
       // If this spell is known (level >0), then all prerequisite spells must also already be known.
@@ -292,8 +244,7 @@ public abstract class MageSpell extends Spell implements Enums
       return TN[2 + power];
    }
 
-   @Override
-   public int getMaxAttackActions() {
+   private int getMaxAttackActions() {
       return 3;
    }
 

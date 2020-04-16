@@ -78,13 +78,12 @@ public abstract class WeaponStyle implements Enums//, Serializable
    @Override
    public String toString()
    {
-      String sb = "name: " + _name +
-                  ", skillName: " + _skillType.getName() +
-                  ", speedBase: " + _speedBase +
-                  ", slowStr: " + _slowStr +
-                  ", fastStr: " + _fastStr +
-                  ", hands: " + _handsRequired;
-      return sb;
+      return "name: " + _name +
+             ", skillName: " + _skillType.getName() +
+             ", speedBase: " + _speedBase +
+             ", slowStr: " + _slowStr +
+             ", fastStr: " + _fastStr +
+             ", hands: " + _handsRequired;
    }
 
    @Override

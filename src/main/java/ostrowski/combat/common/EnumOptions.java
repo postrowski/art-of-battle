@@ -42,12 +42,6 @@ public abstract class EnumOptions <T> extends SerializableObject implements Clon
       return _list.size();
    }
 
-   public void addAll(EnumOptions<T> options) {
-      for (T opt : options._list) {
-         add(opt);
-      }
-   }
-
    public void clear() {
       _list.clear();
    }

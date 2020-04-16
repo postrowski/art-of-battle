@@ -51,10 +51,6 @@ public class OpenCharacter extends Dialog implements MouseListener
 
    public Table      _table       = null;
 
-   public OpenCharacter(Shell arg0) {
-      super(arg0);
-   }
-
    public OpenCharacter(Shell parent, CharacterFile charFile, int style) {
       super(parent, style);
 
@@ -411,38 +407,6 @@ public class OpenCharacter extends Dialog implements MouseListener
          }
       }
       return _exitButton;
-   }
-
-   protected static int checkStyle(int style) {
-      if ((style & SWT.SYSTEM_MODAL) == SWT.SYSTEM_MODAL) {
-         return SWT.SYSTEM_MODAL;
-      }
-      else if ((style & SWT.PRIMARY_MODAL) == SWT.PRIMARY_MODAL) {
-         return SWT.PRIMARY_MODAL;
-      }
-      else if ((style & SWT.APPLICATION_MODAL) == SWT.APPLICATION_MODAL) {
-         return SWT.APPLICATION_MODAL;
-      }
-      return style;
-   }
-
-   protected static int checkImageStyle(int style) {
-      if ((style & SWT.ICON_ERROR) == SWT.ICON_ERROR) {
-         return SWT.ICON_ERROR;
-      }
-      else if ((style & SWT.ICON_INFORMATION) == SWT.ICON_INFORMATION) {
-         return SWT.ICON_INFORMATION;
-      }
-      else if ((style & SWT.ICON_QUESTION) == SWT.ICON_QUESTION) {
-         return SWT.ICON_QUESTION;
-      }
-      else if ((style & SWT.ICON_WARNING) == SWT.ICON_WARNING) {
-         return SWT.ICON_WARNING;
-      }
-      else if ((style & SWT.ICON_WORKING) == SWT.ICON_WORKING) {
-         return SWT.ICON_WORKING;
-      }
-      return SWT.NONE;
    }
 
    @Override

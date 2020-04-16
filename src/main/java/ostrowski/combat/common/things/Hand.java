@@ -99,9 +99,9 @@ public class Hand extends Limb {
          }
       }
       Hand otherHand = (Hand) self.getLimb(_limbType.getPairedType());
-      if ((otherHand._heldThing != null) && (otherHand._heldThing instanceof Weapon)) {
+      if ((otherHand._heldThing instanceof Weapon)) {
          Weapon otherHandWeapon = (Weapon) otherHand._heldThing;
-         if ((otherHandWeapon != null) && (otherHandWeapon.isOnlyTwoHanded())) {
+         if (otherHandWeapon.isOnlyTwoHanded()) {
             otherHand.setActionsNeededToReady((byte) 1);
          }
       }
@@ -147,9 +147,6 @@ public class Hand extends Limb {
       return ((_preparedState != 0) && (getActionsNeededToReady() == 0));
    }
 
-   public byte getParryStyle() {
-      return _defenseStyle;
-   }
    public void setParryStyle(byte style) {
       _defenseStyle = style;
    }
@@ -181,23 +178,18 @@ public class Hand extends Limb {
             if ((otherHand != null) && (otherHand._heldThing != null)) {
                if (otherHand._heldThing instanceof Weapon) {
                   Weapon otherHandWeapon = (Weapon) otherHand._heldThing;
-                  if (otherHandWeapon != null) {
-                     if (otherHandWeapon.isOnlyTwoHanded()) {
-                        return null;
-                     }
+                  if (otherHandWeapon.isOnlyTwoHanded()) {
+                     return null;
                   }
                }
             }
+            return Weapons.getWeapon(Weapon.NAME_Punch, self.getRace());
          }
-         return Weapons.getWeapon(Weapon.NAME_Punch, self.getRace());
       }
       if (_heldThing instanceof Weapon) {
          return (Weapon) _heldThing;
       }
       return null;
-   }
-   public Weapon getWeapon() {
-      return getWeapon(null);
    }
 
    @Override
@@ -226,7 +218,7 @@ public class Hand extends Limb {
       try {
          super.serializeFromStream(in);
          String thingName = readString(in);
-         if ((thingName == null) || (thingName.length() == 0)) {
+         if (thingName.length() == 0) {
             _heldThing = null;
          }
          else {
@@ -401,29 +393,30 @@ public class Hand extends Limb {
             }
          }
          Weapon punch = Weapons.getWeapon(Weapon.NAME_Punch, defender.getRace());
-
-         WeaponStyleParry[] parrySkills = punch.getParryStyles();
-         byte bestLevel = -1;
-         byte bestIndex = -1;
-         for (byte i=0 ; i<parrySkills.length ; i++) {
-            WeaponStyleParry parrySkill = parrySkills[i];
-            if (parrySkill.canDefendAgainstDamageType(damageType, attackIsGrapple, distance)) {
-               SkillType styleType = parrySkill.getSkillType();
-               Skill skill = defender.getSkill(styleType);
-               if (skill != null) {
-                  if (skill.getLevel() >= parrySkill.getMinSkill()) {
-                     byte skillLevel = (byte) (skill.getLevel() * parrySkill.getEffectiveness());
-                     if ((bestIndex == -1) || (skillLevel > bestLevel)) {
-                        bestLevel = skillLevel;
-                        bestIndex = i;
+         if (punch != null) {
+            WeaponStyleParry[] parrySkills = punch.getParryStyles();
+            byte bestLevel = -1;
+            byte bestIndex = -1;
+            for (byte i = 0; i < parrySkills.length; i++) {
+               WeaponStyleParry parrySkill = parrySkills[i];
+               if (parrySkill.canDefendAgainstDamageType(damageType, attackIsGrapple, distance)) {
+                  SkillType styleType = parrySkill.getSkillType();
+                  Skill skill = defender.getSkill(styleType);
+                  if (skill != null) {
+                     if (skill.getLevel() >= parrySkill.getMinSkill()) {
+                        byte skillLevel = (byte) (skill.getLevel() * parrySkill.getEffectiveness());
+                        if ((bestIndex == -1) || (skillLevel > bestLevel)) {
+                           bestLevel = skillLevel;
+                           bestIndex = i;
+                        }
                      }
                   }
                }
             }
-         }
-         if (bestIndex != -1) {
-            _defenseStyle = bestIndex;
-            return true;
+            if (bestIndex != -1) {
+               _defenseStyle = bestIndex;
+               return true;
+            }
          }
          return false;
       }
@@ -458,6 +451,9 @@ public class Hand extends Limb {
             return false;
          }
          Weapon punch = Weapons.getWeapon(Weapon.NAME_Punch, defender.getRace());
+         if (punch == null) {
+            return false;
+         }
          for (WeaponStyleCounterAttack parrySkill : punch._counterattackStyles) {
             if (parrySkill.getName().toLowerCase().contains("grab") == grab) {
                SkillType styleType = parrySkill.getSkillType();
@@ -533,8 +529,7 @@ public class Hand extends Limb {
             for (WeaponStyleParry parryStyle : weap._parryStyles) {
                if (parryStyle.getSkillType() == SkillType.Aikido) {
                   // Aikido uses each hand effectively, so don't consider hand penalties
-                  LimbType limbType = null;
-                  byte skillLevel = (byte) (self.getSkillLevel(parryStyle.getSkillType(), limbType , false/*sizeAdjust*/,
+                  byte skillLevel = (byte) (self.getSkillLevel(parryStyle.getSkillType(), null, false/*sizeAdjust*/,
                                                                false/*adjustForEncumbrance*/, true/*adjustForHolds*/)
                                             - parryStyle.getSkillPenalty());
                   byte parryLevel = Rules.getParryLevel(skillLevel, parryStyle.getEffectiveness());
@@ -622,10 +617,8 @@ public class Hand extends Limb {
       }
       if (otherHand._heldThing instanceof Weapon) {
          Weapon otherHandWeapon = (Weapon) otherHand._heldThing;
-         if (otherHandWeapon != null) {
-            if (otherHandWeapon.isOnlyTwoHanded()) {
-               return false;
-            }
+         if (otherHandWeapon.isOnlyTwoHanded()) {
+            return false;
          }
       }
       return super.canBeReadied(self);

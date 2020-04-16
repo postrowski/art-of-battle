@@ -38,11 +38,6 @@ public class SpellBless extends ExpiringPriestSpell implements ICastInBattle
    }
 
    @Override
-   public DiceSet adjustResistanceRoll(DiceSet dice) {
-      return dice.addBonus(getEffectivePower());
-   }
-
-   @Override
    public String describeSpell() {
       return "The '" + getName() +
              "' spell increases the subject's die rolls by 1 point for every effective power point of the spell."+

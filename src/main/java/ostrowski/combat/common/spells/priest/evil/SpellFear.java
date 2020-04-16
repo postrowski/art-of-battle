@@ -1,5 +1,6 @@
 package ostrowski.combat.common.spells.priest.evil;
 
+import ostrowski.DebugBreak;
 import ostrowski.combat.common.Advantage;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.DiceSet;
@@ -30,6 +31,10 @@ public class SpellFear extends ResistedPriestSpell implements ICastInBattle
       Advantage divineAff = _caster.getAdvantage(Advantage.DIVINE_AFFINITY_ + getDeity());
       if (divineAff == null && isInate()) {
          return (byte) (0-this.getAffinity());
+      }
+      if (divineAff == null) {
+         DebugBreak.debugBreak();
+         return 0;
       }
       // advantages have a 0-base index, so a level of 0 means 1 point of affinity
       return (byte) (-divineAff.getLevel() - 1);

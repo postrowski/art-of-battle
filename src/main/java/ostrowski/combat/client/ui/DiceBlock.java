@@ -21,14 +21,12 @@ import java.util.HashMap;
 
 public class DiceBlock extends Helper implements IUIBlock
 {
-   final         CharacterWidget            _display;
    private final HashMap<Attribute, Text[]> _dice             = new HashMap<>();
    private       Text                       _painReductioDice = null;
    private       Text                       _maxPainWounds    = null;
 
    public DiceBlock(CharacterWidget display)
    {
-      _display = display;
       for (Attribute att : Attribute.values()) {
          _dice.put(att, new Text[4]);
       }

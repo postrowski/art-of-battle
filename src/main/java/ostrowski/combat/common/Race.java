@@ -154,10 +154,8 @@ public class Race implements Cloneable, Enums
          }
          _racialProperties.add(element);
          Armor naturalArmor = Armor.getArmor(element, this);
-         if (naturalArmor != null) {
-            if (!naturalArmor.getName().equals(Armor.NAME_NoArmor)) {
-               _naturalArmor = naturalArmor;
-            }
+         if (!naturalArmor.getName().equals(Armor.NAME_NoArmor)) {
+            _naturalArmor = naturalArmor;
          }
       }
       if (_wingCount > 0) {
@@ -241,10 +239,6 @@ public class Race implements Cloneable, Enums
 
    public byte getBuildModifier() {
       return _buildModifier;
-   }
-
-   public byte getBaseMovementRate() {
-      return _baseSpeed;
    }
 
    public byte getMovementRate(byte encLevel) {
@@ -826,10 +820,6 @@ public class Race implements Cloneable, Enums
       return false;
    }
 
-   public boolean canFly() {
-      return _canFly;
-   }
-
    public boolean isAquatic() {
       return _isAquatic;
    }
@@ -906,13 +896,6 @@ public class Race implements Cloneable, Enums
          return 0;
       }
       return _naturalArmor.getBarrier(damType);
-   }
-
-   public byte getNaturalArmorPD() {
-      if (_naturalArmor == null) {
-         return 0;
-      }
-      return _naturalArmor.getPassiveDefense();
    }
 
    public void getPointEstimate() {

@@ -9,7 +9,7 @@ public interface IAreaSpell extends Cloneable
 {
    void setTargetLocation(ArenaLocation targetLocation, Arena _arena);
    ArenaLocation getTargetLocation();
-   TargetType getTargetType();
+
    byte getRadiusOfAffect();
    void affectCharacterOnEntry(Character enteringCharacter);
    void affectCharacterOnExit(Character exitingCharacter);

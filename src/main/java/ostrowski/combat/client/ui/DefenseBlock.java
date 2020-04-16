@@ -25,9 +25,6 @@ import java.util.HashMap;
 
 public class DefenseBlock extends Helper implements IUIBlock
 {
-   static public boolean INCLUDE_RANGE = false;
-
-   CharacterWidget _display;
    private final HashMap<RANGE, HashMap<DefenseOption, Text>>    _baseDefenseOpt = new HashMap<>();
    private final HashMap<RANGE, HashMap<DefenseOptions, Text>>   _defenseOpts    = new HashMap<>();
    private static final HashMap<DefenseOptions, String> OPTIONS_TO_SHOW = new HashMap<>();
@@ -47,9 +44,7 @@ public class DefenseBlock extends Helper implements IUIBlock
    private Text             _sizeAdj      = null;
    private Text             _pdShield     = null;
    private Text             _pdArmor      = null;
-   public DefenseBlock(CharacterWidget display)
-   {
-      _display = display;
+   public DefenseBlock(CharacterWidget display) {
    }
 
    @Override

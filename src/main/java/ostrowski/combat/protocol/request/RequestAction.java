@@ -553,18 +553,17 @@ public class RequestAction extends SyncRequest implements Enums
    @Override
    public String toString()
    {
-      String sb = super.toString() + ", actorID = " + _actorID +
-                  ", equReq = " + _equipmentRequest +
-                  ", movReq = " + _movementRequest +
-                  ", posReq = " + _positionRequest +
-                  ", styReq = " + _styleRequest +
-                  ", targetPriorities = " + _targetPriorities +
-                  ", spellTypeSelectionRequest = " + _spellTypeSelectionRequest +
-                  ", spellSelectionRequest = " + _spellSelectionRequest +
-                  ", targetSelection = " + _targetSelection +
-                  ", targetID = " + _targetID +
-                  ", hand = " + _limbType;
-      return sb;
+      return super.toString() + ", actorID = " + _actorID +
+             ", equReq = " + _equipmentRequest +
+             ", movReq = " + _movementRequest +
+             ", posReq = " + _positionRequest +
+             ", styReq = " + _styleRequest +
+             ", targetPriorities = " + _targetPriorities +
+             ", spellTypeSelectionRequest = " + _spellTypeSelectionRequest +
+             ", spellSelectionRequest = " + _spellSelectionRequest +
+             ", targetSelection = " + _targetSelection +
+             ", targetID = " + _targetID +
+             ", hand = " + _limbType;
    }
 
    public RANGE getRange(Character attacker, short distanceInHexes) {

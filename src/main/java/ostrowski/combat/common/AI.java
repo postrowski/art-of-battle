@@ -1197,7 +1197,7 @@ public class AI implements Enums
                      case 1: minimumCastingPower = 1; break;
                      case 2: minimumCastingPower = 1; break;
                      case 3: minimumCastingPower = 2; break;
-                     case 4: minimumCastingPower = 3; break;
+                     case 4:
                      case 5: minimumCastingPower = 3; break;
                   }
                }
@@ -1824,7 +1824,7 @@ public class AI implements Enums
                byte styleDamage = attackStyle.getDamageMod();
                DamageType styleDamType = attackStyle.getDamageType();
                byte styleTime = attackStyle.getSpeed(_self.getAttributeLevel(Attribute.Strength));
-               Armor armor = target.getArmor();
+               Armor armor = (target == null) ? null : target.getArmor();
                byte targetResistant = (armor == null) ? 0 : armor.getBarrier(styleDamType);
                byte skillLevel = _self.getSkillLevel(attackStyle.getSkillType(), null, false/*sizeAdjust*/, true/*adjustForEncumbrance*/, true/*adjustForHolds*/);
                styleDamage -= targetResistant;
@@ -2967,7 +2967,7 @@ public class AI implements Enums
          Integer tnHigh = bestActualTNPerAction.get(defActions);
          Integer tnLower = bestActualTNPerAction.get(defActions - 1);
          if ((tnHigh != null) && (tnLower != null)) {
-            if (toHitDice == null) {
+            if ((toHitDice == null) && (attacker != null)) {
                toHitDice = Rules.getDice(attacker.getAttributeLevel(Attribute.Dexterity), defense.getAttackActions(), Attribute.Dexterity);
             }
             double oddsDefSuccessHigh = Math.round((1.0 - toHitDice.getOddsForTN(tnHigh + extraSkillRequired)) * 100) / 100.0;
@@ -3565,8 +3565,7 @@ public class AI implements Enums
             return _pathCache;
          }
       }
-      Character mover = fromChar;
-      byte movementRate = mover.getMovementRate();
+      byte movementRate = fromChar.getMovementRate();
       if (map.hasLineOfSight(fromLoc, toLoc, true/*blockedByAnyStandingCharacter*/)) {
          // This is the line-of-sight path
          List<ArenaLocation> LOSpath = map.getLOSPath(fromLoc, toLoc, true/*trimPath*/);
@@ -3581,7 +3580,7 @@ public class AI implements Enums
             if (canSeeDirectly && toChar.isInCoordinates(loc1)) {
                break;
             }
-            if ((loc1.getCharacters().size() > 0) || (loc1.costToEnter(loc0, mover) > 1)) {
+            if ((loc1.getCharacters().size() > 0) || (loc1.costToEnter(loc0, fromChar) > 1)) {
                LOSpath = null;
                break;
             }

@@ -709,21 +709,11 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
             if (_terrain != comp._terrain) {
                return false;
             }
-            if (_doors.size()  != comp._doors.size()) {
+            if (!listsMatch(_doors, comp._doors))  {
                return false;
             }
-            for (int d=0 ; d<_doors.size() ; d++) {
-               if (!_doors.get(d).equals(comp._doors.get(d))) {
-                  return false;
-               }
-            }
-            if (_things.size() != comp._things.size()) {
+            if (!listsMatch(_things, comp._things)) {
                return false;
-            }
-            for (int t=0 ; t<_things.size() ; t++) {
-               if (!_things.get(t).equals(comp._things.get(t))) {
-                  return false;
-               }
             }
          }
       }
@@ -994,21 +984,11 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
             if (_terrain != otherLoc._terrain) {
                return false;
             }
-            if (_things.size() != otherLoc._things.size()) {
+            if (!listsMatch(_things, otherLoc._things)) {
                return false;
             }
-            for (int i=0 ; i<_things.size(); i++) {
-               if (!_things.get(i).equals(otherLoc._things.get(i))) {
-                  return false;
-               }
-            }
-            if (_doors.size() != otherLoc._doors.size()) {
+            if (!listsMatch(_doors, otherLoc._doors)) {
                return false;
-            }
-            for (int i=0 ; i<_doors.size(); i++) {
-               if (!_doors.get(i).equals(otherLoc._doors.get(i))) {
-                  return false;
-               }
             }
             if ((_label != null) && (otherLoc._label != null)) {
                return _label.equals(otherLoc._label);
@@ -1017,6 +997,19 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
          }
       }
    }
+
+   private <T> boolean listsMatch(List<T> l1, List<T> l2) {
+      if (l1.size() != l2.size()) {
+         return false;
+      }
+      for (int i = 0; i < l1.size(); i++) {
+         if (!l1.get(i).equals(l2.get(i))) {
+            return false;
+         }
+      }
+      return true;
+   }
+
    public boolean getSelectable() {
       return _selectable;
    }

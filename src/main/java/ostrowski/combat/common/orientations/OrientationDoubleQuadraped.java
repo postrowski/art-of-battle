@@ -28,8 +28,7 @@ public class OrientationDoubleQuadraped extends OrientationSerpentine
    @Override
    public DrawnObject getBodyOutlines(Character character, int wideDiameter, int narrowDiameter, ArenaLocation loc, int[] bounds, RGB foreground, RGB background)
    {
-      int pointCount = wideDiameter;
-      DrawnObject charOutlines = DrawnObject.createElipse((int) (wideDiameter*.8), narrowDiameter*3, pointCount, foreground, background);
+      DrawnObject charOutlines = DrawnObject.createElipse((int) (wideDiameter*.8), narrowDiameter*3, wideDiameter, foreground, background);
       int yOffset = narrowDiameter;
       int xOffset = 0;
       if (!loc.sameCoordinates(_coordinates.get(0))) {

@@ -183,12 +183,6 @@ public class Condition extends SerializableObject implements Enums {
       }
       return getPositionAdjustmentForAttack() != -99;
    }
-   public boolean canDefend() {
-      if (!_isConscious) {
-         return false;
-      }
-      return getActionsAvailableThisRound(true/*usedForDefenseOnly*/) > 0;
-   }
    private boolean canRetreat() {
       if (_collapsed) {
          return false;
@@ -348,7 +342,6 @@ public class Condition extends SerializableObject implements Enums {
       }
    }
    public void applyWound(Wound wound, Arena arena, Character character) {
-      _orientation.applyWound(wound, arena.getCombatMap(), character);
 
       boolean wasConscious = _isConscious && _isAlive;
       if (wound.isKnockOut()) {
@@ -685,28 +678,27 @@ public class Condition extends SerializableObject implements Enums {
 
    @Override
    public String toString() {
-      String sb = ", actionsAvailable: " + _actionsAvailable +
-                  ", pain: " + _penaltyPain +
-                  ", wounds: " + _wounds +
-                  ", bleed: " + _bleedRate +
-                  ", movePenalty: " + _penaltyMove +
-                  ", actionsSpent: " + _actionsSpentThisRound +
-                  ", initiative: " + _initiative +
-                  ", attackedThisRound: " + _attackedThisRound +
-                  ", defensesOptionsTakenThisRound: " + _defenseOptionsTakenThisRound +
-                  ", movementAvailableThisRound: " + _movementAvailableThisRound +
-                  ", movementAvailableEachRound:" + _movementAvailableEachRound +
-                  ", moveComplete: " + _moveComplete +
-                  ", movingEvasively:" + _movingEvasively +
-                  ", collapsed: " + _collapsed +
-                  ", isConscious: " + _isConscious +
-                  ", isAlive: " + _isAlive +
-                  ", mageSpellPointsAvailable: " + _mageSpellPointsAvailable +
-                  ", mageSpellPointsMax: " + _mageSpellPointsMax +
-                  ", priestSpellPointsAvailable: " + _priestSpellPointsAvailable +
-                  ", priestSpellPointsMax: " + _priestSpellPointsMax +
-                  ", orientation: " + _orientation;
-      return sb;
+      return ", actionsAvailable: " + _actionsAvailable +
+             ", pain: " + _penaltyPain +
+             ", wounds: " + _wounds +
+             ", bleed: " + _bleedRate +
+             ", movePenalty: " + _penaltyMove +
+             ", actionsSpent: " + _actionsSpentThisRound +
+             ", initiative: " + _initiative +
+             ", attackedThisRound: " + _attackedThisRound +
+             ", defensesOptionsTakenThisRound: " + _defenseOptionsTakenThisRound +
+             ", movementAvailableThisRound: " + _movementAvailableThisRound +
+             ", movementAvailableEachRound:" + _movementAvailableEachRound +
+             ", moveComplete: " + _moveComplete +
+             ", movingEvasively:" + _movingEvasively +
+             ", collapsed: " + _collapsed +
+             ", isConscious: " + _isConscious +
+             ", isAlive: " + _isAlive +
+             ", mageSpellPointsAvailable: " + _mageSpellPointsAvailable +
+             ", mageSpellPointsMax: " + _mageSpellPointsMax +
+             ", priestSpellPointsAvailable: " + _priestSpellPointsAvailable +
+             ", priestSpellPointsMax: " + _priestSpellPointsMax +
+             ", orientation: " + _orientation;
    }
    public void collapseFromPain(CombatMap map, Character actor)
    {
@@ -826,9 +818,7 @@ public class Condition extends SerializableObject implements Enums {
    public ArenaLocation getLimbLocation(LimbType limbType, CombatMap map) {
       return _orientation.getLimbLocation(limbType, map);
    }
-   public ArenaCoordinates getLimbCoordinates(LimbType limbType) {
-      return _orientation.getLimbCoordinates(limbType);
-   }
+
    public List<Orientation> getPossibleAdvanceOrientations(CombatMap map) {
       return _orientation.getPossibleAdvanceOrientations(map, true/*blockByCharacters*/);
    }
@@ -960,7 +950,5 @@ public class Condition extends SerializableObject implements Enums {
          _isConscious = true;
       }
    }
-   public byte getMaxActionsPerTurn() {
-      return _maxActionsPerRound;
-   }
+
 }

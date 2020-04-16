@@ -108,11 +108,11 @@ public class CharacterGenerator implements Enums
       DISSALLOWED_SKILLS_FOR_RACE.put(Race.NAME_Kobold,   Arrays.asList(SkillType.Aikido, SkillType.Karate));
       DISSALLOWED_SKILLS_FOR_RACE.put(Race.NAME_Fairy,    Arrays.asList(SkillType.Aikido, SkillType.Karate));
       DISSALLOWED_SKILLS_FOR_RACE.put(Race.NAME_Goblin,   Arrays.asList(SkillType.Aikido, SkillType.Karate));
-      DISSALLOWED_SKILLS_FOR_RACE.put(Race.NAME_Fawn,     Arrays.asList(SkillType.Aikido));
+      DISSALLOWED_SKILLS_FOR_RACE.put(Race.NAME_Fawn,     Collections.singletonList(SkillType.Aikido));
       DISSALLOWED_SKILLS_FOR_RACE.put(Race.NAME_Ellyon,   Arrays.asList(SkillType.Aikido, SkillType.Karate));
-      DISSALLOWED_SKILLS_FOR_RACE.put(Race.NAME_Orc,      Arrays.asList(SkillType.Aikido));
+      DISSALLOWED_SKILLS_FOR_RACE.put(Race.NAME_Orc,      Collections.singletonList(SkillType.Aikido));
       DISSALLOWED_SKILLS_FOR_RACE.put(Race.NAME_Gargoyle, Arrays.asList(SkillType.Aikido, SkillType.Karate));
-      DISSALLOWED_SKILLS_FOR_RACE.put(Race.NAME_InsectMan,Arrays.asList(SkillType.Aikido));
+      DISSALLOWED_SKILLS_FOR_RACE.put(Race.NAME_InsectMan,Collections.singletonList(SkillType.Aikido));
       DISSALLOWED_SKILLS_FOR_RACE.put(Race.NAME_Centaur,  Arrays.asList(SkillType.Aikido, SkillType.Karate));
       DISSALLOWED_SKILLS_FOR_RACE.put(Race.NAME_HalfOgre, Arrays.asList(SkillType.Aikido, SkillType.Karate));
       DISSALLOWED_SKILLS_FOR_RACE.put(Race.NAME_Ogre,     Arrays.asList(SkillType.Aikido, SkillType.Karate, SkillType.Boxing));
@@ -1610,7 +1610,7 @@ public class CharacterGenerator implements Enums
       if (maxExpenditure >= 0) {
          for (String weaponName : appropriateWeapons) {
             Weapon weap = Weapons.getWeapon(weaponName, racialBase);
-            if (weap.getCost() > maxExpenditure) {
+            if ((weap != null) && (weap.getCost() > maxExpenditure)) {
                removeWeapons.add(weaponName);
             }
          }
@@ -1618,7 +1618,8 @@ public class CharacterGenerator implements Enums
       appropriateWeapons.removeAll(removeWeapons);
       if (appropriateWeapons.isEmpty()) {
          appropriateWeapons.add(Weapon.NAME_Punch);
-         if (maxExpenditure > Weapons.getWeapon(Weapon.NAME_Club, racialBase).getCost()) {
+         Weapon club = Weapons.getWeapon(Weapon.NAME_Club, racialBase);
+         if ((club != null) && (maxExpenditure > club.getCost())) {
             appropriateWeapons.add(Weapon.NAME_Club);
          }
       }

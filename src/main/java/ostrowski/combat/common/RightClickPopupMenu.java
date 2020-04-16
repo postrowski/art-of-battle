@@ -43,26 +43,25 @@ import ostrowski.combat.server.ArenaLocation;
 import ostrowski.combat.server.CombatServer;
 import ostrowski.protocol.ObjectChanged;
 
-public class RightClickPopupMenu
-{
+public class RightClickPopupMenu {
    private interface IActOnTextResults {
       void doAction(String results);
    }
 
-   private ArenaLocation _currentMouseLoc = null;
-   private final Arena _arena;
-   private Menu _popupMenu;
-   private Menu _moveToPopupMenu;
-   private MenuItem _characterPopupMenu;
+   private       ArenaLocation _currentMouseLoc = null;
+   private final Arena         _arena;
+   private       Menu          _popupMenu;
+   private       Menu          _moveToPopupMenu;
+   private       MenuItem      _characterPopupMenu;
 
-   private final Map<AI_Type, MenuItem> _controlMenuSubItem = new HashMap<>();
-   private MenuItem _aiLocal;
-   private MenuItem _aiRemote;
-   private final Map<String, MenuItem> _teamMenuSubItem = new HashMap<>();
-   private MenuItem _removeItems;
-   private MenuItem _addCharacter;
-   private final Map<TerrainType, MenuItem> _setTerrain = new HashMap<>();
-   private ArenaLocation _moveFromLocation = null;
+   private final Map<AI_Type, MenuItem>     _controlMenuSubItem = new HashMap<>();
+   private       MenuItem                   _aiLocal;
+   private       MenuItem                   _aiRemote;
+   private final Map<String, MenuItem>      _teamMenuSubItem    = new HashMap<>();
+   private       MenuItem                   _removeItems;
+   private       MenuItem                   _addCharacter;
+   private final Map<TerrainType, MenuItem> _setTerrain         = new HashMap<>();
+   private       ArenaLocation              _moveFromLocation   = null;
 
    public RightClickPopupMenu(Arena arena) {
       this._arena = arena;
@@ -110,13 +109,11 @@ public class RightClickPopupMenu
             }
             if (this._arena.isRemotelyControlled(character)) {
                _aiRemote.setSelection(true);
-            }
-            else {
+            } else {
                AI_Type aiType = this._arena.getAiType(character);
                if (aiType == null) {
                   _aiLocal.setSelection(true);
-               }
-               else {
+               } else {
                   _controlMenuSubItem.get(aiType).setSelection(true);
                }
             }
@@ -133,8 +130,7 @@ public class RightClickPopupMenu
       Point cursorLocation = Display.getCurrent().getCursorLocation();
       if (_moveFromLocation == null) {
          _popupMenu.setLocation(cursorLocation.x, cursorLocation.y);
-      }
-      else {
+      } else {
          _moveToPopupMenu.setLocation(cursorLocation.x, cursorLocation.y);
       }
 
@@ -188,6 +184,7 @@ public class RightClickPopupMenu
          }
       }
    }
+
    private void createMoveToMenu(Shell shell) {
       _moveToPopupMenu = new Menu(shell);
       createMenu(_moveToPopupMenu, "Relocate to here, facing 12 O'Clock", e -> completeMove(Facing.NOON), SWT.NONE);
@@ -273,8 +270,8 @@ public class RightClickPopupMenu
             // set the edit page to this character
             CombatServer._this._charWidget._character.copyData(character);
             CombatServer._this._charWidget.updateDisplayFromCharacter();
-         }
-         else {
+            CombatServer._this._tabFolderMain.setSelection(1);
+         } else {
             // set this character to the edit page
             Character originalCharacter = character.clone();
             character.copyData(CombatServer._this._charWidget._character);
@@ -339,6 +336,7 @@ public class RightClickPopupMenu
          this._arena.recomputeAllTargets(character);
       }
    }
+
    private void changeToRemoteConnection() {
       Character character = getCharacter();
       if (character != null) {
@@ -358,16 +356,16 @@ public class RightClickPopupMenu
    }
 
    static private void openDialog(Display display, String title, String prompt, String contents,
-                                    boolean multiline, IActOnTextResults actOnResult) {
-      final Shell shell = new Shell (display, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | SWT.RESIZE);
+                                  boolean multiline, IActOnTextResults actOnResult) {
+      final Shell shell = new Shell(display, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | SWT.RESIZE);
       shell.setText(title);
-      FormLayout formLayout = new FormLayout ();
+      FormLayout formLayout = new FormLayout();
       formLayout.marginWidth = 10;
       formLayout.marginHeight = 10;
       formLayout.spacing = 10;
-      shell.setLayout (formLayout);
+      shell.setLayout(formLayout);
 
-      Label label = new Label (shell, SWT.NONE);
+      Label label = new Label(shell, SWT.NONE);
       {
          label.setText(prompt);
          FormData labelFormData = new FormData();
@@ -399,8 +397,8 @@ public class RightClickPopupMenu
          text.setText(contents);
       }
       {
-         Button ok = new Button (shell, SWT.PUSH);
-         ok.setText ("OK");
+         Button ok = new Button(shell, SWT.PUSH);
+         ok.setText("OK");
          FormData okFormData = new FormData();
          okFormData.width = 60;
          okFormData.right = new FormAttachment(cancel, 0, SWT.DEFAULT);
@@ -410,9 +408,9 @@ public class RightClickPopupMenu
             actOnResult.doAction(text.getText());
             shell.close();
          });
-         shell.setDefaultButton (ok);
+         shell.setDefaultButton(ok);
       }
-      shell.pack ();
-      shell.open ();
+      shell.pack();
+      shell.open();
    }
 }

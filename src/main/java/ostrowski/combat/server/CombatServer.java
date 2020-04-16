@@ -49,10 +49,6 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       }
       return threadsStorage.get(key);
    }
-   public static Object putThreadStorage(String key, Object value) {
-      HashMap<String, Object> threadsStorage = threadStorage_.computeIfAbsent(Thread.currentThread(), k -> new HashMap<>());
-      return threadsStorage.put(key, value);
-   }
 
    public static void main(String[] args)
    {
@@ -80,6 +76,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    static void probabilityTest() {
       DiceSet dice = new DiceSet("1d10±");
       double odds = dice.getOddsForTN(-31);
+      //noinspection MismatchedReadAndWriteOfArray
       @SuppressWarnings("unused")
       double[] odd = new double[40];
       for (int i=0 ; i<40 ; i++) {
@@ -145,8 +142,8 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    private final Semaphore                  _lock_pausePlayControl = new Semaphore("CombatServer_pausePalyControl",
                                                                                    CombatSemaphore.CLASS_COMBATSERVER_pausePlayControl);
 
-   public        CharacterWidget _charWidget;
-   public final  CharacterFile   _charFile      = new CharacterFile("Character.data");
+   public final CharacterWidget _charWidget;
+   public final CharacterFile   _charFile      = new CharacterFile("Character.data");
    private final CharInfoBlock   _charInfoBlock = new CharInfoBlock(null);
    private Button                           _hideViewFromLocalPlayersButton;
 
@@ -157,8 +154,9 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    private final HashMap<String, CombatMap> _nameToArenaMap   = null;// new HashMap<String, CombatMap>();
 
 
-   private TabFolder                  _tabFolder;
-   private TabItem                    _terrainTabItem;
+   private      TabFolder _tabFolder;
+   public final TabFolder _tabFolderMain;
+   private      TabItem   _terrainTabItem;
    private TabItem                    _triggersTabItem;
    private TabItem                    _combatantsTabItem;
    private TabItem                    _messagesTabItem;
@@ -202,36 +200,36 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
 
       getShell().setLayout(new FillLayout());
       getShell().addKeyListener(this);
-      TabFolder tabFolder = new TabFolder(getShell(), SWT.NONE);
+      _tabFolderMain = new TabFolder(getShell(), SWT.NONE);
 
       TabItem item;
       // create a TabItem
-      item = new TabItem( tabFolder, SWT.NULL);
+      item = new TabItem( _tabFolderMain, SWT.NULL);
       item.setText( "Arena Map");
       // create a control
-      Composite arenaMap = createComposite(tabFolder, 1, GridData.FILL_BOTH);
+      Composite arenaMap = createComposite(_tabFolderMain, 1, GridData.FILL_BOTH);
       // add the control to the TabItem
       item.setControl( arenaMap );
 
       // create the next tab
-      item = new TabItem( tabFolder, SWT.NULL);
+      item = new TabItem( _tabFolderMain, SWT.NULL);
       item.setText( "Characters");
-      Composite characterData = createComposite(tabFolder, 1, GridData.FILL_BOTH);
+      Composite characterData = createComposite(_tabFolderMain, 1, GridData.FILL_BOTH);
       // add the control to the TabItem
       item.setControl( characterData );
 
       // create the next tab
-      item = new TabItem( tabFolder, SWT.NULL);
+      item = new TabItem( _tabFolderMain, SWT.NULL);
       item.setText( "Full Messages");
-      Composite fullMessageData = createComposite(tabFolder, 1, GridData.FILL_BOTH);
+      Composite fullMessageData = createComposite(_tabFolderMain, 1, GridData.FILL_BOTH);
       // add the control to the TabItem
       item.setControl( fullMessageData );
 
       // create the next tab
-      item = new TabItem( tabFolder, SWT.NULL);
+      item = new TabItem( _tabFolderMain, SWT.NULL);
       item.setText( "Rules");
       // add the control to the TabItem
-      item.setControl(new RuleComposite(tabFolder, 1, GridData.FILL_BOTH, new Configuration(),
+      item.setControl(new RuleComposite(_tabFolderMain, 1, GridData.FILL_BOTH, new Configuration(),
                                         WINDOW_WIDTH, display.getSystemColor(SWT.COLOR_WHITE)));
 
       Composite mainGridBlock = new Composite(arenaMap, SWT.NONE);
@@ -307,7 +305,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
             }
          }
       }
-      tabFolder.setSelection(initialTab);
+      _tabFolderMain.setSelection(initialTab);
 
       if (_nameToArenaMap != null) {
          if (arenaName != null) {
@@ -994,17 +992,19 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
                refreshSaveButton();
             }
          }
-         else if (e.widget == _saveButton) {
-            if (_saveButton.getText().equals(" Save ")) {
-               _saveButton.setText("Delete");
-               _nameToArenaMap.put(_arenaName.getText().toLowerCase(), _arena.getCombatMap());
-            } else if (_saveButton.getText().equals("Delete")) {
-               _saveButton.setText("  Add ");
-               _nameToArenaMap.remove(_arenaName.getText().toLowerCase());
-            } else if (_saveButton.getText().equals("  Add ")) {
-               _saveButton.setText("Delete");
-               _nameToArenaMap.put(_arenaName.getText().toLowerCase(), _arena.getCombatMap());
-               _arenaName.add(_arenaName.getText());
+         else if ((e.widget == _saveButton) && (_saveButton != null)) {
+            if (_nameToArenaMap != null) {
+               if (_saveButton.getText().equals(" Save ")) {
+                  _saveButton.setText("Delete");
+                  _nameToArenaMap.put(_arenaName.getText().toLowerCase(), _arena.getCombatMap());
+               } else if (_saveButton.getText().equals("Delete")) {
+                  _saveButton.setText("  Add ");
+                  _nameToArenaMap.remove(_arenaName.getText().toLowerCase());
+               } else if (_saveButton.getText().equals("  Add ")) {
+                  _saveButton.setText("Delete");
+                  _nameToArenaMap.put(_arenaName.getText().toLowerCase(), _arena.getCombatMap());
+                  _arenaName.add(_arenaName.getText());
+               }
             }
             writeNamedArenaMapToFile(_arenaName.getText(), true/*overwriteExistingFile*/);
             refreshSaveButton();
@@ -1025,6 +1025,9 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
                   _arena.serializeFromFile(battleFile);
                   setMap(_arena.getCombatMap(), false/*clearCombatants*/);
                   setOpenButtonText(false/*start*/);
+                  // Open the Messages tab:
+                  this._tabFolder.setSelection(3);
+                  this._map.allowPan(true);
                }
             }
          }
@@ -1565,8 +1568,10 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    }
 
    public void writeNamedArenaMapToFile(String arenaName, boolean overwriteExistingFile) {
-      CombatMap map = _nameToArenaMap.get(arenaName.toLowerCase());
-      writeArenaMapToFile(map, overwriteExistingFile);
+      if (_nameToArenaMap != null) {
+         CombatMap map = _nameToArenaMap.get(arenaName.toLowerCase());
+         writeArenaMapToFile(map, overwriteExistingFile);
+      }
    }
 
    String _currentMapFileName = null;
@@ -1632,14 +1637,16 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
                }
             }
             else if (e.widget == _arenaName) {
-               CombatMap newCombatMap = _nameToArenaMap.get(_arenaName.getText().toLowerCase());
-               if (newCombatMap != null) {
-                  setMap(_arenaName.getText());
-                  _saveButton.setText("Delete");
-               }
-               else {
-                  _saveButton.setText("  Add ");
-                  _arena.setName(_arenaName.getText());
+               if (_nameToArenaMap != null) {
+                  CombatMap newCombatMap = _nameToArenaMap.get(_arenaName.getText().toLowerCase());
+                  if (newCombatMap != null) {
+                     setMap(_arenaName.getText());
+                     _saveButton.setText("Delete");
+                  }
+                  else {
+                     _saveButton.setText("  Add ");
+                     _arena.setName(_arenaName.getText());
+                  }
                }
             }
             else {

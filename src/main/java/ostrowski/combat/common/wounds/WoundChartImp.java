@@ -62,7 +62,6 @@ public class WoundChartImp extends WoundChart {
             case 36:  wound = new Wound(damageLevel, Wound.Location.NECK, "decapitation",               0, 0, 0, 0, 0, 0, DamageType.IMP, EFFECT_DEATH, target); break;
             case 37:  wound = new Wound(damageLevel, Wound.Location.HEAD, "brain knocked out of skull", 0, 0, 0, 0, 0, 0, DamageType.IMP, EFFECT_DEATH, target); break;
             case 38:  wound = new Wound(damageLevel, Wound.Location.HEAD, "brain knocked out of skull", 0, 0, 0, 0, 0, 0, DamageType.IMP, EFFECT_DEATH, target); break;
-            case 39:  wound = new Wound(damageLevel, Wound.Location.HEAD, "head and brain destroyed",   0, 0, 0, 0, 0, 0, DamageType.IMP, EFFECT_DEATH, target); break;
             default:  wound = new Wound(damageLevel, Wound.Location.HEAD, "head and brain destroyed",   0, 0, 0, 0, 0, 0, DamageType.IMP, EFFECT_DEATH, target); break;
          }
          if (wound.isValid()) {

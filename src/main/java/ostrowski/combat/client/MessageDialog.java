@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.Shell;
 import ostrowski.combat.server.Arena;
 
 public class MessageDialog extends Dialog implements FocusListener{
-   Object result;
    String _targetName;
    public Shell _shell;
 
@@ -34,7 +33,7 @@ public class MessageDialog extends Dialog implements FocusListener{
    public void setTargetName(String targetName) {
       _targetName = targetName;
    }
-   public Object open (String message, boolean isPublic) {
+   public void open (String message, boolean isPublic) {
       Shell parent = getParent();
       _shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
       if (isPublic) {
@@ -107,7 +106,6 @@ public class MessageDialog extends Dialog implements FocusListener{
             }
          }
       }
-      return result;
    }
    @Override
    public void focusLost(FocusEvent arg0) {

@@ -129,19 +129,6 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       }
       return -1;
    }
-   public byte[] getAvailableCombatantsOnTeams() {
-      byte[] roomOnTeam = new byte[TEAM_NAMES.length];
-      for (byte team=0 ; team<_teamCount ; team++) {
-         roomOnTeam[team] = 0;
-         for (byte cur=0 ; cur<_maxCombatantsPerTeam ; cur++) {
-            ArenaLocation loc = _startPoints[team][cur];
-            if ((loc != null) && (loc.getCharacters().size() == 0)) {
-               roomOnTeam[team]++;
-            }
-         }
-      }
-      return roomOnTeam;
-   }
    public Map<Byte, List<RequestArenaEntrance.TeamMember>> getRemoteTeamMembersByTeams() {
       Map<Byte, List<RequestArenaEntrance.TeamMember>> teamMembersByTeam = new HashMap<>();
       for (byte team=0 ; team<_teamCount ; team++) {
@@ -207,12 +194,6 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       }
       return count;
    }
-   public ArenaLocation[][] getStartingPoints() {
-      return _startPoints;
-   }
-   public ArenaLocation[] getStartingPoints(byte teamID) {
-      return _startPoints[teamID];
-   }
    public boolean removeCharacter(Character character) {
       boolean removed = false;
       List<ArenaLocation> locs = getLocations(character);
@@ -228,17 +209,6 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       }
 
       return removed;
-   }
-   public void addCharacter(Character character) {
-      List<ArenaLocation> locs = getLocations(character);
-      for (ArenaLocation loc : locs) {
-         if (loc != null) {
-            loc.addThing(character);
-         }
-         for (IAreaSpell spell : loc.getActiveSpells()) {
-            spell.affectCharacterOnEntry(character);
-         }
-      }
    }
    public byte getTeamCount() { return _teamCount; }
 
@@ -538,9 +508,6 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       }
    }
 
-   public void addThing(short x, short y, Object thing) {
-      _locations[x][y].addThing(thing);
-   }
    public String getName() {
       return _name;
    }
@@ -592,13 +559,6 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       _locations[arenaLocation._x][arenaLocation._y] = arenaLocation;
       return true;
    }
-   public boolean removeLocation(ArenaLocation arenaLocation) {
-      if (_locations[arenaLocation._x][arenaLocation._y] == null) {
-         return false;
-      }
-      _locations[arenaLocation._x][arenaLocation._y] = null;
-      return true;
-   }
 
    public boolean dropThing(Object thing, short xLoc, short yLoc) {
       ArenaLocation location = _locations[xLoc][yLoc];
@@ -609,15 +569,6 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       return false;
    }
 
-   public boolean dropSomething(Character actor, Object thing) {
-      ArenaCoordinates coord = actor.getHeadCoordinates();
-      ArenaLocation location = _locations[coord._x][coord._y];
-      if (location != null) {
-          location.addThing(thing);
-          return true;
-      }
-      return false;
-   }
    public List<Character> getCombatants() {
       List<Character> list = new ArrayList<>();
       for (short col = 0 ; col<_sizeX ; col++) {
@@ -639,27 +590,6 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
             }
          }
       }
-   }
-   public List<ArenaLocation> getLocationsWithObjects() {
-     List<ArenaLocation> list = new ArrayList<>();
-     for (short col = 0 ; col<_sizeX ; col++) {
-         for (short row = (short)(col%2) ; row<_sizeY ; row += 2) {
-            ArenaLocation location = _locations[col][row];
-            synchronized (location) {
-               try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(location._lock_this)) {
-                  if ((location.getThings() != null) &&
-                      (location.getThings().size() > 0)) {
-                     list.add(location);
-                  }
-                  else if ((location.getDoors() != null) &&
-                           (location.getDoors().size() > 0)) {
-                     list.add(location);
-                  }
-               }
-            }
-         }
-      }
-      return list;
    }
 
    public static final String SEPARATOR_MAIN = ":";
@@ -1299,71 +1229,6 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       return path;
    }
    /**
-    * This method returns a straight line of hexes from fromLoc to toLoc, regardless of terrain or obstacles.
-    * @param fromCoord
-    * @param toCoord
-    * @param trimPath
-    * @return
-    */
-   public List<ArenaLocation> getLOSPath_OLD(ArenaCoordinates fromCoord, ArenaCoordinates toCoord, boolean trimPath) {
-       List<ArenaLocation> path = new ArrayList<>();
-       int xDist = toCoord._x - fromCoord._x;
-       int yDist = toCoord._y - fromCoord._y;
-       int pointsToCheck = (Math.abs(xDist) + Math.abs(yDist)) * 2;
-       double xMove = ((double)xDist) / pointsToCheck;
-       double yMove = ((double)yDist) / pointsToCheck;
-       short lastX = -100;
-       short lastY = -100;
-       for (int point=0 ; point<=pointsToCheck ; point++) {
-           double xLoc = fromCoord._x + (point*xMove);
-           double yLoc = fromCoord._y + (point*yMove);
-           short newX = (short) Math.round(xLoc);
-           short newY = getYLocation(yLoc, newX);
-           if ((newX == lastX) && (newY == lastY)) {
-              continue;
-           }
-           lastX = newX;
-           lastY = newY;
-
-           ArenaLocation testLoc = getLocation(newX, newY);
-           if (testLoc == null) {
-              DebugBreak.debugBreak();
-           }
-           else {
-              // test the last element in the current path to see if it's the same
-              if ((path.size() == 0) || (!path.get(path.size()-1).sameCoordinates(testLoc))) {
-                 if (trimPath) {
-                    if (path.size() > 1) {
-                       ArenaLocation twoStepsAgo = path.get(path.size() - 2);
-                       // Is the hex from two steps back and this one adjacent?
-                       if (ArenaCoordinates.getFacingToLocation(twoStepsAgo, testLoc) != null) {
-                          // If so, remove the intermediate step than is not needed, since
-                          // we can go from the hex two steps back directly to this one.
-                          path.remove(path.size()-1);
-                       }
-                    }
-                 }
-                 path.add(testLoc);
-              }
-           }
-       }
-       return path;
-   }
-   /**
-    * This method uses the same logic as the getPath, in that it starts with a straight line from
-    * the head of the fromChar to the head of the toChar, regardless of obstacles and terrain,
-    * but instead of computing the entire path, it returns just the location in the path that is
-    * not the fromLoc (unless the fromLoc is equal to the toLoc)
-    * @param fromChar
-    * @param toChar
-    * @return
-    */
-   public ArenaLocation getFirstLocationInPath(Character fromChar, Character toChar) {
-      ArenaLocation fromLoc = getLocation(fromChar.getHeadCoordinates());
-      ArenaLocation toLoc = getLocation(toChar.getHeadCoordinates());
-      return getFirstLocationInPath(fromLoc, toLoc);
-   }
-   /**
     * This method uses the same logic as the getPath, in that it starts with a straight line from
     * the fromLoc to the toLoc, regardless of obstacles and terrain, but instead of computing the
     * entire path, it returns just the location in the path that is not the fromLoc (unless the
@@ -1471,15 +1336,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
          }
       }
    }
-   public void showStartingPointLabels() {
-      for (byte team=0 ; team<_teamCount ; team++) {
-         for (byte cur=0 ; cur<_maxCombatantsPerTeam ; cur++) {
-            if (_startPoints[team][cur] != null) {
-               _startPoints[team][cur].setLabel(getLabel(team, cur));
-            }
-         }
-      }
-   }
+
    static public String getLabel(byte team, byte cur) {
        return (TEAM_NAMES[team] + (cur+1));
    }
@@ -1634,23 +1491,6 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
             }
          }
       }
-   }
-
-   public List<Byte> getTeamsAvailable()
-   {
-      List<Byte> teams = new ArrayList<>();
-      for (byte team=0 ; team<3 ; team++) {
-         for (byte cur=0 ; cur<_startPoints[team].length ; cur++) {
-            if (_startPoints[team][cur] != null) {
-               if (_startPoints[team][cur].getCharacters().size() == 0) {
-                  teams.add(team);
-                  // This break exits the cur for loop, putting us back into the team for loop
-                  break;
-               }
-            }
-         }
-      }
-      return teams;
    }
 
    private static final String CLOSE_DOOR  = "close door ";
@@ -2652,16 +2492,6 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
        } catch (ParserConfigurationException | IOException e) {
        }
       return null;
-   }
-   public List<ArenaLocation> getAdjacentLocations(ArenaLocation location) {
-      List<ArenaLocation> locs = new ArrayList<>();
-      for (Facing facing : Facing.values()) {
-         ArenaLocation loc = ArenaLocation.getForwardMovement(location, facing, this);
-         if (loc != null) {
-            locs.add(loc);
-         }
-      }
-      return locs;
    }
    public Character getCombatantByUniqueID(int uniqueID) {
       for (short col=0 ; col<_sizeX ; col++) {

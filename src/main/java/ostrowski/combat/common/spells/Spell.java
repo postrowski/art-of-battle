@@ -166,6 +166,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
          TableRow row = new TableRow(htmlRow++, spell.getName()).addTD(new TableData(descriptionBuffer.toString()).setAlignLeft());
          table.addRow(row);
          sb.append("<br/><dt><b>").append(spell.getName()).append("</b></dt><dd>").append(descriptionBuffer).append("</dd>\n");
+         previousSpell = spell;
       }
       sb.append("</dl>");
       if (formatForRuleBook) {
@@ -295,18 +296,6 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
    }
 
    /**
-    * @return the actions used in the resisted attribute to resist this spell.
-    * Difficult spells (Control Mind, for example) return higher values.
-    */
-   public byte getResistanceActions() {
-      return 1;
-   }
-
-   public int getMaxAttackActions() {
-      return 1;
-   }
-
-   /**
     * completeTurn returns 'true' if this spell expired this turn.
     * @param arena
     * @return
@@ -380,10 +369,6 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
 
    public TargetType getTargetType() {
       return TargetType.TARGET_NONE;
-   }
-
-   public boolean getCanTarget(Character target) {
-      return (canTarget(getCaster(), target) == null);
    }
 
    public short getMaxRange(Character caster) {

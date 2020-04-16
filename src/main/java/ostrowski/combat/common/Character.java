@@ -937,8 +937,10 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          }
       }
       MageCollege college = MageCollege.getCollege(collegeName);
-      college.setLevel(collegeLevel);
-      _knownCollegesList.add(college);
+      if (college != null) {
+         college.setLevel(collegeLevel);
+         _knownCollegesList.add(college);
+      }
    }
 
    public byte getBuildBase() {
@@ -3208,8 +3210,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                                                                                     includePosition,
                                                                                     false/*computePdOnly*/, distance);
       byte basePD = baseDefs.get(range).get(DefenseOption.DEF_PD);
-      byte baseTN = getBaseDefenseOptionTN(baseDefs, defenseOptions, range, isGrappleAttack, damageType, includeWoundPenalty, includePosition, includeHolds);
-      byte defenseTN = baseTN;
+      byte defenseTN = getBaseDefenseOptionTN(baseDefs, defenseOptions, range, isGrappleAttack, damageType, includeWoundPenalty, includePosition, includeHolds);
       for (Limb limb : _limbs.values()) {
          // Is this hand used in the defense?
          DefenseOption defIndex = limb.getDefOption();
@@ -3255,7 +3256,6 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                                                                              boolean computePdOnly,
                                                                              short distance) {
       byte attributeNim = getAttributeLevel(Attribute.Nimbleness);
-      byte dodge = Rules.getDodgeLevel(attributeNim);
       byte retreat = Rules.getRetreatLevel(attributeNim);
       HashMap<RANGE, HashMap<DefenseOption, Byte>> defBase = new HashMap<>();
       for (RANGE range : RANGE.values()) {
@@ -3369,35 +3369,44 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          }
       }
       for (RANGE range : RANGE.values()) {
+         byte dodge = Rules.getDodgeLevel(attributeNim);
          byte rangeAdjustmentToPD = Rules.getRangeDefenseAdjustmentToPD(range);
          byte rangeAdjustmentPerAction = Rules.getRangeDefenseAdjustmentPerAction(range);
+         boolean canDodge = true;
+         boolean canRetreat = true;
          if (!computePdOnly) {
             if (includeWoundPenalty) {
                if (_condition.getPenaltyMove() < 0) {
-                  dodge = 0;
-                  retreat = 0;
+                  canDodge = false;
+                  canRetreat = false;
                }
                else {
                   dodge = (byte) Math.max(0, dodge - _condition.getPenaltyMove());
                   byte retreatPenalty = _condition.getPenaltyRetreat(includeWoundPenalty);
                   if (retreatPenalty < 0) {
-                     retreat = 0;
+                     canRetreat = false;
                   }
                   else {
                      retreat = (byte) Math.max(0, retreat - retreatPenalty);
                   }
                }
             }
-            if (dodge != 0) {
+            if (canDodge) {
                dodge += rangeAdjustmentPerAction;
+               if (dodge < 0) {
+                  dodge = 0;
+               }
             }
-            if (retreat != 0) {
-               retreat += rangeAdjustmentPerAction * 2;
-            }
-            if (dodge < 0) {
+            else {
                dodge = 0;
             }
-            if (retreat < 0) {
+            if (canRetreat) {
+               retreat += rangeAdjustmentPerAction * 2;
+               if (retreat < 0) {
+                  retreat = 0;
+               }
+            }
+            else {
                retreat = 0;
             }
             if (includePosition) {
@@ -3707,8 +3716,10 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       _knownCollegesList = new ArrayList<>();
       for (MageCollege sourceCollege : source._knownCollegesList) {
          MageCollege college = MageCollege.getCollege(sourceCollege.getName());
-         college.setLevel(sourceCollege.getLevel());
-         _knownCollegesList.add(college);
+         if (college != null) {
+            college.setLevel(sourceCollege.getLevel());
+            _knownCollegesList.add(college);
+         }
       }
       _advList = new ArrayList<>();
       for (Advantage sourceAdvantage : source._advList) {
@@ -3845,7 +3856,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    public void setTargetPriorities(List<Integer> orderedTargetIds) {
       _orderedTargetIds.clear();
       _orderedTargetIds.addAll(orderedTargetIds);
-      if ((_orderedTargetIds != null) && (_orderedTargetIds.size() > 0)) {
+      if (_orderedTargetIds.size() > 0) {
          _targetID = _orderedTargetIds.get(0);
       }
    }
@@ -4767,7 +4778,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
             if (action._targetSelection != null) {
                setTarget(action._targetSelection.getAnswerID());
             }
-            else if (action._targetPriorities== null) {
+            else if (action._targetPriorities != null) {
                List<Integer> orderedTargetIds = action._targetPriorities.getOrderedTargetIds();
                setTargetPriorities(orderedTargetIds);
             }
@@ -5150,7 +5161,9 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                            }
                         }
                      }
-                     req.addReadyOption(thing.getName(), equipment.indexOf(thing), limb._limbType, enabled);
+                     if (limb != null) {
+                        req.addReadyOption(thing.getName(), equipment.indexOf(thing), limb._limbType, enabled);
+                     }
                   }
                   if (thing.canBeApplied()) {
                      req.addApplyOption(thing.getName(), equipment.indexOf(thing), LimbType.HAND_RIGHT, true/*enabled*/);

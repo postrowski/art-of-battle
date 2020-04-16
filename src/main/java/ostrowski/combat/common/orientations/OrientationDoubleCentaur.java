@@ -29,8 +29,7 @@ public class OrientationDoubleCentaur extends OrientationSerpentine
    @Override
    public DrawnObject getBodyOutlines(Character character, int wideDiameter, int narrowDiameter, ArenaLocation loc, int[] bounds, RGB foreground, RGB background)
    {
-      int pointCount = wideDiameter;
-      DrawnObject charOutlines = DrawnObject.createElipse((int) (wideDiameter*.8), narrowDiameter*3, pointCount, foreground, background);
+      DrawnObject charOutlines = DrawnObject.createElipse((int) (wideDiameter*.8), narrowDiameter*3, wideDiameter, foreground, background);
       int yOffset;
       int xOffset = 0;
       if (loc.sameCoordinates(_coordinates.get(0))) {
@@ -41,10 +40,10 @@ public class OrientationDoubleCentaur extends OrientationSerpentine
       }
       charOutlines.offsetPoints(xOffset, yOffset);
       if (loc.sameCoordinates(_coordinates.get(0))) {
-         charOutlines.addChild(DrawnObject.createElipse(wideDiameter, narrowDiameter, pointCount, foreground, background));
+         charOutlines.addChild(DrawnObject.createElipse(wideDiameter, narrowDiameter, wideDiameter, foreground, background));
       }
       else {
-         charOutlines.addChild(DrawnObject.createElipse((int)(wideDiameter*.8), (int)(narrowDiameter*1.2), pointCount, foreground, background));
+         charOutlines.addChild(DrawnObject.createElipse((int)(wideDiameter*.8), (int)(narrowDiameter*1.2), wideDiameter, foreground, background));
       }
       return charOutlines;
    }

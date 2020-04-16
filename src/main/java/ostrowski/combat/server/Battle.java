@@ -34,14 +34,14 @@ import ostrowski.util.SemaphoreAutoTracker;
 import java.util.*;
 
 public class Battle extends Thread implements Enums {
-   public Arena _arena;
+   public final Arena _arena;
    int _turnCount  = 1;
    int _roundCount = 1;
    int _phaseCount = 1;
    public boolean      _startMidTurn              = false;
-   public boolean      _resetMessageBufferOnStart = true;
-   public CombatServer _combatServer;
-   public int          _turnPause                 = 1000;
+   public       boolean      _resetMessageBufferOnStart = true;
+   public final CombatServer _combatServer;
+   public       int          _turnPause                 = 1000;
    public int          _roundPause                = 1000;
    public int          _phasePause                = 1000;
 

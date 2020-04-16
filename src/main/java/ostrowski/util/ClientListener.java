@@ -15,7 +15,7 @@ import ostrowski.combat.server.Configuration;
 public class ClientListener extends Thread
 {
    ServerSocket _serverSocket;
-   CombatServer _server;
+   final CombatServer _server;
    boolean      _keepRunning          = true;
    public ClientListener(CombatServer server) {
       _server = server;

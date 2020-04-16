@@ -59,11 +59,10 @@ public class EnterArena extends SerializableObject
 
    @Override
    public String toString() {
-      String sb = "EnterArena: " +
-                  _character +
-                  ", entering: " + _entering +
-                  ", team: " + _team +
-                  ", indexOnTeam: " + _indexOnTeam;
-      return sb;
+      return "EnterArena: " +
+             _character +
+             ", entering: " + _entering +
+             ", team: " + _team +
+             ", indexOnTeam: " + _indexOnTeam;
    }
 }
