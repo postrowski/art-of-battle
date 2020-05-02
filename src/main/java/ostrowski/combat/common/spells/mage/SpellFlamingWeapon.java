@@ -167,10 +167,11 @@ public class SpellFlamingWeapon extends ExpiringMageSpell implements ICastInBatt
    @Override
    public void setCasterAndTargetFromIDs(List<Character> combatants) {
       super.setCasterAndTargetFromIDs(combatants);
-      if (_limbType != null) {
-         Limb limb = getTarget().getLimb(_limbType);
-         _weapon = limb.getWeapon(getTarget());
-         _weapon.setSpecialDamageModifier(_specDam, "Flaming Weapon spell (power level " + getPower() + ": +" + getPain(getPower()) + " pain, +"
+      if ((_limbType != null) && (_target != null)) {
+         Limb limb = _target.getLimb(_limbType);
+         _weapon = limb.getWeapon(_target);
+         _weapon.setSpecialDamageModifier(_specDam, "Flaming Weapon spell (power level " +
+                                                    getPower() + ": +" + getPain(getPower()) + " pain, +"
                                                     + getWounds(getPower()) + " wounds)");
       }
    }
@@ -178,10 +179,12 @@ public class SpellFlamingWeapon extends ExpiringMageSpell implements ICastInBatt
    @Override
    public Element getXMLObject(Document parentDoc, String newLine) {
       Element node = super.getXMLObject(parentDoc, newLine);
-      for (Limb limb : getTarget().getLimbs()) {
-         if (_weapon == limb.getWeapon(getTarget())) {
-            node.setAttribute("weaponLimbIndex", String.valueOf(limb._limbType.value));
-            break;
+      if (_target != null) {
+         for (Limb limb : _target.getLimbs()) {
+            if (_weapon == limb.getWeapon(_target)) {
+               node.setAttribute("weaponLimbIndex", String.valueOf(limb._limbType.value));
+               break;
+            }
          }
       }
       return node;

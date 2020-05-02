@@ -101,7 +101,7 @@ public abstract class PriestSpell extends Spell
       Table table = new Table();
       table.addRow(new TableRow(-1, new TableHeader("Divine<br/>Affinity").setAttribute("rowspan", "2"), new TableHeader("Divine Power").setAttribute("colspan", "5")));
       table.addRow(new TableRow(-1, "1", "2", "3", "4", "5"));
-      for (byte affinity=1 ; affinity<=5 ; affinity++) {
+      for (byte affinity=1 ; affinity<=10 ; affinity++) {
          table.addRow(new TableRow(affinity-1, ""+affinity, affinity * 5, affinity *10,  affinity * 15, affinity * 20, affinity * 25));
       }
       sb.append(table);

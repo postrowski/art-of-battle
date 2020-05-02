@@ -345,6 +345,14 @@ public class CharacterDisplay implements Enums, ModifyListener, IMapListener //,
 
    @Override
    public void onMouseMove(ArenaLocation loc, Event event, double angleFromCenter, double normalizedDistFromCenter) {
+      // are we waiting on a location request?
+      if (!_pendingRequests.isEmpty()) {
+         SyncRequest syncReq = _pendingRequests.get(0);
+         if (syncReq instanceof RequestMovement) {
+            // If we are in the middle of a movement, don't display character information.
+            return;
+         }
+      }
       _mouseOverCharInfoPopup.onMouseMove(loc, event, angleFromCenter, normalizedDistFromCenter);
    }
 

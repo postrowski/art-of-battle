@@ -470,8 +470,9 @@ public class CharInfoBlock extends Helper implements IUIBlock, ModifyListener
 
    public static Object getToolTipSummary(Character target) {
       StringBuilder sb = new StringBuilder();
-      sb.append("Character: ").append(target.getName());
-      sb.append(" (").append(target.getRace().getName()).append(")");
+      sb.append("Character: ").append(target.getName())
+        .append(" (").append(target.getPointTotal()).append(" point ")
+        .append(target.getRace().getName()).append(")");
 
       sb.append("\n  Actions rnd/turn: ").append(getActionsText(target.getCondition()));
 

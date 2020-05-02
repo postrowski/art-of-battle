@@ -1415,7 +1415,10 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
        boolean characterChangedLocations = false;
        for (ArenaLocation newLoc : newCharLocs) {
           if (newLoc == null) {
+             // this can happen when we change maps while a character is moving, and
+             // the new location no longer exists on the smaller map.
              DebugBreak.debugBreak();
+             return;
           }
           List<Character> chars = newLoc.getCharacters();
           boolean characterFound = false;

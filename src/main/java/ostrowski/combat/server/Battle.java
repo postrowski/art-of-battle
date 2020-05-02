@@ -1784,7 +1784,7 @@ public class Battle extends Thread implements Enums {
       // apply all the actions to each actor
       for (Character actor : actedCombatants) {
          RequestAction actReq = results.get(actor);
-         if (actReq != null) {
+         if (actReq != null && actReq.isAnswered()) {
             actor.applyAction(actReq, _arena);
          }
       }
