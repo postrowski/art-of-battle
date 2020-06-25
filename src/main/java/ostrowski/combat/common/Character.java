@@ -3991,7 +3991,10 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
             st = new StringTokenizer(equipment, SEPARATOR_SECONDARY);
             while (st.hasMoreElements()) {
                String equipName = (String) st.nextElement();
-               _equipment.add(Thing.getThing(equipName, true/*allowTool*/, getRace()));
+               Thing thing = Thing.getThing(equipName, true/*allowTool*/, getRace());
+               if (thing != null) {
+                  _equipment.add(thing);
+               }
             }
          }
       }
