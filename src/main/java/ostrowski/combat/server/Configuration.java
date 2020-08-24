@@ -18,29 +18,31 @@ import java.util.List;
 
 public class Configuration implements SelectionListener
 {
-   public RuleComposite  _ruleComposite             = null;
+   public RuleComposite  _ruleComposite                = null;
 
-   static public boolean _spellTnAffectedByMa       = true;
-   static public boolean _useSimpleDamage           = true;
-   static public boolean _useSimpleDice             = true;
-   static public boolean _useExtendedDice           = false;
-   static public boolean _useBellCurveDice          = false;
-   static public boolean _useComplexTOUDice         = true;
-   static public boolean _use3DMap                  = true;
-   static public boolean _showChit                  = true;
-   static public boolean _rollDice                  = true;
-   static public int    _serverPort                = 1777;
-   private       Button _spellTnAffectedByMaButton = null;
-   private       Button _useSimpleDamageButton     = null;
-   //private Button        _useSimpleDiceButton       = null;
-   private Button        _useComplexTOUDiceButton   = null;
-   private Button        _diceExtendedButton        = null;
-   private Button        _diceSimpleButton          = null;
-   private Button        _diceBellCurveButton       = null;
-   private Button        _use3DMapButton            = null;
-   private Button _showChitButton = null;
-   private Button _rollDiceButton = null;
-   private Text   _serverPortText = null;
+   static public boolean _spellTnAffectedByMa          = true;
+   static public boolean _useSimpleDamage              = true;
+   static public boolean _useSimpleDice                = true;
+   static public boolean _useExtendedDice              = false;
+   static public boolean _useBellCurveDice             = false;
+   static public boolean _useComplexTOUDice            = true;
+   static public boolean _useD6ForAttributeRolls       = true;
+   static public boolean _use3DMap                     = true;
+   static public boolean _showChit                     = true;
+   static public boolean _rollDice                     = true;
+   static public int    _serverPort                    = 1777;
+   private       Button _spellTnAffectedByMaButton     = null;
+   private       Button _useSimpleDamageButton         = null;
+   //private Button        _useSimpleDiceButton        = null;
+   private Button        _useComplexTOUDiceButton      = null;
+   private Button        _useD6ForAttributeRollsButton = null;
+   private Button        _diceExtendedButton           = null;
+   private Button        _diceSimpleButton             = null;
+   private Button        _diceBellCurveButton          = null;
+   private Button        _use3DMapButton               = null;
+   private Button        _showChitButton               = null;
+   private Button        _rollDiceButton               = null;
+   private Text          _serverPortText               = null;
 
    public static boolean isSpellTnAffectedByMa() {
       return _spellTnAffectedByMa;
@@ -62,6 +64,9 @@ public class Configuration implements SelectionListener
 
    public static boolean useComplexTOUDice() {
       return _useComplexTOUDice;
+   }
+   public static boolean useD6ForAttributeRolls() {
+      return _useD6ForAttributeRolls;
    }
    public static boolean use3DMap() {
       return _use3DMap;
@@ -235,6 +240,8 @@ public class Configuration implements SelectionListener
          out.write("\n");
          writeBoolean(out, "useComplexTOUDice", _useComplexTOUDice);
          out.write("\n");
+         writeBoolean(out, "useD6ForAttributeRolls", _useD6ForAttributeRolls);
+         out.write("\n");
          writeBoolean(out, "use3DMap", _use3DMap);
          out.write("\n");
          writeBoolean(out, "showChit", _showChit);
@@ -265,16 +272,17 @@ public class Configuration implements SelectionListener
             e.printStackTrace();
          }
 
-         _spellTnAffectedByMa = readBoolean(fileLines, "spellTnAffectedByMa", _spellTnAffectedByMa);
-         _useSimpleDamage     = readBoolean(fileLines, "useSimpleDamage",     _useSimpleDamage);
-         _useSimpleDice       = readBoolean(fileLines, "useSimpleDice",       _useSimpleDice);
-         _useExtendedDice     = readBoolean(fileLines, "useExtendedDice",     _useExtendedDice);
-         _useBellCurveDice    = readBoolean(fileLines, "useBellCurveDice",    _useBellCurveDice);
-         _useComplexTOUDice   = readBoolean(fileLines, "useComplexTOUDice",   _useComplexTOUDice);
-         _use3DMap            = readBoolean(fileLines, "use3DMap",            _use3DMap);
-         _showChit            = readBoolean(fileLines, "showChit",            _showChit);
-         _rollDice            = readBoolean(fileLines, "rollDice",            _rollDice);
-         String serverPort    = readString(fileLines,  "serverPort");
+         _spellTnAffectedByMa    = readBoolean(fileLines, "spellTnAffectedByMa",    _spellTnAffectedByMa);
+         _useSimpleDamage        = readBoolean(fileLines, "useSimpleDamage",        _useSimpleDamage);
+         _useSimpleDice          = readBoolean(fileLines, "useSimpleDice",          _useSimpleDice);
+         _useExtendedDice        = readBoolean(fileLines, "useExtendedDice",        _useExtendedDice);
+         _useBellCurveDice       = readBoolean(fileLines, "useBellCurveDice",       _useBellCurveDice);
+         _useComplexTOUDice      = readBoolean(fileLines, "useComplexTOUDice",      _useComplexTOUDice);
+         _useD6ForAttributeRolls = readBoolean(fileLines, "useD6ForAttributeRolls", _useD6ForAttributeRolls);
+         _use3DMap               = readBoolean(fileLines, "use3DMap",               _use3DMap);
+         _showChit               = readBoolean(fileLines, "showChit",               _showChit);
+         _rollDice               = readBoolean(fileLines, "rollDice",               _rollDice);
+         String serverPort       = readString(fileLines,  "serverPort");
          if (serverPort != null) {
             _serverPort = Integer.parseInt(serverPort);
          }

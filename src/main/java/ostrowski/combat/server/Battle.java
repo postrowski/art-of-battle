@@ -675,7 +675,7 @@ public class Battle extends Thread implements Enums {
       byte str = actor.getAttributeLevel(Attribute.Strength);
       byte nim = actor.getAttributeLevel(Attribute.Nimbleness);
       Attribute bestAttr = str > nim ? Attribute.Strength : Attribute.Nimbleness;
-      DiceSet dice = Rules.getDice((byte) Math.max(str, nim), action.getActionsUsed(), bestAttr/*attribute*/);
+      DiceSet dice = Rules.getDice((byte) Math.max(str, nim), action.getActionsUsed(), bestAttr/*attribute*/, RollType.BREAK_FREE);
       String rollMessage = actor.getName() + ", your " + bestAttr.name() + " will be used to break free (" +
                            action.getActionsUsed() + " actions), roll to attempt the escape.";
       int roll = dice.roll(true/*allowExplodes*/, actor, RollType.BREAK_FREE, rollMessage);
@@ -2161,7 +2161,7 @@ public class Battle extends Thread implements Enums {
                   if ((target == null) || (!target.stillFighting())) {
                      recoveryAttempted = true;
                      byte iq = combatant.getAttributeLevel(Attribute.Intelligence);
-                     DiceSet berserkSaveDice = Rules.getDice(iq, (byte) 1/*actions*/, Attribute.Intelligence);
+                     DiceSet berserkSaveDice = Rules.getDice(iq, (byte) 1/*actions*/, Attribute.Intelligence, RollType.BERSERK_RECOVERY);
                      berserkSaveDice = combatant.adjustDieRoll(berserkSaveDice, RollType.BERSERK_RECOVERY, null/*target*/);
                      rollMessage = combatant.getName() + ", roll end your berserking state.";
                      int diceRoll = berserkSaveDice.roll(true/*allowExplodes*/, combatant, RollType.BERSERK_RECOVERY, rollMessage);

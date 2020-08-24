@@ -427,13 +427,13 @@ public abstract class PriestSpell extends Spell
       if (Configuration.useExtendedDice()) {
          byte actionDice = getActionsDice(effectivePower);
          byte bonusToDice = getBonusDice(effectivePower);
-         DiceSet dice = Rules.getDice(_caster.getAttributeLevel(castingAttr), actionDice, castingAttr/*attribute*/);
+         DiceSet dice = Rules.getDice(_caster.getAttributeLevel(castingAttr), actionDice, castingAttr/*attribute*/, RollType.SPELL_CASTING);
          if (bonusToDice != 0) {
             return dice.addBonus(bonusToDice);
          }
          return dice;
       }
-      DiceSet dice = Rules.getDice(_caster.getAttributeLevel(castingAttr), (byte) 1/*actions*/, castingAttr/*attribute*/);
+      DiceSet dice = Rules.getDice(_caster.getAttributeLevel(castingAttr), (byte) 1/*actions*/, castingAttr/*attribute*/, RollType.SPELL_CASTING);
       byte powerBonus = (byte) ((effectivePower - 1) * 3);
       return dice.addBonus(powerBonus);
    }

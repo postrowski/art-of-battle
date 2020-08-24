@@ -370,23 +370,33 @@ public class Rules extends DebugBreak implements Enums
 
    static final HashMap<String, DiceSet> _diceTable = new HashMap<>();
 
-   static public DiceSet getDice(byte attributeLevel, byte actions, Attribute attribute) {
+   static public DiceSet getDice(byte attributeLevel, byte actions, Attribute attribute, RollType rollType) {
       boolean useComplexDice = Configuration.useExtendedDice();
       if (!useComplexDice) {
          if ((attribute == Attribute.Toughness) && (Configuration.useComplexTOUDice())) {
             useComplexDice = true;
          }
       }
+      // stock for 2-actions, -5 for 1-action, +5 for 3-actions:
+      int d1 = Rules.getTNBonusForActions(actions) + attributeLevel;
+      int d6 = 0;
+      int d10 = 0;
+      int dBell = 0;
       if (!useComplexDice) {
          if (Configuration.useSimpleDice()) {
-            // return a d10 for 2-actions, d10-5 for 1-action, d10+5 for 3-actions:
-            int d1 = Rules.getTNBonusForActions(actions) + attributeLevel;
-            return new DiceSet(d1, 0/*d4*/, 0/*d6*/, 0/*d8*/, 1/*d10*/, 0/*d12*/, 0/*d20*/, 0/*dBell*/, 1.0/*multiplier*/);
+            d10 = 1;
+            return new DiceSet(d1, 0, d6, 0, d10, 0, 0, dBell, 1.0);
          }
          if (Configuration.useBellCurveDice()) {
-            // return a d10 for 2-actions, d10-5 for 1-action, d10+5 for 3-actions:
-            int d1 = Rules.getTNBonusForActions(actions) + attributeLevel;
-            return new DiceSet(d1, 0/*d4*/, 0/*d6*/, 0/*d8*/, 0/*d10*/, 0/*d12*/, 0/*d20*/, 1/*dBell*/, 1.0/*multiplier*/);
+            if ((rollType == RollType.SPELL_CASTING) ||
+                (rollType == RollType.ATTACK_TO_HIT) ||
+                !Configuration.useD6ForAttributeRolls()) {
+               dBell = 1;
+            }
+            else {
+               d6 = 1;
+            }
+            return new DiceSet(d1, 0, d6, 0, d10, 0, 0, dBell, 1.0);
          }
       }
       // two ways to get here:
@@ -446,7 +456,7 @@ public class Rules extends DebugBreak implements Enums
    }
 
    public static DiceSet getPainReductionDice(byte toughness) {
-      return getDice(toughness, (byte) 1, Attribute.Toughness);
+      return getDice(toughness, (byte) 1, Attribute.Toughness, RollType.PAIN_RECOVERY);
    }
 
    public static byte getDodgeLevel(byte nimbleness) {
@@ -666,18 +676,18 @@ public class Rules extends DebugBreak implements Enums
          }
          if (Configuration._useExtendedDice) {
             for (byte actions = 1; actions < 4; actions++) {
-               DiceSet dice = getDice(attLevel, actions, Attribute.Intelligence);
+               DiceSet dice = getDice(attLevel, actions, Attribute.Intelligence, RollType.ATTACK_TO_HIT);
                row.addTD(new TableData(dice));
             }
          }
          if (!Configuration.useExtendedDice() && Configuration.useComplexTOUDice()) {
-            DiceSet dice = getDice(attLevel, (byte) 1/*actions*/, Attribute.Toughness);
+            DiceSet dice = getDice(attLevel, (byte) 1/*actions*/, Attribute.Toughness, RollType.PAIN_RECOVERY);
             row.addTD(new TableData(dice));
          }
          int maxWounds = getUnconsciousWoundLevel(attLevel);
          row.addTD(new TableData(maxWounds));
          if (!Configuration.useExtendedDice() && Configuration.useComplexTOUDice()) {
-            DiceSet dice = getDice(attLevel, (byte) 2/*actions*/, Attribute.Toughness);
+            DiceSet dice = getDice(attLevel, (byte) 2/*actions*/, Attribute.Toughness, RollType.PAIN_RECOVERY);
             row.addTD(new TableData(dice));
          }
          for (byte enc = 0; enc < 6; enc++) {

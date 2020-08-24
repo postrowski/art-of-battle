@@ -3083,7 +3083,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                            }
                         }
                      }
-                     DiceSet attackDice = Rules.getDice(getAttributeLevel(Attribute.Dexterity), attackActions, Attribute.Dexterity/*attribute*/);
+                     DiceSet attackDice = Rules.getDice(getAttributeLevel(Attribute.Dexterity), attackActions, Attribute.Dexterity/*attribute*/, RollType.ATTACK_TO_HIT);
                      req.addAttackOption(i, sb.toString(), styleAllowed, styles[i].getAttackType(), attackDice, styles[i].getDamageType());
                   }
                }
@@ -4622,7 +4622,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       if ((newPain > 0) && (modifiedWound.getPain() > 0))  {
          if (isBerserker() && !isBerserking()) {
             byte iq = getAttributeLevel(Attribute.Intelligence);
-            DiceSet berserkSaveDice = Rules.getDice(iq, (byte) 2/*action*/, Attribute.Intelligence);
+            DiceSet berserkSaveDice = Rules.getDice(iq, (byte) 2/*action*/, Attribute.Intelligence, RollType.BERSERK_RESISTANCE);
             berserkSaveDice = adjustDieRoll(berserkSaveDice, RollType.BERSERK_RESISTANCE, null/*target*/);
             String rollMessage = getName() + ", because of your new pain level (" + newPain +
                                  "), you must roll your IQ (" + iq + ") + d10± against a TN of " +
@@ -4669,7 +4669,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          }
          if ((currentPain > 0) && (modifiedWound.getPain() > 0)) {
             byte toughness = getAttributeLevel(Attribute.Toughness);
-            DiceSet magicSaveDice = Rules.getDice(toughness, (byte) 2/*action*/, Attribute.Toughness);
+            DiceSet magicSaveDice = Rules.getDice(toughness, (byte) 2/*action*/, Attribute.Toughness, RollType.PAIN_CONCENTRATION);
             magicSaveDice = adjustDieRoll(magicSaveDice, RollType.PAIN_CONCENTRATION, null/*target*/);
             String rollMessage = getName() + ", because of your new pain level (" + currentPain +
                                  "), you must roll your TOU (" + toughness + ") + d10± against a TN of " +

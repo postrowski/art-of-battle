@@ -79,7 +79,7 @@ public abstract class ResistedPriestSpell extends ExpiringPriestSpell implements
       byte resistanceAttrLevel = getResistanceAttribute(target);
       byte resistanceActions = getResistanceActions();
       if (Configuration._useExtendedDice) {
-         return Rules.getDice(resistanceAttrLevel, resistanceActions, _resistedAtt/*attribute*/);
+         return Rules.getDice(resistanceAttrLevel, resistanceActions, _resistedAtt/*attribute*/, RollType.MAGIC_RESISTANCE);
       }
       byte bonus = (byte) ((resistanceActions -2) * 5);
       resistanceAttrLevel += bonus;

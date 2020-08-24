@@ -518,7 +518,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
 
    public DiceSet getCastDice(byte actionsUsed, RANGE range) {
       Attribute att = getCastingAttribute();
-      return Rules.getDice(getCaster().getAttributeLevel(att), actionsUsed, att/*attribute*/);
+      return Rules.getDice(getCaster().getAttributeLevel(att), actionsUsed, att/*attribute*/, RollType.SPELL_CASTING);
    }
 
    public Attribute getCastingAttribute() {

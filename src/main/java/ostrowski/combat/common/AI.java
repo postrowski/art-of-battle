@@ -1714,7 +1714,7 @@ public class AI implements Enums
       if (spell instanceof MageSpell) {
          MageSpell mageSpell = (MageSpell) spell;
          // Always cast spells with a power level equal to our MA
-         DiceSet dice = Rules.getDice(_self.getAttributeLevel(Attribute.Intelligence), (byte) 3, Attribute.Intelligence);
+         DiceSet dice = Rules.getDice(_self.getAttributeLevel(Attribute.Intelligence), (byte) 3, Attribute.Intelligence, RollType.SPELL_CASTING);
          for (byte power = 2; power <10 ; power++) {
             byte tnAtPower = mageSpell.getTN(_self, power);
             double successOdds = dice.getOddsForTN(tnAtPower);
@@ -2968,7 +2968,7 @@ public class AI implements Enums
          Integer tnLower = bestActualTNPerAction.get(defActions - 1);
          if ((tnHigh != null) && (tnLower != null)) {
             if ((toHitDice == null) && (attacker != null)) {
-               toHitDice = Rules.getDice(attacker.getAttributeLevel(Attribute.Dexterity), defense.getAttackActions(), Attribute.Dexterity);
+               toHitDice = Rules.getDice(attacker.getAttributeLevel(Attribute.Dexterity), defense.getAttackActions(), Attribute.Dexterity, RollType.ATTACK_TO_HIT);
             }
             double oddsDefSuccessHigh = Math.round((1.0 - toHitDice.getOddsForTN(tnHigh + extraSkillRequired)) * 100) / 100.0;
             double oddsDefSuccessLower = Math.round((1.0 - toHitDice.getOddsForTN(tnLower + extraSkillRequired)) * 100) / 100.0;

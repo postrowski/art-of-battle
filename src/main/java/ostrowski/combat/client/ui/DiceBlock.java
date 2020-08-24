@@ -85,13 +85,13 @@ public class DiceBlock extends Helper implements IUIBlock
             // Also, if the configuration was not set to complex dice when we started this application,
             // this array will also be empty.
             if (_dice.get(att)[actions] != null) {
-               _dice.get(att)[actions].setText(Rules.getDice(attributeLevel, actions, att/*attribute*/).toString().replaceAll(" ", ""));
+               _dice.get(att)[actions].setText(Rules.getDice(attributeLevel, actions, att/*attribute*/, RollType.ATTACK_TO_HIT).toString().replaceAll(" ", ""));
             }
          }
       }
       byte toughness = character.getAttributeLevel(Attribute.Toughness);
       if (_painReductioDice != null) {
-         _painReductioDice.setText(Rules.getDice(toughness, (byte)1, Attribute.Toughness/*attribute*/).toString().replaceAll(" ", ""));
+         _painReductioDice.setText(Rules.getDice(toughness, (byte)1, Attribute.Toughness/*attribute*/, RollType.PAIN_RECOVERY).toString().replaceAll(" ", ""));
       }
       if (_maxPainWounds != null) {
          _maxPainWounds.setText("" + Rules.getUnconsciousWoundLevel(toughness));

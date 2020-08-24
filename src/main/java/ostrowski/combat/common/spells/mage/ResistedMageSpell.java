@@ -55,10 +55,10 @@ public abstract class ResistedMageSpell extends ExpiringMageSpell implements IRe
    public DiceSet getResistanceDice(Character target) {
       byte resistanceAttr = getResistanceAttribute(target);
       if (Configuration.useExtendedDice()) {
-         return Rules.getDice(resistanceAttr, getResistanceActions(), _resistedAtt);
+         return Rules.getDice(resistanceAttr, getResistanceActions(), _resistedAtt, RollType.MAGIC_RESISTANCE);
       }
 
-      DiceSet dice = Rules.getDice(resistanceAttr, (byte)2, _resistedAtt);
+      DiceSet dice = Rules.getDice(resistanceAttr, (byte)2, _resistedAtt, RollType.MAGIC_RESISTANCE);
       switch (getResistanceActions()) {
          case 1: dice.addBonus(-5); break;
          case 2: break;
