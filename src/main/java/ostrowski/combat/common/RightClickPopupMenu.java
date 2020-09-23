@@ -129,9 +129,13 @@ public class RightClickPopupMenu {
       }
       Point cursorLocation = Display.getCurrent().getCursorLocation();
       if (_moveFromLocation == null) {
-         _popupMenu.setLocation(cursorLocation.x, cursorLocation.y);
+         if (_popupMenu != null) {
+            _popupMenu.setLocation(cursorLocation.x, cursorLocation.y);
+         }
       } else {
-         _moveToPopupMenu.setLocation(cursorLocation.x, cursorLocation.y);
+         if (_moveToPopupMenu != null) {
+            _moveToPopupMenu.setLocation(cursorLocation.x, cursorLocation.y);
+         }
       }
 
       _moveToPopupMenu.setVisible(_moveFromLocation != null);
