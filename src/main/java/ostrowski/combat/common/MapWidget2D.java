@@ -699,7 +699,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       }
       boolean showKnownButNotVisibleChars = false;
       if (_selfLoc != null) {
-         if (ArenaCoordinates.getDistance(_selfLoc, loc) <= Rules.getAutoVisibleDistance()) {
+         if (ArenaCoordinates.getDistance(_selfLoc, loc) <= Rules.AUTO_VISIBLE_DISTANCE) {
             showKnownButNotVisibleChars = true;
          }
       }

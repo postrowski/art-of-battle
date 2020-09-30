@@ -138,8 +138,12 @@ public class RightClickPopupMenu {
          }
       }
 
-      _moveToPopupMenu.setVisible(_moveFromLocation != null);
-      _popupMenu.setVisible(_moveFromLocation == null);
+      if (_moveToPopupMenu != null) {
+         _moveToPopupMenu.setVisible(_moveFromLocation != null);
+      }
+      if (_popupMenu != null) {
+         _popupMenu.setVisible(_moveFromLocation == null);
+      }
    }
 
    private void createMainMenu(Shell shell) {

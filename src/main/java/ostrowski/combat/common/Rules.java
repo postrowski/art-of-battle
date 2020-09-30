@@ -1000,7 +1000,7 @@ public class Rules extends DebugBreak implements Enums
          return baseActiveDef;
       }
 
-      int adjuster = 1;
+      int adjuster = 0;
       if (defBase == DefenseOption.DEF_DODGE) {
          adjuster = position.adjustmentToDefenseDodge;
       }
@@ -1118,8 +1118,6 @@ public class Rules extends DebugBreak implements Enums
       return adjustedLevel;
    }
 
-   public static short getAutoVisibleDistance() {
-      // If we have a character within 3 hexes of us, always show them, even if they are behind us.
-      return 3;
-   }
+   // If we have a character within 3 hexes of us, always show them, even if they are behind us.
+   public static final short AUTO_VISIBLE_DISTANCE = 3;
 }

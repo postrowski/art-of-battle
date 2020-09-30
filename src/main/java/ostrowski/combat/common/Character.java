@@ -1561,28 +1561,25 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          }
          // Sort the list for the order to show in the options list
          List<Limb> sortedLimbs = _limbs.values().stream()
-                  .sorted(new Comparator<>() {
-                     @Override
-                     public int compare(Limb limbA, Limb limbB) {
-                        LimbType limbAtype = limbA._limbType;
-                        LimbType limbBtype = limbB._limbType;
-                        if (limbA == limbB) {
-                           return 0;
-                        }
-                        if ((limbAtype.isHead() && !limbBtype.isHead()) ||
-                            (limbAtype.isHand() && !limbBtype.isHand()) ||
-                            (limbAtype.isWing() && !limbBtype.isWing()) ||
-                            (limbAtype.isBody() && !limbBtype.isBody()) ||
-                            (limbAtype.isTail() && !limbBtype.isTail()) ||
-                            (limbAtype.isLeg() && !limbBtype.isLeg())) {
-                           return -1;
-                        }
-                        if (((limbAtype.side == Side.RIGHT) && (limbBtype.side != Side.RIGHT))) {
-                           return -1;
-                        }
-                        return Integer.compare(limbAtype.setId, limbBtype.setId);
-                     }
-                  }).collect(Collectors.toList());
+                                        .sorted((limbA, limbB) -> {
+                                           LimbType limbAtype = limbA._limbType;
+                                           LimbType limbBtype = limbB._limbType;
+                                           if (limbA == limbB) {
+                                              return 0;
+                                           }
+                                           if ((limbAtype.isHead() && !limbBtype.isHead()) ||
+                                               (limbAtype.isHand() && !limbBtype.isHand()) ||
+                                               (limbAtype.isWing() && !limbBtype.isWing()) ||
+                                               (limbAtype.isBody() && !limbBtype.isBody()) ||
+                                               (limbAtype.isTail() && !limbBtype.isTail()) ||
+                                               (limbAtype.isLeg() && !limbBtype.isLeg())) {
+                                              return -1;
+                                           }
+                                           if (((limbAtype.side == Side.RIGHT) && (limbBtype.side != Side.RIGHT))) {
+                                              return -1;
+                                           }
+                                           return Integer.compare(limbAtype.setId, limbBtype.setId);
+                                        }).collect(Collectors.toList());
          for (Limb limb : sortedLimbs) {
             // adjust the listed distance of each of our limb locations
             if (target != null) {
@@ -3492,7 +3489,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          if (defenseActions.contains(defOpt) || (defOpt == DefenseOption.DEF_PD)) {
             defense += defenseBase.get(range).get(defOpt);
          }
-      }
+   }
 
       if (includeWoundPenalty) {
          defense -= getWounds();

@@ -128,12 +128,7 @@ public class RequestSingleTargetSelection extends SyncRequest implements Enums
          }
       }
       // sort the list of target based upon the distance from the caster:
-      targets.sort(new Comparator<>() {
-         @Override
-         public int compare(Character o1, Character o2) {
-            return Short.compare(Arena.getMinDistance(requestor, o1), Arena.getMinDistance(requestor, o2));
-         }
-      });
+      targets.sort((o1, o2) -> Short.compare(Arena.getMinDistance(requestor, o1), Arena.getMinDistance(requestor, o2)));
 
       for (Character target : targets) {
          // Don't allow a selection of someone they can't see.

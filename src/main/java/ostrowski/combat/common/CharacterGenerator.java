@@ -233,113 +233,113 @@ public class CharacterGenerator implements Enums
                   }
                }
             }
-         }
-         if (thing == null) {
-            // What else could this be?
-            Advantage adv = Advantage.getAdvantage(token);
-            if (adv == null) {
-               adv = Advantage.getAdvantage(twoTokens);
-               if (adv != null) {
-                  // If we used the second token to make an advantage, consume the token
-                  tokens.remove(0);
-               }
+            if (thing == null) {
+               // What else could this be?
+               Advantage adv = Advantage.getAdvantage(token);
                if (adv == null) {
-                  adv = Advantage.getAdvantage(threeTokens);
+                  adv = Advantage.getAdvantage(twoTokens);
                   if (adv != null) {
-                     // If we used the second and third tokens to make an advantage, consume the tokens
+                     // If we used the second token to make an advantage, consume the token
                      tokens.remove(0);
-                     tokens.remove(0);
+                  }
+                  if (adv == null) {
+                     adv = Advantage.getAdvantage(threeTokens);
+                     if (adv != null) {
+                        // If we used the second and third tokens to make an advantage, consume the tokens
+                        tokens.remove(0);
+                        tokens.remove(0);
+                     }
                   }
                }
-            }
-            if (adv != null) {
-               character.addAdvantage(adv);
-               if (adv.getName().startsWith(Advantage.WEALTH)) {
-                  String wealthLevel = adv.getLevelNames().get(adv.getLevel());
-                  wealthLevel = wealthLevel.substring(1).replaceAll(",", "");// remove the '$' and all commas
-                  maxExpenditure = Integer.parseInt(wealthLevel);
-                  if (maxExpenditure == 0) {
-                     noEquip = true;
-                  }
-                  maxExpenditure *= character.getRace().getWealthMultiplier();
-               }
-            }
-            else {
-               // Allow specific attribute levels
-               int indexOfColon = token.indexOf(':');
-               if (indexOfColon != -1) {
-                  String name = token.substring(0, indexOfColon);
-                  String value = token.substring(indexOfColon + 1);
-                  if (name.equalsIgnoreCase("team")) {
-                     for (byte teamID = 0; teamID < TEAM_NAMES.length; teamID++) {
-                        if (value.equalsIgnoreCase(TEAM_NAMES[teamID])) {
-                           character._teamID = teamID;
-                           break;
-                        }
+               if (adv != null) {
+                  character.addAdvantage(adv);
+                  if (adv.getName().startsWith(Advantage.WEALTH)) {
+                     String wealthLevel = adv.getLevelNames().get(adv.getLevel());
+                     wealthLevel = wealthLevel.substring(1).replaceAll(",", "");// remove the '$' and all commas
+                     maxExpenditure = Integer.parseInt(wealthLevel);
+                     if (maxExpenditure == 0) {
+                        noEquip = true;
                      }
-                  }
-                  else if (name.equalsIgnoreCase("name")) {
-                     requiredName = value;
-                  }
-                  else {
-                     boolean attrFound = false;
-                     for (Attribute att : Attribute.values()) {
-                        if (name.equalsIgnoreCase(att.shortName)) {
-                           Integer level = Integer.parseInt(value);
-                           requiredAttributes.put(att.shortName, level);
-                           character.setAttribute(att, level.byteValue(), true/*containInLimits*/);
-                           attrFound = true;
-                           break;
-                        }
-                     }
-                     if (!attrFound) {
-                        SkillType skillType = SkillType.getSkillTypeByName(name);
-                        if (skillType != null) {
-                           Byte level = Byte.parseByte(value);
-                           requiredSkills.put(skillType, level);
-                        }
-                        else {
-                           MageSpell mageSpell = MageSpells.getSpell(name);
-                           if (mageSpell != null) {
-                              byte level = Byte.parseByte(value);
-                              mageSpell.setFamiliarity(MageSpell.FAM_KNOWN);
-                              character.setSpellLevel(mageSpell.getName(), mageSpell.getLevel());
-                              Class<? extends MageSpell>[] requiredSpells = mageSpell._prerequisiteSpells;
-                              for (Class<? extends MageSpell> preReq : requiredSpells) {
-                                 try {
-                                    MageSpell preReqSpell = preReq.getDeclaredConstructor().newInstance();
-                                    character.setSpellLevel(preReqSpell.getName(), mageSpell.getLevel());
-                                 } catch (InstantiationException |
-                                          IllegalAccessException |
-                                          IllegalArgumentException |
-                                          InvocationTargetException |
-                                          NoSuchMethodException |
-                                          SecurityException e) {
-                                    e.printStackTrace();
-                                 }
-                              }
-                              for (MageCollege college : mageSpell._prerequisiteColleges) {
-                                 if (level > character.getCollegeLevel(college.getName())) {
-                                    character.setCollegeLevel(college.getName(), level);
-                                 }
-                              }
-                           }
-                           else {
-                              // What else could this be? It has a colon (':') in it
-                              // It could be a key ("key:red door")
-                              character.addEquipment(Thing.getThing(token, character.getRace()));
-                           }
-                        }
-                     }
+                     maxExpenditure *= character.getRace().getWealthMultiplier();
                   }
                }
                else {
-                  if (token.equalsIgnoreCase("sheathed")) {
-                     weaponSheathed = true;
+                  // Allow specific attribute levels
+                  int indexOfColon = token.indexOf(':');
+                  if (indexOfColon != -1) {
+                     String name = token.substring(0, indexOfColon);
+                     String value = token.substring(indexOfColon + 1);
+                     if (name.equalsIgnoreCase("team")) {
+                        for (byte teamID = 0; teamID < TEAM_NAMES.length; teamID++) {
+                           if (value.equalsIgnoreCase(TEAM_NAMES[teamID])) {
+                              character._teamID = teamID;
+                              break;
+                           }
+                        }
+                     }
+                     else if (name.equalsIgnoreCase("name")) {
+                        requiredName = value;
+                     }
+                     else {
+                        boolean attrFound = false;
+                        for (Attribute att : Attribute.values()) {
+                           if (name.equalsIgnoreCase(att.shortName)) {
+                              Integer level = Integer.parseInt(value);
+                              requiredAttributes.put(att.shortName, level);
+                              character.setAttribute(att, level.byteValue(), true/*containInLimits*/);
+                              attrFound = true;
+                              break;
+                           }
+                        }
+                        if (!attrFound) {
+                           SkillType skillType = SkillType.getSkillTypeByName(name);
+                           if (skillType != null) {
+                              Byte level = Byte.parseByte(value);
+                              requiredSkills.put(skillType, level);
+                           }
+                           else {
+                              MageSpell mageSpell = MageSpells.getSpell(name);
+                              if (mageSpell != null) {
+                                 byte level = Byte.parseByte(value);
+                                 mageSpell.setFamiliarity(MageSpell.FAM_KNOWN);
+                                 character.setSpellLevel(mageSpell.getName(), mageSpell.getLevel());
+                                 Class<? extends MageSpell>[] requiredSpells = mageSpell._prerequisiteSpells;
+                                 for (Class<? extends MageSpell> preReq : requiredSpells) {
+                                    try {
+                                       MageSpell preReqSpell = preReq.getDeclaredConstructor().newInstance();
+                                       character.setSpellLevel(preReqSpell.getName(), mageSpell.getLevel());
+                                    } catch (InstantiationException |
+                                            IllegalAccessException |
+                                            IllegalArgumentException |
+                                            InvocationTargetException |
+                                            NoSuchMethodException |
+                                            SecurityException e) {
+                                       e.printStackTrace();
+                                    }
+                                 }
+                                 for (MageCollege college : mageSpell._prerequisiteColleges) {
+                                    if (level > character.getCollegeLevel(college.getName())) {
+                                       character.setCollegeLevel(college.getName(), level);
+                                    }
+                                 }
+                              }
+                              else {
+                                 // What else could this be? It has a colon (':') in it
+                                 // It could be a key ("key:red door")
+                                 character.addEquipment(Thing.getThing(token, character.getRace()));
+                              }
+                           }
+                        }
+                     }
                   }
                   else {
-                     // TODO: allow classes? (priest, mage, archer, tank)
-                     character.addEquipment(Thing.getThing(token, character.getRace()));
+                     if (token.equalsIgnoreCase("sheathed")) {
+                        weaponSheathed = true;
+                     }
+                     else {
+                        // TODO: allow classes? (priest, mage, archer, tank)
+                        character.addEquipment(Thing.getThing(token, character.getRace()));
+                     }
                   }
                }
             }
@@ -929,7 +929,7 @@ public class CharacterGenerator implements Enums
       Skill shieldSkill  = character.getSkill(SkillType.Shield);
       List<Skill> skills = character.getSkillsList();
       for (Skill skill : skills) {
-         boolean isPrimary = (skill.getName().equals(primarySkill.getName()));
+         boolean isPrimary = (primarySkill != null) && (skill.getName().equals(primarySkill.getName()));
          if (skill.isAdjustedForEncumbrance()) {
             byte encLevel = Rules.getEncumbranceLevel(character);
 
@@ -962,7 +962,7 @@ public class CharacterGenerator implements Enums
             }
          }
          // Make sure no skill is higher than the primary skill
-         if (!isPrimary) {
+         if (!isPrimary && (primarySkill != null)) {
             if (skill.getLevel() > primarySkill.getLevel()) {
                skill.setLevel((byte) (skill.getLevel() - 1));
                primarySkill.setLevel((byte) (primarySkill.getLevel() + 1));
@@ -974,7 +974,7 @@ public class CharacterGenerator implements Enums
          // Make sure no skill other than the primary is higher than the shield
          if ((shieldSkill != null) && (shieldSkill.getLevel() > 0)) {
             if (!skill.getName().equals(shieldSkill.getName())) {
-               if (!skill.getName().equals(primarySkill.getName())) {
+               if ((primarySkill != null) && !skill.getName().equals(primarySkill.getName())) {
                   if (skill.getLevel() > shieldSkill.getLevel()) {
                      skill.setLevel((byte) (skill.getLevel() - 1));
                      shieldSkill.setLevel((byte) (shieldSkill.getLevel() + 1));
@@ -1267,17 +1267,14 @@ public class CharacterGenerator implements Enums
    }
 
    private static TreeSet<Skill> sortSkillsByLevel(List<Skill> skillsList, final boolean ascending) {
-      TreeSet<Skill> skills = new TreeSet<>(new Comparator<>() {
-         @Override
-         public int compare(Skill o1, Skill o2) {
-            if (o1.getLevel() == o2.getLevel()) {
-               return 0;
-            }
-            if (o1.getLevel() < o2.getLevel()) {
-               return ascending ? -1 : 1;
-            }
-            return ascending ? 1 : -1;
+      TreeSet<Skill> skills = new TreeSet<>((o1, o2) -> {
+         if (o1.getLevel() == o2.getLevel()) {
+            return 0;
          }
+         if (o1.getLevel() < o2.getLevel()) {
+            return ascending ? -1 : 1;
+         }
+         return ascending ? 1 : -1;
       });
       skills.addAll(skillsList);
       return skills;

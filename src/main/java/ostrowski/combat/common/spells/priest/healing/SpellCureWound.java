@@ -55,53 +55,50 @@ public class SpellCureWound extends PriestSpell implements ICastInBattle
    }
    @Override
    public void applyEffects(Arena arena) {
-      SortedSet<Wound> sortedWounds = new TreeSet<>(new Comparator<>() {
-         @Override
-         public int compare(Wound wound1, Wound wound2) {
-            if ((wound1.getPenaltyMove() == -1) == (wound2.getPenaltyMove() == -1)) {
-               if ((wound1.getPenaltyLimb() == -1) == (wound2.getPenaltyLimb() == -1)) {
-                  if (wound1.getEffectiveWounds() == wound2.getEffectiveWounds()) {
-                     if (wound1.getEffectiveBleedRate() == wound2.getEffectiveBleedRate()) {
-                        if (wound1.getWounds() == wound2.getWounds()) {
-                           if (wound1.getPenaltyMove() == wound2.getPenaltyMove()) {
-                              if (wound1.getBleedRate() == wound2.getBleedRate()) {
-                                 return Byte.compare(wound1.getLevel(), wound2.getLevel());
-                              }
-                              if (wound1.getBleedRate() < wound2.getBleedRate()) {
-                                 return -1;
-                              }
-                              return 1;
+      SortedSet<Wound> sortedWounds = new TreeSet<>((wound1, wound2) -> {
+         if ((wound1.getPenaltyMove() == -1) == (wound2.getPenaltyMove() == -1)) {
+            if ((wound1.getPenaltyLimb() == -1) == (wound2.getPenaltyLimb() == -1)) {
+               if (wound1.getEffectiveWounds() == wound2.getEffectiveWounds()) {
+                  if (wound1.getEffectiveBleedRate() == wound2.getEffectiveBleedRate()) {
+                     if (wound1.getWounds() == wound2.getWounds()) {
+                        if (wound1.getPenaltyMove() == wound2.getPenaltyMove()) {
+                           if (wound1.getBleedRate() == wound2.getBleedRate()) {
+                              return Byte.compare(wound1.getLevel(), wound2.getLevel());
                            }
-                           if (wound1.getPenaltyMove() < wound2.getPenaltyMove()) {
+                           if (wound1.getBleedRate() < wound2.getBleedRate()) {
                               return -1;
                            }
                            return 1;
                         }
-                        if (wound1.getWounds() < wound2.getWounds()) {
+                        if (wound1.getPenaltyMove() < wound2.getPenaltyMove()) {
                            return -1;
                         }
                         return 1;
                      }
-                     if (wound1.getEffectiveBleedRate() < wound2.getEffectiveBleedRate()) {
+                     if (wound1.getWounds() < wound2.getWounds()) {
                         return -1;
                      }
                      return 1;
                   }
-                  if (wound1.getEffectiveWounds() < wound2.getEffectiveWounds()) {
+                  if (wound1.getEffectiveBleedRate() < wound2.getEffectiveBleedRate()) {
                      return -1;
                   }
                   return 1;
                }
-               if (wound1.getPenaltyLimb() == -1) {
-                  return 1;
+               if (wound1.getEffectiveWounds() < wound2.getEffectiveWounds()) {
+                  return -1;
                }
-               return -1;
+               return 1;
             }
-            if (wound1.getPenaltyMove() == -1) {
+            if (wound1.getPenaltyLimb() == -1) {
                return 1;
             }
             return -1;
          }
+         if (wound1.getPenaltyMove() == -1) {
+            return 1;
+         }
+         return -1;
       });
       sortedWounds.addAll(getTarget().getWoundsList());
       Wound bestWoundToCure = null;

@@ -1520,12 +1520,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
          return;
       }
       File sourceFile = new File("arena.data");
-      TreeSet<String> arenaNames = new TreeSet<>(new Comparator<>() {
-         @Override
-         public int compare(String o1, String o2) {
-            return o1.toLowerCase().compareTo(o2.toLowerCase());
-         }
-      });
+      TreeSet<String> arenaNames = new TreeSet<>((o1, o2) -> o1.toLowerCase().compareTo(o2.toLowerCase()));
       if (sourceFile.exists() && sourceFile.canRead()) {
          try (FileReader fileReader = new FileReader(sourceFile);
               BufferedReader input = new BufferedReader(fileReader)) {

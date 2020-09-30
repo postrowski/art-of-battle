@@ -1,5 +1,6 @@
 package ostrowski.combat.common;
 
+import org.eclipse.swt.graphics.Point;
 import org.w3c.dom.*;
 import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.DOMImplementationLS;
@@ -39,7 +40,9 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
    private short                      _sizeX;
    private ArenaLocation[][]          _locations                = null;
    private boolean                    _hideViewFromLocalPlayers = true;
-
+   private String                     _backgroundImagePath      = "";
+   private Point                      _bgImageUpperLeft         = new Point(0,0);
+   private Point                      _bgImageBottomRight       = null;
    private byte                       _maxCombatantsPerTeam     = CombatServer.MAX_COMBATANTS_PER_TEAM;
    private byte                       _teamCount                = CombatServer.MAX_TEAMS;
    private ArenaLocation[][]          _startPoints              = new ArenaLocation[_teamCount][_maxCombatantsPerTeam];
@@ -678,6 +681,19 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
             setStockCharacter(charName, ai, team, cur);
          }
       }
+      if (!st.hasMoreElements()) {
+         return true;
+      }
+      _backgroundImagePath = st.nextToken();
+      if (!st.hasMoreElements()) {
+         return true;
+      }
+      _bgImageUpperLeft   = new Point(Short.parseShort(st.nextToken()), Short.parseShort(st.nextToken()));
+      if (!st.hasMoreElements()) {
+         return true;
+      }
+      _bgImageBottomRight = new Point(Short.parseShort(st.nextToken()), Short.parseShort(st.nextToken()));
+
       return true;
    }
    public String serializeToString() {
@@ -720,6 +736,11 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
             }
          }
       }
+      sb.append(_backgroundImagePath).append(SEPARATOR_MAIN);
+      sb.append(_bgImageUpperLeft.x).append(SEPARATOR_MAIN);
+      sb.append(_bgImageUpperLeft.y).append(SEPARATOR_MAIN);
+      sb.append(_bgImageBottomRight.x).append(SEPARATOR_MAIN);
+      sb.append(_bgImageBottomRight.y).append(SEPARATOR_MAIN);
       return sb.toString();
    }
 
@@ -731,6 +752,11 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
          writeToStream(getSizeX(), out);
          writeToStream(getSizeY(), out);
          writeToStream(_hideViewFromLocalPlayers, out);
+         writeToStream(_backgroundImagePath, out);
+         writeToStream(_bgImageUpperLeft.x, out);
+         writeToStream(_bgImageUpperLeft.y, out);
+         writeToStream(_bgImageBottomRight.x, out);
+         writeToStream(_bgImageBottomRight.y, out);
          for (short col=0 ; col<getSizeX() ; col++) {
             for (short row=(short)(col%2) ; row<getSizeY(); row+=2) {
                getLocation(col,row).serializeContentsToStream(out);
@@ -764,6 +790,14 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
          short sizeX = in.readShort();
          short sizeY = in.readShort();
          _hideViewFromLocalPlayers = in.readBoolean();
+         _backgroundImagePath    = readString(in);
+         short x = in.readShort();
+         short y = in.readShort();
+         _bgImageUpperLeft = new Point(x, y);
+         x = in.readShort();
+         y = in.readShort();
+         _bgImageBottomRight = new Point(x, y);
+
          setSize(sizeX, sizeY);
          for (short col=0 ; col<_sizeX ; col++) {
             for (short row=(short)(col%2) ; row<_sizeY; row+=2) {
@@ -777,8 +811,8 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
          _stockCharName = new String[_teamCount][_maxCombatantsPerTeam];
          for (byte team = 0 ; team<_teamCount ; team++) {
             for (byte combatant = 0 ; combatant<_maxCombatantsPerTeam ; combatant++) {
-               short x = in.readShort();
-               short y = in.readShort();
+               x = in.readShort();
+               y = in.readShort();
                if ((x != -1) && (y != -1)) {
                   _startPoints[team][combatant]   = getLocation(x, y);
                }
@@ -796,44 +830,56 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
    public String toString() {
       return "ComatMap: " + _sizeX +"x" + _sizeY;
    }
+
    @Override
    public CombatMap clone() {
-       CombatMap newObj = new CombatMap(_sizeX, _sizeY, null);
-       newObj._level = _level;
-       newObj._hideViewFromLocalPlayers = _hideViewFromLocalPlayers;
-       newObj._name = _name;
-       for (short col = 0 ; col<_sizeX ; col++) {
-           for (short row = (short)(col%2) ; row<_sizeY ; row += 2) {
-             newObj._locations[col][row].copyData(_locations[col][row]);
-          }
-       }
-       newObj._teamCount = _teamCount;
+      CombatMap newObj = new CombatMap(_sizeX, _sizeY, null);
+      newObj._level = _level;
+      newObj._hideViewFromLocalPlayers = _hideViewFromLocalPlayers;
+      newObj._name = _name;
+      for (short col = 0; col < _sizeX; col++) {
+         for (short row = (short) (col % 2); row < _sizeY; row += 2) {
+            newObj._locations[col][row].copyData(_locations[col][row]);
+         }
+      }
+      newObj._teamCount = _teamCount;
 
-       newObj._maxCombatantsPerTeam = _maxCombatantsPerTeam;
-       newObj._startPoints = new ArenaLocation[_teamCount][_maxCombatantsPerTeam];
-       newObj._stockAiName = new String[_teamCount][_maxCombatantsPerTeam];
-       newObj._stockCharName = new String[_teamCount][_maxCombatantsPerTeam];
-       for (byte team=0 ; team<_teamCount ; team++) {
-          for (byte cur=0 ; cur<_maxCombatantsPerTeam ; cur++) {
-             if (_startPoints != null) {
-                ArenaLocation startPoint = _startPoints[team][cur];
-                if (startPoint != null) {
-                   newObj._startPoints[team][cur] = newObj._locations[startPoint._x][startPoint._y];
-                }
-             }
-             if (_stockAiName != null) {
-                newObj._stockAiName[team][cur] = _stockAiName[team][cur];
-             }
-             if (_stockCharName != null) {
-                newObj._stockCharName[team][cur] = _stockCharName[team][cur];
-             }
-          }
-       }
-       newObj._triggers.clear();
-       for (ArenaTrigger trigger : _triggers) {
-          newObj._triggers.add(trigger.clone());
-       }
-       return newObj;
+      newObj._maxCombatantsPerTeam = _maxCombatantsPerTeam;
+      newObj._startPoints = new ArenaLocation[_teamCount][_maxCombatantsPerTeam];
+      newObj._stockAiName = new String[_teamCount][_maxCombatantsPerTeam];
+      newObj._stockCharName = new String[_teamCount][_maxCombatantsPerTeam];
+      for (byte team = 0; team < _teamCount; team++) {
+         for (byte cur = 0; cur < _maxCombatantsPerTeam; cur++) {
+            if (_startPoints != null) {
+               ArenaLocation startPoint = _startPoints[team][cur];
+               if (startPoint != null) {
+                  newObj._startPoints[team][cur] = newObj._locations[startPoint._x][startPoint._y];
+               }
+            }
+            if (_stockAiName != null) {
+               newObj._stockAiName[team][cur] = _stockAiName[team][cur];
+            }
+            if (_stockCharName != null) {
+               newObj._stockCharName[team][cur] = _stockCharName[team][cur];
+            }
+         }
+      }
+      newObj._triggers.clear();
+      for (ArenaTrigger trigger : _triggers) {
+         newObj._triggers.add(trigger.clone());
+      }
+      newObj._backgroundImagePath = _backgroundImagePath;
+      if (_bgImageUpperLeft == null) {
+         newObj._bgImageUpperLeft = null;
+      } else {
+         newObj._bgImageUpperLeft = new Point(_bgImageUpperLeft.x, _bgImageUpperLeft.y);
+      }
+      if (_bgImageBottomRight == null) {
+         newObj._bgImageBottomRight = null;
+      } else {
+         newObj._bgImageBottomRight = new Point(_bgImageBottomRight.x, _bgImageBottomRight.y);
+      }
+      return newObj;
    }
 
    public boolean canSee(Character fromChar, Character toChar, boolean considerFacing, boolean blockedByAnyStandingCharacter) {
@@ -2033,6 +2079,15 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       mainElement.setAttribute("level", String.valueOf(getLevel()));
       mainElement.setAttribute("width", String.valueOf(getSizeX()));
       mainElement.setAttribute("height", String.valueOf(getSizeY()));
+      mainElement.setAttribute("backgroundImagePath", String.valueOf(_backgroundImagePath));
+      if (_bgImageUpperLeft != null) {
+         mainElement.setAttribute("bgImageUpperLeftX", String.valueOf(_bgImageUpperLeft.x));
+         mainElement.setAttribute("bgImageUpperLeftY", String.valueOf(_bgImageUpperLeft.y));
+      }
+      if (_bgImageBottomRight != null) {
+         mainElement.setAttribute("bgImageBottomRightX", String.valueOf(_bgImageBottomRight.x));
+         mainElement.setAttribute("bgImageBottomRightY", String.valueOf(_bgImageBottomRight.y));
+      }
       mainElement.setAttribute("hideViewFromLocalPlayers", String.valueOf(_hideViewFromLocalPlayers));
 
       if (includeKnownByUniqueIDInfo != null) {
@@ -2254,6 +2309,34 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
             _hideViewFromLocalPlayers = Boolean.parseBoolean(hide);
          }
       }
+
+      _backgroundImagePath = "";
+      Node nodePath = namedNodeMap.getNamedItem("backgroundImagePath");
+      if (nodePath != null) {
+         _backgroundImagePath = nodePath.getNodeValue();
+      }
+
+      _bgImageUpperLeft = new Point(0,0);
+      Node nodeX = namedNodeMap.getNamedItem("bgImageUpperLeftX");
+      Node nodeY = namedNodeMap.getNamedItem("bgImageUpperLeftY");
+      if ((nodeX != null) && (nodeY != null)) {
+         String x = nodeX.getNodeValue();
+         String y = nodeY.getNodeValue();
+         if ((x != null) && (y != null) && (!x.isEmpty()) && (!y.isEmpty())) {
+            _bgImageUpperLeft = new Point(Integer.parseInt(x), Integer.parseInt(y));
+         }
+      }
+      _bgImageBottomRight = null;
+      nodeX = namedNodeMap.getNamedItem("bgImageBottomRightX");
+      nodeY = namedNodeMap.getNamedItem("bgImageBottomRightY");
+      if ((nodeX != null) && (nodeY != null)) {
+         String x = nodeX.getNodeValue();
+         String y = nodeY.getNodeValue();
+         if ((x != null) && (y != null) && (!x.isEmpty()) && (!y.isEmpty())) {
+            _bgImageBottomRight = new Point(Integer.parseInt(x), Integer.parseInt(y));
+         }
+      }
+
 
 
       _teamCount = CombatServer.MAX_TEAMS;
@@ -2547,6 +2630,18 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       if (_hideViewFromLocalPlayers != other._hideViewFromLocalPlayers) {
          return false;
       }
+      if (!_backgroundImagePath.equalsIgnoreCase(other._backgroundImagePath)) {
+         return false;
+      }
+      if ((_bgImageBottomRight == null && other._bgImageBottomRight != null) ||
+          (_bgImageBottomRight != null && !_bgImageBottomRight.equals(other._bgImageBottomRight))) {
+         return false;
+      }
+      if ((_bgImageUpperLeft == null && other._bgImageUpperLeft != null) ||
+          (_bgImageUpperLeft != null && !_bgImageUpperLeft.equals(other._bgImageUpperLeft))) {
+         return false;
+      }
+
       for (short col = 0 ; col<_sizeX ; col++) {
          for (short row = (short) (col%2) ; row<_sizeY ; row += 2) {
 //            if (!_locations[col][row].equals(other._locations[col][row])) {
@@ -2619,4 +2714,10 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       }
    }
 
+   public String getBackgroundImagePath() {
+      return _backgroundImagePath;
+   }
+   public void setBackgroundImagePath(String backgroundImagePath) {
+      _backgroundImagePath = backgroundImagePath;
+   }
 }
