@@ -80,6 +80,10 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
    }
 
    @Override
+   public void setBackgroundAlpha(int alpha) {
+   }
+
+   @Override
    public void setLayoutData(Object data) {
       _view.getCanvas().setLayoutData(data);
    }

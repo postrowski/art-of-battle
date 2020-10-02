@@ -26,6 +26,7 @@ public interface IMapWidget extends KeyListener
       FILL,
       LINE
    }
+   void setBackgroundAlpha(int alpha);
 
    void setLayoutData(Object data);
    void addControlGroup(Composite parent);

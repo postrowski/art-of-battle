@@ -63,6 +63,10 @@ public class TerrainInterface extends Helper implements SelectionListener, Modif
    private Button   _clearItems;
    private boolean  _clearItemsActive = false;
 
+   public Text      _bgImageFilePath;
+   public Button    _bgImageFileBtn;
+   public Slider    _bgImageAlphaSlider;
+
    public boolean allowPan() {
       return ((_currentTerrain == -1) && (_currentWall == -1));
    }
@@ -90,16 +94,15 @@ public class TerrainInterface extends Helper implements SelectionListener, Modif
             _terrainButtons[terrain.value].setAlignment(SWT.RIGHT);
             _terrainButtons[terrain.value].addListener(SWT.Paint, this);
             data = new GridData();
-            data.minimumWidth  = 120;
+            data.minimumWidth = 120;
             data.grabExcessHorizontalSpace = true;
             _terrainButtons[terrain.value].setLayoutData(data);
             _terrainButtons[terrain.value].addSelectionListener(this);
          }
-         @SuppressWarnings("unused")
-         Label dummy = new Label(terrainButtonsBlock, 0);
-         dummy = new Label(terrainButtonsBlock, 0);
-         dummy = new Label(terrainButtonsBlock, 0);
-         dummy = new Label(terrainButtonsBlock, 0);
+         new Label(terrainButtonsBlock, 0);
+         new Label(terrainButtonsBlock, 0);
+         new Label(terrainButtonsBlock, 0);
+         new Label(terrainButtonsBlock, 0);
          _clearButton = makeButton(terrainButtonsBlock, "Clear");
          _fillButton = makeButton(terrainButtonsBlock, "Paint / Fill");
          _lineButton = makeButton(terrainButtonsBlock, "Draw Line");
@@ -132,7 +135,7 @@ public class TerrainInterface extends Helper implements SelectionListener, Modif
          {
             Composite doorBlock = createGroup(wallsDoorsBlock, "Door info", 3/*columns*/, false/*sameSize*/, 1 /*hSpacing*/, 1 /*vSpacing*/);
             _isDoor          = new Button(doorBlock, SWT.CHECK);
-            Label isDoorLabel = createLabel(doorBlock, "this wall section has a door.", SWT.LEFT, 2/*hSpan*/, null);
+            createLabel(doorBlock, "this wall section has a door.", SWT.LEFT, 2/*hSpan*/, null);
             _isOpen          = new Button(doorBlock, SWT.CHECK);
             _isOpenLabel     = createLabel(doorBlock, "the door is open.", SWT.LEFT, 2/*hSpan*/, null);
             _isLockable      = new Button(doorBlock, SWT.CHECK);
@@ -158,6 +161,27 @@ public class TerrainInterface extends Helper implements SelectionListener, Modif
          _itemDesc   = createText(itemsBlock, "", true/*editable*/, 1/*hSpan*/);
          _setItems   = makeButton(itemsBlock, "Set Location");
          _clearItems = makeButton(itemsBlock, "Clear Location(s)");
+      }
+      {
+         Composite bgImgBlock = createGroup(buttonsBlock, "Background Image", 4/*columns*/, false/*sameSize*/,
+                                            1 /*hSpacing*/, 1 /*vSpacing*/);
+         grid = new GridLayout(7, false);
+         grid.verticalSpacing = 1;
+         grid.horizontalSpacing = 1;
+         bgImgBlock.setLayout(grid);
+         createLabel(bgImgBlock, "File:", SWT.LEFT, 1/*hSpan*/, null);
+         _bgImageFilePath = createText(bgImgBlock, "", false/*editable*/, 4/*hSpan*/);
+         _bgImageFileBtn = createButton(bgImgBlock, "choose", 2, null, this);
+         createLabel(bgImgBlock, "Alpha", SWT.LEFT, 1/*hSpan*/, null);
+         _bgImageAlphaSlider = new Slider(bgImgBlock, SWT.HORIZONTAL);
+         GridData sliderGridData = new GridData(GridData.FILL_HORIZONTAL);
+         sliderGridData.horizontalSpan = 6;
+         _bgImageAlphaSlider.setLayoutData(sliderGridData);
+         _bgImageAlphaSlider.setBounds(0, 30, 200, 20);
+         _bgImageAlphaSlider.setMaximum(255);
+         _bgImageAlphaSlider.setMinimum(0);
+         _bgImageAlphaSlider.setIncrement(16);
+         _bgImageAlphaSlider.addSelectionListener(this);
       }
    }
    private Button makeButton(Composite parent, String text) {
@@ -220,6 +244,21 @@ public class TerrainInterface extends Helper implements SelectionListener, Modif
       }
       else if (e.widget == _isLocked) {
          // nothing to do?
+      }
+      else if (e.widget == _bgImageAlphaSlider) {
+         _mapInterface.setBackgroundAlpha(_bgImageAlphaSlider.getSelection());
+      }
+      else if (e.widget == _bgImageFileBtn) {
+         FileDialog fd = new FileDialog(e.display.getShells()[0], SWT.OPEN);
+         fd.setText("Open");
+         fd.setFilterPath("Arenas");
+         fd.setFilterExtensions(new String[] {"*.png;*.gif;*.jpg", "*.*"});
+         fd.setFilterNames(new String[] {"Image Files (*.png;*.gif;*.jpg)", "All files(*.*)"});
+         String selected = fd.open();
+         if (selected != null && !selected.isEmpty()) {
+            _bgImageFilePath.setText(selected);
+            _mapInterface.getCombatMap().setBackgroundImagePath(selected);
+         }
       }
       else if (e.widget == _clearButton) {
          _fillActive = false;
@@ -568,7 +607,7 @@ public class TerrainInterface extends Helper implements SelectionListener, Modif
                if (_lineActive && (_currentTerrain > 0)) {
                   mapWidget.setLine(_lineStart, _lineEnd, TerrainType.getByValue(_currentTerrain).color);
                }
-               else if (_wallLineActive && (_currentWall > 0)) {
+               else { // this is true: (_wallLineActive && (_currentWall > 0))
                   mapWidget.setWallLine(_lineStart, _lineStartAngleFromCenter, _lineEnd, _lineEndAngleFromCenter,
                                         TerrainType.getByValue(_currentTerrain).color);
                }
@@ -770,6 +809,16 @@ public class TerrainInterface extends Helper implements SelectionListener, Modif
    }
    public void setMap(IMapWidget map) {
       _mapInterface = map;
+     _mapInterface.setBackgroundAlpha(_bgImageAlphaSlider.getSelection());
+
+     String backgroundImagePath = "";
+     if (map.getCombatMap() != null) {
+        backgroundImagePath = map.getCombatMap().getBackgroundImagePath();
+        if (backgroundImagePath == null) {
+           backgroundImagePath = "";
+        }
+     }
+     _bgImageFilePath.setText(backgroundImagePath);
    }
 
 }

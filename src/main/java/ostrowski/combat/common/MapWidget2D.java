@@ -61,6 +61,67 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
    private ImageData        _imageDataCopy;
    private CombatMap        _hashMapIsForThisMap     = null;
 
+
+   static class BackgroundImageInfo {
+      private int    _alpha          = 0;
+      private Image  _imageKnown     = null;
+      private Image  _imageVisible   = null;
+      private int    _sizePerHex     = 0;
+      private float  _stretchFactorX = 0f;
+      private float  _stretchFactorY = 0f;
+      private String _imagePath      = "";
+      private CombatMap _map = null;
+      private void setInfo(int sizePerHex, CombatMap map, Display display) {
+         if ((_sizePerHex == sizePerHex) && (_map == map) && (map == null || _imagePath.equals(map.getBackgroundImagePath()))) {
+            return;
+         }
+         _sizePerHex = sizePerHex;
+         _map = map;
+         String mapBGImagePath = (map == null) ? "" : map.getBackgroundImagePath();
+         if (mapBGImagePath == null) {
+            mapBGImagePath = "";
+         }
+         if (!_imagePath.equalsIgnoreCase(mapBGImagePath)) {
+            if (_imageKnown != null) {
+               _imageKnown.dispose();
+               _imageVisible.dispose();
+               _imageKnown = null;
+               _imageVisible = null;
+            }
+            _imagePath = mapBGImagePath;
+            if (!mapBGImagePath.isEmpty()) {
+               _imageKnown = new Image(display, _imagePath);
+               _imageVisible = new Image(display, _imagePath);
+               darkenImage(_imageKnown, 50);
+            }
+         }
+
+         if (_map != null && _imageKnown != null) {
+            int[] bottomRightBounds = getHexDimensions(_map.getSizeX(), _map.getSizeY(), _sizePerHex, 0, 0, false/*cacheResults*/);
+            _stretchFactorX = ((float) _imageKnown.getBounds().width) / bottomRightBounds[X_LARGEST];
+            _stretchFactorY = ((float) _imageKnown.getBounds().height) / bottomRightBounds[Y_LARGEST];
+         }
+      }
+
+      public static void darkenImage( Image source, int fade) {
+         ImageData imageData = source.getImageData();
+         // recalculare every pixel, changing the brightness
+         for ( int y = 0; y < source.getBounds().height; y++ ) {
+            for ( int x = 0; x < source.getBounds().width; x++ ) {
+               // get the pixel data
+               int a = imageData.getPixel(x, y);
+               darkenColor(a, fade);
+               imageData.setPixel(x, y, a);
+            }
+         }
+      }
+
+      public boolean isActive() {
+         return _alpha > 0 && _imageKnown != null;
+      }
+   }
+   private static final BackgroundImageInfo BACKGROUND_IMAGE_INFO = new BackgroundImageInfo();
+
    static {
       ZOOM_CONTROL_IMAGE_DATA = getImageData("/res/zoomControl.png");
    }
@@ -102,6 +163,12 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       _canvas.addKeyListener(this);
       _canvas.getParent().addKeyListener(this);
       _canvas.getParent().getParent().addKeyListener(this);
+   }
+
+   @Override
+   public void setBackgroundAlpha(int alpha) {
+      BACKGROUND_IMAGE_INFO._alpha = alpha;
+      redraw();
    }
 
    @Override
@@ -180,6 +247,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
    public void handleEvent(Event event)
    {
       if (event.type == SWT.Paint) {
+         long start = System.currentTimeMillis();
          if (_resizeOnFirstDraw) {
             setZoomToFit();
          }
@@ -187,6 +255,13 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
             Display display = event.display;
             Image image = new Image(display, _canvas.getBounds());
             Font font = new Font(display, "", getFontSizeByZoomLevel(), SWT.BOLD);
+
+            CombatMap combatMap = null;
+            IMapWidget map = CombatServer._this._map;
+            if (map != null) {
+               combatMap = map.getCombatMap();
+            }
+            BACKGROUND_IMAGE_INFO.setInfo(_sizePerHex, combatMap, display);
 
             // Setup an off-screen GC, onto which all drawing is done.
             // This will later be transferred to the events CG (real screen)
@@ -267,6 +342,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
                copyImage.dispose();
             }
             else {
+               //drawBackground(event.x, event.y, event.width, event.height, _left, _top,_sizePerHex, event.gc, display,_combatMap);
                int[] bounds = getHexDimensions((short)10000, (short)10000, false/*chacheResults*/);
                double colWidth = bounds[4] / 10000.0;
                double rowHeight = bounds[1] / 10000.0;
@@ -293,6 +369,40 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
                Map<Color, Pattern> cachedPatternMap = new HashMap<>();
 
                boolean isHideViewFromLocalPlayers = _combatMap.isHideViewFromLocalPlayers();
+               if (BACKGROUND_IMAGE_INFO.isActive()) {
+                  // Collect the set of ArenaLocations that are known, and that are visible
+                  List<ArenaLocation> knownLocs = new ArrayList<>();
+                  List<ArenaLocation> visibleLocs = new ArrayList<>();
+                  for (short col = minCol; col < maxCol; col++) {
+                     short row = minRow;
+                     if ((row % 2) != (col % 2)) {
+                        row++;
+                     }
+                     for (; row < maxRow; row += 2) {
+                        // only redraw hexes that are in the redraw-area.
+                        // Since all we care about is the y coordinated of these hexes,
+                        // we cache them in the 'locAtRow' array, so we can re-use
+                        // them on subsequent columns
+                        ArenaLocation loc = _combatMap.getLocationQuick(col, row);
+                        drawHex(loc, gcImage, display, cachedColorsMap, cachedPatternMap);
+                        boolean isKnown = (_selfID == -1) || loc.isKnownBy(_selfID);
+                        boolean isVisible = (_selfID == -1) || loc.getVisible(_selfID);
+                        if (isKnown) {
+                           if (isVisible) {
+                              visibleLocs.add(loc);
+                           }
+                           else {
+                              knownLocs.add(loc);
+                           }
+                        }
+                     }
+                  }
+                  int previousAlpha = event.gc.getAlpha();
+                  event.gc.setAlpha(BACKGROUND_IMAGE_INFO._alpha);
+                  drawBackground(visibleLocs, BACKGROUND_IMAGE_INFO._imageVisible, _sizePerHex, gcImage, event, display, combatMap);
+                  drawBackground(knownLocs, BACKGROUND_IMAGE_INFO._imageKnown, _sizePerHex, gcImage, event, display, combatMap);
+                  event.gc.setAlpha(previousAlpha);
+               }
                for (short col = minCol; col < maxCol; col++) {
                   short row = minRow;
                   if ((row % 2) != (col % 2)) {
@@ -348,6 +458,8 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
             image.dispose();
             gcImage.dispose();
          }
+         long stop = System.currentTimeMillis();
+         System.out.println("paint took "  + (stop-start) + "ms.");
       }
       else if (event.type == SWT.MouseDown) {
          if (_currentCursor == _handOpenCursor) {
@@ -626,6 +738,88 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       }
    }
 
+   static List<List<Integer>> computeRegions(List<? extends ArenaCoordinates> locs, int sizePerHex, short left, short top) {
+      List<List<Integer>> regions = new ArrayList<>();
+      for (ArenaCoordinates loc : locs) {
+         int[] locBounds = getHexDimensions((short) (loc._x - left), (short)(loc._y - top), sizePerHex, 0, 0, false);
+         List<Integer> locPoints = new ArrayList<>();
+         int x = 0;
+         int y = 0;
+         for (int i=0 ; i<6 ; i++) {
+            // If the line clips the 0-line, clip the line where it meets the border.
+            int nx = locBounds[i*2];
+            int ny = locBounds[i * 2 + 1];
+            float dist = 1.0f;
+            if (nx < 0) {
+               dist = x / (x - nx);
+            }
+            if (ny < 0) {
+               float distY = y / (y - ny);
+               dist = Math.min(distY, dist);
+            }
+            if (dist != 1.0f) {
+               nx = Math.round(dist * nx / (x-nx));
+               ny = Math.round(dist * ny / (y-ny));
+            }
+            locPoints.add(Integer.valueOf(nx * 10_000 + ny));
+            x = nx;
+            y = ny;
+         }
+         if (!combineRegions(regions, locPoints)) {
+            regions.add(locPoints);
+         }
+      }
+      return regions;
+   }
+
+   private static boolean combineRegions(List<List<Integer>> regions, List<Integer> newRegion) {
+      boolean foundRegion = false;
+      for (List<Integer> region : regions) {
+         regionloop:
+         for (int i=0 ; i< region.size() ; i++ ) {
+            Integer pointI = region.get(i);
+            int newRegionSize = newRegion.size();
+            for (int j = 0; j < newRegionSize; j++) {
+               Integer newPointJ = newRegion.get(j);
+               if (pointI.equals(newPointJ)) {
+                  // assume all points are listed in counter-clockwise order
+                  Integer newPointJ_minus = (j>0) ? newRegion.get(j-1) : newRegion.get(newRegionSize-1);
+                  Integer pointI_plus = (i<(region.size()-1) ? region.get(i+1) : region.get(0));
+                  if (pointI_plus.equals(newPointJ_minus)) {
+                     for (int k = 1; k<(newRegionSize - 1) ; k++) {
+                        region.add(i+k, newRegion.get((j+k) % newRegionSize));
+                     }
+                     reduceRegion(region, i + newRegionSize - 1);
+                     newRegion.clear();
+                     foundRegion = true;
+                     // treat the merged-into region as the 'newRegion', to see if we can combine this now larger
+                     // region with any other existing regions
+                     newRegion = region;
+                     break regionloop; // break out of the i loop, to look at the next region
+                  }
+               }
+            }
+         }
+      }
+      if (foundRegion) {
+         regions.removeIf(region->region.isEmpty());
+      }
+      return foundRegion;
+   }
+
+   private static void reduceRegion(List<Integer> region, int i) {
+      while (true) {
+         Integer before = (i>0) ? region.get(i-1) : region.get(region.size()-1);
+         Integer after = (i<(region.size()-1) ? region.get(i+1) : region.get(0));
+         if (!before.equals(after)) {
+            return;
+         }
+         region.remove(i);
+         region.remove(i);
+         i--;
+      }
+   }
+
 //   @Override
 //   public void allowPan(boolean allow) {
 //      super.allowPan(allow);
@@ -648,18 +842,11 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
          return;
       }
       boolean isMouseOver = (loc == _mouseOverLocation);
-//      boolean isVisible = ((_selfID != -1) || !_combatMap.isHideViewFromLocalPlayers()) && loc.getVisible(_selfID);
       boolean isVisible = (_selfID == -1) || loc.getVisible(_selfID);
       boolean isKnown = (_selfID == -1) || loc.isKnownBy(_selfID);
       boolean hexSelectable = true;
       if (_selectableHexes != null) {
          hexSelectable = loc.getSelectable();
-//         for (ArenaCoordinates selectableHex : _selectableHexes) {
-//            if ((selectableHex._x == loc._x) && (selectableHex._y == loc._y)) {
-//               hexSelectable = HEX_ENABLED;
-//               break;
-//            }
-//         }
       }
       List<ArenaTrigger> triggers = new ArrayList<>();
       List<ArenaEvent> events = new ArrayList<>();
@@ -680,8 +867,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
             _eventsMap.clear();
             for (ArenaTrigger trig : _combatMap.getTriggers()) {
                for (ArenaCoordinates trigLoc : trig.getTriggerCoordinates()) {
-                  List<ArenaTrigger> triggersAtLoc = _eventsMap.computeIfAbsent(trigLoc, k -> new ArrayList<>());
-                  triggersAtLoc.add(trig);
+                  _eventsMap.computeIfAbsent(trigLoc, k -> new ArrayList<>()).add(trig);
                }
             }
          }
@@ -697,22 +883,31 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
             }
          }
       }
-      boolean showKnownButNotVisibleChars = false;
-      if (_selfLoc != null) {
-         if (ArenaCoordinates.getDistance(_selfLoc, loc) <= Rules.AUTO_VISIBLE_DISTANCE) {
-            showKnownButNotVisibleChars = true;
-         }
-      }
+      boolean showKnownButNotVisibleChars = (_selfLoc != null) &&
+                                            (ArenaCoordinates.getDistance(_selfLoc, loc) <= Rules.AUTO_VISIBLE_DISTANCE);
       List<Orientation> completionOrientations = null;
       List<Orientation> cancelOrientations = null;
       if (_movementRequest != null) {
          completionOrientations = _movementRequest.getCompletionOrientations();
          cancelOrientations = _movementRequest.getCancelOrientations();
       }
-      drawHex(loc, gc, display, _sizePerHex, /*offsetX*/ /*offsetY*/ _left/*offsetCol*/, _top/*offsetRow*/,
-              isMouseOver, _selfID, _targetID, _selfTeam, hexSelectable, isVisible, isKnown, /*borderFade*/
-              _routeMap, _path, _mouseOverOrientations, completionOrientations, cancelOrientations,
-              _mouseOverCharacter, _locationRequest, triggers, events, showKnownButNotVisibleChars, cachedColorsMap, cachedPatternMap);
+      drawHex(loc, gc, display, _sizePerHex,
+              0/*offsetX*/, 0/*offsetY*/, _left/*offsetCol*/, _top/*offsetRow*/,
+              isMouseOver, _selfID, _targetID, _selfTeam,
+              hexSelectable, isVisible, isKnown, 90 /*borderFade*/,
+              _routeMap,
+              _path,
+              _mouseOverOrientations,
+              completionOrientations,
+              cancelOrientations,
+              _mouseOverCharacter,
+              _locationRequest,
+              triggers,
+              events,
+              showKnownButNotVisibleChars,
+              cachedColorsMap,
+              cachedPatternMap,
+              0/*rotation*/);
    }
 
    public static void drawHex(ArenaLocation loc, GC gc, Display display, int sizePerHex,
@@ -741,42 +936,6 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
    }
 
    private static void drawHex(ArenaLocation loc, GC gc, Display display, int sizePerHex,
-                               short offsetCol, short offsetRow,
-                               boolean isMouseOver, int selfID, int targetID, byte selfTeam,
-                               boolean hexSelectable, boolean isVisible, boolean isKnown,
-                               Map<ArenaCoordinates, ArenaCoordinates> routeMap,
-                               List<ArenaCoordinates> path,
-                               List<Orientation> selectionOrientations,
-                               List<Orientation> completionOrientations,
-                               List<Orientation> cancelOrientations,
-                               Character mouseOverCharacter,
-                               RequestLocation locationRequest,
-                               List<ArenaTrigger> triggers,
-                               List<ArenaEvent> events,
-                               boolean showKnownButNotVisibleChars,
-                               Map<Integer, Color> cachedColorsMap,
-                               Map<Color, Pattern> cachedPatternMap)
-   {
-      drawHex(loc, gc, display, sizePerHex,
-              0, 0, offsetCol, offsetRow,
-              isMouseOver, selfID, targetID, selfTeam,
-              hexSelectable, isVisible, isKnown, 90,
-              routeMap,
-              path,
-              selectionOrientations,
-              completionOrientations,
-              cancelOrientations,
-              mouseOverCharacter,
-              locationRequest,
-              triggers,
-              events,
-              showKnownButNotVisibleChars,
-              cachedColorsMap,
-              cachedPatternMap,
-              0/*rotation*/);
-   }
-
-   private static void drawHex(ArenaLocation loc, GC gc, Display display, int sizePerHex,
                                int offsetX, int offsetY, short offsetCol, short offsetRow,
                                boolean isMouseOver, int selfID, int targetID, byte selfTeam,
                                boolean hexSelectable, boolean isVisible, boolean isKnown, int borderFade,
@@ -799,13 +958,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       }
       gc.setLineStyle(SWT.LINE_SOLID);
       int[] bounds = getHexDimensions((short) (loc._x - offsetCol),
-                                      (short) (loc._y - offsetRow), sizePerHex, offsetX, offsetY, true/*cacheResults*/, rotation);
-      if (isMouseOver) {
-         gc.setBackground(display.getSystemColor(SWT.COLOR_GRAY));
-         gc.setForeground(display.getSystemColor(SWT.COLOR_DARK_GRAY));
-         gc.fillPolygon(bounds);
-         gc.drawPolygon(bounds);
-      }
+                                      (short) (loc._y - offsetRow), sizePerHex, offsetX, offsetY, true, rotation);
       if (!isVisible && !isKnown) {
          gc.setBackground(display.getSystemColor(SWT.COLOR_DARK_GRAY));
          gc.setForeground(display.getSystemColor(SWT.COLOR_DARK_GRAY));
@@ -817,6 +970,19 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
          }
          return;
       }
+
+      if (isMouseOver) {
+         gc.setBackground(display.getSystemColor(SWT.COLOR_GRAY));
+         gc.setForeground(display.getSystemColor(SWT.COLOR_DARK_GRAY));
+         gc.fillPolygon(bounds);
+         gc.drawPolygon(bounds);
+      }
+
+      // If we dont have any watchers, then this location is not on the real map
+      // it's probably a hex being draw on a button, so it doesn't need to draw
+      // brackgrounds, contents, character, route lines, etc.
+      boolean locOnMap = !loc.getSnapShotOfWatchers().isEmpty();
+
       // figure out which character to draw.
       // always draw a fighting character, if one exits (over an unconscious character)
       // and if multiple characters are fighting in this hex, draw the 'self' character.
@@ -892,6 +1058,11 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
          //foreground = darkenColor(foreground);
       }
       int foreground = darkenColor(background, borderFade);
+      if (locOnMap && (BACKGROUND_IMAGE_INFO._alpha > 190) && (BACKGROUND_IMAGE_INFO._imageKnown != null)) {
+         // When using backgrounds, always overlay the map with black hex borders
+         foreground = 0;
+      }
+
       if ((events != null) && (events.size() > 0)) {
          // turn this more blue
          int newRed   = (((background & 0xff0000) *3)/4) & 0xff0000;
@@ -927,10 +1098,15 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       gc.setBackground(bgColor);
       gc.setForeground(fgColor);
       if (isVisible) {
+         int previousAlpha = gc.getAlpha();
+         if (locOnMap) {
+            gc.setAlpha(255 - BACKGROUND_IMAGE_INFO._alpha);
+         }
          gc.fillPolygon(bounds);
+         gc.setAlpha(previousAlpha);
          gc.drawPolygon(bounds);
       }
-      else if (isKnown) {
+      else { // hex is still known, or we would have exited before here
          // overlay a dither pattern to grey-out the hex:
 //         background = new RGB(255, 255, 255);
 //         foreground = new RGB(  0,   0,   0);
@@ -944,11 +1120,11 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
 
          Pattern notCurrentlyVisibleFillPattern;
          if (cachedPatternMap != null) {
-            notCurrentlyVisibleFillPattern = cachedPatternMap.get(bgColor);
-            if (notCurrentlyVisibleFillPattern == null) {
-               notCurrentlyVisibleFillPattern = new Pattern(display, 0,0, 1,2, display.getSystemColor(SWT.COLOR_DARK_GRAY), bgColor);
-               cachedPatternMap.put(bgColor, notCurrentlyVisibleFillPattern);
-            }
+            Color finalBgColor = bgColor;
+            notCurrentlyVisibleFillPattern = cachedPatternMap.computeIfAbsent(bgColor,
+                                                            o-> new Pattern(display, 0, 0, 1, 2,
+                                                                            display.getSystemColor(SWT.COLOR_DARK_GRAY),
+                                                                            finalBgColor));
          }
          else {
             notCurrentlyVisibleFillPattern = new Pattern(display, 0,0, 1,2, display.getSystemColor(SWT.COLOR_DARK_GRAY), bgColor);
@@ -963,6 +1139,10 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       if (cachedColorsMap == null) {
          bgColor.dispose();
          fgColor.dispose();
+      }
+
+      if (!locOnMap) {
+         return;
       }
 
       if (isVisible) {
@@ -1071,6 +1251,85 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
          drawRouteLine(loc, gc, display, sizePerHex, offsetX, offsetY, offsetCol, offsetRow,
                        routeMap, path, bounds);
       }
+   }
+
+   private void drawBackground(List<ArenaLocation> locs, Image image, int sizePerHex,
+                                      GC gcImage, Event event, Display display, CombatMap combatMap) {
+      if (locs == null || locs.isEmpty()) {
+         return;
+      }
+      List<List<Integer>> regions = computeRegions(locs, sizePerHex, _left, _top);
+      Short minX = locs.get(0)._x; ArenaLocation minXLoc = locs.get(0);
+      Short maxX = locs.get(0)._x; ArenaLocation maxXLoc = locs.get(0);
+      Short minY = locs.get(0)._y; ArenaLocation minYLoc = locs.get(0);
+      Short maxY = locs.get(0)._y; ArenaLocation maxYLoc = locs.get(0);
+      for (ArenaLocation loc : locs) {
+         if (minX > loc._x) { minX = loc._x; minXLoc = loc; }
+         if (minY > loc._y) { minY = loc._y; minYLoc = loc; }
+         if (maxX < loc._x) { maxX = loc._x; maxXLoc = loc; }
+         if (maxY < loc._y) { maxY = loc._y; maxYLoc = loc; }
+      }
+
+      int[] unAdjustedBoundsMinX  = getHexDimensions(minXLoc._x, minXLoc._y, sizePerHex, 0, 0, false/*cacheResults*/);
+      int[] unAdjustedBoundsMinY  = getHexDimensions(minYLoc._x, minYLoc._y, sizePerHex, 0, 0, false/*cacheResults*/);
+      int[] unAdjustedBoundsMaxX  = getHexDimensions(maxXLoc._x, maxXLoc._y, sizePerHex, 0, 0, false/*cacheResults*/);
+      int[] unAdjustedBoundsMaxY  = getHexDimensions(maxYLoc._x, maxYLoc._y, sizePerHex, 0, 0, false/*cacheResults*/);
+      int[] adjustedBoundsMinX  = getHexDimensions((short)(minXLoc._x - _left), (short)(minXLoc._y - _top), sizePerHex, 0, 0, false/*cacheResults*/);
+      int[] adjustedBoundsMinY  = getHexDimensions((short)(minYLoc._x - _left), (short)(minYLoc._y - _top), sizePerHex, 0, 0, false/*cacheResults*/);
+      int[] adjustedBoundsMaxX  = getHexDimensions((short)(maxXLoc._x - _left), (short)(maxXLoc._y - _top), sizePerHex, 0, 0, false/*cacheResults*/);
+      int[] adjustedBoundsMaxY  = getHexDimensions((short)(maxYLoc._x - _left), (short)(maxYLoc._y - _top), sizePerHex, 0, 0, false/*cacheResults*/);
+      int mapSpaceHexXmin = (int) Math.round(unAdjustedBoundsMinX[X_SMALLEST] * BACKGROUND_IMAGE_INFO._stretchFactorX);
+      int mapSpaceHexYmin = (int) Math.round(unAdjustedBoundsMinY[Y_SMALLEST] * BACKGROUND_IMAGE_INFO._stretchFactorY);
+      int mapSpaceHexXmax = (int) Math.round(unAdjustedBoundsMaxX[X_LARGEST] * BACKGROUND_IMAGE_INFO._stretchFactorX);
+      int mapSpaceHexYmax = (int) Math.round(unAdjustedBoundsMaxY[Y_LARGEST] * BACKGROUND_IMAGE_INFO._stretchFactorY);
+      int srcX = mapSpaceHexXmin;
+      int srcY = mapSpaceHexYmin;
+      int srcWidth = mapSpaceHexXmax - mapSpaceHexXmin;
+      int srcHeight = mapSpaceHexYmax - mapSpaceHexYmin;
+
+      int dstX = adjustedBoundsMinX[X_SMALLEST];
+      int dstY = adjustedBoundsMinY[Y_SMALLEST];
+      int dstWidth = adjustedBoundsMaxX[X_LARGEST] - dstX;
+      int dstHeight = adjustedBoundsMaxY[Y_LARGEST] - dstY;
+
+      for (List<Integer> region : regions) {
+         Path clippingPath = new Path(display);
+         for (Integer point : region) {
+            clippingPath.lineTo(point / 10_000, point % 10_000);
+         }
+         // tie it back to the first point
+         clippingPath.lineTo(region.get(0) / 10_000, region.get(0) % 10_000);
+         gcImage.setClipping(clippingPath);
+         gcImage.drawImage(image, srcX, srcY, srcWidth, srcHeight,
+                                  dstX, dstY, dstWidth, dstHeight);
+      }
+   }
+   private static void drawBackground(ArenaLocation loc, int sizePerHex, GC gc, Display display, int[] bounds, CombatMap combatMap) {
+      int[] unAdjustedBounds  = getHexDimensions(loc._x, loc._y, sizePerHex, 0, 0, false/*cacheResults*/);
+
+      int mapSpaceHexXmin = (int) Math.round(unAdjustedBounds[X_SMALLEST] * BACKGROUND_IMAGE_INFO._stretchFactorX);
+      int mapSpaceHexYmin = (int) Math.round(unAdjustedBounds[Y_SMALLEST] * BACKGROUND_IMAGE_INFO._stretchFactorY);
+      int mapSpaceHexXmax = (int) Math.round(unAdjustedBounds[X_LARGEST] * BACKGROUND_IMAGE_INFO._stretchFactorX);
+      int mapSpaceHexYmax = (int) Math.round(unAdjustedBounds[Y_LARGEST] * BACKGROUND_IMAGE_INFO._stretchFactorY);
+
+      int srcX = mapSpaceHexXmin;
+      int srcY = mapSpaceHexYmin;
+      int srcWidth = mapSpaceHexXmax - mapSpaceHexXmin;
+      int srcHeight = mapSpaceHexYmax - mapSpaceHexYmin;
+      int destX = bounds[X_SMALLEST];
+      int destY = bounds[Y_SMALLEST];
+      int destWidth = bounds[X_LARGEST] - bounds[X_SMALLEST];
+      int destHeight = bounds[Y_LARGEST] - bounds[Y_SMALLEST];
+
+      Path clippingPath = new Path(display);
+      for (int i = 0; i <= 6; i++) {
+         clippingPath.lineTo(bounds[(i % 6) * 2], bounds[(i % 6) * 2 + 1]);
+      }
+//      gc.setClipping(clippingPath);
+//      int previousAlpha = gc.getAlpha();
+//      gc.setAlpha(_backgroundImageInfo._alpha);
+//      gc.drawImage(_backgroundImageInfo._imageKnown, srcX, srcY, srcWidth, srcHeight, destX, destY, destWidth, destHeight);
+//      gc.setAlpha(previousAlpha);
    }
    /*
     *   10 9 8      y = lowest
@@ -1848,29 +2107,13 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
             mapColumnToHexDims.put(column, hexDims);
          }
       }
-      if ((offsetX != 0) && (offsetY != 0)) {
+      if ((offsetX != 0) || (offsetY != 0)) {
          return new int[] { hexDims[0]  + offsetX, hexDims[1] + offsetY,
                             hexDims[2]  + offsetX, hexDims[3] + offsetY,
                             hexDims[4]  + offsetX, hexDims[5] + offsetY,
                             hexDims[6]  + offsetX, hexDims[7] + offsetY,
                             hexDims[8]  + offsetX, hexDims[9] + offsetY,
                             hexDims[10] + offsetX, hexDims[11] + offsetY};
-      }
-      if (offsetY != 0) {
-         return new int[] { hexDims[0],  hexDims[1] + offsetY,
-                            hexDims[2],  hexDims[3] + offsetY,
-                            hexDims[4],  hexDims[5] + offsetY,
-                            hexDims[6],  hexDims[7] + offsetY,
-                            hexDims[8],  hexDims[9] + offsetY,
-                            hexDims[10], hexDims[11] + offsetY};
-      }
-      if (offsetX != 0) {
-         return new int[] { hexDims[0]  + offsetX, hexDims[1],
-                            hexDims[2]  + offsetX, hexDims[3],
-                            hexDims[4]  + offsetX, hexDims[5],
-                            hexDims[6]  + offsetX, hexDims[7],
-                            hexDims[8]  + offsetX, hexDims[9],
-                            hexDims[10] + offsetX, hexDims[11]};
       }
       return hexDims;
    }
@@ -1899,6 +2142,8 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
    public final static int X_LARGEST  = 6;
    public final static int Y_SMALLEST = 9;
    public final static int Y_LARGEST  = 3;
+   public final static int Y_LEFTMOST  = 1;
+   public final static int Y_RIGHTMOST = 7;
 
    public double getAngleFromCenter(ArenaLocation loc, int x, int y) {
       return getMeasurementFromCenter(loc, x, y, true/*angle*/);
@@ -1908,8 +2153,8 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
    }
    public double getMeasurementFromCenter(ArenaLocation loc, int x, int y, boolean angle) {
       int[] bounds = getHexDimensions(loc);
-      int centerX = (bounds[0] + bounds[3 * 2]) / 2;
-      int centerY = (bounds[1] + bounds[(3 * 2) + 1]) / 2;
+      int centerX = (bounds[X_SMALLEST] + bounds[X_LARGEST]) / 2;
+      int centerY = (bounds[Y_LEFTMOST] + bounds[Y_RIGHTMOST]) / 2;
       // normalize the distances, so a 1 means at the edge or vertex
       double yDist = ((double)(y - centerY)) / (bounds[(5*2)+1] - centerY);
       double xDist = ((double)(x - centerX)) / (bounds[0] - centerX);

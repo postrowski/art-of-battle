@@ -3489,7 +3489,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          if (defenseActions.contains(defOpt) || (defOpt == DefenseOption.DEF_PD)) {
             defense += defenseBase.get(range).get(defOpt);
          }
-   }
+      }
 
       if (includeWoundPenalty) {
          defense -= getWounds();
