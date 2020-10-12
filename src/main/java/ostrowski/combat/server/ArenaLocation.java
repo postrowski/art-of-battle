@@ -181,7 +181,21 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
       synchronized (this) {
          try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_this)) {
             for (Door door : _doors) {
-               if (!door.isOpen()) {
+               if (!door.isOpen() && !door.isHalfHeightWall()) {
+                  orientationMask |= door._orientation.bitMask;
+               }
+            }
+         }
+      }
+      return orientationMask;
+   }
+
+   public long getHalfHeightWallOrientations() {
+      long orientationMask = 0;
+      synchronized (this) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_this)) {
+            for (Door door : _doors) {
+               if (door.isHalfHeightWall()) {
                   orientationMask |= door._orientation.bitMask;
                }
             }
@@ -569,6 +583,23 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
       }
       return true;
    }
+
+   private boolean doesEnteringCrossLowWalls(ArenaLocation fromLoc)
+   {
+      long toWalls = getHalfHeightWallOrientations();
+      if ((fromLoc == null) || (toWalls == 0)) {
+         return false;
+      }
+      if ((toWalls & TerrainWall.TERRAIN_ALL_CENTER_WALLS) != 0) {
+         return true;
+      }
+
+      Facing charMoveDir = ArenaCoordinates.getFacingToLocation(fromLoc, this);
+      if (charMoveDir == null) {
+         return true;
+      }
+      return (toWalls & BLOCKING_WALLS_FOR_MOVEMENT_IN_DIRECTION.get(charMoveDir)) != 0;
+   }
    public byte costToEnter(ArenaLocation fromLoc, Character mover) {
       // even if we are flying, we can't traverse solid rock:
       if (_terrain == TerrainType.SOLID_ROCK) {
@@ -587,6 +618,9 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
          }
          if (!_terrain.isWater && mover.isPenalizedOutOfWater()) {
             // water creatures out of water have an additional penalty of 1:
+            entryCost++;
+         }
+         if (doesEnteringCrossLowWalls(fromLoc)) {
             entryCost++;
          }
          synchronized (this) {
@@ -614,10 +648,8 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
 
       // checking if we are flying is a rare exception, and is costly to determine, so
       // only check this in the less common case of a higher entry cost:
-      if (entryCost > 1) {
-         if (mover.isFlying()) {
-            return 1;
-         }
+      if ((entryCost > 1) && (mover.isFlying())) {
+         return 1;
       }
       return entryCost;
    }

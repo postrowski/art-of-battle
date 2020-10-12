@@ -43,7 +43,9 @@ public class TerrainInterface extends Helper implements SelectionListener, Modif
    private Button   _wallLineButton;
    private boolean  _wallLineActive = false;
    private Button[] _wallButtons;
+   private Button   _isHalfHeight;
    private Button   _isDoor;
+   private Label    _isDoorLabel;
    private Button   _isOpen;
    private Label    _isOpenLabel;
    private Button   _isLockable;
@@ -133,17 +135,20 @@ public class TerrainInterface extends Helper implements SelectionListener, Modif
 //         new Label(wallsDoorsBlock, 0);
 //         new Label(wallsDoorsBlock, 0);
          {
-            Composite doorBlock = createGroup(wallsDoorsBlock, "Door info", 3/*columns*/, false/*sameSize*/, 1 /*hSpacing*/, 1 /*vSpacing*/);
-            _isDoor          = new Button(doorBlock, SWT.CHECK);
-            createLabel(doorBlock, "this wall section has a door.", SWT.LEFT, 2/*hSpan*/, null);
-            _isOpen          = new Button(doorBlock, SWT.CHECK);
-            _isOpenLabel     = createLabel(doorBlock, "the door is open.", SWT.LEFT, 2/*hSpan*/, null);
-            _isLockable      = new Button(doorBlock, SWT.CHECK);
-            _isLockableLabel = createLabel(doorBlock, "the door can be locked.", SWT.LEFT, 2/*hSpan*/, null);
-            _isLocked        = new Button(doorBlock, SWT.CHECK);
-            _isLockedLabel   = createLabel(doorBlock, "the door is locked.", SWT.LEFT, 2/*hSpan*/, null);
-            _doorKeyDescLabel= createLabel(doorBlock, "Key description:", SWT.RIGHT, 2/*hSpan*/, null);
-            _doorKeyDesc     = createText(doorBlock, "", true/*editable*/, 1/*hSpan*/);
+            Composite wallBlock = createGroup(wallsDoorsBlock, "Wall info", 3/*columns*/, false/*sameSize*/, 1 /*hSpacing*/, 1 /*vSpacing*/);
+            _isHalfHeight     = new Button(wallBlock, SWT.CHECK);
+            createLabel(wallBlock, "this wall is half height.", SWT.LEFT, 2/*hSpan*/, null);
+            _isHalfHeight.addSelectionListener(this);
+            _isDoor          = new Button(wallBlock, SWT.CHECK);
+            _isDoorLabel     = createLabel(wallBlock, "this wall section has a door.", SWT.LEFT, 2/*hSpan*/, null);
+            _isOpen          = new Button(wallBlock, SWT.CHECK);
+            _isOpenLabel     = createLabel(wallBlock, "the door is open.", SWT.LEFT, 2/*hSpan*/, null);
+            _isLockable      = new Button(wallBlock, SWT.CHECK);
+            _isLockableLabel = createLabel(wallBlock, "the door can be locked.", SWT.LEFT, 2/*hSpan*/, null);
+            _isLocked        = new Button(wallBlock, SWT.CHECK);
+            _isLockedLabel   = createLabel(wallBlock, "the door is locked.", SWT.LEFT, 2/*hSpan*/, null);
+            _doorKeyDescLabel= createLabel(wallBlock, "Key description:", SWT.RIGHT, 2/*hSpan*/, null);
+            _doorKeyDesc     = createText(wallBlock, "", true/*editable*/, 1/*hSpan*/);
             _isDoor.addSelectionListener(this);
             _isOpen.addSelectionListener(this);
             _isLockable.addSelectionListener(this);
@@ -205,48 +210,40 @@ public class TerrainInterface extends Helper implements SelectionListener, Modif
 
    @Override
    public void widgetSelected(SelectionEvent e) {
-      if (e.widget == _isDoor) {
-         _isOpen.setEnabled(_isDoor.getSelection());
-         _isOpenLabel.setEnabled(_isDoor.getSelection());
-         _isLockable.setEnabled(_isDoor.getSelection());
-         _isLockableLabel.setEnabled(_isDoor.getSelection());
-         _isLocked.setEnabled(_isDoor.getSelection() && _isLockable.getSelection() && !_isOpen.getSelection());
-         _isLockedLabel.setEnabled(_isDoor.getSelection() && _isLockable.getSelection() && !_isOpen.getSelection());
-         _doorKeyDesc.setEnabled(_isDoor.getSelection() && _isLockable.getSelection());
-         _doorKeyDescLabel.setEnabled(_isDoor.getSelection() && _isLockable.getSelection());
-         if (!_isOpen.isEnabled()) {
-            _isOpen.setSelection(false);
-         }
-         if (!_isLockable.isEnabled()) {
-            _isLockable.setSelection(false);
-         }
-         if (!_isLocked.isEnabled()) {
-            _isLocked.setSelection(false);
-         }
+      boolean halfHeightWall = _isHalfHeight.getSelection();
+      boolean isDoor = !halfHeightWall && _isDoor.getSelection();
+      boolean isLockableDoor = isDoor && _isLockable.getSelection();
+      boolean isOpenDoor = isDoor && _isOpen.getSelection();
+
+      if (halfHeightWall) {
+         _isDoor.setSelection(false);
+      }
+      if (!isDoor) {
+         _isOpen.setSelection(false);
+         _isLockable.setSelection(false);
+         _isLocked.setSelection(false);
+      }
+      _isDoor.setEnabled(!halfHeightWall);
+      _isDoorLabel.setEnabled(!halfHeightWall);
+      _isOpen.setEnabled(isDoor);
+      _isOpenLabel.setEnabled(isDoor);
+      _isLockable.setEnabled(isDoor);
+      _isLockableLabel.setEnabled(isDoor);
+      _isLocked.setEnabled(isLockableDoor && !isOpenDoor);
+      _isLockedLabel.setEnabled(isLockableDoor && !isOpenDoor);
+      _doorKeyDesc.setEnabled(isLockableDoor);
+      _doorKeyDescLabel.setEnabled(isLockableDoor);
+
+      if ((e.widget == _isDoor) || (e.widget == _isHalfHeight) || (e.widget == _isOpen)) {
+         // These affect the way the door looks, must redraw the hex:
          redrawWalls();
       }
-      else if (e.widget == _isOpen) {
-         redrawWalls();
-         _isLocked.setEnabled(_isDoor.getSelection() && _isLockable.getSelection() && !_isOpen.getSelection());
-         _isLockedLabel.setEnabled(_isDoor.getSelection() && _isLockable.getSelection() && !_isOpen.getSelection());
-         if (!_isLocked.isEnabled()) {
-            _isLocked.setSelection(false);
-         }
-      }
-      else if (e.widget == _isLockable) {
-         _isLocked.setEnabled(_isDoor.getSelection() && _isLockable.getSelection() && !_isOpen.getSelection());
-         _isLockedLabel.setEnabled(_isDoor.getSelection() && _isLockable.getSelection() && !_isOpen.getSelection());
-         _doorKeyDesc.setEnabled(_isDoor.getSelection() && _isLockable.getSelection());
-         _doorKeyDescLabel.setEnabled(_isDoor.getSelection() && _isLockable.getSelection());
-         if (!_isLocked.isEnabled()) {
-            _isLocked.setSelection(false);
-         }
-      }
-      else if (e.widget == _isLocked) {
-         // nothing to do?
+      else if ((e.widget == _isLockable) || (e.widget == _isLocked)) {
+         // These don't affect the appearance, so there is nothing to do
       }
       else if (e.widget == _bgImageAlphaSlider) {
          _mapInterface.setBackgroundAlpha(_bgImageAlphaSlider.getSelection());
+         _mapInterface.getCombatMap().setBackgroundImageAlpha((byte) _bgImageAlphaSlider.getSelection());
       }
       else if (e.widget == _bgImageFileBtn) {
          FileDialog fd = new FileDialog(e.display.getShells()[0], SWT.OPEN);
@@ -466,13 +463,16 @@ public class TerrainInterface extends Helper implements SelectionListener, Modif
                      loc.setTerrain(TerrainType.FLOOR);
                      MapWidget2D.drawHex(loc, event.gc, event.display, sizePerHex, offsetX, offsetY, rotation);
                      if (buttonIndex != 0) {
-                        if (_isDoor.getSelection()) {
-                           DoorState state = DoorState.Closed;
+                        if (_isDoor.getSelection() || _isHalfHeight.getSelection()) {
+                           DoorState state = DoorState.CLOSED;
+                           if (_isHalfHeight.getSelection()) {
+                              state = DoorState.HALF_HEIGHT_WALL;
+                           }
                            if (_isOpen.getSelection()) {
-                              state = DoorState.Open;
+                              state = DoorState.OPEN;
                            }
                            else if (_isLocked.getSelection()) {
-                              state = DoorState.Locked;
+                              state = DoorState.LOCKED;
                            }
 
                            Door door = new Door(state,_doorKeyDesc.getText(), TerrainWall.getByBitMask(wallOrientation));
@@ -742,13 +742,16 @@ public class TerrainInterface extends Helper implements SelectionListener, Modif
                loc.removeAllDoors();
             }
             else {
-               if (_isDoor.getSelection()) {
-                  DoorState state = DoorState.Closed;
-                  if (_isOpen.getSelection()) {
-                     state = DoorState.Open;
+               if (_isDoor.getSelection() || _isHalfHeight.getSelection()) {
+                  DoorState state = DoorState.CLOSED;
+                  if (_isHalfHeight.getSelection()) {
+                     state = DoorState.HALF_HEIGHT_WALL;
+                  }
+                  else if (_isOpen.getSelection()) {
+                     state = DoorState.OPEN;
                   }
                   else if (_isLocked.getSelection()) {
-                     state = DoorState.Locked;
+                     state = DoorState.LOCKED;
                   }
 
                   Door door = new Door(state, _doorKeyDesc.getText(), TerrainWall.getByBitMask(_currentWall));
@@ -814,6 +817,7 @@ public class TerrainInterface extends Helper implements SelectionListener, Modif
      String backgroundImagePath = "";
      if (map.getCombatMap() != null) {
         backgroundImagePath = map.getCombatMap().getBackgroundImagePath();
+        _bgImageAlphaSlider.setSelection(map.getCombatMap().getBackgroundImageAlpha());
         if (backgroundImagePath == null) {
            backgroundImagePath = "";
         }

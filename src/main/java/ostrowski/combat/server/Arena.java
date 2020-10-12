@@ -1778,17 +1778,19 @@ public class Arena implements Enums, IMapListener
       return null;
    }
    private Orientation getRetreatMoveOrientation(Character character, ArenaLocation attackFromLocation) {
+      byte movementAllowed = character.getAvailableMovement(false/*movingEvasively*/);
+      if (movementAllowed == 0) {
+         return null;
+      }
+      // retreats only need one movement, because if we haven't moved at all, then we can make any single hex
+      // movement with just a single movement point, and using only one point restricts the result set nicely.
+      movementAllowed = 1;
+
       Orientation curOrientation = character.getOrientation();
       List<Orientation> possibleMoves = new ArrayList<>();
       List<Orientation> distancingMoves = new ArrayList<>();
-      byte movementAllowed = character.getAvailableMovement(false/*movingEvasively*/);
-      if (movementAllowed > 0) {
-         // retreats only need one movement, because if we haven't moved at all, then we can make any single hex
-         // movement with just a single movement point, and using only one point restricts the result set nicely.
-         movementAllowed = 1;
-         getFutureMoves(possibleMoves, character, curOrientation, movementAllowed, _combatMap,
-                        true/*firstMoveOfRound*/, null/*mapOfFutureOrientToSourceOrient*/, true/*considerUnknownLocations*/);
-      }
+      getFutureMoves(possibleMoves, character, curOrientation, movementAllowed, _combatMap,
+                     true, null, true);
 
       short curDistanceFromLocation = getShortestDistance(attackFromLocation, curOrientation);
       for (Orientation orient : possibleMoves) {

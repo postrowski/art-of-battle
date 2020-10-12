@@ -268,7 +268,6 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
 
    @Override
    public void requestMovement(RequestMovement locationMovement) {
-      _combatMap.setAllHexesSelectable(false);
       setSelectableHexes(locationMovement.getFutureCoordinates());
       _movementRequest  = locationMovement;
       _mouseOverCharacter = getCombatMap().getCombatantByUniqueID(locationMovement.getActorID());
@@ -276,7 +275,6 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
 
    @Override
    public void requestLocation(RequestLocation locationMovement) {
-      _combatMap.setAllHexesSelectable(false);
       _locationRequest  = locationMovement;
       setSelectableHexes(locationMovement.getSelectableCoordinates());
       // setup a cursor of a the spell effect
@@ -285,6 +283,7 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
    @Override
    public void setSelectableHexes(List<ArenaCoordinates> selectableHexes)
    {
+      _combatMap.setAllHexesSelectable(false);
       _selectableHexes  = _combatMap.getLocations(selectableHexes);
       for (ArenaLocation selectableHex : _selectableHexes) {
          selectableHex.setSelectable(true);

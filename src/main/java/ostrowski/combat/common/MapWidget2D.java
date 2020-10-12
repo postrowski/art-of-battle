@@ -72,12 +72,16 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       private String _imagePath      = "";
       private CombatMap _map = null;
       private void setInfo(int sizePerHex, CombatMap map, Display display) {
-         if ((_sizePerHex == sizePerHex) && (_map == map) && (map == null || _imagePath.equals(map.getBackgroundImagePath()))) {
+         if ((_sizePerHex == sizePerHex) && (_map == map) &&
+             (map == null || _imagePath.equals(map.getBackgroundImagePath())) &&
+             (map == null || _alpha == map.getBackgroundImageAlpha())
+         ) {
             return;
          }
          _sizePerHex = sizePerHex;
          _map = map;
          String mapBGImagePath = (map == null) ? "" : map.getBackgroundImagePath();
+         _alpha = (map == null) ? 0 : map.getBackgroundImageAlpha();
          if (mapBGImagePath == null) {
             mapBGImagePath = "";
          }
@@ -243,6 +247,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       }
       return 10;
    }
+   static boolean oneShot = false;
    @Override
    public void handleEvent(Event event)
    {
@@ -252,6 +257,9 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
             setZoomToFit();
          }
          if (_combatMap != null) {
+            if (oneShot) {
+               return;
+            }
             Display display = event.display;
             Image image = new Image(display, _canvas.getBounds());
             Font font = new Font(display, "", getFontSizeByZoomLevel(), SWT.BOLD);
@@ -268,102 +276,27 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
             // This allows double-buffering of the image, to reduce flashing in any animation
             GC gcImage = new GC(image);
             gcImage.setFont(font);
-//            short minCol = -1;
-//            short maxCol = -1;
-//            short minRow = -1;
-//            short maxRow = -1;
-//            short start = (short) Math.min(minCol, minRow);
-//            short end   = (short) Math.max(_combatMap.getSizeX(), _combatMap.getSizeY());
-//            for (short i=start ; i< end ; i++) {
-//               int[] bounds = getHexDimensions(i,i, false/*cacheResults*/);
-//               if (-1 == minCol) {
-//                  if ((bounds[X_SMALLEST] <= event.x) &&
-//                      (bounds[X_LARGEST]  >= event.x)) {
-//                     minCol = i;
-//                  }
-//               }
-//               if (-1 == minRow) {
-//                  if ((bounds[Y_LARGEST]  >= event.y) &&
-//                      (bounds[Y_SMALLEST] <= event.y)) {
-//                     minRow = i;
-//                  }
-//               }
-//               if ((minRow != -1) && (minCol != -1)) {
-//                  break;
-//               }
-//            }
-//            int rightEdge = event.x + event.width;
-//            int bottomEdge = event.y + event.height;
-//            for (short i=end ; i>= start ; i--) {
-//               int[] bounds = getHexDimensions(i,i, false/*cacheResults*/);
-//               if (-1 == maxCol) {
-//                  if ((bounds[X_SMALLEST] <= rightEdge) &&
-//                      (bounds[X_LARGEST]  >= rightEdge)) {
-//                     maxCol = (short) (i+1);
-//                  }
-//               }
-//               if (-1 == maxRow) {
-//                  if ((bounds[Y_LARGEST]  >= bottomEdge) &&
-//                      (bounds[Y_SMALLEST] <= bottomEdge)) {
-//                     maxRow = i;
-//                  }
-//               }
-//               if ((maxRow != -1) && (maxCol != -1)) {
-//                  break;
-//               }
-//            }
-//            minCol = (short) Math.max(minCol, _left - 1);
-//            maxCol = (short) Math.min(maxCol, _combatMap.getSizeX());
-//            minRow = (short) Math.max(minRow, _top - 1);
-//            maxRow = (short) Math.min(maxRow, _combatMap.getSizeY());
-//            if (maxRow == -1) {
-//               maxRow = _combatMap.getSizeY();
-//            }
-//            if (maxCol == -1) {
-//               maxCol = _combatMap.getSizeX();
-//            }
 
-//            int[] bounds = getHexDimensions((short)1000, (short)1000, false/*chacheResults*/);
-//            double colWidth = bounds[4] / 1000.0;
-//            double rowHeight = bounds[1] / 1000.0;
-//            short minCol = (short) Math.max((event.x / colWidth),                   _left - 1);
-//            short maxCol = (short) Math.min(((event.x + event.width) / colWidth + 1),   _combatMap.getSizeX());
-//            short minRow = (short) Math.max((event.y / rowHeight),                  _top - 1);
-//            short maxRow = (short) Math.min(((event.y + event.height) / rowHeight + 1), _combatMap.getSizeY());
-//            if (minCol >0) minCol--;
-//            if (minRow >0) minRow--;
             if (_isDragable && (_dragStart != null) && (_dragEnd != null) && (_imageDataCopy != null)) {
                Image copyImage = new Image(display, _imageDataCopy);
                int dX = _dragEnd.x - _dragStart.x;
                int dY = _dragEnd.y - _dragStart.y;
                drawZoomControls(gcImage);
+               //System.out.println("drawImage at 281 (dragging)");
                event.gc.drawImage(copyImage, event.x/*srcX*/, event.y/*srcY*/, event.width/*srcWidth*/, event.height/*srcHeight*/,
                                              event.x + dX/*dstX*/, event.y + dY/*dstY*/, event.width/*dstWidth*/, event.height/*dstHeight*/);
                copyImage.dispose();
             }
             else {
-               //drawBackground(event.x, event.y, event.width, event.height, _left, _top,_sizePerHex, event.gc, display,_combatMap);
                int[] bounds = getHexDimensions((short)10000, (short)10000, false/*chacheResults*/);
                double colWidth = bounds[4] / 10000.0;
                double rowHeight = bounds[1] / 10000.0;
-               short minCol = (short) (((event.x / colWidth) + _left) - 1);
-               short maxCol = (short) Math.min(Math.round(((event.x + event.width) / colWidth)  + _left+ 2),  _combatMap.getSizeX());
-               short minRow = (short) (((event.y / rowHeight) + _top) -1);
-               short maxRow = (short) Math.min(Math.round(((event.y + event.height) / rowHeight) + _top + 2), _combatMap.getSizeY());
-               if (minCol <0) {
-                  minCol = 0;
-               }
-               if (minRow <0) {
-                  minRow = 0;
-               }
-
-//               if (_isDragable && (_dragStart != null) && (_imageDataCopy == null)) {
-//                  // If we are going to use this as a drag image source, make it as big as possible.
-//                  minCol = 0;
-//                  minRow = 0;
-//                  maxCol = _combatMap.getSizeX();
-//                  maxRow = _combatMap.getSizeY();
-//               }
+               short minCol = (short) Math.max(((event.x / colWidth) + _left) - 1, 0);
+               short maxCol = (short) Math.min(Math.round(((event.x + event.width) / colWidth)  + _left+ 1),
+                                               _combatMap.getSizeX()-1);
+               short minRow = (short) Math.max(((event.y / rowHeight) + _top) -1, 0);
+               short maxRow = (short) Math.min(Math.round(((event.y + event.height) / rowHeight) + _top + 1),
+                                               _combatMap.getSizeY()-1);
 
                Map<Integer, Color> cachedColorsMap = new HashMap<>();
                Map<Color, Pattern> cachedPatternMap = new HashMap<>();
@@ -373,53 +306,46 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
                   // Collect the set of ArenaLocations that are known, and that are visible
                   List<ArenaLocation> knownLocs = new ArrayList<>();
                   List<ArenaLocation> visibleLocs = new ArrayList<>();
-                  for (short col = minCol; col < maxCol; col++) {
+                  for (short col = minCol; col <= maxCol; col++) {
                      short row = minRow;
                      if ((row % 2) != (col % 2)) {
                         row++;
                      }
-                     for (; row < maxRow; row += 2) {
+                     for (; row <= maxRow; row += 2) {
                         // only redraw hexes that are in the redraw-area.
                         // Since all we care about is the y coordinated of these hexes,
                         // we cache them in the 'locAtRow' array, so we can re-use
                         // them on subsequent columns
                         ArenaLocation loc = _combatMap.getLocationQuick(col, row);
-                        drawHex(loc, gcImage, display, cachedColorsMap, cachedPatternMap);
-                        boolean isKnown = (_selfID == -1) || loc.isKnownBy(_selfID);
-                        boolean isVisible = (_selfID == -1) || loc.getVisible(_selfID);
-                        if (isKnown) {
-                           if (isVisible) {
-                              visibleLocs.add(loc);
-                           }
-                           else {
-                              knownLocs.add(loc);
-                           }
+                        if ((_selfID == -1) || loc.getVisible(_selfID)) {
+                           visibleLocs.add(loc);
+                        }
+                        else if (loc.isKnownBy(_selfID)) {
+                           visibleLocs.add(loc);
+                           knownLocs.add(loc);
                         }
                      }
                   }
                   int previousAlpha = event.gc.getAlpha();
                   event.gc.setAlpha(BACKGROUND_IMAGE_INFO._alpha);
+                  //System.out.println("\ndrawBackground, alpha  " + BACKGROUND_IMAGE_INFO._alpha);
                   drawBackground(visibleLocs, BACKGROUND_IMAGE_INFO._imageVisible, _sizePerHex, gcImage, event, display, combatMap);
-                  drawBackground(knownLocs, BACKGROUND_IMAGE_INFO._imageKnown, _sizePerHex, gcImage, event, display, combatMap);
+                  //drawBackground(knownLocs, BACKGROUND_IMAGE_INFO._imageKnown, _sizePerHex, gcImage, event, display, combatMap);
                   event.gc.setAlpha(previousAlpha);
                }
-               for (short col = minCol; col < maxCol; col++) {
+               //System.out.println("("+ minCol + ", " + minRow + ")-(" + maxCol +"," + maxRow +")");
+               for (short col = minCol; col <= maxCol; col++) {
                   short row = minRow;
                   if ((row % 2) != (col % 2)) {
                      row++;
                   }
-                  for (; row < maxRow; row += 2) {
+                  for (; row <= maxRow; row += 2) {
                      // only redraw hexes that are in the redraw-area.
                      // Since all we care about is the y coordinated of these hexes,
                      // we cache them in the 'locAtRow' array, so we can re-use
                      // them on subsequent columns
                      ArenaLocation loc = _combatMap.getLocationQuick(col, row);
                      drawHex(loc, gcImage, display, cachedColorsMap, cachedPatternMap);
-                     boolean isKnown = (_selfID == -1) || loc.isKnownBy(_selfID);
-                     if (isKnown) {
-                        drawWall(_combatMap.getLocation(col, row), gcImage, display,
-                                 _sizePerHex, 0 /*offsetX*/, 0 /*offsetY*/, _left, _top, _selfID, isHideViewFromLocalPlayers);
-                     }
                   }
                }
                // since the text often extends outside of the bounds defined by getHexDimensions,
@@ -439,12 +365,11 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
                   _imageDataCopy = (ImageData) image.getImageData().clone();
                }
 
-               drawZoomControls(gcImage);
-
                // Draw the off-screen buffer to the screen
-               //event.gc.drawImage(image, 0, 0);
+               //System.out.println("drawImage at 365 (off screen to on)");
                event.gc.drawImage(image, event.x/*srcX*/, event.y/*srcY*/, event.width/*srcWidth*/, event.height/*srcHeight*/,
                                          event.x/*dstX*/, event.y/*dstY*/, event.width/*dstWidth*/, event.height/*dstHeight*/);
+               drawZoomControls(event.gc);
 
                // Clean up
                for (Color clr : cachedColorsMap.values()) {
@@ -459,7 +384,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
             gcImage.dispose();
          }
          long stop = System.currentTimeMillis();
-         System.out.println("paint took "  + (stop-start) + "ms.");
+         //System.out.println("paint took "  + (stop-start) + "ms.");
       }
       else if (event.type == SWT.MouseDown) {
          if (_currentCursor == _handOpenCursor) {
@@ -522,13 +447,12 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
 //               if (mouseOverOrientation != null) {
 //                  _mouseOverOrientations.add(mouseOverOrientation);
 //               }
-//               else
-               {
-                  Orientation futureOrientation = _movementRequest.getBestFutureOrientation(loc, angle, distance);
-                  if (futureOrientation != null) {
-                     _mouseOverOrientations = _movementRequest.getRouteToFutureOrientation(futureOrientation);
-                  }
+//               else {
+               Orientation futureOrientation = _movementRequest.getBestFutureOrientation(loc, angle, distance);
+               if (futureOrientation != null) {
+                  _mouseOverOrientations = _movementRequest.getRouteToFutureOrientation(futureOrientation);
                }
+//               }
             }
          }
          boolean orientationChanged;
@@ -545,7 +469,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
             orientationChanged = ((oldOrientations != null) || (_mouseOverOrientations != null));
          }
          if (!orientationChanged) {
-            if ((_mouseOverCharacter != null) && (_mouseOverOrientations != null) && (_mouseOverOrientations.size() > 0)) {
+            if ((_mouseOverCharacter != null) && (_mouseOverOrientations != null) && (!_mouseOverOrientations.isEmpty())) {
                if (_mouseOverOrientations.contains(_mouseOverCharacter.getOrientation())) {
                   orientationChanged = true;
                }
@@ -557,28 +481,13 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
                   listener.onMouseDrag(_mouseOverLocation, event, angle, distance);
                }
             }
-            int minX = 1000;
-            int minY = 1000;
-            int maxX = 0;
-            int maxY = 0;
-            if (_mouseOverLocation != null) {
-               int[] bounds = getHexDimensions(_mouseOverLocation);
-               minX = bounds[X_SMALLEST];
-               minY = bounds[Y_SMALLEST];
-               maxX = bounds[X_LARGEST];
-               maxY = bounds[Y_LARGEST];
-            }
+            List<ArenaCoordinates> locationsToRedraw = new ArrayList<>();
+            locationsToRedraw.add(_mouseOverLocation);
             boolean redrawSurroundHexes = false;
             if (redrawSurroundHexes && (loc != null)) {
                for (Facing dir : Facing.values()) {
                   ArenaLocation adjLoc = _combatMap.getLocation((short)(loc._x + dir.moveX), (short)(loc._y + dir.moveY));
-                  if (adjLoc != null) {
-                     int[] bounds = getHexDimensions(adjLoc);
-                     minX = Math.min(minX, bounds[X_SMALLEST]);
-                     minY = Math.min(minY, bounds[Y_SMALLEST]);
-                     maxX = Math.max(maxX, bounds[X_LARGEST]);
-                     maxY = Math.max(maxY, bounds[Y_LARGEST]);
-                  }
+                  locationsToRedraw.add(adjLoc);
                }
             }
             _mouseOverLocation = loc;
@@ -588,11 +497,6 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
                      listener.onMouseDrag(_mouseOverLocation, event, angle, distance);
                   }
                }
-               int[] bounds = getHexDimensions(_mouseOverLocation);
-               minX = Math.min(minX, bounds[X_SMALLEST]);
-               minY = Math.min(minY, bounds[Y_SMALLEST]);
-               maxX = Math.max(maxX, bounds[X_LARGEST]);
-               maxY = Math.max(maxY, bounds[Y_LARGEST]);
             }
             for (IMapListener listener : _listeners) {
                listener.onMouseMove(_mouseOverLocation, event, angle, distance);
@@ -605,13 +509,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
                         DebugBreak.debugBreak();
                      }
                      else {
-                        for (ArenaCoordinates oldCoord : oldOrientation.getCoordinates()) {
-                           int[] bounds = getHexDimensions(oldCoord);
-                           minX = Math.min(minX, bounds[X_SMALLEST]);
-                           minY = Math.min(minY, bounds[Y_SMALLEST]);
-                           maxX = Math.max(maxX, bounds[X_LARGEST]);
-                           maxY = Math.max(maxY, bounds[Y_LARGEST]);
-                        }
+                        locationsToRedraw.addAll(oldOrientation.getCoordinates());
                      }
                   }
                }
@@ -621,18 +519,27 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
                         DebugBreak.debugBreak();
                      }
                      else {
-                        for (ArenaCoordinates newCoord : mouseOverOrientation.getCoordinates()) {
-                           int[] bounds = getHexDimensions(newCoord);
-                           minX = Math.min(minX, bounds[X_SMALLEST]);
-                           minY = Math.min(minY, bounds[Y_SMALLEST]);
-                           maxX = Math.max(maxX, bounds[X_LARGEST]);
-                           maxY = Math.max(maxY, bounds[Y_LARGEST]);
-                        }
+                        locationsToRedraw.addAll(mouseOverOrientation.getCoordinates());
                      }
                   }
                }
             }
-            redraw(minX, minY, (maxX - minX), (maxY - minY), true);
+            locationsToRedraw.removeIf(o-> o==null);
+            if (!locationsToRedraw.isEmpty()) {
+               int minX = 10000;
+               int minY = 10000;
+               int maxX = 0;
+               int maxY = 0;
+               for (ArenaCoordinates locationToRedraw : locationsToRedraw) {
+                  int[] bounds = getHexDimensions(locationToRedraw);
+                  minX = Math.min(minX, bounds[X_SMALLEST]);
+                  minY = Math.min(minY, bounds[Y_SMALLEST]);
+                  maxX = Math.max(maxX, bounds[X_LARGEST]);
+                  maxY = Math.max(maxY, bounds[Y_LARGEST]);
+               }
+
+               redraw(minX, minY, (maxX - minX), (maxY - minY), true);
+            }
          }
       }
       else if ((event.type == SWT.MouseDown) || (event.type == SWT.MouseUp)) {
@@ -848,6 +755,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       if (_selectableHexes != null) {
          hexSelectable = loc.getSelectable();
       }
+
       List<ArenaTrigger> triggers = new ArrayList<>();
       List<ArenaEvent> events = new ArrayList<>();
       ArenaTrigger trigger = _combatMap.getSelectedTrigger();
@@ -893,21 +801,11 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       }
       drawHex(loc, gc, display, _sizePerHex,
               0/*offsetX*/, 0/*offsetY*/, _left/*offsetCol*/, _top/*offsetRow*/,
-              isMouseOver, _selfID, _targetID, _selfTeam,
-              hexSelectable, isVisible, isKnown, 90 /*borderFade*/,
-              _routeMap,
-              _path,
-              _mouseOverOrientations,
-              completionOrientations,
-              cancelOrientations,
-              _mouseOverCharacter,
-              _locationRequest,
-              triggers,
-              events,
-              showKnownButNotVisibleChars,
-              cachedColorsMap,
-              cachedPatternMap,
-              0/*rotation*/);
+              isMouseOver, _selfID, _targetID,
+              hexSelectable, isVisible, isKnown, 10 ,
+              _routeMap, _path, _mouseOverOrientations, completionOrientations, cancelOrientations,
+              _mouseOverCharacter, _locationRequest, triggers, events,
+              showKnownButNotVisibleChars, cachedColorsMap, cachedPatternMap, 0);
    }
 
    public static void drawHex(ArenaLocation loc, GC gc, Display display, int sizePerHex,
@@ -915,7 +813,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
    {
       drawHex(loc, gc, display, sizePerHex, offsetX, offsetY, (short) 0/*offsetCol*/,
               (short) 0/*offsetRow*/, false/*isMouseOver*/, -1/*selfID*/, -1/*targetID*/,
-              (byte) -1/*selfTeam*/, true/*hexSelectable*/, true/*isVisible*/, true/*isKnown*/, 50,
+              true/*hexSelectable*/, true/*isVisible*/, true/*isKnown*/, 50,
               null/*routeMap*/, null/*path*/, null/*selectionOrientation*/,
               null/*completionOrientations*/, null/*cancelOrientations*/,
               null/*_mouseOverCharacter*/, null/*locationRequest*/,
@@ -927,7 +825,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
    {
       drawHex(loc, gc, display, sizePerHex, offsetX, offsetY, (short) 0/*offsetCol*/,
               (short) 0/*offsetRow*/, false/*isMouseOver*/, -1/*selfID*/, -1/*targetID*/,
-              (byte) -1/*selfTeam*/, true/*hexSelectable*/, true/*isVisible*/, true/*isKnown*/, 50,
+              true/*hexSelectable*/, true/*isVisible*/, true/*isKnown*/, 50,
               null/*routeMap*/, null/*path*/, null/*selectionOrientation*/,
               null/*completionOrientations*/, null/*cancelOrientations*/,
               null/*_mouseOverCharacter*/, null/*locationRequest*/,
@@ -937,7 +835,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
 
    private static void drawHex(ArenaLocation loc, GC gc, Display display, int sizePerHex,
                                int offsetX, int offsetY, short offsetCol, short offsetRow,
-                               boolean isMouseOver, int selfID, int targetID, byte selfTeam,
+                               boolean isMouseOver, int selfID, int targetID,
                                boolean hexSelectable, boolean isVisible, boolean isKnown, int borderFade,
                                Map<ArenaCoordinates, ArenaCoordinates> routeMap,
                                List<ArenaCoordinates> path,
@@ -962,20 +860,21 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       if (!isVisible && !isKnown) {
          gc.setBackground(display.getSystemColor(SWT.COLOR_DARK_GRAY));
          gc.setForeground(display.getSystemColor(SWT.COLOR_DARK_GRAY));
+         //System.out.println("drawPolygon at 859: " + loc._x + "," + loc._y + " (unknown hex)");
          gc.fillPolygon(bounds);
          gc.drawPolygon(bounds);
-         if (routeMap != null) {
-            drawRouteLine(loc, gc, display, sizePerHex, offsetX, offsetY, offsetCol, offsetRow,
-                          routeMap, path, bounds);
-         }
+         drawRouteLine(loc, gc, display, sizePerHex, offsetX, offsetY, offsetCol, offsetRow, routeMap, path, bounds);
          return;
       }
-
       if (isMouseOver) {
          gc.setBackground(display.getSystemColor(SWT.COLOR_GRAY));
          gc.setForeground(display.getSystemColor(SWT.COLOR_DARK_GRAY));
+         int previousAlpha = gc.getAlpha();
+         gc.setAlpha(128);
+         //System.out.println("fillPolygon at 870: " + loc._x + "," + loc._y +" (mouseover)");
          gc.fillPolygon(bounds);
          gc.drawPolygon(bounds);
+         gc.setAlpha(previousAlpha);
       }
 
       // If we dont have any watchers, then this location is not on the real map
@@ -987,7 +886,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       // always draw a fighting character, if one exits (over an unconscious character)
       // and if multiple characters are fighting in this hex, draw the 'self' character.
       Character character = null;
-      if (isVisible || (showKnownButNotVisibleChars /*&& isKnown*/)) { /*even if we don't know the hex, we should draw that someone is there*/
+      if (isVisible || showKnownButNotVisibleChars) { /*even if we don't know the hex, we should draw that someone is there*/
          for (Character ch : loc.getCharacters()) {
             if ((character == null) || (ch.stillFighting())) {
                character = ch;
@@ -997,213 +896,158 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
             }
          }
       }
-      int background;
+      int alertLayer = 0;
+      int alertLayerAlpha = 0;
+      int characterColor = 0;
       if (character != null) {
-         byte teamId = character._teamID;
-         if (!character.stillFighting()) {
-            background = 0x808080;
-         }
-         else if (teamId == Enums.TEAM_ALPHA) {
-            if (character._uniqueID == selfID) {
-               background = 0xffC0C0;
-            }
-            else if (character._uniqueID == targetID) {
-               background = 0xff3030;
-            }
-            else {
-               background = 0xC02020;
-            }
-         }
-         else if (teamId == Enums.TEAM_BETA) {
-            if (character._uniqueID == selfID) {
-               background = 0xC0C0ff;
-            }
-            else if (character._uniqueID == targetID) {
-               background = 0x3030ff;
-            }
-            else {
-               background = 0x2020C0;
-            }
-         }
-         else if (teamId == Enums.TEAM_INDEPENDENT) {
-            if (character._uniqueID == selfID) {
-               background = 0xC0ffC0;
-            }
-            else if (character._uniqueID == targetID) {
-               background = 0x30ff30;
-            }
-            else {
-               background = 0x20C020;
-            }
-         }
-         else if (teamId == Enums.TEAM_UNIVERSAL) {
-            background = 0xffC0C0;
-         }
-         else {
-            background = 0xFFFFFF;
-            DebugBreak.debugBreak();
-         }
+         characterColor = getBackgroundForCharacter(selfID, targetID, character);
+         alertLayer = characterColor;
+         alertLayerAlpha = 128;
+      }
+
+      int shadowAlpha = 0;
+      int alpha;
+      int background;
+      if ((_lineColor != null) && _line.contains(loc)) {
+         background = _lineColor.red << (16 + _lineColor.green) << (8 + _lineColor.blue);
+         alpha = 192;
       }
       else {
-         if ((_lineColor != null) && _line.contains(loc)) {
-            background = _lineColor.red << (16 + _lineColor.green) << (8 + _lineColor.blue);
-         }
-         else {
-            background = loc.getRGBColorAsInt();
+         background = loc.getRGBColorAsInt();
+         alpha = 255;
+         if (!isVisible) {
+            shadowAlpha = 60;
          }
       }
-      // RGB foreground = new RGB(0x80,0x80,0x80);
+      // RGB border = new RGB(0x80,0x80,0x80);
       if (!hexSelectable) {
-         background = darkenColor(background, 44);
-         //foreground = darkenColor(foreground);
+         shadowAlpha = 100 - (100 - shadowAlpha) * (100 - 40) / 100;
       }
-      int foreground = darkenColor(background, borderFade);
-      if (locOnMap && (BACKGROUND_IMAGE_INFO._alpha > 190) && (BACKGROUND_IMAGE_INFO._imageKnown != null)) {
+      background = darkenColor(background, shadowAlpha);
+      int border = darkenColor(background, borderFade);
+
+      if (locOnMap && BACKGROUND_IMAGE_INFO.isActive()) {
+         // for hexes that need to be darker when we are using backgroun images,
+         // we draw a semi-transparent dark gray overlay on top of it
+         if (shadowAlpha > 0) {
+            gc.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+            gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
+            int previousAlpha = gc.getAlpha();
+            gc.setAlpha(shadowAlpha);
+            gc.fillPolygon(bounds);
+            gc.setAlpha(previousAlpha);
+         }
          // When using backgrounds, always overlay the map with black hex borders
-         foreground = 0;
+         border = darkenColor(border, BACKGROUND_IMAGE_INFO._alpha);
       }
 
-      if ((events != null) && (events.size() > 0)) {
+      int alertRed   = alertLayer & 0xff0000 >> 16;
+      int alertGreen = alertLayer & 0x00ff00 >> 8;
+      int alertBlue  = alertLayer & 0x0000ff;
+      if ((events != null) && (!events.isEmpty())) {
          // turn this more blue
-         int newRed   = (((background & 0xff0000) *3)/4) & 0xff0000;
-         int newGreen = (((background & 0x00ff00) *3)/4) & 0x00ff00;
-         int newBlue  = (255 - ((255 - (background & 0x0000ff))/2)) & 0x0000ff;
-         background = newRed + newGreen + newBlue;
+         int newRed   = alertRed * 3/4;
+         int newGreen = alertGreen * 3/4;
+         int newBlue  = (alertBlue + 255) / 2;
+         alertLayer = (newRed << 16) + (newGreen << 8) + newBlue;
+         alertLayerAlpha = (alertLayerAlpha == 0) ? 100 : 180;
       }
-      if ((triggers != null) && (triggers.size() > 0)) {
+      if ((triggers != null) && (!triggers.isEmpty())) {
          // turn this more red
-         int newRed   = (255 - (255 - ((background & 0xff0000) /2))) & 0xff0000;
-         int newGreen = (((background & 0x00ff00) *3)/4) & 0x00ff00;
-         int newBlue  = (((background & 0x0000ff) *3)/4) & 0x0000ff;
-         background = newRed + newGreen + newBlue;
+         int newRed   = (alertRed + 255) / 2;
+         int newGreen = alertGreen * 3/4;
+         int newBlue  = alertBlue * 3/4;
+         alertLayer = (newRed << 16) + (newGreen << 8) + newBlue;
+         alertLayerAlpha = (alertLayerAlpha == 0) ? 102 : (alertLayer == 100) ? 190 : 220;
       }
-      Color bgColor;
-      Color fgColor;
-      if (cachedColorsMap != null) {
-         bgColor = cachedColorsMap.get(background);
-         fgColor = cachedColorsMap.get(foreground);
-         if (bgColor == null) {
+
+      {
+         Color bgColor;
+         Color borderColor;
+         Color alertLayerColor = null;
+         if (cachedColorsMap != null) {
+            bgColor = cachedColorsMap.get(background);
+            if (bgColor == null) {
+               bgColor = new Color(display, getColor(background));
+               cachedColorsMap.put(background, bgColor);
+            }
+            borderColor = cachedColorsMap.get(border);
+            if (borderColor == null) {
+               borderColor = new Color(display, getColor(border));
+               cachedColorsMap.put(border, borderColor);
+            }
+            if (alertLayerAlpha > 0) {
+               alertLayerColor = cachedColorsMap.get(alertLayer);
+               if (alertLayerColor == null) {
+                  alertLayerColor = new Color(display, getColor(alertLayer));
+                  cachedColorsMap.put(alertLayer, alertLayerColor);
+               }
+            }
+         } else {
             bgColor = new Color(display, getColor(background));
-            cachedColorsMap.put(background, bgColor);
+            borderColor = new Color(display, getColor(border));
+            if (alertLayerAlpha > 0) {
+               alertLayerColor = new Color(display, getColor(alertLayer));
+            }
          }
-         if (fgColor == null) {
-            fgColor = new Color(display, getColor(foreground));
-            cachedColorsMap.put(foreground, fgColor);
-         }
-      }
-      else {
-         bgColor = new Color(display, getColor(background));
-         fgColor = new Color(display, getColor(foreground));
-      }
-      gc.setBackground(bgColor);
-      gc.setForeground(fgColor);
-      if (isVisible) {
+         gc.setBackground(bgColor);
+         gc.setForeground(borderColor);
          int previousAlpha = gc.getAlpha();
+         int newAlpha = (255 - BACKGROUND_IMAGE_INFO._alpha) * alpha / 255;
          if (locOnMap) {
-            gc.setAlpha(255 - BACKGROUND_IMAGE_INFO._alpha);
+            gc.setAlpha(newAlpha);
          }
+         //System.out.println("fillPolygon at 1002: " + loc._x + "," + loc._y + " (not visible)");
          gc.fillPolygon(bounds);
-         gc.setAlpha(previousAlpha);
+
+         if (isKnown && locOnMap) {
+            drawWall(loc, gc, display, sizePerHex, 0, 0, offsetCol, offsetRow, selfID, false, 0.0);
+         }
+
+         // draw the hex borders without any alpha
          gc.drawPolygon(bounds);
-      }
-      else { // hex is still known, or we would have exited before here
-         // overlay a dither pattern to grey-out the hex:
-//         background = new RGB(255, 255, 255);
-//         foreground = new RGB(  0,   0,   0);
-//         PaletteData palette = new PaletteData(new RGB[] {background, foreground});
-//         int scanlinePad = 2;
-//         byte[] data = new byte[] {1, 1, 1, 1};
-//         ImageData imageData = new ImageData(2/*width*/, 2/*height*/, 1/*depth*/, palette, scanlinePad, data );
-//         Image dither = new Image(display, imageData);
-//         gc.setBackgroundPattern(new Pattern(display, dither));
-//         gc.setForegroundPattern(new Pattern(display, dither));
 
-         Pattern notCurrentlyVisibleFillPattern;
-         if (cachedPatternMap != null) {
-            Color finalBgColor = bgColor;
-            notCurrentlyVisibleFillPattern = cachedPatternMap.computeIfAbsent(bgColor,
-                                                            o-> new Pattern(display, 0, 0, 1, 2,
-                                                                            display.getSystemColor(SWT.COLOR_DARK_GRAY),
-                                                                            finalBgColor));
-         }
-         else {
-            notCurrentlyVisibleFillPattern = new Pattern(display, 0,0, 1,2, display.getSystemColor(SWT.COLOR_DARK_GRAY), bgColor);
+         if (alertLayerAlpha > 0) {
+            try {
+               gc.setBackground(alertLayerColor);
+               gc.setForeground(alertLayerColor);
+            } catch (Exception e) {
+               e.printStackTrace();
+            }
+            gc.setAlpha(alertLayerAlpha);
+            gc.fillPolygon(bounds);
          }
 
-         gc.setBackgroundPattern(notCurrentlyVisibleFillPattern);
-         gc.fillPolygon(bounds);
-         if (cachedPatternMap == null) {
-            notCurrentlyVisibleFillPattern.dispose();
+         gc.setAlpha(previousAlpha);
+
+         if (cachedColorsMap == null) {
+            bgColor.dispose();
+            borderColor.dispose();
+            if (alertLayerColor != null) {
+               alertLayerColor.dispose();
+            }
          }
       }
-      if (cachedColorsMap == null) {
-         bgColor.dispose();
-         fgColor.dispose();
-      }
-
       if (!locOnMap) {
          return;
       }
 
       if (isVisible) {
          // draw any weapons laying on the ground
-         // TODO: assume the size 1/2 the hex width, but this should be an attribute of the weapon.
-         int itemIndex = 0;
-         synchronized (loc) {
-            try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(loc._lock_this)) {
-               for (Object obj : loc.getThings()) {
-                  DrawnObject drawnThing = null;
-                  if (obj instanceof Thing) {
-                     if (obj instanceof Limb) {
-                        if (obj instanceof Hand) {
-                           drawnThing = ((Limb)obj).drawThing((int) (sizePerHex/2.5), (int) (sizePerHex/2.5), new RGB(0,0,0), new RGB(192,192,192));
-                        }
-                        else if (obj instanceof Leg) {
-                           drawnThing = ((Limb)obj).drawThing(sizePerHex/2, sizePerHex/2, new RGB(0,0,0), new RGB(192,192,192));
-                        }
-                        else if (obj instanceof Wing) {
-                           drawnThing = ((Limb)obj).drawThing(sizePerHex/2, sizePerHex/2, new RGB(0,0,0), new RGB(192,192,192));
-                        }
-                     }
-                     else {
-                        Thing thing = (Thing) obj;
-                        drawnThing = thing.drawThing(sizePerHex/3, new RGB(0,0,0), new RGB(64,64,64));
-                     }
-                  }
-                  if (drawnThing != null) {
-                     // create a pseudo-random orientation of this item, so it will always be in the random spot
-                     // each time we draw it.
-                     Random pseudoRandom = new Random((loc._x * 65536) + loc._y + (itemIndex++ * 1000));
-                     int centerX = (bounds[0] + bounds[(2 * 3)]) / 2;
-                     int centerY = (bounds[1] + bounds[(2 * 3) + 1]) / 2;
-                     int width  = bounds[X_LARGEST] - bounds[X_SMALLEST];
-                     int height = bounds[Y_LARGEST] - bounds[Y_SMALLEST];
-                     int offX = (int) ((width/4) * pseudoRandom.nextDouble() * pseudoRandom.nextDouble());
-                     int offY = (int) ((height/4) * pseudoRandom.nextDouble() * pseudoRandom.nextDouble());
-                     drawnThing.rotatePoints(pseudoRandom.nextDouble() * Math.PI * 2);
-                     drawnThing.offsetPoints(offX, offY);
-                     drawnThing.rotatePoints(pseudoRandom.nextDouble() * Math.PI * 2);
-                     drawnThing.offsetPoints(centerX, centerY);
-                     drawnThing.draw(gc, display);
-                  }
-               }
-            }
-         }
+         drawHexThings(loc, gc, display, sizePerHex, bounds);
       }
       int futureBackground = 0xE0E0E0;
       int futureForeground = 0x404040;
-      if ((selectionOrientations != null)
-               && (selectionOrientations.size() > 0)
-               && isMouseOver
-               && (mouseOverCharacter != null)) {
+      if ((selectionOrientations != null) &&
+          !selectionOrientations.isEmpty() &&
+          isMouseOver &&
+          (mouseOverCharacter != null)) {
          Orientation selectionOrientation = selectionOrientations.get(0);
-//            completionOrientations = new ArrayList<>();
-//            completionOrientations.add(mouseOverCharacter.getOrientation());
          boolean drawCheckMark = (completionOrientations != null) && completionOrientations.contains(selectionOrientation);
          boolean drawCancelMark = (cancelOrientations != null) && cancelOrientations.contains(selectionOrientation);
          if (drawCheckMark || drawCancelMark) {
             if (selectionOrientation.isInLocation(loc)) {
-               selectionOrientation.drawCharacter(gc, display, bounds, loc, background, foreground, mouseOverCharacter);
+               selectionOrientation.drawCharacter(gc, display, bounds, loc, background, border, mouseOverCharacter);
             }
             if (drawCheckMark) {
                drawCheckMark(gc, display, bounds);
@@ -1228,28 +1072,103 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       else if (character != null) {
          Orientation orient = character.getOrientation();
          if (orient != null) {
-            orient.drawCharacter(gc, display, bounds, loc, background, foreground, character);
+            orient.drawCharacter(gc, display, bounds, loc, characterColor, border, character);
             if ((mouseOverCharacter == character) && (character.isInCoordinates(loc)) && isMouseOver) {
                drawCheckMark(gc, display, bounds);
             }
          }
       }
       if ((selectionOrientations != null) &&
-          (selectionOrientations.size() > 0) &&
+          !selectionOrientations.isEmpty() &&
           !isMouseOver &&
           (mouseOverCharacter != null)) {
          for (Orientation selectionOrientation : selectionOrientations) {
-            if (selectionOrientation == null) {
-               DebugBreak.debugBreak();
-            }
-            else if (selectionOrientation.getCoordinates().contains(loc)) {
+            if ((selectionOrientation != null) && (selectionOrientation.getCoordinates().contains(loc))) {
                selectionOrientation.drawCharacter(gc, display, bounds, loc, futureBackground, futureForeground, mouseOverCharacter);
             }
          }
       }
-      if (routeMap != null) {
-         drawRouteLine(loc, gc, display, sizePerHex, offsetX, offsetY, offsetCol, offsetRow,
-                       routeMap, path, bounds);
+      drawRouteLine(loc, gc, display, sizePerHex, offsetX, offsetY, offsetCol, offsetRow, routeMap, path, bounds);
+   }
+
+   private static int getBackgroundForCharacter(int selfID, int targetID, Character character) {
+      byte teamId = character._teamID;
+      if (!character.stillFighting()) {
+         return 0x808080;
+      }
+      if (teamId == Enums.TEAM_ALPHA) {
+         if (character._uniqueID == selfID) {
+            return 0xffC0C0;
+         }
+         if (character._uniqueID == targetID) {
+            return 0xff3030;
+         }
+         return 0xC02020;
+      }
+      if (teamId == Enums.TEAM_BETA) {
+         if (character._uniqueID == selfID) {
+            return 0xC0C0ff;
+         }
+         if (character._uniqueID == targetID) {
+            return 0x3030ff;
+         }
+         return 0x2020C0;
+      }
+      if (teamId == Enums.TEAM_INDEPENDENT) {
+         if (character._uniqueID == selfID) {
+            return 0xC0ffC0;
+         }
+         if (character._uniqueID == targetID) {
+            return 0x30ff30;
+         }
+         return 0x20C020;
+      }
+      if (teamId == Enums.TEAM_UNIVERSAL) {
+         return 0xffC0C0;
+      }
+      DebugBreak.debugBreak();
+      return 0xFFFFFF;
+   }
+
+   private static void drawHexThings(ArenaLocation loc, GC gc, Display display, int sizePerHex, int[] bounds) {
+      // TODO: assume the size 1/2 the hex width, but this should be an attribute of the weapon.
+      int itemIndex = 0;
+      synchronized (loc) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(loc._lock_this)) {
+            for (Object obj : loc.getThings()) {
+               if (obj instanceof Thing) {
+                  DrawnObject drawnThing = null;
+                  if (obj instanceof Limb) {
+                     if (obj instanceof Hand) {
+                        drawnThing = ((Limb) obj).drawThing((int) (sizePerHex / 2.5), (int) (sizePerHex / 2.5), new RGB(0, 0, 0), new RGB(192, 192, 192));
+                     } else if (obj instanceof Leg) {
+                        drawnThing = ((Limb) obj).drawThing(sizePerHex / 2, sizePerHex / 2, new RGB(0, 0, 0), new RGB(192, 192, 192));
+                     } else if (obj instanceof Wing) {
+                        drawnThing = ((Limb) obj).drawThing(sizePerHex / 2, sizePerHex / 2, new RGB(0, 0, 0), new RGB(192, 192, 192));
+                     }
+                  } else {
+                     Thing thing = (Thing) obj;
+                     drawnThing = thing.drawThing(sizePerHex / 3, new RGB(0, 0, 0), new RGB(64, 64, 64));
+                  }
+                  if (drawnThing != null) {
+                     // create a pseudo-random orientation of this item, so it will always be in the random spot
+                     // each time we draw it.
+                     Random pseudoRandom = new Random((loc._x * 65536) + loc._y + (itemIndex++ * 1000));
+                     int centerX = (bounds[0] + bounds[(2 * 3)]) / 2;
+                     int centerY = (bounds[1] + bounds[(2 * 3) + 1]) / 2;
+                     int width = bounds[X_LARGEST] - bounds[X_SMALLEST];
+                     int height = bounds[Y_LARGEST] - bounds[Y_SMALLEST];
+                     int offX = (int) ((width / 4) * pseudoRandom.nextDouble() * pseudoRandom.nextDouble());
+                     int offY = (int) ((height / 4) * pseudoRandom.nextDouble() * pseudoRandom.nextDouble());
+                     drawnThing.rotatePoints(pseudoRandom.nextDouble() * Math.PI * 2);
+                     drawnThing.offsetPoints(offX, offY);
+                     drawnThing.rotatePoints(pseudoRandom.nextDouble() * Math.PI * 2);
+                     drawnThing.offsetPoints(centerX, centerY);
+                     drawnThing.draw(gc, display);
+                  }
+               }
+            }
+         }
       }
    }
 
@@ -1300,37 +1219,13 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
          // tie it back to the first point
          clippingPath.lineTo(region.get(0) / 10_000, region.get(0) % 10_000);
          gcImage.setClipping(clippingPath);
+         //System.out.println("drawImage at 1231 (BG)");
          gcImage.drawImage(image, srcX, srcY, srcWidth, srcHeight,
                                   dstX, dstY, dstWidth, dstHeight);
+         clippingPath.dispose();
       }
    }
-   private static void drawBackground(ArenaLocation loc, int sizePerHex, GC gc, Display display, int[] bounds, CombatMap combatMap) {
-      int[] unAdjustedBounds  = getHexDimensions(loc._x, loc._y, sizePerHex, 0, 0, false/*cacheResults*/);
 
-      int mapSpaceHexXmin = (int) Math.round(unAdjustedBounds[X_SMALLEST] * BACKGROUND_IMAGE_INFO._stretchFactorX);
-      int mapSpaceHexYmin = (int) Math.round(unAdjustedBounds[Y_SMALLEST] * BACKGROUND_IMAGE_INFO._stretchFactorY);
-      int mapSpaceHexXmax = (int) Math.round(unAdjustedBounds[X_LARGEST] * BACKGROUND_IMAGE_INFO._stretchFactorX);
-      int mapSpaceHexYmax = (int) Math.round(unAdjustedBounds[Y_LARGEST] * BACKGROUND_IMAGE_INFO._stretchFactorY);
-
-      int srcX = mapSpaceHexXmin;
-      int srcY = mapSpaceHexYmin;
-      int srcWidth = mapSpaceHexXmax - mapSpaceHexXmin;
-      int srcHeight = mapSpaceHexYmax - mapSpaceHexYmin;
-      int destX = bounds[X_SMALLEST];
-      int destY = bounds[Y_SMALLEST];
-      int destWidth = bounds[X_LARGEST] - bounds[X_SMALLEST];
-      int destHeight = bounds[Y_LARGEST] - bounds[Y_SMALLEST];
-
-      Path clippingPath = new Path(display);
-      for (int i = 0; i <= 6; i++) {
-         clippingPath.lineTo(bounds[(i % 6) * 2], bounds[(i % 6) * 2 + 1]);
-      }
-//      gc.setClipping(clippingPath);
-//      int previousAlpha = gc.getAlpha();
-//      gc.setAlpha(_backgroundImageInfo._alpha);
-//      gc.drawImage(_backgroundImageInfo._imageKnown, srcX, srcY, srcWidth, srcHeight, destX, destY, destWidth, destHeight);
-//      gc.setAlpha(previousAlpha);
-   }
    /*
     *   10 9 8      y = lowest
     *  11     7     y = low
@@ -1429,7 +1324,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
                                      Map<ArenaCoordinates, ArenaCoordinates> routeMap,
                                      List<ArenaCoordinates> path, int[] bounds)
    {
-      ArenaCoordinates comeFrom = routeMap.get(loc);
+      ArenaCoordinates comeFrom = (routeMap == null) ? null : routeMap.get(loc);
       if (comeFrom != null) {
          int x1 = (bounds[X_SMALLEST] + bounds[X_LARGEST]) / 2;
          int y1 = (bounds[Y_SMALLEST] + bounds[Y_LARGEST]) / 2;
@@ -1453,10 +1348,10 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       return _canvas;
    }
 
-   public static int darkenColor(int color, int fade) {
-      return ((((color & 0xff0000) * fade) / 100) & 0xff0000) +
-             ((((color & 0x00ff00) * fade) / 100) & 0x00ff00) +
-             ((((color & 0x0000ff) * fade) / 100) & 0x0000ff);
+   public static int darkenColor(int color, int fadePercent) {
+      return ((((color & 0xff0000) * (100 - fadePercent)) / 100) & 0xff0000) +
+             ((((color & 0x00ff00) * (100 - fadePercent)) / 100) & 0x00ff00) +
+             ((((color & 0x0000ff) * (100 - fadePercent)) / 100) & 0x0000ff);
    }
    public static RGB darkenColor(RGB color, int fade) {
       return new RGB((color.red * fade) / 100, (color.green * fade) / 100, (color.blue * fade) / 100);
@@ -1478,7 +1373,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
          int x = textStart.x;
          int y = textStart.y;
          List<Object> labelsAndColors = getTypeAndLabels(loc);
-         while (labelsAndColors.size() > 0) {
+         while (!labelsAndColors.isEmpty()) {
             Object type = labelsAndColors.remove(0);
             String labelText  = (String) labelsAndColors.remove(0);
             if (type == TYPE_fighting) {
@@ -1532,6 +1427,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       ZOOM_IN_BUTTON_CENTER = new Point(rightEdge - ZOOM_BUTTON_RADIUS, buttonCenterY);
       ZOOM_RESET_BUTTON_CENTER = new Point((leftEdge + rightEdge) / 2, buttonCenterY);
 
+      //System.out.println("drawImage at 1439 (zoom)");
       gc.drawImage(ZOOM_CONTROL_IMAGE, leftEdge, topEdge);
    }
    public static void drawWall(ArenaLocation loc, GC gc, Display display, int sizePerHex,
@@ -1600,26 +1496,25 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
                }
             }
             for (Door door : doors) {
-               int fillPoint = computeFillPoint(vis, door._orientation);
-               if (!door.isOpen()) {
+               if (!door.isOpen() && !door.isHalfHeightWall()) {
+                  int fillPoint = computeFillPoint(vis, door._orientation);
                   drawHidden(hexBounds, gc, door._orientation.startPoint, door._orientation.endPoint, fillPoint);
                }
             }
          }
-      }
-      gc.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-      gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
-      for (TerrainWall terrainWall : TerrainWall.values()) {
-         if (terrainWall.contains(walls)) {
-            drawWall(hexBounds, gc, terrainWall.startPoint, terrainWall.endPoint, terrainWall.thickness);
-            // Are there more than one walls in this hex?
-            if ((terrainWall.bitMask ^ walls) != 0) {
-               // Yes, there are. Find all combinations of the current wall
-               // with each of the OTHER walls in this hex, and get the
-               // polygon that is the joined shape
-               for (TerrainWall terrainWall2 : TerrainWall.values()) {
-                  if (terrainWall != terrainWall2) {
-                     if (terrainWall2.contains(walls)) {
+
+         gc.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+         gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
+         for (TerrainWall terrainWall : TerrainWall.values()) {
+            if (terrainWall.contains(walls)) {
+               drawWall(hexBounds, gc, terrainWall.startPoint, terrainWall.endPoint, terrainWall.thickness);
+               // Are there more than one walls in this hex?
+               if ((terrainWall.bitMask ^ walls) != 0) {
+                  // Yes, there are. Find all combinations of the current wall
+                  // with each of the OTHER walls in this hex, and get the
+                  // polygon that is the joined shape
+                  for (TerrainWall terrainWall2 : TerrainWall.values()) {
+                     if ((terrainWall != terrainWall2) && (terrainWall2.contains(walls))) {
                         int[] polygon = MapWidget.getPolygonForTwoWalls(terrainWall, terrainWall2);
                         if (polygon != null) {
                            drawPolygons(hexBounds, gc, polygon);
@@ -1631,14 +1526,52 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
          }
       }
 
-      gc.setBackground(display.getSystemColor(SWT.COLOR_DARK_RED));
-      gc.setForeground(display.getSystemColor(SWT.COLOR_DARK_RED));
-      for (Door door : doors) {
-         drawDoor(hexBounds, gc, door._orientation.startPoint, door._orientation.endPoint, door._orientation.thickness, door.isOpen());
+      Color shortWallColor = new Color(display, getColor(0x555555));
+      Color doorColor = display.getSystemColor(SWT.COLOR_DARK_RED);
+      Color currentColor = null;
+      for (int d=0 ; d<doors.size() ; d++) {
+         Door door = doors.get(d);
+         if (door.isHalfHeightWall()) {
+            if (currentColor != shortWallColor) {
+               gc.setBackground(shortWallColor);
+               gc.setForeground(shortWallColor);
+               currentColor = shortWallColor;
+            }
+            drawWall(hexBounds, gc, door._orientation.startPoint, door._orientation.endPoint, door._orientation.thickness);
+            for (int d2=0 ; d2<doors.size() ; d2++) {
+               if (d2 != d) {
+                  Door door2 = doors.get(d2);
+                  if (door2.isHalfHeightWall()) {
+                     int[] polygon = MapWidget.getPolygonForTwoWalls(door._orientation, door2._orientation);
+                     if (polygon != null) {
+                        drawPolygons(hexBounds, gc, polygon);
+                     }
+                  }
+               }
+            }
+            // If this hex has a full wall, and a half wall, connect the half wall to each full wall
+            for (TerrainWall terrainWall2 : TerrainWall.values()) {
+               if ((door._orientation != terrainWall2) && (terrainWall2.contains(walls))) {
+                  int[] polygon = MapWidget.getPolygonForTwoWalls(door._orientation, terrainWall2);
+                  if (polygon != null) {
+                     drawPolygons(hexBounds, gc, polygon);
+                  }
+               }
+            }
+         }
+         else {
+            if (currentColor != doorColor) {
+               gc.setBackground(doorColor);
+               gc.setForeground(doorColor);
+               currentColor = doorColor;
+            }
+            drawDoor(hexBounds, gc, door._orientation.startPoint, door._orientation.endPoint, door._orientation.thickness, door.isOpen());
+         }
       }
       drawSpells(loc, hexBounds, gc, display);
       gc.setBackground(oldBg);
       gc.setForeground(oldFg);
+      shortWallColor.dispose();
    }
 
    private static void drawImageOnHex(ArenaLocation loc, int[] hexBounds,
@@ -1656,6 +1589,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
           *    2 3 4      y = highest
           */
          ImageData imageData = getImageDataResourceByName(imageResourceName);
+         //System.out.println("drawImage at 1601");
          gc.drawImage(getImageResourceByName(imageResourceName, display),
                       0/*srcX*/, 0/*srcY*/, imageData.width/*srcWidth*/, imageData.height/*srcHeight*/,
                       x1/*dstX*/, y1/*dstY*/, (x2-x1)/*dstWidth*/, (y2-y1)/*dstHeight*/);

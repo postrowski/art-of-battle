@@ -3,11 +3,12 @@ package ostrowski.combat.common.things;
 import java.util.HashMap;
 
 public enum DoorState {
-   Broken(0),
-   Open(1),
-   Closed(2),
-   Locked(3),
-   Blocked(4);
+   BROKEN(0),
+   OPEN(1),
+   CLOSED(2),
+   LOCKED(3),
+   BLOCKED(4),
+   HALF_HEIGHT_WALL(5);
    DoorState(int val) {
       value = val;
    }

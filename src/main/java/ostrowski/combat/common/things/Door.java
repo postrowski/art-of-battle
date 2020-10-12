@@ -13,7 +13,7 @@ import ostrowski.combat.common.enums.TerrainWall;
 
 public class Door extends Wall implements Enums
 {
-   public DoorState _doorState = DoorState.Closed;
+   public DoorState _doorState = DoorState.CLOSED;
    public String _keyCode = "";
 
    public Door() {
@@ -80,11 +80,12 @@ public class Door extends Wall implements Enums
    public String toString()
    {
       switch (_doorState) {
-         case Closed:   return "Door: closed";
-         case Open:     return "Door: open";
-         case Locked:   return "Door: locked";
-         case Blocked:  return "Door: blocked";
-         case Broken:   return "Door: broken";
+         case CLOSED:           return "Door: closed";
+         case OPEN:             return "Door: open";
+         case LOCKED:           return "Door: locked";
+         case BLOCKED:          return "Door: blocked";
+         case BROKEN:           return "Door: broken";
+         case HALF_HEIGHT_WALL: return "Half wall";
       }
       return "Door";
    }
@@ -94,36 +95,39 @@ public class Door extends Wall implements Enums
    }
 
    public boolean isOpen() {
-      return (_doorState == DoorState.Open) || (_doorState == DoorState.Broken);
+      return (_doorState == DoorState.OPEN) || (_doorState == DoorState.BROKEN);
    }
    public boolean isLocked() {
-      return (_doorState == DoorState.Locked);
+      return (_doorState == DoorState.LOCKED);
+   }
+   public boolean isHalfHeightWall() {
+      return (_doorState == DoorState.HALF_HEIGHT_WALL);
    }
 
    public boolean close() {
-      if (_doorState == DoorState.Open) {
-         _doorState = DoorState.Closed;
+      if (_doorState == DoorState.OPEN) {
+         _doorState = DoorState.CLOSED;
          return true;
       }
       return false;
    }
    public boolean open() {
-      if (_doorState == DoorState.Closed) {
-         _doorState = DoorState.Open;
+      if (_doorState == DoorState.CLOSED) {
+         _doorState = DoorState.OPEN;
          return true;
       }
       return false;
    }
    public boolean lock() {
-      if (_doorState == DoorState.Closed) {
-         _doorState = DoorState.Locked;
+      if (_doorState == DoorState.CLOSED) {
+         _doorState = DoorState.LOCKED;
          return true;
       }
       return false;
    }
    public boolean unlock() {
-      if (_doorState == DoorState.Locked) {
-         _doorState = DoorState.Closed;
+      if (_doorState == DoorState.LOCKED) {
+         _doorState = DoorState.CLOSED;
          return true;
       }
       return false;

@@ -291,11 +291,15 @@ public class CharInfoBlock extends Helper implements IUIBlock, ModifyListener
          sb.append(" (");
          boolean first = true;
          for (Wound wnd : target.getCondition().getWoundsList()) {
+            byte effectiveWounds = wnd.getEffectiveWounds();
+            if (effectiveWounds <= 0) {
+               continue;
+            }
             if (!first) {
                sb.append("+");
             }
             first = false;
-            sb.append(wnd.getEffectiveWounds());
+            sb.append(effectiveWounds);
          }
          sb.append(")");
       }

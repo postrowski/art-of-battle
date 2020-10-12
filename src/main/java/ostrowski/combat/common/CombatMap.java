@@ -41,6 +41,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
    private ArenaLocation[][]          _locations                = null;
    private boolean                    _hideViewFromLocalPlayers = true;
    private String                     _backgroundImagePath      = "";
+   private byte                       _backgroundImageAlpha     = (byte)192;
    private Point                      _bgImageUpperLeft         = new Point(0,0);
    private Point                      _bgImageBottomRight       = null;
    private byte                       _maxCombatantsPerTeam     = CombatServer.MAX_COMBATANTS_PER_TEAM;
@@ -693,6 +694,10 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
          return true;
       }
       _bgImageBottomRight = new Point(Short.parseShort(st.nextToken()), Short.parseShort(st.nextToken()));
+      if (!st.hasMoreElements()) {
+         return true;
+      }
+      _backgroundImageAlpha = Byte.parseByte(st.nextToken());
 
       return true;
    }
@@ -741,6 +746,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       sb.append(_bgImageUpperLeft.y).append(SEPARATOR_MAIN);
       sb.append(_bgImageBottomRight.x).append(SEPARATOR_MAIN);
       sb.append(_bgImageBottomRight.y).append(SEPARATOR_MAIN);
+      sb.append(_backgroundImageAlpha).append(SEPARATOR_MAIN);
       return sb.toString();
    }
 
@@ -753,6 +759,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
          writeToStream(getSizeY(), out);
          writeToStream(_hideViewFromLocalPlayers, out);
          writeToStream(_backgroundImagePath, out);
+         writeToStream(_backgroundImageAlpha, out);
          writeToStream(_bgImageUpperLeft.x, out);
          writeToStream(_bgImageUpperLeft.y, out);
          writeToStream(_bgImageBottomRight.x, out);
@@ -790,7 +797,8 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
          short sizeX = in.readShort();
          short sizeY = in.readShort();
          _hideViewFromLocalPlayers = in.readBoolean();
-         _backgroundImagePath    = readString(in);
+         _backgroundImagePath      = readString(in);
+         _backgroundImageAlpha     = readByte(in);
          short x = in.readShort();
          short y = in.readShort();
          _bgImageUpperLeft = new Point(x, y);
@@ -869,6 +877,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
          newObj._triggers.add(trigger.clone());
       }
       newObj._backgroundImagePath = _backgroundImagePath;
+      newObj._backgroundImageAlpha = _backgroundImageAlpha;
       if (_bgImageUpperLeft == null) {
          newObj._bgImageUpperLeft = null;
       } else {
@@ -1619,7 +1628,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
    private static void addAdjacentLocationAction(RequestAction actionReq, Character actor, ArenaLocation fromLoc, ArenaLocation toLoc,
                                                  String doorDirectionDescription, RequestActionType reqIdBase, boolean includeHalfAngles) {
       Door door = getDoorBetween(fromLoc, toLoc, includeHalfAngles);
-      if (door != null) {
+      if (door != null && !door.isHalfHeightWall()) {
          if (door.isOpen()) {
             RequestActionType reqActType = getLocActionType(doorDirectionDescription, CLOSE_DOOR);
             actionReq.addOption(new RequestActionOption(CLOSE_DOOR + doorDirectionDescription, reqActType, LimbType.BODY, true/*enabled*/));
@@ -1901,7 +1910,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
             }
             else {
                door = getDoorBetween(location, toLoc, includeHalfAngles);
-               if (door != null) {
+               if (door != null && !door.isHalfHeightWall()) {
                   ArenaLocation doorLoc = toLoc;
                   synchronized (location) {
                      try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(location._lock_this)) {
@@ -2080,6 +2089,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       mainElement.setAttribute("width", String.valueOf(getSizeX()));
       mainElement.setAttribute("height", String.valueOf(getSizeY()));
       mainElement.setAttribute("backgroundImagePath", String.valueOf(_backgroundImagePath));
+      mainElement.setAttribute("backgroundImageAlpha", String.valueOf(_backgroundImageAlpha));
       if (_bgImageUpperLeft != null) {
          mainElement.setAttribute("bgImageUpperLeftX", String.valueOf(_bgImageUpperLeft.x));
          mainElement.setAttribute("bgImageUpperLeftY", String.valueOf(_bgImageUpperLeft.y));
@@ -2316,6 +2326,12 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
          _backgroundImagePath = nodePath.getNodeValue();
       }
 
+      _backgroundImageAlpha = (byte) 192;
+      Node nodeAlpha = namedNodeMap.getNamedItem("backgroundImageAlpha");
+      if (nodeAlpha != null) {
+         _backgroundImageAlpha = Byte.parseByte(nodeAlpha.getNodeValue());
+      }
+
       _bgImageUpperLeft = new Point(0,0);
       Node nodeX = namedNodeMap.getNamedItem("bgImageUpperLeftX");
       Node nodeY = namedNodeMap.getNamedItem("bgImageUpperLeftY");
@@ -2513,7 +2529,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
                      String stateStr   = attributes.getNamedItem("state").getNodeValue();
                      if ((orientation != null) && (stateStr != null)) {
                         long doorOrientation = 0;
-                        DoorState doorState = DoorState.Closed;
+                        DoorState doorState = DoorState.CLOSED;
                         try {
                            doorOrientation = Long.parseLong(orientation);
                         }
@@ -2633,6 +2649,9 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       if (!_backgroundImagePath.equalsIgnoreCase(other._backgroundImagePath)) {
          return false;
       }
+      if (_backgroundImageAlpha != other._backgroundImageAlpha) {
+         return false;
+      }
       if ((_bgImageBottomRight == null && other._bgImageBottomRight != null) ||
           (_bgImageBottomRight != null && !_bgImageBottomRight.equals(other._bgImageBottomRight))) {
          return false;
@@ -2719,5 +2738,12 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
    }
    public void setBackgroundImagePath(String backgroundImagePath) {
       _backgroundImagePath = backgroundImagePath;
+   }
+
+   public byte getBackgroundImageAlpha() {
+      return _backgroundImageAlpha;
+   }
+   public void setBackgroundImageAlpha(byte backgroundImageAlpha) {
+      _backgroundImageAlpha = backgroundImageAlpha;
    }
 }
