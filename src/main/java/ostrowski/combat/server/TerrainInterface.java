@@ -243,7 +243,7 @@ public class TerrainInterface extends Helper implements SelectionListener, Modif
       }
       else if (e.widget == _bgImageAlphaSlider) {
          _mapInterface.setBackgroundAlpha(_bgImageAlphaSlider.getSelection());
-         _mapInterface.getCombatMap().setBackgroundImageAlpha((byte) _bgImageAlphaSlider.getSelection());
+         _mapInterface.getCombatMap().setBackgroundImageAlpha(_bgImageAlphaSlider.getSelection());
       }
       else if (e.widget == _bgImageFileBtn) {
          FileDialog fd = new FileDialog(e.display.getShells()[0], SWT.OPEN);

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Arena Name="dungeon" height="130" hideViewFromLocalPlayers="true" level="0" width="85">
+<?xml version="1.0" encoding="UTF-8"?><Arena Name="dungeon" backgroundImageAlpha="235" backgroundImagePath="C:\Users\paul_\workspace\xcmbt\arenas\dungeon1.png" bgImageUpperLeftX="0" bgImageUpperLeftY="0" height="130" hideViewFromLocalPlayers="true" level="0" width="85">
   <rows>
     <row id="0">11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:</row>
     <row id="1">11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:</row>
@@ -389,26 +388,10 @@
   </triggers>
 
   <items>
-    <item col="7" name="Archway" raceBase="Human" row="99"/>
-    <item col="16" name="Fire pit" raceBase="Human" row="96"/>
-    <item col="20" name="blankets" raceBase="Human" row="114"/>
-    <item col="23" name="blankets" raceBase="Human" row="111"/>
-    <item col="25" name="blankets" raceBase="Human" row="115"/>
-    <item col="29" name="trash" raceBase="Human" row="95"/>
-    <door col="30" key="" orient="VERT_CENTER" row="94" state="2"/>
-    <door col="30" key="" orient="VERT_CENTER" row="96" state="2"/>
+    <item col="23" name="" row="113"/>
+    <item col="24" name="" row="112"/>
+    <door col="30" key="" orient="128" row="94" state="2"/>
+    <door col="30" key="" orient="128" row="96" state="2"/>
     <item col="79" name="Dagger" raceBase="Human" row="61"/>
-    <item col="79" name="shackles" raceBase="Human" row="77"/>
-    <item col="80" name="Alter" raceBase="Human" row="60"/>
-    <item col="80" name="Cage" raceBase="Human" row="80"/>
-    <item col="81" name="Pentagram" raceBase="Human" row="57"/>
-    <item col="81" name="Cage" raceBase="Human" row="83"/>
-    <item col="82" name="Stairs" raceBase="Human" row="50"/>
-    <item col="82" name="Down" raceBase="Human" row="50"/>
-    <item col="83" name="Shrine" raceBase="Human" row="69"/>
-    <item col="83" name="shackles" raceBase="Human" row="81"/>
-    <item col="83" name="Bones" raceBase="Human" row="81"/>
-    <item col="83" name="Cage" raceBase="Human" row="85"/>
-    <item col="83" name="Bones" raceBase="Human" row="85"/>
   </items>
 </Arena>

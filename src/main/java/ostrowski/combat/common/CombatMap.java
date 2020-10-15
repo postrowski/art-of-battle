@@ -41,7 +41,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
    private ArenaLocation[][]          _locations                = null;
    private boolean                    _hideViewFromLocalPlayers = true;
    private String                     _backgroundImagePath      = "";
-   private byte                       _backgroundImageAlpha     = (byte)192;
+   private int                        _backgroundImageAlpha     = 192;
    private Point                      _bgImageUpperLeft         = new Point(0,0);
    private Point                      _bgImageBottomRight       = null;
    private byte                       _maxCombatantsPerTeam     = CombatServer.MAX_COMBATANTS_PER_TEAM;
@@ -2286,7 +2286,11 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       if (sourceFile.getAbsolutePath().endsWith(".xml")) {
          Document charDoc =  parseXmlFile(sourceFile, false/*validating*/);
          if (charDoc != null) {
-            return serializeFromXmlObject(charDoc.getDocumentElement());
+            if (serializeFromXmlObject(charDoc.getDocumentElement())) {
+               // Make sure the map name matches the name of the file it was read from:
+               _name = sourceFile.getName().substring(0, sourceFile.getName().indexOf('.'));
+               return true;
+            }
          }
       }
       return false;
@@ -2327,6 +2331,9 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       }
 
       _backgroundImageAlpha = (byte) 192;
+      if (_backgroundImagePath.isEmpty()) {
+         _backgroundImageAlpha = 0;
+      }
       Node nodeAlpha = namedNodeMap.getNamedItem("backgroundImageAlpha");
       if (nodeAlpha != null) {
          _backgroundImageAlpha = Byte.parseByte(nodeAlpha.getNodeValue());
@@ -2740,10 +2747,10 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       _backgroundImagePath = backgroundImagePath;
    }
 
-   public byte getBackgroundImageAlpha() {
+   public int getBackgroundImageAlpha() {
       return _backgroundImageAlpha;
    }
-   public void setBackgroundImageAlpha(byte backgroundImageAlpha) {
+   public void setBackgroundImageAlpha(int backgroundImageAlpha) {
       _backgroundImageAlpha = backgroundImageAlpha;
    }
 }

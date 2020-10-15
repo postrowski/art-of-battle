@@ -916,14 +916,14 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
          background = loc.getRGBColorAsInt();
          alpha = 255;
          if (!isVisible) {
-            shadowAlpha = 60;
+            shadowAlpha = 140;
          }
       }
       // RGB border = new RGB(0x80,0x80,0x80);
       if (!hexSelectable) {
-         shadowAlpha = 100 - (100 - shadowAlpha) * (100 - 40) / 100;
+         shadowAlpha = 255 - (255 - shadowAlpha) * (255 - 100) / 255;
       }
-      background = darkenColor(background, shadowAlpha);
+      //background = darkenColor(background, shadowAlpha);
       int border = darkenColor(background, borderFade);
 
       if (locOnMap && BACKGROUND_IMAGE_INFO.isActive()) {
@@ -938,7 +938,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
             gc.setAlpha(previousAlpha);
          }
          // When using backgrounds, always overlay the map with black hex borders
-         border = darkenColor(border, BACKGROUND_IMAGE_INFO._alpha);
+         border = darkenColor(border, (BACKGROUND_IMAGE_INFO._alpha * 100 / 255));
       }
 
       int alertRed   = alertLayer & 0xff0000 >> 16;
