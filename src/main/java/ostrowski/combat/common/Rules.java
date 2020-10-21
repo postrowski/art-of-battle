@@ -504,8 +504,8 @@ public class Rules extends DebugBreak implements Enums
       return (byte) ((Math.max(thrustTime, swingTime) + 1) / 2);
    }
 
-   public static byte getCollapsePainLevel() {
-      return 10;
+   public static byte getCollapsePainLevel(byte toughnessLevel) {
+      return (byte) (10 + (toughnessLevel/2));
    }
 
    public static byte getUnconsciousWoundLevel(byte toughnessLevel) {

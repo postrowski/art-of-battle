@@ -50,6 +50,7 @@ public class CharacterFile
             for (File charFile : charFiles) {
                Character newChar = new Character();
                if (newChar.serializeFromFile(charFile)) {
+                  newChar.resetSpellPoints();
                   putCharacter(newChar);
                }
             }

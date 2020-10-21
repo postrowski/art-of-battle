@@ -111,7 +111,7 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
    protected       int                                       _targetID;
    protected       RequestMovement                           _movementRequest       = null;
    protected       RequestLocation                           _locationRequest       = null;
-   protected       List<ArenaLocation>                       _selectableHexes       = null;
+   protected       Set<ArenaLocation>                        _selectableHexes       = null;
    protected       boolean                                   _isDragable            = true;
    protected       List<Orientation>                         _mouseOverOrientations = new ArrayList<>();
    protected       Character                                 _mouseOverCharacter    = null;
@@ -284,7 +284,8 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
    public void setSelectableHexes(List<ArenaCoordinates> selectableHexes)
    {
       _combatMap.setAllHexesSelectable(false);
-      _selectableHexes  = _combatMap.getLocations(selectableHexes);
+      _selectableHexes = new HashSet<>();
+      _selectableHexes.addAll(_combatMap.getLocations(selectableHexes));
       for (ArenaLocation selectableHex : _selectableHexes) {
          selectableHex.setSelectable(true);
       }

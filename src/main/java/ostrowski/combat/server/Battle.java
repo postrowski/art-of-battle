@@ -2091,7 +2091,7 @@ public class Battle extends Thread implements Enums {
                   }
                   events.append(".<br/>");
                }
-               if (combatant.getPainPenalty(true/*accountForBerserking*/) >= Rules.getCollapsePainLevel()) {
+               if (combatant.getPainPenalty(true/*accountForBerserking*/) >= Rules.getCollapsePainLevel(combatant.getAttributeLevel(Attribute.Toughness))) {
                   events.append(combatant.getName()).append(" collapses from the pain.<br/>");
                   combatant.collapseFromPain(_arena.getCombatMap());
                }

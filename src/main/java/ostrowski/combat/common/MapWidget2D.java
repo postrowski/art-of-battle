@@ -19,6 +19,7 @@ import ostrowski.combat.server.*;
 import ostrowski.util.SemaphoreAutoTracker;
 
 import java.awt.Point;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -63,22 +64,27 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
 
 
    static class BackgroundImageInfo {
-      private int    _alpha          = 0;
-      private Image  _imageKnown     = null;
-      private Image  _imageVisible   = null;
-      private int    _sizePerHex     = 0;
+      private int   _alpha      = 0;
+      private Image _image      = null;
+      private int   _sizePerHex = 0;
       private float  _stretchFactorX = 0f;
       private float  _stretchFactorY = 0f;
       private String _imagePath      = "";
+      private short  _mapSizeX       = 0;
+      private short  _mapSizeY       = 0;
       private CombatMap _map = null;
       private void setInfo(int sizePerHex, CombatMap map, Display display) {
          if ((_sizePerHex == sizePerHex) && (_map == map) &&
              (map == null || _imagePath.equals(map.getBackgroundImagePath())) &&
-             (map == null || _alpha == map.getBackgroundImageAlpha())
+             (map == null || _alpha == map.getBackgroundImageAlpha()) &&
+             (map == null || _mapSizeX == map.getSizeX()) &&
+             (map == null || _mapSizeY == map.getSizeY())
          ) {
             return;
          }
          _sizePerHex = sizePerHex;
+         _mapSizeX = (map == null) ? 0 : map.getSizeX();
+         _mapSizeY = (map == null) ? 0 : map.getSizeY();
          _map = map;
          String mapBGImagePath = (map == null) ? "" : map.getBackgroundImagePath();
          _alpha = (map == null) ? 0 : map.getBackgroundImageAlpha();
@@ -86,24 +92,30 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
             mapBGImagePath = "";
          }
          if (!_imagePath.equalsIgnoreCase(mapBGImagePath)) {
-            if (_imageKnown != null) {
-               _imageKnown.dispose();
-               _imageVisible.dispose();
-               _imageKnown = null;
-               _imageVisible = null;
+            if (_image != null) {
+               _image.dispose();
+               _image = null;
             }
             _imagePath = mapBGImagePath;
             if (!mapBGImagePath.isEmpty()) {
-               _imageKnown = new Image(display, _imagePath);
-               _imageVisible = new Image(display, _imagePath);
-               darkenImage(_imageKnown, 50);
+               String baseDir = System.getProperty("user.dir");
+               String fileSeparator = System.getProperty("file.separator");
+               baseDir = baseDir + fileSeparator + "arenas";
+               File image = new File(_imagePath);
+               if (!image.exists()) {
+                  _imagePath = baseDir + fileSeparator + _imagePath;
+                  image = new File(_imagePath);
+               }
+               if (image.exists()) {
+                  _image = new Image(display, _imagePath);
+               }
             }
          }
 
-         if (_map != null && _imageKnown != null) {
-            int[] bottomRightBounds = getHexDimensions(_map.getSizeX(), _map.getSizeY(), _sizePerHex, 0, 0, false/*cacheResults*/);
-            _stretchFactorX = ((float) _imageKnown.getBounds().width) / bottomRightBounds[X_LARGEST];
-            _stretchFactorY = ((float) _imageKnown.getBounds().height) / bottomRightBounds[Y_LARGEST];
+         if (_map != null && _image != null) {
+            int[] bottomRightBounds = getHexDimensions(_mapSizeX, _mapSizeY, _sizePerHex, 0, 0, false/*cacheResults*/);
+            _stretchFactorX = ((float) _image.getBounds().width) / bottomRightBounds[X_LARGEST];
+            _stretchFactorY = ((float) _image.getBounds().height) / bottomRightBounds[Y_LARGEST];
          }
       }
 
@@ -121,7 +133,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       }
 
       public boolean isActive() {
-         return _alpha > 0 && _imageKnown != null;
+         return _alpha > 0 && _image != null;
       }
    }
    private static final BackgroundImageInfo BACKGROUND_IMAGE_INFO = new BackgroundImageInfo();
@@ -329,8 +341,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
                   int previousAlpha = event.gc.getAlpha();
                   event.gc.setAlpha(BACKGROUND_IMAGE_INFO._alpha);
                   //System.out.println("\ndrawBackground, alpha  " + BACKGROUND_IMAGE_INFO._alpha);
-                  drawBackground(visibleLocs, BACKGROUND_IMAGE_INFO._imageVisible, _sizePerHex, gcImage, event, display, combatMap);
-                  //drawBackground(knownLocs, BACKGROUND_IMAGE_INFO._imageKnown, _sizePerHex, gcImage, event, display, combatMap);
+                  drawBackground(visibleLocs, BACKGROUND_IMAGE_INFO._image, _sizePerHex, gcImage, event, display, combatMap);
                   event.gc.setAlpha(previousAlpha);
                }
                //System.out.println("("+ minCol + ", " + minRow + ")-(" + maxCol +"," + maxRow +")");
@@ -404,16 +415,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       }
       // Don't do else if, because there is another MouseDown & MouseUp handler later:
       if (event.type == SWT.MouseEnter) {
-         switch (_mapMode) {
-            case DRAG:          _currentCursor = _handOpenCursor; break;
-            case FILL:          _currentCursor = _fillCursor;     break;
-            case PAINT_TERRAIN: _currentCursor = _brushCursor;    break;
-            case PAINT_WALL:    _currentCursor = _wallCursor;     break;
-            case LINE:          _currentCursor = null;            break;
-         }
-         if ((event.widget.getDisplay() != null) && (event.widget.getDisplay().getActiveShell() != null)) {
-            event.widget.getDisplay().getActiveShell().setCursor(_currentCursor);
-         }
+         resetCurson(event);
       }
       else if (event.type == SWT.MouseExit) {
          if (_currentCursor != null) {
@@ -634,14 +636,31 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
                }
             }
             else if (event.type == SWT.MouseUp) {
+               MapMode oldMapMode = _mapMode;
                if (event.button == 1) {
                   listener.onMouseUp(loc, event, angle, distance);
                }
                else if (event.button == 3) {
                   listener.onRightMouseUp(loc, event, angle, distance);
                }
+               if (oldMapMode != _mapMode) {
+                  resetCurson(event);
+               }
             }
          }
+      }
+   }
+
+   private void resetCurson(Event event) {
+      switch (_mapMode) {
+         case DRAG:          _currentCursor = _handOpenCursor; break;
+         case FILL:          _currentCursor = _fillCursor;     break;
+         case PAINT_TERRAIN: _currentCursor = _brushCursor;    break;
+         case PAINT_WALL:    _currentCursor = _wallCursor;     break;
+         case LINE:          _currentCursor = null;            break;
+      }
+      if ((event.widget.getDisplay() != null) && (event.widget.getDisplay().getActiveShell() != null)) {
+         event.widget.getDisplay().getActiveShell().setCursor(_currentCursor);
       }
    }
 
@@ -926,17 +945,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       //background = darkenColor(background, shadowAlpha);
       int border = darkenColor(background, borderFade);
 
-      if (locOnMap && BACKGROUND_IMAGE_INFO.isActive()) {
-         // for hexes that need to be darker when we are using backgroun images,
-         // we draw a semi-transparent dark gray overlay on top of it
-         if (shadowAlpha > 0) {
-            gc.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-            gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
-            int previousAlpha = gc.getAlpha();
-            gc.setAlpha(shadowAlpha);
-            gc.fillPolygon(bounds);
-            gc.setAlpha(previousAlpha);
-         }
+      if (locOnMap) {
          // When using backgrounds, always overlay the map with black hex borders
          border = darkenColor(border, (BACKGROUND_IMAGE_INFO._alpha * 100 / 255));
       }
@@ -998,14 +1007,20 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
             gc.setAlpha(newAlpha);
          }
          //System.out.println("fillPolygon at 1002: " + loc._x + "," + loc._y + " (not visible)");
+         gc.drawPolygon(bounds);
          gc.fillPolygon(bounds);
 
+         if (locOnMap && (shadowAlpha > 0)) {
+            // for hexes that need to be darker when we are using background images,
+            // we draw a semi-transparent dark gray overlay on top of it
+            gc.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+            gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
+            gc.setAlpha(shadowAlpha);
+            gc.fillPolygon(bounds);
+         }
          if (isKnown && locOnMap) {
             drawWall(loc, gc, display, sizePerHex, 0, 0, offsetCol, offsetRow, selfID, false, 0.0);
          }
-
-         // draw the hex borders without any alpha
-         gc.drawPolygon(bounds);
 
          if (alertLayerAlpha > 0) {
             try {
@@ -1017,6 +1032,10 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
             gc.setAlpha(alertLayerAlpha);
             gc.fillPolygon(bounds);
          }
+         // draw the hex borders an alpha that is relative to the size per hex, smaller hexes get less alpha
+         gc.setAlpha(Math.min(sizePerHex * 3, 255));
+
+         gc.drawPolygon(bounds);
 
          gc.setAlpha(previousAlpha);
 

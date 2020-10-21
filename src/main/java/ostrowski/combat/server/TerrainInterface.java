@@ -27,6 +27,7 @@ import ostrowski.combat.common.things.Thing;
 import ostrowski.graphics.IGLViewListener;
 import ostrowski.ui.Helper;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -246,13 +247,43 @@ public class TerrainInterface extends Helper implements SelectionListener, Modif
          _mapInterface.getCombatMap().setBackgroundImageAlpha(_bgImageAlphaSlider.getSelection());
       }
       else if (e.widget == _bgImageFileBtn) {
-         FileDialog fd = new FileDialog(e.display.getShells()[0], SWT.OPEN);
+         Shell shell = e.display.getShells()[0];
+         FileDialog fd = new FileDialog(shell, SWT.OPEN);
          fd.setText("Open");
          fd.setFilterPath("Arenas");
          fd.setFilterExtensions(new String[] {"*.png;*.gif;*.jpg", "*.*"});
          fd.setFilterNames(new String[] {"Image Files (*.png;*.gif;*.jpg)", "All files(*.*)"});
          String selected = fd.open();
          if (selected != null && !selected.isEmpty()) {
+            String baseDir = System.getProperty("user.dir");
+            String fileSeparator = System.getProperty("file.separator");
+            baseDir = baseDir + fileSeparator + "arenas";
+            if (selected.startsWith(baseDir)) {
+               selected = selected.substring(baseDir.length());
+            }
+            else {
+               // copy the file to the same directory as the arenas are stored
+               File file = new File(selected);
+               File newFile = new File(baseDir + fileSeparator + file.getName());
+               String fullPath = newFile.getAbsolutePath();
+               int i=0;
+               while (newFile.exists()) {
+                  newFile = new File(fullPath.split(".")[0] + i++ + fullPath.split(".")[1]);
+               }
+               try (InputStream in = new BufferedInputStream(new FileInputStream(file));
+                    OutputStream out = new BufferedOutputStream(new FileOutputStream(newFile))) {
+
+                  byte[] buffer = new byte[1024];
+                  int lengthRead;
+                  while ((lengthRead = in.read(buffer)) > 0) {
+                     out.write(buffer, 0, lengthRead);
+                     out.flush();
+                  }
+               } catch (IOException ex) {
+                  ex.printStackTrace();
+               }
+               selected = newFile.getName();
+            }
             _bgImageFilePath.setText(selected);
             _mapInterface.getCombatMap().setBackgroundImagePath(selected);
          }
@@ -717,6 +748,7 @@ public class TerrainInterface extends Helper implements SelectionListener, Modif
             if (_fillActive) {
                fillMap(loc, _currentTerrain, mapWidget.getCombatMap(), locationsToRedraw);
                _fillActive = false;
+               _mapInterface.setMode(MapMode.PAINT_TERRAIN);
                _fillButton.redraw();
             }
             else if (!_lineActive && !_wallLineActive) {

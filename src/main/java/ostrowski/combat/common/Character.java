@@ -593,7 +593,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    }
 
    public void reducePain(byte painReduction) {
-      _condition.reducePain(painReduction);
+      _condition.reducePain(painReduction, getAttributeLevel(Attribute.Toughness));
    }
 
    public byte getActionsPerTurn() {

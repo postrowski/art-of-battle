@@ -21,15 +21,15 @@ public class Configuration implements SelectionListener
    public RuleComposite  _ruleComposite                = null;
 
    static public boolean _spellTnAffectedByMa          = true;
-   static public boolean _useSimpleDamage              = true;
-   static public boolean _useSimpleDice                = true;
+   static public boolean _useSimpleDamage              = false;
+   static public boolean _useSimpleDice                = false;
    static public boolean _useExtendedDice              = false;
-   static public boolean _useBellCurveDice             = false;
+   static public boolean _useBellCurveDice             = true;
    static public boolean _useComplexTOUDice            = true;
    static public boolean _useD6ForAttributeRolls       = true;
-   static public boolean _use3DMap                     = true;
-   static public boolean _showChit                     = true;
-   static public boolean _rollDice                     = true;
+   static public boolean _use3DMap                     = false;
+   static public boolean _showChit                     = false;
+   static public boolean _rollDice                     = false;
    static public int    _serverPort                    = 1777;
    private       Button _spellTnAffectedByMaButton     = null;
    private       Button _useSimpleDamageButton         = null;
@@ -286,6 +286,8 @@ public class Configuration implements SelectionListener
          if (serverPort != null) {
             _serverPort = Integer.parseInt(serverPort);
          }
+      } catch (FileNotFoundException e1) {
+         writeToFile();
       } catch (IOException e1) {
          e1.printStackTrace();
       }

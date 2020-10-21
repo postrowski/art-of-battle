@@ -229,12 +229,12 @@ public class Condition extends SerializableObject implements Enums {
    public void setInitiative(byte initiative) {
       _initiative = initiative;
    }
-   public void reducePain(byte painReduction) {
+   public void reducePain(byte painReduction, byte toughnessLevel) {
       _penaltyPain -= painReduction;
       if (_penaltyPain < 0) {
          _penaltyPain = 0;
       }
-      if (_penaltyPain < Rules.getCollapsePainLevel()) {
+      if (_penaltyPain < Rules.getCollapsePainLevel(toughnessLevel)) {
          _collapsed = false;
       }
    }

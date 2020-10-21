@@ -2336,7 +2336,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       }
       Node nodeAlpha = namedNodeMap.getNamedItem("backgroundImageAlpha");
       if (nodeAlpha != null) {
-         _backgroundImageAlpha = Byte.parseByte(nodeAlpha.getNodeValue());
+         _backgroundImageAlpha = Integer.parseInt(nodeAlpha.getNodeValue());
       }
 
       _bgImageUpperLeft = new Point(0,0);
