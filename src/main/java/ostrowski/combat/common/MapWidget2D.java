@@ -75,7 +75,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       private CombatMap _map = null;
       private void setInfo(int sizePerHex, CombatMap map, Display display) {
          if ((_sizePerHex == sizePerHex) && (_map == map) &&
-             (map == null || _imagePath.equals(map.getBackgroundImagePath())) &&
+             (map == null || _imagePath.endsWith(map.getBackgroundImagePath())) &&
              (map == null || _alpha == map.getBackgroundImageAlpha()) &&
              (map == null || _mapSizeX == map.getSizeX()) &&
              (map == null || _mapSizeY == map.getSizeY())
@@ -113,22 +113,10 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
          }
 
          if (_map != null && _image != null) {
-            int[] bottomRightBounds = getHexDimensions(_mapSizeX, _mapSizeY, _sizePerHex, 0, 0, false/*cacheResults*/);
+            // subtract 1 from the map size, because a map of size 2x2 has (0,0), (0,1), (1,0), (1,1)
+            int[] bottomRightBounds = getHexDimensions((short)(_mapSizeX-1), (short) (_mapSizeY - 1), _sizePerHex, 0, 0, false/*cacheResults*/);
             _stretchFactorX = ((float) _image.getBounds().width) / bottomRightBounds[X_LARGEST];
             _stretchFactorY = ((float) _image.getBounds().height) / bottomRightBounds[Y_LARGEST];
-         }
-      }
-
-      public static void darkenImage( Image source, int fade) {
-         ImageData imageData = source.getImageData();
-         // recalculare every pixel, changing the brightness
-         for ( int y = 0; y < source.getBounds().height; y++ ) {
-            for ( int x = 0; x < source.getBounds().width; x++ ) {
-               // get the pixel data
-               int a = imageData.getPixel(x, y);
-               darkenColor(a, fade);
-               imageData.setPixel(x, y, a);
-            }
          }
       }
 
@@ -222,7 +210,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       _sizePerHex = MIN_SIZE_PER_HEX;
       if (_combatMap != null) {
          while (++_sizePerHex < (_widgetWidth / 2)) {
-            int[] bounds = getHexDimensions(_combatMap.getSizeX(), _combatMap.getSizeY(), false/*cacheResults*/);
+            int[] bounds = getHexDimensions((short)(_combatMap.getSizeX()-1), (short) (_combatMap.getSizeY() - 1), false/*cacheResults*/);
             if ((bounds[X_LARGEST] > _widgetWidth) || (bounds[Y_LARGEST] > _widgetHeight)) {
                _sizePerHex--;
                break;
