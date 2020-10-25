@@ -282,7 +282,6 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
                int dX = _dragEnd.x - _dragStart.x;
                int dY = _dragEnd.y - _dragStart.y;
                drawZoomControls(gcImage);
-               //System.out.println("drawImage at 281 (dragging)");
                event.gc.drawImage(copyImage, event.x/*srcX*/, event.y/*srcY*/, event.width/*srcWidth*/, event.height/*srcHeight*/,
                                              event.x + dX/*dstX*/, event.y + dY/*dstY*/, event.width/*dstWidth*/, event.height/*dstHeight*/);
                copyImage.dispose();
@@ -302,7 +301,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
                Map<Color, Pattern> cachedPatternMap = new HashMap<>();
 
                boolean isHideViewFromLocalPlayers = _combatMap.isHideViewFromLocalPlayers();
-               if (BACKGROUND_IMAGE_INFO.isActive()) {
+               if (BACKGROUND_IMAGE_INFO._image != null) {
                   // Collect the set of ArenaLocations that are known, and that are visible
                   List<ArenaLocation> knownLocs = new ArrayList<>();
                   List<ArenaLocation> visibleLocs = new ArrayList<>();
@@ -326,13 +325,11 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
                         }
                      }
                   }
-                  int previousAlpha = event.gc.getAlpha();
-                  event.gc.setAlpha(BACKGROUND_IMAGE_INFO._alpha);
-                  //System.out.println("\ndrawBackground, alpha  " + BACKGROUND_IMAGE_INFO._alpha);
+                  //int previousAlpha = event.gc.getAlpha();
+                  //event.gc.setAlpha(BACKGROUND_IMAGE_INFO._alpha);
                   drawBackground(visibleLocs, BACKGROUND_IMAGE_INFO._image, _sizePerHex, gcImage, event, display, combatMap);
-                  event.gc.setAlpha(previousAlpha);
+                  //event.gc.setAlpha(previousAlpha);
                }
-               //System.out.println("("+ minCol + ", " + minRow + ")-(" + maxCol +"," + maxRow +")");
                for (short col = minCol; col <= maxCol; col++) {
                   short row = minRow;
                   if ((row % 2) != (col % 2)) {
@@ -1022,7 +1019,6 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
          }
          // draw the hex borders an alpha that is relative to the size per hex, smaller hexes get less alpha
          gc.setAlpha(Math.min(sizePerHex * 3, 255));
-
          gc.drawPolygon(bounds);
 
          gc.setAlpha(previousAlpha);
@@ -1231,6 +1227,7 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
                                   dstX, dstY, dstWidth, dstHeight);
          clippingPath.dispose();
       }
+      gcImage.setClipping((Path)null);
    }
 
    /*
