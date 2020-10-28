@@ -5760,8 +5760,15 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       return thisHeadCoord.compareTo(otherHeadCoord);
    }
 
-   public String cureWound(Wound woundToCure, byte woundReduction, byte bleedingReduction) {
-      return _condition.healWound(woundToCure, woundReduction, bleedingReduction);
+   public boolean cureWound(Wound woundToCure, byte woundReduction, byte bleedingReduction) {
+      boolean woundCured = _condition.healWound(woundToCure, woundReduction, bleedingReduction);
+      if (woundCured) {
+         Limb limb = getLimb(woundToCure.getLimb());
+         if (limb != null) {
+            limb.removeWound(woundToCure);
+         }
+      }
+      return woundCured;
    }
 
    public String regrowLimb(Wound woundToCure) {

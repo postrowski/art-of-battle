@@ -708,18 +708,20 @@ public class Condition extends SerializableObject implements Enums {
    public List<Wound> getWoundsList() {
       return _woundsList;
    }
-   public String healWound(Wound woundToCure, byte woundReduction, byte bleedingReduction)
+   public boolean healWound(Wound woundToCure, byte woundReduction, byte bleedingReduction)
    {
+      boolean woundCured = false;
       if (_woundsList.contains(woundToCure)) {
-         if (woundToCure.healWound(woundReduction, bleedingReduction)) {
+         woundCured = woundToCure.healWound(woundReduction, bleedingReduction);
+         if (woundCured) {
             _woundsList.remove(woundToCure);
          }
 
          recomputeWoundEffects();
-         return "";
+         return woundCured;
       }
       DebugBreak.debugBreak();
-      return null;
+      return woundCured;
    }
    /**
     * This method regenerates 1 point of a wound on any wound in the list of wounds,

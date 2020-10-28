@@ -37,7 +37,7 @@ public abstract class Limb extends Thing implements Cloneable {
 
     // penalties are positive integers so a 2 means a -2 to actions.
     // A negative value means no use possible, such as a severed limb.
-    private List<Wound> _wounds = new ArrayList<>();
+    private final List<Wound> _wounds = new ArrayList<>();
     private byte  _attackStyle  = 0;
     private byte  _actionsNeededToReady   = 0;
 
@@ -74,14 +74,18 @@ public abstract class Limb extends Thing implements Cloneable {
     public boolean isCrippled() { return (getWoundPenalty() < 0);}
     public boolean isSevered() { return (getWoundPenalty() == -2);}
 
+    public boolean removeWound(Wound wound) {
+       return _wounds.remove(wound);
+    }
+
     public boolean applyWound(Wound wound) {
        if (_limbType == wound.getLimb()) {
           if (wound.getPenaltyLimb() != 0) {
              _wounds.add(wound);
           }
           if (wound.isUnreadyWeapon()) {
-            setActionsNeededToReady((byte) (_actionsNeededToReady+1));
-         }
+             setActionsNeededToReady((byte) (_actionsNeededToReady+1));
+          }
           return true;
        }
        return false;
@@ -194,7 +198,8 @@ public abstract class Limb extends Thing implements Cloneable {
       }
    }
 
-   public boolean canDefend(Character defender, boolean attackIsRanged, short distance, boolean attackIsCharge, boolean attackIsGrapple, DamageType damageType, boolean checkState) {
+   public boolean canDefend(Character defender, boolean attackIsRanged, short distance, boolean attackIsCharge,
+                            boolean attackIsGrapple, DamageType damageType, boolean checkState) {
       return false;
    }
    @Override
@@ -205,7 +210,8 @@ public abstract class Limb extends Thing implements Cloneable {
    public String getDefenseName(boolean tensePast, Character defender) {
       return null;
    }
-   public byte getDefenseTNWithoutWounds(Character character, boolean isRangedAttack, short distance, boolean isChargeAttack, boolean isGrappleAttack, DamageType damageType, boolean checkState) {
+   public byte getDefenseTNWithoutWounds(Character character, boolean isRangedAttack, short distance, boolean isChargeAttack,
+                                         boolean isGrappleAttack, DamageType damageType, boolean checkState) {
       return 0;
    }
    public byte getDefenseTime(byte attribute, Character attacker) {
@@ -220,7 +226,7 @@ public abstract class Limb extends Thing implements Cloneable {
       return null;
    }
    public void copyDataInto(Limb dest) {
-      dest._wounds               = new ArrayList<>();
+      dest._wounds.clear();
       dest._wounds.addAll(_wounds);
       dest._attackStyle          = _attackStyle;
       dest._actionsNeededToReady = _actionsNeededToReady;

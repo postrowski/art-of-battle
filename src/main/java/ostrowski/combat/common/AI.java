@@ -684,6 +684,9 @@ public class AI implements Enums
          }
       }
       Character target = selectTarget(display, map, (myWeapon != null) && (myWeapon.getRangedStyle() != null)/*allowRangedAllack*/);
+      if (target == null && !_targets.isEmpty()) {
+         target = _targets.get(0);
+      }
       byte skillLevel = 0;
 //      Limb limbUsedInAttack = null;
       if (myWeapon != null) {
@@ -991,7 +994,8 @@ public class AI implements Enums
       //             move toward target
       //             wait for opportunity to attack
       if (!_self.isAnimal()) {
-         if (findPotionIndexToUse(action, target, null/*requestEquipmentPriorities*/)) {
+         Character target1 = selectTarget(display, map, (myWeapon != null) && (myWeapon.getRangedStyle() != null)/*allowRangedAllack*/);
+         if (target1 != null && findPotionIndexToUse(action, target, null/*requestEquipmentPriorities*/)) {
             traceSb.append(", potion");
             priorities.add(new RequestActionOption("", RequestActionType.OPT_EQUIP_UNEQUIP, LimbType.BODY, true));
          }
@@ -1366,6 +1370,7 @@ public class AI implements Enums
             }
          }
       }
+
       switch (attackActions) {
          case 7:
          case 6:
@@ -1500,6 +1505,14 @@ public class AI implements Enums
          priorities.add(new RequestActionOption("", RequestActionType.OPT_ATTACK_MELEE_2, LimbType.BODY, true));
          priorities.add(new RequestActionOption("", RequestActionType.OPT_ATTACK_MELEE_1, LimbType.BODY, true));
       }
+      if (target != null &&
+          map.canSee(_self, target, false, false) &&
+          !map.canSee(_self, target, true, false)) {
+         traceSb.append(", turnToFace");
+         // turn to face our enemy
+         priorities.add(new RequestActionOption("", RequestActionType.OPT_MOVE, LimbType.BODY, true));
+      }
+
       Rules.diag(traceSb.toString());
       return selectAnswerByType(action, priorities);
    }
@@ -4005,8 +4018,9 @@ public class AI implements Enums
             }
          }
       }
-
-      return targetWeight;
+      // add in a bit of luck so everyone doesn't always attack the closest enemy:
+      short luck = (short) (3 * CombatServer.random());
+      return (short) (targetWeight + luck);
    }
 
    public void removeCachedDataOnArenaExit() {

@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MapWidget2D extends MapWidget implements Listener, SelectionListener
 {
@@ -1502,7 +1503,10 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
             for (Door door : doors) {
                if (!door.isOpen() && !door.isHalfHeightWall()) {
                   int fillPoint = computeFillPoint(vis, door._orientation);
+                  int previousAlpha = gc.getAlpha();
+                  gc.setAlpha(255);
                   drawHidden(hexBounds, gc, door._orientation.startPoint, door._orientation.endPoint, fillPoint);
+                  gc.setAlpha(previousAlpha);
                }
             }
          }
@@ -1902,6 +1906,11 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
       }
    }
    public void redraw(Collection<ArenaCoordinates> coordinates) {
+      if (_selfID != -1) {
+         coordinates = coordinates.stream()
+                                  .filter(loc-> !(loc instanceof ArenaLocation) || ((ArenaLocation)loc).getVisible(_selfID))
+                 .collect(Collectors.toList());
+      }
       if (!_canvas.isDisposed() && !_canvas.getDisplay().isDisposed()) {
          int minX = 10000;
          int minY = 10000;

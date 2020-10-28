@@ -1601,27 +1601,28 @@ public class Arena implements Enums, IMapListener
       _combatMap.clearCharacterViewedHistory();
       _characterGenerated = false;
       for (byte team=0 ; team<_combatMap.getTeamCount() ; team++) {
-         String[] stockAIName = _combatMap.getStockAIName(team);
+         String[] stockAINames = _combatMap.getStockAIName(team);
          String[] stockCharacters = _combatMap.getStockCharacters(team);
          for (byte cur=0 ; cur<stockCharacters.length; cur++) {
-            if ((stockAIName[cur] != null) && (stockAIName[cur].length() > 0) && (!stockAIName[cur].equalsIgnoreCase("Off"))) {
-               if ((stockCharacters[cur] != null) && (stockCharacters[cur].length() > 0)) {
-                  Character stockCharacter;
-                  if (stockCharacters[cur].startsWith("? ")) {
-                     if (!_characterGenerated) {
-                        _characterGenerated = true;
-                        if (!_server._usePseudoRandomNumbers.getSelection()) {
-                           CombatServer.generateNewPseudoRandomNumberSeed();
-                        }
+            String stockAIName = stockAINames[cur];
+            String stockCharacterName = stockCharacters[cur];
+            if ((stockAIName != null) && (stockAIName.trim().length() > 0) && (!stockAIName.equalsIgnoreCase("Off")) &&
+                (stockCharacterName != null) && (stockCharacterName.trim().length() > 0)) {
+               Character stockCharacter;
+               if (stockCharacterName.startsWith("? ")) {
+                  if (!_characterGenerated) {
+                     _characterGenerated = true;
+                     if (!_server._usePseudoRandomNumbers.getSelection()) {
+                        CombatServer.generateNewPseudoRandomNumberSeed();
                      }
-                     stockCharacter = CharacterGenerator.generateRandomCharacter(stockCharacters[cur], this, true/*printCharacter*/);
                   }
-                  else {
-                     stockCharacter = _server._charFile.getCharacter(stockCharacters[cur]);
-                  }
-                  if (stockCharacter != null) {
-                     addCombatant(stockCharacter, team, cur/*combatantIndexOnTeam*/, null, true/*checkForAutoStart*/);
-                  }
+                  stockCharacter = CharacterGenerator.generateRandomCharacter(stockCharacterName, this, true/*printCharacter*/);
+               }
+               else {
+                  stockCharacter = _server._charFile.getCharacter(stockCharacterName);
+               }
+               if (stockCharacter != null) {
+                  addCombatant(stockCharacter, team, cur/*combatantIndexOnTeam*/, null, true/*checkForAutoStart*/);
                }
             }
          }
