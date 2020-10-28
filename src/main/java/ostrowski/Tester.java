@@ -147,26 +147,23 @@ public class Tester
       newGc.setBackground(display.getSystemColor(SWT.COLOR_RED));
       newGc.fillOval(rect.x, rect.y, rect.width, rect.height);
       newGc.dispose();
-      shell.addListener(SWT.Paint, new Listener() {
-         @Override
-         public void handleEvent(Event event) {
-            GC gc = event.gc;
-            Transform tr = new Transform(display);
-            tr.translate(100, 120);
-            tr.rotate(-30);
-            gc.drawImage(image, 0, 0, rect.width, rect.height, 0, 0,
-                         rect.width / 2, rect.height / 2);
-            gc.setAlpha(128);
-            gc.setTransform(tr);
-            Path path = new Path(display);
-            path.addString("SWT", 0, 0, font);
-            gc.setBackground(display.getSystemColor(SWT.COLOR_GREEN));
-            gc.setForeground(display.getSystemColor(SWT.COLOR_BLUE));
-            gc.fillPath(path);
-            gc.drawPath(path);
-            tr.dispose();
-            path.dispose();
-         }
+      shell.addListener(SWT.Paint, event -> {
+         GC gc = event.gc;
+         Transform tr = new Transform(display);
+         tr.translate(100, 120);
+         tr.rotate(-30);
+         gc.drawImage(image, 0, 0, rect.width, rect.height, 0, 0,
+                      rect.width / 2, rect.height / 2);
+         gc.setAlpha(128);
+         gc.setTransform(tr);
+         Path path = new Path(display);
+         path.addString("SWT", 0, 0, font);
+         gc.setBackground(display.getSystemColor(SWT.COLOR_GREEN));
+         gc.setForeground(display.getSystemColor(SWT.COLOR_BLUE));
+         gc.fillPath(path);
+         gc.drawPath(path);
+         tr.dispose();
+         path.dispose();
       });
       shell.setSize(shell.computeSize(rect.width / 2, rect.height / 2));
       shell.open();

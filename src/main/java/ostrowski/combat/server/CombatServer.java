@@ -1303,19 +1303,16 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
          if (!getShell().isDisposed()) {
             Display display = getShell().getDisplay();
             if (!display.isDisposed()) {
-               display.asyncExec(new Runnable() {
-                  @Override
-                  public void run() {
-                     if ((_messages != null) && (!_messages.isDisposed())) {
-                        _messages.setText("<body></body>");
-                     }
-                     if ((_fullMessages != null) && (!_fullMessages.isDisposed())) {
-                        _fullMessages.setText("<body></body>");
-                     }
-                     synchronized (_pendingMessage) {
-                        _lock_pendingMessage.check();
-                        _pendingMessage.setLength(0);
-                     }
+               display.asyncExec(() -> {
+                  if ((_messages != null) && (!_messages.isDisposed())) {
+                     _messages.setText("<body></body>");
+                  }
+                  if ((_fullMessages != null) && (!_fullMessages.isDisposed())) {
+                     _fullMessages.setText("<body></body>");
+                  }
+                  synchronized (_pendingMessage) {
+                     _lock_pendingMessage.check();
+                     _pendingMessage.setLength(0);
                   }
                });
             }
@@ -1357,33 +1354,30 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       if (!getShell().isDisposed()) {
          Display display = getShell().getDisplay();
          if (!display.isDisposed()) {
-            display.asyncExec(new Runnable() {
-               @Override
-               public void run() {
-                  String msg;
-                  synchronized (_pendingMessage) {
-                     _lock_pendingMessage.check();
-                     msg = _pendingMessage.toString();
-                     _pendingMessage.setLength(0);
-                  }
-                  // remove all CR-LF because they terminate the javascript execution for the insert
-                  msg = msg.replace("\n", "");
-                  // escape any single quote character, since we are putting this inside a single quote
-                  msg = msg.replace("'", "\\'");
-                  StringBuilder sb = new StringBuilder();
-                  sb.append("document.body.insertAdjacentHTML('beforeEnd', '");
-                  sb.append(msg);
-                  sb.append("');window.scrollTo(0,document.body.scrollHeight);"); // scroll to the bottom of the window
-                  if ((_messages != null) && (!_messages.isDisposed())) {
-                     _messages.execute(sb.toString());
-                     _messages.redraw();
-                  }
-                  if ((_fullMessages != null) && (!_fullMessages.isDisposed())) {
-                     _fullMessages.execute(sb.toString());
-                     _fullMessages.redraw();
-                  }
-              }
-            });
+            display.asyncExec(() -> {
+               String msg;
+               synchronized (_pendingMessage) {
+                  _lock_pendingMessage.check();
+                  msg = _pendingMessage.toString();
+                  _pendingMessage.setLength(0);
+               }
+               // remove all CR-LF because they terminate the javascript execution for the insert
+               msg = msg.replace("\n", "");
+               // escape any single quote character, since we are putting this inside a single quote
+               msg = msg.replace("'", "\\'");
+               StringBuilder sb = new StringBuilder();
+               sb.append("document.body.insertAdjacentHTML('beforeEnd', '");
+               sb.append(msg);
+               sb.append("');window.scrollTo(0,document.body.scrollHeight);"); // scroll to the bottom of the window
+               if ((_messages != null) && (!_messages.isDisposed())) {
+                  _messages.execute(sb.toString());
+                  _messages.redraw();
+               }
+               if ((_fullMessages != null) && (!_fullMessages.isDisposed())) {
+                  _fullMessages.execute(sb.toString());
+                  _fullMessages.redraw();
+               }
+           });
          }
       }
    }
@@ -1396,27 +1390,24 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       if (!getShell().isDisposed()) {
          Display display = getShell().getDisplay();
          if (!display.isDisposed()) {
-            display.asyncExec(new Runnable() {
-               @Override
-               public void run() {
-                  if (_map != null) {
-                     if (_map.updateMap(arena.getCombatMap(), -1/*selfID*/, (byte)-1/*selfTeam*/, null/*availableLocs*/, -1/*targetID*/)) {
-                        _map.setZoomToFit();
+            display.asyncExec(() -> {
+               if (_map != null) {
+                  if (_map.updateMap(arena.getCombatMap(), -1/*selfID*/, (byte)-1/*selfTeam*/, null/*availableLocs*/, -1/*targetID*/)) {
+                     _map.setZoomToFit();
+                  }
+                  int selectedTabIndex = _tabFolder.getSelectionIndex();
+                  TabItem selectedTab = _tabFolder.getItem(selectedTabIndex);
+                  CombatMap combatMap = _map.getCombatMap();
+                  if (combatMap != null) {
+                     if (selectedTab != _triggersTabItem) {
+                        combatMap.setSelectedTrigger(null);
                      }
-                     int selectedTabIndex = _tabFolder.getSelectionIndex();
-                     TabItem selectedTab = _tabFolder.getItem(selectedTabIndex);
-                     CombatMap combatMap = _map.getCombatMap();
-                     if (combatMap != null) {
-                        if (selectedTab != _triggersTabItem) {
-                           combatMap.setSelectedTrigger(null);
-                        }
-                        else {
-                           combatMap.setSelectedTrigger(_triggersInterface.getCurrentlySelectedTrigger());
-                        }
+                     else {
+                        combatMap.setSelectedTrigger(_triggersInterface.getCurrentlySelectedTrigger());
                      }
                   }
-                  refreshSaveButton();
                }
+               refreshSaveButton();
             });
          }
       }
@@ -1668,12 +1659,9 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       if (!getShell().isDisposed()) {
          Display display = getShell().getDisplay();
          if (!display.isDisposed()) {
-            display.asyncExec(new Runnable() {
-               @Override
-               public void run() {
-                  if (_map != null) {
-                     _map.redraw();
-                  }
+            display.asyncExec(() -> {
+               if (_map != null) {
+                  _map.redraw();
                }
             });
          }
@@ -1683,16 +1671,13 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       if (!getShell().isDisposed()) {
          Display display = getShell().getDisplay();
          if (!display.isDisposed()) {
-            display.asyncExec(new Runnable() {
-               @Override
-               public void run() {
-                  if (_map != null) {
-                     if (_map instanceof MapWidget2D) {
-                        ((MapWidget2D)_map).redraw(locationsToRedraw);
-                     }
-                     else if (_map instanceof MapWidget3D) {
-                        _map.redraw();
-                     }
+            display.asyncExec(() -> {
+               if (_map != null) {
+                  if (_map instanceof MapWidget2D) {
+                     ((MapWidget2D)_map).redraw(locationsToRedraw);
+                  }
+                  else if (_map instanceof MapWidget3D) {
+                     _map.redraw();
                   }
                }
             });
@@ -1705,12 +1690,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       if (!getShell().isDisposed()) {
          Display display = getShell().getDisplay();
          if (!display.isDisposed()) {
-            display.asyncExec(new Runnable() {
-               @Override
-               public void run() {
-                  _charInfoBlock.updateCombatants(combatants);
-               }
-            });
+            display.asyncExec(() -> _charInfoBlock.updateCombatants(combatants));
          }
       }
    }
@@ -1742,27 +1722,24 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
          Display display = getShell().getDisplay();
          if (!display.isDisposed()) {
             final Object synchObject = 0;
-            display.asyncExec(new Runnable() {
-               @Override
-               public void run() {
-                  if (_usePseudoRandomNumbers.getSelection()) {
-                     if (!_pseudoRandomNumberSeedText.getText().equals(String.valueOf(_pseudoRandomNumberSeed))) {
-                        _pseudoRandomNumberSeedText.setText(String.valueOf(_pseudoRandomNumberSeed));
-                     }
+            display.asyncExec(() -> {
+               if (_usePseudoRandomNumbers.getSelection()) {
+                  if (!_pseudoRandomNumberSeedText.getText().equals(String.valueOf(_pseudoRandomNumberSeed))) {
+                     _pseudoRandomNumberSeedText.setText(String.valueOf(_pseudoRandomNumberSeed));
                   }
-                  else {
-                     if (!_arena._characterGenerated) {
-                        generateNewPseudoRandomNumberSeed();
-                     }
+               }
+               else {
+                  if (!_arena._characterGenerated) {
+                     generateNewPseudoRandomNumberSeed();
                   }
-                  // Wait for a 1/4 second so the other thread will have a chance to wait for the synchObject lock.
-                  try {
-                     Thread.sleep(250);
-                  } catch (InterruptedException e) {
-                  }
-                  synchronized(synchObject) {
-                     synchObject.notifyAll();
-                  }
+               }
+               // Wait for a 1/4 second so the other thread will have a chance to wait for the synchObject lock.
+               try {
+                  Thread.sleep(250);
+               } catch (InterruptedException e) {
+               }
+               synchronized(synchObject) {
+                  synchObject.notifyAll();
                }
             });
             try {

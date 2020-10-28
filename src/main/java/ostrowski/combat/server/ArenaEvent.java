@@ -358,34 +358,31 @@ public class ArenaEvent implements Cloneable
                synchronized(waitObj) {
                   // Since CombatServer.setMap(...) require UI-thread access permissions,
                   // we have to defer this to the UI thread
-                  display.asyncExec(new Runnable() {
-                     @Override
-                     public void run() {
-                        arena.removeAllCombatants();
-                        CombatMap newMap = _savedMaps.get(_eventData);
-                        if (newMap == null) {
-                           CombatServer._this.setMap(_eventData);
+                  display.asyncExec(() -> {
+                     arena.removeAllCombatants();
+                     CombatMap newMap = _savedMaps.get(_eventData);
+                     if (newMap == null) {
+                        CombatServer._this.setMap(_eventData);
+                     }
+                     else {
+                        arena.setCombatMap(newMap, true/*clearCombatants*/);
+                     }
+                     arena.addStockCombatants();
+                     List<ArenaCoordinates> locations = new ArrayList<>();
+                     for (Character teamMember : team) {
+                        // make sure we never run out of locations, even if we re-use them twice.
+                        if (locations.isEmpty()) {
+                           locations.addAll(_eventLocations);
                         }
-                        else {
-                           arena.setCombatMap(newMap, true/*clearCombatants*/);
-                        }
-                        arena.addStockCombatants();
-                        List<ArenaCoordinates> locations = new ArrayList<>();
-                        for (Character teamMember : team) {
-                           // make sure we never run out of locations, even if we re-use them twice.
-                           if (locations.isEmpty()) {
-                              locations.addAll(_eventLocations);
-                           }
 
-                           ArenaCoordinates loc = locations.remove(0);
-                           arena.addCombatant(teamMember, teamID, loc._x, loc._y, teamMember.getAIType());
-                        }
-                        arena.terminateBattle();
-                        arena.beginBattle();
-                        synchronized(waitObj) {
-                           // Let the non-UI thread know we are done, so it can resume.
-                           waitObj.notifyAll();
-                        }
+                        ArenaCoordinates loc = locations.remove(0);
+                        arena.addCombatant(teamMember, teamID, loc._x, loc._y, teamMember.getAIType());
+                     }
+                     arena.terminateBattle();
+                     arena.beginBattle();
+                     synchronized(waitObj) {
+                        // Let the non-UI thread know we are done, so it can resume.
+                        waitObj.notifyAll();
                      }
                   });
                   try {

@@ -85,7 +85,7 @@ public class Armor extends Thing {
       if (source instanceof Armor) {
          Armor armor = (Armor) source;
          _barrier.clear();
-         for(DamageType damageType : armor._barrier.keySet()) {
+         for (DamageType damageType : armor._barrier.keySet()) {
             _barrier.put(damageType, armor._barrier.get(damageType));
          }
       }

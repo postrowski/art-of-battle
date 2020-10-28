@@ -135,16 +135,16 @@ public class Weapon extends Thing {
          _grapplingStyles     = new WeaponStyleAttackGrapple[weap._grapplingStyles.length];
          _parryStyles         = new WeaponStyleParry[weap._parryStyles.length];
 
-         for(int i=0 ; i<_attackStyles.length ; i++) {
+         for (int i=0 ; i<_attackStyles.length ; i++) {
             _attackStyles[i] = (WeaponStyleAttack) weap._attackStyles[i].clone();
          }
-         for(int i=0 ; i<_parryStyles.length ; i++) {
+         for (int i=0 ; i<_parryStyles.length ; i++) {
             _parryStyles[i] = weap._parryStyles[i].clone();
          }
-         for(int i=0 ; i<_counterattackStyles.length ; i++) {
+         for (int i=0 ; i<_counterattackStyles.length ; i++) {
             _counterattackStyles[i] = weap._counterattackStyles[i].clone();
          }
-         for(int i=0 ; i<_grapplingStyles.length ; i++) {
+         for (int i=0 ; i<_grapplingStyles.length ; i++) {
             _grapplingStyles[i] = weap._grapplingStyles[i].clone();
          }
       }

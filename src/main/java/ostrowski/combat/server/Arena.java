@@ -591,13 +591,10 @@ public class Arena implements Enums, IMapListener
          if (obj instanceof MessageText) {
             final MessageText msgText = (MessageText) obj;
             if (msgText.isPopUp()) {
-               CombatServer._this.getShell().getDisplay().asyncExec(new Runnable() {
-                  @Override
-                  public void run() {
-                     MessageDialog msgDlg = new MessageDialog(CombatServer._this.getShell(), SWT.ICON | SWT.MODELESS);
-                     msgDlg.setTargetName(combatant.getName());
-                     msgDlg.open(msgText.getText(), msgText.isPublic());
-                  }
+               CombatServer._this.getShell().getDisplay().asyncExec(() -> {
+                  MessageDialog msgDlg = new MessageDialog(CombatServer._this.getShell(), SWT.ICON | SWT.MODELESS);
+                  msgDlg.setTargetName(combatant.getName());
+                  msgDlg.open(msgText.getText(), msgText.isPublic());
                });
             }
          }
@@ -646,83 +643,80 @@ public class Arena implements Enums, IMapListener
       }
       if (!_server.getShell().isDisposed()) {
          Display display = _server.getShell().getDisplay();
-         Runnable askQuestionRunnable = new Runnable() {
-            @Override
-            public void run() {
-               // Hide the hexes that the player can't see
-               _server._map.recomputeVisibility(combatant, null/*diag*/);
-               if (req instanceof RequestLocation) {
-                  RequestLocation reqLoc = (RequestLocation) req;
-                  // selectHex does its own redraw(), so we avoid calling that before calling selectHex
-                  _server._map.requestLocation(reqLoc);
-                  // continue hiding the hexes that the player can't see until they click on a valid movement location.
-                  if (_recordedActions != null) {
+         Runnable askQuestionRunnable = () -> {
+            // Hide the hexes that the player can't see
+            _server._map.recomputeVisibility(combatant, null/*diag*/);
+            if (req instanceof RequestLocation) {
+               RequestLocation reqLoc = (RequestLocation) req;
+               // selectHex does its own redraw(), so we avoid calling that before calling selectHex
+               _server._map.requestLocation(reqLoc);
+               // continue hiding the hexes that the player can't see until they click on a valid movement location.
+               if (_recordedActions != null) {
+                  _recordedActions.add(req);
+                  _playbackIndex++;
+               }
+            } else if (req instanceof RequestMovement) {
+               RequestMovement reqMove = (RequestMovement) req;
+               // selectHex does its own redraw(), so we avoid calling that before calling selectHex
+               _server._map.requestMovement(reqMove);
+               // continue hiding the hexes that the player can't see until they clink on a valid movement location.
+               if (_recordedActions != null) {
+                  _recordedActions.add(req);
+                  _playbackIndex++;
+               }
+            } else {
+               _server._map.redraw();
+               RequestUserInput reqUI = new RequestUserInput(_server.getShell(),
+                                                             SWT.ICON_QUESTION | SWT.MODELESS,
+                                                             req, allowBackup,
+                                                             _server._map, combatant,
+                                                             Configuration.showChit());
+               reqUI.setDefault(req.getDefaultIndex());
+               reqUI.setTitle("Question from the Server");
+               _activeRequestUserInputs.add(reqUI);
+
+               Object answer = reqUI.open();
+
+               _activeRequestUserInputs.remove(reqUI);
+               while (!_activeRequestUserInputs.isEmpty()) {
+                  // Set another open dialog to have focus
+                  RequestUserInput next = _activeRequestUserInputs.get(0);
+                  if (next._shell.isDisposed()) {
+                     _activeRequestUserInputs.remove(next);
+                  } else {
+                     next._shell.setFocus();
+                     break;
+                  }
+               }
+
+               if (answer != null) {
+                  if (answer instanceof Integer) {
+                     req.setAnswerByOptionIndex(((Integer) answer));
+                  } else {
+                     req.setCustAnswer((String) answer);
+                  }
+               }
+               // Since the player has made his/her choice,
+               // stop hiding the hexes that the player can't see
+               _server._map.recomputeVisibility(null/*self*/, null/*diag*/);
+               _server.redrawMap();
+
+               req.set_backupSelected(reqUI.isBackupSelected());
+               stopWaitingForResponse(req);
+
+               if (_recordedActions != null) {
+                  if (reqUI.isBackupSelected()) {
+                     // remove the last question in our playback record
+                     SyncRequest lastAction = _recordedActions.remove(_recordedActions.size() - 1);
+                     // If the last action was a movement request, remove all the movement requests
+                     // until we remove a non movement request (the RequestAction whose answer was 'move')
+                     while (lastAction instanceof RequestMovement) {
+                        lastAction = _recordedActions.remove(_recordedActions.size() - 1);
+                     }
+                     restart();
+                  } else {
                      _recordedActions.add(req);
                      _playbackIndex++;
-                  }
-               } else if (req instanceof RequestMovement) {
-                  RequestMovement reqMove = (RequestMovement) req;
-                  // selectHex does its own redraw(), so we avoid calling that before calling selectHex
-                  _server._map.requestMovement(reqMove);
-                  // continue hiding the hexes that the player can't see until they clink on a valid movement location.
-                  if (_recordedActions != null) {
-                     _recordedActions.add(req);
-                     _playbackIndex++;
-                  }
-               } else {
-                  _server._map.redraw();
-                  RequestUserInput reqUI = new RequestUserInput(_server.getShell(),
-                                                                SWT.ICON_QUESTION | SWT.MODELESS,
-                                                                req, allowBackup,
-                                                                _server._map, combatant,
-                                                                Configuration.showChit());
-                  reqUI.setDefault(req.getDefaultIndex());
-                  reqUI.setTitle("Question from the Server");
-                  _activeRequestUserInputs.add(reqUI);
-
-                  Object answer = reqUI.open();
-
-                  _activeRequestUserInputs.remove(reqUI);
-                  while (!_activeRequestUserInputs.isEmpty()) {
-                     // Set another open dialog to have focus
-                     RequestUserInput next = _activeRequestUserInputs.get(0);
-                     if (next._shell.isDisposed()) {
-                        _activeRequestUserInputs.remove(next);
-                     } else {
-                        next._shell.setFocus();
-                        break;
-                     }
-                  }
-
-                  if (answer != null) {
-                     if (answer instanceof Integer) {
-                        req.setAnswerByOptionIndex(((Integer) answer));
-                     } else {
-                        req.setCustAnswer((String) answer);
-                     }
-                  }
-                  // Since the player has made his/her choice,
-                  // stop hiding the hexes that the player can't see
-                  _server._map.recomputeVisibility(null/*self*/, null/*diag*/);
-                  _server.redrawMap();
-
-                  req.set_backupSelected(reqUI.isBackupSelected());
-                  stopWaitingForResponse(req);
-
-                  if (_recordedActions != null) {
-                     if (reqUI.isBackupSelected()) {
-                        // remove the last question in our playback record
-                        SyncRequest lastAction = _recordedActions.remove(_recordedActions.size() - 1);
-                        // If the last action was a movement request, remove all the movement requests
-                        // until we remove a non movement request (the RequestAction whose answer was 'move')
-                        while (lastAction instanceof RequestMovement) {
-                           lastAction = _recordedActions.remove(_recordedActions.size() - 1);
-                        }
-                        restart();
-                     } else {
-                        _recordedActions.add(req);
-                        _playbackIndex++;
-                     }
                   }
                }
             }
@@ -862,12 +856,9 @@ public class Arena implements Enums, IMapListener
       if (serObj instanceof MessageText) {
          final MessageText msgText = (MessageText) serObj;
          if (msgText.isPopUp()) {
-            CombatServer._this.getShell().getDisplay().asyncExec(new Runnable() {
-               @Override
-               public void run() {
-                  MessageDialog msgDlg = new MessageDialog(CombatServer._this.getShell(), SWT.ICON | SWT.MODELESS);
-                  msgDlg.open(msgText.getText(), msgText.isPublic());
-               }
+            CombatServer._this.getShell().getDisplay().asyncExec(() -> {
+               MessageDialog msgDlg = new MessageDialog(CombatServer._this.getShell(), SWT.ICON | SWT.MODELESS);
+               msgDlg.open(msgText.getText(), msgText.isPublic());
             });
          }
       }
@@ -1425,12 +1416,7 @@ public class Arena implements Enums, IMapListener
                      final Character movingCharacter = mover;
                      final int selfId = CombatServer._this._map.getSelfId();
                      if (movingCharacter._uniqueID != selfId) {
-                        display.asyncExec(new Runnable() {
-                           @Override
-                           public void run() {
-                              CombatServer._this._map.recomputeVisibility(movingCharacter, null/*diag*/);
-                           }
-                        });
+                        display.asyncExec(() -> CombatServer._this._map.recomputeVisibility(movingCharacter, null/*diag*/));
                         // wait until the UIThread has set its _self to this mover
                         int maxWait = 5000; // 5 seconds
                         try {
@@ -1444,16 +1430,13 @@ public class Arena implements Enums, IMapListener
 
 // TODO: MOVEMENT ISSUE: Rules.debugBreak();
                         // after the debugBreak, restore the previous view settings
-                        display.asyncExec(new Runnable() {
-                           @Override
-                           public void run() {
-                              Character previousSelf = null;
-                              if (selfId != -1) {
-                                 previousSelf = CombatServer._this._map.getCombatMap().getCombatantByUniqueID(selfId);
-                              }
-
-                              CombatServer._this._map.recomputeVisibility(previousSelf, null/*diag*/);
+                        display.asyncExec(() -> {
+                           Character previousSelf = null;
+                           if (selfId != -1) {
+                              previousSelf = CombatServer._this._map.getCombatMap().getCombatantByUniqueID(selfId);
                            }
+
+                           CombatServer._this._map.recomputeVisibility(previousSelf, null/*diag*/);
                         });
                      }
                   }

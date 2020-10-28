@@ -76,15 +76,11 @@ public class ConnectionBlock extends Helper implements SelectionListener, Enums
       _cmbIpAddresses.setItems(new String[] {"127.0.0.1", "localhost"});
       _ipAddress = _cmbIpAddresses.getItem(0);
       _cmbIpAddresses.setText(_ipAddress);
-      _cmbIpAddresses.addModifyListener(new ModifyListener() {
-         @Override
-         public void modifyText(ModifyEvent e)
-         {
-            if (!CharacterWidget._inModify) {
-               CharacterWidget._inModify = true;
-               _ipAddress = ((Combo)e.widget).getText();
-               CharacterWidget._inModify = false;
-            }
+      _cmbIpAddresses.addModifyListener(e -> {
+         if (!CharacterWidget._inModify) {
+            CharacterWidget._inModify = true;
+            _ipAddress = ((Combo)e.widget).getText();
+            CharacterWidget._inModify = false;
          }
       });
 

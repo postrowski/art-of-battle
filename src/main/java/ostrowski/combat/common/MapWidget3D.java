@@ -505,13 +505,8 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
          final Object changeNotificationFinal = changeNotification;
          final Vector<IMonitoringObject> skipListFinal = skipList;
          final Diagnostics diagFinal = diag;
-         display.asyncExec(new Runnable() {
-            @Override
-            public void run() {
-               monitoredObjectChangedOnUIThread(originalWatchedObjectFinal, modifiedWatchedObjectFinal,
-                                                changeNotificationFinal, skipListFinal, diagFinal);
-            }
-         });
+         display.asyncExec(() -> monitoredObjectChangedOnUIThread(originalWatchedObjectFinal, modifiedWatchedObjectFinal,
+                                                            changeNotificationFinal, skipListFinal, diagFinal));
       }
    }
    public void monitoredObjectChangedOnUIThread(IMonitorableObject originalWatchedObject,
@@ -616,12 +611,7 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
       // so we must use the Display.asyncExec() method:
       Display display = Display.getDefault();
       if (!display.isDisposed()) {
-         display.asyncExec(new Runnable() {
-            @Override
-            public void run() {
-               updateMap(_combatMap, _selfID, _selfTeam, null, _targetID);
-            }
-         });
+         display.asyncExec(() -> updateMap(_combatMap, _selfID, _selfTeam, null, _targetID));
       }
    }
 

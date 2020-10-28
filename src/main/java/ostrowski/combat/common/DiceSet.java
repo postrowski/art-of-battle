@@ -569,12 +569,7 @@ public class DiceSet extends SerializableObject implements Enums
       if (_diceAllowed != null) {
          return _diceAllowed;
       }
-      _diceAllowed = new TreeSet<>(new Comparator<>() {
-         @Override
-         public int compare(DiceSet dice1, DiceSet dice2) {
-            return Double.compare(dice1.getExpectedRoll(), dice2.getExpectedRoll());
-         }
-      });
+      _diceAllowed = new TreeSet<>((dice1, dice2) -> Double.compare(dice1.getExpectedRoll(), dice2.getExpectedRoll()));
       // We allow dice sets that combine not more that two different types of dice
       // Further, we allow up to 6 total dice, in any combination
 

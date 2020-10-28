@@ -46,22 +46,16 @@ public class RollingDie extends Dialog implements PaintListener
                while (endTime > System.currentTimeMillis()) {
                   Thread.sleep(40); // ~25 redraws per second
                   //Rules.diag("in loop, about to call run()");
-                  Display.getDefault().asyncExec(new Runnable() {
-                     @Override
-                     public void run() {
-                        _die._facingOffset = new Tuple3(_die._facingOffset.getX() + 10,
-                                                        _die._facingOffset.getY() + 0,
-                                                        _die._facingOffset.getZ() + 0);
-                        redraw();
-                     }
+                  Display.getDefault().asyncExec(() -> {
+                     _die._facingOffset = new Tuple3(_die._facingOffset.getX() + 10,
+                                                     _die._facingOffset.getY() + 0,
+                                                     _die._facingOffset.getZ() + 0);
+                     redraw();
                   });
                }
-               Display.getDefault().asyncExec(new Runnable() {
-                  @Override
-                  public void run() {
-                     Rules.diag("done loop in run");
-                     _this.close();
-                  }
+               Display.getDefault().asyncExec(() -> {
+                  Rules.diag("done loop in run");
+                  _this.close();
                });
 
             } catch (InterruptedException | IllegalMonitorStateException e) {

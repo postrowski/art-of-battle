@@ -117,7 +117,7 @@ public class MessageDialog extends Dialog implements FocusListener{
          _shell.forceActive();
          _shell.forceFocus();
          _shell.setFocus();
-         for( RequestUserInput userInput : Arena._activeRequestUserInputs) {
+         for (RequestUserInput userInput : Arena._activeRequestUserInputs) {
             if (!userInput._shell.isDisposed()) {
                _shell.moveAbove(userInput._shell);
             }

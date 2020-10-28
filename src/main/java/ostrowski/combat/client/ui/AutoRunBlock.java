@@ -98,29 +98,26 @@ public class AutoRunBlock extends Helper implements IUIBlock, ModifyListener, Se
       final StringBuilder results = new StringBuilder();
       if (!shell.isDisposed()) {
          Display display = shell.getDisplay();
-         display.asyncExec(new Runnable() {
-            @Override
-            public void run() {
-               if (winningTeamId != -1) {
-                  String winCountStr = _winCountPerTeam[winningTeamId].getText();
-                  int winCount = Integer.parseInt(winCountStr);
-                  winCount++;
-                  _winCountPerTeam[winningTeamId].setText(String.valueOf(winCount));
-               }
-               int count = _playCount.getSelection();
-               char result;
-               count--;
-               if (count == 0) {
-                  result = 'f';
-                  _runButton.setEnabled(true);
-               }
-               else {
-                  _playCount.setSelection(count);
-                  result = 't';
-               }
-               synchronized (results) {
-                  results.append(result);
-               }
+         display.asyncExec(() -> {
+            if (winningTeamId != -1) {
+               String winCountStr = _winCountPerTeam[winningTeamId].getText();
+               int winCount = Integer.parseInt(winCountStr);
+               winCount++;
+               _winCountPerTeam[winningTeamId].setText(String.valueOf(winCount));
+            }
+            int count = _playCount.getSelection();
+            char result;
+            count--;
+            if (count == 0) {
+               result = 'f';
+               _runButton.setEnabled(true);
+            }
+            else {
+               _playCount.setSelection(count);
+               result = 't';
+            }
+            synchronized (results) {
+               results.append(result);
             }
          });
       }

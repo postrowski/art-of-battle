@@ -38,12 +38,7 @@ public class ServerConnection extends CombatSocket
       // so we must use the Display.asyncExec() method:
       if (!_display._shell.isDisposed()) {
          Display display = _display._shell.getDisplay();
-         display.asyncExec(new Runnable() {
-            @Override
-            public void run() {
-               processReceivedObjectInUIThread(inObj);
-            }
-         });
+         display.asyncExec(() -> processReceivedObjectInUIThread(inObj));
       }
    }
 

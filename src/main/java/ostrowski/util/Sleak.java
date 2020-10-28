@@ -36,47 +36,22 @@ public class Sleak
       shell = new Shell(display);
       shell.setText("S-Leak");
       list = new List(shell, SWT.BORDER | SWT.V_SCROLL);
-      list.addListener(SWT.Selection, new Listener() {
-         @Override
-         public void handleEvent(Event event) {
-            refreshObject();
-         }
-      });
+      list.addListener(SWT.Selection, event -> refreshObject());
       text = new Text(shell, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
       canvas = new Canvas(shell, SWT.BORDER);
       canvas.addListener(SWT.Paint, this::paintCanvas);
       check = new Button(shell, SWT.CHECK);
       check.setText("Stack");
-      check.addListener(SWT.Selection, new Listener() {
-         @Override
-         public void handleEvent(Event e) {
-            toggleStackTrace();
-         }
-      });
+      check.addListener(SWT.Selection, e -> toggleStackTrace());
       start = new Button(shell, SWT.PUSH);
       start.setText("Snap");
-      start.addListener(SWT.Selection, new Listener() {
-         @Override
-         public void handleEvent(Event event) {
-            refreshAll();
-         }
-      });
+      start.addListener(SWT.Selection, event -> refreshAll());
       stop = new Button(shell, SWT.PUSH);
       stop.setText("Diff");
-      stop.addListener(SWT.Selection, new Listener() {
-         @Override
-         public void handleEvent(Event event) {
-            refreshDifference();
-         }
-      });
+      stop.addListener(SWT.Selection, event -> refreshDifference());
       label = new Label(shell, SWT.BORDER);
       label.setText("0 object(s)");
-      shell.addListener(SWT.Resize, new Listener() {
-         @Override
-         public void handleEvent(Event e) {
-            layout();
-         }
-      });
+      shell.addListener(SWT.Resize, e -> layout());
       check.setSelection(false);
       text.setVisible(false);
       Point size = shell.getSize();

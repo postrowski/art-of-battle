@@ -372,7 +372,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
 
    public void setSkillsList(List<Skill> newSkills) {
       _skillsList.clear();
-      for(Skill skill : newSkills) {
+      for (Skill skill : newSkills) {
          _skillsList.put(skill.getType(), skill);
       }
    }
@@ -6100,12 +6100,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    private final HashMap<IHolder, Byte> _heldPenalties    = new HashMap<>();
    private Character                _holdTarget = null;
 
-   public static final Comparator<? super Character> nameComparator = new Comparator<> () {
-      @Override
-      public int compare(Character char1, Character char2) {
-         return char1.getName().compareTo(char2.getName());
-      }
-   };
+   public static final Comparator<? super Character> nameComparator = (Comparator<Character>) (char1, char2) -> char1.getName().compareTo(char2.getName());
 
    public void regenerateWound(byte woundReduction) {
       getCondition().regenerateWound(woundReduction);
