@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><Arena Name="default" backgroundImagePath="" bgImageUpperLeftX="0" bgImageUpperLeftY="0" height="28" hideViewFromLocalPlayers="true" level="0" width="20">
+<?xml version="1.0" encoding="UTF-8"?><Arena Name="default" backgroundImageAlpha="0" backgroundImagePath="" bgImageUpperLeftX="0" bgImageUpperLeftY="0" height="28" hideViewFromLocalPlayers="true" level="0" width="20">
   <rows>
     <row id="0">0:0:0:0:0:0:0:0:0:0:</row>
     <row id="1">0:0:0:0:0:0:0:0:0:0:</row>
@@ -12,9 +12,9 @@
     <row id="9">0:0:0:0:0:0:0:0:0:0:</row>
     <row id="10">0:0:0:0:0:0:0:0:0:0:</row>
     <row id="11">0:0:0:0:0:0:0:0:0:0:</row>
-    <row id="12">0:0:0:0:0:0:0:28672:0:0:</row>
+    <row id="12">0:0:0:0:0:0:0:0:0:0:</row>
     <row id="13">0:0:0:0:0:0:0:0:0:0:</row>
-    <row id="14">0:0:0:0:0:0:0:12288:0:0:</row>
+    <row id="14">0:0:0:0:0:0:0:0:0:0:</row>
     <row id="15">0:0:0:0:0:0:0:0:0:0:</row>
     <row id="16">0:0:0:0:0:0:0:0:0:0:</row>
     <row id="17">0:0:0:0:0:0:0:0:0:0:</row>
@@ -32,7 +32,7 @@
   
   <teams count="4" maxCombatantsPerTeam="15">
     <team id="0">
-      <combatant AI="Local" charName="? 300 Orc" id="0" startX="11" startY="7"/>
+      <combatant AI="Off" charName="" id="0"/>
       <combatant AI="Off" charName=" " id="1"/>
       <combatant AI="Off" charName=" " id="2"/>
       <combatant AI="Off" charName=" " id="3"/>
@@ -49,7 +49,7 @@
       <combatant AI="Off" charName=" " id="14"/>
     </team>
     <team id="1">
-      <combatant AI="Local" charName="? 300 Elf" id="0" startX="18" startY="18"/>
+      <combatant AI="Off" charName="" id="0"/>
       <combatant AI="Off" charName=" " id="1"/>
       <combatant AI="Off" charName=" " id="2"/>
       <combatant AI="Off" charName=" " id="3"/>
@@ -105,19 +105,5 @@
   </triggers>
 
   <items>
-    <door col="16" key="" orient="32768" row="12" state="5"/>
-    <door col="16" key="" orient="4096" row="12" state="5"/>
-    <door col="16" key="" orient="16384" row="12" state="5"/>
-    <door col="16" key="" orient="131072" row="12" state="5"/>
-    <door col="16" key="" orient="1024" row="12" state="5"/>
-    <door col="16" key="" orient="2048" row="12" state="5"/>
-    <door col="16" key="" orient="512" row="12" state="5"/>
-    <door col="17" key="" orient="1024" row="11" state="5"/>
-    <door col="17" key="" orient="2048" row="11" state="5"/>
-    <door col="17" key="" orient="1024" row="13" state="5"/>
-    <door col="17" key="" orient="512" row="13" state="5"/>
-    <door col="18" key="" orient="1024" row="12" state="5"/>
-    <door col="18" key="" orient="2048" row="12" state="5"/>
-    <door col="18" key="" orient="512" row="12" state="5"/>
   </items>
 </Arena>

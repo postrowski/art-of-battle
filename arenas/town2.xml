@@ -1,94 +1,99 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Arena Name="town2" height="52" hideViewFromLocalPlayers="false" level="0" width="30">
+<?xml version="1.0" encoding="UTF-8"?><Arena Name="town2" backgroundImageAlpha="181" backgroundImagePath="\town.png" bgImageUpperLeftX="0" bgImageUpperLeftY="0" height="58" hideViewFromLocalPlayers="true" level="0" width="45">
   <rows>
-    <row id="0">8:8:1:1:1:1:2:2:2:1:1:1:1:1:1:</row>
-    <row id="1">8:8:1:1:1:8:2:2:2:1:1:1:1:1:1:</row>
-    <row id="2">8:8:1:1:1:8:2:2:2:1:1:1:1:1:1:</row>
-    <row id="3">8:8:1:1:1:9:2:2:2:1:1:1:1:1:1:</row>
-    <row id="4">1:8:1:1:1:8:2:2:2:2049:2049:2049:2049:2049:1:</row>
-    <row id="5">8:1:1:1:1:9:2:2:16386:1024:1024:17408:1024:32769:1:</row>
-    <row id="6">8:1:1:1:1:8:2:2:2:4672:512:512:33344:131840:1:</row>
-    <row id="7">1:1:1:8:1:8:2:2:131330:0:0:16640:0:4162:1:</row>
-    <row id="8">1:1:9:1050633:2099201:1:2:2:2:4160:0:0:32832:131328:2:</row>
-    <row id="9">1:8:1050633:8651264:2099201:1:2:2:131074:0:0:16640:0:4098:1:</row>
-    <row id="10">1:1:1050633:266240:8519680:2099201:2:2:2:0:0:0:32832:0:2:</row>
-    <row id="11">1:9:266240:0:8519680:32769:2:2:16386:0:0:16640:0:2:1:</row>
-    <row id="12">1:1:266304:0:0:8519936:2:2:2:4160:0:0:32832:131328:2:</row>
-    <row id="13">1:131336:0:0:0:4161:2:2:131330:0:0:16640:0:4162:1:</row>
-    <row id="14">1:1:4160:0:0:131328:2:2:2:4160:0:0:32832:131328:2:</row>
-    <row id="15">1:131329:0:0:0:4098:2:2:131330:0:0:131072:0:4162:1:</row>
-    <row id="16">1:1:4160:0:0:0:2:2:2:6208:2048:2048:2048:133376:2:</row>
-    <row id="17">1:131329:0:0:0:32770:2:2:131074:1024:1024:1024:1024:4098:1:</row>
-    <row id="18">1:1:4160:0:0:131328:2:2:2:514:514:514:514:514:2:</row>
-    <row id="19">1:131329:0:0:0:4161:2:2:2:2:2:2:2:2:1:</row>
-    <row id="20">1:1:2129984:0:0:1181952:1:2:2:2050:2050:2050:2050:2:1:</row>
-    <row id="21">1:131073:2099200:0:1050624:4097:2:2:16386:1024:1024:33792:32769:1:1:</row>
-    <row id="22">9:8:8519681:2099200:1050624:266241:1:2:2:4672:512:17152:131840:1:1:</row>
-    <row id="23">9:8:8519681:3147776:266241:1:2:2:131330:0:0:32832:4161:1:1:</row>
-    <row id="24">9:9:1:8519681:266241:8:1:2:2:4160:0:16640:131328:1:1:</row>
-    <row id="25">9:8:1:513:8:8:2:2:131330:0:0:5120:4161:1:1:</row>
-    <row id="26">9:8:1:1:1:10:1:2:2:4160:0:0:131328:1:1:</row>
-    <row id="27">1:1:1:1:8:8:2:2:131074:0:0:0:1:1:1:</row>
-    <row id="28">1:1:1:1:1:8:1:2:2:0:0:128:131328:1:1:</row>
-    <row id="29">1:2049:2049:2049:2049:1:2:2:16386:0:0:0:1:1:1:</row>
-    <row id="30">1:16385:1024:1024:1024:32769:2:2:2:4160:0:128:131328:1:1:</row>
-    <row id="31">1:4672:512:512:131840:2:2:2:131336:0:0:0:4161:8:1:</row>
-    <row id="32">1:131329:0:0:0:2:2:2:2:6208:2048:2176:133376:8:8:</row>
-    <row id="33">1:4160:0:0:0:2:2:2:131080:1024:1024:1024:4097:10:1:</row>
-    <row id="34">1:131329:0:0:0:32770:2:2:2:520:513:513:513:8:8:</row>
-    <row id="35">1:4160:0:0:131328:2:2:2:8:1:1:1:1:8:8:</row>
-    <row id="36">1:131329:0:0:0:4161:2:2:2:2049:2049:2049:2049:2049:1:</row>
-    <row id="37">1:6208:2048:2048:133376:1:2:2:16392:1024:1024:1024:0:32770:8:</row>
-    <row id="38">16385:1024:0:1024:17408:1:1:2:2:4672:512:512:512:131840:2:</row>
-    <row id="39">4672:512:512:512:4161:1:2:2:131074:0:0:0:0:4162:9:</row>
-    <row id="40">131329:0:0:0:131328:1:1:2:2:0:0:0:0:131328:2:</row>
-    <row id="41">4160:0:0:0:4161:1:2:2:16386:0:0:0:0:4162:9:</row>
-    <row id="42">131329:0:0:0:131328:1:1:2:2:6208:2048:2048:2048:133376:2:</row>
-    <row id="43">6208:2048:2048:0:4161:1:2:2:131074:1024:1024:1024:1024:4098:9:</row>
-    <row id="44">131073:1024:1024:1024:132096:8:1:2:2:514:514:514:514:514:8:</row>
-    <row id="45">513:513:513:1:1:8:2:2:2:2:2:2:2:2:9:</row>
-    <row id="46">1:1:1:1:1:8:1:2:2:2:2:2:2:2:8:</row>
-    <row id="47">1:1:1:1:8:8:2:2:2:2:2:2:2:2:9:</row>
-    <row id="48">1:1:1:1:8:9:1:2:2:1:8:1:1:1:8:</row>
-    <row id="49">1:1:8:8:9:8:2:2:1:8:8:1:8:8:8:</row>
-    <row id="50">1:1:8:8:9:8:1:2:2:8:9:8:8:8:9:</row>
-    <row id="51">1:1:8:8:9:8:2:2:1:9:8:8:8:9:9:</row>
+    <row id="0">8:8:1:1:1:1:1:1:1:2:2:1:1:1:1:1:1:1:1:1:1:9:9:</row>
+    <row id="1">1:1:1:1:1:1:1:1:2:2:2:1:1:1:1:1:1:1:1:1:1:10:</row>
+    <row id="2">8:1:1:1:1:8:1:1:1:2:2:1:1:1:1:1:1:1:1:1:1:9:9:</row>
+    <row id="3">1:1:1:8:9:1:1:1:2:2:2:1:1:8:1:8:1:8:8:1:1:9:</row>
+    <row id="4">8:1:1:1:11:11:11:1:1:2:2:1:11:11:11:11:11:11:11:11:1:1:1:</row>
+    <row id="5">1:1:1:11:11:11:11:1:2:2:2:11:11:11:11:11:11:11:11:1:1:1:</row>
+    <row id="6">1:1:1:11:0:0:0:11:1:2:2:1:0:0:0:0:0:0:0:11:1:1:1:</row>
+    <row id="7">1:1:1:0:0:0:0:1:2:2:2:11:0:0:0:0:0:0:0:1:1:1:</row>
+    <row id="8">1:1:1:11:0:0:0:11:1:2:2:1:0:0:0:0:0:0:0:11:1:1:1:</row>
+    <row id="9">1:1:11:0:0:0:0:11:2:2:2:0:0:0:0:0:0:0:0:1:1:1:</row>
+    <row id="10">1:1:1:0:0:0:0:0:1:2:2:1:0:0:0:0:0:0:0:0:1:1:1:</row>
+    <row id="11">1:1:11:0:0:0:0:11:2:2:2:11:0:0:0:0:0:0:0:1:1:6:</row>
+    <row id="12">1:1:1:0:0:0:0:0:2:2:2:1:0:0:0:0:0:0:0:11:1:1:1:</row>
+    <row id="13">1:1:11:0:0:0:0:0:2:2:2:11:0:0:0:0:0:0:0:1:1:1:</row>
+    <row id="14">1:1:1:0:0:0:0:0:2:2:2:1:0:0:0:0:0:0:0:11:1:1:1:</row>
+    <row id="15">1:1:11:0:0:0:0:11:2:2:2:11:0:0:0:0:0:0:0:1:1:1:</row>
+    <row id="16">1:1:1:0:0:0:0:0:1:2:2:1:11:11:11:11:11:11:11:11:1:1:1:</row>
+    <row id="17">1:1:11:0:0:0:0:11:2:2:2:11:11:11:11:11:11:11:11:1:1:8:</row>
+    <row id="18">1:1:9:11:0:0:0:11:1:2:2:1:1:1:1:1:1:1:1:1:1:8:8:</row>
+    <row id="19">1:9:1:0:0:0:0:1:2:2:2:1:1:1:1:1:1:1:1:1:8:9:</row>
+    <row id="20">1:9:9:11:0:0:0:11:1:2:2:1:1:1:1:1:1:1:1:1:1:9:9:</row>
+    <row id="21">1:10:9:11:11:0:11:8:2:2:2:1:1:1:1:1:1:1:1:1:8:10:</row>
+    <row id="22">1:9:9:1:11:11:11:9:8:2:2:1:11:11:11:11:11:11:11:1:1:9:9:</row>
+    <row id="23">1:9:8:1:1:11:8:9:2:2:2:11:11:11:11:11:11:11:1:1:8:9:</row>
+    <row id="24">1:8:8:1:1:1:1:8:8:2:2:1:0:0:0:0:11:0:11:1:1:8:8:</row>
+    <row id="25">1:1:1:1:1:1:1:8:2:2:2:11:0:0:0:0:0:0:1:1:1:8:</row>
+    <row id="26">8:1:1:1:1:1:1:1:1:2:2:2:0:0:0:0:11:0:0:1:1:1:1:</row>
+    <row id="27">1:1:1:1:1:1:1:1:1:2:2:0:0:0:0:0:0:0:1:1:1:1:</row>
+    <row id="28">1:1:1:11:11:11:11:11:11:2:2:2:0:0:0:0:11:0:11:1:1:8:8:</row>
+    <row id="29">1:1:11:11:11:11:11:11:1:2:2:11:0:0:0:0:0:0:1:1:1:9:</row>
+    <row id="30">1:1:1:0:0:0:0:0:11:2:2:1:0:0:0:0:11:0:11:1:1:9:9:</row>
+    <row id="31">1:1:11:0:0:0:0:0:1:2:2:11:0:0:0:0:0:0:1:1:1:10:</row>
+    <row id="32">1:1:1:0:0:0:0:0:11:2:2:1:0:0:0:0:0:0:11:1:1:9:9:</row>
+    <row id="33">1:1:11:0:0:0:0:0:2:2:2:11:0:0:0:0:0:0:1:1:1:9:</row>
+    <row id="34">1:1:9:0:0:0:0:0:0:2:2:1:11:11:11:11:11:11:11:1:1:9:9:</row>
+    <row id="35">1:9:11:0:0:0:0:0:2:2:2:11:11:11:11:11:11:11:1:1:1:10:</row>
+    <row id="36">1:1:9:0:0:0:0:0:11:2:2:8:8:8:8:8:8:1:1:1:1:9:9:</row>
+    <row id="37">1:9:11:0:0:0:0:0:1:2:2:8:1:1:1:8:1:1:1:1:1:9:</row>
+    <row id="38">1:1:9:0:0:0:0:0:11:2:2:8:8:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="39">1:11:11:0:11:11:11:11:1:2:2:8:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="40">1:11:11:11:11:11:11:11:11:2:2:1:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="41">1:0:0:0:0:0:0:11:8:2:2:1:1:1:1:1:1:1:1:1:1:1:</row>
+    <row id="42">1:11:0:0:0:0:0:0:1:2:2:1:11:11:11:11:11:11:11:1:1:1:1:</row>
+    <row id="43">1:0:0:0:0:0:0:11:1:2:2:11:11:11:11:11:11:0:11:1:1:1:</row>
+    <row id="44">1:11:0:0:0:0:0:0:1:2:2:1:0:0:0:0:0:0:0:1:1:1:1:</row>
+    <row id="45">1:0:0:0:0:0:0:11:1:2:2:11:0:0:0:0:0:0:11:1:1:1:</row>
+    <row id="46">1:11:0:0:0:0:0:0:1:2:2:2:0:0:0:0:0:0:0:1:1:1:1:</row>
+    <row id="47">1:0:0:0:0:0:0:11:1:2:2:0:0:0:0:0:0:0:11:1:1:1:</row>
+    <row id="48">1:11:0:0:0:0:0:0:1:2:2:2:0:0:0:0:0:0:0:8:1:1:1:</row>
+    <row id="49">1:11:11:11:11:11:11:11:1:2:2:11:0:0:0:0:0:0:11:8:1:1:</row>
+    <row id="50">1:11:11:11:11:11:1:11:1:2:2:1:0:0:0:0:0:0:0:8:1:1:1:</row>
+    <row id="51">1:1:1:1:8:8:8:8:1:2:2:11:0:0:0:0:0:0:11:8:1:1:</row>
+    <row id="52">1:1:1:1:1:8:1:8:1:2:2:1:0:0:0:0:0:0:0:8:1:1:9:</row>
+    <row id="53">1:1:1:1:8:8:8:8:1:2:2:11:11:11:11:11:11:11:11:8:1:9:</row>
+    <row id="54">1:1:1:1:1:8:1:8:1:2:2:1:11:11:11:11:11:11:11:1:8:1:8:</row>
+    <row id="55">1:1:1:1:1:1:1:1:1:2:2:1:1:1:1:1:1:1:1:8:1:8:</row>
+    <row id="56">1:1:1:1:1:1:1:1:1:2:2:1:1:1:1:1:1:1:1:1:1:1:8:</row>
+    <row id="57">1:1:1:1:1:1:1:1:1:2:2:1:1:1:1:1:1:1:1:1:1:1:</row>
   </rows>
   
   <teams count="4" maxCombatantsPerTeam="15">
     <team id="0">
-      <combatant AI="Local" charName="Knight" id="0" startX="15" startY="47"/>
-      <combatant AI="Local" charName="PriestOfThor" id="1" startX="13" startY="49"/>
-      <combatant AI="Local" charName="Malihk" id="2" startX="17" startY="49"/>
+      <combatant AI="Local" charName="Knight" id="0" startX="17" startY="51"/>
+      <combatant AI="Local" charName="PriestOfThor" id="1" startX="19" startY="51"/>
+      <combatant AI="Local" charName="Malihk" id="2" startX="21" startY="51"/>
       <combatant AI="Off" charName=" " id="3"/>
       <combatant AI="Off" charName=" " id="4"/>
       <combatant AI="Off" charName=" " id="5"/>
-      <combatant AI="Off" charName="" id="6"/>
-      <combatant AI="Off" charName="" id="7"/>
-      <combatant AI="Off" charName="" id="8"/>
-      <combatant AI="Off" charName="" id="9"/>
-      <combatant AI="Off" charName="" id="10"/>
-      <combatant AI="Off" charName="" id="11"/>
-      <combatant AI="Off" charName="" id="12"/>
-      <combatant AI="Off" charName="" id="13"/>
-      <combatant AI="Off" charName="" id="14"/>
+      <combatant AI="Off" charName=" " id="6"/>
+      <combatant AI="Off" charName=" " id="7"/>
+      <combatant AI="Off" charName=" " id="8"/>
+      <combatant AI="Off" charName=" " id="9"/>
+      <combatant AI="Off" charName=" " id="10"/>
+      <combatant AI="Off" charName=" " id="11"/>
+      <combatant AI="Off" charName=" " id="12"/>
+      <combatant AI="Off" charName=" " id="13"/>
+      <combatant AI="Off" charName=" " id="14"/>
     </team>
     <team id="1">
-      <combatant AI="Norm" charName="Minotaur" id="0" startX="12" startY="2"/>
-      <combatant AI="Norm" charName="Morrak" id="1" startX="14" startY="2"/>
-      <combatant AI="Norm" charName="Martock" id="2" startX="16" startY="2"/>
+      <combatant AI="Norm" charName="Minotaur" id="0" startX="18" startY="2"/>
+      <combatant AI="Norm" charName="Morrak" id="1" startX="20" startY="2"/>
+      <combatant AI="Norm" charName="Martock" id="2" startX="22" startY="2"/>
       <combatant AI="Off" charName=" " id="3"/>
       <combatant AI="Off" charName=" " id="4"/>
       <combatant AI="Off" charName=" " id="5"/>
-      <combatant AI="Off" charName="" id="6"/>
-      <combatant AI="Off" charName="" id="7"/>
-      <combatant AI="Off" charName="" id="8"/>
-      <combatant AI="Off" charName="" id="9"/>
-      <combatant AI="Off" charName="" id="10"/>
-      <combatant AI="Off" charName="" id="11"/>
-      <combatant AI="Off" charName="" id="12"/>
-      <combatant AI="Off" charName="" id="13"/>
-      <combatant AI="Off" charName="" id="14"/>
+      <combatant AI="Off" charName=" " id="6"/>
+      <combatant AI="Off" charName=" " id="7"/>
+      <combatant AI="Off" charName=" " id="8"/>
+      <combatant AI="Off" charName=" " id="9"/>
+      <combatant AI="Off" charName=" " id="10"/>
+      <combatant AI="Off" charName=" " id="11"/>
+      <combatant AI="Off" charName=" " id="12"/>
+      <combatant AI="Off" charName=" " id="13"/>
+      <combatant AI="Off" charName=" " id="14"/>
     </team>
     <team id="2">
       <combatant AI="Off" charName=" " id="0"/>
@@ -97,32 +102,32 @@
       <combatant AI="Off" charName=" " id="3"/>
       <combatant AI="Off" charName=" " id="4"/>
       <combatant AI="Off" charName=" " id="5"/>
-      <combatant AI="Off" charName="" id="6"/>
-      <combatant AI="Off" charName="" id="7"/>
-      <combatant AI="Off" charName="" id="8"/>
-      <combatant AI="Off" charName="" id="9"/>
-      <combatant AI="Off" charName="" id="10"/>
-      <combatant AI="Off" charName="" id="11"/>
-      <combatant AI="Off" charName="" id="12"/>
-      <combatant AI="Off" charName="" id="13"/>
-      <combatant AI="Off" charName="" id="14"/>
+      <combatant AI="Off" charName=" " id="6"/>
+      <combatant AI="Off" charName=" " id="7"/>
+      <combatant AI="Off" charName=" " id="8"/>
+      <combatant AI="Off" charName=" " id="9"/>
+      <combatant AI="Off" charName=" " id="10"/>
+      <combatant AI="Off" charName=" " id="11"/>
+      <combatant AI="Off" charName=" " id="12"/>
+      <combatant AI="Off" charName=" " id="13"/>
+      <combatant AI="Off" charName=" " id="14"/>
     </team>
     <team id="3">
-      <combatant AI="Off" charName="" id="0"/>
-      <combatant AI="Off" charName="" id="1"/>
-      <combatant AI="Off" charName="" id="2"/>
-      <combatant AI="Off" charName="" id="3"/>
-      <combatant AI="Off" charName="" id="4"/>
-      <combatant AI="Off" charName="" id="5"/>
-      <combatant AI="Off" charName="" id="6"/>
-      <combatant AI="Off" charName="" id="7"/>
-      <combatant AI="Off" charName="" id="8"/>
-      <combatant AI="Off" charName="" id="9"/>
-      <combatant AI="Off" charName="" id="10"/>
-      <combatant AI="Off" charName="" id="11"/>
-      <combatant AI="Off" charName="" id="12"/>
-      <combatant AI="Off" charName="" id="13"/>
-      <combatant AI="Off" charName="" id="14"/>
+      <combatant AI="Off" charName=" " id="0"/>
+      <combatant AI="Off" charName=" " id="1"/>
+      <combatant AI="Off" charName=" " id="2"/>
+      <combatant AI="Off" charName=" " id="3"/>
+      <combatant AI="Off" charName=" " id="4"/>
+      <combatant AI="Off" charName=" " id="5"/>
+      <combatant AI="Off" charName=" " id="6"/>
+      <combatant AI="Off" charName=" " id="7"/>
+      <combatant AI="Off" charName=" " id="8"/>
+      <combatant AI="Off" charName=" " id="9"/>
+      <combatant AI="Off" charName=" " id="10"/>
+      <combatant AI="Off" charName=" " id="11"/>
+      <combatant AI="Off" charName=" " id="12"/>
+      <combatant AI="Off" charName=" " id="13"/>
+      <combatant AI="Off" charName=" " id="14"/>
     </team>
   </teams>
 
@@ -130,5 +135,47 @@
   </triggers>
 
   <items>
+    <door col="12" key="" orient="2048" row="48" state="2"/>
+    <door col="15" key="" orient="128" row="13" state="1"/>
+    <door col="16" key="" orient="128" row="34" state="2"/>
+    <door col="23" key="" orient="128" row="9" state="1"/>
+    <door col="23" key="" orient="128" row="27" state="1"/>
+    <door col="23" key="" orient="128" row="47" state="2"/>
+    <door col="26" key="" orient="1024" row="8" state="5"/>
+    <door col="26" key="" orient="2048" row="8" state="5"/>
+    <door col="26" key="" orient="512" row="8" state="5"/>
+    <door col="26" key="" orient="1024" row="14" state="5"/>
+    <door col="26" key="" orient="2048" row="14" state="5"/>
+    <door col="26" key="" orient="512" row="14" state="5"/>
+    <door col="28" key="" orient="16384" row="12" state="5"/>
+    <door col="28" key="" orient="1048576" row="12" state="5"/>
+    <door col="28" key="" orient="128" row="14" state="5"/>
+    <door col="28" key="" orient="16384" row="14" state="5"/>
+    <door col="28" key="" orient="131072" row="14" state="5"/>
+    <door col="29" key="" orient="1024" row="13" state="5"/>
+    <door col="29" key="" orient="512" row="13" state="5"/>
+    <door col="30" key="" orient="1024" row="8" state="5"/>
+    <door col="30" key="" orient="2048" row="8" state="5"/>
+    <door col="30" key="" orient="512" row="8" state="5"/>
+    <door col="30" key="" orient="1024" row="12" state="5"/>
+    <door col="30" key="" orient="2048" row="12" state="5"/>
+    <door col="31" key="" orient="1024" row="13" state="5"/>
+    <door col="31" key="" orient="512" row="13" state="5"/>
+    <door col="32" key="" orient="1024" row="12" state="5"/>
+    <door col="32" key="" orient="2048" row="12" state="5"/>
+    <door col="33" key="" orient="1024" row="13" state="5"/>
+    <door col="33" key="" orient="512" row="13" state="5"/>
+    <door col="34" key="" orient="1024" row="8" state="5"/>
+    <door col="34" key="" orient="2048" row="8" state="5"/>
+    <door col="34" key="" orient="512" row="8" state="5"/>
+    <door col="34" key="" orient="1024" row="12" state="5"/>
+    <door col="34" key="" orient="2048" row="12" state="5"/>
+    <door col="35" key="" orient="1024" row="13" state="5"/>
+    <door col="35" key="" orient="512" row="13" state="5"/>
+    <door col="35" key="" orient="512" row="43" state="2"/>
+    <door col="36" key="" orient="1024" row="12" state="5"/>
+    <door col="36" key="" orient="2048" row="12" state="5"/>
+    <door col="36" key="" orient="128" row="26" state="2"/>
+    <door col="38" key="" orient="128" row="10" state="1"/>
   </items>
 </Arena>
