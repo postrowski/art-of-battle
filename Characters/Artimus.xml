@@ -1,18 +1,17 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="Artimus" Race="Elf">
-  <Attributes DEX="5" HT="4" IQ="4" NIM="8" SOC="5" STR="7" TOU="3"/>
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Artimus" Race="Elf">
+  <Attributes DEX="5" HT="3" IQ="4" NIM="7" SOC="5" STR="8" TOU="3"/>
   <Equipment Armor="Light Plate">
-    <Hand Name="right hand">Shortsword</Hand>
+    <Hand Name="right hand">Mace</Hand>
     <Hand Name="left hand">Large Shield</Hand>
     <Belt>Bow, Longbow</Belt>
     <Belt>Potion:Complete Healing</Belt>
     <Belt>Potion:Speed</Belt>
   </Equipment>
   <Skills>
-    <Skill Level="10" Name="Sword"/>
-    <Skill Level="9" Name="Shield"/>
     <Skill Level="6" Name="Karate"/>
     <Skill Level="5" Name="Bow"/>
+    <Skill Level="9" Name="Axe/Mace"/>
+    <Skill Level="9" Name="Shield"/>
   </Skills>
   <Spells>
     <Spell Level="1" Name="Flaming Weapon"/>
@@ -41,11 +40,11 @@
     <College Level="1" Name="Air"/>
   </Colleges>
   <Advantages>
-    <Advantage Level="2" Name="Magical Aptitude"/>
-    <Advantage Level="6" Name="Wealth"/>
-    <Advantage Level="4" Name="Divine Aff. - Thor"/>
-    <Advantage Level="3" Name="Divine Power"/>
-    <Advantage Level="2" Name="Hero points"/>
-    <Advantage Level="1" Name="Sense of Duty"/>
+    <Advantage LevelName="+3" Name="Magical Aptitude"/>
+    <Advantage LevelName="$5,000" Name="Wealth"/>
+    <Advantage LevelName="6" Name="Divine Aff. - Thor"/>
+    <Advantage LevelName="5" Name="Divine Power"/>
+    <Advantage LevelName="2" Name="Hero points"/>
+    <Advantage LevelName="Full-time" Name="Sense of Duty"/>
   </Advantages>
 </Character>

@@ -1,20 +1,20 @@
-<?xml version="1.0"?>
-<Character Gender="Female" Name="TaoPriestess" Race="Half-Elf">
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Female" Name="TaoPriestess" Race="Half-Elf">
   <Attributes DEX="2" HT="-1" IQ="0" NIM="2" SOC="4" STR="0" TOU="-1"/>
   <Equipment Armor="Leather">
     <Hand Name="right hand"/>
     <Hand Name="left hand"/>
+    <Belt>Quarterstaff</Belt>
   </Equipment>
   <Skills>
-    <Skill Level="6" Name="Brawling"/>
+    <Skill Level="6" Name="Quarterstaff"/>
     <Skill Level="5" Name="Aikido"/>
     <Skill Level="1" Name="Throwing"/>
   </Skills>
   <Advantages>
-    <Advantage Level="2" Name="Wealth"/>
-    <Advantage Level="3" Name="Divine Power"/>
-    <Advantage Level="4" Name="Divine Aff. - Tao"/>
-    <Advantage Level="0" Name="Honest"/>
-    <Advantage Level="2" Name="Vision"/>
+    <Advantage LevelName="$500" Name="Wealth"/>
+    <Advantage LevelName="4" Name="Divine Power"/>
+    <Advantage LevelName="5" Name="Divine Aff. - Tao"/>
+    <Advantage LevelName="" Name="Honest"/>
+    <Advantage LevelName="Near sighted" Name="Vision"/>
   </Advantages>
 </Character>
