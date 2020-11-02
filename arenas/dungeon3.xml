@@ -245,7 +245,7 @@
       <location x="42" y="68"/>
       <event data="" name="single shot" type="Disable This Trigger"/>
       <event data="As you enter the room, you recognize that it once must have been a large treasure vault.\nRich tapestries and large gilden paintings still hang on the walls that remain.\n The far side of the room has collapsed, and a dirt cavern extends into the darkness.\n Much of the treasure that must have once graced this room is piled loosely on the far side of the room, laying in the dirt.\n Closer inspection reveals scratches in the dirt and marble flooring,\n and scorch mark reveal that this is likely the current home of a Dragon!" name="Room description" type="Public Message"/>
-      <event data="? Dragon 800" name="enter dragon" type="Enter Character">
+      <event data="? Dragon 1000" name="enter dragon" type="Enter Character">
         <location x="62" y="72"/>
       </event>
     </trigger>

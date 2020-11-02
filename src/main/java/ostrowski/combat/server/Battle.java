@@ -1501,7 +1501,7 @@ public class Battle extends Thread implements Enums {
                            }
                            sb.append(" the level-").append(defender.getHoldLevel(holder))
                              .append(" hold from ").append(holder.getName());
-                           defender.setHoldLevel(holder, (byte) 0);
+                           defender.setHoldLevel(holder, null);
                            preamble = false;
                         }
                         return;

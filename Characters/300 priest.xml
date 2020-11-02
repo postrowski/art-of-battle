@@ -3,13 +3,15 @@
   <Equipment Armor="Plate Mail">
     <Hand Name="right hand">Mace</Hand>
     <Hand Name="left hand">Tower Shield</Hand>
-    <Belt>Knife</Belt>
+    <Belt>Potion:Minor Healing</Belt>
+    <Belt>Potion:Major Healing</Belt>
+    <Belt>Potion:Major Healing</Belt>
   </Equipment>
   <Skills>
     <Skill Level="5" Name="Axe/Mace"/>
     <Skill Level="2" Name="Knife"/>
     <Skill Level="5" Name="Shield"/>
-    <Skill Level="2" Name="Brawling"/>
+    <Skill Level="3" Name="Brawling"/>
   </Skills>
   <Advantages>
     <Advantage LevelName="$2,000" Name="Wealth"/>
@@ -17,5 +19,6 @@
     <Advantage LevelName="5" Name="Divine Aff. - Thor"/>
     <Advantage LevelName="4" Name="Divine Power"/>
     <Advantage LevelName="" Name="Intolerant"/>
+    <Advantage LevelName="x4" Name="Quirks"/>
   </Advantages>
 </Character>

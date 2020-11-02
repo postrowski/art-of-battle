@@ -397,12 +397,12 @@
     <door col="69" key="" orient="2048" row="21" state="5"/>
     <door col="69" key="" orient="1024" row="21" state="5"/>
     <door col="69" key="" orient="512" row="21" state="5"/>
-    <item col="69" name="Potion: Restore Mana" raceBase="Human" row="73"/>
-    <item col="69" name="Potion: Major Healing" raceBase="Human" row="73"/>
+    <item col="69" name="Potion:Restore Mana" raceBase="Human" row="73"/>
+    <item col="69" name="Potion:Major Healing" raceBase="Human" row="73"/>
     <door col="70" key="" orient="2048" row="20" state="5"/>
     <door col="70" key="" orient="1024" row="20" state="5"/>
     <door col="70" key="" orient="512" row="20" state="5"/>
-    <item col="70" name="Potion: Restore Mana" raceBase="Human" row="72"/>
-    <item col="70" name="Potion: Complete Healing" raceBase="Human" row="72"/>
+    <item col="70" name="Potion:Restore Mana" raceBase="Human" row="72"/>
+    <item col="70" name="Potion:Complete Healing" raceBase="Human" row="72"/>
   </items>
 </Arena>
