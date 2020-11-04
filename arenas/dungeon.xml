@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><Arena Name="dungeon" backgroundImageAlpha="161" backgroundImagePath="\dungeon1.png" bgImageUpperLeftX="0" bgImageUpperLeftY="0" height="130" hideViewFromLocalPlayers="true" level="0" width="86">
+<?xml version="1.0" encoding="UTF-8"?><Arena Name="dungeon" backgroundImageAlpha="161" backgroundImagePath="\dungeon1.png" height="130" hideViewFromLocalPlayers="true" level="0" width="86">
   <rows>
     <row id="0">11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:</row>
     <row id="1">11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:</row>

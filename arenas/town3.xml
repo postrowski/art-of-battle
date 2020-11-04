@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><Arena Name="town3" backgroundImageAlpha="181" backgroundImagePath="\town.png" bgImageUpperLeftX="0" bgImageUpperLeftY="0" height="58" hideViewFromLocalPlayers="true" level="0" width="45">
+<?xml version="1.0" encoding="UTF-8"?><Arena Name="town3" backgroundImageAlpha="181" backgroundImagePath="\town.png" height="58" hideViewFromLocalPlayers="true" knownByAllPlayers="true" level="0" width="45">
   <rows>
     <row id="0">8:8:1:1:1:1:1:1:1:2:2:1:1:1:1:1:1:1:1:1:1:9:9:</row>
     <row id="1">1:1:1:1:1:1:1:1:2:2:2:1:1:1:1:1:1:1:1:1:1:10:</row>
@@ -62,7 +62,7 @@
   
   <teams count="4" maxCombatantsPerTeam="15">
     <team id="0">
-      <combatant AI="Local" charName="HighPriestOfThor" id="0" startX="19" startY="51"/>
+      <combatant AI="Local" charName="HighPriest of Thor" id="0" startX="19" startY="51"/>
       <combatant AI="Off" charName=" " id="1"/>
       <combatant AI="Off" charName=" " id="2"/>
       <combatant AI="Off" charName=" " id="3"/>
@@ -79,7 +79,7 @@
       <combatant AI="Off" charName=" " id="14"/>
     </team>
     <team id="1">
-      <combatant AI="AI - Norm" charName="TrollArcher" id="0" startX="20" startY="2"/>
+      <combatant AI="Norm" charName="TrollArcher" id="0" startX="20" startY="2"/>
       <combatant AI="Off" charName=" " id="1"/>
       <combatant AI="Off" charName=" " id="2"/>
       <combatant AI="Off" charName=" " id="3"/>

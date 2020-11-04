@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><Arena Name="pool" backgroundImageAlpha="245" backgroundImagePath="\pool.png" bgImageUpperLeftX="0" bgImageUpperLeftY="0" height="34" hideViewFromLocalPlayers="false" level="0" width="26">
+<?xml version="1.0" encoding="UTF-8"?><Arena Name="pool" backgroundImageAlpha="245" backgroundImagePath="\pool.png" height="34" hideViewFromLocalPlayers="false" level="0" width="26">
   <rows>
     <row id="0">11:11:11:11:1:1:1:1:1:1:1:1:8:</row>
     <row id="1">7:7:7:7:1:1:1:1:1:1:1:1:1:</row>

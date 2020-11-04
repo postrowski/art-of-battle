@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><Arena Name="town2" backgroundImageAlpha="181" backgroundImagePath="\town.png" bgImageUpperLeftX="0" bgImageUpperLeftY="0" height="58" hideViewFromLocalPlayers="true" level="0" width="45">
+<?xml version="1.0" encoding="UTF-8"?><Arena Name="town2" backgroundImageAlpha="181" backgroundImagePath="\town.png" height="58" hideViewFromLocalPlayers="true" knownByAllPlayers="true" level="0" width="45">
   <rows>
     <row id="0">8:8:1:1:1:1:1:1:1:2:2:1:1:1:1:1:1:1:1:1:1:9:9:</row>
     <row id="1">1:1:1:1:1:1:1:1:2:2:2:1:1:1:1:1:1:1:1:1:1:10:</row>

@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="HighPriest of Thor" Race="Human">
-  <Attributes DEX="3" HT="0" IQ="0" NIM="2" SOC="5" STR="6" TOU="2"/>
-  <Equipment Armor="Light Plate">
+  <Attributes DEX="3" HT="0" IQ="0" NIM="2" SOC="5" STR="6" TOU="3"/>
+  <Equipment Armor="Plate Mail">
     <Hand Name="right hand">Maul</Hand>
     <Hand Name="left hand"/>
   </Equipment>
   <Skills>
+    <Skill Level="4" Name="Brawling"/>
     <Skill Level="8" Name="2-Handed Axe/Mace"/>
-    <Skill Level="6" Name="Shield"/>
+    <Skill Level="1" Name="Swimming"/>
+    <Skill Level="1" Name="Riding"/>
   </Skills>
   <Advantages>
     <Advantage LevelName="$5,000" Name="Wealth"/>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><Arena Name="default" backgroundImageAlpha="0" backgroundImagePath="" bgImageUpperLeftX="0" bgImageUpperLeftY="0" height="28" hideViewFromLocalPlayers="true" level="0" width="20">
+<?xml version="1.0" encoding="UTF-8"?><Arena Name="default" backgroundImageAlpha="0" backgroundImagePath="" height="28" hideViewFromLocalPlayers="true" level="0" width="20">
   <rows>
     <row id="0">0:0:0:0:0:0:0:0:0:0:</row>
     <row id="1">0:0:0:0:0:0:0:0:0:0:</row>
