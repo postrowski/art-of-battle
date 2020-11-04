@@ -403,6 +403,10 @@ public class Battle extends Thread implements Enums {
       TreeSet<Character> actors = new TreeSet<>(results.keySet());
       for (Character actor : actors) {
          RequestAction action = results.get(actor);
+         if (!action.isAnswered()) {
+            // could be shutting down the battle
+            continue;
+         }
          if (!action.isTargetEnemy()) {
             clearAimingCharacterMap(actor);
          }
