@@ -431,6 +431,11 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       _hideViewFromLocalPlayersButton.setText("Hide map from local players.");
       _hideViewFromLocalPlayersButton.setSelection(false);
       _hideViewFromLocalPlayersButton.addSelectionListener(this);
+
+      _hideViewFromLocalPlayersButton = new Button(topGridBlock, SWT.CHECK);
+      _hideViewFromLocalPlayersButton.setText("All players know the map.");
+      _hideViewFromLocalPlayersButton.setSelection(false);
+      _hideViewFromLocalPlayersButton.addSelectionListener(this);
    }
 
    /**
