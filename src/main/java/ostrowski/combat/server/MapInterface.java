@@ -151,24 +151,23 @@ public class MapInterface extends Helper implements SelectionListener, ModifyLis
     */
    private void buildArenaSizeBlock(Composite parent)
    {
-      Composite outterBlock = createGroup(parent, "Arena size", 1/*columns*/, false/*sameSize*/,
-                                         1 /*hSpacing*/, 1 /*vSpacing*/);
+      Composite outerBlock = createGroup(parent, "Arena size", 1, false,1 , 1);
       {
-         Composite sizeblock = new Composite(outterBlock, SWT.TRAIL);
+         Composite sizeBlock = new Composite(outerBlock, SWT.TRAIL);
          GridLayout grid = new GridLayout(5, false);
-         sizeblock.setLayout(grid);
-         new Label(sizeblock, SWT.LEFT).setText("Width:");
+         sizeBlock.setLayout(grid);
+         new Label(sizeBlock, SWT.LEFT).setText("Width:");
 
-         _arenaSizeXValue = new Text(sizeblock, SWT.LEFT | SWT.BORDER);
+         _arenaSizeXValue = new Text(sizeBlock, SWT.LEFT | SWT.BORDER);
          _arenaSizeXValue.setText("20");
          _arenaSizeXValue.setSize(30, 20);
          GridData data = new GridData();
          data.minimumWidth = 30;
          data.grabExcessHorizontalSpace = true;
          _arenaSizeXValue.setLayoutData(data);
-         new Label(sizeblock, SWT.CENTER).setText(" Height:");
+         new Label(sizeBlock, SWT.CENTER).setText(" Height:");
 
-         _arenaSizeYValue = new Text(sizeblock, SWT.LEFT | SWT.BORDER);
+         _arenaSizeYValue = new Text(sizeBlock, SWT.LEFT | SWT.BORDER);
          _arenaSizeYValue.setText("14");
          _arenaSizeYValue.setSize(30, 20);
          data = new GridData();
@@ -176,20 +175,18 @@ public class MapInterface extends Helper implements SelectionListener, ModifyLis
          data.grabExcessHorizontalSpace = true;
          _arenaSizeYValue.setLayoutData(data);
 
-         _setSizeButton = new Button(sizeblock, SWT.PUSH);
+         _setSizeButton = new Button(sizeBlock, SWT.PUSH);
          _setSizeButton.setText("Set Size");
          _setSizeButton.addSelectionListener(this);
          _setSizeButton.setEnabled(false);
       }
-      _arenaSizeXValue.addModifyListener(this);
-      _arenaSizeYValue.addModifyListener(this);
 
-      _hideViewFromLocalPlayersButton = new Button(outterBlock, SWT.CHECK);
+      _hideViewFromLocalPlayersButton = new Button(outerBlock, SWT.CHECK);
       _hideViewFromLocalPlayersButton.setText("Hide map from local players.");
       _hideViewFromLocalPlayersButton.setSelection(false);
       _hideViewFromLocalPlayersButton.addSelectionListener(this);
 
-      _mapKnownToAllPlayersButton = new Button(outterBlock, SWT.CHECK);
+      _mapKnownToAllPlayersButton = new Button(outerBlock, SWT.CHECK);
       _mapKnownToAllPlayersButton.setText("All players know the map.");
       _mapKnownToAllPlayersButton.setSelection(false);
       _mapKnownToAllPlayersButton.addSelectionListener(this);
