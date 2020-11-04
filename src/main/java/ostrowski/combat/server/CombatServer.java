@@ -20,6 +20,7 @@ import ostrowski.combat.client.MessageDialog;
 import ostrowski.combat.client.RequestUserInput;
 import ostrowski.combat.client.ui.AutoRunBlock;
 import ostrowski.combat.client.ui.CharInfoBlock;
+import ostrowski.combat.client.ui.PseudoRandomBlock;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.*;
 import ostrowski.combat.common.enums.AI_Type;
@@ -42,6 +43,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    private static final String VERSION_NUMBER = "4.2.0";
 
    public static final HashMap<Thread, HashMap<String, Object>> threadStorage_ = new HashMap<>();
+
    public static Object getThreadStorage(String key) {
       HashMap<String, Object> threadsStorage = threadStorage_.get(Thread.currentThread());
       if (threadsStorage == null) {
@@ -108,8 +110,6 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    public static CombatServer             _this                  = null;
    // UI elements:
    private       Button                   _openButton;
-   public        Button                   _usePseudoRandomNumbers;
-   private       Text                     _pseudoRandomNumberSeedText;
    private       Button                   _newMapButton;
    private       Button                   _openMapButton;
    private       Button                   _saveMapButton;
@@ -137,6 +137,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    public final  CharacterWidget          _charWidget;
    public final  CharacterFile            _charFile              = new CharacterFile("Character.data");
    private final CharInfoBlock            _charInfoBlock         = new CharInfoBlock(null);
+   private       PseudoRandomBlock        _pseudoRandomBlock     = new PseudoRandomBlock(this);
 
 
    public static final byte MAX_COMBATANTS_PER_TEAM = 15;
@@ -287,8 +288,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
                }
                if (name.equalsIgnoreCase("seed")) {
                   setPseudoRandomNumberSeed(Integer.parseInt(value));
-                  _usePseudoRandomNumbers.setSelection(true);
-                  _pseudoRandomNumberSeedText.setEnabled(true);
+                  _pseudoRandomBlock.setUsingPseudoRandomNumber(true);
                }
             }
          }
@@ -393,7 +393,6 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       data.grabExcessHorizontalSpace = true;
       topGridBlock.setLayoutData(data);
       buildArenaNameBlock(topGridBlock);
-      buildPseudoRandomBlock(topGridBlock);
    }
 
    /**
@@ -645,6 +644,8 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
 
             AutoRunBlock autoRunBlock = new AutoRunBlock(this);
             autoRunBlock.buildBlock(midRightBottomBlock);
+
+            _pseudoRandomBlock.buildBlock(midRightBottomBlock);
          }
       }
    }
@@ -685,31 +686,8 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
     }
 
    /**
-    * @param topGridBlock
+    * @param parent
     */
-   private void buildPseudoRandomBlock(Composite topGridBlock)
-   {
-      Composite block   = new Composite(topGridBlock, SWT.LEFT);
-
-      GridLayout grid = new GridLayout(2, false);
-      block.setLayout(grid);
-      GridData data = new GridData();
-      data.horizontalAlignment = SWT.BEGINNING;
-      block.setLayoutData(data);
-
-      _usePseudoRandomNumbers = new Button(block, SWT.CHECK);
-      _usePseudoRandomNumbers.setText("Use pseudo-random number seed:");
-      _usePseudoRandomNumbers.setSelection(false);
-      _usePseudoRandomNumbers.addSelectionListener(this);
-
-      _pseudoRandomNumberSeedText = new Text(block, SWT.LEFT | SWT.BORDER);
-      // over-write the Text field with a large empty string to keep it large for the initial pack.
-      _pseudoRandomNumberSeedText.setText("       ");
-      _pseudoRandomNumberSeedText.setEditable(false);
-      _pseudoRandomNumberSeedText.setEnabled(false);
-      _pseudoRandomNumberSeedText.addModifyListener(this);
-   }
-
    private void addStartButton(Composite parent)
    {
       _openButton = new Button(parent, SWT.LEFT);
@@ -859,11 +837,6 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
                onPlay();
                closePort();
             }
-         }
-         else if (e.widget == _usePseudoRandomNumbers) {
-            _pseudoRandomNumberSeedText.setEditable(_usePseudoRandomNumbers.getSelection());
-            _pseudoRandomNumberSeedText.setEnabled(_usePseudoRandomNumbers.getSelection());
-            _pseudoRandomNumberSeedText.setText(String.valueOf(_pseudoRandomNumberSeed));
          }
          else if (e.widget == _saveMapButton) {
             writeArenaMapToFile(_arena.getCombatMap(), true/*overwriteExistingFile*/);
@@ -1445,31 +1418,15 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       if (!_inModify) {
          _inModify = true;
          try {
-            if (e.widget == _pseudoRandomNumberSeedText) {
-               String value = _pseudoRandomNumberSeedText.getText();
-               StringBuilder validatedValue = new StringBuilder();
-               for (int i=0 ; i<value.length() ; i++) {
-                  if (java.lang.Character.isDigit(value.charAt(i))) {
-                     validatedValue.append(value.charAt(i));
+            for (byte team=0 ; (team<_combatantsButtons.length) ; team++) {
+               for (byte cur=0 ; (cur<_combatantsButtons[team].length) ; cur++) {
+                  if (e.widget == _combatantsAI[team][cur]) {
+                      changeAI(team, cur);
+                      return;
                   }
-               }
-               int val = 0;
-               if (validatedValue.length() > 0) {
-                  val = Integer.parseInt(validatedValue.toString());
-               }
-               setPseudoRandomNumberSeed(val);
-            }
-            else {
-               for (byte team=0 ; (team<_combatantsButtons.length) ; team++) {
-                  for (byte cur=0 ; (cur<_combatantsButtons[team].length) ; cur++) {
-                     if (e.widget == _combatantsAI[team][cur]) {
-                         changeAI(team, cur);
-                         return;
-                     }
-                     if (e.widget == _combatantsName[team][cur]) {
-                        changeName(team, cur, false/*checkForRandom*/);
-                        return;
-                     }
+                  if (e.widget == _combatantsName[team][cur]) {
+                     changeName(team, cur, false/*checkForRandom*/);
+                     return;
                   }
                }
             }
@@ -1547,10 +1504,8 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
          if (!display.isDisposed()) {
             final Object synchObject = 0;
             display.asyncExec(() -> {
-               if (_usePseudoRandomNumbers.getSelection()) {
-                  if (!_pseudoRandomNumberSeedText.getText().equals(String.valueOf(_pseudoRandomNumberSeed))) {
-                     _pseudoRandomNumberSeedText.setText(String.valueOf(_pseudoRandomNumberSeed));
-                  }
+               if (_pseudoRandomBlock.isUsingPseudoRandomNumber()) {
+                  _pseudoRandomBlock.setSeedText(_pseudoRandomNumberSeed);
                }
                else {
                   if (!_arena._characterGenerated) {
@@ -1583,6 +1538,9 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    public static void generateNewPseudoRandomNumberSeed() {
       setPseudoRandomNumberSeed((int) (System.currentTimeMillis() / 100));
    }
+   public boolean isUsingPseudoRandomNumbers() {
+      return _pseudoRandomBlock.isUsingPseudoRandomNumber();
+   }
    public static void setPseudoRandomNumberSeed(int newValue)
    {
       int clippedValue = (newValue % MAX_PSEUDO_RANDOM_VALUE);
@@ -1595,7 +1553,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       _pseudoRandomNumberSeed = clippedValue;
       if (!_inModify) {
          if (_this != null) {
-            _this._pseudoRandomNumberSeedText.setText(String.valueOf(_pseudoRandomNumberSeed));
+            _this._pseudoRandomBlock.setSeedText(_pseudoRandomNumberSeed);
          }
       }
    }

@@ -1595,7 +1595,7 @@ public class Arena implements Enums, IMapListener
                if (stockCharacterName.startsWith("? ")) {
                   if (!_characterGenerated) {
                      _characterGenerated = true;
-                     if (!_server._usePseudoRandomNumbers.getSelection()) {
+                     if (!_server.isUsingPseudoRandomNumbers()) {
                         CombatServer.generateNewPseudoRandomNumberSeed();
                      }
                   }
