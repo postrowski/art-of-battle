@@ -102,67 +102,59 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    }
 
    static final int WINDOW_WIDTH = 950;
-   private Shell                            _shell;
-   Diagnostics                              _diag             = null;
-   public static boolean                    _isServer         = false;
-   public static CombatServer               _this             = null;
-
+   private Shell _shell;
+   Diagnostics _diag = null;
+   public static boolean                  _isServer              = false;
+   public static CombatServer             _this                  = null;
    // UI elements:
-   private Button                           _openButton;
-   public  Button                           _usePseudoRandomNumbers;
-   private Text                             _pseudoRandomNumberSeedText;
-   private Button                           _newMapButton;
-   private Button                           _openMapButton;
-   private Button                           _saveMapButton;
-   private Text                             _arenaSizeXValue;
-   private Text                             _arenaSizeYValue;
-   public        IMapWidget _map;
-   private final Browser    _fullMessages;
-   private       Browser    _messages;
-
-   private ClientListener                   _clientListener;
-   private final Arena                      _arena;
-   private Button[/*team*/][/*id*/]         _combatantsButtons;
-   private Combo[/*team*/][/*id*/]          _combatantsName;
-   private Combo[/*team*/][/*id*/]          _combatantsAI;
-   private final byte                       _maxTeams         = CombatServer.MAX_TEAMS;
-   private byte                             _currentTeam      = -1;
-   private byte                             _currentCombatant = -1;
-   private boolean                          _changingMap      = false;
-
-   private Button                           _loadBattleButton;
-   private Button                           _saveBattleButton;
-   private Button                           _pausePlayButton;
-   private Button                           _turnButton;
-   private Button                           _roundButton;
-   private Button                           _phaseButton;
-   private final Object                     _pausePlayControl = new Object();
-   private final Semaphore                  _lock_pausePlayControl = new Semaphore("CombatServer_pausePalyControl",
-                                                                                   CombatSemaphore.CLASS_COMBATSERVER_pausePlayControl);
-
-   public final CharacterWidget _charWidget;
-   public final CharacterFile   _charFile      = new CharacterFile("Character.data");
-   private final CharInfoBlock   _charInfoBlock = new CharInfoBlock(null);
-   private Button                           _hideViewFromLocalPlayersButton;
+   private       Button                   _openButton;
+   public        Button                   _usePseudoRandomNumbers;
+   private       Text                     _pseudoRandomNumberSeedText;
+   private       Button                   _newMapButton;
+   private       Button                   _openMapButton;
+   private       Button                   _saveMapButton;
+   public        IMapWidget               _map;
+   private final Browser                  _fullMessages;
+   private       Browser                  _messages;
+   private       ClientListener           _clientListener;
+   private final Arena                    _arena;
+   private       Button[/*team*/][/*id*/] _combatantsButtons;
+   private       Combo[/*team*/][/*id*/]  _combatantsName;
+   private       Combo[/*team*/][/*id*/]  _combatantsAI;
+   private final byte                     _maxTeams              = CombatServer.MAX_TEAMS;
+   private       byte                     _currentTeam           = -1;
+   private       byte                     _currentCombatant      = -1;
+   private       boolean                  _changingMap           = false;
+   private       Button                   _loadBattleButton;
+   private       Button                   _saveBattleButton;
+   private       Button                   _pausePlayButton;
+   private       Button                   _turnButton;
+   private       Button                   _roundButton;
+   private       Button                   _phaseButton;
+   private final Object                   _pausePlayControl      = new Object();
+   private final Semaphore                _lock_pausePlayControl = new Semaphore("CombatServer_pausePalyControl",
+                                                                                 CombatSemaphore.CLASS_COMBATSERVER_pausePlayControl);
+   public final  CharacterWidget          _charWidget;
+   public final  CharacterFile            _charFile              = new CharacterFile("Character.data");
+   private final CharInfoBlock            _charInfoBlock         = new CharInfoBlock(null);
 
 
    public static final byte MAX_COMBATANTS_PER_TEAM = 15;
    public static final byte MAX_TEAMS               = (byte)(TEAM_NAMES.length);
 
-   private final HashMap<String, CombatMap> _nameToArenaMap   = null;// new HashMap<String, CombatMap>();
-
-
    private      TabFolder _tabFolder;
    public final TabFolder _tabFolderMain;
+   private      TabItem   _mapTabItem;
    private      TabItem   _terrainTabItem;
-   private TabItem                    _triggersTabItem;
-   private TabItem                    _combatantsTabItem;
-   private TabItem                    _messagesTabItem;
+   private      TabItem   _triggersTabItem;
+   private      TabItem   _combatantsTabItem;
+   private      TabItem   _messagesTabItem;
 
-   private TerrainInterface           _terrainInterface;
-   private TriggersInterface          _triggersInterface;
-   private CombatMap _originalMap = null;
-   private boolean _autoStart = false;
+   private MapInterface      _mapInterface;
+   private TerrainInterface  _terrainInterface;
+   private TriggersInterface _triggersInterface;
+   private CombatMap         _originalMap = null;
+   private boolean           _autoStart   = false;
 
    public static final String _REMOTE_AI_NAME = "Remote Connection";
    public static final String _INACTIVE_AI_NAME = "Off";
@@ -258,12 +250,10 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
          _fullMessages.setLayoutData(data);
          _fullMessages.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
       }
-      _arena = new Arena(this,  Short.parseShort(_arenaSizeXValue.getText().trim()),
-                         (short)(Short.parseShort(_arenaSizeYValue.getText().trim()) * 2));
+      _arena = new Arena(this, _mapInterface.getMapSizeX(), _mapInterface.getMapSizeY());
       if (_map != null) {
          _map.addListener(_arena);
       }
-      readNameToArenaMapFromFile();
 
       String arenaName = null;
       String battleName = null;
@@ -305,22 +295,6 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       }
       _tabFolderMain.setSelection(initialTab);
 
-      if (_nameToArenaMap != null) {
-         if (arenaName != null) {
-            // Is this name the name of an arena in our data file?
-            if (_nameToArenaMap.get(arenaName.toLowerCase()) == null) {
-               // if not, ignore the parameter.
-               arenaName = null;
-            }
-         }
-         if (arenaName == null) {
-            TreeSet<String> keys = new TreeSet<>(_nameToArenaMap.keySet());
-            Iterator<String> iter = keys.iterator();
-            if (iter.hasNext()) {
-               arenaName = iter.next();
-            }
-         }
-      }
       if (arenaName != null) {
          setMap(arenaName);
       }
@@ -420,17 +394,6 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       topGridBlock.setLayoutData(data);
       buildArenaNameBlock(topGridBlock);
       buildPseudoRandomBlock(topGridBlock);
-      buildArenaSizeBlock(topGridBlock);
-
-      _hideViewFromLocalPlayersButton = new Button(topGridBlock, SWT.CHECK);
-      _hideViewFromLocalPlayersButton.setText("Hide map from local players.");
-      _hideViewFromLocalPlayersButton.setSelection(false);
-      _hideViewFromLocalPlayersButton.addSelectionListener(this);
-
-      _hideViewFromLocalPlayersButton = new Button(topGridBlock, SWT.CHECK);
-      _hideViewFromLocalPlayersButton.setText("All players know the map.");
-      _hideViewFromLocalPlayersButton.setSelection(false);
-      _hideViewFromLocalPlayersButton.addSelectionListener(this);
    }
 
    /**
@@ -451,6 +414,14 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
          gdata.grabExcessHorizontalSpace = true;
          bottomGridBlock.setLayoutData(gdata);
       }
+
+      // create a TabItem
+      _mapTabItem = new TabItem( _tabFolder, SWT.NULL);
+      _mapTabItem.setText( "Map layout");
+      // create a control
+      Composite mapComposite = createComposite(_tabFolder, 1, GridData.FILL_BOTH);
+      // add the control to the TabItem
+      _mapTabItem.setControl( mapComposite );
 
       // create a TabItem
       _terrainTabItem = new TabItem( _tabFolder, SWT.NULL);
@@ -505,11 +476,13 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
 
       GridData data;
       GridLayout grid;
+      _mapInterface = new MapInterface(this);
       _terrainInterface = new TerrainInterface();
       _triggersInterface = new TriggersInterface();
       if (_map instanceof MapWidget3D) {
          ((MapWidget3D) _map).addGLViewListener(_terrainInterface);
       }
+      _mapInterface.buildBlock(mapComposite);
       _terrainInterface.buildBlock(terrainComposite);
       _triggersInterface.buildBlock(triggersComposite);
       _triggersInterface.setMap(_map);
@@ -684,35 +657,6 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       _phaseButton.setEnabled(false);
    }
 
-   /**
-    * @param topGridBlock
-    */
-   private void buildArenaSizeBlock(Composite topGridBlock)
-   {
-      Composite block  = new Composite(topGridBlock, SWT.TRAIL);
-      GridLayout grid = new GridLayout(5, false);
-      block.setLayout(grid);
-      new Label(block, SWT.LEFT).setText("Arena size:");
-
-      _arenaSizeXValue = new Text(block, SWT.LEFT | SWT.BORDER);
-      _arenaSizeXValue.setText("20");
-      _arenaSizeXValue.setSize(30, 20);
-      GridData data = new GridData();
-      data.minimumWidth = 30;
-      data.grabExcessHorizontalSpace = true;
-      _arenaSizeXValue.setLayoutData(data);
-      new Label(block, SWT.CENTER).setText("x");
-      _arenaSizeYValue = new Text(block, SWT.LEFT | SWT.BORDER);
-      _arenaSizeYValue.setText("14");
-      _arenaSizeYValue.setSize(30, 20);
-      data = new GridData();
-      data.minimumWidth = 30;
-      data.grabExcessHorizontalSpace = true;
-      _arenaSizeYValue.setLayoutData(data);
-
-      _arenaSizeXValue.addModifyListener(this);
-      _arenaSizeYValue.addModifyListener(this);
-   }
 
    /**
     * @param topGridBlock
@@ -726,12 +670,6 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       data.horizontalAlignment = SWT.CENTER;
       data.grabExcessHorizontalSpace = true;
       block.setLayoutData(data);
-//      _arenaName = new Combo(block, SWT.NONE);
-//      _arenaName.addModifyListener(this);
-//
-//      _saveButton = new Button(block, SWT.PUSH | SWT.BORDER);
-//      _saveButton.setText(" Save ");
-//      _saveButton.addSelectionListener(this);
 
       _newMapButton = new Button(block, SWT.PUSH);
       _newMapButton.setText("New Map");
@@ -760,7 +698,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       block.setLayoutData(data);
 
       _usePseudoRandomNumbers = new Button(block, SWT.CHECK);
-      _usePseudoRandomNumbers.setText("Use pseduo-random number seed:");
+      _usePseudoRandomNumbers.setText("Use pseudo-random number seed:");
       _usePseudoRandomNumbers.setSelection(false);
       _usePseudoRandomNumbers.addSelectionListener(this);
 
@@ -794,24 +732,19 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    public void setMap(String arenaName)
    {
       CombatMap map;
-      if (_nameToArenaMap != null) {
-         map = _nameToArenaMap.get(arenaName.toLowerCase());
-      }
-      else {
-         map = new CombatMap();
-         File mapFile = new File("arenas" + File.separator + arenaName + ".xml");
+      map = new CombatMap();
+      File mapFile = new File("arenas" + File.separator + arenaName + ".xml");
+      if (!mapFile.exists()) {
+         mapFile = new File(arenaName + ".xml");
          if (!mapFile.exists()) {
-            mapFile = new File(arenaName + ".xml");
+            mapFile = new File(arenaName);
             if (!mapFile.exists()) {
-               mapFile = new File(arenaName);
-               if (!mapFile.exists()) {
-                  mapFile = new File("arenas" + File.separator + arenaName);
-               }
+               mapFile = new File("arenas" + File.separator + arenaName);
             }
          }
-         if (mapFile.exists() && mapFile.canRead()) {
-            map.serializeFromFile(mapFile);
-         }
+      }
+      if (mapFile.exists() && mapFile.canRead()) {
+         map.serializeFromFile(mapFile);
       }
       setMap(map, true/*clearCombatants*/);
    }
@@ -826,9 +759,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
          _map.updateMap(map, (byte)-1/*selfID*/, (byte)-1/*selfTeam*/, null/*availableLocs*/, (byte)-1/*targetID*/);
          _triggersInterface.setMap(map);
          _originalMap = map.clone();
-         _arenaSizeXValue.setText(String.valueOf(map.getSizeX()));
-         _arenaSizeYValue.setText(String.valueOf(map.getSizeY()/2));
-         _hideViewFromLocalPlayersButton.setSelection(map.isHideViewFromLocalPlayers());
+         _mapInterface.setMap(map);
          for (byte team=0 ; team<_maxTeams ; team++) {
             for (byte curCombatantIndex=0 ; curCombatantIndex<map.getStockAIName(team).length ; curCombatantIndex++) {
                boolean locExists = (map.getStartingLocation(team, curCombatantIndex) != null);
@@ -1051,10 +982,6 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
                }
             }
          }
-         else if (e.widget == _hideViewFromLocalPlayersButton) {
-            _map.setHideViewFromLocalPlayers(_hideViewFromLocalPlayersButton.getSelection());
-            refreshSaveButton();
-         }
          else {
             for (byte team=0 ; team<_combatantsButtons.length ; team++) {
                for (byte cur=0 ; cur<_combatantsButtons[team].length ; cur++) {
@@ -1198,12 +1125,12 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       resetMessageBuffer();
       TabFolder bottomTabFolder = _messagesTabItem.getParent();
       bottomTabFolder.setSelection(bottomTabFolder.indexOf(_messagesTabItem));
+      _mapTabItem.getControl().setVisible(false);
       _terrainTabItem.getControl().setVisible(false);
       _triggersTabItem.getControl().setVisible(false);
       _combatantsTabItem.getControl().setVisible(false);
 
-      _arenaSizeXValue.setEnabled(false);
-      _arenaSizeYValue.setEnabled(false);
+      _mapInterface.openPort();
       setOpenButtonText(false/*start*/);
 
       if (startup) {
@@ -1219,6 +1146,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
 
       TabFolder bottomTabFolder = _messagesTabItem.getParent();
       bottomTabFolder.setSelection(bottomTabFolder.indexOf(_terrainTabItem));
+      _mapTabItem.getControl().setVisible(true);
       _terrainTabItem.getControl().setVisible(true);
       _triggersTabItem.getControl().setVisible(true);
       _combatantsTabItem.getControl().setVisible(true);
@@ -1227,8 +1155,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
          _clientListener.closePort();
          _clientListener = null;
       }
-      _arenaSizeXValue.setEnabled(true);
-      _arenaSizeYValue.setEnabled(true);
+      _mapInterface.closePort();
       setOpenButtonText(true/*start*/);
 
       _arena.removeAllCombatants();
@@ -1477,54 +1404,6 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
          onMouseUp(loc, event, angleFromCenter, normalizedDistFromCenter);
       }
    }
-   public void readNameToArenaMapFromFile() {
-      if (_nameToArenaMap == null) {
-         return;
-      }
-      File sourceFile = new File("arena.data");
-      TreeSet<String> arenaNames = new TreeSet<>((o1, o2) -> o1.toLowerCase().compareTo(o2.toLowerCase()));
-      if (sourceFile.exists() && sourceFile.canRead()) {
-         try (FileReader fileReader = new FileReader(sourceFile);
-              BufferedReader input = new BufferedReader(fileReader)) {
-            String inputLine;
-            while ((inputLine = input.readLine()) != null) {
-               CombatMap newCombatMap = new CombatMap();
-               if (newCombatMap.serializeFromString(inputLine)) {
-                  if (_nameToArenaMap != null) {
-                     _nameToArenaMap.put(newCombatMap.getName().toLowerCase(), newCombatMap);
-                  }
-                  arenaNames.add(newCombatMap.getName());
-               }
-               writeNamedArenaMapToFile(newCombatMap.getName(), false/*overwriteExistingFiles*/);
-            }
-            sourceFile.delete();
-         } catch (IOException e) {
-            e.printStackTrace();
-         }
-      }
-      else {
-         File sourceDir = new File("Arenas");
-         if (sourceDir.exists() && sourceDir.isDirectory()) {
-            File[] mapFiles = sourceDir.listFiles();
-            for (File mapFile : mapFiles) {
-               CombatMap newMap = new CombatMap();
-               if (newMap.serializeFromFile(mapFile)) {
-                  if (_nameToArenaMap != null) {
-                     _nameToArenaMap.put(newMap.getName().toLowerCase(), newMap);
-                  }
-                  arenaNames.add(newMap.getName());
-               }
-            }
-         }
-      }
-   }
-
-   public void writeNamedArenaMapToFile(String arenaName, boolean overwriteExistingFile) {
-      if (_nameToArenaMap != null) {
-         CombatMap map = _nameToArenaMap.get(arenaName.toLowerCase());
-         writeArenaMapToFile(map, overwriteExistingFile);
-      }
-   }
 
    String _currentMapFileName = null;
    public void writeArenaMapToFile(CombatMap map, boolean overwriteExistingFile) {
@@ -1579,14 +1458,6 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
                   val = Integer.parseInt(validatedValue.toString());
                }
                setPseudoRandomNumberSeed(val);
-            }
-            else if ((e.widget == _arenaSizeXValue) || (e.widget == _arenaSizeYValue)) {
-               if (!_changingMap) {
-                  _arena.setSize(Short.parseShort(_arenaSizeXValue.getText()),
-                                 (short)(Short.parseShort(_arenaSizeYValue.getText())*2));
-                  updateMap(_arena);
-                  redrawMap();
-               }
             }
             else {
                for (byte team=0 ; (team<_combatantsButtons.length) ; team++) {
@@ -1796,5 +1667,13 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    }
    @Override
    public void shellIconified(ShellEvent arg0) {
+   }
+
+   public void setMapSize(short x, short y) {
+      if (!_changingMap) {
+         _arena.setSize(x, y);
+         updateMap(_arena);
+         redrawMap();
+      }
    }
 }

@@ -25,7 +25,7 @@ import java.util.List;
 public class WeaponBlock extends Helper implements ModifyListener, IUIBlock, SelectionListener
 {
    private final CharacterWidget _display;
-   static final int LINES_OF_EQU = 5;
+   static final int LINES_OF_EQU = 6;
    public final String BELT = "Belt";
    private final Button[]         _buttons   = new Button[LINES_OF_EQU];
    private final Combo[]          _equipment = new Combo[LINES_OF_EQU];
@@ -425,40 +425,42 @@ public class WeaponBlock extends Helper implements ModifyListener, IUIBlock, Sel
       int itemsPerStyle = 0;
       byte charStr = (_display._character == null) ? 0 : _display._character.getAttributeLevel(Attribute.Strength);
       byte damBase = (_display._character == null) ? 0 : _display._character.getPhysicalDamageBase();
-      List<Limb> limbs = character.getLimbs();
-      for (Limb limb : limbs) {
-         Weapon weapon = limb.getWeapon(character);
-         if (weapon != null) {
-            if (weapon.isReal()) {
-               // don't list weapons that aren't unarmed combat in this list.
-               continue;
-            }
-            if (!weapons.contains(weapon)) {
-               weapons.add(weapon);
-               for (WeaponStyleAttack element : weapon.getAttackStyles()) {
-                  if (attackStyles.contains(element)) {
-                     continue;
-                  }
-                  attackStyles.add(element);
-                  int minSkill = element.getMinSkill();
-                  byte charSkill = character.getSkillLevel(element, false/*adjustForPain*/,
-                                                           limb._limbType/*useHand*/, false/*sizeAdjust*/,
-                                                           false/*AdjustForEnumbrance*/, false/*adjustForHolds*/);
-                  if ((minSkill == 0) || (minSkill <= charSkill)) {
-                     String styleName = element.getName();
-                     String skillName = element.getSkillType().getName();
-                     _styleName[0][itemsPerStyle].setText(styleName);
-                     if (element.getSkillPenalty() > 0) {
-                        skillName += " - " + element.getSkillPenalty();
+      if (character != null) {
+         List<Limb> limbs = character.getLimbs();
+         for (Limb limb : limbs) {
+            Weapon weapon = limb.getWeapon(character);
+            if (weapon != null) {
+               if (weapon.isReal()) {
+                  // don't list weapons that aren't unarmed combat in this list.
+                  continue;
+               }
+               if (!weapons.contains(weapon)) {
+                  weapons.add(weapon);
+                  for (WeaponStyleAttack element : weapon.getAttackStyles()) {
+                     if (attackStyles.contains(element)) {
+                        continue;
                      }
-                     _skillName[0][itemsPerStyle].setText(skillName);
-                     String ranges = "" + element.getMinRange() + (element.getMinRange() == element.getMaxRange() ? "" : " - " + element.getMaxRange());
-                     _styleRange[0][itemsPerStyle].setText(ranges);
-                     _styleTime[0][itemsPerStyle].setText(String.valueOf(element.getSpeed(charStr)));
-                     _styleDamage[0][itemsPerStyle].setText(element.getDamageString(damBase));
-                     itemsPerStyle++;
-                     if (itemsPerStyle >= _styleName[0].length) {
-                        return;
+                     attackStyles.add(element);
+                     int minSkill = element.getMinSkill();
+                     byte charSkill = character.getSkillLevel(element, false/*adjustForPain*/,
+                                                              limb._limbType/*useHand*/, false/*sizeAdjust*/,
+                                                              false/*AdjustForEnumbrance*/, false/*adjustForHolds*/);
+                     if ((minSkill == 0) || (minSkill <= charSkill)) {
+                        String styleName = element.getName();
+                        String skillName = element.getSkillType().getName();
+                        _styleName[0][itemsPerStyle].setText(styleName);
+                        if (element.getSkillPenalty() > 0) {
+                           skillName += " - " + element.getSkillPenalty();
+                        }
+                        _skillName[0][itemsPerStyle].setText(skillName);
+                        String ranges = "" + element.getMinRange() + (element.getMinRange() == element.getMaxRange() ? "" : " - " + element.getMaxRange());
+                        _styleRange[0][itemsPerStyle].setText(ranges);
+                        _styleTime[0][itemsPerStyle].setText(String.valueOf(element.getSpeed(charStr)));
+                        _styleDamage[0][itemsPerStyle].setText(element.getDamageString(damBase));
+                        itemsPerStyle++;
+                        if (itemsPerStyle >= _styleName[0].length) {
+                           return;
+                        }
                      }
                   }
                }
