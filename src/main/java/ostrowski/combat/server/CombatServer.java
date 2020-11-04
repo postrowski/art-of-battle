@@ -111,8 +111,6 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    private Button                           _openButton;
    public  Button                           _usePseudoRandomNumbers;
    private Text                             _pseudoRandomNumberSeedText;
-   private Combo                            _arenaName;
-   private Button                           _saveButton;
    private Button                           _newMapButton;
    private Button                           _openMapButton;
    private Button                           _saveMapButton;
@@ -325,9 +323,6 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       }
       if (arenaName != null) {
          setMap(arenaName);
-         if (_arenaName != null) {
-            _arenaName.setText(arenaName);
-         }
       }
       else {
          updateMap(_arena);
@@ -912,18 +907,6 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    }
 
    public void refreshSaveButton() {
-      if ((_saveButton != null) && (_arenaName != null) && (_nameToArenaMap != null)) {
-         CombatMap map = _nameToArenaMap.get(_arenaName.getText().toLowerCase());
-         if (map == null) {
-            _saveButton.setText("  Add ");
-         }
-         else if (_arena.getCombatMap().equals(map)) {
-            _saveButton.setText("Delete");
-         }
-         else {
-            _saveButton.setText(" Save ");
-         }
-      }
       if (_saveMapButton != null) {
          boolean enabled = (_originalMap == null) || (!_originalMap.equals(_arena.getCombatMap()));
          _saveMapButton.setEnabled(enabled );
@@ -996,23 +979,6 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
                _currentMapFileName = null; // make sure we don't overwrite the current file
                refreshSaveButton();
             }
-         }
-         else if ((e.widget == _saveButton) && (_saveButton != null)) {
-            if (_nameToArenaMap != null) {
-               if (_saveButton.getText().equals(" Save ")) {
-                  _saveButton.setText("Delete");
-                  _nameToArenaMap.put(_arenaName.getText().toLowerCase(), _arena.getCombatMap());
-               } else if (_saveButton.getText().equals("Delete")) {
-                  _saveButton.setText("  Add ");
-                  _nameToArenaMap.remove(_arenaName.getText().toLowerCase());
-               } else if (_saveButton.getText().equals("  Add ")) {
-                  _saveButton.setText("Delete");
-                  _nameToArenaMap.put(_arenaName.getText().toLowerCase(), _arena.getCombatMap());
-                  _arenaName.add(_arenaName.getText());
-               }
-            }
-            writeNamedArenaMapToFile(_arenaName.getText(), true/*overwriteExistingFile*/);
-            refreshSaveButton();
          }
          else if ((e.widget == _loadBattleButton) || (e.widget == _saveBattleButton)) {
             boolean save = (e.widget == _saveBattleButton);
@@ -1551,11 +1517,6 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
             }
          }
       }
-      if (_arenaName != null) {
-         for (String name : arenaNames) {
-            _arenaName.add(name);
-         }
-      }
    }
 
    public void writeNamedArenaMapToFile(String arenaName, boolean overwriteExistingFile) {
@@ -1625,19 +1586,6 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
                                  (short)(Short.parseShort(_arenaSizeYValue.getText())*2));
                   updateMap(_arena);
                   redrawMap();
-               }
-            }
-            else if (e.widget == _arenaName) {
-               if (_nameToArenaMap != null) {
-                  CombatMap newCombatMap = _nameToArenaMap.get(_arenaName.getText().toLowerCase());
-                  if (newCombatMap != null) {
-                     setMap(_arenaName.getText());
-                     _saveButton.setText("Delete");
-                  }
-                  else {
-                     _saveButton.setText("  Add ");
-                     _arena.setName(_arenaName.getText());
-                  }
                }
             }
             else {
