@@ -1482,6 +1482,14 @@ public class AI implements Enums
       priorities.add(new RequestActionOption("", RequestActionType.OPT_BREAK_FREE_2, LimbType.BODY, true));
       priorities.add(new RequestActionOption("", RequestActionType.OPT_BREAK_FREE_1, LimbType.BODY, true));
 
+      if (target != null &&
+          map.canSee(_self, target, false, false) &&
+          !map.canSee(_self, target, true, false)) {
+         traceSb.append(", turnToFace");
+         // turn to face our enemy
+         priorities.add(new RequestActionOption("", RequestActionType.OPT_MOVE, LimbType.BODY, true));
+      }
+
       priorities.add(new RequestActionOption("", RequestActionType.OPT_WAIT_TO_ATTACK, LimbType.BODY, true));
 
       // before we go into final defense mode, or go on gaurd, if we have a spell that needs to be maintained, maintain it
@@ -1504,13 +1512,6 @@ public class AI implements Enums
          priorities.add(new RequestActionOption("", RequestActionType.OPT_ATTACK_MELEE_3, LimbType.BODY, true));
          priorities.add(new RequestActionOption("", RequestActionType.OPT_ATTACK_MELEE_2, LimbType.BODY, true));
          priorities.add(new RequestActionOption("", RequestActionType.OPT_ATTACK_MELEE_1, LimbType.BODY, true));
-      }
-      if (target != null &&
-          map.canSee(_self, target, false, false) &&
-          !map.canSee(_self, target, true, false)) {
-         traceSb.append(", turnToFace");
-         // turn to face our enemy
-         priorities.add(new RequestActionOption("", RequestActionType.OPT_MOVE, LimbType.BODY, true));
       }
 
       Rules.diag(traceSb.toString());

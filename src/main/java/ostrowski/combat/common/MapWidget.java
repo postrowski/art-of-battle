@@ -532,6 +532,11 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
       _combatMap.setHideViewFromLocalPlayers(hideViewFromLocalPlayers);
       redraw();
    }
+   @Override
+   public void setKnownByAllPlayers(boolean knownByAllPlayers) {
+      _combatMap.setKnownByAllPlayers(knownByAllPlayers);
+      redraw();
+   }
 
    @Override
    public void setFocusForCharacter(Character actingCharacter, SyncRequest request) {

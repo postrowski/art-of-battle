@@ -54,7 +54,8 @@ public interface IMapWidget extends KeyListener
    void updateMapVisibility(MapVisibility mapVisibilty);
    void recomputeVisibility(Character self, Diagnostics diag);
 
-   void setHideViewFromLocalPlayers(boolean selection);
+   void setHideViewFromLocalPlayers(boolean hideViewFromLocalPlayers);
+   void setKnownByAllPlayers(boolean knownByAllPlayers);
 
    List<ArenaLocation> getLine();
    List<ArenaLocation> getWallLine();
