@@ -197,7 +197,7 @@
       <event data="" name="single shot" type="Disable This Trigger"/>
       <event data="You see a set of stair to the west. Walk to the west to travel up them." name="see stairs" type="Public Message"/>
     </trigger>
-    <trigger enabled="true" name="castle all" onlyAffectsPlayers="true" requiresEntireTeam="false">
+    <trigger enabled="true" name="Castle All" onlyAffectsPlayers="true" requiresEntireTeam="false">
       <location x="8" y="34"/>
       <location x="8" y="36"/>
       <event data="Castle All" name="new map" type="New Map">

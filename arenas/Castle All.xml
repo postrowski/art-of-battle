@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><Arena Name="castle all" backgroundImageAlpha="140" backgroundImagePath="\Castle Keep.png" height="176" hideViewFromLocalPlayers="true" knownByAllPlayers="false" level="0" width="75">
+<?xml version="1.0" encoding="UTF-8"?><Arena Name="Castle All" backgroundImageAlpha="140" backgroundImagePath="\Castle All.png" height="176" hideViewFromLocalPlayers="true" knownByAllPlayers="false" level="0" width="75">
   <rows>
     <row id="0">5:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:0:0:11:5:1:1:2:1:</row>
     <row id="1">5:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:0:0:6:5:1:2:1:</row>
