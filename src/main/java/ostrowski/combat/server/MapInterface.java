@@ -15,15 +15,20 @@ import java.io.*;
 
 public class MapInterface extends Helper implements SelectionListener, ModifyListener {
 
+   private Button       _newMapButton;
+   private Button       _openMapButton;
+   private Button       _saveMapButton;
    private Text         _arenaSizeXValue;
    private Text         _arenaSizeYValue;
    private Button       _setSizeButton;
    private Button       _hideViewFromLocalPlayersButton;
    private Button       _mapKnownToAllPlayersButton;
    private CombatServer _combatServer;
-   public Text      _bgImageFilePath;
-   public Button _bgImageFileBtn;
-   public Slider _bgImageAlphaSlider;
+   public  Text         _bgImageFilePath;
+   public  Button       _bgImageFileBtn;
+   public  Slider       _bgImageAlphaSlider;
+   private CombatMap    _originalMap;
+   private String       _currentMapFileName;
 
    public MapInterface(CombatServer combatServer){
       _combatServer = combatServer;
@@ -57,11 +62,9 @@ public class MapInterface extends Helper implements SelectionListener, ModifyLis
       }
       else if (e.widget == _hideViewFromLocalPlayersButton) {
          _combatServer._map.setHideViewFromLocalPlayers(_hideViewFromLocalPlayersButton.getSelection());
-         _combatServer.refreshSaveButton();
       }
       else if (e.widget == _mapKnownToAllPlayersButton) {
          _combatServer._map.setKnownByAllPlayers(_mapKnownToAllPlayersButton.getSelection());
-         _combatServer.refreshSaveButton();
       }
       else if (e.widget == _bgImageAlphaSlider) {
          _combatServer._map.setBackgroundAlpha(_bgImageAlphaSlider.getSelection());
@@ -109,7 +112,92 @@ public class MapInterface extends Helper implements SelectionListener, ModifyLis
             _combatServer._map.getCombatMap().setBackgroundImagePath(selected);
          }
       }
+      else if (e.widget == _saveMapButton) {
+         writeArenaMapToFile(_combatServer.getArena().getCombatMap(), true/*overwriteExistingFile*/);
+         _originalMap = _combatServer.getArena().getCombatMap().clone();
+      }
+      else if (e.widget == _openMapButton) {
+         FileDialog dialog = new FileDialog(_combatServer.getShell());
+         dialog.setFilterExtensions(new String[] {"*.xml"});
+         dialog.setFilterNames(new String[] {"Arena Files (*.xml)"});
+         dialog.setFilterPath("Arenas");
+
+         // Disable the current terrain and wall settings, or the mouse up
+         // event will fire to the terrain interface after the load completes,
+         // and the map will be edited immediately:
+         _combatServer._terrainInterface.disableCurrentEdits();
+
+         String fileName = dialog.open();
+         if ((fileName != null) && (fileName.length() > 0)) {
+            File sourceFile = new File("Arenas" + File.separator + fileName);
+            if (!sourceFile.exists()) {
+               sourceFile = new File(fileName);
+            }
+            if (sourceFile.exists()) {
+               if (sourceFile.canRead()) {
+                  _currentMapFileName = sourceFile.getAbsolutePath();
+                  CombatMap map = new CombatMap();
+                  map.serializeFromFile(sourceFile);
+                  _combatServer.setMap(map, true/*clearCombatants*/);
+                  _combatServer._map.setZoomToFit();
+               }
+            }
+         }
+      }
+      else if (e.widget == _newMapButton) {
+         NewMapDialog dialog = new NewMapDialog(_combatServer.getShell());
+         dialog.open();
+         if (!dialog.isCanceled()) {
+            CombatMap map = new CombatMap(dialog.getSizeX(), (short) (dialog.getSizeY()*2), null/*diag*/);
+            map.setName(dialog.getName());
+            _originalMap = map.clone();
+            _combatServer.setMap(map, true/*clearCombatants*/);
+            _currentMapFileName = null; // make sure we don't overwrite the current file
+         }
+      }
+      refreshSaveButton();
    }
+
+   public void refreshSaveButton() {
+      if (_saveMapButton != null) {
+         boolean enabled = (_originalMap == null) || (!_originalMap.equals(_combatServer.getArena().getCombatMap()));
+         _saveMapButton.setEnabled(enabled);
+      }
+   }
+
+   public void writeArenaMapToFile(CombatMap map, boolean overwriteExistingFile) {
+      File sourceDir = new File("Arenas");
+      if (sourceDir.exists() && sourceDir.isFile()) {
+         sourceDir.delete();
+      }
+      if (!sourceDir.exists()) {
+         sourceDir.mkdirs();
+      }
+      File sourceFile;
+      if (_currentMapFileName == null) {
+         sourceFile = new File("Arenas" + File.separator + map.getName().toLowerCase() + ".xml");
+      }
+      else {
+         sourceFile = new File(_currentMapFileName);
+      }
+
+      try {
+         if (sourceFile.exists()) {
+            if (!overwriteExistingFile) {
+               return;
+            }
+            sourceFile.delete();
+         }
+
+         sourceFile.createNewFile();
+         if (sourceFile.exists() && sourceFile.canWrite()) {
+            map.serializeToFile(sourceFile);
+         }
+      } catch (IOException e1) {
+         e1.printStackTrace();
+      }
+   }
+
 
    @Override
    public void widgetDefaultSelected(SelectionEvent e) {
@@ -118,10 +206,11 @@ public class MapInterface extends Helper implements SelectionListener, ModifyLis
 
    public void buildBlock(Composite parent) {
       Composite main = new Composite(parent, SWT.TRAIL);
-      GridLayout mainGrid = new GridLayout(2, false);
+      GridLayout mainGrid = new GridLayout(3, false);
       mainGrid.verticalSpacing = 1;
       mainGrid.horizontalSpacing = 1;
       main.setLayout(mainGrid);
+      buildArenaNameBlock(main);
       buildArenaSizeBlock(main);
       {
          Composite bgImgBlock = createGroup(main, "Background Image", 4/*columns*/, false/*sameSize*/,
@@ -143,7 +232,37 @@ public class MapInterface extends Helper implements SelectionListener, ModifyLis
          _bgImageAlphaSlider.setMinimum(0);
          _bgImageAlphaSlider.setIncrement(16);
          _bgImageAlphaSlider.addSelectionListener(this);
+
+         GridData data = new GridData(GridData.FILL_VERTICAL);
+         data.grabExcessVerticalSpace = true;
+         bgImgBlock.setLayoutData(data);
       }
+   }
+
+   /**
+    * @param parent
+    */
+   private void buildArenaNameBlock(Composite parent)
+   {
+      Composite block = new Composite(parent, SWT.CENTER);
+      GridLayout grid = new GridLayout(3, false);
+      block.setLayout(grid);
+      GridData data = new GridData(GridData.FILL_HORIZONTAL);
+      data.horizontalAlignment = SWT.CENTER;
+      data.grabExcessHorizontalSpace = true;
+      block.setLayoutData(data);
+
+      _newMapButton = new Button(block, SWT.PUSH);
+      _newMapButton.setText("New Map");
+      _newMapButton.addSelectionListener(this);
+
+      _saveMapButton = new Button(block, SWT.PUSH);
+      _saveMapButton.setText("Save Map");
+      _saveMapButton.addSelectionListener(this);
+
+      _openMapButton = new Button(block, SWT.PUSH);
+      _openMapButton.setText("Load Map");
+      _openMapButton.addSelectionListener(this);
    }
 
    /**
@@ -174,6 +293,9 @@ public class MapInterface extends Helper implements SelectionListener, ModifyLis
          data.minimumWidth = 30;
          data.grabExcessHorizontalSpace = true;
          _arenaSizeYValue.setLayoutData(data);
+
+         _arenaSizeXValue.addModifyListener(this);
+         _arenaSizeYValue.addModifyListener(this);
 
          _setSizeButton = new Button(sizeBlock, SWT.PUSH);
          _setSizeButton.setText("Set Size");

@@ -316,7 +316,7 @@ public class TriggersInterface extends Helper implements SelectionListener, Modi
             trigger.setOnlyAffectsPlayers(_triggerOnlyAffectsPlayers.getSelection());
          }
       }
-      CombatServer._this.refreshSaveButton();
+      CombatServer._this._mapInterface.refreshSaveButton();
    }
 
    private void setEvent(ArenaEvent event) {
@@ -425,7 +425,7 @@ public class TriggersInterface extends Helper implements SelectionListener, Modi
                   }
                }
             }
-            CombatServer._this.refreshSaveButton();
+            CombatServer._this._mapInterface.refreshSaveButton();
          }
          finally {
             CombatServer._inModify = false;

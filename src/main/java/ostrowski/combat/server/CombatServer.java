@@ -31,9 +31,7 @@ import ostrowski.graphics.objects3d.Helper;
 import ostrowski.util.ClientListener;
 import ostrowski.util.*;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 import java.util.*;
@@ -107,12 +105,9 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    private Shell _shell;
    Diagnostics _diag = null;
    public static boolean                  _isServer              = false;
-   public static CombatServer             _this                  = null;
+   public static CombatServer _this                  = null;
    // UI elements:
-   private       Button                   _openButton;
-   private       Button                   _newMapButton;
-   private       Button                   _openMapButton;
-   private       Button                   _saveMapButton;
+   private       Button       _startStopBattleButton;
    public        IMapWidget               _map;
    private final Browser                  _fullMessages;
    private       Browser                  _messages;
@@ -151,8 +146,8 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    private      TabItem   _combatantsTabItem;
    private      TabItem   _messagesTabItem;
 
-   private MapInterface      _mapInterface;
-   private TerrainInterface  _terrainInterface;
+   public MapInterface     _mapInterface;
+   public TerrainInterface _terrainInterface;
    private TriggersInterface _triggersInterface;
    private CombatMap         _originalMap = null;
    private boolean           _autoStart   = false;
@@ -392,7 +387,6 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       data.grabExcessVerticalSpace = false;
       data.grabExcessHorizontalSpace = true;
       topGridBlock.setLayoutData(data);
-      buildArenaNameBlock(topGridBlock);
    }
 
    /**
@@ -658,52 +652,25 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       _phaseButton.setEnabled(false);
    }
 
-
-   /**
-    * @param topGridBlock
-    */
-   private void buildArenaNameBlock(Composite topGridBlock)
-   {
-      Composite block = new Composite(topGridBlock, SWT.CENTER);
-      GridLayout grid = new GridLayout(3, false);
-      block.setLayout(grid);
-      GridData data = new GridData(GridData.FILL_HORIZONTAL);
-      data.horizontalAlignment = SWT.CENTER;
-      data.grabExcessHorizontalSpace = true;
-      block.setLayoutData(data);
-
-      _newMapButton = new Button(block, SWT.PUSH);
-      _newMapButton.setText("New Map");
-      _newMapButton.addSelectionListener(this);
-
-      _saveMapButton = new Button(block, SWT.PUSH);
-      _saveMapButton.setText("Save Map");
-      _saveMapButton.addSelectionListener(this);
-
-      _openMapButton = new Button(block, SWT.PUSH);
-      _openMapButton.setText("Load Map");
-      _openMapButton.addSelectionListener(this);
-    }
-
    /**
     * @param parent
     */
    private void addStartButton(Composite parent)
    {
-      _openButton = new Button(parent, SWT.LEFT);
+      _startStopBattleButton = new Button(parent, SWT.LEFT);
       setOpenButtonText(true/*start*/);
-      _openButton.addSelectionListener(this);
+      _startStopBattleButton.addSelectionListener(this);
    }
    private void setOpenButtonText(boolean start) {
       Color bgColor;
       if (start) {
-         _openButton.setText("Start Battle");
-         bgColor = new Color(_openButton.getDisplay(), 128, 255, 128);
+         _startStopBattleButton.setText("Start Battle");
+         bgColor = new Color(_startStopBattleButton.getDisplay(), 128, 255, 128);
       } else {
-         _openButton.setText("Stop Battle");
-         bgColor = new Color(_openButton.getDisplay(), 255, 128, 128);
+         _startStopBattleButton.setText("Stop Battle");
+         bgColor = new Color(_startStopBattleButton.getDisplay(), 255, 128, 128);
       }
-      _openButton.setBackground(bgColor);
+      _startStopBattleButton.setBackground(bgColor);
       bgColor.dispose();
    }
 
@@ -815,19 +782,12 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       }
    }
 
-   public void refreshSaveButton() {
-      if (_saveMapButton != null) {
-         boolean enabled = (_originalMap == null) || (!_originalMap.equals(_arena.getCombatMap()));
-         _saveMapButton.setEnabled(enabled );
-      }
-   }
-
    @Override
    public void widgetSelected(SelectionEvent e)
    {
       try {
-         if (e.widget == _openButton) {
-            if (_openButton.getText().equals("Start Battle")) {
+         if (e.widget == _startStopBattleButton) {
+            if (_startStopBattleButton.getText().equals("Start Battle")) {
 //               Shell shell = new Shell(_shell, SWT.DIALOG_TRIM | SWT.MODELESS);
 //               shell.setText("test");
 //               shell.setLayout(new GridLayout(2/*numColumns*/, false/*makeColumnsEqualWidth*/));
@@ -836,52 +796,6 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
             } else { // _openButton.getText().equals("Stop Battle")
                onPlay();
                closePort();
-            }
-         }
-         else if (e.widget == _saveMapButton) {
-            writeArenaMapToFile(_arena.getCombatMap(), true/*overwriteExistingFile*/);
-            _originalMap = _arena.getCombatMap().clone();
-            refreshSaveButton();
-         }
-         else if (e.widget == _openMapButton) {
-            FileDialog dialog = new FileDialog(getShell());
-            dialog.setFilterExtensions(new String[] {"*.xml"});
-            dialog.setFilterNames(new String[] {"Arena Files (*.xml)"});
-            dialog.setFilterPath("Arenas");
-
-            // Disable the current terrain and wall settings, or the mouse up
-            // event will fire to the terrain interface after the load completes,
-            // and the map will be edited immediately:
-            _terrainInterface.disableCurrentEdits();
-
-            String fileName = dialog.open();
-            if ((fileName != null) && (fileName.length() > 0)) {
-               File sourceFile = new File("Arenas" + File.separator + fileName);
-               if (!sourceFile.exists()) {
-                  sourceFile = new File(fileName);
-               }
-               if (sourceFile.exists()) {
-                  if (sourceFile.canRead()) {
-                     _currentMapFileName = sourceFile.getAbsolutePath();
-                     CombatMap map = new CombatMap();
-                     map.serializeFromFile(sourceFile);
-                     setMap(map, true/*clearCombatants*/);
-                     _map.setZoomToFit();
-                     refreshSaveButton();
-                  }
-               }
-            }
-         }
-         else if (e.widget == _newMapButton) {
-            NewMapDialog dialog = new NewMapDialog(getShell());
-            dialog.open();
-            if (!dialog.isCanceled()) {
-               CombatMap map = new CombatMap(dialog.getSizeX(), (short) (dialog.getSizeY()*2), null/*diag*/);
-               map.setName(dialog.getName());
-               _originalMap = map.clone();
-               setMap(map, true/*clearCombatants*/);
-               _currentMapFileName = null; // make sure we don't overwrite the current file
-               refreshSaveButton();
             }
          }
          else if ((e.widget == _loadBattleButton) || (e.widget == _saveBattleButton)) {
@@ -974,7 +888,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
                            ((MapWidget2D)_map).redraw(locs);
                         }
                      }
-                     refreshSaveButton();
+                     _mapInterface.refreshSaveButton();
                   }
                   else if (e.widget == _combatantsAI[team][cur]) {
                      changeAI(team, cur);
@@ -1022,7 +936,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
             }
          }
       }
-      refreshSaveButton();
+      _mapInterface.refreshSaveButton();
    }
 
    private void changeAI(byte team, byte cur) {
@@ -1048,7 +962,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
             }
          }
       }
-      refreshSaveButton();
+      _mapInterface.refreshSaveButton();
    }
    public void onPlay() {
       resetPlayPauseControls();
@@ -1278,7 +1192,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
                      }
                   }
                }
-               refreshSaveButton();
+               _mapInterface.refreshSaveButton();
             });
          }
       }
@@ -1310,7 +1224,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       }
 
       // On every mouse click, the map may become modified
-      refreshSaveButton();
+      _mapInterface.refreshSaveButton();
    }
    @Override
    public void onMouseMove(ArenaLocation loc, Event event, double angleFromCenter, double normalizedDistFromCenter) {
@@ -1362,7 +1276,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
          }
 
          // On every mouse click, the map may become modified
-         refreshSaveButton();
+         _mapInterface.refreshSaveButton();
 //      }
    }
 
@@ -1378,39 +1292,6 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       }
    }
 
-   String _currentMapFileName = null;
-   public void writeArenaMapToFile(CombatMap map, boolean overwriteExistingFile) {
-      File sourceDir = new File("Arenas");
-      if (sourceDir.exists() && sourceDir.isFile()) {
-         sourceDir.delete();
-      }
-      if (!sourceDir.exists()) {
-         sourceDir.mkdirs();
-      }
-      File sourceFile;
-      if (_currentMapFileName == null) {
-         sourceFile = new File("Arenas" + File.separator + map.getName().toLowerCase() + ".xml");
-      }
-      else {
-         sourceFile = new File(_currentMapFileName);
-      }
-
-      try {
-         if (sourceFile.exists()) {
-            if (!overwriteExistingFile) {
-               return;
-            }
-            sourceFile.delete();
-         }
-
-         sourceFile.createNewFile();
-         if (sourceFile.exists() && sourceFile.canWrite()) {
-            map.serializeToFile(sourceFile);
-         }
-      } catch (IOException e1) {
-         e1.printStackTrace();
-      }
-   }
 
    public static boolean _inModify = false;
    @Override
