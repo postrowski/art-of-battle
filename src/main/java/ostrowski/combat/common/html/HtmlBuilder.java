@@ -105,7 +105,7 @@ public class HtmlBuilder
          sb.append("  \n");
          //*** Set divMainContent Properties ****
          sb.append("      //*** Set divMainContent Properties ****\n");
-         sb.append("      DivMC.style.padding = '0px 17px 0px 0px';\n");
+         sb.append("      DivMC.style.padding = '0px 0px 0px 0px';\n");
          sb.append("      DivMC.style.height = height + 'px';\n");
          sb.append("      DivMC.style.position = 'relative';\n");
          sb.append("      DivMC.style.top = -headerHeight + 'px';\n");

@@ -4,14 +4,14 @@
     <row id="1">5:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:0:0:6:5:1:2:1:</row>
     <row id="2">5:11:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:11:5:1:1:2:1:</row>
     <row id="3">5:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:6:4:1:2:1:</row>
-    <row id="4">5:11:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:11:5:1:1:2:1:</row>
+    <row id="4">5:11:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:6:5:1:1:2:1:</row>
     <row id="5">5:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:11:6:4:1:2:1:</row>
     <row id="6">5:11:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:11:6:5:1:1:2:1:</row>
     <row id="7">5:0:0:11:0:11:11:11:11:11:11:11:11:11:11:11:11:0:0:0:0:0:11:0:11:11:11:11:11:0:11:6:6:4:1:2:1:</row>
     <row id="8">5:11:0:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:0:0:0:0:0:11:11:11:11:11:11:0:0:6:6:5:1:1:2:1:</row>
     <row id="9">5:0:0:0:0:0:0:0:0:0:11:0:0:0:0:0:0:0:0:0:0:0:11:0:0:0:0:0:11:0:11:6:5:4:1:2:1:</row>
     <row id="10">5:11:0:11:0:11:0:0:0:0:0:0:0:0:0:11:0:11:0:0:0:0:0:0:0:0:0:0:0:0:0:6:6:5:1:1:2:1:</row>
-    <row id="11">5:0:0:0:0:0:0:0:0:0:11:0:0:0:0:0:0:0:0:0:0:0:11:0:0:0:0:0:11:0:11:6:5:4:1:2:1:</row>
+    <row id="11">5:0:0:2048:2048:0:0:0:0:0:11:0:0:0:0:0:0:0:0:0:0:0:11:0:0:0:0:0:11:0:11:6:5:4:1:2:1:</row>
     <row id="12">5:11:0:11:0:11:0:0:0:0:0:0:0:0:0:11:0:11:0:0:0:0:0:0:0:0:0:0:0:0:0:6:6:5:1:1:2:1:</row>
     <row id="13">5:0:0:0:0:0:0:0:0:0:11:0:0:0:0:0:0:0:0:0:0:0:11:0:0:0:0:0:11:0:11:6:5:4:1:2:1:</row>
     <row id="14">5:11:0:11:0:0:0:0:0:0:0:0:0:0:0:11:0:11:0:0:0:0:0:0:0:0:0:0:0:0:0:6:6:5:4:1:2:1:</row>
@@ -63,9 +63,9 @@
     <row id="60">5:11:0:11:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:11:0:0:0:0:0:0:0:0:0:0:6:6:5:1:1:2:1:</row>
     <row id="61">5:0:0:0:0:0:0:0:0:0:11:0:0:0:0:0:0:0:0:0:11:11:11:11:11:0:11:11:11:0:11:6:5:4:1:2:2:</row>
     <row id="62">5:11:0:11:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:11:11:0:11:11:11:11:11:0:0:6:6:5:1:1:2:1:</row>
-    <row id="63">5:0:0:0:0:0:0:0:0:0:11:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:6:5:4:1:2:1:</row>
+    <row id="63">5:0:0:0:0:0:0:0:0:0:11:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:11:6:5:4:1:2:1:</row>
     <row id="64">5:11:0:11:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:6:6:5:1:1:2:1:</row>
-    <row id="65">5:0:0:0:0:0:0:0:0:0:11:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:6:5:4:1:2:1:</row>
+    <row id="65">5:0:0:0:0:0:0:0:0:0:11:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:11:6:5:4:1:2:1:</row>
     <row id="66">5:11:0:11:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:11:6:5:1:1:2:1:</row>
     <row id="67">5:0:0:0:0:0:0:0:0:0:11:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:6:4:1:2:1:</row>
     <row id="68">5:11:0:11:0:0:0:0:0:0:11:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:11:5:1:1:2:2099201:</row>
@@ -198,11 +198,11 @@
     </team>
     <team id="1">
       <combatant AI="Norm" charName="? 100 Orc Bow, Shortbow" id="0" startX="6" startY="94"/>
-      <combatant AI="Norm" charName="? 100 Orc Crossbow" id="1" startX="61" startY="61"/>
+      <combatant AI="Norm" charName="? 100 Orc Crossbow" id="1" startX="62" startY="74"/>
       <combatant AI="Norm" charName="? 150 Orc" id="2" startX="36" startY="66"/>
-      <combatant AI="Norm" charName="? 200 Orc &quot;Potion:Major Healing&quot; &quot;Potion:Complete Healing&quot; " id="3" startX="68" startY="66"/>
-      <combatant AI="Norm" charName="? 150 Orc" id="4" startX="40" startY="66"/>
-      <combatant AI="Norm" charName="? 100 Orc Bow, shortbow" id="5" startX="72" startY="76"/>
+      <combatant AI="Norm" charName="? 200 Orc &quot;Potion:Major Healing&quot; &quot;Potion:Complete Healing&quot; " id="3" startX="66" startY="78"/>
+      <combatant AI="Norm" charName="? 150 Orc" id="4" startX="34" startY="66"/>
+      <combatant AI="Norm" charName="? 100 Orc Bow, shortbow" id="5" startX="71" startY="85"/>
       <combatant AI="Off" charName=" " id="6"/>
       <combatant AI="Off" charName=" " id="7"/>
       <combatant AI="Off" charName=" " id="8"/>
@@ -252,8 +252,6 @@
   <triggers>
     <trigger enabled="true" name="enter SW building" onlyAffectsPlayers="true" requiresEntireTeam="false">
       <location x="6" y="76"/>
-      <location x="32" y="18"/>
-      <location x="29" y="17"/>
       <location x="21" y="59"/>
       <event data="" name="single shot" type="Disable This Trigger"/>
       <event data="? 250 Orc" name="add orc 250" type="Enter Character">
@@ -354,12 +352,12 @@
       <location x="14" y="34"/>
       <location x="14" y="36"/>
       <event data="Castle Sewers" name="enter sewer" type="New Map">
-        <location x="15" y="35"/>
-        <location x="13" y="35"/>
-        <location x="15" y="33"/>
-        <location x="13" y="33"/>
-        <location x="14" y="34"/>
-        <location x="14" y="36"/>
+        <location x="19" y="35"/>
+        <location x="19" y="33"/>
+        <location x="20" y="36"/>
+        <location x="20" y="34"/>
+        <location x="21" y="33"/>
+        <location x="21" y="35"/>
       </event>
     </trigger>
     <trigger enabled="true" name="see grate" onlyAffectsPlayers="true" requiresEntireTeam="false">
@@ -519,9 +517,222 @@
   </triggers>
 
   <items>
-    <door col="8" key="red" orient="1024" row="14" state="2"/>
-    <door col="8" key="red" orient="1024" row="32" state="3"/>
-    <door col="9" key="red" orient="2048" row="9" state="2"/>
+    <door col="6" key="" orient="128" row="76" state="2"/>
+    <door col="8" key="red" orient="1024" row="12" state="3"/>
+    <door col="8" key="red" orient="2048" row="30" state="3"/>
+    <door col="8" key="red" orient="256" row="54" state="5"/>
+    <door col="8" key="red" orient="64" row="54" state="5"/>
+    <door col="8" key="red" orient="65536" row="54" state="5"/>
+    <door col="8" key="red" orient="256" row="56" state="5"/>
+    <door col="8" key="red" orient="64" row="56" state="5"/>
+    <door col="8" key="red" orient="65536" row="56" state="5"/>
+    <door col="8" key="red" orient="256" row="58" state="5"/>
+    <door col="8" key="red" orient="64" row="58" state="5"/>
+    <door col="8" key="red" orient="65536" row="58" state="5"/>
+    <door col="8" key="red" orient="256" row="60" state="5"/>
+    <door col="8" key="red" orient="64" row="60" state="5"/>
+    <door col="8" key="red" orient="65536" row="60" state="5"/>
+    <door col="8" key="red" orient="256" row="62" state="5"/>
+    <door col="8" key="red" orient="64" row="62" state="5"/>
+    <door col="8" key="red" orient="65536" row="62" state="5"/>
+    <door col="8" key="red" orient="256" row="64" state="5"/>
+    <door col="8" key="red" orient="64" row="64" state="5"/>
+    <door col="8" key="red" orient="65536" row="64" state="5"/>
+    <door col="8" key="red" orient="256" row="66" state="5"/>
+    <door col="8" key="red" orient="64" row="66" state="5"/>
+    <door col="8" key="red" orient="65536" row="66" state="5"/>
+    <door col="8" key="red" orient="256" row="68" state="5"/>
+    <door col="8" key="red" orient="64" row="68" state="5"/>
+    <door col="8" key="red" orient="2048" row="68" state="5"/>
+    <door col="8" key="red" orient="65536" row="68" state="5"/>
+    <door col="9" key="red" orient="2048" row="7" state="2"/>
+    <door col="11" key="red" orient="1024" row="69" state="5"/>
+    <door col="11" key="red" orient="512" row="69" state="5"/>
+    <door col="11" key="red" orient="2048" row="69" state="5"/>
+    <door col="12" key="red" orient="1024" row="60" state="5"/>
+    <door col="12" key="red" orient="512" row="60" state="5"/>
+    <door col="12" key="red" orient="2048" row="60" state="5"/>
+    <door col="15" key="red" orient="1024" row="65" state="5"/>
+    <door col="15" key="red" orient="512" row="65" state="5"/>
+    <door col="15" key="red" orient="2048" row="65" state="5"/>
+    <door col="16" key="red" orient="1024" row="58" state="5"/>
+    <door col="16" key="red" orient="512" row="58" state="5"/>
+    <door col="16" key="red" orient="2048" row="58" state="5"/>
+    <door col="19" key="red" orient="1024" row="65" state="5"/>
+    <door col="19" key="red" orient="512" row="65" state="5"/>
+    <door col="19" key="red" orient="2048" row="65" state="5"/>
+    <door col="21" key="" orient="128" row="59" state="1"/>
+    <door col="24" key="" orient="2048" row="18" state="2"/>
+    <door col="27" key="" orient="2048" row="25" state="2"/>
     <door col="31" key="red" orient="512" row="39" state="2"/>
+    <door col="33" key="" orient="2048" row="37" state="2"/>
+    <door col="33" key="red" orient="256" row="71" state="5"/>
+    <door col="33" key="red" orient="131072" row="71" state="5"/>
+    <door col="33" key="red" orient="16384" row="71" state="5"/>
+    <door col="33" key="red" orient="256" row="73" state="5"/>
+    <door col="33" key="red" orient="131072" row="73" state="5"/>
+    <door col="33" key="red" orient="16384" row="73" state="5"/>
+    <door col="33" key="red" orient="256" row="75" state="5"/>
+    <door col="33" key="red" orient="131072" row="75" state="5"/>
+    <door col="33" key="red" orient="16384" row="75" state="5"/>
+    <door col="33" key="red" orient="256" row="77" state="5"/>
+    <door col="33" key="red" orient="131072" row="77" state="5"/>
+    <door col="33" key="red" orient="16384" row="77" state="5"/>
+    <door col="33" key="red" orient="256" row="79" state="5"/>
+    <door col="33" key="red" orient="131072" row="79" state="5"/>
+    <door col="33" key="red" orient="16384" row="79" state="5"/>
+    <door col="33" key="red" orient="256" row="81" state="5"/>
+    <door col="33" key="red" orient="131072" row="81" state="5"/>
+    <door col="33" key="red" orient="16384" row="81" state="5"/>
+    <door col="33" key="red" orient="256" row="83" state="5"/>
+    <door col="33" key="red" orient="131072" row="83" state="5"/>
+    <door col="33" key="red" orient="16384" row="83" state="5"/>
+    <door col="34" key="red" orient="64" row="70" state="5"/>
+    <door col="34" key="red" orient="32768" row="70" state="5"/>
+    <door col="34" key="red" orient="4096" row="70" state="5"/>
+    <door col="34" key="red" orient="64" row="72" state="5"/>
+    <door col="34" key="red" orient="32768" row="72" state="5"/>
+    <door col="34" key="red" orient="4096" row="72" state="5"/>
+    <door col="34" key="red" orient="64" row="74" state="5"/>
+    <door col="34" key="red" orient="32768" row="74" state="5"/>
+    <door col="34" key="red" orient="4096" row="74" state="5"/>
+    <door col="34" key="red" orient="64" row="76" state="5"/>
+    <door col="34" key="red" orient="32768" row="76" state="5"/>
+    <door col="34" key="red" orient="4096" row="76" state="5"/>
+    <door col="34" key="red" orient="64" row="78" state="5"/>
+    <door col="34" key="red" orient="32768" row="78" state="5"/>
+    <door col="34" key="red" orient="4096" row="78" state="5"/>
+    <door col="34" key="red" orient="64" row="80" state="5"/>
+    <door col="34" key="red" orient="32768" row="80" state="5"/>
+    <door col="34" key="red" orient="4096" row="80" state="5"/>
+    <door col="34" key="red" orient="64" row="82" state="5"/>
+    <door col="34" key="red" orient="32768" row="82" state="5"/>
+    <door col="34" key="red" orient="4096" row="82" state="5"/>
+    <door col="36" key="red" orient="16384" row="70" state="5"/>
+    <door col="36" key="red" orient="256" row="70" state="5"/>
+    <door col="36" key="red" orient="131072" row="70" state="5"/>
+    <door col="36" key="red" orient="16384" row="72" state="5"/>
+    <door col="36" key="red" orient="256" row="72" state="5"/>
+    <door col="36" key="red" orient="131072" row="72" state="5"/>
+    <door col="36" key="red" orient="16384" row="74" state="5"/>
+    <door col="36" key="red" orient="256" row="74" state="5"/>
+    <door col="36" key="red" orient="131072" row="74" state="5"/>
+    <door col="36" key="red" orient="16384" row="76" state="5"/>
+    <door col="36" key="red" orient="256" row="76" state="5"/>
+    <door col="36" key="red" orient="131072" row="76" state="5"/>
+    <door col="36" key="red" orient="16384" row="78" state="5"/>
+    <door col="36" key="red" orient="256" row="78" state="5"/>
+    <door col="36" key="red" orient="131072" row="78" state="5"/>
+    <door col="36" key="red" orient="16384" row="80" state="5"/>
+    <door col="36" key="red" orient="256" row="80" state="5"/>
+    <door col="36" key="red" orient="131072" row="80" state="5"/>
+    <door col="36" key="red" orient="16384" row="82" state="5"/>
+    <door col="36" key="red" orient="256" row="82" state="5"/>
+    <door col="36" key="red" orient="131072" row="82" state="5"/>
+    <door col="37" key="red" orient="32768" row="71" state="5"/>
+    <door col="37" key="red" orient="64" row="71" state="5"/>
+    <door col="37" key="red" orient="4096" row="71" state="5"/>
+    <door col="37" key="red" orient="32768" row="73" state="5"/>
+    <door col="37" key="red" orient="64" row="73" state="5"/>
+    <door col="37" key="red" orient="4096" row="73" state="5"/>
+    <door col="37" key="red" orient="32768" row="75" state="5"/>
+    <door col="37" key="red" orient="64" row="75" state="5"/>
+    <door col="37" key="red" orient="4096" row="75" state="5"/>
+    <door col="37" key="red" orient="32768" row="77" state="5"/>
+    <door col="37" key="red" orient="64" row="77" state="5"/>
+    <door col="37" key="red" orient="4096" row="77" state="5"/>
+    <door col="37" key="red" orient="32768" row="79" state="5"/>
+    <door col="37" key="red" orient="64" row="79" state="5"/>
+    <door col="37" key="red" orient="4096" row="79" state="5"/>
+    <door col="37" key="red" orient="32768" row="81" state="5"/>
+    <door col="37" key="red" orient="64" row="81" state="5"/>
+    <door col="37" key="red" orient="4096" row="81" state="5"/>
+    <door col="37" key="red" orient="32768" row="83" state="5"/>
+    <door col="37" key="red" orient="64" row="83" state="5"/>
+    <door col="37" key="red" orient="4096" row="83" state="5"/>
+    <door col="38" key="" orient="1024" row="112" state="5"/>
+    <door col="38" key="" orient="512" row="112" state="5"/>
+    <door col="38" key="" orient="2048" row="112" state="5"/>
+    <door col="39" key="" orient="1024" row="111" state="5"/>
+    <door col="39" key="" orient="2048" row="111" state="5"/>
+    <door col="39" key="" orient="1024" row="113" state="5"/>
+    <door col="39" key="" orient="512" row="113" state="5"/>
+    <door col="39" key="" orient="2048" row="113" state="5"/>
+    <door col="39" key="" orient="1024" row="115" state="5"/>
+    <door col="39" key="" orient="512" row="115" state="5"/>
+    <door col="39" key="" orient="2048" row="115" state="5"/>
+    <door col="40" key="" orient="1024" row="108" state="5"/>
+    <door col="40" key="" orient="512" row="108" state="5"/>
+    <door col="40" key="" orient="2048" row="108" state="5"/>
+    <door col="41" key="red" orient="512" row="41" state="5"/>
+    <door col="41" key="red" orient="1024" row="41" state="5"/>
+    <door col="41" key="red" orient="1024" row="43" state="5"/>
+    <door col="41" key="red" orient="2048" row="43" state="5"/>
+    <door col="41" key="red" orient="1024" row="47" state="5"/>
+    <door col="41" key="red" orient="512" row="47" state="5"/>
+    <door col="41" key="red" orient="1024" row="49" state="5"/>
+    <door col="41" key="red" orient="512" row="49" state="5"/>
+    <door col="41" key="red" orient="1024" row="51" state="5"/>
+    <door col="41" key="red" orient="2048" row="51" state="5"/>
+    <door col="41" key="red" orient="1024" row="55" state="5"/>
+    <door col="41" key="red" orient="512" row="55" state="5"/>
+    <door col="41" key="red" orient="1024" row="57" state="5"/>
+    <door col="41" key="red" orient="512" row="57" state="5"/>
+    <door col="41" key="red" orient="2048" row="59" state="5"/>
+    <door col="41" key="red" orient="1024" row="59" state="5"/>
+    <door col="42" key="red" orient="1024" row="40" state="5"/>
+    <door col="42" key="red" orient="2048" row="40" state="5"/>
+    <door col="42" key="red" orient="1024" row="44" state="5"/>
+    <door col="42" key="red" orient="512" row="44" state="5"/>
+    <door col="42" key="red" orient="1024" row="46" state="5"/>
+    <door col="42" key="red" orient="2048" row="46" state="5"/>
+    <door col="42" key="red" orient="1024" row="48" state="5"/>
+    <door col="42" key="red" orient="2048" row="48" state="5"/>
+    <door col="42" key="red" orient="1024" row="52" state="5"/>
+    <door col="42" key="red" orient="512" row="52" state="5"/>
+    <door col="42" key="red" orient="1024" row="54" state="5"/>
+    <door col="42" key="red" orient="2048" row="54" state="5"/>
+    <door col="42" key="red" orient="2048" row="56" state="5"/>
+    <door col="42" key="red" orient="1024" row="56" state="5"/>
+    <door col="42" key="red" orient="1024" row="60" state="5"/>
+    <door col="42" key="red" orient="512" row="60" state="5"/>
+    <door col="46" key="" orient="512" row="62" state="2"/>
+    <door col="47" key="" orient="2048" row="7" state="2"/>
+    <door col="47" key="red" orient="1024" row="49" state="5"/>
+    <door col="47" key="red" orient="512" row="49" state="5"/>
+    <door col="47" key="red" orient="1024" row="51" state="5"/>
+    <door col="47" key="red" orient="2048" row="51" state="5"/>
+    <door col="47" key="red" orient="512" row="55" state="5"/>
+    <door col="47" key="red" orient="1024" row="55" state="5"/>
+    <door col="47" key="red" orient="1024" row="57" state="5"/>
+    <door col="47" key="red" orient="2048" row="57" state="5"/>
+    <door col="47" key="red" orient="1024" row="59" state="5"/>
+    <door col="47" key="red" orient="2048" row="59" state="5"/>
+    <door col="48" key="red" orient="1024" row="48" state="5"/>
+    <door col="48" key="red" orient="2048" row="48" state="5"/>
+    <door col="48" key="red" orient="1024" row="52" state="5"/>
+    <door col="48" key="red" orient="512" row="52" state="5"/>
+    <door col="48" key="red" orient="1024" row="54" state="5"/>
+    <door col="48" key="red" orient="2048" row="54" state="5"/>
+    <door col="48" key="red" orient="1024" row="58" state="5"/>
+    <door col="48" key="red" orient="512" row="58" state="5"/>
+    <door col="48" key="red" orient="1024" row="60" state="5"/>
+    <door col="48" key="red" orient="512" row="60" state="5"/>
+    <door col="51" key="" orient="2048" row="61" state="1"/>
+    <door col="55" key="" orient="2048" row="29" state="2"/>
+    <door col="67" key="" orient="1024" row="115" state="5"/>
+    <door col="67" key="" orient="512" row="115" state="5"/>
+    <door col="67" key="" orient="2048" row="115" state="5"/>
+    <door col="68" key="" orient="1024" row="114" state="5"/>
+    <door col="68" key="" orient="512" row="114" state="5"/>
+    <door col="68" key="" orient="2048" row="114" state="5"/>
+    <door col="68" key="" orient="1024" row="116" state="5"/>
+    <door col="68" key="" orient="512" row="116" state="5"/>
+    <door col="68" key="" orient="2048" row="116" state="5"/>
+    <door col="70" key="" orient="1024" row="110" state="5"/>
+    <door col="70" key="" orient="512" row="110" state="5"/>
+    <door col="70" key="" orient="2048" row="110" state="5"/>
+    <door col="70" key="" orient="1024" row="112" state="5"/>
+    <door col="70" key="" orient="512" row="112" state="5"/>
   </items>
 </Arena>
