@@ -129,10 +129,10 @@ public class RequestEquipment extends SyncRequest implements Enums {
       }
    }
 
-   public boolean isApply()  { return ((RequestActionOption)_answer).getValue().isApplyEquip();}
-   public boolean isDrop()   { return ((RequestActionOption)_answer).getValue().isDrop();      }
-   public boolean isReady()  { return ((RequestActionOption)_answer).getValue().isReadyEquip();}
-   public boolean isSheath() { return ((RequestActionOption)_answer).getValue().isSheath();    }
+   public boolean isApply()  { return _answer != null && ((RequestActionOption)_answer).getValue().isApplyEquip();}
+   public boolean isDrop()   { return _answer != null && ((RequestActionOption)_answer).getValue().isDrop();      }
+   public boolean isReady()  { return _answer != null && ((RequestActionOption)_answer).getValue().isReadyEquip();}
+   public boolean isSheath() { return _answer != null && ((RequestActionOption)_answer).getValue().isSheath();    }
 
    @Override
    protected String getAllowedKeyStrokesForOption(int optionID) {

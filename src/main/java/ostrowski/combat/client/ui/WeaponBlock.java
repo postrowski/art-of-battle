@@ -25,7 +25,7 @@ import java.util.List;
 public class WeaponBlock extends Helper implements ModifyListener, IUIBlock, SelectionListener
 {
    private final CharacterWidget _display;
-   static final int LINES_OF_EQU = 6;
+   static final int LINES_OF_EQU = 5;
    public final String BELT = "Belt";
    private final Button[]         _buttons   = new Button[LINES_OF_EQU];
    private final Combo[]          _equipment = new Combo[LINES_OF_EQU];

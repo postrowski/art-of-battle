@@ -410,18 +410,18 @@ public class RequestAction extends SyncRequest implements Enums
       return nextReq;
    }
 
-   public boolean isRangedAttack()       { return ((RequestActionOption)_answer).getValue().isRangedAttack();       }
-   public boolean isGrappleAttack()      { return ((RequestActionOption)_answer).getValue().isGrappleAttack();      }
-   public boolean isBreakFree()          { return ((RequestActionOption)_answer).getValue().isBreakFree();          }
-   public boolean isCounterAttack()      { return ((RequestActionOption)_answer).getValue().isCounterAttack();      }
-   public boolean isCounterAttackThrow() { return ((RequestActionOption)_answer).getValue().isCounterAttackThrow(); }
-   public boolean isCounterAttackGrab()  { return ((RequestActionOption)_answer).getValue().isCounterAttackGrab();  }
-   public byte getAttackActions(boolean considerSpellAsAttack) { return ((RequestActionOption)_answer).getValue().getAttackActions(considerSpellAsAttack); }
+   public boolean isRangedAttack()       { return (_answer != null) && ((RequestActionOption)_answer).getValue().isRangedAttack();       }
+   public boolean isGrappleAttack()      { return (_answer != null) && ((RequestActionOption)_answer).getValue().isGrappleAttack();      }
+   public boolean isBreakFree()          { return (_answer != null) && ((RequestActionOption)_answer).getValue().isBreakFree();          }
+   public boolean isCounterAttack()      { return (_answer != null) && ((RequestActionOption)_answer).getValue().isCounterAttack();      }
+   public boolean isCounterAttackThrow() { return (_answer != null) && ((RequestActionOption)_answer).getValue().isCounterAttackThrow(); }
+   public boolean isCounterAttackGrab()  { return (_answer != null) && ((RequestActionOption)_answer).getValue().isCounterAttackGrab();  }
+   public byte getAttackActions(boolean considerSpellAsAttack) { return _answer == null ? 0 : ((RequestActionOption)_answer).getValue().getAttackActions(considerSpellAsAttack); }
    public byte getActionsUsed()
    {
-      return ((RequestActionOption)_answer).getValue()
-                                           .getActionsUsed((_equipmentRequest != null) ?
-                                                           _equipmentRequest.getActionsUsed() : 1);
+      return (_answer == null) ? 0 : ((RequestActionOption)_answer).getValue()
+                                                                   .getActionsUsed((_equipmentRequest != null) ?
+                                                                                   _equipmentRequest.getActionsUsed() : 1);
    }
    public String getActionDescription(Character actor, Character target, Arena arena) {
       switch (((RequestActionOption)_answer).getValue()) {
