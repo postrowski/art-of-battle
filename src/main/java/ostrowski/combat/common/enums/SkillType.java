@@ -27,7 +27,6 @@ public enum SkillType {
    Shield            ("Shield",           false, false, Attribute.Dexterity, ArmsUsed.One,  false),
    Sling             ("Sling",             true, false, Attribute.Dexterity, ArmsUsed.Both, false),
    Spear             ("Spear",             true, false, Attribute.Dexterity, ArmsUsed.OneOrTwo, false),
-   StaffSling        ("Staff Sling",       true, false, Attribute.Dexterity, ArmsUsed.Both, false),
    Sword             ("Sword",             true, false, Attribute.Dexterity, ArmsUsed.One,  false),
    Throwing          ("Throwing",          true, false, Attribute.Dexterity, ArmsUsed.One,  false),
    Wrestling         ("Wrestling",         true,  true, Attribute.Dexterity, ArmsUsed.None, true),

@@ -1412,8 +1412,8 @@ public class AI implements Enums
       if ((myWeapon != null) && myWeaponIsMissile && !targetHasMissileWeapon) {
          // We have a missile weapon, and the target does not. Let them come to us
          // TODO: should we go looking for the enemy?
-         // TODO: perhaps create a new AI type: sentry, and have sentries stay, while all others go scouting
-         //if (_aiType == AI_Type.STATIONARY)
+         // if we are stationary, stay. Let all others go scouting
+         if (_aiType == AI_Type.STATIONARY)
          {
             traceSb.append(", letClose");
             allowAdvance = false;
@@ -2000,7 +2000,7 @@ public class AI implements Enums
          if (skill.getLevel() > 0) {
             SkillType skillType = skill.getType();
             if ((skillType == SkillType.BlowGun) || (skillType == SkillType.Bow) || (skillType == SkillType.Crossbow)
-                || (skillType == SkillType.Sling) || (skillType == SkillType.StaffSling) || (skillType == SkillType.Throwing)
+                || (skillType == SkillType.Sling) || (skillType == SkillType.Throwing)
                 || (skillType == SkillType.Aikido) || (skillType == SkillType.Boxing) || (skillType == SkillType.Brawling)
                 || (skillType == SkillType.Wrestling) || (skillType == SkillType.Karate)) {
                continue;

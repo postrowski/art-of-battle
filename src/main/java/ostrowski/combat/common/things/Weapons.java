@@ -160,7 +160,7 @@ public class Weapons {
               new MissileWeaponBase(6, 9, 300, Weapon.NAME_CrossbowHeavy, SkillType.Crossbow,   0, 0,  12, DieType.D12, DamageType.IMP,   50,  2, new String[] {"Raise crossbow", "Notch bolt", "Ready bolt", "Cock crossbow", "Cock crossbow", "Cock crossbow"}),
               new MissileWeaponBase(2, 6, 150, Weapon.NAME_CrossbowLight, SkillType.Crossbow,   0, 0,   8, DieType.D12, DamageType.IMP,   30,  2, new String[] {"Raise crossbow", "Notch bolt", "Ready bolt", "Cock crossbow"}),
               new MissileWeaponBase(0, 1,   5, Weapon.NAME_Sling,         SkillType.Sling,      1, 0,   0,  DieType.D4, DamageType.BLUNT, 12,  1, new String[] {"Spin sling", "Load stone in sling", "Ready stone"}),
-              new MissileWeaponBase(1, 3, 100, Weapon.NAME_StaffSling,    SkillType.StaffSling, 1, 0,   7,  DieType.D6, DamageType.BLUNT, 20,  2, new String[] {"Spin sling", "Load stone in staff sling", "Ready stone"}),
+              new MissileWeaponBase(1, 3, 100, Weapon.NAME_StaffSling,    SkillType.Sling,      1, 0,   7,  DieType.D6, DamageType.BLUNT, 20,  2, new String[] {"Spin sling", "Load stone in staff sling", "Ready stone"}),
               };
       // sort this array, so they can be listed in alphabetical order
       Arrays.sort(_weaponsList, (o1, o2) -> o1.getName().compareTo(o2.getName()));

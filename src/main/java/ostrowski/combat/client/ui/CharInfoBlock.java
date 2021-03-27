@@ -251,13 +251,13 @@ public class CharInfoBlock extends Helper implements IUIBlock, ModifyListener
       if (!target.getCondition().isConscious()) {
          return "K.O.";
       }
-      if (target.getCondition().isCollapsed()) {
-         return "Collapsed";
-      }
 
       Limb rightHand = target.getLimb(LimbType.HAND_RIGHT);
       Limb leftHand = target.getLimb(LimbType.HAND_LEFT);
       StringBuilder sb = new StringBuilder();
+      if (target.getCondition().isCollapsed()) {
+         sb.append("Collapsed ");
+      }
       byte pain = target.getPainPenalty(false/*accountForBerserking*/);
       if (extendedText) {
          if (pain> 0) {

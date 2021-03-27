@@ -1028,7 +1028,7 @@ public class Rules extends DebugBreak implements Enums
 
    public static byte getMaxAppliedDamageForTNSuccess(byte attackSuccessRollOverTN, byte baseDamage) {
       if (attackSuccessRollOverTN < 5) {
-         return (byte) Math.min((attackSuccessRollOverTN + 1) * 5, baseDamage);
+         return (byte) Math.min((attackSuccessRollOverTN + 1) * 5 - 1, baseDamage);
       }
       return baseDamage;
    }
