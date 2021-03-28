@@ -13,8 +13,8 @@ import ostrowski.combat.server.Configuration;
 
 public abstract class ResistedMageSpell extends ExpiringMageSpell implements IResistedSpell
 {
-   protected Attribute _resistedAtt;
-   protected byte _resistedActions;
+   protected Attribute resistedAtt;
+   protected byte      resistedActions;
 
    @SuppressWarnings("rawtypes")
    protected ResistedMageSpell(String name, Attribute resistedAtt, byte resistedActions, boolean expires,
@@ -22,8 +22,8 @@ public abstract class ResistedMageSpell extends ExpiringMageSpell implements IRe
       super(name, (short)(expires ? 10 : 0)/*baseExpirationTimeInTurns*/,
                   (short)(expires ? 2 : 0)/*bonusTimeInTurnsPerPower*/,
                   prerequisiteSpells, colleges);
-      _resistedAtt = resistedAtt;
-      _resistedActions = resistedActions;
+      this.resistedAtt = resistedAtt;
+      this.resistedActions = resistedActions;
    }
 
    @Override
@@ -45,20 +45,20 @@ public abstract class ResistedMageSpell extends ExpiringMageSpell implements IRe
     */
    @Override
    public byte getResistanceAttribute(Character target) {
-      return target.getAttributeLevel(_resistedAtt);
+      return target.getAttributeLevel(resistedAtt);
    }
    @Override
    public byte getResistanceActions() {
-      return _resistedActions;
+      return resistedActions;
    }
    @Override
    public DiceSet getResistanceDice(Character target) {
       byte resistanceAttr = getResistanceAttribute(target);
       if (Configuration.useExtendedDice()) {
-         return Rules.getDice(resistanceAttr, getResistanceActions(), _resistedAtt, RollType.MAGIC_RESISTANCE);
+         return Rules.getDice(resistanceAttr, getResistanceActions(), resistedAtt, RollType.MAGIC_RESISTANCE);
       }
 
-      DiceSet dice = Rules.getDice(resistanceAttr, (byte)2, _resistedAtt, RollType.MAGIC_RESISTANCE);
+      DiceSet dice = Rules.getDice(resistanceAttr, (byte)2, resistedAtt, RollType.MAGIC_RESISTANCE);
       switch (getResistanceActions()) {
          case 1: dice.addBonus(-5); break;
          case 2: break;
@@ -74,8 +74,8 @@ public abstract class ResistedMageSpell extends ExpiringMageSpell implements IRe
 
       if (source instanceof ResistedMageSpell) {
          ResistedMageSpell resistedSource = (ResistedMageSpell) source;
-         _resistedAtt  = resistedSource._resistedAtt;
-         _resistedActions = resistedSource._resistedActions;
+         resistedAtt = resistedSource.resistedAtt;
+         resistedActions = resistedSource.resistedActions;
       }
    }
 
@@ -86,7 +86,7 @@ public abstract class ResistedMageSpell extends ExpiringMageSpell implements IRe
 
    @Override
    public String getResistanceAttributeName(){
-      return _resistedAtt.shortName;
+      return resistedAtt.shortName;
    }
 
 }

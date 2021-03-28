@@ -13,7 +13,6 @@ import ostrowski.combat.common.enums.SkillType;
 
 public class WeaponStyleCounterAttack extends WeaponStyleAttackMelee
 {
-
    public WeaponStyleCounterAttack(SkillType skillType, int minSkill, int skillPenalty, String name,
                                    int speedBase, int slowStr, int fastStr, int damageMod,
                                    DieType varianceDie, DamageType damageType, AttackType attackType,
@@ -34,10 +33,10 @@ public class WeaponStyleCounterAttack extends WeaponStyleAttackMelee
    @Override
    public WeaponStyleCounterAttack clone()
    {
-      WeaponStyleCounterAttack style = new WeaponStyleCounterAttack(_skillType, _minSkill, _skillPenalty, _name,
-                                                                    _speedBase, _slowStr, _fastStr,
-                                                                    _damageMod, _varianceDice, _damageType, _attackType,
-                                                                    _parryPenalty, _minRange, _maxRange, _handsRequired);
+      WeaponStyleCounterAttack style = new WeaponStyleCounterAttack(skillType, minSkill, skillPenalty, name,
+                                                                    speedBase, slowStr, fastStr,
+                                                                    damageMod, varianceDice, damageType, attackType,
+                                                                    parryPenalty, minRange, maxRange, handsRequired);
       style.copyDataFrom(this);
       return style;
    }

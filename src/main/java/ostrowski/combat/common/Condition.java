@@ -36,257 +36,257 @@ import java.util.List;
  *
  */
 public class Condition extends SerializableObject implements Enums {
-   private byte          _actionsAvailable               = 0;
-   private byte          _finalDefensiveActionsAvailable = 0;
-   private byte          _maxActionsPerRound             = 3;
-   final   StringBuilder _actionsAvailAudit              = new StringBuilder();
+   private byte          actionsAvailable               = 0;
+   private byte          finalDefensiveActionsAvailable = 0;
+   private byte          maxActionsPerRound             = 3;
+   final   StringBuilder actionsAvailAudit              = new StringBuilder();
    // wounds:
-   private byte          _wounds                         = 0;
-   private byte          _bleedRate                      = 0;
-   private byte          _penaltyPain                    = 0;
+   private byte          wounds                         = 0;
+   private byte          bleedRate                      = 0;
+   private byte          penaltyPain                    = 0;
 
    // penalties are positive integers so a 2 means a -2 to actions.
    // A negative value means no use possible, such as a severed limb.
-   private byte _penaltyMove                = 0;
-   private byte _actionsSpentThisRound      = 0;
-   private byte _initiative                 = 0;
-   private byte _movementAvailableThisRound = 0;
-   private byte _movementAvailableEachRound = 0;
+   private byte penaltyMove                = 0;
+   private byte actionsSpentThisRound      = 0;
+   private byte initiative                 = 0;
+   private byte movementAvailableThisRound = 0;
+   private byte movementAvailableEachRound = 0;
 
-   private boolean        _hasMovedThisRound            = false;
-   private boolean        _attackedThisRound            = false;
-   private boolean        _moveComplete                 = false;
-   private boolean        _movingEvasively              = false;
-   private boolean        _movedLastAction              = false;
-   private DefenseOptions _defenseOptionsTakenThisRound = new DefenseOptions();
+   private boolean        hasMovedThisRound            = false;
+   private boolean        attackedThisRound            = false;
+   private boolean        moveComplete                 = false;
+   private boolean        movingEvasively              = false;
+   private boolean        movedLastAction              = false;
+   private DefenseOptions defenseOptionsTakenThisRound = new DefenseOptions();
 
-   private Orientation _orientation = null;
-   private boolean     _collapsed   = false;
-   private boolean     _isConscious = true;
-   private boolean     _isAlive     = true;
+   private Orientation orientation = null;
+   private boolean     collapsed   = false;
+   private boolean     isConscious = true;
+   private boolean     isAlive     = true;
 
-   private short _priestSpellPointsMax       = 0;
-   private short _mageSpellPointsMax         = 0;
-   private short _priestSpellPointsAvailable = 0;
-   private short _mageSpellPointsAvailable   = 0;
+   private short priestSpellPointsMax       = 0;
+   private short mageSpellPointsMax         = 0;
+   private short priestSpellPointsAvailable = 0;
+   private short mageSpellPointsAvailable   = 0;
 
-   private List<Wound> _woundsList = new ArrayList<>();
+   private List<Wound> woundsList = new ArrayList<>();
 
    public Condition() {
       // ctor used for all Serializable objects
    }
    public Condition(Orientation orientation) {
-      _orientation = orientation.clone();
+      this.orientation = orientation.clone();
    }
    public Condition(Character character) {
       setOrientation(character.getRace().getBaseOrientation());
    }
    public byte getActionsAvailable(boolean usedForDefenseOnly) {
-      if (usedForDefenseOnly && (_finalDefensiveActionsAvailable != 0)) {
-         return _finalDefensiveActionsAvailable;
+      if (usedForDefenseOnly && (finalDefensiveActionsAvailable != 0)) {
+         return finalDefensiveActionsAvailable;
       }
-      if (_actionsAvailable < 0) {
+      if (actionsAvailable < 0) {
          return 0;
       }
-      return _actionsAvailable;
+      return actionsAvailable;
    }
    public byte getActionsAvailableThisRound(boolean usedForDefenseOnly) {
-      if (usedForDefenseOnly && (_finalDefensiveActionsAvailable != 0)) {
-         return _finalDefensiveActionsAvailable;
+      if (usedForDefenseOnly && (finalDefensiveActionsAvailable != 0)) {
+         return finalDefensiveActionsAvailable;
       }
-      return (byte) Math.min(_maxActionsPerRound -_actionsSpentThisRound, _actionsAvailable);
+      return (byte) Math.min(maxActionsPerRound - actionsSpentThisRound, actionsAvailable);
    }
    public byte getActionsSpentThisRound() {
-      return _actionsSpentThisRound;
+      return actionsSpentThisRound;
    }
-   public byte getPenaltyPain()                         { return _penaltyPain; }
-   public byte getWoundsAndPainPenalty()                { return (byte) (_penaltyPain + _wounds); }
-   public byte getWounds()                              { return _wounds; }
-   public byte getBleedRate()                           { return _bleedRate; }
+   public byte getPenaltyPain()                         { return penaltyPain; }
+   public byte getWoundsAndPainPenalty()                { return (byte) (penaltyPain + wounds); }
+   public byte getWounds()                              { return wounds; }
+   public byte getBleedRate()                           { return bleedRate; }
    public byte getPenaltyRetreat  (boolean includeWounds)  {
-      if (_penaltyMove < 0) {
-         return _penaltyMove;
+      if (penaltyMove < 0) {
+         return penaltyMove;
       }
-      return (byte) (_penaltyMove + (includeWounds ? _wounds : 0));
+      return (byte) (penaltyMove + (includeWounds ? wounds : 0));
    }
-   public byte getPenaltyMove()                          { return _penaltyMove; }
-   public byte getInitiative()                           { return _initiative; }
-   public Position getPosition()                         { return _orientation.getPosition(); }
-   public boolean isCollapsed()                          { return _collapsed; }
-   public boolean isConscious()                          { return _isConscious; }
-   public boolean isAlive()                              { return _isAlive; }
-   public boolean isStanding()                           { return (_orientation.getPosition() == Position.STANDING); }
-   public void setMovingEvasively(boolean movingEvasively) { _movingEvasively = movingEvasively; }
-   public boolean isMovingEvasively() { return _movingEvasively;}
-   public boolean hasMovedLastAction() { return _movedLastAction; }
+   public byte getPenaltyMove()                          { return penaltyMove; }
+   public byte getInitiative()                           { return initiative; }
+   public Position getPosition()                         { return orientation.getPosition(); }
+   public boolean isCollapsed()                          { return collapsed; }
+   public boolean isConscious()                          { return isConscious; }
+   public boolean isAlive()                              { return isAlive; }
+   public boolean isStanding()                           { return (orientation.getPosition() == Position.STANDING); }
+   public void setMovingEvasively(boolean movingEvasively) { this.movingEvasively = movingEvasively; }
+   public boolean isMovingEvasively() { return movingEvasively;}
+   public boolean hasMovedLastAction() { return movedLastAction; }
    public byte getMovementAvailableThisRound(boolean movingEvasively) {
-      if (!_isAlive || !_isConscious || _collapsed) {
+      if (!isAlive || !isConscious || collapsed) {
          return 0;
       }
 
-      if (movingEvasively != _movingEvasively) {
-         _movingEvasively = movingEvasively;
+      if (movingEvasively != this.movingEvasively) {
+         this.movingEvasively = movingEvasively;
          if (movingEvasively) {
             // Divide our movement allowance by two, rounding up
-            _movementAvailableThisRound = (byte) ((_movementAvailableThisRound+1)/2);
+            movementAvailableThisRound = (byte) ((movementAvailableThisRound + 1) / 2);
          }
       }
-      return _movementAvailableThisRound;
+      return movementAvailableThisRound;
    }
    public void raiseFromDead(boolean asZombie) {
-      _isAlive     = true;
-      _isConscious = true;
-      _collapsed   = false;
+      isAlive = true;
+      isConscious = true;
+      collapsed = false;
    }
    public void applyMovementCost(byte movementCost) {
-      _movementAvailableThisRound -= movementCost;
+      movementAvailableThisRound -= movementCost;
       if (movementCost > 0) {
-         _hasMovedThisRound = true;
+         hasMovedThisRound = true;
       }
-      if (_movementAvailableThisRound <= 0) {
-         _movementAvailableThisRound = 0;
-         _moveComplete = true;
+      if (movementAvailableThisRound <= 0) {
+         movementAvailableThisRound = 0;
+         moveComplete = true;
       }
    }
 
    public short getPriestSpellPointsAvailable() {
-      return _priestSpellPointsAvailable;
+      return priestSpellPointsAvailable;
    }
    public void setPriestSpellPointsAvailable(short priestSpellPointsAvailable) {
-      _priestSpellPointsAvailable = priestSpellPointsAvailable;
+      this.priestSpellPointsAvailable = priestSpellPointsAvailable;
    }
 
    public short getMageSpellPointsAvailable() {
-      return _mageSpellPointsAvailable;
+      return mageSpellPointsAvailable;
    }
    public void setMageSpellPointsAvailable(short mageSpellPointsAvailable) {
-      _mageSpellPointsAvailable = mageSpellPointsAvailable;
+      this.mageSpellPointsAvailable = mageSpellPointsAvailable;
    }
 
 
    public boolean hasAttackedThisRound() {
-       return _attackedThisRound;
+       return attackedThisRound;
    }
 
    public boolean canAttack() {
-      if (_collapsed) {
+      if (collapsed) {
          return false;
       }
-      if (!_isConscious) {
+      if (!isConscious) {
          return false;
       }
       if (getActionsAvailableThisRound(false/*usedForDefenseOnly*/) <= 0) {
          return false;
       }
-      if (_attackedThisRound) {
+      if (attackedThisRound) {
          return false;
       }
       return getPositionAdjustmentForAttack() != -99;
    }
    private boolean canRetreat() {
-      if (_collapsed) {
+      if (collapsed) {
          return false;
       }
-      if (!_isConscious) {
+      if (!isConscious) {
          return false;
       }
       if (getActionsAvailableThisRound(true/*usedForDefenseOnly*/) <= 0) {
          return false;
       }
-      if (_attackedThisRound) {
+      if (attackedThisRound) {
          return false;
       }
-      if (_penaltyMove < 0) {
+      if (penaltyMove < 0) {
          return false;
       }
-      return (_movementAvailableThisRound >= 2) || !_hasMovedThisRound;
+      return (movementAvailableThisRound >= 2) || !hasMovedThisRound;
    }
    public boolean canAdvance() {
-      if (!_isConscious) {
+      if (!isConscious) {
          return false;
       }
       if (getActionsAvailableThisRound(false/*usedForDefenseOnly*/) <= 0) {
          return false;
       }
-      if (_penaltyMove < 0) {
+      if (penaltyMove < 0) {
          return false;
       }
-      return _movementAvailableThisRound >= 1;
+      return movementAvailableThisRound >= 1;
    }
    public void adjustActions(byte actionsThisRound, byte actionsPerRound) {
-      boolean hasActionsThisRound = (_actionsAvailable > 0);
-      _actionsAvailable   += actionsThisRound;
-      _maxActionsPerRound += actionsPerRound;
+      boolean hasActionsThisRound = (actionsAvailable > 0);
+      actionsAvailable += actionsThisRound;
+      maxActionsPerRound += actionsPerRound;
 
-      if ((_actionsAvailable <= 0) && hasActionsThisRound) {
-         _actionsAvailable = 1;
+      if ((actionsAvailable <= 0) && hasActionsThisRound) {
+         actionsAvailable = 1;
       }
-      if (_maxActionsPerRound <= 0) {
-         _maxActionsPerRound = 1;
+      if (maxActionsPerRound <= 0) {
+         maxActionsPerRound = 1;
       }
    }
 
    public void setInitiative(byte initiative) {
-      _initiative = initiative;
+      this.initiative = initiative;
    }
    public void reducePain(byte painReduction, byte toughnessLevel) {
-      _penaltyPain -= painReduction;
-      if (_penaltyPain < 0) {
-         _penaltyPain = 0;
+      penaltyPain -= painReduction;
+      if (penaltyPain < 0) {
+         penaltyPain = 0;
       }
-      if (_penaltyPain < Rules.getCollapsePainLevel(toughnessLevel)) {
-         _collapsed = false;
+      if (penaltyPain < Rules.getCollapsePainLevel(toughnessLevel)) {
+         collapsed = false;
       }
    }
    public void initializeActionsAndMovementForNewTurn(byte actionsAvailable, byte maxActionsPerRound, byte movementAllowance) {
-      _actionsAvailable = actionsAvailable;
-      _finalDefensiveActionsAvailable = 0;
-      _maxActionsPerRound = maxActionsPerRound;
-      _actionsAvailAudit.setLength(0);
-      _actionsAvailAudit.append(" New turn, ").append(_actionsAvailable).append(" actions available.");
+      this.actionsAvailable = actionsAvailable;
+      finalDefensiveActionsAvailable = 0;
+      this.maxActionsPerRound = maxActionsPerRound;
+      actionsAvailAudit.setLength(0);
+      actionsAvailAudit.append(" New turn, ").append(this.actionsAvailable).append(" actions available.");
 
-      _movementAvailableEachRound = movementAllowance;
-      if ((_penaltyMove > 0) && (_movementAvailableThisRound > 0)) {
-         _movementAvailableEachRound = (byte) Math.max(1, _movementAvailableEachRound - _penaltyMove);
+      movementAvailableEachRound = movementAllowance;
+      if ((penaltyMove > 0) && (movementAvailableThisRound > 0)) {
+         movementAvailableEachRound = (byte) Math.max(1, movementAvailableEachRound - penaltyMove);
       }
-      _movementAvailableThisRound = _movementAvailableEachRound;
+      movementAvailableThisRound = movementAvailableEachRound;
    }
 
    // return 'true' if any actions remains to be spent
    public boolean endRound() {
-      if ((_actionsSpentThisRound == 0) && (_actionsAvailable > 0)) {
-         _actionsAvailAudit.append(" no action/end of round(1 action).");
-         _actionsAvailable--;
+      if ((actionsSpentThisRound == 0) && (actionsAvailable > 0)) {
+         actionsAvailAudit.append(" no action/end of round(1 action).");
+         actionsAvailable--;
       }
-      _actionsSpentThisRound = 0;
-      _attackedThisRound  = false;
-      _hasMovedThisRound  = false;
-      _moveComplete       = false;
-      _defenseOptionsTakenThisRound.clear();
-      _movementAvailableThisRound = _movementAvailableEachRound;
+      actionsSpentThisRound = 0;
+      attackedThisRound = false;
+      hasMovedThisRound = false;
+      moveComplete = false;
+      defenseOptionsTakenThisRound.clear();
+      movementAvailableThisRound = movementAvailableEachRound;
 
-      return (_actionsAvailable > 0);
+      return (actionsAvailable > 0);
    }
    public boolean isMoveComplete()   {
-      return _moveComplete;
+      return moveComplete;
    }
    public void setMoveComplete() {
-      _moveComplete = true;
+      moveComplete = true;
    }
 
    public boolean hasMovedThisRound() {
-      return _hasMovedThisRound;
+      return hasMovedThisRound;
    }
    public int getAvailableActions(StringBuilder sbReasons, boolean isBeingHeld) {
       int actionsAllowed = 0;
-      if (_isConscious && _isAlive) {
+      if (isConscious && isAlive) {
          if (getActionsAvailableThisRound(true/*usedForDefenseOnly*/) > 0) {
             if (getActionsAvailableThisRound(false/*usedForDefenseOnly*/) > 0) {
-               if (!_collapsed) {
+               if (!collapsed) {
                   if (canAttack()) {
                      actionsAllowed |= ACTION_ATTACK;
                   }
-                  if ((_movementAvailableThisRound > 0)  && !isBeingHeld) {
+                  if ((movementAvailableThisRound > 0) && !isBeingHeld) {
                      actionsAllowed |= ACTION_MOVE;
                      actionsAllowed |= getAvailablePositions();
                   }
@@ -298,13 +298,13 @@ public class Condition extends SerializableObject implements Enums {
       return actionsAllowed;
    }
    public int getAvailablePositions() {
-      if ((!_isConscious) || _collapsed) {
+      if ((!isConscious) || collapsed) {
          return 0;
       }
       if (getActionsAvailableThisRound(false/*usedForDefenseOnly*/) < 1) {
          return 0;
       }
-      int availPos = _orientation.getAvailablePositions();
+      int availPos = orientation.getAvailablePositions();
 
       if (!canStand()) {
          // don't allow the player to stand or crouch
@@ -315,7 +315,7 @@ public class Condition extends SerializableObject implements Enums {
    }
    public DefenseOptions getAvailableDefenseOptions() {
       DefenseOptions actionsAllowed = new DefenseOptions();
-      if (_isConscious) {
+      if (isConscious) {
 //         // DODGE is allowed, as long as no action has been spent yet this round.
 //         if ((getActionsSpentThisRound() == 0) || (getActionsAvailableThisRound() > 0)) {
 //            actionsAllowed.add(DefenseOption.DEF_DODGE);
@@ -335,7 +335,7 @@ public class Condition extends SerializableObject implements Enums {
 
    public void setPosition(Position newPosition, CombatMap map, Character actor) {
       Collection<ArenaCoordinates> coordinatesToRedraw = new ArrayList<>(getCoordinates());
-      _orientation.setPosition(newPosition, map, actor);
+      orientation.setPosition(newPosition, map, actor);
       coordinatesToRedraw.addAll(getCoordinates());
       if (CombatServer._this != null) {
          CombatServer._this.redrawMap(coordinatesToRedraw );
@@ -343,31 +343,31 @@ public class Condition extends SerializableObject implements Enums {
    }
    public void applyWound(Wound wound, Arena arena, Character character) {
 
-      boolean wasConscious = _isConscious && _isAlive;
+      boolean wasConscious = isConscious && isAlive;
       if (wound.isKnockOut()) {
-         _isConscious = false;
+         isConscious = false;
       }
       if (wound.isFatal()) {
-         _isAlive = false;
+         isAlive = false;
       }
 
       if (!character.hasAdvantage(Advantage.NO_PAIN)) {
-         _penaltyPain += wound.getPain();
+         penaltyPain += wound.getPain();
       }
-      _wounds      += wound.getEffectiveWounds();
-      _bleedRate   += wound.getEffectiveBleedRate();
+      wounds += wound.getEffectiveWounds();
+      bleedRate += wound.getEffectiveBleedRate();
 
       if ((wound.getWounds() != 0) ||
           (wound.getBleedRate() != 0) ||
           (wound.getPenaltyLimb() != 0) ||
           (wound.getPenaltyMove() != 0)    ) {
-         _woundsList.add(wound);
+         woundsList.add(wound);
       }
 
-      if (_wounds >= Rules.getUnconsciousWoundLevel(character.getAttributeLevel(Attribute.Toughness))) {
-         _isConscious = false;
+      if (wounds >= Rules.getUnconsciousWoundLevel(character.getAttributeLevel(Attribute.Toughness))) {
+         isConscious = false;
       }
-      if (wasConscious && (!_isConscious || !_isAlive)) {
+      if (wasConscious && (!isConscious || !isAlive)) {
          character.dropAllEquipment(arena);
          character.releaseHold();
          setPosition(Position.PRONE_BACK, arena.getCombatMap(), character);
@@ -378,12 +378,12 @@ public class Condition extends SerializableObject implements Enums {
 
       // If we are not crippled on a limb, all wounding is additive.
       // If we are crippled, don't adjust the particular penalty.
-      if (_penaltyMove     >=0) {
-         _penaltyMove     += wound.getPenaltyMove();
+      if (penaltyMove >= 0) {
+         penaltyMove += wound.getPenaltyMove();
       }
       // Check for crippling injuries
       if (wound.getPenaltyMove()     < 0) {
-         _penaltyMove  = wound.getPenaltyMove();
+         penaltyMove = wound.getPenaltyMove();
       }
    }
 
@@ -406,138 +406,138 @@ public class Condition extends SerializableObject implements Enums {
    }
    // Call this once for each action spent.
    public void applyAction(RequestAction action, Character actor, Spell currentSpell, Arena arena) {
-      _actionsAvailAudit.append("action, answerID=").append(action.getAnswerID());
-      _actionsAvailAudit.append("(").append(action.getActionsUsed()).append(" actions)");
-      _actionsAvailable -= action.getActionsUsed();
-      if (_actionsAvailable < 0) {
-         DebugBreak.debugBreak(actor.getName() + " has " + _actionsAvailable + " actions to use. Full audit (inclusive)=" + _actionsAvailAudit);
-         _actionsAvailable = 0;
+      actionsAvailAudit.append("action, answerID=").append(action.getAnswerID());
+      actionsAvailAudit.append("(").append(action.getActionsUsed()).append(" actions)");
+      actionsAvailable -= action.getActionsUsed();
+      if (actionsAvailable < 0) {
+         DebugBreak.debugBreak(actor.getName() + " has " + actionsAvailable + " actions to use. Full audit (inclusive)=" + actionsAvailAudit);
+         actionsAvailable = 0;
       }
 //      if (action.isChangePosition()) {
 //         // change position actions always report they require 2 actions, when they may not need that much
 //         byte actionsUsed = action.getActionsUsed();
-//         if (actionsUsed > _actionsNeededToChangePosition)
-//            actionsUsed = _actionsNeededToChangePosition;
-//         _actionsSpentThisRound += actionsUsed;
+//         if (actionsUsed > actionsNeededToChangePosition)
+//            actionsUsed = actionsNeededToChangePosition;
+//         actionsSpentThisRound += actionsUsed;
 //      }
 //      else
       {
-         _actionsSpentThisRound += action.getActionsUsed();
+         actionsSpentThisRound += action.getActionsUsed();
       }
       if (action.isChannelEnergy()) {
-         _mageSpellPointsAvailable -= action.getActionsUsed();
-         if (_mageSpellPointsAvailable < 0) {
+         mageSpellPointsAvailable -= action.getActionsUsed();
+         if (mageSpellPointsAvailable < 0) {
             DebugBreak.debugBreak();
          }
       }
       if (action.isCompletePriestSpell()) {
          if (!currentSpell.isInate()) {
-            _priestSpellPointsAvailable -= currentSpell.getSpellPoints();
-            if (_priestSpellPointsAvailable < 0) {
+            priestSpellPointsAvailable -= currentSpell.getSpellPoints();
+            if (priestSpellPointsAvailable < 0) {
                DebugBreak.debugBreak();
             }
          }
       }
       if (action.isAttack()) {
-         _attackedThisRound = true;
+         attackedThisRound = true;
       }
-      _movingEvasively = (action.isAdvance() && action.isEvasiveMove());
-      _movedLastAction = action.isAdvance();
+      movingEvasively = (action.isAdvance() && action.isEvasiveMove());
+      movedLastAction = action.isAdvance();
 
       if (action.isFinalDefense()) {
-         _finalDefensiveActionsAvailable += action.getActionsUsed();
+         finalDefensiveActionsAvailable += action.getActionsUsed();
       }
       if (action.isChangePosition()) {
-         setPosition(mapActionPosToPosition(action._positionRequest.getActionType()), arena.getCombatMap(), actor);
+         setPosition(mapActionPosToPosition(action.positionRequest.getActionType()), arena.getCombatMap(), actor);
 //         // Are we in the middle of changing position?
-//         if ((_actionNeededToChangePosition > 0) && (_movingToPosition != _position)) {
+//         if ((actionNeededToChangePosition > 0) && (movingToPosition != position)) {
 //            // allow return to previous position with one action
-//            if (_position == mapActionPosToPosition(action._positionRequest.getAnswerID()))
+//            if (position == mapActionPosToPosition(action.positionRequest.getAnswerID()))
 //            {
-//               _actionsNeededToChangePosition = 0;
-//               _movingToPosition = _position;
+//               actionsNeededToChangePosition = 0;
+//               movingToPosition = position;
 //            }
 //            // allow continue move to next position
-//            else if (_movingToPosition == mapActionPosToPosition(action._positionRequest.getAnswerID()))
+//            else if (movingToPosition == mapActionPosToPosition(action.positionRequest.getAnswerID()))
 //            {
-//               _actionsNeededToChangePosition -= action.getActionsUsed();
-//               if (_actionsNeededToChangePosition <= 0) {
+//               actionsNeededToChangePosition -= action.getActionsUsed();
+//               if (actionsNeededToChangePosition <= 0) {
 //                  // add back any excess actions spent
-//                  _actionsAvailable -= _actionsNeededToChangePosition;
-//                  setPosition(_movingToPosition);
+//                  actionsAvailable -= actionsNeededToChangePosition;
+//                  setPosition(movingToPosition);
 //               }
 //            }
 //         }
 //         else {
 //            // Allow movement to next position
-//            _movingToPosition = mapActionPosToPosition(action._positionRequest.getAnswerID());
-//            _actionsNeededToChangePosition = (byte) (Rules.getActionsToChangePosition() - action.getActionsUsed());
-//            if (_actionsNeededToChangePosition <= 0) {
-//               setPosition(_movingToPosition);
+//            movingToPosition = mapActionPosToPosition(action.positionRequest.getAnswerID());
+//            actionsNeededToChangePosition = (byte) (Rules.getActionsToChangePosition() - action.getActionsUsed());
+//            if (actionsNeededToChangePosition <= 0) {
+//               setPosition(movingToPosition);
 //            }
 //         }
       }
    }
    public void applyHoldMaintenance(RequestGrapplingHoldMaintain holdMaintainenance) {
-      _actionsAvailAudit.append("hold maintain, answerID=").append(holdMaintainenance.getAnswerID());
-      _actionsAvailAudit.append("(").append(holdMaintainenance.getActionsUsed()).append(" actions)");
-      if (_finalDefensiveActionsAvailable > 0) {
-         _finalDefensiveActionsAvailable -= holdMaintainenance.getActionsUsed();
-         if (_finalDefensiveActionsAvailable < 0) {
-            _finalDefensiveActionsAvailable = 0;
+      actionsAvailAudit.append("hold maintain, answerID=").append(holdMaintainenance.getAnswerID());
+      actionsAvailAudit.append("(").append(holdMaintainenance.getActionsUsed()).append(" actions)");
+      if (finalDefensiveActionsAvailable > 0) {
+         finalDefensiveActionsAvailable -= holdMaintainenance.getActionsUsed();
+         if (finalDefensiveActionsAvailable < 0) {
+            finalDefensiveActionsAvailable = 0;
          }
       }
       else {
-         _actionsAvailable -= holdMaintainenance.getActionsUsed();
-         if (_actionsAvailable < 0) {
-            _actionsAvailable = 0;
+         actionsAvailable -= holdMaintainenance.getActionsUsed();
+         if (actionsAvailable < 0) {
+            actionsAvailable = 0;
             DebugBreak.debugBreak();
          }
-         _actionsSpentThisRound += holdMaintainenance.getActionsUsed();
+         actionsSpentThisRound += holdMaintainenance.getActionsUsed();
       }
    }
 
    public void applyDefense(RequestDefense defense) {
-      _actionsAvailAudit.append("defense, answerID=").append(defense.getAnswerID());
+      actionsAvailAudit.append("defense, answerID=").append(defense.getAnswerID());
       DefenseOptions defUsed = new DefenseOptions(defense.getAnswerID());
       byte actionsUsed = defense.getActionsUsed();
-      _actionsAvailAudit.append("(").append(actionsUsed).append(" actions)");
-      if (_finalDefensiveActionsAvailable > 0) {
-         _finalDefensiveActionsAvailable -= actionsUsed;
-         if (_finalDefensiveActionsAvailable < 0) {
-            _finalDefensiveActionsAvailable = 0;
+      actionsAvailAudit.append("(").append(actionsUsed).append(" actions)");
+      if (finalDefensiveActionsAvailable > 0) {
+         finalDefensiveActionsAvailable -= actionsUsed;
+         if (finalDefensiveActionsAvailable < 0) {
+            finalDefensiveActionsAvailable = 0;
          }
       }
       else {
-         _actionsAvailable -= actionsUsed;
-         if (_actionsAvailable < 0) {
-            _actionsAvailable = 0;
+         actionsAvailable -= actionsUsed;
+         if (actionsAvailable < 0) {
+            actionsAvailable = 0;
             DebugBreak.debugBreak("applyDefense: can't use " + actionsUsed +
-                             " actions for " + defense.getAnswer() + " (ID=" + defense.getAnswerID() + ")" +
-                             ", _finalDefensiveActionsAvailable=" + _finalDefensiveActionsAvailable +
-                             "\n_actionsAvailAudit = " + _actionsAvailAudit);
+                                  " actions for " + defense.getAnswer() + " (ID=" + defense.getAnswerID() + ")" +
+                                  ", finalDefensiveActionsAvailable=" + finalDefensiveActionsAvailable +
+                                  "\nactionsAvailAudit = " + actionsAvailAudit);
          }
-         _actionsSpentThisRound += actionsUsed;
+         actionsSpentThisRound += actionsUsed;
       }
-      _defenseOptionsTakenThisRound.add(defUsed);
+      defenseOptionsTakenThisRound.add(defUsed);
       int magicPointsUsed = defUsed.getDefenseMagicPointsUsed();
       // TODO: how to we deal with mage-priests?
       if (magicPointsUsed > 0) {
-         if (_mageSpellPointsAvailable >= magicPointsUsed) {
-            _mageSpellPointsAvailable -= magicPointsUsed;
+         if (mageSpellPointsAvailable >= magicPointsUsed) {
+            mageSpellPointsAvailable -= magicPointsUsed;
          }
-         else if (_priestSpellPointsAvailable >= magicPointsUsed) {
-            _priestSpellPointsAvailable -= magicPointsUsed;
+         else if (priestSpellPointsAvailable >= magicPointsUsed) {
+            priestSpellPointsAvailable -= magicPointsUsed;
          }
          else {
             // neither one can handle the points needed.
             DebugBreak.debugBreak("applyDefense: can't use " + actionsUsed +
-                             " actions for " + defense.getAnswer() + " (ID=" + defense.getAnswerID() + ")" +
-                             ", magicPointsUsed=" + magicPointsUsed +
-                             "_mageSpellPointsAvailable = " + _mageSpellPointsAvailable +
-                             "_priestSpellPointsAvailable = " + _priestSpellPointsAvailable);
-            _mageSpellPointsAvailable = 0;
-            _priestSpellPointsAvailable = 0;
+                                  " actions for " + defense.getAnswer() + " (ID=" + defense.getAnswerID() + ")" +
+                                  ", magicPointsUsed=" + magicPointsUsed +
+                                  "mageSpellPointsAvailable = " + mageSpellPointsAvailable +
+                                  "priestSpellPointsAvailable = " + priestSpellPointsAvailable);
+            mageSpellPointsAvailable = 0;
+            priestSpellPointsAvailable = 0;
          }
       }
    }
@@ -551,24 +551,24 @@ public class Condition extends SerializableObject implements Enums {
 //   public byte[] getSeializeBuffer()
 //   {
 //      byte bitFields = 0;
-//      if (_attackedThisRound)  bitFields |= SERIAL_BIT_AttackedThisRound;
-//      if (_moveComplete)       bitFields |= SERIAL_BIT_MoveComplete;
-//      if (_movingEvasively)    bitFields |= SERIAL_BIT_MovingEvasively;
-//      if (_collapsed)          bitFields |= SERIAL_BIT_Collapsed;
-//      if (_isConscious)        bitFields |= SERIAL_BIT_IsConscious;
-//      if (_isAlive)            bitFields |= SERIAL_BIT_IsAlive;
-//      byte[] buf = new byte[] {   _position,
-//                                  _actionsAvailable,
-//                                  _actionsSpentThisRound,
-//                                  _actionsNeededToChangePosition,
-//                                  _wounds,
-//                                  _bleedRate,
-//                                  _penaltyPain,
-//                                  _penaltyMove,
-//                                  _movingToPosition,
-//                                  _initiative,
-//                                  _movementAvailableThisRound,
-//                                  _movementAvailableEachRound,
+//      if (attackedThisRound)  bitFields |= SERIAL_BIT_AttackedThisRound;
+//      if (moveComplete)       bitFields |= SERIAL_BIT_MoveComplete;
+//      if (movingEvasively)    bitFields |= SERIAL_BIT_MovingEvasively;
+//      if (collapsed)          bitFields |= SERIAL_BIT_Collapsed;
+//      if (isConscious)        bitFields |= SERIAL_BIT_IsConscious;
+//      if (isAlive)            bitFields |= SERIAL_BIT_IsAlive;
+//      byte[] buf = new byte[] {   position,
+//                                  actionsAvailable,
+//                                  actionsSpentThisRound,
+//                                  actionsNeededToChangePosition,
+//                                  wounds,
+//                                  bleedRate,
+//                                  penaltyPain,
+//                                  penaltyMove,
+//                                  movingToPosition,
+//                                  initiative,
+//                                  movementAvailableThisRound,
+//                                  movementAvailableEachRound,
 //                                  bitFields
 //      };
 //      return buf;
@@ -576,41 +576,41 @@ public class Condition extends SerializableObject implements Enums {
    @Override
    public void serializeToStream(DataOutputStream out) {
       try {
-         writeToStream(_actionsAvailable, out);
-         writeToStream(_actionsSpentThisRound, out);
-         writeToStream(_wounds, out);
-         writeToStream(_bleedRate, out);
-         writeToStream(_penaltyPain, out);
-         writeToStream(_penaltyMove, out);
-         writeToStream(_initiative, out);
-         writeToStream(_movementAvailableThisRound, out);
-         writeToStream(_movementAvailableEachRound, out);
+         writeToStream(actionsAvailable, out);
+         writeToStream(actionsSpentThisRound, out);
+         writeToStream(wounds, out);
+         writeToStream(bleedRate, out);
+         writeToStream(penaltyPain, out);
+         writeToStream(penaltyMove, out);
+         writeToStream(initiative, out);
+         writeToStream(movementAvailableThisRound, out);
+         writeToStream(movementAvailableEachRound, out);
          byte bitFields = 0;
-         if (_attackedThisRound) {
+         if (attackedThisRound) {
             bitFields |= SERIAL_BIT_AttackedThisRound;
          }
-         if (_moveComplete) {
+         if (moveComplete) {
             bitFields |= SERIAL_BIT_MoveComplete;
          }
-         if (_movingEvasively) {
+         if (movingEvasively) {
             bitFields |= SERIAL_BIT_MovingEvasively;
          }
-         if (_collapsed) {
+         if (collapsed) {
             bitFields |= SERIAL_BIT_Collapsed;
          }
-         if (_isConscious) {
+         if (isConscious) {
             bitFields |= SERIAL_BIT_IsConscious;
          }
-         if (_isAlive) {
+         if (isAlive) {
             bitFields |= SERIAL_BIT_IsAlive;
          }
          writeToStream(bitFields, out);
-         writeToStream(_defenseOptionsTakenThisRound.getIntValue(), out);
-         writeToStream(_mageSpellPointsAvailable, out);
-         writeToStream(_mageSpellPointsMax, out);
-         writeToStream(_priestSpellPointsAvailable, out);
-         writeToStream(_priestSpellPointsMax, out);
-         _orientation.serializeToStream(out);
+         writeToStream(defenseOptionsTakenThisRound.getIntValue(), out);
+         writeToStream(mageSpellPointsAvailable, out);
+         writeToStream(mageSpellPointsMax, out);
+         writeToStream(priestSpellPointsAvailable, out);
+         writeToStream(priestSpellPointsMax, out);
+         orientation.serializeToStream(out);
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -618,27 +618,27 @@ public class Condition extends SerializableObject implements Enums {
    @Override
    public void serializeFromStream(DataInputStream in) {
       try {
-         _actionsAvailable            = in.readByte();
-         _actionsSpentThisRound       = in.readByte();
-         _wounds                      = in.readByte();
-         _bleedRate                   = in.readByte();
-         _penaltyPain                 = in.readByte();
-         _penaltyMove                 = in.readByte();
-         _initiative                  = in.readByte();
-         _movementAvailableThisRound  = in.readByte();
-         _movementAvailableEachRound  = in.readByte();
+         actionsAvailable = in.readByte();
+         actionsSpentThisRound = in.readByte();
+         wounds = in.readByte();
+         bleedRate = in.readByte();
+         penaltyPain = in.readByte();
+         penaltyMove = in.readByte();
+         initiative = in.readByte();
+         movementAvailableThisRound = in.readByte();
+         movementAvailableEachRound = in.readByte();
          byte bitFields               = in.readByte();
-         _attackedThisRound           = (bitFields & SERIAL_BIT_AttackedThisRound) != 0;
-         _moveComplete                = (bitFields & SERIAL_BIT_MoveComplete) != 0;
-         _movingEvasively             = (bitFields & SERIAL_BIT_MovingEvasively) != 0;
-         _collapsed                   = (bitFields & SERIAL_BIT_Collapsed) != 0;
-         _isConscious                 = (bitFields & SERIAL_BIT_IsConscious) != 0;
-         _isAlive                     = (bitFields & SERIAL_BIT_IsAlive) != 0;
-         _defenseOptionsTakenThisRound = new DefenseOptions(in.readInt());
-         _mageSpellPointsAvailable    = in.readShort();
-         _mageSpellPointsMax          = in.readShort();
-         _priestSpellPointsAvailable  = in.readShort();
-         _priestSpellPointsMax        = in.readShort();
+         attackedThisRound = (bitFields & SERIAL_BIT_AttackedThisRound) != 0;
+         moveComplete = (bitFields & SERIAL_BIT_MoveComplete) != 0;
+         movingEvasively = (bitFields & SERIAL_BIT_MovingEvasively) != 0;
+         collapsed = (bitFields & SERIAL_BIT_Collapsed) != 0;
+         isConscious = (bitFields & SERIAL_BIT_IsConscious) != 0;
+         isAlive = (bitFields & SERIAL_BIT_IsAlive) != 0;
+         defenseOptionsTakenThisRound = new DefenseOptions(in.readInt());
+         mageSpellPointsAvailable = in.readShort();
+         mageSpellPointsMax = in.readShort();
+         priestSpellPointsAvailable = in.readShort();
+         priestSpellPointsMax = in.readShort();
          setOrientation(Orientation.serializeOrientationFromStream(in));
       } catch (IOException e) {
          e.printStackTrace();
@@ -647,74 +647,74 @@ public class Condition extends SerializableObject implements Enums {
    @Override
    public Condition clone()
    {
-      Condition duplicate = new Condition(_orientation);
-      duplicate._actionsAvailable           = _actionsAvailable;
-      duplicate._actionsSpentThisRound      = _actionsSpentThisRound;
-      duplicate._wounds                     = _wounds;
-      duplicate._bleedRate                  = _bleedRate;
-      duplicate._penaltyPain                = _penaltyPain;
-      duplicate._penaltyMove                = _penaltyMove;
-      duplicate._initiative                 = _initiative;
-      duplicate._attackedThisRound          = _attackedThisRound;
-      duplicate._defenseOptionsTakenThisRound = _defenseOptionsTakenThisRound.clone();
-      duplicate._movementAvailableThisRound = _movementAvailableThisRound;
-      duplicate._movementAvailableEachRound = _movementAvailableEachRound;
-      duplicate._moveComplete               = _moveComplete;
-      duplicate._movingEvasively            = _movingEvasively;
-      duplicate._collapsed                  = _collapsed;
-      duplicate._isConscious                = _isConscious;
-      duplicate._isAlive                    = _isAlive;
-      duplicate._mageSpellPointsAvailable   = _mageSpellPointsAvailable;
-      duplicate._mageSpellPointsMax         = _mageSpellPointsMax;
-      duplicate._priestSpellPointsAvailable = _priestSpellPointsAvailable;
-      duplicate._priestSpellPointsMax       = _priestSpellPointsMax;
-      duplicate._woundsList = new ArrayList<>();
-      for (Wound wound : this._woundsList) {
-         duplicate._woundsList.add(wound.clone());
+      Condition duplicate = new Condition(orientation);
+      duplicate.actionsAvailable = actionsAvailable;
+      duplicate.actionsSpentThisRound = actionsSpentThisRound;
+      duplicate.wounds = wounds;
+      duplicate.bleedRate = bleedRate;
+      duplicate.penaltyPain = penaltyPain;
+      duplicate.penaltyMove = penaltyMove;
+      duplicate.initiative = initiative;
+      duplicate.attackedThisRound = attackedThisRound;
+      duplicate.defenseOptionsTakenThisRound = defenseOptionsTakenThisRound.clone();
+      duplicate.movementAvailableThisRound = movementAvailableThisRound;
+      duplicate.movementAvailableEachRound = movementAvailableEachRound;
+      duplicate.moveComplete = moveComplete;
+      duplicate.movingEvasively = movingEvasively;
+      duplicate.collapsed = collapsed;
+      duplicate.isConscious = isConscious;
+      duplicate.isAlive = isAlive;
+      duplicate.mageSpellPointsAvailable = mageSpellPointsAvailable;
+      duplicate.mageSpellPointsMax = mageSpellPointsMax;
+      duplicate.priestSpellPointsAvailable = priestSpellPointsAvailable;
+      duplicate.priestSpellPointsMax = priestSpellPointsMax;
+      duplicate.woundsList = new ArrayList<>();
+      for (Wound wound : this.woundsList) {
+         duplicate.woundsList.add(wound.clone());
       }
-      duplicate.setOrientation(_orientation.clone());
+      duplicate.setOrientation(orientation.clone());
       return duplicate;
    }
 
    @Override
    public String toString() {
-      return ", actionsAvailable: " + _actionsAvailable +
-             ", pain: " + _penaltyPain +
-             ", wounds: " + _wounds +
-             ", bleed: " + _bleedRate +
-             ", movePenalty: " + _penaltyMove +
-             ", actionsSpent: " + _actionsSpentThisRound +
-             ", initiative: " + _initiative +
-             ", attackedThisRound: " + _attackedThisRound +
-             ", defensesOptionsTakenThisRound: " + _defenseOptionsTakenThisRound +
-             ", movementAvailableThisRound: " + _movementAvailableThisRound +
-             ", movementAvailableEachRound:" + _movementAvailableEachRound +
-             ", moveComplete: " + _moveComplete +
-             ", movingEvasively:" + _movingEvasively +
-             ", collapsed: " + _collapsed +
-             ", isConscious: " + _isConscious +
-             ", isAlive: " + _isAlive +
-             ", mageSpellPointsAvailable: " + _mageSpellPointsAvailable +
-             ", mageSpellPointsMax: " + _mageSpellPointsMax +
-             ", priestSpellPointsAvailable: " + _priestSpellPointsAvailable +
-             ", priestSpellPointsMax: " + _priestSpellPointsMax +
-             ", orientation: " + _orientation;
+      return ", actionsAvailable: " + actionsAvailable +
+             ", pain: " + penaltyPain +
+             ", wounds: " + wounds +
+             ", bleed: " + bleedRate +
+             ", movePenalty: " + penaltyMove +
+             ", actionsSpent: " + actionsSpentThisRound +
+             ", initiative: " + initiative +
+             ", attackedThisRound: " + attackedThisRound +
+             ", defensesOptionsTakenThisRound: " + defenseOptionsTakenThisRound +
+             ", movementAvailableThisRound: " + movementAvailableThisRound +
+             ", movementAvailableEachRound:" + movementAvailableEachRound +
+             ", moveComplete: " + moveComplete +
+             ", movingEvasively:" + movingEvasively +
+             ", collapsed: " + collapsed +
+             ", isConscious: " + isConscious +
+             ", isAlive: " + isAlive +
+             ", mageSpellPointsAvailable: " + mageSpellPointsAvailable +
+             ", mageSpellPointsMax: " + mageSpellPointsMax +
+             ", priestSpellPointsAvailable: " + priestSpellPointsAvailable +
+             ", priestSpellPointsMax: " + priestSpellPointsMax +
+             ", orientation: " + orientation;
    }
    public void collapseFromPain(CombatMap map, Character actor)
    {
-      _collapsed = true;
+      collapsed = true;
       setPosition(Position.PRONE_BACK, map, actor);
    }
    public List<Wound> getWoundsList() {
-      return _woundsList;
+      return woundsList;
    }
    public boolean healWound(Wound woundToCure, byte woundReduction, byte bleedingReduction)
    {
       boolean woundCured = false;
-      if (_woundsList.contains(woundToCure)) {
+      if (woundsList.contains(woundToCure)) {
          woundCured = woundToCure.healWound(woundReduction, bleedingReduction);
          if (woundCured) {
-            _woundsList.remove(woundToCure);
+            woundsList.remove(woundToCure);
          }
 
          recomputeWoundEffects();
@@ -729,8 +729,8 @@ public class Condition extends SerializableObject implements Enums {
     * @param woundReduction
     */
    public void regenerateWound(byte woundReduction) {
-      while ((woundReduction > 0) && (_woundsList.size() > 0)) {
-         for (Wound wound : _woundsList) {
+      while ((woundReduction > 0) && (woundsList.size() > 0)) {
+         for (Wound wound : woundsList) {
             byte woundsWoundLevel = wound.getEffectiveWounds();
             if (woundsWoundLevel == 0) {
                // if this wound is just an arm penalty or move penalty,
@@ -745,8 +745,8 @@ public class Condition extends SerializableObject implements Enums {
             woundReduction -= woundsWoundLevel;
             if (wound.healWound((byte) (woundsWoundLevel + (wound.getWounds() - wound.getEffectiveWounds())),
                                 (byte) (woundsWoundLevel + (wound.getBleedRate() - wound.getEffectiveBleedRate())))) {
-               _woundsList.remove(wound);
-               // stop the iteration, since we have modified the _woundsList, and we'd get a ConcurrentModificationException
+               woundsList.remove(wound);
+               // stop the iteration, since we have modified the woundsList, and we'd get a ConcurrentModificationException
                regenerateWound(woundReduction);
                break;
             }
@@ -756,31 +756,31 @@ public class Condition extends SerializableObject implements Enums {
    }
    public void recomputeWoundEffects() {
       // recompute all our penalties, in case something became cured:
-      _wounds = 0;
-      _bleedRate = 0;
-      _penaltyMove = 0;
-      for (Wound wound : _woundsList) {
-         _wounds      += wound.getEffectiveWounds();
-         _bleedRate   += wound.getEffectiveBleedRate();
+      wounds = 0;
+      bleedRate = 0;
+      penaltyMove = 0;
+      for (Wound wound : woundsList) {
+         wounds += wound.getEffectiveWounds();
+         bleedRate += wound.getEffectiveBleedRate();
          // If we are not crippled on a limb, all wounding is additive.
          // If we are crippled, don't adjust the particular penalty.
-         if (_penaltyMove     >=0) {
-            _penaltyMove     += wound.getPenaltyMove();
+         if (penaltyMove >= 0) {
+            penaltyMove += wound.getPenaltyMove();
          }
          // Check for crippling injuries
          if (wound.getPenaltyMove()     < 0) {
-            _penaltyMove = wound.getPenaltyMove();
+            penaltyMove = wound.getPenaltyMove();
          }
       }
    }
    public String regrowLimb(Wound woundToCure)
    {
-      if (_woundsList.contains(woundToCure)) {
+      if (woundsList.contains(woundToCure)) {
          byte origWound          = woundToCure.getEffectiveWounds();
          byte origBleedRate      = woundToCure.getEffectiveBleedRate();
          if (woundToCure.regrowLimb()) {
-            _wounds    -= origWound;
-            _bleedRate -= origBleedRate;
+            wounds -= origWound;
+            bleedRate -= origBleedRate;
             return "";
          }
       }
@@ -789,102 +789,102 @@ public class Condition extends SerializableObject implements Enums {
    }
    public void resetSpellPoints(Advantage advMagicalAptitude, byte divineAffinity, byte divinePower)
    {
-      _priestSpellPointsMax = Rules.getMaxPriestSpellPoints(divineAffinity, divinePower);
+      priestSpellPointsMax = Rules.getMaxPriestSpellPoints(divineAffinity, divinePower);
       short magicalAptitude = 0;
       if (advMagicalAptitude != null) {
          magicalAptitude = (byte) (advMagicalAptitude.getLevel() + 1);
       }
-      _mageSpellPointsMax = Rules.getMaxMageSpellPoint(magicalAptitude);
-      _priestSpellPointsAvailable = _priestSpellPointsMax;
-      _mageSpellPointsAvailable   = _mageSpellPointsMax;
+      mageSpellPointsMax = Rules.getMaxMageSpellPoint(magicalAptitude);
+      priestSpellPointsAvailable = priestSpellPointsMax;
+      mageSpellPointsAvailable = mageSpellPointsMax;
    }
 
    public Facing getFacing() {
-      return _orientation.getFacing();
+      return orientation.getFacing();
    }
    public Orientation getOrientation() {
-      return _orientation;
+      return orientation;
    }
    public boolean isInCoordinates(ArenaCoordinates loc) {
-      return _orientation.isInLocation(loc);
+      return orientation.isInLocation(loc);
    }
    public List<ArenaCoordinates> getCoordinates() {
-      if (_orientation == null) {
+      if (orientation == null) {
          return new ArrayList<>();
       }
-      return _orientation.getCoordinates();
+      return orientation.getCoordinates();
    }
    public ArenaCoordinates getHeadCoordinates() {
-      return _orientation.getHeadCoordinates();
+      return orientation.getHeadCoordinates();
    }
    public ArenaLocation getLimbLocation(LimbType limbType, CombatMap map) {
-      return _orientation.getLimbLocation(limbType, map);
+      return orientation.getLimbLocation(limbType, map);
    }
 
    public List<Orientation> getPossibleAdvanceOrientations(CombatMap map) {
-      return _orientation.getPossibleAdvanceOrientations(map, true/*blockByCharacters*/);
+      return orientation.getPossibleAdvanceOrientations(map, true/*blockByCharacters*/);
    }
    public boolean setHeadLocation(Character character, ArenaLocation headLocation, Facing facing, CombatMap map, Diagnostics diag) {
-      return _orientation.setHeadLocation(character, headLocation, facing, map, diag, true/*allowTwisting*/);
+      return orientation.setHeadLocation(character, headLocation, facing, map, diag, true/*allowTwisting*/);
    }
 //   public boolean setLocations(List<ArenaLocation> newLocations, byte newFacing, CombatMap map, Diagnostics diag) {
-//      return _orientation.setLocations(newLocations, newFacing, map, diag);
+//      return orientation.setLocations(newLocations, newFacing, map, diag);
 //   }
    public boolean setOrientation(Orientation destination) {
-      if (destination.equals(_orientation)) {
+      if (destination.equals(orientation)) {
          return false;
       }
-      _orientation = destination;
+      orientation = destination;
       return true;
    }
    public byte getActionsNeededToChangePosition() {
-      return _orientation.getActionsNeededToChangePosition();
+      return orientation.getActionsNeededToChangePosition();
    }
    public boolean canStand() {
-      return (_penaltyMove >= 0) && (!isCollapsed());
+      return (penaltyMove >= 0) && (!isCollapsed());
    }
    public String getPositionName() {
-      return _orientation.getPositionName();
+      return orientation.getPositionName();
    }
    public byte getPositionAdjustedDefenseOption(DefenseOption defOption, byte def) {
-      return _orientation.getPositionAdjustedDefenseOption(defOption, def);
+      return orientation.getPositionAdjustedDefenseOption(defOption, def);
    }
    public byte getPositionAdjustmentForAttack() {
-      return _orientation.getPositionAdjustmentForAttack();
+      return orientation.getPositionAdjustmentForAttack();
    }
    public Element getXMLObject(Document parentDoc, String newLine) {
       Element mainElement = parentDoc.createElement("Condition");
-      mainElement.setAttribute("actionsAvailable",              String.valueOf(_actionsAvailable));
-      mainElement.setAttribute("finalDefensiveActionsAvailable",String.valueOf(_finalDefensiveActionsAvailable));
-      mainElement.setAttribute("maxActionsPerRound",            String.valueOf(_maxActionsPerRound));
-      mainElement.setAttribute("actionsSpentThisRound",         String.valueOf(_actionsSpentThisRound));
-      mainElement.setAttribute("initiative",                    String.valueOf(_initiative));
-      mainElement.setAttribute("movementAvailableThisRound",    String.valueOf(_movementAvailableThisRound));
-      mainElement.setAttribute("movementAvailableEachRound",    String.valueOf(_movementAvailableEachRound));
-      mainElement.setAttribute("hasMovedThisRound",             String.valueOf(_hasMovedThisRound));
-      mainElement.setAttribute("attackedThisRound",             String.valueOf(_attackedThisRound));
-      mainElement.setAttribute("defenseOptionsTakenThisRound",  String.valueOf(_defenseOptionsTakenThisRound.getIntValue()));
-      mainElement.setAttribute("moveComplete",                  String.valueOf(_moveComplete));
-      mainElement.setAttribute("movingEvasively",               String.valueOf(_movingEvasively));
-      mainElement.setAttribute("movedLastAction",               String.valueOf(_movedLastAction));
-      mainElement.setAttribute("collapsed",                     String.valueOf(_collapsed));
-      mainElement.setAttribute("penaltyPain",                   String.valueOf(_penaltyPain));
-      mainElement.setAttribute("isConscious",                   String.valueOf(_isConscious));
-      mainElement.setAttribute("isAlive",                       String.valueOf(_isAlive));
-      mainElement.setAttribute("priestSpellPointsMax",          String.valueOf(_priestSpellPointsMax));
-      mainElement.setAttribute("mageSpellPointsMax",            String.valueOf(_mageSpellPointsMax));
-      mainElement.setAttribute("priestSpellPointsAvailable",    String.valueOf(_priestSpellPointsAvailable));
-      mainElement.setAttribute("mageSpellPointsAvailable",      String.valueOf(_mageSpellPointsAvailable));
+      mainElement.setAttribute("actionsAvailable",              String.valueOf(actionsAvailable));
+      mainElement.setAttribute("finalDefensiveActionsAvailable",String.valueOf(finalDefensiveActionsAvailable));
+      mainElement.setAttribute("maxActionsPerRound",            String.valueOf(maxActionsPerRound));
+      mainElement.setAttribute("actionsSpentThisRound",         String.valueOf(actionsSpentThisRound));
+      mainElement.setAttribute("initiative",                    String.valueOf(initiative));
+      mainElement.setAttribute("movementAvailableThisRound",    String.valueOf(movementAvailableThisRound));
+      mainElement.setAttribute("movementAvailableEachRound",    String.valueOf(movementAvailableEachRound));
+      mainElement.setAttribute("hasMovedThisRound",             String.valueOf(hasMovedThisRound));
+      mainElement.setAttribute("attackedThisRound",             String.valueOf(attackedThisRound));
+      mainElement.setAttribute("defenseOptionsTakenThisRound",  String.valueOf(defenseOptionsTakenThisRound.getIntValue()));
+      mainElement.setAttribute("moveComplete",                  String.valueOf(moveComplete));
+      mainElement.setAttribute("movingEvasively",               String.valueOf(movingEvasively));
+      mainElement.setAttribute("movedLastAction",               String.valueOf(movedLastAction));
+      mainElement.setAttribute("collapsed",                     String.valueOf(collapsed));
+      mainElement.setAttribute("penaltyPain",                   String.valueOf(penaltyPain));
+      mainElement.setAttribute("isConscious",                   String.valueOf(isConscious));
+      mainElement.setAttribute("isAlive",                       String.valueOf(isAlive));
+      mainElement.setAttribute("priestSpellPointsMax",          String.valueOf(priestSpellPointsMax));
+      mainElement.setAttribute("mageSpellPointsMax",            String.valueOf(mageSpellPointsMax));
+      mainElement.setAttribute("priestSpellPointsAvailable",    String.valueOf(priestSpellPointsAvailable));
+      mainElement.setAttribute("mageSpellPointsAvailable",      String.valueOf(mageSpellPointsAvailable));
 
       mainElement.appendChild(parentDoc.createTextNode(newLine + "  "));
-      mainElement.appendChild(_orientation.getXMLObject(parentDoc, newLine + "  "));
+      mainElement.appendChild(orientation.getXMLObject(parentDoc, newLine + "  "));
       mainElement.appendChild(parentDoc.createTextNode(newLine + "  "));
       Element woundsElement = parentDoc.createElement("Wounds");
       mainElement.appendChild(woundsElement);
       mainElement.appendChild(parentDoc.createTextNode(newLine));
 
-      if (_woundsList.size() > 0) {
-         for (Wound wound : _woundsList) {
+      if (woundsList.size() > 0) {
+         for (Wound wound : woundsList) {
             woundsElement.appendChild(parentDoc.createTextNode(newLine + "    "));
             woundsElement.appendChild(wound.getXMLObject(parentDoc, newLine + "    "));
          }
@@ -901,36 +901,36 @@ public class Condition extends SerializableObject implements Enums {
       if (attributes == null) {
          return false;
       }
-      _actionsAvailable              = Byte.parseByte(attributes.getNamedItem("actionsAvailable").getNodeValue());
-      _finalDefensiveActionsAvailable= Byte.parseByte(attributes.getNamedItem("finalDefensiveActionsAvailable").getNodeValue());
-      _maxActionsPerRound            = Byte.parseByte(attributes.getNamedItem("maxActionsPerRound").getNodeValue());
-      _actionsSpentThisRound         = Byte.parseByte(attributes.getNamedItem("actionsSpentThisRound").getNodeValue());
-      _initiative                    = Byte.parseByte(attributes.getNamedItem("initiative").getNodeValue());
-      _movementAvailableThisRound    = Byte.parseByte(attributes.getNamedItem("movementAvailableThisRound").getNodeValue());
-      _movementAvailableEachRound    = Byte.parseByte(attributes.getNamedItem("movementAvailableEachRound").getNodeValue());
-      _hasMovedThisRound             = Boolean.parseBoolean(attributes.getNamedItem("hasMovedThisRound").getNodeValue());
-      _attackedThisRound             = Boolean.parseBoolean(attributes.getNamedItem("attackedThisRound").getNodeValue());
-      _moveComplete                  = Boolean.parseBoolean(attributes.getNamedItem("moveComplete").getNodeValue());
-      _movingEvasively               = Boolean.parseBoolean(attributes.getNamedItem("movingEvasively").getNodeValue());
-      _movedLastAction               = Boolean.parseBoolean(attributes.getNamedItem("movedLastAction").getNodeValue());
-      _collapsed                     = Boolean.parseBoolean(attributes.getNamedItem("collapsed").getNodeValue());
-      _penaltyPain                   = Byte.parseByte(attributes.getNamedItem("penaltyPain").getNodeValue());
-      _isConscious                   = Boolean.parseBoolean(attributes.getNamedItem("isConscious").getNodeValue());
-      _isAlive                       = Boolean.parseBoolean(attributes.getNamedItem("isAlive").getNodeValue());
-      _priestSpellPointsMax          = Short.parseShort(attributes.getNamedItem("priestSpellPointsMax").getNodeValue());
-      _mageSpellPointsMax            = Short.parseShort(attributes.getNamedItem("mageSpellPointsMax").getNodeValue());
-      _priestSpellPointsAvailable    = Short.parseShort(attributes.getNamedItem("priestSpellPointsAvailable").getNodeValue());
-      _mageSpellPointsAvailable      = Short.parseShort(attributes.getNamedItem("mageSpellPointsAvailable").getNodeValue());
+      actionsAvailable = Byte.parseByte(attributes.getNamedItem("actionsAvailable").getNodeValue());
+      finalDefensiveActionsAvailable = Byte.parseByte(attributes.getNamedItem("finalDefensiveActionsAvailable").getNodeValue());
+      maxActionsPerRound = Byte.parseByte(attributes.getNamedItem("maxActionsPerRound").getNodeValue());
+      actionsSpentThisRound = Byte.parseByte(attributes.getNamedItem("actionsSpentThisRound").getNodeValue());
+      initiative = Byte.parseByte(attributes.getNamedItem("initiative").getNodeValue());
+      movementAvailableThisRound = Byte.parseByte(attributes.getNamedItem("movementAvailableThisRound").getNodeValue());
+      movementAvailableEachRound = Byte.parseByte(attributes.getNamedItem("movementAvailableEachRound").getNodeValue());
+      hasMovedThisRound = Boolean.parseBoolean(attributes.getNamedItem("hasMovedThisRound").getNodeValue());
+      attackedThisRound = Boolean.parseBoolean(attributes.getNamedItem("attackedThisRound").getNodeValue());
+      moveComplete = Boolean.parseBoolean(attributes.getNamedItem("moveComplete").getNodeValue());
+      movingEvasively = Boolean.parseBoolean(attributes.getNamedItem("movingEvasively").getNodeValue());
+      movedLastAction = Boolean.parseBoolean(attributes.getNamedItem("movedLastAction").getNodeValue());
+      collapsed = Boolean.parseBoolean(attributes.getNamedItem("collapsed").getNodeValue());
+      penaltyPain = Byte.parseByte(attributes.getNamedItem("penaltyPain").getNodeValue());
+      isConscious = Boolean.parseBoolean(attributes.getNamedItem("isConscious").getNodeValue());
+      isAlive = Boolean.parseBoolean(attributes.getNamedItem("isAlive").getNodeValue());
+      priestSpellPointsMax = Short.parseShort(attributes.getNamedItem("priestSpellPointsMax").getNodeValue());
+      mageSpellPointsMax = Short.parseShort(attributes.getNamedItem("mageSpellPointsMax").getNodeValue());
+      priestSpellPointsAvailable = Short.parseShort(attributes.getNamedItem("priestSpellPointsAvailable").getNodeValue());
+      mageSpellPointsAvailable = Short.parseShort(attributes.getNamedItem("mageSpellPointsAvailable").getNodeValue());
       Node node = attributes.getNamedItem("defenseOptionsTakenThisRound");
-      _defenseOptionsTakenThisRound  = new DefenseOptions((node == null) ? 0 : Integer.parseInt(node.getNodeValue()));
+      defenseOptionsTakenThisRound = new DefenseOptions((node == null) ? 0 : Integer.parseInt(node.getNodeValue()));
 
-      _woundsList = new ArrayList<>();
+      woundsList = new ArrayList<>();
       NodeList children = element.getChildNodes();
       for (int index=0 ; index<children.getLength() ; index++) {
          Node child = children.item(index);
          if (child.getNodeName().equals("Orientation")) {
-//          _orientation = new Orientation();
-            _orientation.serializeFromXmlObject(child);
+//          orientation = new Orientation();
+            orientation.serializeFromXmlObject(child);
          }
          if (child.getNodeName().equals("Wounds")) {
             NodeList grandChildren = child.getChildNodes();
@@ -939,7 +939,7 @@ public class Condition extends SerializableObject implements Enums {
                if (grandChild.getNodeName().equals("Wound")) {
                   Wound wound = new Wound();
                   wound.serializeFromXmlObject(grandChild);
-                  _woundsList.add(wound);
+                  woundsList.add(wound);
                }
             }
             recomputeWoundEffects();
@@ -948,8 +948,8 @@ public class Condition extends SerializableObject implements Enums {
       return true;
    }
    public void awaken() {
-      if (_isAlive) {
-         _isConscious = true;
+      if (isAlive) {
+         isConscious = true;
       }
    }
 

@@ -36,11 +36,11 @@ public class OrientationReptilian extends OrientationSerpentine
       int pointCount = size;
       DrawnObject charOutlines = new DrawnObject(foreground, background);
       if (character.getRace().hasProperty(Race.PROPERTIES_TAIL)) {
-         if ( _baseSize == 2) {
+         if (baseSize == 2) {
             size *= .5;
             narrowDiameter *= .7;
          }
-         else if ( _baseSize == 3) {
+         else if (baseSize == 3) {
             size *= .7;
             narrowDiameter *= 1.0;
          }
@@ -66,21 +66,21 @@ public class OrientationReptilian extends OrientationSerpentine
    }
    @Override
    public boolean shouldFlipPoints(Limb limb) {
-      return ((limb._limbType == LimbType.LEG_LEFT_2) || (limb._limbType == LimbType.LEG_RIGHT_2));
+      return ((limb.limbType == LimbType.LEG_LEFT_2) || (limb.limbType == LimbType.LEG_RIGHT_2));
    }
 
    @Override
    public double getLimbRotation(Limb limb) {
-      if (limb._limbType == LimbType.LEG_LEFT) {
+      if (limb.limbType == LimbType.LEG_LEFT) {
          return 0-(Math.PI/3);
       }
-      if (limb._limbType == LimbType.LEG_LEFT_2) {
+      if (limb.limbType == LimbType.LEG_LEFT_2) {
          return Math.PI/3;
       }
-      if (limb._limbType == LimbType.LEG_RIGHT) {
+      if (limb.limbType == LimbType.LEG_RIGHT) {
          return Math.PI/3;
       }
-      if (limb._limbType == LimbType.LEG_RIGHT_2) {
+      if (limb.limbType == LimbType.LEG_RIGHT_2) {
          return 0-(Math.PI/3);
       }
       return super.getLimbRotation(limb);
@@ -90,7 +90,7 @@ public class OrientationReptilian extends OrientationSerpentine
       if (limb == null) {
          int yOffset = 0;
          int narrowDiameter = getBodyNarrowDiameter(size);
-         switch (_coordinates.indexOf(loc)) {
+         switch (coordinates.indexOf(loc)) {
             case 0: yOffset = narrowDiameter; break;
             case 1: yOffset = -narrowDiameter; break;
             case 2: yOffset = -(3 * narrowDiameter); break;
@@ -101,12 +101,12 @@ public class OrientationReptilian extends OrientationSerpentine
          return -(size / 10);
       }
       if (limb instanceof Wing) {
-         if (_baseSize == 2) {
+         if (baseSize == 2) {
             return -(size / 2);
          }
       }
       if ((limb instanceof Leg) && (limb.getLocationPair() == Pair.SECOND)) {
-         return (size * _baseSize)/40; // 20 for size = 2, 10 for size = 3
+         return (size * baseSize) / 40; // 20 for size = 2, 10 for size = 3
       }
       return size/24;
    }
@@ -117,11 +117,11 @@ public class OrientationReptilian extends OrientationSerpentine
       }
       if (limb instanceof Leg) {
          int base = size/10;
-         if (_baseSize == 2) {
+         if (baseSize == 2) {
              base = size/6;
          }
          if (limb.getLocationPair() == Pair.SECOND) {
-            base = base * _baseSize;
+            base = base * baseSize;
          }
 
          if (limb.getLocationSide() == Side.LEFT) {
@@ -141,10 +141,10 @@ public class OrientationReptilian extends OrientationSerpentine
          return size/2;
       }
       if (limbType.isTail()) {
-         if ( _baseSize == 2) {
+         if (baseSize == 2) {
              size /= 2;
          }
-         if ( _baseSize == 3) {
+         if (baseSize == 3) {
             return (int) (size * .7);
          }
       }
@@ -159,10 +159,10 @@ public class OrientationReptilian extends OrientationSerpentine
          return (int) ((size * .65) / 2.0);
       }
       if (limbType.isTail()) {
-         if ( _baseSize == 2) {
+         if (baseSize == 2) {
             size *= .7;
          }
-         else if ( _baseSize == 3) {
+         else if (baseSize == 3) {
             return size;
          }
       }

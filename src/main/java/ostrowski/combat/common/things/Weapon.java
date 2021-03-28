@@ -18,39 +18,39 @@ import java.util.List;
  */
 
 public class Weapon extends Thing {
-   public    WeaponStyleAttack[]        _attackStyles;
-   public    WeaponStyleCounterAttack[] _counterattackStyles;
-   public    WeaponStyleAttackGrapple[] _grapplingStyles;
-   public    WeaponStyleParry[]         _parryStyles;
-   protected int                 _size;
-   private   SpecialDamage       _specialDamageModifier    = new SpecialDamage(0);
-   private   String              _specialDamageExplanation = "";
+   public    WeaponStyleAttack[]        attackStyles;
+   public    WeaponStyleCounterAttack[] counterattackStyles;
+   public    WeaponStyleAttackGrapple[] grapplingStyles;
+   public    WeaponStyleParry[]         parryStyles;
+   protected int                        size;
+   private   SpecialDamage              specialDamageModifier    = new SpecialDamage(0);
+   private   String                     specialDamageExplanation = "";
 
    public WeaponStyleAttack[] getAttackStyles() {
-      return _attackStyles;
+      return attackStyles;
    }
    public WeaponStyleAttack getAttackStyle(int index) {
-      if (index < _attackStyles.length) {
-         return _attackStyles[index];
+      if (index < attackStyles.length) {
+         return attackStyles[index];
       }
       System.err.println("asked a " + getName() +" for style #"+index+", which doesn't exist.");
       DebugBreak.debugBreak();
       return null;
    }
    public WeaponStyleAttackGrapple[] getGrapplingStyles() {
-      return _grapplingStyles;
+      return grapplingStyles;
    }
    public WeaponStyleAttackGrapple getGrappleStyle(int index) {
-      if (index < _grapplingStyles.length) {
-         return _grapplingStyles[index];
+      if (index < grapplingStyles.length) {
+         return grapplingStyles[index];
       }
       System.err.println("asked a " + getName() +" for grappling style #"+index+", which doesn't exist.");
       DebugBreak.debugBreak();
       return null;
    }
    public WeaponStyleCounterAttack getCounterAttackStyle(int index) {
-      if (index < _counterattackStyles.length) {
-         return _counterattackStyles[index];
+      if (index < counterattackStyles.length) {
+         return counterattackStyles[index];
       }
       System.err.println("asked a " + getName() +" for counter-attack style #"+index+", which doesn't exist.");
       DebugBreak.debugBreak();
@@ -60,7 +60,7 @@ public class Weapon extends Thing {
    public Weapon() {}
    public Weapon(int size, Race racialBase, double weight, int cost, String name, WeaponStyle[] styleModes) {
       super(name, racialBase, cost, weight, (byte)0/*passiveDefense*/);
-      _size        = size;
+      this.size = size;
       int attackCount = 0;
       int counterattackCount = 0;
       int grappleCount = 0;
@@ -79,10 +79,10 @@ public class Weapon extends Thing {
             parryCount++;
          }
       }
-      _counterattackStyles = new WeaponStyleCounterAttack[counterattackCount];
-      _grapplingStyles     = new WeaponStyleAttackGrapple[grappleCount];
-      _attackStyles        = new WeaponStyleAttack[attackCount];
-      _parryStyles         = new WeaponStyleParry[parryCount];
+      counterattackStyles = new WeaponStyleCounterAttack[counterattackCount];
+      grapplingStyles = new WeaponStyleAttackGrapple[grappleCount];
+      attackStyles = new WeaponStyleAttack[attackCount];
+      parryStyles = new WeaponStyleParry[parryCount];
 
       attackCount        = 0;
       counterattackCount = 0;
@@ -92,70 +92,70 @@ public class Weapon extends Thing {
       for (WeaponStyle element : styleModes) {
          WeaponStyle styleCopy = element.clone();
          if (styleCopy instanceof WeaponStyleCounterAttack) {
-            _counterattackStyles[counterattackCount++] = (WeaponStyleCounterAttack) styleCopy;
+            counterattackStyles[counterattackCount++] = (WeaponStyleCounterAttack) styleCopy;
          }
          else if (styleCopy instanceof WeaponStyleAttackGrapple) {
-            _grapplingStyles[grappleCount++] = (WeaponStyleAttackGrapple) styleCopy;
+            grapplingStyles[grappleCount++] = (WeaponStyleAttackGrapple) styleCopy;
          }
          else if (styleCopy instanceof WeaponStyleAttack) {
-            _attackStyles[attackCount++] = (WeaponStyleAttack) styleCopy;
+            attackStyles[attackCount++] = (WeaponStyleAttack) styleCopy;
          }
          else if (styleCopy instanceof WeaponStyleParry) {
-            _parryStyles[parryCount++] = (WeaponStyleParry) styleCopy;
+            parryStyles[parryCount++] = (WeaponStyleParry) styleCopy;
          }
          styleCopy.setWeapon(this);
       }
    }
    @Override
    public Weapon clone() {
-      WeaponStyle[] styles = new WeaponStyle[_counterattackStyles.length + _grapplingStyles.length + _attackStyles.length + _parryStyles.length];
+      WeaponStyle[] styles = new WeaponStyle[counterattackStyles.length + grapplingStyles.length + attackStyles.length + parryStyles.length];
       int styleCount = 0;
-      for (WeaponStyleAttack _attackStyle : _attackStyles) {
-         styles[styleCount++] = _attackStyle.clone();
+      for (WeaponStyleAttack attackStyle : attackStyles) {
+         styles[styleCount++] = attackStyle.clone();
       }
-      for (WeaponStyleCounterAttack _counterattackStyle : _counterattackStyles) {
-         styles[styleCount++] = _counterattackStyle.clone();
+      for (WeaponStyleCounterAttack counterattackStyle : counterattackStyles) {
+         styles[styleCount++] = counterattackStyle.clone();
       }
-      for (WeaponStyleAttackGrapple _grapplingStyle : _grapplingStyles) {
-         styles[styleCount++] = _grapplingStyle.clone();
+      for (WeaponStyleAttackGrapple grapplingStyle : grapplingStyles) {
+         styles[styleCount++] = grapplingStyle.clone();
       }
-      for (WeaponStyleParry _parryStyle : _parryStyles) {
-         styles[styleCount++] = _parryStyle.clone();
+      for (WeaponStyleParry parryStyle : parryStyles) {
+         styles[styleCount++] = parryStyle.clone();
       }
-      return new Weapon(_size, getRacialBase(), _weight, _cost, _name, styles);
+      return new Weapon(size, getRacialBase(), weight, cost, name, styles);
    }
    @Override
    public void copyData(Thing source) {
       super.copyData(source);
       if (source instanceof Weapon) {
          Weapon weap = (Weapon) source;
-         _size = weap._size;
-         _attackStyles        = new WeaponStyleAttack[weap._attackStyles.length];
-         _counterattackStyles = new WeaponStyleCounterAttack[weap._counterattackStyles.length];
-         _grapplingStyles     = new WeaponStyleAttackGrapple[weap._grapplingStyles.length];
-         _parryStyles         = new WeaponStyleParry[weap._parryStyles.length];
+         size = weap.size;
+         attackStyles = new WeaponStyleAttack[weap.attackStyles.length];
+         counterattackStyles = new WeaponStyleCounterAttack[weap.counterattackStyles.length];
+         grapplingStyles = new WeaponStyleAttackGrapple[weap.grapplingStyles.length];
+         parryStyles = new WeaponStyleParry[weap.parryStyles.length];
 
-         for (int i=0 ; i<_attackStyles.length ; i++) {
-            _attackStyles[i] = (WeaponStyleAttack) weap._attackStyles[i].clone();
+         for (int i = 0; i < attackStyles.length ; i++) {
+            attackStyles[i] = (WeaponStyleAttack) weap.attackStyles[i].clone();
          }
-         for (int i=0 ; i<_parryStyles.length ; i++) {
-            _parryStyles[i] = weap._parryStyles[i].clone();
+         for (int i = 0; i < parryStyles.length ; i++) {
+            parryStyles[i] = weap.parryStyles[i].clone();
          }
-         for (int i=0 ; i<_counterattackStyles.length ; i++) {
-            _counterattackStyles[i] = weap._counterattackStyles[i].clone();
+         for (int i = 0; i < counterattackStyles.length ; i++) {
+            counterattackStyles[i] = weap.counterattackStyles[i].clone();
          }
-         for (int i=0 ; i<_grapplingStyles.length ; i++) {
-            _grapplingStyles[i] = weap._grapplingStyles[i].clone();
+         for (int i = 0; i < grapplingStyles.length ; i++) {
+            grapplingStyles[i] = weap.grapplingStyles[i].clone();
          }
       }
    }
 
    public boolean isUnarmedStyle () {
-      return _size<0;
+      return size < 0;
    }
    @Override
    public String getActiveDefenseName() {
-      if (_parryStyles.length > 0) {
+      if (parryStyles.length > 0) {
          return "parry";
       }
       return null;
@@ -163,8 +163,8 @@ public class Weapon extends Thing {
    @Override
    public List<SkillType> getDefenseSkillTypes() {
       List<SkillType> results = new ArrayList<>();
-      for (WeaponStyleParry element : _parryStyles) {
-         results.add(element._skillType);
+      for (WeaponStyleParry element : parryStyles) {
+         results.add(element.skillType);
       }
       return results;
    }
@@ -172,7 +172,7 @@ public class Weapon extends Thing {
    public byte getBestDefenseOption(Character wielder, LimbType useHand, boolean canUse2Hands, DamageType damType,
                                     boolean isGrappleAttack, short distance) {
       byte bestDef = 0;
-      for (WeaponStyleParry parryStyle : _parryStyles) {
+      for (WeaponStyleParry parryStyle : parryStyles) {
          if ((parryStyle.getHandsRequired() == 1) || (canUse2Hands)) {
             if (parryStyle.getSkillType() == SkillType.Shield) {
                useHand = null;
@@ -199,12 +199,12 @@ public class Weapon extends Thing {
 
    public byte getMinSkillToAttack() {
       byte minSkill = 127;
-      for (WeaponStyleAttack attack : _attackStyles) {
+      for (WeaponStyleAttack attack : attackStyles) {
          if (attack.getMinSkill() < minSkill) {
             minSkill = attack.getMinSkill();
          }
       }
-      for (WeaponStyleAttackGrapple grapple : _grapplingStyles) {
+      for (WeaponStyleAttackGrapple grapple : grapplingStyles) {
          if (grapple.getMinSkill() < minSkill) {
             minSkill = grapple.getMinSkill();
          }
@@ -266,7 +266,7 @@ public class Weapon extends Thing {
    public static void main(String[] args) {
       StringBuilder sb = new StringBuilder();
       sb.append("[");
-      for (SizelessWeapon weapon : Weapons._weaponsList) {
+      for (SizelessWeapon weapon : Weapons.weaponsList) {
          sb.append("{");
          sb.append(" name: '").append(weapon.getName());
          sb.append("', weight: ").append(weapon.getWeight());
@@ -305,7 +305,7 @@ public class Weapon extends Thing {
    // Return true if all weapon styles require both hands.
    public boolean isOnlyTwoHanded()
    {
-      for (WeaponStyleAttack attackStyle : _attackStyles) {
+      for (WeaponStyleAttack attackStyle : attackStyles) {
          if (!attackStyle.isTwoHanded()) {
             return false;
          }
@@ -314,17 +314,17 @@ public class Weapon extends Thing {
    }
    public boolean isTwoHanded(int attackIndex)
    {
-      return _attackStyles[attackIndex].isTwoHanded();
+      return attackStyles[attackIndex].isTwoHanded();
    }
    @Override
    public String toString()
    {
       StringBuilder sb = new StringBuilder();
-      sb.append("Weapon: ").append(_name);
-      sb.append(", size: ").append(_size);
+      sb.append("Weapon: ").append(name);
+      sb.append(", size: ").append(size);
       sb.append(", attacks:{");
-      for (int i=0 ; i<_attackStyles.length ; i++) {
-         sb.append(i).append(':').append(_attackStyles[i]);
+      for (int i = 0; i < attackStyles.length ; i++) {
+         sb.append(i).append(':').append(attackStyles[i]);
       }
       return sb.toString();
    }
@@ -334,7 +334,7 @@ public class Weapon extends Thing {
       return false;
    }
    public boolean isOnlyThrowable() {
-      for (WeaponStyleAttack attack : _attackStyles) {
+      for (WeaponStyleAttack attack : attackStyles) {
          if (!attack.isThrown()) {
             return false;
          }
@@ -345,7 +345,7 @@ public class Weapon extends Thing {
       return getThrownAttackStyle() != null;
    }
    public WeaponStyleAttackThrown getThrownAttackStyle() {
-      for (WeaponStyleAttack attack : _attackStyles) {
+      for (WeaponStyleAttack attack : attackStyles) {
          if (attack.isThrown()) {
             return (WeaponStyleAttackThrown) attack;
          }
@@ -358,7 +358,7 @@ public class Weapon extends Thing {
    }
    public short getWeaponMaxRange(boolean allowRanged, boolean onlyChargeTypes, Character wielder) {
       short maxRange = -1;
-      for (WeaponStyleAttack attackStyle : _attackStyles) {
+      for (WeaponStyleAttack attackStyle : attackStyles) {
          if (attackStyle.getMaxRange() > maxRange) {
             if (!onlyChargeTypes || attackStyle.canCharge(wielder.isMounted(), wielder.getLegCount() > 3)) {
                if (allowRanged || !attackStyle.isRanged()) {
@@ -370,7 +370,7 @@ public class Weapon extends Thing {
             }
          }
       }
-      for (WeaponStyleAttackGrapple grapplingStyle : _grapplingStyles) {
+      for (WeaponStyleAttackGrapple grapplingStyle : grapplingStyles) {
          if (grapplingStyle.getMaxRange() > maxRange) {
             if (!onlyChargeTypes || grapplingStyle.canCharge(wielder.isMounted(), wielder.getLegCount() > 3)) {
                if (allowRanged || !grapplingStyle.isRanged()) {
@@ -387,16 +387,16 @@ public class Weapon extends Thing {
 
    public short getWeaponMinRange(boolean allowRanged, boolean onlyChargeTypes, Character wielder) {
       short minRange = 10000;
-      for (WeaponStyleAttack attackStyle : _attackStyles) {
+      for (WeaponStyleAttack attackStyle : attackStyles) {
          if (attackStyle.getMinRange() < minRange) {
             if (!onlyChargeTypes || attackStyle.canCharge(wielder.isMounted(), wielder.getLegCount() > 3)) {
                if (allowRanged || !attackStyle.isRanged()) {
                   // For Karate kicks, make sure the attacker has at least 2 non-crippled legs.
                   // Wrestling / Brawling skill types can still use knee strikes
-                  if ((_name.equals(NAME_KarateKick)) && (attackStyle.getSkillType() == SkillType.Karate)) {
+                  if ((name.equals(NAME_KarateKick)) && (attackStyle.getSkillType() == SkillType.Karate)) {
                      int uncrippledLegCount = 0;
                      for (Limb limb : wielder.getLimbs()) {
-                        if (limb._limbType.isLeg() && !limb.isCrippled() && !limb.isSevered()) {
+                        if (limb.limbType.isLeg() && !limb.isCrippled() && !limb.isSevered()) {
                            uncrippledLegCount++;
                         }
                      }
@@ -413,7 +413,7 @@ public class Weapon extends Thing {
             }
          }
       }
-      for (WeaponStyleAttackGrapple grapplingStyle : _grapplingStyles) {
+      for (WeaponStyleAttackGrapple grapplingStyle : grapplingStyles) {
          if (grapplingStyle.getMinRange() < minRange) {
             if (allowRanged || !grapplingStyle.isRanged()) {
                if (!onlyChargeTypes || grapplingStyle.canCharge(wielder.isMounted(), wielder.getLegCount() > 3)) {
@@ -439,7 +439,7 @@ public class Weapon extends Thing {
    public byte getWeaponMaxDamage(Character actor)
    {
       byte maxDamage = -127;
-      for (WeaponStyleAttack element : _attackStyles) {
+      for (WeaponStyleAttack element : attackStyles) {
          // bug-fix: If adjustForPain is passed as 'true', then when an attacker is hurt enough that his pain
          //          is greater than his skill, it will appear that he can't attack here.
          if (actor.getSkillLevel(element, false/*adjustForPain*/, null/*useHand*/, true/*sizeAdjust*/, true/*adjustForEncumbrance*/, true/*adjustForHolds*/) > 0) {
@@ -457,18 +457,18 @@ public class Weapon extends Thing {
    }
 
    public int getSize() {
-      return _size;
+      return size;
    }
 
    public void setSpecialDamageModifier(SpecialDamage specialDamageModifier, String specialDamageExplanation) {
-      _specialDamageModifier = specialDamageModifier;
-      _specialDamageExplanation = specialDamageExplanation;
+      this.specialDamageModifier = specialDamageModifier;
+      this.specialDamageExplanation = specialDamageExplanation;
    }
    public SpecialDamage getSpecialDamageModifier() {
-      return _specialDamageModifier;
+      return specialDamageModifier;
    }
    public String getSpecialDamageModifierExplanation() {
-      return _specialDamageExplanation;
+      return specialDamageExplanation;
    }
    public WeaponStyleAttackRanged getRangedStyle() {
       if (this instanceof MissileWeapon) {
@@ -480,10 +480,10 @@ public class Weapon extends Thing {
    @Override
    public byte getHandUseagePenalties(LimbType limbType, Character wielder, SkillType skillType) {
       // nunchucks can be used with either hand:
-      if (_name.equals(NAME_Nunchucks)) {
+      if (name.equals(NAME_Nunchucks)) {
          return 0;
       }
-      if (_name.equals(NAME_Punch)) {
+      if (name.equals(NAME_Punch)) {
          if (skillType != null) {
             if (skillType == SkillType.Boxing) {
                return 0;
@@ -509,45 +509,45 @@ public class Weapon extends Thing {
    }
    public void drawOutline(DrawnObject obj, int size) {
       // the handle should be at (0,0)
-      if (_name.equals(NAME_TwoHandedSword)) {drawSword        (obj, size*1.0, size*1.0);                return;}
-      if (_name.equals(NAME_TwoHandedSword_Fine)) {drawSword   (obj, size*1.0, size*1.0);                return;}
-      if (_name.equals(NAME_BastardSword))   {drawSword        (obj, size*0.9, size*1.0);                return;}
-      if (_name.equals(NAME_BastardSword_Fine))   {drawSword   (obj, size*0.9, size*1.0);                return;}
-      if (_name.equals(NAME_Dagger))         {drawSword        (obj, size*0.5, size*0.75);               return;}
-      if (_name.equals(NAME_Knife))          {drawSword        (obj, size*0.5, size*1.0);                return;}
-      if (_name.equals(NAME_Katana))         {drawSword        (obj, size*0.75,size*0.9);                return;}
-      if (_name.equals(NAME_Katana_Fine))    {drawSword        (obj, size*0.75,size*0.9);                return;}
-      if (_name.equals(NAME_Longsword))      {drawSword        (obj, size*0.8, size*1.0);                return;}
-      if (_name.equals(NAME_Longsword_Fine)) {drawSword        (obj, size*0.8, size*1.0);                return;}
-      if (_name.equals(NAME_Broadsword))     {drawSword        (obj, size*0.8, size*1.2);                return;}
-      if (_name.equals(NAME_Rapier))         {drawSword        (obj, size*0.7, size*0.25);               return;}
-      if (_name.equals(NAME_Shortsword))     {drawSword        (obj, size*0.7, size*1.0);                return;}
-      if (_name.equals(NAME_BlowGun))        {drawClub         (obj, size*0.7, size*0.5, false);         return;}
-      if (_name.equals(NAME_Club))           {drawClub         (obj, size*0.7, size*1.0, false);         return;}
-      if (_name.equals(NAME_Mace))           {drawClub         (obj, size*0.7, size*1.0, true);          return;}
-      if (_name.equals(NAME_Quarterstaff))   {drawQuarterstaff (obj, size*1.0, size*1.0, false);         return;}
-      if (_name.equals(NAME_StaffSling))     {drawQuarterstaff (obj, size*1.0, size*1.0, true);          return;}
-      if (_name.equals(NAME_Sling))          {drawQuarterstaff (obj, size*0.5, size*1.0, true);          return;}
-      if (_name.equals(NAME_Spear))          {drawSpear        (obj, size*1.0, size*1.0);                return;}
-      if (_name.equals(NAME_Javelin))        {drawJavelin      (obj, size*0.9, size*1.0);                return;}
-      if (_name.equals(NAME_GreatAxe))       {drawGreatAxe     (obj, size*1.0, size*0.7, size*1.0, size*1.0, _name); return;}
-      if (_name.equals(NAME_Axe))            {drawGreatAxe     (obj, size*0.7, size*0.7, size*0.7, size*0.7, _name); return;}
-      if (_name.equals(NAME_ThrowingAxe))    {drawGreatAxe     (obj, size*0.7, size*0.7, size*0.7, size*0.7, _name); return;}
-      if (_name.equals(NAME_Halberd))        {drawGreatAxe     (obj, size*1.5, size*0.5, size*0.8, size*0.8, _name); return;}
-      if (_name.equals(NAME_PickAxe))        {drawPickAxe      (obj, size*0.7, size*1.0);                return;}
-      if (_name.equals(NAME_WarHammer))      {drawWarHammerMaul(obj, size*0.7, size*1.0, true);          return;}
-      if (_name.equals(NAME_Maul))           {drawWarHammerMaul(obj, size*0.7, size*1.0, false);         return;}
-      if (_name.equals(NAME_BowComposite))   {drawBow          (obj, size*1.0, size*1.0);                return;}
-      if (_name.equals(NAME_BowLongbow))     {drawBow          (obj, size*1.0, size*1.0);                return;}
-      if (_name.equals(NAME_BowShortbow))    {drawBow          (obj, size*1.0, size*1.0);                return;}
-      if (_name.equals(NAME_Crossbow))       {drawCrossBow     (obj, size*1.0, size*1.0);                return;}
-      if (_name.equals(NAME_CrossbowHeavy))  {drawCrossBow     (obj, size*1.0, size*1.0);                return;}
-      if (_name.equals(NAME_CrossbowLight))  {drawCrossBow     (obj, size*1.0, size*1.0);                return;}
-//      if (_name.equals(NAME_Flail))          {}
-//      if (_name.equals(NAME_Nunchucks))      {}
-//      if (_name.equals(NAME_MorningStar))    {}
-//      if (_name.equals(NAME_ThrowingStar))   {}
-//      if (_name.equals(NAME_ThreePartStaff)) {}
+      if (name.equals(NAME_TwoHandedSword)) {drawSword(obj, size * 1.0, size * 1.0);                return;}
+      if (name.equals(NAME_TwoHandedSword_Fine)) {drawSword(obj, size * 1.0, size * 1.0);                return;}
+      if (name.equals(NAME_BastardSword))   {drawSword(obj, size * 0.9, size * 1.0);                return;}
+      if (name.equals(NAME_BastardSword_Fine))   {drawSword(obj, size * 0.9, size * 1.0);                return;}
+      if (name.equals(NAME_Dagger))         {drawSword(obj, size * 0.5, size * 0.75);               return;}
+      if (name.equals(NAME_Knife))          {drawSword(obj, size * 0.5, size * 1.0);                return;}
+      if (name.equals(NAME_Katana))         {drawSword(obj, size * 0.75, size * 0.9);                return;}
+      if (name.equals(NAME_Katana_Fine))    {drawSword(obj, size * 0.75, size * 0.9);                return;}
+      if (name.equals(NAME_Longsword))      {drawSword(obj, size * 0.8, size * 1.0);                return;}
+      if (name.equals(NAME_Longsword_Fine)) {drawSword(obj, size * 0.8, size * 1.0);                return;}
+      if (name.equals(NAME_Broadsword))     {drawSword(obj, size * 0.8, size * 1.2);                return;}
+      if (name.equals(NAME_Rapier))         {drawSword(obj, size * 0.7, size * 0.25);               return;}
+      if (name.equals(NAME_Shortsword))     {drawSword(obj, size * 0.7, size * 1.0);                return;}
+      if (name.equals(NAME_BlowGun))        {drawClub(obj, size * 0.7, size * 0.5, false);         return;}
+      if (name.equals(NAME_Club))           {drawClub(obj, size * 0.7, size * 1.0, false);         return;}
+      if (name.equals(NAME_Mace))           {drawClub(obj, size * 0.7, size * 1.0, true);          return;}
+      if (name.equals(NAME_Quarterstaff))   {drawQuarterstaff(obj, size * 1.0, size * 1.0, false);         return;}
+      if (name.equals(NAME_StaffSling))     {drawQuarterstaff(obj, size * 1.0, size * 1.0, true);          return;}
+      if (name.equals(NAME_Sling))          {drawQuarterstaff(obj, size * 0.5, size * 1.0, true);          return;}
+      if (name.equals(NAME_Spear))          {drawSpear(obj, size * 1.0, size * 1.0);                return;}
+      if (name.equals(NAME_Javelin))        {drawJavelin(obj, size * 0.9, size * 1.0);                return;}
+      if (name.equals(NAME_GreatAxe))       {drawGreatAxe(obj, size * 1.0, size * 0.7, size * 1.0, size * 1.0, name); return;}
+      if (name.equals(NAME_Axe))            {drawGreatAxe(obj, size * 0.7, size * 0.7, size * 0.7, size * 0.7, name); return;}
+      if (name.equals(NAME_ThrowingAxe))    {drawGreatAxe(obj, size * 0.7, size * 0.7, size * 0.7, size * 0.7, name); return;}
+      if (name.equals(NAME_Halberd))        {drawGreatAxe(obj, size * 1.5, size * 0.5, size * 0.8, size * 0.8, name); return;}
+      if (name.equals(NAME_PickAxe))        {drawPickAxe(obj, size * 0.7, size * 1.0);                return;}
+      if (name.equals(NAME_WarHammer))      {drawWarHammerMaul(obj, size * 0.7, size * 1.0, true);          return;}
+      if (name.equals(NAME_Maul))           {drawWarHammerMaul(obj, size * 0.7, size * 1.0, false);         return;}
+      if (name.equals(NAME_BowComposite))   {drawBow(obj, size * 1.0, size * 1.0);                return;}
+      if (name.equals(NAME_BowLongbow))     {drawBow(obj, size * 1.0, size * 1.0);                return;}
+      if (name.equals(NAME_BowShortbow))    {drawBow(obj, size * 1.0, size * 1.0);                return;}
+      if (name.equals(NAME_Crossbow))       {drawCrossBow(obj, size * 1.0, size * 1.0);                return;}
+      if (name.equals(NAME_CrossbowHeavy))  {drawCrossBow(obj, size * 1.0, size * 1.0);                return;}
+      if (name.equals(NAME_CrossbowLight))  {drawCrossBow(obj, size * 1.0, size * 1.0);                return;}
+//      if (name.equals(NAME_Flail))          {}
+//      if (name.equals(NAME_Nunchucks))      {}
+//      if (name.equals(NAME_MorningStar))    {}
+//      if (name.equals(NAME_ThrowingStar))   {}
+//      if (name.equals(NAME_ThreePartStaff)) {}
       // Default, for now just draw a sword.
       drawSword(obj, size*1.0, size*1.0);
    }
@@ -760,12 +760,12 @@ public class Weapon extends Thing {
    }
 
    public boolean canMeleeAttack() {
-      return _attackStyles.length > 0;
+      return attackStyles.length > 0;
    }
    public boolean canGrappleAttack(Character self) {
 
       int armCount = -1;
-      for (WeaponStyleAttackGrapple grapple : _grapplingStyles ) {
+      for (WeaponStyleAttackGrapple grapple : grapplingStyles) {
          if (self.getSkillLevel(grapple.getSkillType(), null, false/*sizeAdjust*/,
                                 true/*adjustForEncumbrance*/, true/*adjustForHolds*/) >= grapple.getMinSkill()) {
             if (armCount == -1) {
@@ -778,7 +778,7 @@ public class Weapon extends Thing {
    }
 
    public WeaponStyleParry[] getParryStyles() {
-      return _parryStyles;
+      return parryStyles;
    }
 }
 

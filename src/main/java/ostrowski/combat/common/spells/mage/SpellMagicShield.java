@@ -33,7 +33,7 @@ public class SpellMagicShield extends ExpiringMageSpell implements ICastInBattle
    public String describeSpell() {
       Table table = new Table();
       table.addRow(new TableRow(-1, "Power", "Shield type"));
-      for (int p=1 ; p<Shield._shieldList.length ; p++) {
+      for (int p = 1; p<Shield.shieldList.length ; p++) {
          table.addRow(new TableRow(p-1).addHeader("" + p)
                                        .addTD(new TableData(getDescriptionForpower(p)).setAlignLeft()));
       }
@@ -42,12 +42,12 @@ public class SpellMagicShield extends ExpiringMageSpell implements ICastInBattle
              table;
    }
    private static String getDescriptionForpower(int p) {
-      if ((p == 0) || (p >= Shield._shieldList.length)) {
+      if ((p == 0) || (p >= Shield.shieldList.length)) {
          return "";
       }
-      Shield shield = Shield._shieldList[p];
+      Shield shield = Shield.shieldList[p];
       if (shield != null) {
-         return shield._name + " (PD " + shield._passiveDefense + ")";
+         return shield.name + " (PD " + shield.passiveDefense + ")";
       }
       return "";
    }
@@ -68,9 +68,9 @@ public class SpellMagicShield extends ExpiringMageSpell implements ICastInBattle
          case 5: shieldType = "Tower Shield"; break;
       }
       Shield magicShield = Shield.getShield(shieldType, getCaster().getRace());
-      magicShield._name   = "Magic " + shieldType;
-      magicShield._weight = 0;
-      magicShield._cost   = 1;// don't set to zero, because that causes isReal() to return false.
+      magicShield.name = "Magic " + shieldType;
+      magicShield.weight = 0;
+      magicShield.cost = 1;// don't set to zero, because that causes isReal() to return false.
       hand.setHeldThing(magicShield, getCaster());
       getCaster().refreshDefenses();
    }

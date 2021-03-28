@@ -16,11 +16,11 @@ import java.util.TreeSet;
 
 public class CharacterFile
 {
-   public final  HashMap<String, Character> _nameToCharMap = new HashMap<>();
-   private final String                     _directory;
+   public final  HashMap<String, Character> nameToCharMap = new HashMap<>();
+   private final String                     directory;
 
    public CharacterFile(String fileName) {
-      _directory = "Characters";
+      directory = "Characters";
       loadNameToCharMapFromFile();
    }
 
@@ -43,7 +43,7 @@ public class CharacterFile
          sourceFile.delete();
          return;
       }
-      File sourceDir = new File(_directory);
+      File sourceDir = new File(directory);
       if (sourceDir.exists() && sourceDir.isDirectory()) {
          File[] charFiles = sourceDir.listFiles();
          if (charFiles != null) {
@@ -63,7 +63,7 @@ public class CharacterFile
    }
 
    public void writeNameToCharMapToFile(String characterName, boolean overwriteOldCharactes) {
-      File sourceDir = new File(_directory);
+      File sourceDir = new File(directory);
       try {
          if ((!sourceDir.exists()) || (!sourceDir.isDirectory())) {
             if (sourceDir.exists()) {
@@ -73,7 +73,7 @@ public class CharacterFile
             }
             sourceDir.mkdirs();
          }
-         File destFile = new File(_directory + File.separator + characterName + ".xml");
+         File destFile = new File(directory + File.separator + characterName + ".xml");
          if (destFile.exists()) {
             if (!overwriteOldCharactes) {
                return;
@@ -82,7 +82,7 @@ public class CharacterFile
          }
          destFile.createNewFile();
          if (destFile.exists() && destFile.canWrite()) {
-            Character character = _nameToCharMap.get(characterName.toLowerCase());
+            Character character = nameToCharMap.get(characterName.toLowerCase());
             if (character != null) {
                character.serializeToFile(destFile);
             }
@@ -93,11 +93,11 @@ public class CharacterFile
    }
 
    public List<String> getCharacterNames() {
-      TreeSet<String> names = new TreeSet<>(_nameToCharMap.keySet());
-      List<String> strNames = new ArrayList<>(_nameToCharMap.size());
+      TreeSet<String> names = new TreeSet<>(nameToCharMap.keySet());
+      List<String> strNames = new ArrayList<>(nameToCharMap.size());
       for (String name : names) {
-         Character combatant = _nameToCharMap.get(name);
-         if (CombatServer._isServer || !combatant.getRace().isNpc()) {
+         Character combatant = nameToCharMap.get(name);
+         if (CombatServer.isServer || !combatant.getRace().isNpc()) {
             strNames.add(combatant.getName());
          }
       }
@@ -105,15 +105,15 @@ public class CharacterFile
    }
 
    public Character delCharacter(String name) {
-      return _nameToCharMap.remove(name.toLowerCase());
+      return nameToCharMap.remove(name.toLowerCase());
    }
 
    public Character getCharacter(String name) {
       List<Character> charactersMatchingName = new ArrayList<>();
       String lowerCaseName = name.toLowerCase();
-      for (String charName : _nameToCharMap.keySet()) {
+      for (String charName : nameToCharMap.keySet()) {
          if (lowerCaseName.contains(charName.toLowerCase())) {
-            Character character = _nameToCharMap.get(charName);
+            Character character = nameToCharMap.get(charName);
             if (character != null) {
                charactersMatchingName.add(character);
             }
@@ -136,7 +136,7 @@ public class CharacterFile
    }
 
    public Character putCharacter(Character character) {
-      return _nameToCharMap.put(character.getName().toLowerCase(), character.clone());
+      return nameToCharMap.put(character.getName().toLowerCase(), character.clone());
    }
 
 }

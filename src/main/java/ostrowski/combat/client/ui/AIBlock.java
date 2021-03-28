@@ -18,11 +18,11 @@ import ostrowski.ui.Helper;
 
 public class AIBlock extends Helper implements IUIBlock, ModifyListener {
 
-   final   CharacterDisplay _display;
-   private Combo            _aiSelection;
+   final   CharacterDisplay display;
+   private Combo            aiSelection;
 
    public AIBlock(CharacterDisplay display) {
-      _display = display;
+      this.display = display;
    }
 
    @Override
@@ -35,9 +35,9 @@ public class AIBlock extends Helper implements IUIBlock, ModifyListener {
          AIs.add("AI - " + aiType.name);
       }
 
-      _aiSelection = createCombo(group, SWT.READ_ONLY, 1, AIs);
-      _aiSelection.select(0);
-      _aiSelection.addModifyListener(this);
+      aiSelection = createCombo(group, SWT.READ_ONLY, 1, AIs);
+      aiSelection.select(0);
+      aiSelection.addModifyListener(this);
    }
 
    @Override
@@ -54,23 +54,23 @@ public class AIBlock extends Helper implements IUIBlock, ModifyListener {
 
    public void setAI(boolean aiOn) {
        int newSelIndex = aiOn ? 1 : 0;
-       if (newSelIndex != _aiSelection.getSelectionIndex()) {
-         _aiSelection.select(newSelIndex);
+       if (newSelIndex != aiSelection.getSelectionIndex()) {
+         aiSelection.select(newSelIndex);
       }
    }
    @Override
    public void modifyText(ModifyEvent e) {
-      if (!CharacterWidget._inModify) {
-         CharacterWidget._inModify = true;
-         if (e.widget == _aiSelection) {
-            int selectedIndex = _aiSelection.getSelectionIndex();
-            String aiEngine = _aiSelection.getItem(selectedIndex);
+      if (!CharacterWidget.inModify) {
+         CharacterWidget.inModify = true;
+         if (e.widget == aiSelection) {
+            int selectedIndex = aiSelection.getSelectionIndex();
+            String aiEngine = aiSelection.getItem(selectedIndex);
             if (aiEngine.startsWith("AI - ")) {
                aiEngine = aiEngine.replace("AI - ", "");
             }
-            _display.setAIEngine(aiEngine);
+            display.setAIEngine(aiEngine);
          }
-         CharacterWidget._inModify = false;
+         CharacterWidget.inModify = false;
       }
    }
 

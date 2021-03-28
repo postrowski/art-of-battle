@@ -11,64 +11,64 @@ import java.util.List;
 import java.util.TreeSet;
 
 public class MageSpells {
-   static final Collection<MageSpell> _spellsList = new TreeSet<>();
+   static final Collection<MageSpell> spellsList = new TreeSet<>();
    static {
-      _spellsList.add(new SpellAffectArea());
-      _spellsList.add(new SpellArmor());
-      _spellsList.add(new SpellBlockAttack());
-      _spellsList.add(new SpellBlockSpell());
-      _spellsList.add(new SpellBlockThought());
-      _spellsList.add(new SpellBlur());
-      _spellsList.add(new SpellCausePain());
-      _spellsList.add(new SpellCauseWound());
-      _spellsList.add(new SpellControlCharge());
-      _spellsList.add(new SpellControlFire());
-      _spellsList.add(new SpellControlLight());
-      _spellsList.add(new SpellControlMind());
-      _spellsList.add(new SpellControlTemperature());
-      _spellsList.add(new SpellControlTime());
-      _spellsList.add(new SpellCreateAir());
-      _spellsList.add(new SpellCreateDarkness());
-      _spellsList.add(new SpellCreateEarth());
-      _spellsList.add(new SpellCreateElectricity());
-      _spellsList.add(new SpellCreateFire());
-      _spellsList.add(new SpellCreateForce());
-      _spellsList.add(new SpellCreateLight());
-      _spellsList.add(new SpellCreateRope());
-      _spellsList.add(new SpellCreateWater());
-      _spellsList.add(new SpellDetectDisturbance());
-      _spellsList.add(new SpellDetectObject());
-      _spellsList.add(new SpellFireball());
-      _spellsList.add(new SpellFlameJet());
-      _spellsList.add(new SpellFlamingWeapon());
-      _spellsList.add(new SpellFlamingMissileWeapon());
-      _spellsList.add(new SpellFlight());
-      _spellsList.add(new SpellFreezeArea());
-      _spellsList.add(new SpellGlue());
-      _spellsList.add(new SpellHarden());
-      _spellsList.add(new SpellIceDaggers());
-      _spellsList.add(new SpellImmobilize());
-      _spellsList.add(new SpellLevitate());
-      _spellsList.add(new SpellLightning());
-      _spellsList.add(new SpellMagicMissile());
-      _spellsList.add(new SpellMagicShield());
-      _spellsList.add(new SpellMendObjects());
-      _spellsList.add(new SpellMissileShield());
-      _spellsList.add(new SpellPush());
-      _spellsList.add(new SpellResistPain());
-      _spellsList.add(new SpellReverseMissile());
-      _spellsList.add(new SpellShockingGrasp());
-      _spellsList.add(new SpellSlow());
-      _spellsList.add(new SpellSpeed());
-      _spellsList.add(new SpellSpiderWeb());
-      _spellsList.add(new SpellStrength());
-      _spellsList.add(new SpellSuggestion());
-      _spellsList.add(new SpellThrowSpell());
-      _spellsList.add(new SpellTrip());
-      _spellsList.add(new SpellWaterJet());
-      _spellsList.add(new SpellWallOfFire());
-      _spellsList.add(new SpellWeaken());
-      _spellsList.add(new SpellWind());
+      spellsList.add(new SpellAffectArea());
+      spellsList.add(new SpellArmor());
+      spellsList.add(new SpellBlockAttack());
+      spellsList.add(new SpellBlockSpell());
+      spellsList.add(new SpellBlockThought());
+      spellsList.add(new SpellBlur());
+      spellsList.add(new SpellCausePain());
+      spellsList.add(new SpellCauseWound());
+      spellsList.add(new SpellControlCharge());
+      spellsList.add(new SpellControlFire());
+      spellsList.add(new SpellControlLight());
+      spellsList.add(new SpellControlMind());
+      spellsList.add(new SpellControlTemperature());
+      spellsList.add(new SpellControlTime());
+      spellsList.add(new SpellCreateAir());
+      spellsList.add(new SpellCreateDarkness());
+      spellsList.add(new SpellCreateEarth());
+      spellsList.add(new SpellCreateElectricity());
+      spellsList.add(new SpellCreateFire());
+      spellsList.add(new SpellCreateForce());
+      spellsList.add(new SpellCreateLight());
+      spellsList.add(new SpellCreateRope());
+      spellsList.add(new SpellCreateWater());
+      spellsList.add(new SpellDetectDisturbance());
+      spellsList.add(new SpellDetectObject());
+      spellsList.add(new SpellFireball());
+      spellsList.add(new SpellFlameJet());
+      spellsList.add(new SpellFlamingWeapon());
+      spellsList.add(new SpellFlamingMissileWeapon());
+      spellsList.add(new SpellFlight());
+      spellsList.add(new SpellFreezeArea());
+      spellsList.add(new SpellGlue());
+      spellsList.add(new SpellHarden());
+      spellsList.add(new SpellIceDaggers());
+      spellsList.add(new SpellImmobilize());
+      spellsList.add(new SpellLevitate());
+      spellsList.add(new SpellLightning());
+      spellsList.add(new SpellMagicMissile());
+      spellsList.add(new SpellMagicShield());
+      spellsList.add(new SpellMendObjects());
+      spellsList.add(new SpellMissileShield());
+      spellsList.add(new SpellPush());
+      spellsList.add(new SpellResistPain());
+      spellsList.add(new SpellReverseMissile());
+      spellsList.add(new SpellShockingGrasp());
+      spellsList.add(new SpellSlow());
+      spellsList.add(new SpellSpeed());
+      spellsList.add(new SpellSpiderWeb());
+      spellsList.add(new SpellStrength());
+      spellsList.add(new SpellSuggestion());
+      spellsList.add(new SpellThrowSpell());
+      spellsList.add(new SpellTrip());
+      spellsList.add(new SpellWaterJet());
+      spellsList.add(new SpellWallOfFire());
+      spellsList.add(new SpellWeaken());
+      spellsList.add(new SpellWind());
    }
 
    static {
@@ -77,7 +77,7 @@ public class MageSpells {
       //   2) Each spell that requires another spell, also requires the colleges used by the other spell(s)
       //   3) Each spell that requires another spell, also requires the spells required by the first spell
       StringBuilder problems = new StringBuilder();
-      for (MageSpell spell : _spellsList) {
+      for (MageSpell spell : spellsList) {
          // If this assumption isn't true, then the code in Spell.getEffectiveness needs to change:
          if (spell.isDefendable() != ((spell instanceof MissileMageSpell) || (spell instanceof SpellSpiderWeb))) {
             problems.append(spell.getName()).append(".isDefendable != (Missile || SpiderWeb)");
@@ -85,13 +85,13 @@ public class MageSpells {
 
          StringBuilder misssingCollegeProblems = new StringBuilder();
          StringBuilder misssingSpellProblems = new StringBuilder();
-         for (Class<MageSpell> prerequisiteSpellClass : spell._prerequisiteSpells) {
+         for (Class<MageSpell> prerequisiteSpellClass : spell.prerequisiteSpells) {
             try {
                MageSpell prerequisiteSpell = prerequisiteSpellClass.getDeclaredConstructor().newInstance();
                //  1) Each spell that requires another spell, also requires the colleges used by the other spell(s)
-               for (MageCollege prerequisiteSpellsColleges : prerequisiteSpell._prerequisiteColleges) {
+               for (MageCollege prerequisiteSpellsColleges : prerequisiteSpell.prerequisiteColleges) {
                   boolean collegeFound = false;
-                  for (MageCollege myColleges : spell._prerequisiteColleges) {
+                  for (MageCollege myColleges : spell.prerequisiteColleges) {
                      if (myColleges.getName().equals(prerequisiteSpellsColleges.getName())) {
                         collegeFound = true;
                         break;
@@ -113,12 +113,12 @@ public class MageSpells {
             }
          }
          // 2) Each spell that requires another spell, also requires the spells required by the first spell
-         for (Class<MageSpell> prerequisiteSpellClassI : spell._prerequisiteSpells) {
+         for (Class<MageSpell> prerequisiteSpellClassI : spell.prerequisiteSpells) {
             try {
                MageSpell prerequisiteSpell = prerequisiteSpellClassI.getDeclaredConstructor().newInstance();
-               for (Class<MageSpell> prereqPrereqSpellClass : prerequisiteSpell._prerequisiteSpells) {
+               for (Class<MageSpell> prereqPrereqSpellClass : prerequisiteSpell.prerequisiteSpells) {
                   boolean spellFound = false;
-                  for (Class<MageSpell> prerequisiteSpellClassJ : spell._prerequisiteSpells) {
+                  for (Class<MageSpell> prerequisiteSpellClassJ : spell.prerequisiteSpells) {
                      if (prerequisiteSpellClassJ == prereqPrereqSpellClass) {
                         spellFound = true;
                         break;
@@ -156,7 +156,7 @@ public class MageSpells {
    }
    static public MageSpell getSpell(String name) {
       if (name != null) {
-         for (MageSpell element : _spellsList) {
+         for (MageSpell element : spellsList) {
             if (element.getName().equalsIgnoreCase(name)) {
                return (MageSpell) element.clone();
             }
@@ -167,14 +167,14 @@ public class MageSpells {
 
    public static List<String> getSpellNames() {
       List<String> list = new ArrayList<>();
-      for (MageSpell element : _spellsList) {
+      for (MageSpell element : spellsList) {
          list.add(element.getName());
       }
       return list;
    }
 
    protected static String getSpellGrimioreForHTML() {
-      return Spell.getSpellGrimioreForHTML(_spellsList);
+      return Spell.getSpellGrimioreForHTML(spellsList);
    }
 
 }

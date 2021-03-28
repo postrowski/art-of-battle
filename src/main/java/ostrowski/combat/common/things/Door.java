@@ -13,8 +13,8 @@ import ostrowski.combat.common.enums.TerrainWall;
 
 public class Door extends Wall implements Enums
 {
-   public DoorState _doorState = DoorState.CLOSED;
-   public String _keyCode = "";
+   public DoorState doorState = DoorState.CLOSED;
+   public String    keyCode   = "";
 
    public Door() {
       // default 'ctor used for serialization
@@ -27,18 +27,18 @@ public class Door extends Wall implements Enums
    }
    public Door(String name, double weight, DoorState doorState, String keyCode, TerrainWall orientation) {
       super(name, weight, orientation);
-      _doorState = doorState;
-      _keyCode = keyCode;
+      this.doorState = doorState;
+      this.keyCode = keyCode;
    }
 
    public boolean equals(Door other) {
       if (other == null) {
          return false;
       }
-      if (_doorState    != other._doorState) {
+      if (doorState != other.doorState) {
          return false;
       }
-      if (!_keyCode.equals(other._keyCode)) {
+      if (!keyCode.equals(other.keyCode)) {
          return false;
       }
       return super.equals(other);
@@ -50,8 +50,8 @@ public class Door extends Wall implements Enums
       super.copyData(source);
       if (source instanceof Door) {
          Door doorSource = (Door) source;
-         _doorState = doorSource._doorState;
-         _keyCode = doorSource._keyCode;
+         doorState = doorSource.doorState;
+         keyCode = doorSource.keyCode;
       }
    }
    @Override
@@ -59,8 +59,8 @@ public class Door extends Wall implements Enums
    {
       super.serializeFromStream(in);
       try {
-         _doorState   = DoorState.getByValue(readInt(in));
-         _keyCode     = readString(in);
+         doorState = DoorState.getByValue(readInt(in));
+         keyCode = readString(in);
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -70,8 +70,8 @@ public class Door extends Wall implements Enums
    {
       super.serializeToStream(out);
       try {
-         writeToStream(_doorState.value, out);
-         writeToStream(_keyCode, out);
+         writeToStream(doorState.value, out);
+         writeToStream(keyCode, out);
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -79,7 +79,7 @@ public class Door extends Wall implements Enums
    @Override
    public String toString()
    {
-      switch (_doorState) {
+      switch (doorState) {
          case CLOSED:           return "Door: closed";
          case OPEN:             return "Door: open";
          case LOCKED:           return "Door: locked";
@@ -91,43 +91,43 @@ public class Door extends Wall implements Enums
    }
    @Override
    public Door clone() {
-      return new Door(_name, _weight, _doorState, _keyCode, _orientation);
+      return new Door(name, weight, doorState, keyCode, orientation);
    }
 
    public boolean isOpen() {
-      return (_doorState == DoorState.OPEN) || (_doorState == DoorState.BROKEN);
+      return (doorState == DoorState.OPEN) || (doorState == DoorState.BROKEN);
    }
    public boolean isLocked() {
-      return (_doorState == DoorState.LOCKED);
+      return (doorState == DoorState.LOCKED);
    }
    public boolean isHalfHeightWall() {
-      return (_doorState == DoorState.HALF_HEIGHT_WALL);
+      return (doorState == DoorState.HALF_HEIGHT_WALL);
    }
 
    public boolean close() {
-      if (_doorState == DoorState.OPEN) {
-         _doorState = DoorState.CLOSED;
+      if (doorState == DoorState.OPEN) {
+         doorState = DoorState.CLOSED;
          return true;
       }
       return false;
    }
    public boolean open() {
-      if (_doorState == DoorState.CLOSED) {
-         _doorState = DoorState.OPEN;
+      if (doorState == DoorState.CLOSED) {
+         doorState = DoorState.OPEN;
          return true;
       }
       return false;
    }
    public boolean lock() {
-      if (_doorState == DoorState.CLOSED) {
-         _doorState = DoorState.LOCKED;
+      if (doorState == DoorState.CLOSED) {
+         doorState = DoorState.LOCKED;
          return true;
       }
       return false;
    }
    public boolean unlock() {
-      if (_doorState == DoorState.LOCKED) {
-         _doorState = DoorState.CLOSED;
+      if (doorState == DoorState.LOCKED) {
+         doorState = DoorState.CLOSED;
          return true;
       }
       return false;

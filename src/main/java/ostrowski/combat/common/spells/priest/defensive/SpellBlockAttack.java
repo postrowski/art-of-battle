@@ -32,10 +32,10 @@ public class SpellBlockAttack extends InstantaneousPriestSpell
 
    @Override
    public byte getActiveDefensiveTN(byte actionsSpent, Character caster) {
-      if ((_caster != null) && (_caster != caster)) {
+      if ((this.caster != null) && (this.caster != caster)) {
          DebugBreak.debugBreak();
       }
-      _caster = caster;
+      this.caster = caster;
       return (byte) (getCastingLevel() * actionsSpent);
    }
    @Override

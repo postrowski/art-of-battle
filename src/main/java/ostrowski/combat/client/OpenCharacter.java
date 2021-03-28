@@ -34,37 +34,39 @@ import ostrowski.combat.server.CombatServer;
 
 public class OpenCharacter extends Dialog implements MouseListener
 {
-   private Shell        _shell;
-   public CharacterFile _charFile;
-   public String        _selectedName = null;
+   private Shell         shell;
+   public  CharacterFile charFile;
+   public  String        selectedName = null;
+   int     currentSortColumn = -1;
+   boolean ascending         = true;
 
    public enum ExitButton {
       Open, Copy, Cancel
    }
 
-   public ExitButton _exitButton  = ExitButton.Cancel;
+   public ExitButton exitButton = ExitButton.Cancel;
 
    Button            openButton   = null;
    Button            copyButton   = null;
    Button            deleteButton = null;
    Button            cancelButton = null;
 
-   public Table      _table       = null;
+   public Table table = null;
 
    public OpenCharacter(Shell parent, CharacterFile charFile, int style) {
       super(parent, style);
 
-      _charFile = charFile;
+      this.charFile = charFile;
 
-      _shell = new Shell(parent.getDisplay());
-      _shell.setText(getText());
+      shell = new Shell(parent.getDisplay());
+      shell.setText(getText());
       GridLayout gridLayout = new GridLayout(3/*columns*/, false/*sameWidth*/);
-      _shell.setLayout(gridLayout);
+      shell.setLayout(gridLayout);
 
-      _shell.setText("Character selection");
+      shell.setText("Character selection");
 
       // top row
-      Label label = new Label(_shell, SWT.NONE);
+      Label label = new Label(shell, SWT.NONE);
       GridData data = new GridData(GridData.FILL_HORIZONTAL);
       data.horizontalSpan = 3;
       data.grabExcessVerticalSpace = false;
@@ -72,7 +74,7 @@ public class OpenCharacter extends Dialog implements MouseListener
       label.setLayoutData(data);
 
       // second row
-      label = new Label(_shell, SWT.NONE);
+      label = new Label(shell, SWT.NONE);
       label.setText("     ");
       data = new GridData(GridData.FILL_HORIZONTAL);
       data.minimumWidth = 25;
@@ -80,13 +82,13 @@ public class OpenCharacter extends Dialog implements MouseListener
       data.grabExcessHorizontalSpace = false;
       label.setLayoutData(data);
 
-      buildTable(_shell);
+      buildTable(shell);
       data = new GridData(GridData.FILL_HORIZONTAL);
       data.grabExcessVerticalSpace = true;
       data.grabExcessHorizontalSpace = true;
-      _table.setLayoutData(data);
+      table.setLayoutData(data);
 
-      label = new Label(_shell, SWT.NONE);
+      label = new Label(shell, SWT.NONE);
       label.setText("     ");
       data = new GridData(GridData.FILL_HORIZONTAL);
       data.minimumWidth = 25;
@@ -95,12 +97,12 @@ public class OpenCharacter extends Dialog implements MouseListener
       label.setLayoutData(data);
 
       // third row
-      label = new Label(_shell, SWT.NONE);
+      label = new Label(shell, SWT.NONE);
       data = new GridData(GridData.FILL_HORIZONTAL);
       label.setLayoutData(data);
       data.grabExcessVerticalSpace = false;
 
-      Composite buttonComp = new Composite(_shell, SWT.NONE);
+      Composite buttonComp = new Composite(shell, SWT.NONE);
       buttonComp.setLayout(new FillLayout());
       openButton = new Button(buttonComp, SWT.FLAT);
       openButton.setText("Open");
@@ -117,9 +119,9 @@ public class OpenCharacter extends Dialog implements MouseListener
 
       setButtonsEnabledState(false);
 
-      _table.addMouseListener(this);
+      table.addMouseListener(this);
 
-      _table.addSelectionListener(new SelectionAdapter() {
+      table.addSelectionListener(new SelectionAdapter() {
          @Override
          public void widgetSelected(SelectionEvent e) {
             setButtonsEnabledState(true);
@@ -135,35 +137,35 @@ public class OpenCharacter extends Dialog implements MouseListener
          @Override
          public void widgetSelected(SelectionEvent e) {
             // open button clicked:
-            _exitButton = ExitButton.Open;
-            _selectedName = _table.getSelection()[0].getText();
-            _shell.dispose();
+            exitButton = ExitButton.Open;
+            selectedName = table.getSelection()[0].getText();
+            shell.dispose();
          }
       });
       copyButton.addSelectionListener(new SelectionAdapter() {
          @Override
          public void widgetSelected(SelectionEvent e) {
             // copy button clicked:
-            _exitButton = ExitButton.Copy;
-            _selectedName = _table.getSelection()[0].getText();
-            _shell.dispose();
+            exitButton = ExitButton.Copy;
+            selectedName = table.getSelection()[0].getText();
+            shell.dispose();
          }
       });
       deleteButton.addSelectionListener(new SelectionAdapter() {
          @Override
          public void widgetSelected(SelectionEvent e) {
             // delete button clicked:
-            String selectedName = _table.getSelection()[0].getText();
-            _charFile.delCharacter(selectedName);
-            if (CombatServer._isServer) {
+            String selectedName = table.getSelection()[0].getText();
+            OpenCharacter.this.charFile.delCharacter(selectedName);
+            if (CombatServer.isServer) {
                CombatServer._this.removeCharacter(selectedName);
             }
-            TableItem[] tableItem = _table.getSelection();
-            for (int i = 0; i < _table.getItemCount(); i++) {
-               TableItem row = _table.getItem(i);
+            TableItem[] tableItem = table.getSelection();
+            for (int i = 0; i < table.getItemCount(); i++) {
+               TableItem row = table.getItem(i);
                if (row == tableItem[0]) {
-                  _table.clear(i);
-                  _table.remove(i);
+                  table.clear(i);
+                  table.remove(i);
                   setButtonsEnabledState(false);
                   return;
                }
@@ -175,24 +177,24 @@ public class OpenCharacter extends Dialog implements MouseListener
          @Override
          public void widgetSelected(SelectionEvent e) {
             // cancel button clicked:
-            _exitButton = ExitButton.Cancel;
-            if (_table.getSelection().length > 0) {
-               _selectedName = _table.getSelection()[0].getText();
+            exitButton = ExitButton.Cancel;
+            if (table.getSelection().length > 0) {
+               selectedName = table.getSelection()[0].getText();
             }
-            _shell.dispose();
+            shell.dispose();
          }
       });
-      _table.addKeyListener(new KeyListener() {
+      table.addKeyListener(new KeyListener() {
          @Override
          public void keyReleased(KeyEvent arg0) {
             if (arg0.keyCode == SWT.ESC) {
-               _shell.dispose();
+               shell.dispose();
             }
             if (arg0.keyCode == 13) {
                // open button clicked:
-               _exitButton = ExitButton.Open;
-               _selectedName = _table.getSelection()[0].getText();
-               _shell.dispose();
+               exitButton = ExitButton.Open;
+               selectedName = table.getSelection()[0].getText();
+               shell.dispose();
             }
          }
          @Override
@@ -210,26 +212,26 @@ public class OpenCharacter extends Dialog implements MouseListener
    }
 
    public void buildTable(Composite parent) {
-      _table = new Table(parent, SWT.FULL_SELECTION | SWT.BORDER);
-      _table.setHeaderVisible(true);
-      _table.setLinesVisible(true);
-      _table.setBounds(new org.eclipse.swt.graphics.Rectangle(47, 67, 190, 70));
+      table = new Table(parent, SWT.FULL_SELECTION | SWT.BORDER);
+      table.setHeaderVisible(true);
+      table.setLinesVisible(true);
+      table.setBounds(new org.eclipse.swt.graphics.Rectangle(47, 67, 190, 70));
 
       String[] columnNames = new String[] { "Name", "Cost", "Race", "Gender", "Str (adj)", "Ht (adj)", "Tou", "IQ", "Nim", "Dex", "Soc",
                                             "Skills", "Right hand", "Left hand", "Armor", "Wealth", "M.A.", "Priest", "Advantages"};
       for (String columnName : columnNames) {
-         TableColumn tableColumn = new TableColumn(_table, SWT.NONE);
+         TableColumn tableColumn = new TableColumn(table, SWT.NONE);
          tableColumn.setWidth(100);
          tableColumn.setText(columnName);
       }
 
-      for (String name : _charFile.getCharacterNames()) {
-         Character character = _charFile.getCharacter(name);
+      for (String name : charFile.getCharacterNames()) {
+         Character character = charFile.getCharacter(name);
          String[] rowStrs = convertCharacterToRow(character);
-         TableItem row = new TableItem(_table, 0);
+         TableItem row = new TableItem(table, 0);
          row.setText(rowStrs);
       }
-      for (TableColumn col : _table.getColumns()) {
+      for (TableColumn col : table.getColumns()) {
          col.pack();
          col.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -317,7 +319,7 @@ public class OpenCharacter extends Dialog implements MouseListener
       return new String[] {character.getName(),
                            String.valueOf(character.getPointTotal()),
                            character.getRace().getName(),
-                           character.getRace().getGender()._name,
+                           character.getRace().getGender().name,
                            strStr,
                            htStr,
                            String.valueOf(character.getAttributeLevel(Attribute.Toughness)),
@@ -335,13 +337,10 @@ public class OpenCharacter extends Dialog implements MouseListener
                            advantages.toString()};
    }
 
-   int     _currentSortColumn = -1;
-   boolean _ascending         = true;
-
    public void sortTableOnColumn(TableColumn column) {
       int columnIndex = -1;
-      for (int n = 0; n < _table.getColumnCount(); n++) {
-         TableColumn col = _table.getColumn(n);
+      for (int n = 0; n < table.getColumnCount(); n++) {
+         TableColumn col = table.getColumn(n);
          if (col == column) {
             columnIndex = n;
             break;
@@ -353,35 +352,35 @@ public class OpenCharacter extends Dialog implements MouseListener
       }
 
       boolean treatAsInteger = (columnIndex == 1);
-      if (_currentSortColumn == columnIndex) {
-         _ascending = !_ascending;
+      if (currentSortColumn == columnIndex) {
+         ascending = !ascending;
       }
 
-      _currentSortColumn = columnIndex;
+      currentSortColumn = columnIndex;
 
-      for (int i = 0; i < _table.getItemCount(); i++) {
-         TableItem rowI = _table.getItem(i);
+      for (int i = 0; i < table.getItemCount(); i++) {
+         TableItem rowI = table.getItem(i);
          String textI = rowI.getText(columnIndex);
          int intI = 0;
          if (treatAsInteger) {
             intI = Integer.parseInt(textI);
          }
 
-         for (int j = i + 1; j < _table.getItemCount(); j++) {
-            TableItem rowJ = _table.getItem(j);
+         for (int j = i + 1; j < table.getItemCount(); j++) {
+            TableItem rowJ = table.getItem(j);
             String textJ = rowJ.getText(columnIndex);
             boolean swap;
             int intJ = 0;
             if (treatAsInteger) {
                intJ = Integer.parseInt(textJ);
-               swap = (_ascending) ? (intI < intJ) : (intI > intJ);
+               swap = (ascending) ? (intI < intJ) : (intI > intJ);
             }
             else {
-               swap = (_ascending) ? (textI.compareTo(textJ) < 0) : (textI.compareTo(textJ) > 0);
+               swap = (ascending) ? (textI.compareTo(textJ) < 0) : (textI.compareTo(textJ) > 0);
             }
             if (swap) {
                // swap rows i & j:
-               for (int c = 0; c < _table.getColumnCount(); c++) {
+               for (int c = 0; c < table.getColumnCount(); c++) {
                   String iText = rowI.getText(c);
 
                   rowI.setText(c, rowJ.getText(c));
@@ -392,28 +391,28 @@ public class OpenCharacter extends Dialog implements MouseListener
             }
          }
       }
-      _table.redraw();
+      table.redraw();
    }
 
    public ExitButton open() {
-      _shell.pack();
-      _shell.open();
-      _shell.layout();
-      _shell.setSize(1500, 750);
+      shell.pack();
+      shell.open();
+      shell.layout();
+      shell.setSize(1500, 750);
 
-      while (!_shell.isDisposed()) {
-         if (!_shell.getDisplay().readAndDispatch()) {
-            _shell.getDisplay().sleep();
+      while (!shell.isDisposed()) {
+         if (!shell.getDisplay().readAndDispatch()) {
+            shell.getDisplay().sleep();
          }
       }
-      return _exitButton;
+      return exitButton;
    }
 
    @Override
    public void mouseDoubleClick(MouseEvent arg0) {
-      _exitButton = ExitButton.Open;
-      _selectedName = _table.getSelection()[0].getText();
-      _shell.dispose();
+      exitButton = ExitButton.Open;
+      selectedName = table.getSelection()[0].getText();
+      shell.dispose();
    }
 
    @Override

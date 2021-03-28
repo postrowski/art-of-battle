@@ -18,100 +18,100 @@ import java.util.List;
 
 public class RequestAttackStyle extends SyncRequest implements Enums {
    static class AttackStyleInfo {
-      final DamageType _damageType;
-      final AttackType _attackType;
-      final DiceSet    _attackDice;
+      final DamageType damageType;
+      final AttackType attackType;
+      final DiceSet    attackDice;
       public AttackStyleInfo(DamageType damageType, AttackType attackType, DiceSet attackDice) {
-         _damageType = damageType;
-         _attackType = attackType;
-         _attackDice = attackDice;
+         this.damageType = damageType;
+         this.attackType = attackType;
+         this.attackDice = attackDice;
       }
       public AttackStyleInfo() {
-         _damageType = DamageType.NONE;
-         _attackType = null;
-         _attackDice = new DiceSet();
+         damageType = DamageType.NONE;
+         attackType = null;
+         attackDice = new DiceSet();
       }
       public boolean isThrown() {
-         return _attackType == AttackType.THROW;
+         return attackType == AttackType.THROW;
       }
       public boolean isMissile() {
-         return _attackType == AttackType.MISSILE;
+         return attackType == AttackType.MISSILE;
       }
       public boolean isGrapple() {
-         return _attackType == AttackType.GRAPPLE;
+         return attackType == AttackType.GRAPPLE;
       }
       public boolean isCounterAttack() {
-         return _attackType == AttackType.COUNTER_ATTACK;
+         return attackType == AttackType.COUNTER_ATTACK;
       }
       public AttackType getAttackType() {
-         return _attackType;
+         return attackType;
       }
       public DamageType getDamageType() {
-         return _damageType;
+         return damageType;
       }
       public DiceSet getAttackDice() {
-         return _attackDice;
+         return attackDice;
       }
       @Override
       public String toString() {
-         return " damageType=" + _damageType + ", attackType=" + _attackType + ", attackDice=" + _attackDice;
+         return " damageType=" + damageType + ", attackType=" + attackType + ", attackDice=" + attackDice;
       }
    }
 
-   public int  _actorID   = -1;
-   public int  _targetID  = -1;
-   public LimbType              _limbType   = null;
-   final  List<AttackStyleInfo> _attackInfo = new ArrayList<>();
+   public int                   actorID    = -1;
+   public int                   targetID   = -1;
+   public LimbType              limbType   = null;
+   final  List<AttackStyleInfo> attackInfo = new ArrayList<>();
 
 
    public RequestAttackStyle() {
        // c'tor used by the SerializableFactory class, when reading in a object of this class
    }
    public RequestAttackStyle(int actorID, int targetID, LimbType limbType) {
-       _actorID   = actorID;
-       _targetID  = targetID;
-       _limbType = limbType;
+       this.actorID = actorID;
+       this.targetID = targetID;
+       this.limbType = limbType;
    }
 
    public boolean isRanged() {
        return (isThrown() || isMissile());
    }
    public boolean isThrown() {
-      return _attackInfo.get(getAnswerIndex()).isThrown();
+      return attackInfo.get(getAnswerIndex()).isThrown();
    }
    public boolean isMissile() {
-      return _attackInfo.get(getAnswerIndex()).isMissile();
+      return attackInfo.get(getAnswerIndex()).isMissile();
    }
    public boolean isGrapple() {
-      return _attackInfo.get(getAnswerIndex()).isGrapple();
+      return attackInfo.get(getAnswerIndex()).isGrapple();
    }
    public boolean isCounterAttack() {
-      return _attackInfo.get(getAnswerIndex()).isCounterAttack();
+      return attackInfo.get(getAnswerIndex()).isCounterAttack();
    }
 
    public DamageType getDamageType() {
-      return _attackInfo.get(getAnswerIndex()).getDamageType();
+      return attackInfo.get(getAnswerIndex()).getDamageType();
    }
    public DiceSet getAttackDice() {
-      return _attackInfo.get(getAnswerIndex()).getAttackDice();
+      return attackInfo.get(getAnswerIndex()).getAttackDice();
    }
    @Override
    public void copyAnswer(SyncRequest source) {
       if (source instanceof RequestAttackStyle) {
          RequestAttackStyle src = (RequestAttackStyle)source;
-         _attackInfo.clear();
-         _attackInfo.addAll(src._attackInfo);
+         attackInfo.clear();
+         attackInfo.addAll(src.attackInfo);
       }
       super.copyAnswer(source);
    }
    @Override
    public synchronized void copyDataInto(SyncRequest newObj) {
-      try (SemaphoreAutoLocker sal = new SemaphoreAutoLocker(_lockThis)) {
+      try (SemaphoreAutoLocker sal = new SemaphoreAutoLocker(lockThis)) {
          super.copyDataInto(newObj);
          if (newObj instanceof RequestAttackStyle) {
             RequestAttackStyle dest = (RequestAttackStyle)newObj;
-            dest._attackInfo.clear();
-            dest._attackInfo.addAll(_attackInfo);
+            dest.attackInfo.clear();
+            dest.attackInfo.addAll(attackInfo);
          }
       }
    }
@@ -119,17 +119,17 @@ public class RequestAttackStyle extends SyncRequest implements Enums {
    public void serializeFromStream(DataInputStream in) {
       super.serializeFromStream(in);
       try {
-         _actorID       = readInt(in);
-         _targetID      = readInt(in);
-         _limbType      = LimbType.getByValue(readByte(in));
+         actorID = readInt(in);
+         targetID = readInt(in);
+         limbType = LimbType.getByValue(readByte(in));
          short size     = readShort(in);
-         _attackInfo.clear();
+         attackInfo.clear();
          for (short i=0 ; i<size ; i++) {
             DamageType damType = DamageType.getByValue(readByte(in));
             AttackType attType = AttackType.getByValue(readByte(in));
             DiceSet attDice = new DiceSet();
             attDice.serializeFromStream(in);
-            _attackInfo.add(new AttackStyleInfo(damType, attType, attDice));
+            attackInfo.add(new AttackStyleInfo(damType, attType, attDice));
          }
       } catch (IOException e) {
          e.printStackTrace();
@@ -139,26 +139,26 @@ public class RequestAttackStyle extends SyncRequest implements Enums {
    public void serializeToStream(DataOutputStream out) {
       super.serializeToStream(out);
       try {
-         writeToStream(_actorID, out);
-         writeToStream(_targetID, out);
-         writeToStream(((byte)(_limbType.value)), out);
-         short size = (short) _attackInfo.size();
+         writeToStream(actorID, out);
+         writeToStream(targetID, out);
+         writeToStream(((byte)(limbType.value)), out);
+         short size = (short) attackInfo.size();
          writeToStream(size, out);
          for (short i=0 ; i<size ; i++) {
-            if (_attackInfo.get(i).getDamageType() == null) {
+            if (attackInfo.get(i).getDamageType() == null) {
                writeToStream((byte)-1, out);
             }
             else {
-               writeToStream(_attackInfo.get(i).getDamageType().value, out);
+               writeToStream(attackInfo.get(i).getDamageType().value, out);
             }
-            AttackType attackType = _attackInfo.get(i).getAttackType();
+            AttackType attackType = attackInfo.get(i).getAttackType();
             if (attackType == null) {
                writeToStream((byte)-1, out);
             }
             else {
                writeToStream(attackType.value, out);
             }
-            _attackInfo.get(i).getAttackDice().serializeToStream(out);
+            attackInfo.get(i).getAttackDice().serializeToStream(out);
          }
       } catch (IOException e) {
          e.printStackTrace();
@@ -168,17 +168,17 @@ public class RequestAttackStyle extends SyncRequest implements Enums {
    public void addAttackOption(int optionID, String optionStr, boolean enabled, AttackType attackType,
                                DiceSet attackDice, DamageType damageType) {
       super.addOption(new RequestOption(optionStr, optionID, enabled));
-      while (optionID < _attackInfo.size()) {
-         _attackInfo.add(new AttackStyleInfo());
+      while (optionID < attackInfo.size()) {
+         attackInfo.add(new AttackStyleInfo());
       }
-      _attackInfo.add(new AttackStyleInfo(damageType, attackType, attackDice));
+      attackInfo.add(new AttackStyleInfo(damageType, attackType, attackDice));
    }
    @Override
    public void addOption(int optionID, String optionStr, boolean enabled) {
       if (optionID == OPT_CANCEL_ACTION) {
          super.addOption(new RequestActionOption("Cancel attack",  RequestActionType.OPT_CANCEL_ACTION, LimbType.BODY, enabled));
          //super.addOption(optionID, "Cancel attack", enabled);
-         _attackInfo.add(new AttackStyleInfo());
+         attackInfo.add(new AttackStyleInfo());
          return;
       }
       DebugBreak.debugBreak();
@@ -190,6 +190,6 @@ public class RequestAttackStyle extends SyncRequest implements Enums {
    }
    @Override
    public String toString() {
-      return super.toString() + _attackInfo;
+      return super.toString() + attackInfo;
    }
 }

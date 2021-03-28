@@ -9,19 +9,19 @@ import java.util.List;
 
 public class PriestGoodSpell implements IPriestGroup
 {
-   static public final List<PriestSpell> _spells = new ArrayList<>();
+   static public final List<PriestSpell> spells = new ArrayList<>();
    static {
-      _spells.add(new SpellDetectEvil(PriestGoodSpell.class, 1));
-      _spells.add(new SpellLight(PriestGoodSpell.class, 1));
-      _spells.add(new SpellDetectLies(PriestGoodSpell.class, 2));
-      _spells.add(new SpellBless(PriestGoodSpell.class, 2));
-      _spells.add(new SpellPacify(PriestGoodSpell.class, 3));
-      _spells.add(new SpellForceTruth(PriestGoodSpell.class, 4));
-      _spells.add(new SpellCharmPerson(PriestGoodSpell.class, 4));
-      _spells.add(new SpellTurnUndead(PriestGoodSpell.class, 5));
-      _spells.add(new SpellCharmMonster(PriestGoodSpell.class, 6));
-      _spells.add(new SpellBanishEvil(PriestGoodSpell.class, 7));
-      _spells.add(new SpellDestroyEvil(PriestGoodSpell.class, 8));
-      _spells.add(new SpellResurrection(PriestGoodSpell.class, 9));
+      spells.add(new SpellDetectEvil(PriestGoodSpell.class, 1));
+      spells.add(new SpellLight(PriestGoodSpell.class, 1));
+      spells.add(new SpellDetectLies(PriestGoodSpell.class, 2));
+      spells.add(new SpellBless(PriestGoodSpell.class, 2));
+      spells.add(new SpellPacify(PriestGoodSpell.class, 3));
+      spells.add(new SpellForceTruth(PriestGoodSpell.class, 4));
+      spells.add(new SpellCharmPerson(PriestGoodSpell.class, 4));
+      spells.add(new SpellTurnUndead(PriestGoodSpell.class, 5));
+      spells.add(new SpellCharmMonster(PriestGoodSpell.class, 6));
+      spells.add(new SpellBanishEvil(PriestGoodSpell.class, 7));
+      spells.add(new SpellDestroyEvil(PriestGoodSpell.class, 8));
+      spells.add(new SpellResurrection(PriestGoodSpell.class, 9));
    }
 }

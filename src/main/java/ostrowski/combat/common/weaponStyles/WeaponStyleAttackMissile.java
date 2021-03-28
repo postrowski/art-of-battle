@@ -24,9 +24,9 @@ public class WeaponStyleAttackMissile extends WeaponStyleAttackRanged
    @Override
    public WeaponStyleAttackMissile clone()
    {
-      WeaponStyleAttackMissile style = new WeaponStyleAttackMissile(_skillType, _minSkill, _skillPenalty,
-                                                                    _damageMod, _varianceDice, _damageType,
-                                                                    _rangeBase, _handsRequired, _preparationSteps);
+      WeaponStyleAttackMissile style = new WeaponStyleAttackMissile(skillType, minSkill, skillPenalty,
+                                                                    damageMod, varianceDice, damageType,
+                                                                    rangeBase, handsRequired, preparationSteps);
       style.copyDataFrom(this);
       return style;
    }

@@ -26,7 +26,7 @@ public class Tail extends Limb
       }
       return null;
    }
-//   static Weapon _tailStrike = Weapons.getWeapon(Weapon.NAME_TailStrike);
+//   static Weapon tailStrike = Weapons.getWeapon(Weapon.NAME_TailStrike);
 
    @Override
    public DrawnObject drawThing(int narrowDiameter, int size, RGB foreground, RGB background) {
@@ -35,7 +35,7 @@ public class Tail extends Limb
       int baseSize = 1;
       Orientation orientation = getRacialBase().getBaseOrientation();
       if (orientation instanceof OrientationReptilian) {
-         baseSize = ((OrientationReptilian)orientation)._baseSize;
+         baseSize = ((OrientationReptilian)orientation).baseSize;
       }
       double tailLength = narrowDiameter * 1.2 * baseSize;
       tail.addPoint(tailWidth/2.0, tailLength / 3.6);
@@ -45,7 +45,7 @@ public class Tail extends Limb
    }
    @Override
    public Tail clone() {
-      return new Tail(_limbType, getRacialBase());
+      return new Tail(limbType, getRacialBase());
    }
 
 }

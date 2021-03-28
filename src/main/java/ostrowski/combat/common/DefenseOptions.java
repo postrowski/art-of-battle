@@ -3,8 +3,6 @@ package ostrowski.combat.common;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import ostrowski.DebugBreak;
 import ostrowski.combat.common.enums.DefenseOption;
@@ -13,8 +11,8 @@ import ostrowski.protocol.IRequestOption;
 
 public class DefenseOptions extends EnumOptions<DefenseOption> implements Comparable<DefenseOptions>, IRequestOption
 {
-   private boolean _enabled;
-   private String _name;
+   private boolean enabled;
+   private String  name;
 
    public DefenseOptions() {}
    public DefenseOptions(int valuesBitMap) {
@@ -35,9 +33,9 @@ public class DefenseOptions extends EnumOptions<DefenseOption> implements Compar
    }
 
    public DefenseOptions add(DefenseOptions opts) {
-      for (DefenseOption opt : opts._list) {
-         if (!_list.contains(opt)) {
-            _list.add(opt);
+      for (DefenseOption opt : opts.list) {
+         if (!list.contains(opt)) {
+            list.add(opt);
          }
       }
       return this;
@@ -76,11 +74,11 @@ public class DefenseOptions extends EnumOptions<DefenseOption> implements Compar
 
    public boolean isDefensesValid() {
       boolean counterAttacking = false;
-      for (DefenseOption opt1 : _list) {
+      for (DefenseOption opt1 : list) {
          if (opt1.isCounterAttack()) {
             counterAttacking = true;
          }
-         for (DefenseOption opt2 : _list) {
+         for (DefenseOption opt2 : list) {
             if (!opt1.isCompatibleWith(opt2)) {
                return false;
             }
@@ -89,19 +87,19 @@ public class DefenseOptions extends EnumOptions<DefenseOption> implements Compar
       // When counter attacking, one or more block/parrys must be used:
       if (counterAttacking) {
          // a defense that doesn't include a block can't use counter defenses:
-         return _list.contains(DefenseOption.DEF_LEFT) ||
-                _list.contains(DefenseOption.DEF_LEFT_2) ||
-                _list.contains(DefenseOption.DEF_LEFT_3) ||
-                _list.contains(DefenseOption.DEF_RIGHT) ||
-                _list.contains(DefenseOption.DEF_RIGHT_2) ||
-                _list.contains(DefenseOption.DEF_RIGHT_3);
+         return list.contains(DefenseOption.DEF_LEFT) ||
+                list.contains(DefenseOption.DEF_LEFT_2) ||
+                list.contains(DefenseOption.DEF_LEFT_3) ||
+                list.contains(DefenseOption.DEF_RIGHT) ||
+                list.contains(DefenseOption.DEF_RIGHT_2) ||
+                list.contains(DefenseOption.DEF_RIGHT_3);
       }
       return true;
    }
 
    public byte getDefenseActionsUsed() {
       byte actionsUsed = 0;
-      for (DefenseOption opt : _list) {
+      for (DefenseOption opt : list) {
          actionsUsed += opt.getActionsUsed();
       }
       return actionsUsed;
@@ -110,10 +108,10 @@ public class DefenseOptions extends EnumOptions<DefenseOption> implements Compar
    public String getDefenseName(boolean pastTense, Character actor, RequestAction action) {
       StringBuilder sb = new StringBuilder();
       int index = 0;
-      for (DefenseOption defOpt : _list) {
+      for (DefenseOption defOpt : list) {
          if (defOpt != DefenseOption.DEF_PD) {
             if (index > 0) {
-               if (index == (_list.size() - 1)) {
+               if (index == (list.size() - 1)) {
                   sb.append(" and ");
                }
                else {
@@ -135,7 +133,7 @@ public class DefenseOptions extends EnumOptions<DefenseOption> implements Compar
 
    public DefenseOptions logicAndWithSet(DefenseOptions availableOptions) {
       DefenseOptions newDefOpts = new DefenseOptions();
-      for (DefenseOption defOpt : _list) {
+      for (DefenseOption defOpt : list) {
          if (availableOptions.contains(defOpt)) {
             newDefOpts.add(defOpt);
          }
@@ -160,7 +158,7 @@ public class DefenseOptions extends EnumOptions<DefenseOption> implements Compar
    }
    @Override
    public String toString() {
-      return _list.toString();
+      return list.toString();
    }
 
    @Override
@@ -180,7 +178,7 @@ public class DefenseOptions extends EnumOptions<DefenseOption> implements Compar
       return 0;
    }
    public boolean isCounterAttackGrab() {
-      for (DefenseOption opt : _list) {
+      for (DefenseOption opt : list) {
          if (opt.isCounterAttackGrab()) {
             return true;
          }
@@ -188,7 +186,7 @@ public class DefenseOptions extends EnumOptions<DefenseOption> implements Compar
       return false;
    }
    public boolean isCounterAttackThrow() {
-      for (DefenseOption opt : _list) {
+      for (DefenseOption opt : list) {
          if (opt.isCounterAttackThrow()) {
             return true;
          }
@@ -196,7 +194,7 @@ public class DefenseOptions extends EnumOptions<DefenseOption> implements Compar
       return false;
    }
    public boolean isCounterAttack() {
-      for (DefenseOption opt : _list) {
+      for (DefenseOption opt : list) {
          if (opt.isCounterAttack()) {
             return true;
          }
@@ -205,28 +203,28 @@ public class DefenseOptions extends EnumOptions<DefenseOption> implements Compar
    }
    @Override
    public String getName() {
-      return _name;
+      return name;
    }
 
    @Override
    public boolean isEnabled() {
-      return _enabled;
+      return enabled;
    }
    @Override
    public void setEnabled(boolean enabled) {
-      this._enabled = enabled;
+      this.enabled = enabled;
    }
    @Override
    public int getIntValue() {
       int value = 0;
-      for (DefenseOption opt : _list) {
+      for (DefenseOption opt : list) {
          value |= opt.getValue();
       }
       return value;
    }
    @Override
    public void setAnswerStr(String name) {
-      this._name = name;
+      this.name = name;
    }
    @Override
    public void setAnswerID(int valuesBitMap) {

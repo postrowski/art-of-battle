@@ -11,7 +11,7 @@ import ostrowski.combat.server.ArenaLocation;
 
 public abstract class AreaMageSpell extends MageSpell implements IAreaSpell
 {
-   private ArenaLocation _targetLocation = null;
+   private ArenaLocation targetLocation = null;
 
    @SuppressWarnings("rawtypes")
    public AreaMageSpell(String name, Class[] prerequisiteSpells, MageCollege[] colleges) {
@@ -21,13 +21,13 @@ public abstract class AreaMageSpell extends MageSpell implements IAreaSpell
    @Override
    public void setTargetLocation(ArenaLocation targetLocation, Arena arena)
    {
-      _targetLocation = targetLocation;
+      this.targetLocation = targetLocation;
    }
 
    @Override
    public ArenaLocation getTargetLocation()
    {
-      return _targetLocation;
+      return targetLocation;
    }
    @Override
    public TargetType getTargetType() {

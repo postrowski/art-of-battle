@@ -241,6 +241,8 @@ public class Rules extends DebugBreak implements Enums
       SerializableFactory.registerClass("Wound.", Wound.class);
    }
 
+   static final HashMap<String, DiceSet> diceTable = new HashMap<>();
+
    /*
    The crevase running east-west splits a marble hall here. To the south, the ceiling has collapsed, blocking the passage.\nPausing for a moment, you hear the sound of digging. Listening more closely, you hear voices:\nvoice 1: Dig faster Malcon, or I'll cast you back to the pit!\nvoice 2: (laughing in a dark, sinister, monsterous tone) I think not, human.\n           You know you have no chance of recovering the orb without my help.\n           You would be destroyed... HAHA.\nvoice 1: Perhaps not demon, but I don't have to share its power with you once we defeat him. Now dig you foul beast!\nThe digging resumes...
     *
@@ -368,8 +370,6 @@ public class Rules extends DebugBreak implements Enums
       return strengthBase;
    }
 
-   static final HashMap<String, DiceSet> _diceTable = new HashMap<>();
-
    static public DiceSet getDice(byte attributeLevel, byte actions, Attribute attribute, RollType rollType) {
       boolean useComplexDice = Configuration.useExtendedDice();
       if (!useComplexDice) {
@@ -403,7 +403,7 @@ public class Rules extends DebugBreak implements Enums
       //    1) using complex dice.
       //    2) looking for dice for Toughness roll (pain roll), with useComplexTOUDice true
       String key = attributeLevel + ":" + actions;
-      DiceSet set = _diceTable.get(key);
+      DiceSet set = diceTable.get(key);
       if (set != null) {
          return set;
       }
@@ -451,7 +451,7 @@ public class Rules extends DebugBreak implements Enums
             throw new IllegalArgumentException("attribute (" + attributeLevel + ") must be between -10 and +19.");
       }
       set = DiceSet.getDieClosestToExpectedRoll(expectedValues[actions - 1]);
-      _diceTable.put(key, set);
+      diceTable.put(key, set);
       return set;
    }
 
@@ -640,7 +640,7 @@ public class Rules extends DebugBreak implements Enums
       table.addRow(header2);
       header1.addTD(new TableHeader("Attribute<br/>level").setRowSpan(2));
       header1.addTD(new TableHeader("Cost").setRowSpan(2).setAttribute("width", "45"));
-      if (Configuration._useExtendedDice) {
+      if (Configuration.useExtendedDice) {
          header1.addTD(new TableHeader("Dice").setColSpan(3));
       }
       if (!Configuration.useExtendedDice() && Configuration.useComplexTOUDice()) {
@@ -655,7 +655,7 @@ public class Rules extends DebugBreak implements Enums
       header1.addTD(new TableHeader("IQ<br/>test&nbsp;score<br/>(IQ&nbsp;attribute)").setRowSpan(2));
       header1.addTD(new TableHeader("Range<br/>adjustment").setRowSpan(2));
 
-      if (Configuration._useExtendedDice) {
+      if (Configuration.useExtendedDice) {
          for (int i = 1; i <= 3; i++) {
             header2.addTD(new TableHeader(i + "-actions"));
          }
@@ -674,7 +674,7 @@ public class Rules extends DebugBreak implements Enums
          else {
             row.addTD(new TableData("---"));
          }
-         if (Configuration._useExtendedDice) {
+         if (Configuration.useExtendedDice) {
             for (byte actions = 1; actions < 4; actions++) {
                DiceSet dice = getDice(attLevel, actions, Attribute.Intelligence, RollType.ATTACK_TO_HIT);
                row.addTD(new TableData(dice));
@@ -881,7 +881,7 @@ public class Rules extends DebugBreak implements Enums
          // don't show races for size 0 beings.
          if (ave != 0) {
             List<String> raceNames = new ArrayList<>();
-            for (Race race : Race._raceList) {
+            for (Race race : Race.raceList) {
                if (raceNames.contains(race.getName())) {
                   // ignore duplicate races that exist to deal with genders.
                   continue;
@@ -1020,7 +1020,7 @@ public class Rules extends DebugBreak implements Enums
    }
 
    public static byte getMagicResistanceBonus(Advantage magicResistanceAdv, byte resistanceActions) {
-      if (!Configuration._useExtendedDice) {
+      if (!Configuration.useExtendedDice) {
          resistanceActions = 3;
       }
       return (byte) (magicResistanceAdv.getLevel() * resistanceActions);

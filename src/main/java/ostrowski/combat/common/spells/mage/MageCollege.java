@@ -16,52 +16,52 @@ import java.util.List;
 
 public class MageCollege extends SerializableObject implements Enums
 {
-   public static List<String>                 _nameList = new ArrayList<>();
-   public static HashMap<String, MageCollege> _colleges = new HashMap<>();
+   public static List<String>                 nameList = new ArrayList<>();
+   public static HashMap<String, MageCollege> colleges = new HashMap<>();
 
-   private String                             _name;
-   private byte                               _level;
-   public static final MageCollege            FIRE        = new MageCollege("Fire");
-   public static final MageCollege            WATER       = new MageCollege("Water");
-   public static final MageCollege            EARTH       = new MageCollege("Earth");
-   public static final MageCollege            AIR         = new MageCollege("Air");
-   public static final MageCollege            ENERGY      = new MageCollege("Energy");
-   public static final MageCollege            EVOCATION   = new MageCollege("Evocation");
-   public static final MageCollege            CONJURATION = new MageCollege("Conjuration");
-   public static final MageCollege            ILLUSION    = new MageCollege("Illusion");
-   public static final MageCollege            DIVINATION  = new MageCollege("Divination");
-   public static final MageCollege            NECROMANCY  = new MageCollege("Necromancy");
-   public static final MageCollege            PROTECTION  = new MageCollege("Protection");
-   public static final MageCollege            ENCHANTMENT = new MageCollege("Enchantment");
+   private             String      name;
+   private             byte        level;
+   public static final MageCollege FIRE        = new MageCollege("Fire");
+   public static final MageCollege WATER       = new MageCollege("Water");
+   public static final MageCollege EARTH       = new MageCollege("Earth");
+   public static final MageCollege AIR         = new MageCollege("Air");
+   public static final MageCollege ENERGY      = new MageCollege("Energy");
+   public static final MageCollege EVOCATION   = new MageCollege("Evocation");
+   public static final MageCollege CONJURATION = new MageCollege("Conjuration");
+   public static final MageCollege ILLUSION    = new MageCollege("Illusion");
+   public static final MageCollege DIVINATION  = new MageCollege("Divination");
+   public static final MageCollege NECROMANCY  = new MageCollege("Necromancy");
+   public static final MageCollege PROTECTION  = new MageCollege("Protection");
+   public static final MageCollege ENCHANTMENT = new MageCollege("Enchantment");
 
    public MageCollege() {
       // This ctor required for serialization
-      _name = "For Serialization only";
+      name = "For Serialization only";
    }
 
    public MageCollege(MageCollege source) {
-      _name = source._name;
-      _level = source._level;
+      name = source.name;
+      level = source.level;
    }
 
    public MageCollege(String name) {
-      _name = name;
-      if (!_nameList.contains(name)) {
-         _nameList.add(name);
-         _colleges.put(name, this);
+      this.name = name;
+      if (!nameList.contains(name)) {
+         nameList.add(name);
+         colleges.put(name, this);
       }
    }
 
    public String getName() {
-      return _name;
+      return name;
    }
 
    public static List<String> getCollegeNames() {
-      return _nameList;
+      return nameList;
    }
 
    public static MageCollege getCollege(String collegeName) {
-      MageCollege college = _colleges.get(collegeName);
+      MageCollege college = colleges.get(collegeName);
       if (college == null) {
          return null;
       }
@@ -69,11 +69,11 @@ public class MageCollege extends SerializableObject implements Enums
    }
 
    public byte getLevel() {
-      return _level;
+      return level;
    }
 
    public void setLevel(byte newLevel) {
-      _level = newLevel;
+      level = newLevel;
    }
 
    @Override
@@ -89,8 +89,8 @@ public class MageCollege extends SerializableObject implements Enums
    @Override
    public void serializeToStream(DataOutputStream out) {
       try {
-         writeToStream(_name, out);
-         writeToStream(_level, out);
+         writeToStream(name, out);
+         writeToStream(level, out);
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -99,8 +99,8 @@ public class MageCollege extends SerializableObject implements Enums
    @Override
    public void serializeFromStream(DataInputStream in) {
       try {
-         _name = readString(in);
-         _level = readByte(in);
+         name = readString(in);
+         level = readByte(in);
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -108,6 +108,6 @@ public class MageCollege extends SerializableObject implements Enums
 
    @Override
    public String toString() {
-      return "College: " + _name + "~" + _level;
+      return "College: " + name + "~" + level;
    }
 }

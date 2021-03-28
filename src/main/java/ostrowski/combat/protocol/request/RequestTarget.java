@@ -17,11 +17,11 @@ import java.util.StringTokenizer;
 
 public class RequestTarget extends SyncRequest
 {
-   private List<Byte> _optionsTeam;
+   private List<Byte> optionsTeam;
 
    public RequestTarget() {
-      _message = "Please select your target, in order of priority." +
-                 " Put the highest priority targets at the top of the list.";
+      message = "Please select your target, in order of priority." +
+                " Put the highest priority targets at the top of the list.";
    }
    @Override
    public boolean isCancelable() {
@@ -29,7 +29,7 @@ public class RequestTarget extends SyncRequest
    }
    public List<Integer> getOrderedTargetIds() {
       List<Integer> ids = new ArrayList<>();
-      for (IRequestOption opt : _options) {
+      for (IRequestOption opt : options) {
          ids.add(opt.getIntValue());
       }
       return ids;
@@ -42,28 +42,28 @@ public class RequestTarget extends SyncRequest
    }
    @Override
    public synchronized void copyDataInto(SyncRequest newObj) {
-      try (SemaphoreAutoLocker sal = new SemaphoreAutoLocker(_lockThis)) {
+      try (SemaphoreAutoLocker sal = new SemaphoreAutoLocker(lockThis)) {
          super.copyDataInto(newObj);
          if (newObj instanceof RequestTarget) {
-            ((RequestTarget)newObj)._optionsTeam = _optionsTeam;
+            ((RequestTarget)newObj).optionsTeam = optionsTeam;
          }
       }
    }
    public void setOrderedTargetIds(List<Character> newOrder) {
-      _options  = new ArrayList<>();
-      _optionsTeam = new ArrayList<>();
+      options = new ArrayList<>();
+      optionsTeam = new ArrayList<>();
       for (Character target : newOrder) {
-         _options.add(new RequestOption(target.getName(), target._uniqueID, true));
-         _optionsTeam.add(target._teamID);
+         options.add(new RequestOption(target.getName(), target.uniqueID, true));
+         optionsTeam.add(target.teamID);
       }
    }
    public List<Character> getTargetCharacters() {
       List<Character> targets = new ArrayList<>();
-      for (int i=0 ; i<_options.size() ; i++) {
+      for (int i = 0; i < options.size() ; i++) {
          Character target = new Character();
-         target.setName(_options.get(i).getName());
-         target._uniqueID = _options.get(i).getIntValue();
-         target._teamID   = _optionsTeam.get(i);
+         target.setName(options.get(i).getName());
+         target.uniqueID = options.get(i).getIntValue();
+         target.teamID = optionsTeam.get(i);
          targets.add(target);
       }
       return targets;
@@ -71,18 +71,18 @@ public class RequestTarget extends SyncRequest
    @Override
    public String getAnswer() {
       StringBuilder sb = new StringBuilder();
-      for (IRequestOption option : _options) {
+      for (IRequestOption option : options) {
          sb.append(option).append(",");
       }
       return sb.toString();
    }
    @Override
    public synchronized void setCustAnswer(String answer) {
-      try (SemaphoreAutoLocker sal = new SemaphoreAutoLocker(_lockThis)) {
+      try (SemaphoreAutoLocker sal = new SemaphoreAutoLocker(lockThis)) {
          int index = 0;
          StringTokenizer st = new StringTokenizer(answer, ",");
          while (st.hasMoreTokens()) {
-            _options.set(index++, new RequestOption("", Integer.parseInt(st.nextToken()), true));
+            options.set(index++, new RequestOption("", Integer.parseInt(st.nextToken()), true));
             // TODO: we currently don't copy the name or teamID
          }
       }

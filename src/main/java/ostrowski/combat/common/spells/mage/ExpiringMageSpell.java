@@ -18,9 +18,9 @@ import ostrowski.combat.server.Arena;
 
 public abstract class ExpiringMageSpell extends MageSpell implements IExpiringSpell
 {
-   protected short     _duration                  = -1;
-   protected short     _baseExpirationTimeInTurns;
-   protected short     _bonusTimeInTurnsPerPower;
+   protected short duration = -1;
+   protected short baseExpirationTimeInTurns;
+   protected short bonusTimeInTurnsPerPower;
    public ExpiringMageSpell(){
       this("", (short)0, (short)0, null, null);
    }
@@ -28,8 +28,8 @@ public abstract class ExpiringMageSpell extends MageSpell implements IExpiringSp
    public ExpiringMageSpell(String name, short baseExpirationTimeInTurns, short bonusTimeInTurnsPerPower,
                         Class[] prerequisiteSpells, MageCollege[] colleges) {
       super(name, prerequisiteSpells, colleges);
-      _baseExpirationTimeInTurns = baseExpirationTimeInTurns;
-      _bonusTimeInTurnsPerPower = bonusTimeInTurnsPerPower;
+      this.baseExpirationTimeInTurns = baseExpirationTimeInTurns;
+      this.bonusTimeInTurnsPerPower = bonusTimeInTurnsPerPower;
    }
 
    /**
@@ -39,25 +39,25 @@ public abstract class ExpiringMageSpell extends MageSpell implements IExpiringSp
     */
    @Override
    public short getDuration() {
-      return _duration;
+      return duration;
    }
    public boolean isExpired() {
-      return _duration <= 0;
+      return duration <= 0;
    }
    @Override
    public short getBaseExpirationTimeInTurns() {
-      return _baseExpirationTimeInTurns;
+      return baseExpirationTimeInTurns;
    }
    @Override
    public short getBonusTimeInTurnsPerPower() {
-      return _bonusTimeInTurnsPerPower;
+      return bonusTimeInTurnsPerPower;
    }
    @Override
    public String describeActiveSpell() {
       return getTargetName() + " is under the effects of a " +
              getPower() + "-point power " +
              getName() + " spell, which has" +
-             _duration + " turns left.";
+             duration + " turns left.";
    }
 
    /**
@@ -68,9 +68,9 @@ public abstract class ExpiringMageSpell extends MageSpell implements IExpiringSp
    @Override
    public boolean completeTurn(Arena arena)
    {
-      if (_duration > -1) {
-         _duration--;
-         if (_duration > 0) {
+      if (duration > -1) {
+         duration--;
+         if (duration > 0) {
             return false;
          }
          removeEffects(arena);
@@ -80,16 +80,16 @@ public abstract class ExpiringMageSpell extends MageSpell implements IExpiringSp
    @Override
    public void completeSpell() {
       super.completeSpell();
-      _duration = (short) (_baseExpirationTimeInTurns + (getPower()*_bonusTimeInTurnsPerPower));
+      duration = (short) (baseExpirationTimeInTurns + (getPower() * bonusTimeInTurnsPerPower));
    }
    @Override
    public void serializeToStream(DataOutputStream out)
    {
       super.serializeToStream(out);
       try {
-         writeToStream(_duration, out);
-         writeToStream(_baseExpirationTimeInTurns, out);
-         writeToStream(_bonusTimeInTurnsPerPower, out);
+         writeToStream(duration, out);
+         writeToStream(baseExpirationTimeInTurns, out);
+         writeToStream(bonusTimeInTurnsPerPower, out);
 
       } catch (IOException e) {
          e.printStackTrace();
@@ -100,9 +100,9 @@ public abstract class ExpiringMageSpell extends MageSpell implements IExpiringSp
    {
       super.serializeFromStream(in);
       try {
-         _duration                  = readShort(in);
-         _baseExpirationTimeInTurns = readShort(in);
-         _bonusTimeInTurnsPerPower  = readShort(in);
+         duration = readShort(in);
+         baseExpirationTimeInTurns = readShort(in);
+         bonusTimeInTurnsPerPower = readShort(in);
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -112,30 +112,30 @@ public abstract class ExpiringMageSpell extends MageSpell implements IExpiringSp
    {
       super.copyDataFrom(source);
       if (source instanceof ExpiringMageSpell) {
-         _duration                  = ((ExpiringMageSpell) source)._duration;
-         _baseExpirationTimeInTurns = ((ExpiringMageSpell) source)._baseExpirationTimeInTurns;
-         _bonusTimeInTurnsPerPower  = ((ExpiringMageSpell) source)._bonusTimeInTurnsPerPower;
+         duration = ((ExpiringMageSpell) source).duration;
+         baseExpirationTimeInTurns = ((ExpiringMageSpell) source).baseExpirationTimeInTurns;
+         bonusTimeInTurnsPerPower = ((ExpiringMageSpell) source).bonusTimeInTurnsPerPower;
       }
    }
    @Override
    public Element getXMLObject(Document parentDoc, String newLine) {
       Element node = super.getXMLObject(parentDoc, newLine);
-      node.setAttribute("duration", String.valueOf(_duration));
-      node.setAttribute("baseExpirationTimeInTurns", String.valueOf(_baseExpirationTimeInTurns));
-      node.setAttribute("bonusTimeInTurnsPerPower", String.valueOf(_bonusTimeInTurnsPerPower));
+      node.setAttribute("duration", String.valueOf(duration));
+      node.setAttribute("baseExpirationTimeInTurns", String.valueOf(baseExpirationTimeInTurns));
+      node.setAttribute("bonusTimeInTurnsPerPower", String.valueOf(bonusTimeInTurnsPerPower));
       return node;
    }
    @Override
    public void readFromXMLObject(NamedNodeMap namedNodeMap) {
       super.readFromXMLObject(namedNodeMap);
       Node node = namedNodeMap.getNamedItem("duration");             if (node != null) {
-         _duration  = Short.parseShort(node.getNodeValue());
+         duration = Short.parseShort(node.getNodeValue());
       }
       node = namedNodeMap.getNamedItem("baseExpirationTimeInTurns"); if (node != null) {
-         _baseExpirationTimeInTurns  = Short.parseShort(node.getNodeValue());
+         baseExpirationTimeInTurns = Short.parseShort(node.getNodeValue());
       }
       node = namedNodeMap.getNamedItem("bonusTimeInTurnsPerPower");  if (node != null) {
-         _bonusTimeInTurnsPerPower  = Short.parseShort(node.getNodeValue());
+         bonusTimeInTurnsPerPower = Short.parseShort(node.getNodeValue());
       }
    }
 }

@@ -20,40 +20,40 @@ import java.util.List;
 
 public class TargetPrioritiesWidget extends Helper implements SelectionListener
 {
-   public org.eclipse.swt.widgets.List _priorityList = null;
-   private List<Character>        _combatants   = null;
-   private Button                      _upButton     = null;
-   private       Button           _dnButton     = null;
-   private final CharacterDisplay _display;
-   private       int              _selfUniqueID = -1;
-   private byte                        _selfTeamID   = -1;
+   public        org.eclipse.swt.widgets.List priorityList = null;
+   private       List<Character>              combatants   = null;
+   private       Button                       upButton     = null;
+   private       Button                       dnButton     = null;
+   private final CharacterDisplay             display;
+   private       int                          selfUniqueID = -1;
+   private       byte                         selfTeamID   = -1;
 
    public TargetPrioritiesWidget(Character self, CharacterDisplay display) {
       setSelf(self);
-      _display = display;
+      this.display = display;
    }
    public void setSelf(Character self) {
       if (self != null) {
-         _selfUniqueID = self._uniqueID;
-         _selfTeamID   = self._teamID;
+         selfUniqueID = self.uniqueID;
+         selfTeamID = self.teamID;
       }
    }
 
    public void buildBlock(Composite parent)
    {
       Group group = createGroup(parent, "Target Priority", 2/*columns*/, false/*sameSize*/, 3/*hSpacing*/, 3/*vSpacing*/);
-      _priorityList = new org.eclipse.swt.widgets.List(group, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL);
+      priorityList = new org.eclipse.swt.widgets.List(group, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL);
       GridData data = new GridData();
       data.grabExcessVerticalSpace = true;
       data.verticalSpan = 2;
       data.minimumHeight = 60;
-      _priorityList.setLayoutData(data);
-      _combatants = new ArrayList<>();
-      _upButton = createButton(group, "up", 1, null, this);
-      _dnButton = createButton(group, "dn", 1, null, this);
-      _priorityList.add("----- Friends below this -----");
-      _priorityList.addSelectionListener(this);
-      _combatants.add(null);
+      priorityList.setLayoutData(data);
+      combatants = new ArrayList<>();
+      upButton = createButton(group, "up", 1, null, this);
+      dnButton = createButton(group, "dn", 1, null, this);
+      priorityList.add("----- Friends below this -----");
+      priorityList.addSelectionListener(this);
+      combatants.add(null);
       enabelUpDnButtons();
    }
 
@@ -61,11 +61,11 @@ public class TargetPrioritiesWidget extends Helper implements SelectionListener
       boolean changed = false;
       // all we care about are the names of the combatants
       for (Character newCombatant : combatants) {
-         if (newCombatant._uniqueID != _selfUniqueID) {
+         if (newCombatant.uniqueID != selfUniqueID) {
             boolean combatantFound = false;
-            for (Character knownCombatant : _combatants) {
+            for (Character knownCombatant : this.combatants) {
                if (knownCombatant != null) { // null divides friend & enemies
-                  if (knownCombatant._uniqueID == newCombatant._uniqueID) {
+                  if (knownCombatant.uniqueID == newCombatant.uniqueID) {
                      combatantFound = true;
                      // update our copy of the combatants information
                      knownCombatant.copyData(newCombatant);
@@ -74,39 +74,39 @@ public class TargetPrioritiesWidget extends Helper implements SelectionListener
                }
             }
             if (!combatantFound) {
-               if ((_selfTeamID != newCombatant._teamID) ||
-                   (_selfTeamID == Enums.TEAM_INDEPENDENT)) {
+               if ((selfTeamID != newCombatant.teamID) ||
+                   (selfTeamID == Enums.TEAM_INDEPENDENT)) {
                   // add new combatants at the top of the list, so they default to be an enemy
-                  _priorityList.add(newCombatant.getName(), 0);
+                  priorityList.add(newCombatant.getName(), 0);
                   // keep the combatants list synchronized with the priority list
-                  _combatants.add(0, newCombatant);
+                  this.combatants.add(0, newCombatant);
                }
                else {
                   // add new combatants at the bottom of the list, so they default to be a friend
-                  _priorityList.add(newCombatant.getName());
+                  priorityList.add(newCombatant.getName());
                   // keep the combatants list synchronized with the priority list
-                  _combatants.add(newCombatant);
+                  this.combatants.add(newCombatant);
                }
                changed = true;
             }
          }
       }
       // check if anyone has been removed from battle:
-      for (int knownIndex = 0 ;  knownIndex < _combatants.size(); knownIndex++) {
-         Character knownCombatant = _combatants.get(knownIndex);
+      for (int knownIndex = 0; knownIndex < this.combatants.size(); knownIndex++) {
+         Character knownCombatant = this.combatants.get(knownIndex);
          if (knownCombatant != null) { // null divides friend & enemies
             boolean combatantFound = false;
             for (Character newCombatant : combatants) {
-               if (newCombatant._uniqueID != _selfUniqueID) {
-                  if (knownCombatant._uniqueID == newCombatant._uniqueID) {
+               if (newCombatant.uniqueID != selfUniqueID) {
+                  if (knownCombatant.uniqueID == newCombatant.uniqueID) {
                      combatantFound = true;
                      break;
                   }
                }
             }
             if (!combatantFound) {
-               _priorityList.remove(knownIndex);
-               _combatants.remove(knownIndex);
+               priorityList.remove(knownIndex);
+               this.combatants.remove(knownIndex);
                knownIndex--;
                changed = true;
             }
@@ -114,10 +114,10 @@ public class TargetPrioritiesWidget extends Helper implements SelectionListener
       }
 
       // If nothing is selected yet, select one now
-      String[] selected = _priorityList.getSelection();
+      String[] selected = priorityList.getSelection();
       if ((selected == null) || (selected.length == 0)) {
-         if (_combatants.size() > 0) {
-            _priorityList.select(0);
+         if (this.combatants.size() > 0) {
+            priorityList.select(0);
          }
       }
       if (changed) {
@@ -128,9 +128,9 @@ public class TargetPrioritiesWidget extends Helper implements SelectionListener
    }
 
    public void updateServerWithTargets() {
-      if (_display != null) {
+      if (display != null) {
          List<Character> orderedEnemies = new ArrayList<>();
-         for (Character combatant : _combatants) {
+         for (Character combatant : combatants) {
             if (combatant == null) {
                // The 'null' entry corresponds to the "friend below this" entry.
                // When we reach it, stop adding enemies.
@@ -138,22 +138,22 @@ public class TargetPrioritiesWidget extends Helper implements SelectionListener
             }
             orderedEnemies.add(combatant);
          }
-         _display.updateTargetPriorities(orderedEnemies);
+         display.updateTargetPriorities(orderedEnemies);
       }
    }
 
    public void updateCombatant(Character character)
    {
       int index = 0;
-      for (Character knownCombatant : _combatants) {
+      for (Character knownCombatant : combatants) {
          if (knownCombatant != null) { // null divides friend & enemies
-            if (knownCombatant._uniqueID == character._uniqueID) {
+            if (knownCombatant.uniqueID == character.uniqueID) {
                // update our copy of the combatants information
                String oldName = knownCombatant.getName();
                String newName = character.getName();
                knownCombatant.copyData(character);
                if (!oldName.equals(newName)) {
-                  _priorityList.setItem(index, newName);
+                  priorityList.setItem(index, newName);
                }
                return;
             }
@@ -166,32 +166,32 @@ public class TargetPrioritiesWidget extends Helper implements SelectionListener
    public void widgetSelected(SelectionEvent e)
    {
       boolean modified = false;
-      int selection = _priorityList.getSelectionIndex();
-      if (e.widget == _upButton) {
+      int selection = priorityList.getSelectionIndex();
+      if (e.widget == upButton) {
          if (selection > 0) {
-            String[] selected = _priorityList.getSelection();
+            String[] selected = priorityList.getSelection();
             String selectedItem = selected[0];
-            _priorityList.remove(selection);
-            _priorityList.add(selectedItem, selection-1);
-            _priorityList.select(selection-1);
-            Character character = _combatants.remove(selection);
-            _combatants.add(selection-1, character);
+            priorityList.remove(selection);
+            priorityList.add(selectedItem, selection - 1);
+            priorityList.select(selection - 1);
+            Character character = combatants.remove(selection);
+            combatants.add(selection - 1, character);
             modified = true;
          }
       }
-      else if (e.widget == _dnButton) {
-         if (selection < (_priorityList.getItemCount()-1)) {
-            String[] selected = _priorityList.getSelection();
+      else if (e.widget == dnButton) {
+         if (selection < (priorityList.getItemCount() - 1)) {
+            String[] selected = priorityList.getSelection();
             String selectedItem = selected[0];
-            _priorityList.remove(selection);
-            _priorityList.add(selectedItem, selection+1);
-            _priorityList.select(selection+1);
-            Character character = _combatants.remove(selection);
-            _combatants.add(selection+1, character);
+            priorityList.remove(selection);
+            priorityList.add(selectedItem, selection + 1);
+            priorityList.select(selection + 1);
+            Character character = combatants.remove(selection);
+            combatants.add(selection + 1, character);
             modified = true;
          }
       }
-      else if (e.widget == _priorityList) {
+      else if (e.widget == priorityList) {
          enabelUpDnButtons();
       }
 
@@ -201,39 +201,39 @@ public class TargetPrioritiesWidget extends Helper implements SelectionListener
       }
    }
    public void setTeam(byte teamId) {
-      for (int i=0 ; i<_combatants.size() ; i++) {
-         Character combatant = _combatants.get(i);
+      for (int i = 0; i < combatants.size() ; i++) {
+         Character combatant = combatants.get(i);
          if (combatant == null) {
             // null divides friend & enemies
             return;
          }
-         if (combatant._teamID == teamId) {
-            _combatants.remove(i);
-            _priorityList.remove(i);
+         if (combatant.teamID == teamId) {
+            combatants.remove(i);
+            priorityList.remove(i);
             i--;
-            _combatants.add(combatant);
-            _priorityList.add(combatant.getName());
+            combatants.add(combatant);
+            priorityList.add(combatant.getName());
          }
       }
    }
 
    public void enabelUpDnButtons() {
-      int selection = _priorityList.getSelectionIndex();
+      int selection = priorityList.getSelectionIndex();
       if (selection == -1) {
-         _upButton.setEnabled(false);
-         _dnButton.setEnabled(false);
+         upButton.setEnabled(false);
+         dnButton.setEnabled(false);
       }
       else {
-         int itemCount = _priorityList.getItemCount();
+         int itemCount = priorityList.getItemCount();
          if (itemCount >= 2) {
-            _upButton.setEnabled(selection != 0);
-            _dnButton.setEnabled(selection != (itemCount-1));
+            upButton.setEnabled(selection != 0);
+            dnButton.setEnabled(selection != (itemCount - 1));
          }
       }
    }
    public List<Character> getOrderedEnemies() {
       List<Character> orderedEnemies = new ArrayList<>();
-      for (Character combatant : _combatants) {
+      for (Character combatant : combatants) {
          if (combatant == null) {
             // The 'null' entry corresponds to the "friend below this" entry.
             // When we reach it, stop adding enemies.
@@ -244,22 +244,22 @@ public class TargetPrioritiesWidget extends Helper implements SelectionListener
       return orderedEnemies;
    }
    public boolean ignoreEnemy(Character enemy) {
-      for (int i=0 ; i<_combatants.size() ; i++) {
-         if (_combatants.get(i) == null) {
+      for (int i = 0; i < combatants.size() ; i++) {
+         if (combatants.get(i) == null) {
             // If we haven't found it before we found our friends, then we are already ignoring this enemy.
             return false;
          }
-         if ((_combatants.get(i))._uniqueID == enemy._uniqueID) {
-            Character myEnemy = (_combatants.get(i));
-            _combatants.set(i, _combatants.get(i+1));
-            _combatants.set(i+1, myEnemy);
+         if ((combatants.get(i)).uniqueID == enemy.uniqueID) {
+            Character myEnemy = (combatants.get(i));
+            combatants.set(i, combatants.get(i + 1));
+            combatants.set(i + 1, myEnemy);
 
             // TODO: which item is selected? can we preserve this?
-            String enemyName = _priorityList.getItem(i);
-            _priorityList.remove(i);
-            _priorityList.add(enemyName, i+1);
+            String enemyName = priorityList.getItem(i);
+            priorityList.remove(i);
+            priorityList.add(enemyName, i + 1);
 
-            if (_combatants.get(i) == null) {
+            if (combatants.get(i) == null) {
                // Once we push this past our friends list, stop pushing it down.
                updateServerWithTargets();
                return true;

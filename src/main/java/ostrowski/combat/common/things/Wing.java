@@ -20,11 +20,11 @@ public class Wing extends Limb
    //static public byte TYPE_BAT = 0; // bats, demons, dragons
    //static public byte TYPE_FAIRY = 1; // pixies, insects
    //static public byte TYPE_FEATHERED = 2; // birds
-   Wing.Type _wingType = Wing.Type.Bat;
+   Wing.Type wingType = Wing.Type.Bat;
    public Wing() {}
    public Wing(LimbType id, Wing.Type type, Race racialBase) {
       super(id, racialBase);
-      _wingType = type;
+      wingType = type;
    }
    @Override
    public Weapon getWeapon(Character character) {
@@ -39,7 +39,7 @@ public class Wing extends Limb
       }
 
       DrawnObject obj = new DrawnObject(foreground, background);
-      if (_wingType == Wing.Type.Bat) {
+      if (wingType == Wing.Type.Bat) {
          obj.addPoint((wideDiameter *  4)/32, -((narrowDiameter * 5) / 32));  // front shoulder
          obj.addPoint((wideDiameter *  7)/32, -((narrowDiameter * 4) / 32));  // front elbow
          obj.addPoint((wideDiameter * 11)/32, -((narrowDiameter * 7) / 32));  // front elbow
@@ -51,7 +51,7 @@ public class Wing extends Limb
          obj.addPoint((wideDiameter * 10)/32, -((narrowDiameter * -15) / 32));  // back inner extension
          obj.addPoint((wideDiameter *  4)/32, -((narrowDiameter * -6) / 32));  // back shoulder
       }
-      else if (_wingType == Wing.Type.Fairy) {
+      else if (wingType == Wing.Type.Fairy) {
          obj.addPoint((wideDiameter *  4)/32, -((narrowDiameter * 5) / 32));  // front shoulder
          obj.addPoint((wideDiameter *  7)/32, -((narrowDiameter * 4) / 32));  // front elbow
          obj.addPoint((wideDiameter * 11)/32, -((narrowDiameter * 7) / 32));  // front elbow
@@ -62,7 +62,7 @@ public class Wing extends Limb
          obj.addPoint((wideDiameter * 10)/32, -((narrowDiameter * -8) / 32));  // back inner extension
          obj.addPoint((wideDiameter *  4)/32, -((narrowDiameter * -10) / 32));  // back shoulder
       }
-      else if (_wingType == Wing.Type.Feathered) {
+      else if (wingType == Wing.Type.Feathered) {
          obj.addPoint((wideDiameter *  4)/32, -((narrowDiameter * 5) / 32));  // front shoulder
          obj.addPoint((wideDiameter *  7)/32, -((narrowDiameter * 4) / 32));  // front elbow
          obj.addPoint((wideDiameter * 11)/32, -((narrowDiameter * 7) / 32));  // front elbow
@@ -78,6 +78,6 @@ public class Wing extends Limb
 
    @Override
    public Wing clone() {
-      return new Wing(_limbType, _wingType, getRacialBase());
+      return new Wing(limbType, wingType, getRacialBase());
    }
 }

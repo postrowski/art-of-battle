@@ -21,21 +21,21 @@ import ostrowski.ui.Helper;
 
 public class AutoRunBlock extends Helper implements IUIBlock, ModifyListener, SelectionListener
 {
-   private Spinner _playCount;
-   private Button  _runButton;
-   private final Text[]  _winCountPerTeam   = new Text[TEAM_NAMES.length];
-   private final CombatServer _combatServer;
+   private Spinner            playCount;
+   private Button             runButton;
+   private final Text[]       winCountPerTeam = new Text[TEAM_NAMES.length];
+   private final CombatServer combatServer;
 
    public AutoRunBlock(CombatServer combatServer) {
-      _combatServer = combatServer;
+      this.combatServer = combatServer;
    }
 
    @Override
    public void buildBlock(Composite parent) {
       Group playGroup = createGroup(parent, "AutoRun", 3/*columns*/, false/*sameSize*/, 3/*hSpacing*/, 1/*vSpacing*/);
       createLabel(playGroup, "Count", SWT.RIGHT, 1/*hSpan*/, null/*fontData*/);
-      _playCount = createSpinner(playGroup, 0/*min*/, 99/*max*/, 1/*value*/, 1/*hSpan*/);
-      _runButton = createButton(playGroup, "  Run ", 1/*hSpan*/, null/*fontData*/, this/*SelectionListener*/);
+      playCount = createSpinner(playGroup, 0/*min*/, 99/*max*/, 1/*value*/, 1/*hSpan*/);
+      runButton = createButton(playGroup, "  Run ", 1/*hSpan*/, null/*fontData*/, this/*SelectionListener*/);
 
       Group countGroup = new Group(playGroup, SWT.SHADOW_NONE);
       GridLayout layout = new GridLayout(TEAM_NAMES.length +1, false/*sameSize*/);
@@ -55,7 +55,7 @@ public class AutoRunBlock extends Helper implements IUIBlock, ModifyListener, Se
       }
       createLabel(countGroup, "count", SWT.CENTER, 1/*hSpan*/, null/*fontData*/);
       for (int t=0 ; t<TEAM_NAMES.length ; t++) {
-         _winCountPerTeam[t] = createText(countGroup, "", false/*editable*/, 1/*hSpan*/, null/*fontData*/, 35/*minWdith*/);
+         winCountPerTeam[t] = createText(countGroup, "", false/*editable*/, 1/*hSpan*/, null/*fontData*/, 35/*minWdith*/);
       }
    }
 
@@ -81,39 +81,39 @@ public class AutoRunBlock extends Helper implements IUIBlock, ModifyListener, Se
 
    @Override
    public void widgetSelected(SelectionEvent e) {
-      if (e.widget == _runButton) {
+      if (e.widget == runButton) {
          for (int t=0 ; t<TEAM_NAMES.length ; t++) {
-            _winCountPerTeam[t].setText("0");
+            winCountPerTeam[t].setText("0");
          }
-         _combatServer.onAutoRun(this);
+         combatServer.onAutoRun(this);
       }
    }
 
    public void battleStarted() {
-      _runButton.setEnabled(false);
+      runButton.setEnabled(false);
    }
 
    public boolean battleEnded(final int winningTeamId) {
-      Shell shell = _combatServer.getShell();
+      Shell shell = combatServer.getShell();
       final StringBuilder results = new StringBuilder();
       if (!shell.isDisposed()) {
          Display display = shell.getDisplay();
          display.asyncExec(() -> {
             if (winningTeamId != -1) {
-               String winCountStr = _winCountPerTeam[winningTeamId].getText();
+               String winCountStr = winCountPerTeam[winningTeamId].getText();
                int winCount = Integer.parseInt(winCountStr);
                winCount++;
-               _winCountPerTeam[winningTeamId].setText(String.valueOf(winCount));
+               winCountPerTeam[winningTeamId].setText(String.valueOf(winCount));
             }
-            int count = _playCount.getSelection();
+            int count = playCount.getSelection();
             char result;
             count--;
             if (count == 0) {
                result = 'f';
-               _runButton.setEnabled(true);
+               runButton.setEnabled(true);
             }
             else {
-               _playCount.setSelection(count);
+               playCount.setSelection(count);
                result = 't';
             }
             synchronized (results) {

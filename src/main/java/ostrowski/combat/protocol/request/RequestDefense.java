@@ -22,18 +22,18 @@ import ostrowski.util.SemaphoreAutoLocker;
 
 public class RequestDefense extends SyncRequest implements Enums
 {
-   private int            _attackerID        = -1;
-   private byte           _attackActions     = 0;
-   private DamageType     _damageType        = DamageType.NONE;
-   private byte           _minimumDamage     = 0;
-   private double         _damageExpected    = 0;
-   private double         _toHitRollExpected = 0;
-   private DiceSet        _toHitDice         = new DiceSet();
-   private boolean        _rangedAttack      = false;
-   private boolean        _chargeAttack      = false;
-   private boolean        _grappleAttack     = false;
-   private RANGE          _range             = RANGE.OUT_OF_RANGE;
-   private Spell          _attackingSpell    = null;
+   private int        attackerID        = -1;
+   private byte       attackActions     = 0;
+   private DamageType damageType        = DamageType.NONE;
+   private byte       minimumDamage     = 0;
+   private double     damageExpected    = 0;
+   private double     toHitRollExpected = 0;
+   private DiceSet    toHitDice         = new DiceSet();
+   private boolean    rangedAttack      = false;
+   private boolean    chargeAttack      = false;
+   private boolean    grappleAttack     = false;
+   private RANGE      range             = RANGE.OUT_OF_RANGE;
+   private Spell      attackingSpell    = null;
 
    @Override
    protected String getAllowedKeyStrokesForOption(int optionID) {
@@ -59,21 +59,21 @@ public class RequestDefense extends SyncRequest implements Enums
    @Override
    public synchronized void copyDataInto(SyncRequest newObj)
    {
-      try (SemaphoreAutoLocker sal = new SemaphoreAutoLocker(_lockThis)) {
+      try (SemaphoreAutoLocker sal = new SemaphoreAutoLocker(lockThis)) {
          super.copyDataInto(newObj);
          if (newObj instanceof RequestDefense) {
             RequestDefense reqDef = (RequestDefense) newObj;
-            reqDef._attackerID        = _attackerID;
-            reqDef._attackActions     = _attackActions;
-            reqDef._damageType        = _damageType;
-            reqDef._minimumDamage     = _minimumDamage;
-            reqDef._damageExpected    = _damageExpected;
-            reqDef._toHitRollExpected = _toHitRollExpected;
-            reqDef._toHitDice         = _toHitDice;
-            reqDef._rangedAttack      = _rangedAttack;
-            reqDef._chargeAttack      = _chargeAttack;
-            reqDef._grappleAttack     = _grappleAttack;
-            reqDef._range             = _range;
+            reqDef.attackerID = attackerID;
+            reqDef.attackActions = attackActions;
+            reqDef.damageType = damageType;
+            reqDef.minimumDamage = minimumDamage;
+            reqDef.damageExpected = damageExpected;
+            reqDef.toHitRollExpected = toHitRollExpected;
+            reqDef.toHitDice = toHitDice;
+            reqDef.rangedAttack = rangedAttack;
+            reqDef.chargeAttack = chargeAttack;
+            reqDef.grappleAttack = grappleAttack;
+            reqDef.range = range;
          }
       }
    }
@@ -82,21 +82,21 @@ public class RequestDefense extends SyncRequest implements Enums
       // default c'tor used by factor method to serialize in from a stream.
    }
    public RequestDefense(Character attacker, RequestAction attack, RANGE range) {
-      _attackerID        = attacker._uniqueID;
-      _attackActions     = attack.getAttackActions(true/*considerSpellAsAttack*/);
-      _toHitRollExpected = attack.getExpectedAttackRoll(attacker, true/*includeSkill*/, true/*includeWoundsAndPain*/, range);
-      _toHitDice         = attack.getAttackDice(attacker, true/*includeSkill*/, true/*includeWoundsAndPain*/, range);
-      _rangedAttack      = attack.isRangedAttack();
-      _chargeAttack      = attack.isCharge();
-      _grappleAttack     = attack.isGrappleAttack() || attack.isCounterAttack();
-      _range             = range;
-      _attackingSpell    = attack.getSpell();
+      attackerID = attacker.uniqueID;
+      attackActions = attack.getAttackActions(true/*considerSpellAsAttack*/);
+      toHitRollExpected = attack.getExpectedAttackRoll(attacker, true/*includeSkill*/, true/*includeWoundsAndPain*/, range);
+      toHitDice = attack.getAttackDice(attacker, true/*includeSkill*/, true/*includeWoundsAndPain*/, range);
+      rangedAttack = attack.isRangedAttack();
+      chargeAttack = attack.isCharge();
+      grappleAttack = attack.isGrappleAttack() || attack.isCounterAttack();
+      this.range = range;
+      attackingSpell = attack.getSpell();
 
       WeaponStyleAttack style = attack.getWeaponStyleAttack(attacker);
       if (style != null) {
-         _minimumDamage  = attack.getMinimumDamage(attacker);
-         _damageType     = style.getDamageType();
-         _damageExpected = _minimumDamage + style.getVarianceDie().getAverageRoll(true/*allowExplodes*/);
+         minimumDamage = attack.getMinimumDamage(attacker);
+         damageType = style.getDamageType();
+         damageExpected = minimumDamage + style.getVarianceDie().getAverageRoll(true/*allowExplodes*/);
       }
    }
 
@@ -104,18 +104,18 @@ public class RequestDefense extends SyncRequest implements Enums
    public boolean isCancelable() {
        return false;
    }
-   public int            getAttackerID()        { return _attackerID; }
-   public byte           getAttackActions()     { return _attackActions; }
-   public byte           getMinimumDamage()     { return _minimumDamage; }
-   public double         getExpectedDamage()    { return _damageExpected; }
-   public double         getExpectedToHitRoll() { return _toHitRollExpected; }
-   public DiceSet        getExpectedToHitDice() { return _toHitDice; }
-   public boolean        isRangedAttack()       { return _rangedAttack; }
-   public boolean        isChargeAttack()       { return _chargeAttack; }
-   public boolean        isGrapple()            { return _grappleAttack; }
-   public Spell          getSpell()             { return _attackingSpell; }
-   public RANGE          getRange()             { return _range; }
-   public DamageType     getDamageType()        { return _damageType; }
+   public int            getAttackerID()        { return attackerID; }
+   public byte           getAttackActions()     { return attackActions; }
+   public byte           getMinimumDamage()     { return minimumDamage; }
+   public double         getExpectedDamage()    { return damageExpected; }
+   public double         getExpectedToHitRoll() { return toHitRollExpected; }
+   public DiceSet        getExpectedToHitDice() { return toHitDice; }
+   public boolean        isRangedAttack()       { return rangedAttack; }
+   public boolean        isChargeAttack()       { return chargeAttack; }
+   public boolean        isGrapple()            { return grappleAttack; }
+   public Spell          getSpell()             { return attackingSpell; }
+   public RANGE          getRange()             { return range; }
+   public DamageType     getDamageType()        { return damageType; }
    public int            getDefenseIndex()      { return getAnswerID(); }
 
    public DefenseOptions getDefenseOptions()    { return new DefenseOptions(getAnswerID()); }
@@ -155,20 +155,20 @@ public class RequestDefense extends SyncRequest implements Enums
    public void serializeFromStream(DataInputStream in) {
       super.serializeFromStream(in);
       try {
-         _attackerID        = readInt(in);
-         _attackActions     = readByte(in);
-         _damageType        = ostrowski.combat.common.enums.DamageType.getByValue(readByte(in));
-         _minimumDamage     = readByte(in);
-         _damageExpected    = readDouble(in);
-         _toHitRollExpected = readDouble(in);
-         _toHitDice.serializeFromStream(in);
-         _rangedAttack      = readBoolean(in);
-         _chargeAttack      = readBoolean(in);
-         _grappleAttack     = readBoolean(in);
+         attackerID = readInt(in);
+         attackActions = readByte(in);
+         damageType = ostrowski.combat.common.enums.DamageType.getByValue(readByte(in));
+         minimumDamage = readByte(in);
+         damageExpected = readDouble(in);
+         toHitRollExpected = readDouble(in);
+         toHitDice.serializeFromStream(in);
+         rangedAttack = readBoolean(in);
+         chargeAttack = readBoolean(in);
+         grappleAttack = readBoolean(in);
          byte rangeByte     = readByte(in);
          for (RANGE range : RANGE.values()) {
             if (range.ordinal() == rangeByte) {
-               _range = range;
+               this.range = range;
             }
          }
       } catch (IOException e) {
@@ -179,17 +179,17 @@ public class RequestDefense extends SyncRequest implements Enums
    public void serializeToStream(DataOutputStream out) {
       super.serializeToStream(out);
       try {
-         writeToStream(_attackerID, out);
-         writeToStream(_attackActions, out);
-         writeToStream(_damageType.value, out);
-         writeToStream(_minimumDamage, out);
-         writeToStream(_damageExpected, out);
-         writeToStream(_toHitRollExpected, out);
-         _toHitDice.serializeToStream(out);
-         writeToStream(_rangedAttack, out);
-         writeToStream(_chargeAttack, out);
-         writeToStream(_grappleAttack, out);
-         writeToStream((byte)(_range.ordinal()), out);
+         writeToStream(attackerID, out);
+         writeToStream(attackActions, out);
+         writeToStream(damageType.value, out);
+         writeToStream(minimumDamage, out);
+         writeToStream(damageExpected, out);
+         writeToStream(toHitRollExpected, out);
+         toHitDice.serializeToStream(out);
+         writeToStream(rangedAttack, out);
+         writeToStream(chargeAttack, out);
+         writeToStream(grappleAttack, out);
+         writeToStream((byte)(range.ordinal()), out);
       } catch (IOException e) {
          e.printStackTrace();
       }

@@ -27,89 +27,89 @@ import java.util.List;
 
 public class RequestMovement extends SyncRequest implements Enums
 {
-   private List<Orientation>                 _completeOrientations;
-   private List<Orientation>                 _cancelOrientations;
-   private List<Orientation>                 _selectedPath;
-//   private List<Orientation>                 _orientations;
-   private List<Orientation>                 _futureOrientations;
-   private HashMap<Orientation, Orientation> _mapOfFutureOrientToSourceOrient;
-   private int                               _actorID;
+   private List<Orientation>                 completeOrientations;
+   private List<Orientation>                 cancelOrientations;
+   private List<Orientation>                 selectedPath;
+   //private List<Orientation>                 orientations;
+   private List<Orientation>                 futureOrientations;
+   private HashMap<Orientation, Orientation> mapOfFutureOrientToSourceOrient;
+   private int                               actorID;
 
    public RequestMovement() {
-      _completeOrientations = new ArrayList<>();
-      _cancelOrientations = new ArrayList<>();
+      completeOrientations = new ArrayList<>();
+      cancelOrientations = new ArrayList<>();
    }
 
    public boolean setOrientation(Orientation orientation) {
-      if (_futureOrientations.contains(orientation)) {
-         if (_cancelOrientations.contains(orientation)) {
+      if (futureOrientations.contains(orientation)) {
+         if (cancelOrientations.contains(orientation)) {
             setAnswerID(OPT_CANCEL_ACTION);
          }
-         _selectedPath = getRouteToFutureOrientation(orientation);
+         selectedPath = getRouteToFutureOrientation(orientation);
          return true;
       }
       return false;
    }
    @Override
    public synchronized void setAnswerByOptionIndex(int i) {
-      try (SemaphoreAutoLocker sal = new SemaphoreAutoLocker(_lockThis)) {
+      try (SemaphoreAutoLocker sal = new SemaphoreAutoLocker(lockThis)) {
          //setAnswerID(i);
-         _answer = new RequestOption("", i, true);
-         if (_futureOrientations.size() > i) {
-            if (_cancelOrientations.contains(_futureOrientations.get(i))) {
+         answer = new RequestOption("", i, true);
+         if (futureOrientations.size() > i) {
+            if (cancelOrientations.contains(futureOrientations.get(i))) {
                setAnswerID(OPT_CANCEL_ACTION);
             }
          }
-         //_answerStr = _futureOrientations.get(i).toString();
+         //_answerStr = futureOrientations.get(i).toString();
       }
    }
    public List<Orientation> getOrientations() {
-      return _futureOrientations;
+      return futureOrientations;
    }
    public void setOrientations(List<Orientation> futureOrientations,
                                HashMap<Orientation, Orientation> mapOfFutureOrientToSourceOrient, Character actor) {
-      _futureOrientations = futureOrientations;
-      _mapOfFutureOrientToSourceOrient = mapOfFutureOrientToSourceOrient;
-      _actorID = actor._uniqueID;
-      _cancelOrientations.clear();
-      _completeOrientations.clear();
+      this.futureOrientations = futureOrientations;
+      this.mapOfFutureOrientToSourceOrient = mapOfFutureOrientToSourceOrient;
+      actorID = actor.uniqueID;
+      cancelOrientations.clear();
+      completeOrientations.clear();
       if (actor.hasMovedThisRound()) {
-         _completeOrientations.add(actor.getOrientation());
+         completeOrientations.add(actor.getOrientation());
       }
       else {
-         _cancelOrientations.add(actor.getOrientation());
+         cancelOrientations.add(actor.getOrientation());
       }
    }
    public Orientation getAnswerOrientation(boolean removeEntry) {
-      if (_selectedPath.isEmpty()) {
+      if (selectedPath.isEmpty()) {
          return null;
       }
       if (removeEntry) {
-         return _selectedPath.remove(_selectedPath.size()-1);
+         return selectedPath.remove(selectedPath.size() - 1);
       }
-      return _selectedPath.get(_selectedPath.size()-1);
+      return selectedPath.get(selectedPath.size() - 1);
    }
 
    @Override
    public boolean isAnswered() {
-      return (_selectedPath != null);
+      return (selectedPath != null);
    }
 
    @Override
    public int getActionCount() {
-      return super.getActionCount() + _futureOrientations.size();
+      return super.getActionCount() + futureOrientations.size();
    }
 
    @Override
    public void copyAnswer(SyncRequest source) {
       if (source instanceof RequestMovement) {
          RequestMovement sourceMove = (RequestMovement) source;
-         _selectedPath                    = sourceMove._selectedPath;
-         _futureOrientations              = sourceMove._futureOrientations;
-         _completeOrientations            = sourceMove._completeOrientations;
-         _cancelOrientations              = sourceMove._cancelOrientations;
+         selectedPath = sourceMove.selectedPath;
+         futureOrientations = sourceMove.futureOrientations;
+         completeOrientations = sourceMove.completeOrientations;
+         cancelOrientations = sourceMove.cancelOrientations;
 
-         _mapOfFutureOrientToSourceOrient = sourceMove._mapOfFutureOrientToSourceOrient;
+         mapOfFutureOrientToSourceOrient = sourceMove.mapOfFutureOrientToSourceOrient;
       }
       //super.copyAnswer(source);
    }
@@ -139,28 +139,28 @@ public class RequestMovement extends SyncRequest implements Enums
    public void serializeFromStream(DataInputStream in) {
       super.serializeFromStream(in);
       try {
-         _selectedPath = new ArrayList<>();
-         _futureOrientations = new ArrayList<>();
-         _cancelOrientations = new ArrayList<>();
-         _completeOrientations = new ArrayList<>();
+         selectedPath = new ArrayList<>();
+         futureOrientations = new ArrayList<>();
+         cancelOrientations = new ArrayList<>();
+         completeOrientations = new ArrayList<>();
          List<Integer> futureOrientationsSourceIndexIntoFutureOrientations = new ArrayList<>();
-         _actorID = readInt(in);
-         readIntoListOrientation(_selectedPath, in);
-         readIntoListOrientation(_futureOrientations, in);
-         readIntoListOrientation(_cancelOrientations, in);
-         readIntoListOrientation(_completeOrientations, in);
+         actorID = readInt(in);
+         readIntoListOrientation(selectedPath, in);
+         readIntoListOrientation(futureOrientations, in);
+         readIntoListOrientation(cancelOrientations, in);
+         readIntoListOrientation(completeOrientations, in);
          readIntoListInteger(futureOrientationsSourceIndexIntoFutureOrientations, in);
          {
             // load up the HashMap with all the known routes
-            _mapOfFutureOrientToSourceOrient = new HashMap<>();
-            for (Orientation futureOrientation : _futureOrientations) {
+            mapOfFutureOrientToSourceOrient = new HashMap<>();
+            for (Orientation futureOrientation : futureOrientations) {
                while (futureOrientation != null) {
-                  int index = _futureOrientations.indexOf(futureOrientation);
+                  int index = futureOrientations.indexOf(futureOrientation);
                   if (index != -1) {
                      Integer sourceIndex = futureOrientationsSourceIndexIntoFutureOrientations.get(index);
                      if (sourceIndex >= 0) {
-                        Orientation fromOrientation = _futureOrientations.get(sourceIndex);
-                        _mapOfFutureOrientToSourceOrient.put(futureOrientation, fromOrientation);
+                        Orientation fromOrientation = futureOrientations.get(sourceIndex);
+                        mapOfFutureOrientToSourceOrient.put(futureOrientation, fromOrientation);
                         futureOrientation = fromOrientation;
                      }
                      else {
@@ -178,19 +178,19 @@ public class RequestMovement extends SyncRequest implements Enums
    public void serializeToStream(DataOutputStream out) {
       super.serializeToStream(out);
       try {
-         writeToStream(_actorID, out);
-         writeListOrientationToStream(_selectedPath, out);
-         writeListOrientationToStream(_futureOrientations, out);
-         writeListOrientationToStream(_cancelOrientations, out);
-         writeListOrientationToStream(_completeOrientations, out);
+         writeToStream(actorID, out);
+         writeListOrientationToStream(selectedPath, out);
+         writeListOrientationToStream(futureOrientations, out);
+         writeListOrientationToStream(cancelOrientations, out);
+         writeListOrientationToStream(completeOrientations, out);
          List<Integer> futureOrientationsSourceIndexIntoFutureOrientations = new ArrayList<> ();
-         for (Orientation futureOrientation : _futureOrientations) {
-            Orientation sourceOrientation = _mapOfFutureOrientToSourceOrient.get(futureOrientation);
+         for (Orientation futureOrientation : futureOrientations) {
+            Orientation sourceOrientation = mapOfFutureOrientToSourceOrient.get(futureOrientation);
             if (sourceOrientation == null) {
                futureOrientationsSourceIndexIntoFutureOrientations.add(-1);
             }
             else {
-               int indexIntoFutureOrientations = _futureOrientations.indexOf(sourceOrientation);
+               int indexIntoFutureOrientations = futureOrientations.indexOf(sourceOrientation);
                if (indexIntoFutureOrientations != -1) {
                   futureOrientationsSourceIndexIntoFutureOrientations.add(indexIntoFutureOrientations);
                }
@@ -211,22 +211,22 @@ public class RequestMovement extends SyncRequest implements Enums
    {
       return super.toString() +
              "RequestMovement: " +
-             ", futureOrientations:" + _futureOrientations +
-             ", cancelOrientations:" + _cancelOrientations +
-             ", completeOrientations:" + _completeOrientations +
-             ", actorID:" + _actorID;
+             ", futureOrientations:" + futureOrientations +
+             ", cancelOrientations:" + cancelOrientations +
+             ", completeOrientations:" + completeOrientations +
+             ", actorID:" + actorID;
    }
 
    public boolean setOrientation(ArenaLocation loc, double angleFromCenter, double normalizedDistFromCenter) {
       Orientation orient;
       orient = getBestFutureOrientation(loc, angleFromCenter, normalizedDistFromCenter);
       if (orient != null) {
-         _selectedPath = getRouteToFutureOrientation(orient);
-         if (_selectedPath != null) {
+         selectedPath = getRouteToFutureOrientation(orient);
+         if (selectedPath != null) {
             // Once we have selected the path, we can release all the possible orientations
             // and their route-to mapping, so these memories can be freed
-            _futureOrientations.clear();
-            _mapOfFutureOrientToSourceOrient.clear();
+            futureOrientations.clear();
+            mapOfFutureOrientToSourceOrient.clear();
             return true;
          }
       }
@@ -236,13 +236,13 @@ public class RequestMovement extends SyncRequest implements Enums
       List<Orientation> path = new ArrayList<>();
       while (futureOrientation != null) {
          path.add(futureOrientation);
-         futureOrientation = _mapOfFutureOrientToSourceOrient.get(futureOrientation);
-//         int index = _futureOrientations.indexOf(futureOrientation);
+         futureOrientation = mapOfFutureOrientToSourceOrient.get(futureOrientation);
+//         int index = futureOrientations.indexOf(futureOrientation);
 //         if (index == -1)
 //            break;
-//         Integer sourceIndex = _futureOrientationsSourceIndexIntoFutureOrientations.get(index);
+//         Integer sourceIndex = futureOrientationsSourceIndexIntoFutureOrientations.get(index);
 //         if (sourceIndex >= 0)
-//            futureOrientation = _futureOrientations.get(sourceIndex.intValue());
+//            futureOrientation = futureOrientations.get(sourceIndex.intValue());
 //         else if (sourceIndex != -1)
 //            break;
       }
@@ -256,10 +256,10 @@ public class RequestMovement extends SyncRequest implements Enums
       return path;
    }
 //   public Orientation getBestOrientation(ArenaLocation loc, double angleFromCenter, double normalizedDistFromCenter) {
-//      return getBestOrientation(loc, angleFromCenter, normalizedDistFromCenter, _orientations);
+//      return getBestOrientation(loc, angleFromCenter, normalizedDistFromCenter, orientations);
 //   }
    public Orientation getBestFutureOrientation(ArenaLocation loc, double angleFromCenter, double normalizedDistFromCenter) {
-      return getBestOrientation(loc, angleFromCenter, normalizedDistFromCenter, _futureOrientations);
+      return getBestOrientation(loc, angleFromCenter, normalizedDistFromCenter, futureOrientations);
    }
    static private Orientation getBestOrientation(ArenaLocation loc, double angleFromCenter, double normalizedDistFromCenter, List<Orientation> orientations) {
       Facing facing = getFacingFromAngle(angleFromCenter);
@@ -325,40 +325,40 @@ public class RequestMovement extends SyncRequest implements Enums
 
    public List<ArenaCoordinates> getFutureCoordinates() {
       List<ArenaCoordinates> locations = new ArrayList<>();
-      for (Orientation orient : _futureOrientations) {
+      for (Orientation orient : futureOrientations) {
          locations.add(orient.getHeadCoordinates());
       }
       return locations;
    }
 
    public int getActorID() {
-      return _actorID;
+      return actorID;
    }
 
    public boolean hasMovesLeft() {
-      return (_selectedPath != null) && (_selectedPath.size()>0);
+      return (selectedPath != null) && (selectedPath.size() > 0);
    }
    public void forceEndOfMovement() {
-      if (_selectedPath != null) {
-         _selectedPath.clear();
+      if (selectedPath != null) {
+         selectedPath.clear();
       }
    }
 
    public List<Orientation> getCancelOrientations() {
-      return _cancelOrientations;
+      return cancelOrientations;
    }
 
    public List<Orientation> getCompletionOrientations() {
-      return _completeOrientations;
+      return completeOrientations;
    }
 
    public boolean moveByKeystroke(KeyEvent arg0, CombatMap map) {
       Orientation currentOrientation;
-      if (_completeOrientations.size() == 1) {
-         currentOrientation = _completeOrientations.get(0);
+      if (completeOrientations.size() == 1) {
+         currentOrientation = completeOrientations.get(0);
       }
-      else if (_cancelOrientations.size() == 1) {
-         currentOrientation = _cancelOrientations.get(0);
+      else if (cancelOrientations.size() == 1) {
+         currentOrientation = cancelOrientations.get(0);
       }
       else {
          return false;
@@ -402,11 +402,11 @@ public class RequestMovement extends SyncRequest implements Enums
       }
 
       if (moveDir != null) {
-         headLoc = map.getLocation((short)(headLoc._x + moveDir.moveX),
-                                   (short)(headLoc._y + moveDir.moveY));
+         headLoc = map.getLocation((short)(headLoc.x + moveDir.moveX),
+                                   (short)(headLoc.y + moveDir.moveY));
       }
 
-      for (Orientation possibleMove : _futureOrientations) {
+      for (Orientation possibleMove : futureOrientations) {
          if (possibleMove.getHeadCoordinates().sameCoordinates(headLoc)) {
             if (possibleMove.getFacing() == facingDir) {
                return setOrientation(possibleMove);

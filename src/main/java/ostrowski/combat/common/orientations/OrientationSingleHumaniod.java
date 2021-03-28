@@ -40,18 +40,18 @@ public class OrientationSingleHumaniod extends OrientationSerpentine
          if (newPosition == Position.PRONE_BACK) {
             Facing newFacing = getFacing().turn(3);
             newHeadLoc = ArenaLocation.getForwardMovement(getHeadCoordinates(), newFacing, map);
-            _facings.add(newFacing);
+            facings.add(newFacing);
             altPosition = Position.SITTING;
          }
          else {
             newHeadLoc = ArenaLocation.getForwardMovement(getHeadCoordinates(), getFacing(), map);
-            _facings.add(getFacing());
+            facings.add(getFacing());
             altPosition = Position.KNEELING;
          }
-         ArenaLocation curHeadLoc = map.getLocation(_coordinates.get(0));
+         ArenaLocation curHeadLoc = map.getLocation(coordinates.get(0));
          if ((newHeadLoc != null) && (ArenaLocation.canMoveBetween(curHeadLoc, newHeadLoc, true/*blockByCharacters*/))) {
 //         if ((newHeadLoc != null) && (newHeadLoc.canEnter(curHeadLoc, true/*blockByCharacters*/))) {
-            _coordinates.add(0, newHeadLoc);
+            coordinates.add(0, newHeadLoc);
             // set our position BEFORE we add this character to any hex, or the character may appear in the wrong position
             super.setPosition(newPosition, map, actor);
             newHeadLoc.addThing(actor);
@@ -61,23 +61,23 @@ public class OrientationSingleHumaniod extends OrientationSerpentine
             // use the alternate position that only takes one hex.
             newSize = 1;
             newPosition = altPosition;
-            _facings.remove(_facings.size()-1);
+            facings.remove(facings.size() - 1);
          }
       }
       else if ((newSize == 1) && (oldSize == 2)) {
-         ArenaLocation oldLoc = map.getLocation(_coordinates.remove(0));
+         ArenaLocation oldLoc = map.getLocation(coordinates.remove(0));
          oldLoc.remove(actor);
-         _facings.remove(_facings.size()-1);
+         facings.remove(facings.size() - 1);
       }
-      _baseSize = newSize;
+      baseSize = newSize;
       // when we roll, change our facing
       if (((newPosition == Position.PRONE_BACK)  && (currentPos == Position.PRONE_FRONT)) ||
           ((newPosition == Position.PRONE_FRONT) && (currentPos == Position.PRONE_BACK )))
       {
-         _facings.set(0, _facings.get(0).turn(3));
+         facings.set(0, facings.get(0).turn(3));
       }
 
-      if (_facings.size() != _coordinates.size()) {
+      if (facings.size() != coordinates.size()) {
          DebugBreak.debugBreak();
       }
 
@@ -232,7 +232,7 @@ public class OrientationSingleHumaniod extends OrientationSerpentine
       if (limb == null) {
          // drawing the body:
          int yOffset = 0;
-         switch (_coordinates.indexOf(loc)) {
+         switch (coordinates.indexOf(loc)) {
             case 0: yOffset = (int) (size*.72); break;
             case 1: yOffset = (int) (0-(size*.72)); break;
          }
@@ -265,7 +265,7 @@ public class OrientationSingleHumaniod extends OrientationSerpentine
       Facing facing = super.getFacing(loc);
       if ((facing != null) &&
           (getPosition() == Position.PRONE_BACK) &&
-          (_coordinates.get(1).sameCoordinates(loc))) {
+          (coordinates.get(1).sameCoordinates(loc))) {
          return facing.turn(3);
       }
       return facing;

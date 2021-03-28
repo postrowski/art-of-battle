@@ -10,8 +10,8 @@ public class RequestPosition extends SyncRequest implements Enums {
    public RequestPosition() { }
    public RequestPosition(RequestAction parentReq) {}
    public RequestActionType getActionType() {
-      if (_answer instanceof RequestActionOption) {
-         RequestActionOption reqActOpt = (RequestActionOption) _answer;
+      if (answer instanceof RequestActionOption) {
+         RequestActionOption reqActOpt = (RequestActionOption) answer;
          return reqActOpt.getValue();
       }
       return null;

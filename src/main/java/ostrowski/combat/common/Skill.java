@@ -27,28 +27,28 @@ public class Skill extends SerializableObject implements Cloneable, Enums {
       OneOrTwo
    }
 
-   private SkillType       _type;
-   private byte            _level;
+   private SkillType type;
+   private byte      level;
 
    public Skill()
    {
    }
    public Skill(SkillType type, byte level)
    {
-      _type = type;
-      _level = level;
+      this.type = type;
+      this.level = level;
    }
-   public void setLevel(byte level)          {  _level = level;  }
-   public byte getLevel()                    { return _level;}
-   public SkillType getType()                { return _type;}
-   public String getName()                   { return _type._name;}
-   public ArmsUsed getArmUseCount()          { return _type._armUseCount; }
-   public Attribute getAttributeBase()       { return _type._attributeBase; }
-   public boolean isAdjustedForSize()        { return _type._isAdjustedForSize;  }
-   public boolean isAdjustedForEncumbrance() { return _type._isAdjustedForEncumbrance; }
+   public void setLevel(byte level)          {  this.level = level;  }
+   public byte getLevel()                    { return level;}
+   public SkillType getType()                { return type;}
+   public String getName()                   { return type.name;}
+   public ArmsUsed getArmUseCount()          { return type.armUseCount; }
+   public Attribute getAttributeBase()       { return type.attributeBase; }
+   public boolean isAdjustedForSize()        { return type.isAdjustedForSize;  }
+   public boolean isAdjustedForEncumbrance() { return type.isAdjustedForEncumbrance; }
 
    public byte getPenaltyForEncumbranceLevel(byte encumbranceLevel) {
-      if (_type._isAdjustedForEncumbrance) {
+      if (type.isAdjustedForEncumbrance) {
          return encumbranceLevel;
       }
       return 0;
@@ -57,24 +57,24 @@ public class Skill extends SerializableObject implements Cloneable, Enums {
    @Override
    public String toString()
    {
-      return "Skill: {" + _type._name + " = " + _level + '}';
+      return "Skill: {" + type.name + " = " + level + '}';
    }
 
    @Override
    public Skill clone()
    {
       Skill newSkill = new Skill();
-      newSkill._type = _type;
-      newSkill.setLevel(_level);
+      newSkill.type = type;
+      newSkill.setLevel(level);
       return newSkill;
    }
    @Override
    public void serializeToStream(DataOutputStream out)
    {
       try {
-         writeToStream(_type._name, out);
-         writeToStream(_level, out);
-         // The _attributeBase & _armUseCount don't need to be serialized,
+         writeToStream(type.name, out);
+         writeToStream(level, out);
+         // The attributeBase & armUseCount don't need to be serialized,
          // because they are constant for a given skill (defined by its name).
       } catch (IOException e) {
          e.printStackTrace();
@@ -84,8 +84,8 @@ public class Skill extends SerializableObject implements Cloneable, Enums {
    public void serializeFromStream(DataInputStream in)
    {
       try {
-         _type = SkillType.getSkillTypeByName(readString(in));
-         _level = readByte(in);
+         type = SkillType.getSkillTypeByName(readString(in));
+         level = readByte(in);
       } catch (IOException e) {
          e.printStackTrace();
       }

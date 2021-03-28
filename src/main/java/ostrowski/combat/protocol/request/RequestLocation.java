@@ -17,63 +17,63 @@ import java.util.List;
 
 public class RequestLocation extends SyncRequest
 {
-   List<ArenaCoordinates> _selectableCoordinates;
-   String                 _cursorResourceName;
+   List<ArenaCoordinates> selectableCoordinates;
+   String                 cursorResourceName;
 
    public RequestLocation() {
    }
    public RequestLocation(String cursorResourceName) {
-      _cursorResourceName = cursorResourceName;
+      this.cursorResourceName = cursorResourceName;
    }
    public String getCursorResourceName() {
-      return _cursorResourceName;
+      return cursorResourceName;
    }
    public boolean setAnswer(short xLoc, short yLoc) {
-      for (int i=0 ; i<_selectableCoordinates.size() ; i++) {
-         if ((xLoc == _selectableCoordinates.get(i)._x) &&
-             (yLoc == _selectableCoordinates.get(i)._y)) {
+      for (int i = 0; i < selectableCoordinates.size() ; i++) {
+         if ((xLoc == selectableCoordinates.get(i).x) &&
+             (yLoc == selectableCoordinates.get(i).y)) {
             setAnswerID(i);
             return true;
          }
       }
       return false;
    }
-   public List<ArenaCoordinates> getSelectableCoordinates() {  return _selectableCoordinates;  }
+   public List<ArenaCoordinates> getSelectableCoordinates() {  return selectableCoordinates;  }
    public void setCoordinates(List<ArenaCoordinates> selectableCoordinates) {
-      _selectableCoordinates = selectableCoordinates;
+      this.selectableCoordinates = selectableCoordinates;
    }
 
    @Override
    public int getActionCount() {
-      return _selectableCoordinates.size();
+      return selectableCoordinates.size();
    }
    @Override
    public int[] getOptionIDs() {
-      int[] results = new int[_selectableCoordinates.size()];
-      for (int i=0 ; i<_selectableCoordinates.size() ; i++) {
+      int[] results = new int[selectableCoordinates.size()];
+      for (int i = 0; i < selectableCoordinates.size() ; i++) {
          results[i] = i;
       }
       return results;
    }
    @Override
    public String[] getOptions() {
-      String[] results = new String[_selectableCoordinates.size()];
-      for (int i=0 ; i<_selectableCoordinates.size() ; i++) {
-         results[i] = _selectableCoordinates.get(i)._x+","+
-                      _selectableCoordinates.get(i)._y;
+      String[] results = new String[selectableCoordinates.size()];
+      for (int i = 0; i < selectableCoordinates.size() ; i++) {
+         results[i] = selectableCoordinates.get(i).x + "," +
+                      selectableCoordinates.get(i).y;
       }
       return results;
    }
    @Override
    public synchronized void setAnswerByOptionIndex(int i) {
-      try (SemaphoreAutoLocker sal = new SemaphoreAutoLocker(_lockThis)) {
-         _answer = new RequestOption(_selectableCoordinates.get(i)._x + "," +
-                                     _selectableCoordinates.get(i)._y, i, true);
+      try (SemaphoreAutoLocker sal = new SemaphoreAutoLocker(lockThis)) {
+         answer = new RequestOption(selectableCoordinates.get(i).x + "," +
+                                    selectableCoordinates.get(i).y, i, true);
       }
    }
    @Override
    public synchronized boolean setAnswerID(int answerID) {
-      try (SemaphoreAutoLocker sal = new SemaphoreAutoLocker(_lockThis)) {
+      try (SemaphoreAutoLocker sal = new SemaphoreAutoLocker(lockThis)) {
          if (answerID != -1) {
             setAnswerByOptionIndex(answerID);
          }
@@ -82,23 +82,23 @@ public class RequestLocation extends SyncRequest
    }
    @Override
    public int getAnswerIndex() {
-      return _answer.getIntValue();
+      return answer.getIntValue();
    }
 
    public ArenaCoordinates getAnswerCoordinates() {
-      return _selectableCoordinates.get(getAnswerIndex());
+      return selectableCoordinates.get(getAnswerIndex());
    }
    @Override
    public void serializeFromStream(DataInputStream in) {
       super.serializeFromStream(in);
       try {
-         _cursorResourceName = readString(in);
-         _selectableCoordinates = new ArrayList<>();
+         cursorResourceName = readString(in);
+         selectableCoordinates = new ArrayList<>();
          int size = in.readInt();
          for (int i=0 ; i<size ; i++) {
             ArenaCoordinates coord = new ArenaCoordinates();
             coord.serializeFromStream(in);
-            _selectableCoordinates.add(coord);
+            selectableCoordinates.add(coord);
          }
       } catch (IOException e) {
          e.printStackTrace();
@@ -108,11 +108,11 @@ public class RequestLocation extends SyncRequest
    public void serializeToStream(DataOutputStream out) {
       super.serializeToStream(out);
       try {
-         writeToStream(_cursorResourceName, out);
-         writeToStream(_selectableCoordinates.size(), out);
-         for (ArenaCoordinates selectableCoordinate : _selectableCoordinates) {
-            writeToStream(selectableCoordinate._x, out);
-            writeToStream(selectableCoordinate._y, out);
+         writeToStream(cursorResourceName, out);
+         writeToStream(selectableCoordinates.size(), out);
+         for (ArenaCoordinates selectableCoordinate : selectableCoordinates) {
+            writeToStream(selectableCoordinate.x, out);
+            writeToStream(selectableCoordinate.y, out);
          }
       } catch (IOException e) {
          e.printStackTrace();
@@ -122,7 +122,7 @@ public class RequestLocation extends SyncRequest
    public String toString()
    {
       return "RequestLocation: " +
-             "selectableLoc:" + _selectableCoordinates + "\n" +
+             "selectableLoc:" + selectableCoordinates + "\n" +
              super.toString();
    }
 

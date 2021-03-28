@@ -31,7 +31,7 @@ public class OrientationDoubleQuadraped extends OrientationSerpentine
       DrawnObject charOutlines = DrawnObject.createElipse((int) (wideDiameter*.8), narrowDiameter*3, wideDiameter, foreground, background);
       int yOffset = narrowDiameter;
       int xOffset = 0;
-      if (!loc.sameCoordinates(_coordinates.get(0))) {
+      if (!loc.sameCoordinates(coordinates.get(0))) {
          yOffset = -narrowDiameter;
       }
       charOutlines.offsetPoints(xOffset, yOffset);
@@ -40,10 +40,10 @@ public class OrientationDoubleQuadraped extends OrientationSerpentine
 
    @Override
    public double getLimbRotation(Limb limb) {
-      if (limb._limbType == LimbType.HAND_LEFT) {
+      if (limb.limbType == LimbType.HAND_LEFT) {
          return 0-(Math.PI/6);
       }
-      if (limb._limbType == LimbType.HAND_RIGHT) {
+      if (limb.limbType == LimbType.HAND_RIGHT) {
          return Math.PI/6;
       }
       return super.getLimbRotation(limb);

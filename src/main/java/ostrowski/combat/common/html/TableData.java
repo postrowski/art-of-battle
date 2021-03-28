@@ -2,14 +2,14 @@ package ostrowski.combat.common.html;
 
 public class TableData extends HtmlElement
 {
-   public final String  _data;
-   public       boolean _isBold;
+   public final String  data;
+   public       boolean isBold;
    public TableData(Object data) {
       this(data,false);
    }
    public TableData(Object data, boolean isBold) {
-      _data = data.toString();
-      _isBold = isBold;
+      this.data = data.toString();
+      this.isBold = isBold;
    }
 
    public TableData setAlignLeft() {
@@ -28,7 +28,7 @@ public class TableData extends HtmlElement
       return setBold(true);
    }
    public TableData setBold(boolean isBold) {
-      _isBold = isBold;
+      this.isBold = isBold;
       return this;
    }
 
@@ -39,10 +39,10 @@ public class TableData extends HtmlElement
 
    @Override
    protected String getElementContents() {
-      if (_isBold) {
-         return "<b>" + _data + "</b>";
+      if (isBold) {
+         return "<b>" + data + "</b>";
       }
-      return _data;
+      return data;
    }
 
 }

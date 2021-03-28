@@ -25,69 +25,69 @@ public class ArenaMapBlock extends Helper
 {
    private final static short WIDTH  = 600;
    private final static short HEIGHT = 400;
-   private IMapWidget         _map;
+   private IMapWidget         map;
    public ArenaMapBlock() {
    }
    public void buildBlock(Composite parent, int hSpan) {
-      if (CombatServer._uses3dMap) {
-         _map = new MapWidget3D(parent);
+      if (CombatServer.uses3dMap) {
+         map = new MapWidget3D(parent);
       }
       else {
-         _map = new MapWidget2D(parent);
+         map = new MapWidget2D(parent);
       }
       GridData data = new GridData(SWT.FILL, SWT.FILL, true/*grabExcessHorizontalSpace*/, true/*grabExcessVerticalSpace*/);
       data.minimumHeight = HEIGHT;
       data.minimumWidth  = WIDTH;
       data.horizontalSpan = hSpan;
       data.horizontalAlignment = GridData.FILL;
-      _map.setLayoutData(data);
+      map.setLayoutData(data);
    }
    public void addControlGroup(Composite parent) {
-      _map.addControlGroup(parent);
+      map.addControlGroup(parent);
    }
 
    public void updateMap(CombatMap map, int selfID, byte selfTeam, List<ArenaLocation> availableLocs, int targetID) {
-      if (_map.updateMap(map, selfID, selfTeam, availableLocs, targetID)) {
-         _map.setZoomToFit();
+      if (this.map.updateMap(map, selfID, selfTeam, availableLocs, targetID)) {
+         this.map.setZoomToFit();
       }
    }
    public void updateTargetID(int targetID) {
-      _map.updateTargetID(targetID);
+      map.updateTargetID(targetID);
    }
    public void addListener(IMapListener listener) {
-      _map.addListener(listener);
+      map.addListener(listener);
    }
    public void redraw() {
-      if (_map != null) {
-         _map.redraw();
+      if (map != null) {
+         map.redraw();
       }
    }
    public void requestMovement(RequestMovement locationMovement) {
-      _map.requestMovement(locationMovement);
+      map.requestMovement(locationMovement);
    }
    public void requestLocation(RequestLocation locationMovement) {
-      _map.requestLocation(locationMovement);
+      map.requestLocation(locationMovement);
    }
    public void endHexSelection() {
-      _map.endHexSelection();
+      map.endHexSelection();
    }
    public CombatMap getCombatMap() {
-      return _map.getCombatMap();
+      return map.getCombatMap();
    }
    public void updateCombatant(Character character) {
-      _map.updateCombatant(character, true/*redraw*/);
+      map.updateCombatant(character, true/*redraw*/);
    }
    public void setRouteMap(HashMap<Orientation, Orientation> newMap, List<Orientation> path) {
-      _map.setRouteMap(newMap, path, true/*allowRedraw*/);
+      map.setRouteMap(newMap, path, true/*allowRedraw*/);
    }
    public void updateArenaLocation(ArenaLocation arenaLoc)
    {
-      _map.updateArenaLocation(arenaLoc);
+      map.updateArenaLocation(arenaLoc);
    }
    public void updateMapVisibility(MapVisibility mapVisibilty) {
-      _map.updateMapVisibility(mapVisibilty);
+      map.updateMapVisibility(mapVisibilty);
    }
    public void recomputeVisibility(Character self, Diagnostics diag) {
-      _map.recomputeVisibility(self, diag);
+      map.recomputeVisibility(self, diag);
    }
 }

@@ -30,72 +30,73 @@ import java.util.List;
 
 public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
 {
-   private static final int MAGE_PAGES             = 4;
-   private static final int PRIEST_PAGES           = 5;
-   private static final int MAGE_SPELLS_PER_PAGE   = 9;
-   private static final int PRIEST_SPELLS_PER_PAGE = 16;
-   private final CharacterWidget  _display;
+   private static final int             MAGE_PAGES             = 4;
+   private static final int             PRIEST_PAGES           = 5;
+   private static final int             MAGE_SPELLS_PER_PAGE   = 9;
+   private static final int             PRIEST_SPELLS_PER_PAGE = 16;
+   private final        CharacterWidget display;
 
-   private final Combo[]          _collegeCombo        = new Combo[MAGE_SPELLS_PER_PAGE];
-   private final Spinner[]        _collegeLevel        = new Spinner[_collegeCombo.length];
-   private final Text[]           _collegeAdjLvl       = new Text[_collegeCombo.length];
-   private final Text[]           _collegeCost         = new Text[_collegeCombo.length];
-
-   // These values cache the content of the Combos, spinners, and text fields,
-   // to make refresh faster:
-   private final String[]  _collegeComboData   = new String[_collegeCombo.length];
-   private final byte[]    _collegeLevelData   = new byte[_collegeCombo.length];
-   private final byte[]    _collegeAdjLvlData  = new byte[_collegeCombo.length];
-   private final String[]  _collegeCostData    = new String[_collegeCombo.length];
-   private final boolean[] _itemEnabledData    = new boolean[_collegeCombo.length];
-
-   private final Combo[]          _spellCombo          = new Combo[MAGE_SPELLS_PER_PAGE * MAGE_PAGES];
-   //private Spinner[]        _spellLevel          = new Spinner[_spellCombo.length];
-   private final Combo[]          _spellFamiliarity    = new Combo[_spellCombo.length];
-   private final Text[]           _spellEffectiveSkill = new Text[_spellCombo.length];
-   private final Text[]           _spellTime           = new Text[_spellCombo.length];
-   private final Text[]           _spellRange          = new Text[_spellCombo.length];
-   private final Text[]           _spellCost           = new Text[_spellCombo.length];
+   private final Combo[]   collegeCombo  = new Combo[MAGE_SPELLS_PER_PAGE];
+   private final Spinner[] collegeLevel  = new Spinner[collegeCombo.length];
+   private final Text[]    collegeAdjLvl = new Text[collegeCombo.length];
+   private final Text[]    collegeCost   = new Text[collegeCombo.length];
 
    // These values cache the content of the Combos, spinners, and text fields,
    // to make refresh faster:
-   private final String[]         _spellComboData          = new String[_spellCombo.length];
-   //private byte[]           _spellLevelData          = new byte[_spellCombo.length];
-   private final String[]         _spellFamiliarityData    = new String[_spellCombo.length];
-   private final String[]         _spellEffectiveSkillData = new String[_spellCombo.length];
-   private final String[]         _spellTimeData           = new String[_spellCombo.length];
-   private final String[]         _spellRangeData          = new String[_spellCombo.length];
-   private final String[]         _spellCostData           = new String[_spellCombo.length];
-   private final boolean[]        _spellEnabledData        = new boolean[_spellCombo.length];
+   private final String[]  collegeComboData  = new String[collegeCombo.length];
+   private final byte[]    collegeLevelData  = new byte[collegeCombo.length];
+   private final byte[]    collegeAdjLvlData = new byte[collegeCombo.length];
+   private final String[]  collegeCostData   = new String[collegeCombo.length];
+   private final boolean[] itemEnabledData   = new boolean[collegeCombo.length];
 
-   private TabFolder              _mainFolder;
-   private final Text[][]         _priestSpellName       = new Text[PRIEST_PAGES][PRIEST_SPELLS_PER_PAGE];
-   private final Text[][]         _priestSpellAffinity   = new Text[PRIEST_PAGES][PRIEST_SPELLS_PER_PAGE];
-   private final Text[][]         _priestSpellRange      = new Text[PRIEST_PAGES][PRIEST_SPELLS_PER_PAGE];
-   private final Text[][]         _priestSpellResistance = new Text[PRIEST_PAGES][PRIEST_SPELLS_PER_PAGE];
-   private TabItem[]              _priestPage;
+   private final Combo[] spellCombo          = new Combo[MAGE_SPELLS_PER_PAGE * MAGE_PAGES];
+   //private Spinner[]
+   // = new Spinner[_spellCombo.length];
+   private final Combo[] spellFamiliarity    = new Combo[spellCombo.length];
+   private final Text[]  spellEffectiveSkill = new Text[spellCombo.length];
+   private final Text[]  spellTime           = new Text[spellCombo.length];
+   private final Text[]  spellRange          = new Text[spellCombo.length];
+   private final Text[]  spellCost           = new Text[spellCombo.length];
+
+   // These values cache the content of the Combos, spinners, and text fields,
+   // to make refresh faster:
+   private final String[]  spellComboData          = new String[spellCombo.length];
+   //private byte[]           spellLevelData          = new byte[_spellCombo.length];
+   private final String[]  spellFamiliarityData    = new String[spellCombo.length];
+   private final String[]  spellEffectiveSkillData = new String[spellCombo.length];
+   private final String[]  spellTimeData           = new String[spellCombo.length];
+   private final String[]  spellRangeData          = new String[spellCombo.length];
+   private final String[]  spellCostData           = new String[spellCombo.length];
+   private final boolean[] spellEnabledData        = new boolean[spellCombo.length];
+
+   private       TabFolder mainFolder;
+   private final Text[][]  priestSpellName       = new Text[PRIEST_PAGES][PRIEST_SPELLS_PER_PAGE];
+   private final Text[][]  priestSpellAffinity   = new Text[PRIEST_PAGES][PRIEST_SPELLS_PER_PAGE];
+   private final Text[][]  priestSpellRange      = new Text[PRIEST_PAGES][PRIEST_SPELLS_PER_PAGE];
+   private final Text[][]  priestSpellResistance = new Text[PRIEST_PAGES][PRIEST_SPELLS_PER_PAGE];
+   private       TabItem[] priestPage;
 
 
    public SpellsBlock(CharacterWidget widget)
    {
-      _display = widget;
+      display = widget;
    }
 
    @Override
    public void buildBlock(Composite parent)
    {
       Group spellGroup = createGroup(parent, "Spells", 1/*columns*/, false/*sameSize*/, 3/*hSpacing*/, 1/*vSpacing*/);
-      _mainFolder = new TabFolder(spellGroup, SWT.NONE);
+      mainFolder = new TabFolder(spellGroup, SWT.NONE);
       GridData data = new GridData(GridData.FILL_HORIZONTAL);
-      _mainFolder.setLayoutData(data);
+      mainFolder.setLayoutData(data);
 
       {
          // Create the Wizardry page
          TabFolder mageFolder;
          {
-            TabItem item = new TabItem(_mainFolder, SWT.NULL);
+            TabItem item = new TabItem(mainFolder, SWT.NULL);
             item.setText( "Wizardry");
-            Composite page = Helper.createComposite(_mainFolder, 1, GridData.FILL_BOTH);
+            Composite page = Helper.createComposite(mainFolder, 1, GridData.FILL_BOTH);
             item.setControl( page );
             page.setLayout(new GridLayout(1 /*columns*/,false/*sameWidth*/));
 
@@ -118,24 +119,24 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
             List<String> collegeNames = MageCollege.getCollegeNames();
             collegeNames.add(0, "---");
             for (int itemIndex=0 ; itemIndex<MAGE_SPELLS_PER_PAGE ; itemIndex++) {
-               _collegeComboData [itemIndex] = collegeNames.get(0);
-               _collegeLevelData [itemIndex] = 0;
-               _collegeAdjLvlData[itemIndex] = 0;
-               _collegeCostData  [itemIndex] = "(0)";
-               _itemEnabledData  [itemIndex] = true;
+               collegeComboData[itemIndex] = collegeNames.get(0);
+               collegeLevelData[itemIndex] = 0;
+               collegeAdjLvlData[itemIndex] = 0;
+               collegeCostData[itemIndex] = "(0)";
+               itemEnabledData[itemIndex] = true;
 
-               _collegeCombo [itemIndex] = createCombo(page, SWT.READ_ONLY, 1, collegeNames);
-               _collegeLevel [itemIndex] = createSpinner(page, 0/*min*/, Rules.getMaxCollegeLevel()/*max*/, _collegeLevelData[itemIndex]/*value*/, 1);
-               _collegeAdjLvl[itemIndex] = createText(page, "["+_collegeAdjLvlData[itemIndex]+"]", false/*editable*/, 1);
-               _collegeCost  [itemIndex] = createText(page, _collegeCostData[itemIndex], false/*editable*/, 1);
-               _collegeCombo [itemIndex].addModifyListener(this);
-               _collegeLevel [itemIndex].addModifyListener(this);
+               collegeCombo[itemIndex] = createCombo(page, SWT.READ_ONLY, 1, collegeNames);
+               collegeLevel[itemIndex] = createSpinner(page, 0/*min*/, Rules.getMaxCollegeLevel()/*max*/, collegeLevelData[itemIndex]/*value*/, 1);
+               collegeAdjLvl[itemIndex] = createText(page, "[" + collegeAdjLvlData[itemIndex] + "]", false/*editable*/, 1);
+               collegeCost[itemIndex] = createText(page, collegeCostData[itemIndex], false/*editable*/, 1);
+               collegeCombo[itemIndex].addModifyListener(this);
+               collegeLevel[itemIndex].addModifyListener(this);
             }
             Control[] tabList = new Control[MAGE_SPELLS_PER_PAGE * 2];
             int index = 0;
             for (int itemIndex=0 ; itemIndex<MAGE_SPELLS_PER_PAGE ; itemIndex++) {
-               tabList[index++] = _collegeCombo[itemIndex];
-               tabList[index++] = _collegeLevel[itemIndex];
+               tabList[index++] = collegeCombo[itemIndex];
+               tabList[index++] = collegeLevel[itemIndex];
             }
             page.setTabList(tabList);
          }
@@ -160,31 +161,31 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
             familiarities.add(MageSpell.FAM_MEMORIZED);
             for (int i=0 ; i<MAGE_SPELLS_PER_PAGE ; i++) {
                int itemIndex = i + (pageIndex * MAGE_SPELLS_PER_PAGE);
-               _spellComboData[itemIndex] = spellNames.get(0);
-               _spellFamiliarityData[itemIndex] = familiarities.get(0);
-               _spellEffectiveSkillData[itemIndex] = " ";
-               _spellTimeData [itemIndex] = " ";
-               _spellRangeData[itemIndex] = " ";
-               _spellCostData [itemIndex] = "(0)";
+               spellComboData[itemIndex] = spellNames.get(0);
+               spellFamiliarityData[itemIndex] = familiarities.get(0);
+               spellEffectiveSkillData[itemIndex] = " ";
+               spellTimeData[itemIndex] = " ";
+               spellRangeData[itemIndex] = " ";
+               spellCostData[itemIndex] = "(0)";
 
-               _spellCombo[itemIndex] = createCombo(page, SWT.READ_ONLY, 1, spellNames);
-//               _spellLevel[itemIndex] = createSpinner(page, 0/*min*/, Rules.getMaxSpellLevel()/*max*/, 0/*value*/, 1);
-               _spellFamiliarity   [itemIndex] = createCombo(page, SWT.NONE, 1/*hSpan*/, familiarities);
-               _spellEffectiveSkill[itemIndex] = createText(page, _spellEffectiveSkillData[itemIndex], false/*editable*/, 1);
-               _spellTime [itemIndex] = createText(page, _spellTimeData [itemIndex], false/*editable*/, 1);
-               _spellRange[itemIndex] = createText(page, _spellRangeData[itemIndex], false/*editable*/, 1);
-               _spellCost [itemIndex] = createText(page, _spellCostData [itemIndex], false/*editable*/, 1);
-               _spellCombo[itemIndex].addModifyListener(this);
-//               _spellLevel[itemIndex].addModifyListener(this);
-               _spellFamiliarity[itemIndex].addModifyListener(this);
+               spellCombo[itemIndex] = createCombo(page, SWT.READ_ONLY, 1, spellNames);
+//               spellLevel[itemIndex] = createSpinner(page, 0/*min*/, Rules.getMaxSpellLevel()/*max*/, 0/*value*/, 1);
+               spellFamiliarity[itemIndex] = createCombo(page, SWT.NONE, 1/*hSpan*/, familiarities);
+               spellEffectiveSkill[itemIndex] = createText(page, spellEffectiveSkillData[itemIndex], false/*editable*/, 1);
+               spellTime[itemIndex] = createText(page, spellTimeData[itemIndex], false/*editable*/, 1);
+               spellRange[itemIndex] = createText(page, spellRangeData[itemIndex], false/*editable*/, 1);
+               spellCost[itemIndex] = createText(page, spellCostData[itemIndex], false/*editable*/, 1);
+               spellCombo[itemIndex].addModifyListener(this);
+//               spellLevel[itemIndex].addModifyListener(this);
+               spellFamiliarity[itemIndex].addModifyListener(this);
             }
             Control[] tabList = new Control[MAGE_SPELLS_PER_PAGE * 2];
             int index = 0;
             for (int i=0 ; i<MAGE_SPELLS_PER_PAGE ; i++) {
                int itemIndex = i + (pageIndex * MAGE_SPELLS_PER_PAGE);
-               tabList[index++] = _spellCombo[itemIndex];
-//               tabList[index++] = _spellLevel[itemIndex];
-               tabList[index++] = _spellFamiliarity[itemIndex];
+               tabList[index++] = spellCombo[itemIndex];
+//               tabList[index++] = spellLevel[itemIndex];
+               tabList[index++] = spellFamiliarity[itemIndex];
             }
             page.setTabList(tabList);
          }
@@ -193,9 +194,9 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
          // create the Priest magic page
          TabFolder priestFolder;
          {
-            TabItem item = new TabItem(_mainFolder, SWT.NULL);
+            TabItem item = new TabItem(mainFolder, SWT.NULL);
             item.setText("Priest");
-            Composite page = Helper.createComposite(_mainFolder, 1, GridData.FILL_BOTH);
+            Composite page = Helper.createComposite(mainFolder, 1, GridData.FILL_BOTH);
             item.setControl( page );
             page.setLayout(new GridLayout(1 /*columns*/,false/*sameWidth*/));
 
@@ -204,12 +205,12 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
             priestFolder.setLayoutData(data);
          }
 
-         _priestPage = new TabItem[PRIEST_PAGES];
+         priestPage = new TabItem[PRIEST_PAGES];
          for (int pageIndex=0 ; pageIndex<PRIEST_PAGES ; pageIndex++) {
-            _priestPage[pageIndex] = new TabItem(priestFolder, SWT.NULL);
-            _priestPage[pageIndex].setText( "Page " + (pageIndex+1));
+            priestPage[pageIndex] = new TabItem(priestFolder, SWT.NULL);
+            priestPage[pageIndex].setText("Page " + (pageIndex + 1));
             Composite page = Helper.createComposite(priestFolder, 1, GridData.FILL_BOTH);
-            _priestPage[pageIndex].setControl( page );
+            priestPage[pageIndex].setControl(page);
             page.setLayout(new GridLayout(4 /*columns*/,false/*sameWidth*/));
 
             createLabel(page, "Name", SWT.CENTER, 1, null);
@@ -218,15 +219,15 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
             createLabel(page, "Resistance", SWT.CENTER, 1, null);
 
             for (int itemIndex=0 ; itemIndex<PRIEST_SPELLS_PER_PAGE ; itemIndex++) {
-               _priestSpellName[pageIndex][itemIndex]       = createText(page, "", false/*editable*/, 1/*hSpan*/);
-               _priestSpellAffinity[pageIndex][itemIndex]   = createText(page, "", false/*editable*/, 1/*hSpan*/);
-               _priestSpellRange[pageIndex][itemIndex]      = createText(page, "", false/*editable*/, 1/*hSpan*/);
-               _priestSpellResistance[pageIndex][itemIndex] = createText(page, "", false/*editable*/, 1/*hSpan*/);
+               priestSpellName[pageIndex][itemIndex]       = createText(page, "", false/*editable*/, 1/*hSpan*/);
+               priestSpellAffinity[pageIndex][itemIndex]   = createText(page, "", false/*editable*/, 1/*hSpan*/);
+               priestSpellRange[pageIndex][itemIndex]      = createText(page, "", false/*editable*/, 1/*hSpan*/);
+               priestSpellResistance[pageIndex][itemIndex] = createText(page, "", false/*editable*/, 1/*hSpan*/);
             }
          }
       }
 
-      spellGroup.setTabList(new Control[] {_mainFolder});
+      spellGroup.setTabList(new Control[] {mainFolder});
 
    }
 
@@ -235,9 +236,9 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
    public void updateCharacterFromDisplay(Character character)
    {
       List<MageCollege> newColleges = new ArrayList<>();
-      for (int i=0 ; i<_collegeCombo.length ; i++) {
-         String collegeName = _collegeCombo[i].getText();
-         _collegeComboData[i] = collegeName;
+      for (int i = 0; i < collegeCombo.length ; i++) {
+         String collegeName = collegeCombo[i].getText();
+         collegeComboData[i] = collegeName;
          if (!collegeName.equals("---")) {
             boolean collegeFound = false;
             for (MageCollege existingCollege : newColleges) {
@@ -249,7 +250,7 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
             if (!collegeFound) {
                MageCollege college = MageCollege.getCollege(collegeName);
                if (college != null) {
-                  college.setLevel(getValidCollegeRange((byte) _collegeLevel[i].getSelection()));
+                  college.setLevel(getValidCollegeRange((byte) collegeLevel[i].getSelection()));
                   newColleges.add(college);
                }
             }
@@ -257,18 +258,18 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
       }
       List<MageSpell> newSpells = new ArrayList<>();
       List<Class<MageSpell>> newSpellClasses = new ArrayList<>();
-      for (int i=0 ; i<_spellCombo.length ; i++) {
-         String spellName = _spellCombo[i].getText();
-         _spellComboData[i] = spellName;
+      for (int i = 0; i < spellCombo.length ; i++) {
+         String spellName = spellCombo[i].getText();
+         spellComboData[i] = spellName;
          if (!spellName.equals("---")) {
             MageSpell spell = MageSpells.getSpell(spellName);
             if (spell != null) {
-               spell.setFamiliarity(_spellFamiliarity[i].getText());
-//               spell.setLevel(getValidSpellRange((byte) _spellLevel[i].getSelection()));
+               spell.setFamiliarity(spellFamiliarity[i].getText());
+//               spell.setLevel(getValidSpellRange((byte) spellLevel[i].getSelection()));
                newSpells.add(spell);
                newSpellClasses.add((Class<MageSpell>) spell.getClass());
-               if (spell._prerequisiteColleges != null) {
-                  for (MageCollege college : spell._prerequisiteColleges) {
+               if (spell.prerequisiteColleges != null) {
+                  for (MageCollege college : spell.prerequisiteColleges) {
                      boolean collegeFound = false;
                      for (MageCollege existingCollege : newColleges) {
                         if (existingCollege.getName().equals(college.getName())) {
@@ -289,7 +290,7 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
          checkSpells = false;
          HashSet<Class<MageSpell>> spellClassesToAdd = new HashSet<> ();
          for (MageSpell spell : newSpells) {
-            for (Class<MageSpell> prerequisiteSpellClass : spell._prerequisiteSpells) {
+            for (Class<MageSpell> prerequisiteSpellClass : spell.prerequisiteSpells) {
                if (!newSpellClasses.contains(prerequisiteSpellClass)) {
                   spellClassesToAdd.add(prerequisiteSpellClass);
                }
@@ -314,7 +315,7 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
             for (int mainIndex = 0 ; mainIndex<newSpells.size() ; mainIndex++) {
                MageSpell spell = newSpells.get(mainIndex);
                byte minLevel = spell.getLevel();
-               for (Class<MageSpell> prerequisiteSpellClass : spell._prerequisiteSpells) {
+               for (Class<MageSpell> prerequisiteSpellClass : spell.prerequisiteSpells) {
                   for (int secondaryIndex = 0 ; secondaryIndex<newSpells.size() ; secondaryIndex++) {
                      if (secondaryIndex != mainIndex) {
                         MageSpell secondarySpell = newSpells.get(secondaryIndex);
@@ -336,7 +337,7 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
    }
    public boolean isRequiredByOtherSpells(List<MageSpell> knownSpells, MageSpell source) {
       for (MageSpell spell : knownSpells) {
-         for (Class<MageSpell> prerequisiteSpellClass : spell._prerequisiteSpells) {
+         for (Class<MageSpell> prerequisiteSpellClass : spell.prerequisiteSpells) {
             if (source.getClass() == prerequisiteSpellClass) {
                return true;
             }
@@ -361,11 +362,11 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
       boolean showPriestPage = false;
 
       // build the desired college data:
-      String[]  collegeComboData = new String[_collegeCombo.length];
-      byte[]    collegeLevelData = new byte[_collegeCombo.length];
-      byte[]    collegeAdjLvlData= new byte[_collegeCombo.length];
-      String[]  collegeCostData  = new String[_collegeCombo.length];
-      boolean[] itemEnabledData  = new boolean[_collegeCombo.length];
+      String[]  collegeComboData = new String[collegeCombo.length];
+      byte[]    collegeLevelData = new byte[collegeCombo.length];
+      byte[]    collegeAdjLvlData= new byte[collegeCombo.length];
+      String[]  collegeCostData  = new String[collegeCombo.length];
+      boolean[] itemEnabledData  = new boolean[collegeCombo.length];
       int i=0;
       for (MageCollege college : colleges) {
          collegeComboData[i]   = college.getName();
@@ -375,12 +376,12 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
          collegeCostData[i]    = "(" + Rules.getCollegeCost(college.getLevel()) + ")";
 
          i++;
-         if (i >= _collegeCombo.length) {
+         if (i >= collegeCombo.length) {
             break;
          }
       }
       // clear out any remaining spell combo boxes
-      for ( ; i<_collegeCombo.length ; i++) {
+      for (; i < collegeCombo.length ; i++) {
          collegeComboData[i]   = "---";
          itemEnabledData[i] = enabled;
          collegeLevelData[i]   = 0;
@@ -389,45 +390,45 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
          enabled = false;
       }
       // Now update anything that needs to change in the UI
-      for (int j=0 ; j<_collegeCombo.length ; j++) {
-         if (!_collegeComboData[j].equals(collegeComboData[j])) {
-            _collegeCombo[j].setText(collegeComboData[j]);
+      for (int j = 0; j < collegeCombo.length ; j++) {
+         if (!this.collegeComboData[j].equals(collegeComboData[j])) {
+            collegeCombo[j].setText(collegeComboData[j]);
          }
-         if (!_collegeCostData[j].equals(collegeCostData[j])) {
-            _collegeCost[j].setText(collegeCostData[j]);
+         if (!this.collegeCostData[j].equals(collegeCostData[j])) {
+            collegeCost[j].setText(collegeCostData[j]);
          }
-         if (_collegeLevelData[j]   != collegeLevelData[j]) {
-            _collegeLevel[j].setSelection(collegeLevelData[j]);
+         if (this.collegeLevelData[j] != collegeLevelData[j]) {
+            collegeLevel[j].setSelection(collegeLevelData[j]);
          }
-         if (_collegeAdjLvlData[j]  != collegeAdjLvlData[j]) {
-            _collegeAdjLvl[j].setText("[" + collegeAdjLvlData[j] + "]");
+         if (this.collegeAdjLvlData[j] != collegeAdjLvlData[j]) {
+            collegeAdjLvl[j].setText("[" + collegeAdjLvlData[j] + "]");
          }
-         if (_itemEnabledData[j] != (itemEnabledData[j])) {
-            _collegeCombo[j].setEnabled(itemEnabledData[j]);
-            _collegeLevel[j].setEnabled(itemEnabledData[j]);
-            _collegeAdjLvl[j].setEnabled(itemEnabledData[j]);
-            _spellCombo[j].setEnabled(itemEnabledData[j]);
-//            _spellLevel[j].setEnabled(enabledList[j]);
-            _spellFamiliarity[j].setEnabled(itemEnabledData[j]);
+         if (this.itemEnabledData[j] != (itemEnabledData[j])) {
+            collegeCombo[j].setEnabled(itemEnabledData[j]);
+            collegeLevel[j].setEnabled(itemEnabledData[j]);
+            collegeAdjLvl[j].setEnabled(itemEnabledData[j]);
+            spellCombo[j].setEnabled(itemEnabledData[j]);
+//            spellLevel[j].setEnabled(enabledList[j]);
+            spellFamiliarity[j].setEnabled(itemEnabledData[j]);
          }
          // keep track of the changes we've made:
-         _collegeComboData[j]  = collegeComboData[j];
-         _collegeLevelData[j]  = collegeLevelData[j];
-         _collegeAdjLvlData[j] = collegeAdjLvlData[j];
-         _collegeCostData[j]   = collegeCostData[j];
-         _itemEnabledData[j]   = itemEnabledData[j];
+         this.collegeComboData[j]  = collegeComboData[j];
+         this.collegeLevelData[j]  = collegeLevelData[j];
+         this.collegeAdjLvlData[j] = collegeAdjLvlData[j];
+         this.collegeCostData[j]   = collegeCostData[j];
+         this.itemEnabledData[j]   = itemEnabledData[j];
       }
 
       // now build the desired list of spell data:
       List<MageSpell> mageSpells = (character != null) ? character.getMageSpellsList() : new ArrayList<>();
       String rangeName;
-      String[] spellComboData          = new String[_spellCombo.length];
-      String[] spellFamiliarityData    = new String[_spellCombo.length];
-      String[] spellCostData           = new String[_spellCombo.length];
-      String[] spellEffectiveSkillData = new String[_spellCombo.length];
-      String[] spellTimeData           = new String[_spellCombo.length];
-      String[] spellRangeData          = new String[_spellCombo.length];
-      boolean[] spellEnabledData       = new boolean[_spellCombo.length];
+      String[] spellComboData          = new String[spellCombo.length];
+      String[] spellFamiliarityData    = new String[spellCombo.length];
+      String[] spellCostData           = new String[spellCombo.length];
+      String[] spellEffectiveSkillData = new String[spellCombo.length];
+      String[] spellTimeData           = new String[spellCombo.length];
+      String[] spellRangeData          = new String[spellCombo.length];
+      boolean[] spellEnabledData       = new boolean[spellCombo.length];
 
       int j=0;
       for (MageSpell spell : mageSpells) {
@@ -454,14 +455,14 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
          spellEnabledData[j] = false;
          spellEnabledData[j] = !isRequiredByOtherSpells(mageSpells, spell);
          j++;
-         if (j >= _spellCombo.length) {
+         if (j >= spellCombo.length) {
             break;
          }
       }
 
       enabled = (character != null);
       // clear out any remaining spell combo boxes
-      for ( ; j<_spellCombo.length ; j++) {
+      for (; j < spellCombo.length ; j++) {
          spellComboData[j] = "---";
 //         spellLevelData[j] = 0;
          spellFamiliarityData[j] = MageSpell.FAM_UNFAMILIAR;
@@ -474,40 +475,40 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
       }
       // Now update anything that needs to change in the UI
 
-      for (int k=0 ; k<_spellCombo.length ; k++) {
-         if (!_spellComboData[k].equals(spellComboData[k])) {
-            _spellCombo[k].setText(spellComboData[k]);
+      for (int k = 0; k < spellCombo.length ; k++) {
+         if (!this.spellComboData[k].equals(spellComboData[k])) {
+            spellCombo[k].setText(spellComboData[k]);
          }
-//       if (!_spellLevelData[k].equals(spellLevelData[k])) _spellLevel[k].setSelection(spellLevelData[k]);
-         if (!_spellFamiliarityData[k].equals(spellFamiliarityData[k])) {
-            _spellFamiliarity[k].setText(spellFamiliarityData[k]);
+//       if (!spellLevelData[k].equals(spellLevelData[k])) spellLevel[k].setSelection(spellLevelData[k]);
+         if (!this.spellFamiliarityData[k].equals(spellFamiliarityData[k])) {
+            spellFamiliarity[k].setText(spellFamiliarityData[k]);
          }
-         if (!_spellCostData[k].equals(spellCostData[k])) {
-            _spellCost[k].setText(spellCostData[k]);
+         if (!this.spellCostData[k].equals(spellCostData[k])) {
+            spellCost[k].setText(spellCostData[k]);
          }
-         if (!_spellEffectiveSkillData[k].equals(spellEffectiveSkillData[k])) {
-            _spellEffectiveSkill[k].setText(spellEffectiveSkillData[k]);
+         if (!this.spellEffectiveSkillData[k].equals(spellEffectiveSkillData[k])) {
+            spellEffectiveSkill[k].setText(spellEffectiveSkillData[k]);
          }
-         if (!_spellTimeData[k].equals(spellTimeData[k])) {
-            _spellTime[k].setText(spellTimeData[k]);
+         if (!this.spellTimeData[k].equals(spellTimeData[k])) {
+            spellTime[k].setText(spellTimeData[k]);
          }
-         if (!_spellRangeData[k].equals(spellRangeData[k])) {
-            _spellRange[k].setText(spellRangeData[k]);
+         if (!this.spellRangeData[k].equals(spellRangeData[k])) {
+            spellRange[k].setText(spellRangeData[k]);
          }
-         if (_spellEnabledData[k] != spellEnabledData[k]) {
-            _spellCombo[k].setEnabled(spellEnabledData[k]);
-//            _spellLevel[k].setEnabled(spellEnabledData[k]);
-            _spellFamiliarity[k].setEnabled(spellEnabledData[k]);
+         if (this.spellEnabledData[k] != spellEnabledData[k]) {
+            spellCombo[k].setEnabled(spellEnabledData[k]);
+//            spellLevel[k].setEnabled(spellEnabledData[k]);
+            spellFamiliarity[k].setEnabled(spellEnabledData[k]);
          }
          // keep track of the changes we've made:
-         _spellComboData[k]   = spellComboData[k];
-//       _spellLevelData[k]   = spellLevelData[k];
-         _spellFamiliarityData[k]    = spellFamiliarityData[k];
-         _spellCostData[k]    = spellCostData[k];
-         _spellEffectiveSkillData[k] = spellEffectiveSkillData[k];
-         _spellTimeData[k]    = spellTimeData[k];
-         _spellRangeData[k]   = spellRangeData[k];
-         _spellEnabledData[k] = spellEnabledData[k];
+         this.spellComboData[k]   = spellComboData[k];
+//       spellLevelData[k]   = spellLevelData[k];
+         this.spellFamiliarityData[k]    = spellFamiliarityData[k];
+         this.spellCostData[k]    = spellCostData[k];
+         this.spellEffectiveSkillData[k] = spellEffectiveSkillData[k];
+         this.spellTimeData[k]    = spellTimeData[k];
+         this.spellRangeData[k]   = spellRangeData[k];
+         this.spellEnabledData[k] = spellEnabledData[k];
       }
 
       // TODO: optimize the priest spells the same way we cache the mage spell data
@@ -521,18 +522,18 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
 
             showPriestPage = true;
 
-            if (pageIndex >= _priestPage.length) {
+            if (pageIndex >= priestPage.length) {
                break;
             }
-            _priestPage[pageIndex].setText(group);
+            priestPage[pageIndex].setText(group);
             int spellIndex = 0;
             for (PriestSpell spell : PriestSpell.getSpellsInGroup(group)) {
                spell.setDeity(deity);
-               if (_priestSpellName[pageIndex].length <= spellIndex) {
+               if (priestSpellName[pageIndex].length <= spellIndex) {
                   continue;
                }
-               _priestSpellName[pageIndex][spellIndex].setText(spell.getName());
-               _priestSpellAffinity[pageIndex][spellIndex].setText(String.valueOf(spell.getAffinity()));
+               priestSpellName[pageIndex][spellIndex].setText(spell.getName());
+               priestSpellAffinity[pageIndex][spellIndex].setText(String.valueOf(spell.getAffinity()));
                if (spell instanceof IRangedSpell) {
                   rangeName = String.valueOf(spell.getAdjustedRangeBase());
                }
@@ -550,58 +551,58 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
                   ResistedPriestSpell resistedSpell = (ResistedPriestSpell) spell;
                   resistance = resistedSpell.describeResistance(character);
                }
-               _priestSpellRange[pageIndex][spellIndex].setText(rangeName);
-               _priestSpellResistance[pageIndex][spellIndex].setText(resistance);
+               priestSpellRange[pageIndex][spellIndex].setText(rangeName);
+               priestSpellResistance[pageIndex][spellIndex].setText(resistance);
                enabled = (affinityLevel >= spell.getAffinity());
-               _priestSpellName[pageIndex][spellIndex].setEnabled(enabled);
-               _priestSpellAffinity[pageIndex][spellIndex].setEnabled(enabled);
-               _priestSpellRange[pageIndex][spellIndex].setEnabled(enabled);
-               _priestSpellResistance[pageIndex][spellIndex].setEnabled(enabled);
+               priestSpellName[pageIndex][spellIndex].setEnabled(enabled);
+               priestSpellAffinity[pageIndex][spellIndex].setEnabled(enabled);
+               priestSpellRange[pageIndex][spellIndex].setEnabled(enabled);
+               priestSpellResistance[pageIndex][spellIndex].setEnabled(enabled);
                spellIndex++;
             }
             // clear out any remaining priest spells
             for ( ; spellIndex<PRIEST_SPELLS_PER_PAGE ; spellIndex++) {
-               _priestSpellName[pageIndex][spellIndex].setText("---");
-               //         _spellLevel[pageIndex][spellIndex].setSelection(0);
-               _priestSpellAffinity[pageIndex][spellIndex].setText("---");
-               _priestSpellRange[pageIndex][spellIndex].setText(" ");
-               _priestSpellResistance[pageIndex][spellIndex].setText(" ");
+               priestSpellName[pageIndex][spellIndex].setText("---");
+               //         spellLevel[pageIndex][spellIndex].setSelection(0);
+               priestSpellAffinity[pageIndex][spellIndex].setText("---");
+               priestSpellRange[pageIndex][spellIndex].setText(" ");
+               priestSpellResistance[pageIndex][spellIndex].setText(" ");
 
-               _priestSpellName[pageIndex][spellIndex].setEnabled(false);
-               _priestSpellAffinity[pageIndex][spellIndex].setEnabled(false);
-               _priestSpellRange[pageIndex][spellIndex].setEnabled(false);
-               _priestSpellResistance[pageIndex][spellIndex].setEnabled(false);
+               priestSpellName[pageIndex][spellIndex].setEnabled(false);
+               priestSpellAffinity[pageIndex][spellIndex].setEnabled(false);
+               priestSpellRange[pageIndex][spellIndex].setEnabled(false);
+               priestSpellResistance[pageIndex][spellIndex].setEnabled(false);
             }
             pageIndex++;
          }
       }
       for ( ; pageIndex<PRIEST_PAGES ; pageIndex++) {
-         _priestPage[pageIndex].setText("---");
+         priestPage[pageIndex].setText("---");
          // clear out any remaining priest spells
          for (int spellIndex = 0 ; spellIndex<PRIEST_SPELLS_PER_PAGE ; spellIndex++) {
-            _priestSpellName[pageIndex][spellIndex].setText("---");
-            //         _spellLevel[pageIndex][spellIndex].setSelection(0);
-            _priestSpellAffinity[pageIndex][spellIndex].setText("---");
-            _priestSpellRange[pageIndex][spellIndex].setText(" ");
-            _priestSpellResistance[pageIndex][spellIndex].setText(" ");
+            priestSpellName[pageIndex][spellIndex].setText("---");
+            //         spellLevel[pageIndex][spellIndex].setSelection(0);
+            priestSpellAffinity[pageIndex][spellIndex].setText("---");
+            priestSpellRange[pageIndex][spellIndex].setText(" ");
+            priestSpellResistance[pageIndex][spellIndex].setText(" ");
 
-            _priestSpellName[pageIndex][spellIndex].setEnabled(false);
-            _priestSpellAffinity[pageIndex][spellIndex].setEnabled(false);
-            _priestSpellRange[pageIndex][spellIndex].setEnabled(false);
-            _priestSpellResistance[pageIndex][spellIndex].setEnabled(false);
+            priestSpellName[pageIndex][spellIndex].setEnabled(false);
+            priestSpellAffinity[pageIndex][spellIndex].setEnabled(false);
+            priestSpellRange[pageIndex][spellIndex].setEnabled(false);
+            priestSpellResistance[pageIndex][spellIndex].setEnabled(false);
          }
       }
       // If the character has only one type of spells, go to that page:
       if (showPriestPage != showMagePage) {
-         _mainFolder.setSelection(showPriestPage ? 1 : 0);
+         mainFolder.setSelection(showPriestPage ? 1 : 0);
       }
       // make sure it all looks good.
-//      _spellFamiliarity[0].getParent().pack();
+//      spellFamiliarity[0].getParent().pack();
    }
    @Override
    public void modifyText(ModifyEvent e)
    {
-      _display.modifyText(e, this);
+      display.modifyText(e, this);
    }
 
    @SuppressWarnings("unused")

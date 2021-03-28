@@ -48,47 +48,48 @@ public class ArenaEvent implements Cloneable
       EVENT_TYPES.add(EVENT_TYPE_TELEPORT);
    }
 
-   String                   _eventName;
-   String                   _eventType                           = EVENT_TYPE_DISPLAY_MESSAGE_PUBLICLY;
-   String                   _eventData                           = "";
-   List<ArenaCoordinates> _eventLocations                   = null;
+   String eventName;
+   String                 eventType       = EVENT_TYPE_DISPLAY_MESSAGE_PUBLICLY;
+   String                 eventData      = "";
+   List<ArenaCoordinates> eventLocations = null;
+   static public HashMap<String, CombatMap> savedMaps = new HashMap<>();
 
    public ArenaEvent(String name) {
-      _eventName = name;
+      eventName = name;
    }
 
    public String getData() {
-      if (_eventData == null) {
-         return _eventData = "";
+      if (eventData == null) {
+         return eventData = "";
       }
-      return _eventData;
+      return eventData;
    }
    public void setData(String data) {
-      _eventData = data;
+      eventData = data;
    }
    public String getType() {
-      return _eventType;
+      return eventType;
    }
    public void setType(String type) {
-      _eventType = type;
+      eventType = type;
    }
 
    public boolean usesLocation() {
-      return _eventType.equals(EVENT_TYPE_CLOSE_DOOR) ||
-             _eventType.equals(EVENT_TYPE_OPEN_DOOR) ||
-             _eventType.equals(EVENT_TYPE_ENTER_CHARACTER) ||
-             _eventType.equals(EVENT_TYPE_TRAP);
+      return eventType.equals(EVENT_TYPE_CLOSE_DOOR) ||
+             eventType.equals(EVENT_TYPE_OPEN_DOOR) ||
+             eventType.equals(EVENT_TYPE_ENTER_CHARACTER) ||
+             eventType.equals(EVENT_TYPE_TRAP);
    }
    public Element getXmlNode(Document mapDoc, String newLine) {
       Element eventElement = mapDoc.createElement("event");
-      eventElement.setAttribute("name", String.valueOf(_eventName));
-      eventElement.setAttribute("type", String.valueOf(_eventType));
-      eventElement.setAttribute("data", String.valueOf(_eventData));
-      if ((_eventLocations != null) && (_eventLocations.size() > 0)) {
-         for (ArenaCoordinates location : _eventLocations) {
+      eventElement.setAttribute("name", String.valueOf(eventName));
+      eventElement.setAttribute("type", String.valueOf(eventType));
+      eventElement.setAttribute("data", String.valueOf(eventData));
+      if ((eventLocations != null) && (eventLocations.size() > 0)) {
+         for (ArenaCoordinates location : eventLocations) {
             Element locationElement = mapDoc.createElement("location");
-            locationElement.setAttribute("x", String.valueOf(location._x));
-            locationElement.setAttribute("y", String.valueOf(location._y));
+            locationElement.setAttribute("x", String.valueOf(location.x));
+            locationElement.setAttribute("y", String.valueOf(location.y));
             eventElement.appendChild(mapDoc.createTextNode(newLine + "  "));
             eventElement.appendChild(locationElement);
          }
@@ -109,9 +110,9 @@ public class ArenaEvent implements Cloneable
 
       String name = attributes.getNamedItem("name").getNodeValue();
       ArenaEvent event = new ArenaEvent(name);
-      event._eventType = attributes.getNamedItem("type").getNodeValue();
-      event._eventData = attributes.getNamedItem("data").getNodeValue();
-      event._eventLocations = new ArrayList<>();
+      event.eventType = attributes.getNamedItem("type").getNodeValue();
+      event.eventData = attributes.getNamedItem("data").getNodeValue();
+      event.eventLocations = new ArrayList<>();
       NodeList children = node.getChildNodes();
       for (int teamIndex=0 ; teamIndex<children.getLength() ; teamIndex++) {
          Node child = children.item(teamIndex);
@@ -120,7 +121,7 @@ public class ArenaEvent implements Cloneable
             if (child.getNodeName().equals("location")) {
                short locX = Short.parseShort(childAttrs.getNamedItem("x").getNodeValue());
                short locY = Short.parseShort(childAttrs.getNamedItem("y").getNodeValue());
-               event._eventLocations.add(new ArenaCoordinates(locX, locY));
+               event.eventLocations.add(new ArenaCoordinates(locX, locY));
             }
          }
       }
@@ -128,15 +129,15 @@ public class ArenaEvent implements Cloneable
    }
 
    public String getName() {
-      return _eventName;
+      return eventName;
    }
 
    public void setName(String name) {
-      _eventName = name;
+      eventName = name;
    }
 
    public boolean isEventAtLocation(ArenaCoordinates loc) {
-      return (_eventLocations != null) && _eventLocations.contains(loc);
+      return (eventLocations != null) && eventLocations.contains(loc);
    }
 
    /**
@@ -145,27 +146,27 @@ public class ArenaEvent implements Cloneable
     * @return true if this TriggerEvent causes the mover to stop moving.
     */
    public boolean fireEvent(final Character triggeringCharacter) {
-      if (!CombatServer._isServer) {
+      if (!CombatServer.isServer) {
          DebugBreak.debugBreak();
          return false;
       }
       final Arena arena = CombatServer._this.getArena();
-      if (_eventType.equals(EVENT_TYPE_DISPLAY_MESSAGE_PUBLICLY)) {
-         arena.sendMessageTextToAllClients(_eventData, true/*popUp*/);
+      if (eventType.equals(EVENT_TYPE_DISPLAY_MESSAGE_PUBLICLY)) {
+         arena.sendMessageTextToAllClients(eventData, true/*popUp*/);
       }
-      else if (_eventType.equals(EVENT_TYPE_DISPLAY_MESSAGE_PRIVATELY)) {
-         arena.sendMessageTextToClient(_eventData, triggeringCharacter, true/*popUp*/);
+      else if (eventType.equals(EVENT_TYPE_DISPLAY_MESSAGE_PRIVATELY)) {
+         arena.sendMessageTextToClient(eventData, triggeringCharacter, true/*popUp*/);
       }
-      else if ((_eventType.equals(EVENT_TYPE_CLOSE_DOOR)) ||
-               (_eventType.equals(EVENT_TYPE_OPEN_DOOR))) {
-         for (ArenaCoordinates eventLoc : _eventLocations) {
+      else if ((eventType.equals(EVENT_TYPE_CLOSE_DOOR)) ||
+               (eventType.equals(EVENT_TYPE_OPEN_DOOR))) {
+         for (ArenaCoordinates eventLoc : eventLocations) {
             ArenaLocation loc = arena.getLocation(eventLoc);
             ArenaLocation origLoc = loc.clone();
             boolean locChanged = false;
             synchronized (loc) {
-               try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(loc._lock_this)) {
+               try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(loc.lock_this)) {
                   for (Door door : loc.getDoors()) {
-                     if (_eventType.equals(EVENT_TYPE_CLOSE_DOOR) && door.isOpen()) {
+                     if (eventType.equals(EVENT_TYPE_CLOSE_DOOR) && door.isOpen()) {
                         if (door.close()) {
                            locChanged = true;
                         }
@@ -173,7 +174,7 @@ public class ArenaEvent implements Cloneable
                            locChanged = true;
                         }
                      }
-                     if (_eventType.equals(EVENT_TYPE_OPEN_DOOR) && !door.isOpen()) {
+                     if (eventType.equals(EVENT_TYPE_OPEN_DOOR) && !door.isOpen()) {
                         if (door.unlock()) {
                            locChanged = true;
                         }
@@ -190,25 +191,25 @@ public class ArenaEvent implements Cloneable
             }
          }
       }
-      else if (_eventType.equals(EVENT_TYPE_ENTER_CHARACTER)) {
+      else if (eventType.equals(EVENT_TYPE_ENTER_CHARACTER)) {
          AI_Type aiEngineType =  AI_Type.NORM;
-         String lowerCaseData = _eventData.toLowerCase();
-         String nonAiData = _eventData;
+         String lowerCaseData = eventData.toLowerCase();
+         String nonAiData = eventData;
          for (AI_Type aiType : AI_Type.values()) {
             String aiTypeLowerCase = aiType.name.toLowerCase();
             if (lowerCaseData.contains(" " + aiTypeLowerCase + " ")) {
                int index = lowerCaseData.indexOf(" " + aiTypeLowerCase + " ");
-               nonAiData = _eventData.substring(0, index) + _eventData.substring(index + aiTypeLowerCase.length() + 1);
+               nonAiData = eventData.substring(0, index) + eventData.substring(index + aiTypeLowerCase.length() + 1);
                aiEngineType = aiType;
                break;
             }
             if (lowerCaseData.startsWith(aiTypeLowerCase + " ")) {
-               nonAiData = _eventData.substring(aiTypeLowerCase.length() + 1).trim();
+               nonAiData = eventData.substring(aiTypeLowerCase.length() + 1).trim();
                aiEngineType = aiType;
                break;
             }
             if (lowerCaseData.endsWith(" " + aiTypeLowerCase)) {
-               nonAiData = _eventData.substring(0, _eventData.length() - (aiTypeLowerCase.length() + 1)).trim();
+               nonAiData = eventData.substring(0, eventData.length() - (aiTypeLowerCase.length() + 1)).trim();
                aiEngineType = aiType;
                break;
             }
@@ -227,7 +228,7 @@ public class ArenaEvent implements Cloneable
                }
             }
          }
-         Character newChar = CombatServer._this._charFile.getCharacter(nonAiData);
+         Character newChar = CombatServer._this.charFile.getCharacter(nonAiData);
          if (newChar == null) {
             newChar = CharacterGenerator.generateRandomCharacter(nonAiData, arena, true/*printCharacter*/);
          }
@@ -250,20 +251,20 @@ public class ArenaEvent implements Cloneable
             }
          }
          // If the event specified the team ID, it will be reflected in the generated character
-         byte team = newChar._teamID;
+         byte team = newChar.teamID;
          if (team == -1) {
             // Pick the opposing team
-            if (triggeringCharacter._teamID == Enums.TEAM_ALPHA) {
+            if (triggeringCharacter.teamID == Enums.TEAM_ALPHA) {
                team = Enums.TEAM_BETA;
             }
             else {
                team = Enums.TEAM_ALPHA;
             }
-            newChar._teamID = team;
+            newChar.teamID = team;
          }
          // try each of the locations in the location list until we find one that is unoccupied
-         for (ArenaCoordinates location : _eventLocations) {
-            if (arena.addCombatant(newChar, team, location._x, location._y, aiEngineType)) {
+         for (ArenaCoordinates location : eventLocations) {
+            if (arena.addCombatant(newChar, team, location.x, location.y, aiEngineType)) {
                newChar.getCondition().setPosition(position, arena.getCombatMap(), newChar);
                return false;
             }
@@ -278,8 +279,8 @@ public class ArenaEvent implements Cloneable
                      if ((Math.abs(xOffset) < searchDistance) && (Math.abs(yOffset) < searchDistance)) {
                         continue;
                      }
-                     for (ArenaCoordinates location : _eventLocations) {
-                        if (arena.addCombatant(newChar, team, (short)(location._x + xOffset), (short)(location._y + yOffset), aiEngineType)) {
+                     for (ArenaCoordinates location : eventLocations) {
+                        if (arena.addCombatant(newChar, team, (short)(location.x + xOffset), (short)(location.y + yOffset), aiEngineType)) {
                            newChar.getCondition().setPosition(position, arena.getCombatMap(), newChar);
                            return false;
                         }
@@ -291,11 +292,11 @@ public class ArenaEvent implements Cloneable
          // If we got here, then we never found a location
          DebugBreak.debugBreak();
       }
-      else if (_eventType.equals(EVENT_TYPE_TELEPORT)) {
+      else if (eventType.equals(EVENT_TYPE_TELEPORT)) {
          int locIndex = 0;
          CombatMap map = arena.getCombatMap();
-         while (locIndex < _eventLocations.size()) {
-            ArenaLocation eventLoc = map.getLocation(_eventLocations.get(locIndex));
+         while (locIndex < eventLocations.size()) {
+            ArenaLocation eventLoc = map.getLocation(eventLocations.get(locIndex));
             if (eventLoc.getCharacters().size() == 0) {
                if (triggeringCharacter.setHeadLocation(eventLoc, triggeringCharacter.getFacing(), map, null/*diag*/)) {
                   break;
@@ -304,7 +305,7 @@ public class ArenaEvent implements Cloneable
             locIndex++;
          }
       }
-      else if (_eventType.equals(EVENT_TYPE_DISABLE_THIS_TRIGGER)){
+      else if (eventType.equals(EVENT_TYPE_DISABLE_THIS_TRIGGER)){
          CombatMap map = arena.getCombatMap();
          for (ArenaTrigger trigger : map.getTriggers()) {
             if (trigger.getEvents().contains(this)) {
@@ -312,9 +313,9 @@ public class ArenaEvent implements Cloneable
             }
          }
       }
-      else if ((_eventType.equals(EVENT_TYPE_ENABLE_TRIGGER)) ||
-               (_eventType.equals(EVENT_TYPE_DISABLE_TRIGGER))){
-         boolean enable = _eventType.equals(EVENT_TYPE_ENABLE_TRIGGER);
+      else if ((eventType.equals(EVENT_TYPE_ENABLE_TRIGGER)) ||
+               (eventType.equals(EVENT_TYPE_DISABLE_TRIGGER))){
+         boolean enable = eventType.equals(EVENT_TYPE_ENABLE_TRIGGER);
          CombatMap map = arena.getCombatMap();
 
          String triggerName = getData();
@@ -331,15 +332,15 @@ public class ArenaEvent implements Cloneable
             }
          }
       }
-      else if (_eventType.equals(EVENT_TYPE_NEW_MAP)) {
+      else if (eventType.equals(EVENT_TYPE_NEW_MAP)) {
          // save the current map
          CombatMap map = arena.getCombatMap();
          // if we come back to this map, make sure we don't re-create the original players
          map.clearCharacterStartingLocations();
          final List<Character> team = new ArrayList<>();
-         final byte teamID = triggeringCharacter._teamID;
+         final byte teamID = triggeringCharacter.teamID;
          for (Character combatant : arena.getCombatants()) {
-            if (combatant._teamID == teamID) {
+            if (combatant.teamID == teamID) {
                if (combatant.stillFighting()) {
                   team.add(combatant);
                   // remove the characters that are leaving this map, so they aren't there when they might return.
@@ -348,7 +349,7 @@ public class ArenaEvent implements Cloneable
             }
          }
          // keep this map for later, in case we come back.
-         _savedMaps.put(map.getName(), map.clone());
+         savedMaps.put(map.getName(), map.clone());
          map.removeAllCombatants();
          if (!CombatServer._this.getShell().isDisposed()) {
             Display display = CombatServer._this.getShell().getDisplay();
@@ -360,9 +361,9 @@ public class ArenaEvent implements Cloneable
                   // we have to defer this to the UI thread
                   display.asyncExec(() -> {
                      arena.removeAllCombatants();
-                     CombatMap newMap = _savedMaps.get(_eventData);
+                     CombatMap newMap = savedMaps.get(eventData);
                      if (newMap == null) {
-                        CombatServer._this.setMap(_eventData);
+                        CombatServer._this.setMap(eventData);
                      }
                      else {
                         arena.setCombatMap(newMap, true/*clearCombatants*/);
@@ -372,11 +373,11 @@ public class ArenaEvent implements Cloneable
                      for (Character teamMember : team) {
                         // make sure we never run out of locations, even if we re-use them twice.
                         if (locations.isEmpty()) {
-                           locations.addAll(_eventLocations);
+                           locations.addAll(eventLocations);
                         }
 
                         ArenaCoordinates loc = locations.remove(0);
-                        arena.addCombatant(teamMember, teamID, loc._x, loc._y, teamMember.getAIType());
+                        arena.addCombatant(teamMember, teamID, loc.x, loc.y, teamMember.getAIType());
                      }
                      arena.terminateBattle();
                      arena.beginBattle();
@@ -397,37 +398,36 @@ public class ArenaEvent implements Cloneable
          // return true to indicate that this TriggerEvent caused the mover to stop moving.
          return true;
       }
-//      else if (_eventType.equals(EVENT_TYPE_TRAP)) {
+//      else if (eventType.equals(EVENT_TYPE_TRAP)) {
 //      }
       return false;
    }
-   static public HashMap<String, CombatMap> _savedMaps = new HashMap<>();
 
    public boolean isExitEvent() {
-      return _eventType.equals(EVENT_TYPE_NEW_MAP);
+      return eventType.equals(EVENT_TYPE_NEW_MAP);
    }
 
    public boolean equals(ArenaEvent other) {
-      if (!_eventName.equals(other._eventName)) {
+      if (!eventName.equals(other.eventName)) {
          return false;
       }
-      if (!_eventType.equals(other._eventType)) {
+      if (!eventType.equals(other.eventType)) {
          return false;
       }
-      if (!_eventData.equals(other._eventData)) {
+      if (!eventData.equals(other.eventData)) {
          return false;
       }
-      if ((_eventLocations != null) && (other._eventLocations != null)) {
-         if (_eventLocations.size() != other._eventLocations.size()) {
+      if ((eventLocations != null) && (other.eventLocations != null)) {
+         if (eventLocations.size() != other.eventLocations.size()) {
             return false;
          }
-         for (int i=0 ; i<_eventLocations.size(); i++) {
-            if (!_eventLocations.get(i).sameCoordinates(other._eventLocations.get(i))) {
+         for (int i = 0; i < eventLocations.size(); i++) {
+            if (!eventLocations.get(i).sameCoordinates(other.eventLocations.get(i))) {
                return false;
             }
          }
       }
-      else return (_eventLocations == null) && (other._eventLocations == null);
+      else return (eventLocations == null) && (other.eventLocations == null);
       return true;
    }
 
@@ -435,9 +435,9 @@ public class ArenaEvent implements Cloneable
    public ArenaEvent clone() {
       try {
          ArenaEvent dup = (ArenaEvent) super.clone();
-         if (_eventLocations != null) {
-            dup._eventLocations = new ArrayList<>();
-            dup._eventLocations.addAll(_eventLocations);
+         if (eventLocations != null) {
+            dup.eventLocations = new ArrayList<>();
+            dup.eventLocations.addAll(eventLocations);
          }
          return dup;
       } catch (CloneNotSupportedException e) {
@@ -446,6 +446,6 @@ public class ArenaEvent implements Cloneable
    }
 
    public Collection<ArenaCoordinates> getLocations() {
-      return _eventLocations;
+      return eventLocations;
    }
 }

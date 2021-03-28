@@ -8,33 +8,33 @@ import java.util.List;
 
 public class DrawnObject
 {
-   private       List<Point> _points = new ArrayList<>();
-   private       RGB         _fgRGB;
-   private       RGB               _bgRGB;
-   private final List<DrawnObject> _children = new ArrayList<>();
+   private       List<Point>       points = new ArrayList<>();
+   private       RGB               fgRGB;
+   private       RGB               bgRGB;
+   private final List<DrawnObject> children = new ArrayList<>();
 
    public DrawnObject(RGB fgRGB, RGB bgRGB) {
-      _fgRGB = fgRGB;//==null) ? null : new RGB(fgRGB.red, fgRGB.green, fgRGB.blue);
-      _bgRGB = bgRGB;//==null) ? null : new RGB(bgRGB.red, bgRGB.green, bgRGB.blue);
+      this.fgRGB = fgRGB;//==null) ? null : new RGB(fgRGB.red, fgRGB.green, fgRGB.blue);
+      this.bgRGB = bgRGB;//==null) ? null : new RGB(bgRGB.red, bgRGB.green, bgRGB.blue);
    }
    public void addChild(DrawnObject child) {
       if (child == null) {
          DebugBreak.debugBreak();
          return;
       }
-      _children.add(child);
+      children.add(child);
    }
 
    public void addPoint(int x, int y) {
-      _points.add(new Point(x,y));
+      points.add(new Point(x, y));
    }
    public void addPoint(double x, double y) {
-      _points.add(new Point((int)(Math.round(x)), (int)(Math.round(y))));
+      points.add(new Point((int)(Math.round(x)), (int)(Math.round(y))));
    }
 
    public void draw(GC gc, Device display) {
-      Color bgColor = (_bgRGB == null) ? null : new Color(display, _bgRGB);
-      Color fgColor = (_fgRGB == null) ? null : new Color(display, _fgRGB);
+      Color bgColor = (bgRGB == null) ? null : new Color(display, bgRGB);
+      Color fgColor = (fgRGB == null) ? null : new Color(display, fgRGB);
 
       if (bgColor != null) {
          gc.setBackground(bgColor);
@@ -43,9 +43,9 @@ public class DrawnObject
          gc.setForeground(fgColor);
       }
 
-      int[] points = new int[_points.size()*2];
+      int[] points = new int[this.points.size() * 2];
       int i=0;
-      for (Point point : _points) {
+      for (Point point : this.points) {
          points[i++] = point.x;
          points[i++] = point.y;
       }
@@ -63,13 +63,13 @@ public class DrawnObject
          fgColor.dispose();
       }
 
-      for (DrawnObject child : _children) {
+      for (DrawnObject child : children) {
          child.draw(gc, display);
       }
    }
 
    public void flipPoints(boolean alongHorizontalAxis) {
-      for (Point point : _points) {
+      for (Point point : points) {
          if (alongHorizontalAxis) {
             point.y *= -1;
          }
@@ -79,14 +79,14 @@ public class DrawnObject
       }
    }
    public void offsetPoints(int x, int y) {
-      if (((x==0) && (y==0)) || (_points == null)) {
+      if (((x==0) && (y==0)) || (points == null)) {
          return;
       }
-      for (Point point : _points) {
+      for (Point point : points) {
          point.x += x;
          point.y += y;
       }
-      for (DrawnObject child : _children) {
+      for (DrawnObject child : children) {
          child.offsetPoints(x, y);
       }
    }
@@ -96,26 +96,26 @@ public class DrawnObject
          return; // nothing to do
       }
 
-      if (_points == null) {
+      if (points == null) {
          return;
       }
 
-      for (Point point : _points) {
+      for (Point point : points) {
          double dist = Math.sqrt((point.x*point.x) + (point.y*point.y));
          double curAng = Math.atan2(point.y, point.x);
          double newAng = curAng + angle;
          point.x = (int) Math.round(dist * Math.cos(newAng));
          point.y = (int) Math.round(dist * Math.sin(newAng));
       }
-      for (DrawnObject child : _children) {
+      for (DrawnObject child : children) {
          child.rotatePoints(angle);
       }
    }
    public int getXPoint(int index) {
-      return _points.get(index).x;
+      return points.get(index).x;
    }
    public int getYPoint(int index) {
-      return _points.get(index).y;
+      return points.get(index).y;
    }
 
    public static DrawnObject createElipse(int wideDiameter, int narrowDiameter, int pointCount, RGB foreground, RGB background) {
@@ -147,10 +147,10 @@ public class DrawnObject
       do {
          List<Point> newPoints = new ArrayList<>();
          Point prevPoint = null;
-         int skipsAllowed = _points.size();
+         int skipsAllowed = points.size();
          Point lastAddedPoint = null;
-         while (_points.size() > 0) {
-            Point thisPoint = _points.remove(0);
+         while (points.size() > 0) {
+            Point thisPoint = points.remove(0);
             if (isInBounds(thisPoint, minTest, minY, maxY)) {
                if (prevPoint != null) {
                   if (!isInBounds(prevPoint, minTest, minY, maxY)) {
@@ -168,10 +168,10 @@ public class DrawnObject
                // Add the valid interior point
                if ((lastAddedPoint == null) || (!lastAddedPoint.equals(thisPoint))) {
                   // If the last point was out-of-bounds, then we re-added the
-                  // first point back to the end of the _points list to get the
+                  // first point back to the end of the points list to get the
                   // intersection point. If this is the case, don't re-add the
                   // thisPoint, because its already at the front of the list.
-                  if ((_points.size() > 0) ||
+                  if ((points.size() > 0) ||
                       (newPoints.size() ==0) ||
                       (!newPoints.get(0).equals(thisPoint))) {
                      newPoints.add(thisPoint);
@@ -183,10 +183,10 @@ public class DrawnObject
                // have we found a point inside the valid range yet? if so, prevPoint will be non-null.
                if (prevPoint == null) {
                   // put this point back at the end of the original list, so we'll process it again later.
-                  _points.add(thisPoint);
+                  points.add(thisPoint);
                   if (skipsAllowed-- == 0) {
                      // The entire set of points is out of bounds!
-                     _points.clear();
+                     points.clear();
                      return;
                   }
                   continue;
@@ -206,19 +206,19 @@ public class DrawnObject
                   // Neither the previous point or the current point are in bounds
                   // so we can skip adding the current point into the new list.
                   // This effectively throws away prevPoint.
-                  if (_points.size() == 0) {
+                  if (points.size() == 0) {
                      // If this is the last point, we still need to reconnect to the first point,
-                     _points.add(newPoints.get(0));
+                     points.add(newPoints.get(0));
                   }
                }
             }
             prevPoint = thisPoint;
          }
-         _points = newPoints;
+         points = newPoints;
          minTest=!minTest;
       } while (minTest);
 
-      for (DrawnObject child : _children) {
+      for (DrawnObject child : children) {
          child.trimToYBounds(minY, maxY);
       }
    }
@@ -315,6 +315,6 @@ public class DrawnObject
      return null;
    }
    public int getPointCount() {
-      return _points.size();
+      return points.size();
    }
 }

@@ -32,14 +32,14 @@ public class OrientationDoubleCentaur extends OrientationSerpentine
       DrawnObject charOutlines = DrawnObject.createElipse((int) (wideDiameter*.8), narrowDiameter*3, wideDiameter, foreground, background);
       int yOffset;
       int xOffset = 0;
-      if (loc.sameCoordinates(_coordinates.get(0))) {
+      if (loc.sameCoordinates(coordinates.get(0))) {
          yOffset = (int) (narrowDiameter*1.25);
       }
       else {
          yOffset = (int) (0-(narrowDiameter*1.25));
       }
       charOutlines.offsetPoints(xOffset, yOffset);
-      if (loc.sameCoordinates(_coordinates.get(0))) {
+      if (loc.sameCoordinates(coordinates.get(0))) {
          charOutlines.addChild(DrawnObject.createElipse(wideDiameter, narrowDiameter, wideDiameter, foreground, background));
       }
       else {

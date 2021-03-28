@@ -35,44 +35,44 @@ import java.util.Map.Entry;
 
 public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonitoringObject
 {
-   private final GLView                                 _view;
-   private final Display                                _display;
-   private final HashMap<ArenaLocation, TexturedObject> _locationToObjectMap = new HashMap<>();
-   private       boolean                                _setZoomOnLoad;
-   private final HashMap<HumanBody, ArenaLocation>      _mouseOverBodies     = new HashMap<>();
-   private final HashMap<String, Texture>               _textureByRaceName   = new HashMap<>();
+   private final GLView                                 view;
+   private final Display                                display;
+   private final HashMap<ArenaLocation, TexturedObject> locationToObjectMap = new HashMap<>();
+   private       boolean                                setZoomOnLoad;
+   private final HashMap<HumanBody, ArenaLocation>      mouseOverBodies     = new HashMap<>();
+   private final HashMap<String, Texture>               textureByRaceName   = new HashMap<>();
 
-   final List<Character>             _watchedCharacters      = new ArrayList<>();
-   final HashMap<Integer, HumanBody> _characterIdToHumanBody = new HashMap<>();
-   final HashMap<Integer, ObjHex>    _characterIdToObjHex    = new HashMap<>();
+   final List<Character>             watchedCharacters      = new ArrayList<>();
+   final HashMap<Integer, HumanBody> characterIdToHumanBody = new HashMap<>();
+   final HashMap<Integer, ObjHex>    characterIdToObjHex    = new HashMap<>();
 
-   final         Semaphore            _lock_animationsPending   = new Semaphore("_lock_animationsPending", CombatSemaphore.CLASS_MAPWIDGET3D_animationsPending);
-   final         Semaphore            _lock_animatedObjects     = new Semaphore("_lock_animatedObjects", CombatSemaphore.CLASS_MAPWIDGET3_animatedObjects);
-   final         Semaphore            _lock_locationToObjectMap = new Semaphore("_lock_locationToObjectMap", CombatSemaphore.CLASS_MAPWIDGET3_locationToObjectMap);
-   private final List<HumanBody> _animationsPending        = new ArrayList<>();
-   private final List<HumanBody> _animatedObjects          = new ArrayList<>();
-   Thread _animationThread = null;
+   final         Semaphore       lock_animationsPending   = new Semaphore("_lock_animationsPending", CombatSemaphore.CLASS_MAPWIDGET3D_animationsPending);
+   final         Semaphore       lock_animatedObjects     = new Semaphore("_lock_animatedObjects", CombatSemaphore.CLASS_MAPWIDGET3_animatedObjects);
+   final         Semaphore       lock_locationToObjectMap = new Semaphore("_lock_locationToObjectMap", CombatSemaphore.CLASS_MAPWIDGET3_locationToObjectMap);
+   private final List<HumanBody> animationsPending        = new ArrayList<>();
+   private final List<HumanBody> animatedObjects          = new ArrayList<>();
+   Thread animationThread = null;
 
-   private final transient MonitoredObject  _monitoredObj  = new MonitoredObject("MapWidget3D");
-   private final transient MonitoringObject _monitoringObj = new MonitoringObject("MapWidget3D");
+   private final transient MonitoredObject  monitoredObj  = new MonitoredObject("MapWidget3D");
+   private final transient MonitoringObject monitoringObj = new MonitoringObject("MapWidget3D");
 
 
    public MapWidget3D(Composite parent) {
-      _view = new GLView(parent, true/*withControls*/);
-      Canvas canvas = _view.getCanvas();
+      view = new GLView(parent, true/*withControls*/);
+      Canvas canvas = view.getCanvas();
       canvas.addKeyListener(this);
       canvas.getParent().addKeyListener(this);
       canvas.getParent().getParent().addKeyListener(this);
 
-      _view.addSelectionWatcher(this);
-      _display = parent.getDisplay();
+      view.addSelectionWatcher(this);
+      display = parent.getDisplay();
       CombatServer.registerMapWidget3D(this);
 
-      for (String race : SequenceLibrary._availableRaces) {
+      for (String race : SequenceLibrary.availableRaces) {
          try {
-            Texture texture = _view.getTextureLoader().getTexture("res/bodyparts/texture_"+race+"male.png");
+            Texture texture = view.getTextureLoader().getTexture("res/bodyparts/texture_" + race + "male.png");
             if (texture != null) {
-               _textureByRaceName.put(race, texture);
+               textureByRaceName.put(race, texture);
             }
          } catch (IOException e) {
          }
@@ -85,52 +85,52 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
 
    @Override
    public void setLayoutData(Object data) {
-      _view.getCanvas().setLayoutData(data);
+      view.getCanvas().setLayoutData(data);
    }
 
    @Override
    public void allowPan(boolean allow) {
-      _view.allowPan(allow);
+      view.allowPan(allow);
    }
 
    @Override
    public void allowDrag(boolean allow) {
-      _view.allowDrag(allow);
+      view.allowDrag(allow);
    }
 
    public void checkAnimation() {
-      if (_animationThread != null) {
+      if (animationThread != null) {
          return;
       }
-      synchronized (_lock_animatedObjects) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_animatedObjects)) {
-            if (_animatedObjects.size() == 0) {
+      synchronized (lock_animatedObjects) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_animatedObjects)) {
+            if (animatedObjects.size() == 0) {
                return;
             }
          }
       }
 
-      _animationThread = new Thread() {
+      animationThread = new Thread() {
          @Override
          public void run() {
             try {
                Thread.currentThread().setName("AnimationThread");
                while (true) {
                   List<HumanBody> itemsToRemove = new ArrayList<>();
-                  synchronized (_lock_animatedObjects) {
-                     try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_animatedObjects)) {
-                        if (_animatedObjects.size() == 0) {
+                  synchronized (lock_animatedObjects) {
+                     try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_animatedObjects)) {
+                        if (animatedObjects.size() == 0) {
                            return;
                         }
 
-                        for (HumanBody human : _animatedObjects) {
+                        for (HumanBody human : animatedObjects) {
                            if (!human.advanceAnimation()) {
                               itemsToRemove.add(human);
-                              Set<Entry<Integer, HumanBody>> set = _characterIdToHumanBody.entrySet();
+                              Set<Entry<Integer, HumanBody>> set = characterIdToHumanBody.entrySet();
                               Character character = null;
                               for (Entry<Integer, HumanBody> pair : set) {
                                  if (pair.getValue() == human) {
-                                    character = CombatServer._this._map.getCombatMap().getCombatantByUniqueID(pair.getKey());
+                                    character = CombatServer._this.map.getCombatMap().getCombatantByUniqueID(pair.getKey());
                                     break;
                                  }
                               }
@@ -139,14 +139,14 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
                               }
                            }
                         }
-                        _animatedObjects.removeAll(itemsToRemove);
+                        animatedObjects.removeAll(itemsToRemove);
                      }
                   }
-                  synchronized (_lock_animationsPending) {
-                     try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_animationsPending)) {
-                        _animationsPending.removeAll(itemsToRemove);
+                  synchronized (lock_animationsPending) {
+                     try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_animationsPending)) {
+                        animationsPending.removeAll(itemsToRemove);
                         System.out.println("clearing pending animations.");
-                        _lock_animationsPending.notifyAll();
+                        lock_animationsPending.notifyAll();
                         System.out.println("all pending animations cleared.");
                      }
                   }
@@ -157,13 +157,13 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
             } catch (IllegalMonitorStateException e) {
                System.out.println(e);
             } finally {
-               _animationThread = null;
+               animationThread = null;
             }
          }
       };
 
-      _animationThread.setName("animationThread");
-      _animationThread.start();
+      animationThread.setName("animationThread");
+      animationThread.start();
    }
 
    @Override
@@ -174,47 +174,47 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
 
    @Override
    public void redraw() {
-      _view.drawScene(_display);
+      view.drawScene(display);
    }
 
    @Override
    public void setZoomToFit() {
-      if (_combatMap == null) {
+      if (combatMap == null) {
          return;
       }
-      short centerX = (short) (_combatMap.getSizeX() / 2);
-      short centerY = (short) (_combatMap.getSizeY() / 2);
+      short centerX = (short) (combatMap.getSizeX() / 2);
+      short centerY = (short) (combatMap.getSizeY() / 2);
       if ((centerY % 2) != (centerX % 2)) {
          centerY++;
       }
-      ArenaLocation centerLoc = _combatMap.getLocation(centerX, centerY);
+      ArenaLocation centerLoc = combatMap.getLocation(centerX, centerY);
       // set the camera height equal to half the map length, and the camera position off the bottom edge of the map.
       TexturedObject centerObj;
-      synchronized (_locationToObjectMap) {
-         _lock_locationToObjectMap.check();
-         centerObj = _locationToObjectMap.get(centerLoc);
+      synchronized (locationToObjectMap) {
+         lock_locationToObjectMap.check();
+         centerObj = locationToObjectMap.get(centerLoc);
       }
       if (centerObj == null) {
-         _setZoomOnLoad = true;
+         setZoomOnLoad = true;
          return;
       }
-      Tuple3 centerPos = centerObj._models.get(0)._data.getFace(0).getVertex(0);
-      _view._cameraPosition = new Tuple3(-centerPos.getX(), _view._cameraPosition.getY(), centerPos.getZ() * -3);
-      _view.setHeightScaleByApproximateHeightInInches((centerPos.getX() / 6)/*desiredHeightInInches*/);
+      Tuple3 centerPos = centerObj.models.get(0).data.getFace(0).getVertex(0);
+      view.cameraPosition = new Tuple3(-centerPos.getX(), view.cameraPosition.getY(), centerPos.getZ() * -3);
+      view.setHeightScaleByApproximateHeightInInches((centerPos.getX() / 6)/*desiredHeightInInches*/);
    }
 
    @Override
    public void requestMovement(RequestMovement locationMovement) {
       super.requestMovement(locationMovement);
       setOpacityOfAllHexes();
-      _view.setWatchMouseMove(true);
+      view.setWatchMouseMove(true);
    }
 
    @Override
    public void requestLocation(RequestLocation locationMovement) {
       super.requestLocation(locationMovement);
       setOpacityOfAllHexes();
-      _view.setWatchMouseMove(true);
+      view.setWatchMouseMove(true);
    }
 
    @Override
@@ -227,19 +227,19 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
    public void endHexSelection() {
       super.endHexSelection();
       setOpacityOfAllHexes();
-      _view.setWatchMouseMove(false);
+      view.setWatchMouseMove(false);
    }
 
    private void setOpacityOfAllHexes() {
-      synchronized (_locationToObjectMap) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_locationToObjectMap)) {
-            for (ArenaLocation loc : _locationToObjectMap.keySet()) {
-               TexturedObject texturedObj = _locationToObjectMap.get(loc);
+      synchronized (locationToObjectMap) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_locationToObjectMap)) {
+            for (ArenaLocation loc : locationToObjectMap.keySet()) {
+               TexturedObject texturedObj = locationToObjectMap.get(loc);
                if (loc.getSelectable()) {
-                  texturedObj._opacity = 1.0f;
+                  texturedObj.opacity = 1.0f;
                }
                else {
-                  texturedObj._opacity = 0.5f;
+                  texturedObj.opacity = 0.5f;
                }
             }
          }
@@ -248,14 +248,14 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
 
    @Override
    public boolean updateMap(CombatMap map, int selfID, byte selfTeam, List<ArenaLocation> availableLocs, int targetID) {
-      synchronized (_locationToObjectMap) {
-         _lock_locationToObjectMap.check();
-         _locationToObjectMap.clear();
+      synchronized (locationToObjectMap) {
+         lock_locationToObjectMap.check();
+         locationToObjectMap.clear();
       }
       boolean result = super.updateMap(map, selfID, selfTeam, availableLocs, targetID);
       //      TexturedObject model = null;
-      //      _view.addModel(model);
-      _view.clearModels();
+      //      view.addModel(model);
+      view.clearModels();
       for (short x = 0; x < map.getSizeX(); x++) {
          for (short y = 0; y < map.getSizeY(); y++) {
             ArenaLocation loc = map.getLocation(x, y);
@@ -266,11 +266,11 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
             addHexToMap(loc);
          }
       }
-      _view.setMapExtents(map.getSizeX(), map.getSizeY());
+      view.setMapExtents(map.getSizeX(), map.getSizeY());
 
-      if (_setZoomOnLoad) {
+      if (setZoomOnLoad) {
          setZoomToFit();
-         _setZoomOnLoad = false;
+         setZoomOnLoad = false;
       }
       return result;
    }
@@ -301,7 +301,7 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
    @Override
    //* return true if the map changed, and needs to be redrawn*/
    protected boolean centerOnSelf() {
-      Character self = _combatMap.getCombatantByUniqueID(this._selfID);
+      Character self = combatMap.getCombatantByUniqueID(this.selfID);
       if (self != null) {
          centerViewOn(self);
       }
@@ -312,21 +312,21 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
       ArenaCoordinates headCoord = chr.getHeadCoordinates();
       Facing curFacing = chr.getFacing();
       ArenaCoordinates forwardLoc = ArenaCoordinates.getForwardMovement(headCoord, curFacing);
-      int deltaX = forwardLoc._x - headCoord._x;
-      int deltaY = forwardLoc._y - headCoord._y;
+      int deltaX = forwardLoc.x - headCoord.x;
+      int deltaY = forwardLoc.y - headCoord.y;
       int hexesBehind = -3;
-      Tuple3 center = this._view.getHexLocation(headCoord._x + (deltaX * hexesBehind), headCoord._y + (deltaY * hexesBehind), 0/*z*/);
-      this._view._cameraPosition = center.multiply(-1);
+      Tuple3 center = this.view.getHexLocation(headCoord.x + (deltaX * hexesBehind), headCoord.y + (deltaY * hexesBehind), 0/*z*/);
+      this.view.cameraPosition = center.multiply(-1);
       int xRot = curFacing.value * -60;
       int yRot = -20;
-      this._view.setCameraAngle(xRot, yRot);
+      this.view.setCameraAngle(xRot, yRot);
 
-      this._view.setHeightScaleByApproximateHeightInInches(90f/*desiredHeightInInches*/);
+      this.view.setHeightScaleByApproximateHeightInInches(90f/*desiredHeightInInches*/);
    }
 
    @Override
    protected Canvas getCanvas() {
-      return _view.getCanvas();
+      return view.getCanvas();
    }
 
    @Override
@@ -337,9 +337,9 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
    @Override
    public void onMouseDown(TexturedObject object, Event event, double angleFromCenter, double normalizedDistFromCenter) {
       clearMouseOverBodies();
-      for (IMapListener listener : _listeners) {
-         if ((object._relatedObject instanceof ArenaLocation)) {
-            listener.onMouseDown((ArenaLocation) object._relatedObject, event, angleFromCenter, normalizedDistFromCenter);
+      for (IMapListener listener : listeners) {
+         if ((object.relatedObject instanceof ArenaLocation)) {
+            listener.onMouseDown((ArenaLocation) object.relatedObject, event, angleFromCenter, normalizedDistFromCenter);
          }
       }
    }
@@ -347,13 +347,13 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
    @Override
    public void onMouseMove(TexturedObject object, Event event, double angleFromCenter, double normalizedDistFromCenter) {
       List<Orientation> newMouseOverOrientations = new ArrayList<>();
-      ArenaLocation loc = (ArenaLocation) object._relatedObject;
+      ArenaLocation loc = (ArenaLocation) object.relatedObject;
       Orientation destinationOrientation = null;
       if (loc != null) {
-         if (_movementRequest != null) {
-            destinationOrientation = _movementRequest.getBestFutureOrientation(loc, angleFromCenter, normalizedDistFromCenter);
+         if (movementRequest != null) {
+            destinationOrientation = movementRequest.getBestFutureOrientation(loc, angleFromCenter, normalizedDistFromCenter);
             if (destinationOrientation != null) {
-               newMouseOverOrientations = _movementRequest.getRouteToFutureOrientation(destinationOrientation);
+               newMouseOverOrientations = movementRequest.getRouteToFutureOrientation(destinationOrientation);
             }
          }
       }
@@ -362,10 +362,10 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
 
    public boolean setMouseOverOrientations(List<Orientation> newMouseOverOrientations, Orientation destinationOrientation) {
       boolean orientationChanged;
-      if ((newMouseOverOrientations != null) && (_mouseOverOrientations != null)) {
-         if (newMouseOverOrientations.size() == _mouseOverOrientations.size()) {
-            orientationChanged = !newMouseOverOrientations.containsAll(_mouseOverOrientations)
-                                                                                                       || !_mouseOverOrientations.containsAll(newMouseOverOrientations);
+      if ((newMouseOverOrientations != null) && (mouseOverOrientations != null)) {
+         if (newMouseOverOrientations.size() == mouseOverOrientations.size()) {
+            orientationChanged = !newMouseOverOrientations.containsAll(mouseOverOrientations)
+                                                                                                       || !mouseOverOrientations.containsAll(newMouseOverOrientations);
          }
          else {
             orientationChanged = true;
@@ -373,31 +373,31 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
       }
       else {
          // one of these is null, so if the other is not null, it has changed
-         orientationChanged = ((newMouseOverOrientations != null) || (_mouseOverOrientations != null));
+         orientationChanged = ((newMouseOverOrientations != null) || (mouseOverOrientations != null));
       }
       if (!orientationChanged) {
          return false;
       }
 
       clearMouseOverBodies();
-      _mouseOverOrientations = newMouseOverOrientations;
-      if ((_mouseOverOrientations != null) && (_movementRequest != null)) {
-         Character mover = _combatMap.getCombatantByUniqueID(_movementRequest.getActorID());
+      mouseOverOrientations = newMouseOverOrientations;
+      if ((mouseOverOrientations != null) && (movementRequest != null)) {
+         Character mover = combatMap.getCombatantByUniqueID(movementRequest.getActorID());
          if (mover != null) {
-            for (Orientation newOrientation : _mouseOverOrientations) {
+            for (Orientation newOrientation : mouseOverOrientations) {
                float opacity = 0.35f;
                if (destinationOrientation.equals(newOrientation)) {
                   opacity = 0.65f;
                }
-               ArenaLocation loc = this._combatMap.getLocation(newOrientation.getHeadCoordinates());
-               synchronized (_locationToObjectMap) {
-                  try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_locationToObjectMap)) {
-                     TexturedObject object = this._locationToObjectMap.get(loc);
-                     for (ObjModel model : object._models) {
-                        if (model._data instanceof ObjHex) {
-                           HumanBody human = addCharacterToHex(_view, loc, (ObjHex) model._data, mover, newOrientation, true/*isGhost*/);
+               ArenaLocation loc = this.combatMap.getLocation(newOrientation.getHeadCoordinates());
+               synchronized (locationToObjectMap) {
+                  try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_locationToObjectMap)) {
+                     TexturedObject object = this.locationToObjectMap.get(loc);
+                     for (ObjModel model : object.models) {
+                        if (model.data instanceof ObjHex) {
+                           HumanBody human = addCharacterToHex(view, loc, (ObjHex) model.data, mover, newOrientation, true/*isGhost*/);
                            human.setOpacity(opacity);
-                           _mouseOverBodies.put(human, loc);
+                           mouseOverBodies.put(human, loc);
                         }
                      }
                   }
@@ -410,21 +410,21 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
    }
 
    public void clearMouseOverBodies() {
-      for (HumanBody human : _mouseOverBodies.keySet()) {
-         ArenaLocation loc = _mouseOverBodies.get(human);
+      for (HumanBody human : mouseOverBodies.keySet()) {
+         ArenaLocation loc = mouseOverBodies.get(human);
          TexturedObject object;
-         synchronized (_locationToObjectMap) {
-            _lock_locationToObjectMap.check();
-            object = this._locationToObjectMap.get(loc);
+         synchronized (locationToObjectMap) {
+            lock_locationToObjectMap.check();
+            object = this.locationToObjectMap.get(loc);
          }
-         for (ObjModel model : object._models) {
-            if (model._data instanceof ObjHex) {
-               ObjHex objHex = (ObjHex) model._data;
-               synchronized (objHex._lock_humans) {
-                  try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(objHex._lock_humans)) {
-                     for (HumanBody humanInHex : objHex._humans) {
-                        if (humanInHex._opacity != 1f) {
-                           objHex._humans.remove(humanInHex);
+         for (ObjModel model : object.models) {
+            if (model.data instanceof ObjHex) {
+               ObjHex objHex = (ObjHex) model.data;
+               synchronized (objHex.lock_humans) {
+                  try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(objHex.lock_humans)) {
+                     for (HumanBody humanInHex : objHex.humans) {
+                        if (humanInHex.opacity != 1f) {
+                           objHex.humans.remove(humanInHex);
                            // there should only be one human in this hex that is the mover
                            break; // prevent Concurrent Modification Exception
                         }
@@ -434,50 +434,50 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
             }
          }
       }
-      _mouseOverBodies.clear();
+      mouseOverBodies.clear();
    }
 
    @Override
    public void onMouseDrag(TexturedObject object, Event event, double angleFromCenter, double normalizedDistFromCenter) {
-      for (IMapListener listener : _listeners) {
-         if ((object._relatedObject instanceof ArenaLocation)) {
-            listener.onMouseDrag((ArenaLocation) object._relatedObject, event, angleFromCenter, normalizedDistFromCenter);
+      for (IMapListener listener : listeners) {
+         if ((object.relatedObject instanceof ArenaLocation)) {
+            listener.onMouseDrag((ArenaLocation) object.relatedObject, event, angleFromCenter, normalizedDistFromCenter);
          }
       }
    }
 
    @Override
    public void onMouseUp(TexturedObject object, Event event, double angleFromCenter, double normalizedDistFromCenter) {
-      for (IMapListener listener : _listeners) {
-         if ((object._relatedObject instanceof ArenaLocation)) {
-            listener.onMouseUp((ArenaLocation) object._relatedObject, event, angleFromCenter, normalizedDistFromCenter);
+      for (IMapListener listener : listeners) {
+         if ((object.relatedObject instanceof ArenaLocation)) {
+            listener.onMouseUp((ArenaLocation) object.relatedObject, event, angleFromCenter, normalizedDistFromCenter);
          }
       }
    }
 
    @Override
    public String getObjectIDString() {
-      return _monitoredObj.getObjectIDString();
+      return monitoredObj.getObjectIDString();
    }
 
    @Override
    public boolean registerMonitoredObject(IMonitorableObject watchedObject, Diagnostics diag) {
-      return _monitoringObj.registerMonitoredObject(watchedObject, diag);
+      return monitoringObj.registerMonitoredObject(watchedObject, diag);
    }
 
    @Override
    public boolean unregisterMonitoredObject(IMonitorableObject watchedObject, Diagnostics diag) {
-      return _monitoringObj.unregisterMonitoredObject(watchedObject, diag);
+      return monitoringObj.unregisterMonitoredObject(watchedObject, diag);
    }
 
    @Override
    public boolean unregisterMonitoredObjectAllInstances(IMonitorableObject watchedObject, Diagnostics diag) {
-      return _monitoringObj.unregisterMonitoredObjectAllInstances(watchedObject, diag);
+      return monitoringObj.unregisterMonitoredObjectAllInstances(watchedObject, diag);
    }
 
    @Override
    public Vector<IMonitorableObject> getSnapShotOfWatchedObjects() {
-      return _monitoringObj.getSnapShotOfWatchedObjects();
+      return monitoringObj.getSnapShotOfWatchedObjects();
    }
 
    public String getPositionName(Position position) {
@@ -517,9 +517,9 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
       if (modifiedWatchedObject instanceof Character) {
          Character oldChr = (Character) originalWatchedObject;
          Character newChr = (Character) modifiedWatchedObject;
-         HumanBody human = _characterIdToHumanBody.get(oldChr._uniqueID);
-         RequestAction lastAction = newChr._lastAction;
-         newChr._lastAction = null;
+         HumanBody human = characterIdToHumanBody.get(oldChr.uniqueID);
+         RequestAction lastAction = newChr.lastAction;
+         newChr.lastAction = null;
          Position oldPos = oldChr.getPosition();
          Position newPos = newChr.getPosition();
          String sequenceName = null;
@@ -530,7 +530,7 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
             if (lastAction != null) {
                if (lastAction.isAttack()) {
                   WeaponStyleAttack attackStyle = lastAction.getWeaponStyleAttack(newChr);
-                  switch (attackStyle._handsRequired) {
+                  switch (attackStyle.handsRequired) {
                      case 0: sequenceName = "attack_kick"; break;
                      case 1: sequenceName = "attack_sword_shield"; break;
                      case 2: sequenceName = "attack_greataxe"; break;
@@ -554,9 +554,9 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
          AnimationSequence seq = SequenceLibrary.getAnimationSequenceByName(oldChr.getRace().getName(), sequenceName);
          if (seq != null) {
             human.addAnimationSequence(seq);
-            synchronized (_lock_animationsPending) {
-               try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_animationsPending)) {
-                  _animationsPending.add(human);
+            synchronized (lock_animationsPending) {
+               try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_animationsPending)) {
+                  animationsPending.add(human);
                }
             }
             checkAnimation();
@@ -566,20 +566,20 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
          }
 
          if (!oldChr.getHeadCoordinates().sameCoordinates(newChr.getHeadCoordinates())) {
-            ObjHex oldHex = _characterIdToObjHex.get(oldChr._uniqueID);
-            synchronized (oldHex._lock_humans) {
-               oldHex._lock_humans.check();
-               oldHex._humans.remove(human);
+            ObjHex oldHex = characterIdToObjHex.get(oldChr.uniqueID);
+            synchronized (oldHex.lock_humans) {
+               oldHex.lock_humans.check();
+               oldHex.humans.remove(human);
             }
-            synchronized (_locationToObjectMap) {
-               try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_locationToObjectMap)) {
-                  TexturedObject newHex = _locationToObjectMap.get(newChr.getHeadCoordinates());
+            synchronized (locationToObjectMap) {
+               try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_locationToObjectMap)) {
+                  TexturedObject newHex = locationToObjectMap.get(newChr.getHeadCoordinates());
                   if (newHex != null) {
-                     for (ObjModel model : newHex._models) {
-                        ObjHex objHex = (ObjHex) model._data;
-                        synchronized (oldHex._lock_humans) {
-                           objHex._lock_humans.check();
-                           objHex._humans.add(human);
+                     for (ObjModel model : newHex.models) {
+                        ObjHex objHex = (ObjHex) model.data;
+                        synchronized (oldHex.lock_humans) {
+                           objHex.lock_humans.check();
+                           objHex.humans.add(human);
                         }
                      }
                   }
@@ -591,16 +591,16 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
       else if (modifiedWatchedObject instanceof ArenaLocation) {
          ArenaLocation loc = (ArenaLocation) modifiedWatchedObject;
          TexturedObject object;
-         synchronized (_locationToObjectMap) {
-            try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_locationToObjectMap)) {
-               object = _locationToObjectMap.get(loc);//_view.getObjectByRelatedObject(modifiedWatchedObject);
+         synchronized (locationToObjectMap) {
+            try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_locationToObjectMap)) {
+               object = locationToObjectMap.get(loc);//_view.getObjectByRelatedObject(modifiedWatchedObject);
                if (object != null) {
-                  _locationToObjectMap.remove(loc);
+                  locationToObjectMap.remove(loc);
                }
             }
          }
          if (object != null) {
-            _view.removeObject(object);
+            view.removeObject(object);
             addHexToMap(loc);
          }
       }
@@ -611,15 +611,15 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
       // so we must use the Display.asyncExec() method:
       Display display = Display.getDefault();
       if (!display.isDisposed()) {
-         display.asyncExec(() -> updateMap(_combatMap, _selfID, _selfTeam, null, _targetID));
+         display.asyncExec(() -> updateMap(combatMap, selfID, selfTeam, null, targetID));
       }
    }
 
    private void addHexToMap(ArenaLocation loc) {
-      boolean isVisible = (_selfID == -1) || loc.getVisible(_selfID);
-      boolean isKnown = (_selfID == -1) || loc.isKnownBy(_selfID);
+      boolean isVisible = (selfID == -1) || loc.getVisible(selfID);
+      boolean isKnown = (selfID == -1) || loc.isKnownBy(selfID);
 
-      if (!isVisible && (loc == _selfLoc)) {
+      if (!isVisible && (loc == selfLoc)) {
          isVisible = true;
       }
       Terrain terrain = getMapTerrainForLocation(loc);
@@ -627,11 +627,11 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
       if (!isKnown) {
          terrain = Terrain.GRAVEL;
       }
-      TexturedObject obj = _view.addHex(loc._x, loc._y, 0/*z*/, terrain, opacity, (loc._x * _combatMap.getSizeY()) + loc._y, loc.getLabel());
-      obj._relatedObject = loc;
-      synchronized (_locationToObjectMap) {
-         _lock_locationToObjectMap.check();
-         _locationToObjectMap.put(loc, obj);
+      TexturedObject obj = view.addHex(loc.x, loc.y, 0/*z*/, terrain, opacity, (loc.x * combatMap.getSizeY()) + loc.y, loc.getLabel());
+      obj.relatedObject = loc;
+      synchronized (locationToObjectMap) {
+         lock_locationToObjectMap.check();
+         locationToObjectMap.put(loc, obj);
       }
       long walls = 0;
       List<Door> doors = new ArrayList<>();
@@ -639,7 +639,7 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
       if (isKnown)
       {
          synchronized (loc) {
-            try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(loc._lock_this)) {
+            try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(loc.lock_this)) {
                walls = loc.getWalls();
                doors.addAll(loc.getDoors());
                things.addAll(loc.getThings());
@@ -647,8 +647,8 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
          }
       }
 
-      for (ObjModel model : obj._models) {
-         ObjHex objHex = (ObjHex) model._data;
+      for (ObjModel model : obj.models) {
+         ObjHex objHex = (ObjHex) model.data;
          for (TerrainWall terrainWall : TerrainWall.values()) {
             if (terrainWall.contains(walls)) {
                int pointStart = (terrainWall.startPoint + 4) % 12;
@@ -658,8 +658,8 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
          }
 
          for (Door door : doors) {
-            int pointStart = (door._orientation.startPoint + 4) % 12;
-            int pointEnd = (door._orientation.endPoint + 4) % 12;
+            int pointStart = (door.orientation.startPoint + 4) % 12;
+            int pointEnd = (door.orientation.endPoint + 4) % 12;
             objHex.addWall(pointStart, pointEnd, 85f/*wallHeight*/, 4f/*thickness*/, true/*hasDoor*/, door.isOpen()/*doorIsOpen*/);
          }
          if (loc.getTerrain() == TerrainType.TREE_TRUNK) {
@@ -679,8 +679,8 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
             for (Object thing : things) {
                if (thing instanceof Character) {
                   Character chr = (Character) thing;
-                  if (!_watchedCharacters.contains(chr)) {
-                     _watchedCharacters.add(chr);
+                  if (!watchedCharacters.contains(chr)) {
+                     watchedCharacters.add(chr);
                      chr.registerAsWatcher(this, null);
                   }
                   // If a multi-hex character is present, only deal with the head position:
@@ -691,30 +691,30 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
                      }
                   }
                   if (!skipChar) {
-                     addCharacterToHex(_view, loc, objHex, chr, chr.getOrientation(), false/*isGhost*/);
+                     addCharacterToHex(view, loc, objHex, chr, chr.getOrientation(), false/*isGhost*/);
                   }
                   // even for non-head locations, fill in the floor under every hex of the character
                   int floorColor;
-                  if (chr._teamID == Enums.TEAM_ALPHA) {
+                  if (chr.teamID == Enums.TEAM_ALPHA) {
                      floorColor = chr.stillFighting() ? SWT.COLOR_GREEN : SWT.COLOR_DARK_GREEN;
                   }
-                  else if (chr._teamID == Enums.TEAM_BETA) {
+                  else if (chr.teamID == Enums.TEAM_BETA) {
                      floorColor = chr.stillFighting() ? SWT.COLOR_MAGENTA : SWT.COLOR_DARK_MAGENTA;
                   }
-                  else if (chr._teamID == Enums.TEAM_INDEPENDENT) {
+                  else if (chr.teamID == Enums.TEAM_INDEPENDENT) {
                      floorColor = chr.stillFighting() ? SWT.COLOR_YELLOW : SWT.COLOR_DARK_YELLOW;
                   }
                   else {
                      floorColor = chr.stillFighting() ? SWT.COLOR_RED : SWT.COLOR_DARK_RED;
                   }
-                  objHex.addFloor(_view, 1, floorColor, 0.5f/*opacity*/);
+                  objHex.addFloor(view, 1, floorColor, 0.5f/*opacity*/);
                }
                else {
                   if (thing instanceof Thing) {
                      if (thing instanceof Limb) {
                         String raceName = "human";
-                        Texture humanTexture = _textureByRaceName.get(raceName);
-                        HumanBody human = new HumanBody(humanTexture, _view, 1.0f/*lengthFactor*/, 1.0f/*widthFactor*/, raceName, true/*isMale*/);
+                        Texture humanTexture = textureByRaceName.get(raceName);
+                        HumanBody human = new HumanBody(humanTexture, view, 1.0f/*lengthFactor*/, 1.0f/*widthFactor*/, raceName, true/*isMale*/);
                         TexturedObject limb;
                         if (thing instanceof Hand) {
                            limb = human.getModelHand(true/*rightSide*/);
@@ -747,7 +747,7 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
                               float lengthFactor = 1.0f;
                               ostrowski.graphics.objects3d.Thing thing3d;
                               thing3d = new ostrowski.graphics.objects3d.Thing(weapon, null/*weaponPart*/,
-                                                                               _view, false/*_invertNormals*/,
+                                                                               view, false/*_invertNormals*/,
                                                                                lengthFactor, lengthFactor);
                               objHex.addTexturedObject(thing3d);
                            } catch (IOException e) {
@@ -760,10 +760,10 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
                         try {
                            float lengthFactor = 1f;
                            ostrowski.graphics.objects3d.Thing thing3d;
-                           thing3d = new ostrowski.graphics.objects3d.Thing(shield, _view, false/*_invertNormals*/,
+                           thing3d = new ostrowski.graphics.objects3d.Thing(shield, view, false/*_invertNormals*/,
                                                                             lengthFactor, lengthFactor);
 //                           thing3d = new ostrowski.graphics.objects3d.Thing(ostrowski.graphics.objects3d.Thing.Dice.d12,
-//                                                                            _view, lengthFactor * 60, "");
+//                                                                            view, lengthFactor * 60, "");
                            objHex.addTexturedObject(thing3d);
                         } catch (IOException e) {
                            e.printStackTrace();
@@ -774,7 +774,7 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
             }
          }
          else {
-            objHex.addFloor(_view, 1, SWT.COLOR_GRAY, 0.33f/*opacity*/);
+            objHex.addFloor(view, 1, SWT.COLOR_GRAY, 0.33f/*opacity*/);
          }
       }
    }
@@ -874,7 +874,7 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
                                        Orientation orientation, boolean isGhost) {
       HumanBody human = null;
       if (!isGhost) {
-         human = _characterIdToHumanBody.get(chr._uniqueID);
+         human = characterIdToHumanBody.get(chr.uniqueID);
       }
 
       if (human == null) {
@@ -888,23 +888,23 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
          }
          float widthFactor = (float) Math.pow(1.05, chr.getAdjustedStrength());
          Race race = chr.getRace();
-         lengthFactor *= race._lengthMod3d;
-         widthFactor  *= race._widthMod3d;
+         lengthFactor *= race.lengthMod3d;
+         widthFactor  *= race.widthMod3d;
 
          String raceName = chr.getRace().getName();
          if (chr.getRace().getLegCount() > 2) {
             raceName = "wolf";
          }
 
-         Texture texture = _textureByRaceName.get(raceName.toLowerCase());
+         Texture texture = textureByRaceName.get(raceName.toLowerCase());
          // if that race doesn't have an entry, use 'human'
          if (texture == null) {
-            texture = _textureByRaceName.get("human");
+            texture = textureByRaceName.get("human");
          }
 
-         human = new HumanBody(texture, _view, lengthFactor, widthFactor, raceName, chr.getGender().equals(Gender.MALE));
+         human = new HumanBody(texture, this.view, lengthFactor, widthFactor, raceName, chr.getGender().equals(Gender.MALE));
          if (!isGhost) {
-            _characterIdToHumanBody.put(chr._uniqueID, human);
+            characterIdToHumanBody.put(chr.uniqueID, human);
          }
       }
 
@@ -912,37 +912,37 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
       // TODO: insert "walking" animation here:
       objHex.addHuman(human, orientation.getFacing().value);
       if (!isGhost) {
-         ObjHex oldLocation = _characterIdToObjHex.get(chr._uniqueID);
+         ObjHex oldLocation = characterIdToObjHex.get(chr.uniqueID);
          if (oldLocation != null) {
-            synchronized (oldLocation._lock_humans) {
-               oldLocation._lock_humans.check();
-               oldLocation._humans.remove(human);
+            synchronized (oldLocation.lock_humans) {
+               oldLocation.lock_humans.check();
+               oldLocation.humans.remove(human);
             }
          }
 
-         _characterIdToObjHex.put(chr._uniqueID, objHex);
+         characterIdToObjHex.put(chr.uniqueID, objHex);
          // If a character takes up multiple hexes, only put the name on the head hex.
          if (orientation.getHeadCoordinates().sameCoordinates(loc)) {
             Message nameMessage = new Message();
-            nameMessage._text = chr.getName();
+            nameMessage.text = chr.getName();
             int colorBase = 255;
             if (!chr.getCondition().isConscious()) {
                colorBase = 64;
             }
-            switch (chr._teamID) {
+            switch (chr.teamID) {
                case Enums.TEAM_ALPHA:
-                  nameMessage._colorRGB = new RGB(0, colorBase, 0);
+                  nameMessage.colorRGB = new RGB(0, colorBase, 0);
                   break;
                case Enums.TEAM_BETA:
-                  nameMessage._colorRGB = new RGB(colorBase, 0, 0);
+                  nameMessage.colorRGB = new RGB(colorBase, 0, 0);
                   break;
                case Enums.TEAM_INDEPENDENT:
-                  nameMessage._colorRGB = new RGB(0, 0, colorBase);
+                  nameMessage.colorRGB = new RGB(0, 0, colorBase);
                   break;
             }
-            nameMessage._visible = true;
-            if (!human._messages.contains(nameMessage)) {
-               human._messages.add(nameMessage);
+            nameMessage.visible = true;
+            if (!human.messages.contains(nameMessage)) {
+               human.messages.add(nameMessage);
             }
          }
       }
@@ -951,7 +951,7 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
 
    private static void updateHumanFromCharacter(Character chr, Orientation orientation, HumanBody human) {
       human.setFacing(chr.getFacing().value);
-      human._relatedObject = chr;
+      human.relatedObject = chr;
       Hand rightHand = (Hand) chr.getLimb(LimbType.HAND_RIGHT);
       Hand leftHand = (Hand) chr.getLimb(LimbType.HAND_LEFT);
       if (chr.getLimb(LimbType.LEG_RIGHT) == null) {
@@ -1090,37 +1090,37 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
          }
       }
       human.setFacing(chr.getFacing().value);
-      human._positionOffset = new Tuple3(0, 0, 0);
+      human.positionOffset = new Tuple3(0, 0, 0);
       human.setHeightBasedOnLowestLimbPoint();
       if (chr.getPosition() == Position.PRONE_BACK) {
-         human._positionOffset = new Tuple3(human._positionOffset.getX(), human._positionOffset.getY(), human._positionOffset.getZ() + 40);
+         human.positionOffset = new Tuple3(human.positionOffset.getX(), human.positionOffset.getY(), human.positionOffset.getZ() + 40);
       }
    }
 
    public void addGLViewListener(IGLViewListener listener) {
-      _view.addViewListener(listener);
+      view.addViewListener(listener);
    }
 
    @Override
    public void applyAnimations() {
-      synchronized (_lock_animationsPending) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_animationsPending)) {
-            synchronized (_lock_animatedObjects) {
-               try (SemaphoreAutoTracker sat2 = new SemaphoreAutoTracker(_lock_animatedObjects)) {
-                  _animatedObjects.addAll(_animationsPending);
+      synchronized (lock_animationsPending) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_animationsPending)) {
+            synchronized (lock_animatedObjects) {
+               try (SemaphoreAutoTracker sat2 = new SemaphoreAutoTracker(lock_animatedObjects)) {
+                  animatedObjects.addAll(animationsPending);
                }
             }
             // make sure the animation thread is around to empty this list:
             checkAnimation();
-            while (_animationsPending.size() > 0) {
+            while (animationsPending.size() > 0) {
 
-               System.out.println("pending animations size = " + _animationsPending.size());
+               System.out.println("pending animations size = " + animationsPending.size());
 
-               try (SemaphoreAutoUntracker sau = new SemaphoreAutoUntracker(_lock_animationsPending)) {
-                  _lock_animationsPending.wait(1000);
+               try (SemaphoreAutoUntracker sau = new SemaphoreAutoUntracker(lock_animationsPending)) {
+                  lock_animationsPending.wait(1000);
                } catch (InterruptedException e) {
                }
-               if (_animationThread != null) {
+               if (animationThread != null) {
                   // animation thread died. Maybe we are shutting down.
                   // stop this infinite loop.
                   break;

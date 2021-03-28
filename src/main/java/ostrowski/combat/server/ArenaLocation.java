@@ -30,19 +30,19 @@ import java.util.*;
 
 public class ArenaLocation extends ArenaCoordinates implements IMonitorableObject, Enums
 {
-   public final        Semaphore                          _lock_this                 = new Semaphore("AreanLocation_lock_this", CombatSemaphore.CLASS_ARENALOCATION_this);
-   private             TerrainType                        _terrain                   = TerrainType.FLOOR;
-   private             long                               _data                      = _terrain.value;
-   private             List<Object>                       _things                    = new ArrayList<>();
-   private             List<Door>                         _doors                     = new ArrayList<>();
-   private             List<IAreaSpell>                   _activeSpells              = new ArrayList<>();
-   private             HashSet<Integer>                   _visibleTo                 = new HashSet<>();
-   private             HashSet<Integer>                   _viewedBy                  = new HashSet<>();
-   public              HashMap<Integer, ArenaCoordinates> _visibleToCharacterFromLoc = new HashMap<>();
-   private             String                             _label                     = null;
-   transient           MonitoredObject                    _monitoredProxy;
-   private             boolean                            _selectable                = true;
-   public static final String                             PICKUP                     = "pickup ";
+   public final        Semaphore                          lock_this                 = new Semaphore("AreanLocation_lock_this", CombatSemaphore.CLASS_ARENALOCATION_this);
+   private             TerrainType                        terrain                   = TerrainType.FLOOR;
+   private             long                               data                      = terrain.value;
+   private             List<Object>                       things                    = new ArrayList<>();
+   private             List<Door>                         doors                     = new ArrayList<>();
+   private             List<IAreaSpell>                   activeSpells              = new ArrayList<>();
+   private             HashSet<Integer>                   visibleTo                 = new HashSet<>();
+   private             HashSet<Integer>                   viewedBy                  = new HashSet<>();
+   public              HashMap<Integer, ArenaCoordinates> visibleToCharacterFromLoc = new HashMap<>();
+   private             String                             label                     = null;
+   transient           MonitoredObject                    monitoredProxy;
+   private             boolean                            selectable                = true;
+   public static final String                             PICKUP                    = "pickup ";
 
    public ArenaLocation(short x, short y) {
       super(x,y);
@@ -50,24 +50,24 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
          DebugBreak.debugBreak();
          throw new IllegalArgumentException(" x="+x+", y="+y+" is illegal!");
       }
-      _monitoredProxy = new MonitoredObject("ArenaLoc:"+x+","+y, this);
+      monitoredProxy = new MonitoredObject("ArenaLoc:" + x + "," + y, this);
    }
    public ArenaLocation() {
       // This constructor is only used by serialization.
       // Serialized objects should never need to be watched, since
       // they are only sent from the server to the client, and
       // the client doesn't need any watching/watcher functionality.
-      _monitoredProxy = null;
+      monitoredProxy = null;
    }
 
    public void setDataInternal(long data)
    {
-      _data = data;
-      _terrain = TerrainType.getByValue(data);
+      this.data = data;
+      terrain = TerrainType.getByValue(data);
    }
    public void setData(long data)
    {
-      if (_data == data) {
+      if (this.data == data) {
          return;
       }
       ArenaLocation origLoc = clone();
@@ -75,10 +75,10 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
       ObjectChanged changeNotif = new ObjectChanged(origLoc, this);
       notifyWatchers(origLoc, this, changeNotif, null/*skipList*/, null/*diag*/);
    }
-   public long getData() { return _data; }
+   public long getData() { return data; }
 
    public void addSpell(IAreaSpell spell) {
-      _activeSpells.add(spell);
+      activeSpells.add(spell);
       // Affect the characters in the location
       for (Character chr : getCharacters()) {
          spell.affectCharacterOnActivation(chr);
@@ -87,12 +87,12 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    public List<IAreaSpell> getActiveSpells() {
       List<IAreaSpell> activeSpells = new ArrayList<>();
       // Check for any spells that have expired
-      for (IAreaSpell spell : _activeSpells) {
+      for (IAreaSpell spell : this.activeSpells) {
          if (((Spell)spell).getDuration() != 0) {
             activeSpells.add(spell);
          }
       }
-      _activeSpells = activeSpells;
+      this.activeSpells = activeSpells;
       return activeSpells;
    }
 
@@ -107,71 +107,71 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    private void copyDataUnsafe(ArenaLocation source)
    {
       super.copyData(source);
-      _things                    = new ArrayList<>();
-      _doors                     = new ArrayList<>();
-      _activeSpells              = new ArrayList<>();
-      _visibleTo                 = new HashSet<>();
-      _viewedBy                  = new HashSet<>();
-      _visibleToCharacterFromLoc = new HashMap<>();
+      things = new ArrayList<>();
+      doors = new ArrayList<>();
+      activeSpells = new ArrayList<>();
+      visibleTo = new HashSet<>();
+      viewedBy = new HashSet<>();
+      visibleToCharacterFromLoc = new HashMap<>();
 
-      _data    = source._data;
-      _terrain = source._terrain;
-      _label   = source._label;
-      for (int i=0 ; i<source._things.size() ; i++) {
+      data = source.data;
+      terrain = source.terrain;
+      label = source.label;
+      for (int i = 0; i<source.things.size() ; i++) {
          // Clone the object, if possible
-         Object thing = source._things.get(i);
+         Object thing = source.things.get(i);
          if (thing instanceof Thing) {
             Thing dupThing = ((Thing)thing).clone();
             if (dupThing == null) {
                DebugBreak.debugBreak();
             }
             else {
-               _things.add(dupThing);
+               things.add(dupThing);
             }
          }
          else {
-            _things.add(thing);
+            things.add(thing);
          }
       }
-      for (Door door : source._doors) {
-         _doors.add(door.clone());
+      for (Door door : source.doors) {
+         doors.add(door.clone());
       }
-      for (IAreaSpell spell : source._activeSpells) {
-         _activeSpells.add((IAreaSpell) spell.clone());
+      for (IAreaSpell spell : source.activeSpells) {
+         activeSpells.add((IAreaSpell) spell.clone());
       }
-      _visibleTo.addAll(source._visibleTo);
-      _viewedBy.addAll(source._viewedBy);
-      for (Integer charId : source._visibleToCharacterFromLoc.keySet()) {
-         ArenaCoordinates visFrom = source._visibleToCharacterFromLoc.get(charId);
-         _visibleToCharacterFromLoc.put(charId, new ArenaCoordinates(visFrom._x, visFrom._y));
+      visibleTo.addAll(source.visibleTo);
+      viewedBy.addAll(source.viewedBy);
+      for (Integer charId : source.visibleToCharacterFromLoc.keySet()) {
+         ArenaCoordinates visFrom = source.visibleToCharacterFromLoc.get(charId);
+         visibleToCharacterFromLoc.put(charId, new ArenaCoordinates(visFrom.x, visFrom.y));
       }
    }
 
    public void copyData(ArenaLocation source)
    {
       synchronized (this) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_this)) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_this)) {
             copyDataUnsafe(source);
          }
       }
    }
 
    public List<Door> getDoors() {
-      return _doors;
+      return doors;
    }
    public void addDoor(Door door) {
       ArenaLocation origLoc = clone();
       synchronized (this) {
-         _lock_this.check();
+         lock_this.check();
          // check if we already have this door in place.
-         for (Door existingDoor : _doors) {
-            if (existingDoor._orientation == door._orientation) {
+         for (Door existingDoor : doors) {
+            if (existingDoor.orientation == door.orientation) {
                return;
             }
          }
-         _doors.add(door);
+         doors.add(door);
          // make sure we don't have a wall in the same orientation as this door:
-         _data &= ~door._orientation.bitMask;
+         data &= ~door.orientation.bitMask;
       }
       ObjectChanged changeNotif = new ObjectChanged(origLoc, this);
       notifyWatchers(origLoc, this, changeNotif, null/*skipList*/, null/*diag*/);
@@ -179,10 +179,10 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    public long getBlockingDoorOrientations() {
       long orientationMask = 0;
       synchronized (this) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_this)) {
-            for (Door door : _doors) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_this)) {
+            for (Door door : doors) {
                if (!door.isOpen() && !door.isHalfHeightWall()) {
-                  orientationMask |= door._orientation.bitMask;
+                  orientationMask |= door.orientation.bitMask;
                }
             }
          }
@@ -193,10 +193,10 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    public long getHalfHeightWallOrientations() {
       long orientationMask = 0;
       synchronized (this) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_this)) {
-            for (Door door : _doors) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_this)) {
+            for (Door door : doors) {
                if (door.isHalfHeightWall()) {
-                  orientationMask |= door._orientation.bitMask;
+                  orientationMask |= door.orientation.bitMask;
                }
             }
          }
@@ -211,19 +211,19 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
          }
          else {
             synchronized (this) {
-               _lock_this.check();
-               if (_things.contains(thing)) {
+               lock_this.check();
+               if (things.contains(thing)) {
                   return;
                }
             }
             ArenaLocation origLoc;
             synchronized (this) {
-               try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_this)) {
+               try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_this)) {
                   origLoc = clone();
                   if (thing instanceof Character) {
                      if (((Character)thing).stillFighting()) {
-                        _label = "";
-                        for (Object obj : _things) {
+                        label = "";
+                        for (Object obj : things) {
                            if (obj instanceof Character) {
                               if (((Character)obj).stillFighting()) {
                                  DebugBreak.debugBreak("multiple active characters on one hex");
@@ -232,7 +232,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
                         }
                      }
                   }
-                  _things.add(thing);
+                  things.add(thing);
                }
             }
             ObjectChanged changeNotif = new ObjectChanged(origLoc, this);
@@ -242,8 +242,8 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    }
    public boolean hasThings(Object otherThan) {
       synchronized (this) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_this)) {
-            for (Object thing : _things) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_this)) {
+            for (Object thing : things) {
                if (otherThan != thing) {
                   return true;
                }
@@ -253,17 +253,17 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
       return false;
    }
    public List<Object> getThings() {
-      return _things;
+      return things;
    }
    public void clearItems() {
       ArenaLocation origLoc;
       synchronized (this) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_this)) {
-            if (_things.size() == 0) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_this)) {
+            if (things.size() == 0) {
                return;
             }
             origLoc = clone();
-            _things.clear();
+            things.clear();
          }
       }
       ObjectChanged changeNotif = new ObjectChanged(origLoc, this);
@@ -272,9 +272,9 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    public String nameThing(Object otherThan) {
       // First report any character in this location.
       synchronized (this) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_this)) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_this)) {
             for (int i=1 ; i<=4 ; i++) {
-               for (Object thing : _things) {
+               for (Object thing : things) {
                   if (thing != otherThan) {
                      switch (i) {
                         case 1: if (thing instanceof Character) {
@@ -301,9 +301,9 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
       ArenaLocation origLoc;
       boolean removed;
       synchronized (this) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_this)) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_this)) {
             origLoc = clone();
-            removed = _things.remove(thing);
+            removed = things.remove(thing);
          }
       }
       if (removed) {
@@ -315,22 +315,22 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    }
    public boolean isEmpty() {
       synchronized (this) {
-         _lock_this.check();
-         return _things.size() == 0;
+         lock_this.check();
+         return things.size() == 0;
       }
    }
    @SuppressWarnings("unused")
    public String getLabel() {
       if (false) {
-         return _x + "," + _y + "\n" + (_label == null ? "" : _label);
+         return x + "," + y + "\n" + (label == null ? "" : label);
       }
-      return _label;
+      return label;
    }
    public void setLabel(String label) {
-      if (((label == null) && (_label != null)) ||
-          ((label != null) && (!label.equals(_label)))) {
+      if (((label == null) && (this.label != null)) ||
+          ((label != null) && (!label.equals(this.label)))) {
          ArenaLocation origLoc = clone();
-         _label = label;
+         this.label = label;
          ObjectChanged changeNotif = new ObjectChanged(origLoc, this);
          notifyWatchers(origLoc, this, changeNotif, null/*skipList*/, null/*diag*/);
       }
@@ -343,11 +343,11 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    }
    public void serializeContentsToStream(DataOutputStream out) {
       synchronized (this) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_this)) {
-            writeToStream(_data, out);
-            writeToStream(_label, out);
-            writeToStream(_things.size(), out);
-            for (Object thing : _things) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_this)) {
+            writeToStream(data, out);
+            writeToStream(label, out);
+            writeToStream(things.size(), out);
+            for (Object thing : things) {
                if (thing instanceof Character) {
                   Character combatant = (Character) thing;
                   writeObject("ObjChr", out);
@@ -364,7 +364,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
                   writeObject(((Thing) thing).getName(), out);
                }
             }
-            writeToStream(_doors, out);
+            writeToStream(doors, out);
          } catch (IOException e) {
             e.printStackTrace();
          }
@@ -389,11 +389,11 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    public void serializeContentsFromStream(DataInputStream in)
    {
       synchronized (this) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_this)) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_this)) {
             setDataInternal(readLong(in));
-            _label = readString(in);
+            label = readString(in);
             int count = readInt(in);
-            _things.clear();
+            things.clear();
             for (int i=0 ; i<count ; i++) {
                String objID = SerializableObject.readString(in);
                if (objID.equals("ObjStr")) {
@@ -401,32 +401,32 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
                   Weapon weap = Weapons.getWeapon(object, null);
                   if (weap != null) {
                      if (weap.isUnarmedStyle()) {
-                        _things.add(object);
+                        things.add(object);
                      } else {
-                        _things.add(weap);
+                        things.add(weap);
                      }
                   }
                }
                else if (objID.equals("ObjChr")) {
                   SerializableObject inObj = SerializableFactory.readObject(objID, in);
                   if (inObj instanceof Character) {
-                     _things.add(inObj);
+                     things.add(inObj);
                   }
                }
             }
-//            readIntoListDoor(_doors, in);
+//            readIntoListDoor(doors, in);
             for (SerializableObject obj : readIntoListSerializableObject(in)) {
                if (obj instanceof Door) {
                   // check if we already have this door in place.
                   boolean alreadyExists = false;
-                  for (Door existingDoor : _doors) {
-                     if (existingDoor._orientation == ((Door) obj)._orientation) {
+                  for (Door existingDoor : doors) {
+                     if (existingDoor.orientation == ((Door) obj).orientation) {
                         alreadyExists = true;
                         break;
                      }
                   }
                   if (!alreadyExists) {
-                     _doors.add((Door) obj);
+                     doors.add((Door) obj);
                   }
                }
             }
@@ -441,11 +441,11 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
       // Report all characters in this location.
       List<Character> chars = new ArrayList<>();
       synchronized (this) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_this)) {
-            if (_things == null) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_this)) {
+            if (things == null) {
                return chars;
             }
-            for (Object thing : _things) {
+            for (Object thing : things) {
                if (thing instanceof Character) {
                   chars.add((Character) thing);
                }
@@ -456,16 +456,16 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    }
    public int getCharacterCount(boolean onlyCountStandingCharacters, Character ignoreCharacter) {
       synchronized (this) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_this)) {
-            if (_things == null) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_this)) {
+            if (things == null) {
                return 0;
             }
             int charCount = 0;
-            for (Object thing : _things) {
+            for (Object thing : things) {
                if (thing instanceof Character) {
                   if (!onlyCountStandingCharacters || ((Character)thing).isStanding()) {
                      // we are not blocked by ourselves.
-                     if ((ignoreCharacter == null) || (ignoreCharacter._uniqueID != ((Character)thing)._uniqueID)) {
+                     if ((ignoreCharacter == null) || (ignoreCharacter.uniqueID != ((Character)thing).uniqueID)) {
                         charCount++;
                      }
                   }
@@ -547,15 +547,15 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
 
       if (blockByCharacters) {
          synchronized (this) {
-            try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_this)) {
-               for (Object thing : _things) {
+            try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_this)) {
+               for (Object thing : things) {
                   if (thing instanceof Character) {
                      if (fromLoc == null) {
                         return false;
                      }
                      Character character = (Character) thing;
                      // If we are a mult-hex character, don't be blocked by ourselves.
-                     if (!fromLoc._things.contains(character)) {
+                     if (!fromLoc.things.contains(character)) {
                         if (character.stillFighting()) {
                            return false;
                         }
@@ -602,21 +602,21 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    }
    public byte costToEnter(ArenaLocation fromLoc, Character mover) {
       // even if we are flying, we can't traverse solid rock:
-      if (_terrain == TerrainType.SOLID_ROCK) {
+      if (terrain == TerrainType.SOLID_ROCK) {
          return 100;
       }
 
       byte entryCost;
       if (canEnter(fromLoc, true/*blockByCharacters*/)) {
          boolean isPenalizedInWater = mover.isPenalizedInWater();
-         if (_terrain.isWater && !isPenalizedInWater) {
+         if (terrain.isWater && !isPenalizedInWater) {
             // water creatures in water always have a movement cost of 1
             entryCost = 1;
          }
          else {
-            entryCost = (byte) _terrain.costToEnter;
+            entryCost = (byte) terrain.costToEnter;
          }
-         if (!_terrain.isWater && mover.isPenalizedOutOfWater()) {
+         if (!terrain.isWater && mover.isPenalizedOutOfWater()) {
             // water creatures out of water have an additional penalty of 1:
             entryCost++;
          }
@@ -624,11 +624,11 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
             entryCost++;
          }
          synchronized (this) {
-            try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_this)) {
-               for (Object thing : _things) {
+            try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_this)) {
+               for (Object thing : things) {
                   if (thing instanceof Character) {
                      // If we are a multi-hex character, don't be blocked by ourselves.
-                     if (!fromLoc._things.contains(thing)) {
+                     if (!fromLoc.things.contains(thing)) {
                         // We can't return 100 here, because if we do, then the AI.getAllRoutesFrom(...) method
                         // will not be able to find its way to this destination.
 //                  Character character = (Character) thing;
@@ -659,43 +659,43 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    }
 
    public RGB getRGBColor() {
-      return _terrain.color;
+      return terrain.color;
    }
    public int getRGBColorAsInt() {
-      return _terrain.colorAsInt;
+      return terrain.colorAsInt;
    }
    public TerrainType getTerrain() {
-      return _terrain;
+      return terrain;
    }
    public String getTerrainName() {
-      //return TERRAIN_NAMES[(int) (_data & TERRAIN_MASK)];
-      return _terrain.name;
+      //return TERRAIN_NAMES[(int) (data & TERRAIN_MASK)];
+      return terrain.name;
    }
    public byte getAttackPenaltyForTerrain(boolean attackerIsPenalizedInWater) {
-      if (!attackerIsPenalizedInWater && _terrain.isWater) {
+      if (!attackerIsPenalizedInWater && terrain.isWater) {
          return 0;
       }
-      return _terrain.attackPenalty;
+      return terrain.attackPenalty;
    }
 
    // TODO: call this:
    public byte getDefensePenaltyForTerrain(boolean attackerIsAquatic, byte defenseType) {
-      if (attackerIsAquatic && _terrain.isWater) {
+      if (attackerIsAquatic && terrain.isWater) {
          return 0;
       }
-      return _terrain.defensePenalty;
+      return terrain.defensePenalty;
    }
    public void setTerrain(TerrainType terrain) {
       long walls = getWalls();
       ArenaLocation origLoc = clone();
-      _data = (_data & ~TerrainType.MASK) | (terrain.value);
-      _terrain = terrain;
+      data = (data & ~TerrainType.MASK) | (terrain.value);
+      this.terrain = terrain;
       addWall(walls);
       ObjectChanged changeNotif = new ObjectChanged(origLoc, this);
       notifyWatchers(origLoc, this, changeNotif, null/*skipList*/, null/*diag*/);
    }
    public long getWalls() {
-      return (_data & TerrainWall.MASK);
+      return (data & TerrainWall.MASK);
    }
    public long getWallsAndClosedDoors() {
       return getWalls() | getBlockingDoorOrientations();
@@ -703,7 +703,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    public void removeAllWalls() {
       if (getWalls() != 0) {
          ArenaLocation origLoc = clone();
-         _data = _terrain.value;
+         data = terrain.value;
          ObjectChanged changeNotif = new ObjectChanged(origLoc, this);
          notifyWatchers(origLoc, this, changeNotif, null/*skipList*/, null/*diag*/);
       }
@@ -711,12 +711,12 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    public void removeAllDoors() {
       ArenaLocation origLoc;
       synchronized (this) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_this)) {
-            if (_doors.isEmpty()) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_this)) {
+            if (doors.isEmpty()) {
                return;
             }
             origLoc = clone();
-            _doors.clear();
+            doors.clear();
          }
       }
       ObjectChanged changeNotif = new ObjectChanged(origLoc, this);
@@ -724,27 +724,27 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    }
    public void addWall(long walls) {
       long pureWalls = (walls & TerrainWall.MASK);
-      if ((_data & pureWalls) == pureWalls) {
+      if ((data & pureWalls) == pureWalls) {
          return;
       }
       ArenaLocation origLoc = clone();
-      _data |= pureWalls;
+      data |= pureWalls;
       ObjectChanged changeNotif = new ObjectChanged(origLoc, this);
       notifyWatchers(origLoc, this, changeNotif, null/*skipList*/, null/*diag*/);
    }
    public boolean hasSameContents(ArenaLocation comp) {
       synchronized (this) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_this)) {
-            if (_data != comp._data) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_this)) {
+            if (data != comp.data) {
                return false;
             }
-            if (_terrain != comp._terrain) {
+            if (terrain != comp.terrain) {
                return false;
             }
-            if (!listsMatch(_doors, comp._doors))  {
+            if (!listsMatch(doors, comp.doors))  {
                return false;
             }
-            if (!listsMatch(_things, comp._things)) {
+            if (!listsMatch(things, comp.things)) {
                return false;
             }
          }
@@ -754,10 +754,10 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    @Override
    public String toString() {
       StringBuilder sb = new StringBuilder();
-      sb.append("ArenaLoc {").append(_x).append(",").append(_y).append("}");
+      sb.append("ArenaLoc {").append(x).append(",").append(y).append("}");
       sb.append(", things:[");
       boolean first = true;
-      for (Object thing : _things) {
+      for (Object thing : things) {
          if (!first) {
             sb.append("\n");
          }
@@ -773,8 +773,8 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
       int actionOpt = 0;
       RequestActionType actOpt;
       synchronized (this) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_this)) {
-            for (Object thing : _things) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_this)) {
+            for (Object thing : things) {
                actOpt = RequestActionType.getLocationActionByIndex(actionOpt++);
                if (actOpt == null) {
                   // This will happen if there are too many items to pick up, based on the number of location options defined
@@ -820,9 +820,9 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
                }
                for (Limb limb : validLimbs) {
                   if (validLimbs.size() > 1) {
-                     name += " (" + limb._limbType.name + ")";
+                     name += " (" + limb.limbType.name + ")";
                   }
-                  req.addOption(new RequestActionOption(name, actOpt, limb._limbType, true));
+                  req.addOption(new RequestActionOption(name, actOpt, limb.limbType, true));
                }
             }
          }
@@ -850,9 +850,9 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    public String getPickupItemName(Character actor, RequestAction actionReq, int itemIndex)
    {
       synchronized (this) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_this)) {
-            if (itemIndex < _things.size()) {
-               Object thing = _things.get(itemIndex);
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_this)) {
+            if (itemIndex < things.size()) {
+               Object thing = things.get(itemIndex);
                if (thing instanceof Thing) {
                   return ((Thing) thing).getName();
                }
@@ -870,10 +870,10 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
       ObjectChanged changeNotification = null;
       Object thing = null;
       synchronized (this) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_this)) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_this)) {
             originalLoc = this.clone();
-            if (itemIndex < _things.size()) {
-               thing = _things.remove(itemIndex);
+            if (itemIndex < things.size()) {
+               thing = things.remove(itemIndex);
                if (thing != null) {
                   if (thing instanceof String) {
                      thing = Thing.getThing((String)thing, actor.getRace());
@@ -895,41 +895,41 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    @Override
    public String getObjectIDString()
    {
-      return _monitoredProxy.getObjectIDString();
+      return monitoredProxy.getObjectIDString();
    }
    @Override
    public Vector<IMonitoringObject> getSnapShotOfWatchers()
    {
-      return _monitoredProxy.getSnapShotOfWatchers();
+      return monitoredProxy.getSnapShotOfWatchers();
    }
    @Override
    public void notifyWatchers(IMonitorableObject originalWatchedObject, IMonitorableObject modifiedWatchedObject, Object changeNotification, Vector<IMonitoringObject> skipList, Diagnostics diag)
    {
-      if (_monitoredProxy == null) {
+      if (monitoredProxy == null) {
          DebugBreak.debugBreak();
       }
       else {
-         _monitoredProxy.notifyWatchers(originalWatchedObject, modifiedWatchedObject, changeNotification, skipList, diag);
+         monitoredProxy.notifyWatchers(originalWatchedObject, modifiedWatchedObject, changeNotification, skipList, diag);
       }
    }
    @Override
    public RegisterResults registerAsWatcher(IMonitoringObject watcherObject, Diagnostics diag)
    {
-      return _monitoredProxy.registerAsWatcher(watcherObject, diag);
+      return monitoredProxy.registerAsWatcher(watcherObject, diag);
    }
    @Override
    public UnRegisterResults unregisterAsWatcher(IMonitoringObject watcherObject, Diagnostics diag)
    {
-      return _monitoredProxy.unregisterAsWatcher(watcherObject, diag);
+      return monitoredProxy.unregisterAsWatcher(watcherObject, diag);
    }
    @Override
    public UnRegisterResults unregisterAsWatcherAllInstances(IMonitoringObject watcherObject, Diagnostics diag)
    {
-      return _monitoredProxy.unregisterAsWatcherAllInstances(watcherObject, diag);
+      return monitoredProxy.unregisterAsWatcherAllInstances(watcherObject, diag);
    }
 
 //   private double getHashValue() {
-//      return Math.pow(2.34567, _x) + Math.pow(8.7654, _y);
+//      return Math.pow(2.34567, x) + Math.pow(8.7654, y);
 //   }
 
 //   public void setVisible(CombatMap map, ArenaLocation viewerLoc, int viewerID) {
@@ -941,14 +941,14 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
     * returns true if the visibility changed, false if the visibility didn't change
     */
    public boolean setVisible(boolean isVisible, CombatMap map, ArenaLocation viewerLoc, int viewerID, boolean basedOnFacing) {
-      boolean oldVisibility = _visibleTo.contains(viewerID);
+      boolean oldVisibility = visibleTo.contains(viewerID);
       boolean newVisibility = isVisible;
       if (sameCoordinates(viewerLoc)) {
          newVisibility = true;
       }
       else if (newVisibility && (map != null) && (viewerLoc != null) && basedOnFacing && (viewerID >= 0)) {
          for (Character viewer : viewerLoc.getCharacters()) {
-            if (viewer._uniqueID == viewerID) {
+            if (viewer.uniqueID == viewerID) {
                // This is the character looking at this hex.
                if (!map.isFacing(viewer, this) && !viewer.hasPeripheralVision()) {
                   newVisibility = false;
@@ -962,7 +962,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
       }
 
       if (viewerID == -1) {
-         _visibleTo.clear();
+         visibleTo.clear();
          return true;
       }
       if (viewerID >= 0) {
@@ -970,62 +970,62 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
          if (newVisibility ) {
             if ((map != null) && (viewerLoc != null)) {
                ArenaCoordinates visibleFrom = map.getFirstLocationInPath(this, viewerLoc);
-               _visibleToCharacterFromLoc.put(viewerInt, visibleFrom);
+               visibleToCharacterFromLoc.put(viewerInt, visibleFrom);
                short dist = ArenaCoordinates.getDistance(this, visibleFrom);
                if (dist > 1) {
                   DebugBreak.debugBreak();
                }
             }
-            _visibleTo.add(viewerInt);
-            _viewedBy.add(viewerInt);
+            visibleTo.add(viewerInt);
+            viewedBy.add(viewerInt);
          }
          else {
-            _visibleTo.remove(viewerInt);
-            _visibleToCharacterFromLoc.remove(viewerInt);
+            visibleTo.remove(viewerInt);
+            visibleToCharacterFromLoc.remove(viewerInt);
          }
       }
       return true;
    }
    public boolean getVisible(int viewerID) {
-      return _visibleTo.contains(viewerID);
+      return visibleTo.contains(viewerID);
    }
    public boolean isKnownBy(int viewerID) {
-      return (_viewedBy.contains(viewerID));
+      return (viewedBy.contains(viewerID));
    }
    public boolean setKnownBy(int viewerID, boolean isKnown) {
       Integer intVal = viewerID;
       if (isKnown) {
-         if (_viewedBy.contains(intVal)) {
+         if (viewedBy.contains(intVal)) {
             return false;
          }
-         _viewedBy.add(intVal);
+         viewedBy.add(intVal);
          return true;
       }
-      return _viewedBy.remove(intVal);
+      return viewedBy.remove(intVal);
    }
    public void clearCharacterViewedHistory() {
-      _viewedBy.clear();
+      viewedBy.clear();
    }
 
    public boolean sameContents(ArenaLocation otherLoc) {
       synchronized (this) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_this)) {
-            if (_data != otherLoc._data) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_this)) {
+            if (data != otherLoc.data) {
                return false;
             }
-            if (_terrain != otherLoc._terrain) {
+            if (terrain != otherLoc.terrain) {
                return false;
             }
-            if (!listsMatch(_things, otherLoc._things)) {
+            if (!listsMatch(things, otherLoc.things)) {
                return false;
             }
-            if (!listsMatch(_doors, otherLoc._doors)) {
+            if (!listsMatch(doors, otherLoc.doors)) {
                return false;
             }
-            if ((_label != null) && (otherLoc._label != null)) {
-               return _label.equals(otherLoc._label);
+            if ((label != null) && (otherLoc.label != null)) {
+               return label.equals(otherLoc.label);
             }
-            else return (_label == null) && (otherLoc._label == null);
+            else return (label == null) && (otherLoc.label == null);
          }
       }
    }
@@ -1043,9 +1043,9 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
    }
 
    public boolean getSelectable() {
-      return _selectable;
+      return selectable;
    }
    public void setSelectable(boolean selectable) {
-      _selectable  = selectable;
+      this.selectable = selectable;
    }
 }

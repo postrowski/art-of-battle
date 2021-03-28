@@ -24,24 +24,24 @@ import org.eclipse.swt.widgets.Text;
 import ostrowski.ui.Helper;
 
 public class GenerateCharacterDialog extends Dialog implements ModifyListener {
-   private final Shell _shell;
-   public boolean _cancelSelected = false;
-   final  Combo   _generationPointsCombo;
-   final  Combo   _racesCombo;
-   static int     _generationPoints = 200;
-   private String _race;
-   private final Text _equipmentTextBox;
-   private String _equipment = "";
+   private final Shell   shell;
+   public        boolean cancelSelected   = false;
+   final         Combo   generationPointsCombo;
+   final         Combo   racesCombo;
+   static        int     generationPoints = 200;
+   private       String  race;
+   private final Text    equipmentTextBox;
+   private       String  equipment        = "";
 
    public GenerateCharacterDialog(Shell parent, String defaultRace)
    {
       super(parent);
-      _shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.MODELESS);
-      _shell.setText(getText());
-      _shell.setLayout(new GridLayout(2, false));
+      shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.MODELESS);
+      shell.setText(getText());
+      shell.setLayout(new GridLayout(2, false));
 
       Helper helper = new Helper();
-      new Label(_shell, SWT.CENTER).setImage(_shell.getDisplay().getSystemImage(SWT.ICON_QUESTION));
+      new Label(shell, SWT.CENTER).setImage(shell.getDisplay().getSystemImage(SWT.ICON_QUESTION));
 
       List<String> pointsList = new ArrayList<>();
       for (int i=-100 ; i<=500 ; i+=50) {
@@ -49,25 +49,25 @@ public class GenerateCharacterDialog extends Dialog implements ModifyListener {
       }
       List<String> races = Race.getRaceNames(true/*includeNPCs*/);
 
-      Group body = helper.createGroup(_shell, "Random character generation", 2, false/*sameSize*/, 3, 3);
+      Group body = helper.createGroup(shell, "Random character generation", 2, false/*sameSize*/, 3, 3);
 
       helper.createLabel(body, "How many point for this character:", SWT.LEFT, 1, null);
-      _generationPointsCombo = helper.createCombo(body, 0/*style*/, 1/*hSpan*/, pointsList );
+      generationPointsCombo = helper.createCombo(body, 0/*style*/, 1/*hSpan*/, pointsList);
 
       helper.createLabel(body, "Select a race for this character:", SWT.LEFT, 1, null);
-      _racesCombo = helper.createCombo(body, 0/*style*/, 1/*hSpan*/, races );
-      _racesCombo.setText(Objects.requireNonNullElse(defaultRace, Race.NAME_Human));
-      _race = _racesCombo.getText();
+      racesCombo = helper.createCombo(body, 0/*style*/, 1/*hSpan*/, races);
+      racesCombo.setText(Objects.requireNonNullElse(defaultRace, Race.NAME_Human));
+      race = racesCombo.getText();
 
       helper.createLabel(body, "Enter all equipment for this character:", SWT.LEFT, 2, null);
-      _equipmentTextBox = helper.createText(body, "", true/*editable*/, 2/*hSpan*/);
+      equipmentTextBox = helper.createText(body, "", true/*editable*/, 2/*hSpan*/);
 
-      _generationPointsCombo.setText(String.valueOf(_generationPoints));
-      _equipmentTextBox.setText(_equipment);
+      generationPointsCombo.setText(String.valueOf(generationPoints));
+      equipmentTextBox.setText(equipment);
 
-      _generationPointsCombo.addModifyListener(this);
-      _racesCombo.addModifyListener(this);
-      _equipmentTextBox.addModifyListener(this);
+      generationPointsCombo.addModifyListener(this);
+      racesCombo.addModifyListener(this);
+      equipmentTextBox.addModifyListener(this);
 
       Composite footer = new Composite(body, SWT.NONE);
 
@@ -87,7 +87,7 @@ public class GenerateCharacterDialog extends Dialog implements ModifyListener {
       ok.addSelectionListener(new SelectionAdapter() {
           @Override
           public void widgetSelected(SelectionEvent e) {
-              _shell.dispose();
+              shell.dispose();
           }
       });
 
@@ -97,42 +97,42 @@ public class GenerateCharacterDialog extends Dialog implements ModifyListener {
          cancelButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-               _cancelSelected = true;
-               _shell.dispose();
+               cancelSelected = true;
+               shell.dispose();
             }
          });
       }
-      _shell.setDefaultButton(ok);
+      shell.setDefaultButton(ok);
    }
 
    public int open() {
-      _shell.pack();
-      _shell.open();
-      _shell.layout();
+      shell.pack();
+      shell.open();
+      shell.layout();
 
-      while (!_shell.isDisposed()) {
-         if (!_shell.getDisplay().readAndDispatch()) {
-            _shell.getDisplay().sleep();
+      while (!shell.isDisposed()) {
+         if (!shell.getDisplay().readAndDispatch()) {
+            shell.getDisplay().sleep();
          }
       }
-      return _generationPoints;
+      return generationPoints;
    }
    @Override
    public void modifyText(ModifyEvent e)
    {
       try {
-         _generationPoints = Integer.parseInt(_generationPointsCombo.getText());
-         _race = _racesCombo.getText();
-         _equipment = _equipmentTextBox.getText();
+         generationPoints = Integer.parseInt(generationPointsCombo.getText());
+         race = racesCombo.getText();
+         equipment = equipmentTextBox.getText();
       }
       catch (NumberFormatException ex) {
-         _generationPoints = 0;
+         generationPoints = 0;
       }
    }
    public String getRace() {
-      return _race;
+      return race;
    }
    public String getEquipment() {
-      return _equipment;
+      return equipment;
    }
 }

@@ -14,23 +14,23 @@ import java.util.List;
 
 public class MessageText extends SerializableObject implements Enums
 {
-   String  _source;
-   String  _text;
-   boolean _popUp = false;
-   final   List<String> _targets;
-   private boolean      _isPublic;
+   String  source;
+   String  text;
+   boolean popUp = false;
+   final   List<String> targets;
+   private boolean      isPublic;
    public MessageText() {
-      _text    = null;
-      _targets = null;
+      text = null;
+      targets = null;
    }
    public MessageText(String source, String text, List<String> targetNames, boolean popUp, boolean isPublic) {
-      _source       = source;
-      _text         = text;
-      _targets      = targetNames;
-      _popUp        = popUp;
-      _isPublic     = isPublic;
+      this.source = source;
+      this.text = text;
+      targets = targetNames;
+      this.popUp = popUp;
+      this.isPublic = isPublic;
    }
-   public String getText() {return _text; }
+   public String getText() {return text; }
    public static String getTextNoHTML(String text) {
       String newText = text.replaceAll("<br>", "\n")
                            .replaceAll("<br/>", "\n")
@@ -51,18 +51,18 @@ public class MessageText extends SerializableObject implements Enums
       }
       return newText;
    }
-   public String getSource() {return _source; }
-   public boolean isPopUp() { return _popUp; }
-   public boolean isPublic() {return _isPublic;}
+   public String getSource() {return source; }
+   public boolean isPopUp() { return popUp; }
+   public boolean isPublic() {return isPublic;}
 
    @Override
    public void serializeToStream(DataOutputStream out)
    {
       try {
-         writeToStream(_source, out);
-         writeToStream(_text, out);
-         writeToStream(_popUp, out);
-         writeToStream(_isPublic, out);
+         writeToStream(source, out);
+         writeToStream(text, out);
+         writeToStream(popUp, out);
+         writeToStream(isPublic, out);
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -72,10 +72,10 @@ public class MessageText extends SerializableObject implements Enums
    public void serializeFromStream(DataInputStream in)
    {
       try {
-         _source = readString(in);
-         _text = readString(in);
-         _popUp = readBoolean(in);
-         _isPublic = readBoolean(in);
+         source = readString(in);
+         text = readString(in);
+         popUp = readBoolean(in);
+         isPublic = readBoolean(in);
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -85,13 +85,13 @@ public class MessageText extends SerializableObject implements Enums
    public String toString() {
       StringBuilder sb = new StringBuilder();
       sb.append("MessageText: ");
-      sb.append(", source:").append(_source);
-      sb.append(", message: ").append(_text);
-      sb.append(", popUp: ").append(_popUp);
-      sb.append(", isPublic: ").append(_isPublic);
-      if (_targets != null) {
-         for (int i=0 ; i<_targets.size() ; i++) {
-            sb.append("\n").append(i).append(": ").append(_targets.get(i));
+      sb.append(", source:").append(source);
+      sb.append(", message: ").append(text);
+      sb.append(", popUp: ").append(popUp);
+      sb.append(", isPublic: ").append(isPublic);
+      if (targets != null) {
+         for (int i = 0; i < targets.size() ; i++) {
+            sb.append("\n").append(i).append(": ").append(targets.get(i));
          }
       }
       return sb.toString();

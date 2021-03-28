@@ -55,34 +55,34 @@ public enum SkillType {
    Tactics           ("Tactics",           false, false, Attribute.Intelligence, ArmsUsed.None, false),
    Tracking          ("Tracking",          false, false, Attribute.Intelligence, ArmsUsed.None, false);
 
-   public String           _name;
-   public Attribute        _attributeBase;
-   public ArmsUsed         _armUseCount;
-   public boolean          _isAdjustedForSize;
-   public boolean          _isAdjustedForEncumbrance;
-   public boolean          _isUnarmed;
+   public               String                     name;
+   public               Attribute                  attributeBase;
+   public               ArmsUsed                   armUseCount;
+   public               boolean                    isAdjustedForSize;
+   public               boolean                    isAdjustedForEncumbrance;
+   public               boolean                    isUnarmed;
+   static private final HashMap<String, SkillType> MAP_BY_NAME = new HashMap<>();
 
-   public String getName()                   { return _name;}
+   public String getName()                   { return name;}
 
-   public Attribute getAttributeBase()       { return _attributeBase; }
+   public Attribute getAttributeBase()       { return attributeBase; }
 
-   public boolean isUnarmed()                { return _isUnarmed; }
+   public boolean isUnarmed()                { return isUnarmed; }
 
    SkillType(String name, boolean isAdjForSize, boolean isAdjustedForEncumbrance, Attribute attributeBase, ArmsUsed armCount, boolean isUnarmed) {
-      _name                      = name;
-      _isAdjustedForSize         = isAdjForSize;
-      _isAdjustedForEncumbrance  = isAdjustedForEncumbrance;
-      _attributeBase             = attributeBase;
-      _armUseCount               = armCount;
-      _isUnarmed                 = isUnarmed;
+      this.name = name;
+      isAdjustedForSize = isAdjForSize;
+      this.isAdjustedForEncumbrance = isAdjustedForEncumbrance;
+      this.attributeBase = attributeBase;
+      armUseCount = armCount;
+      this.isUnarmed = isUnarmed;
    }
-   static private final HashMap<String, SkillType> _mapByName = new HashMap<>();
    static {
       for (SkillType type : values()) {
-         _mapByName.put(type._name.toLowerCase(), type);
+         MAP_BY_NAME.put(type.name.toLowerCase(), type);
       }
    }
    static public SkillType getSkillTypeByName(String name) {
-      return _mapByName.get(name.toLowerCase());
+      return MAP_BY_NAME.get(name.toLowerCase());
    }
 }

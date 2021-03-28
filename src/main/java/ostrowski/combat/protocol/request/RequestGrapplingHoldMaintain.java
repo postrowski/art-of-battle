@@ -19,18 +19,18 @@ import ostrowski.protocol.SyncRequest;
 
 public class RequestGrapplingHoldMaintain extends SyncRequest implements Enums
 {
-   private int                             _escaperID                 = -1;
-   private byte                            _escapeActions             = 0;
-   private final HashMap<Integer, Integer> _mapOfActionsToTN          = new HashMap<>();
-   private final HashMap<Integer, String>  _mapOfActionsToExplanation = new HashMap<>();
+   private       int                       escaperID                 = -1;
+   private       byte                      escapeActions             = 0;
+   private final HashMap<Integer, Integer> mapOfActionsToTN          = new HashMap<>();
+   private final HashMap<Integer, String>  mapOfActionsToExplanation = new HashMap<>();
 
    public RequestGrapplingHoldMaintain() {
       // default c'tor used by factor method to serialize in from a stream.
    }
 
    public RequestGrapplingHoldMaintain(Character escaper, RequestAction attack, byte range) {
-      _escaperID = escaper._uniqueID;
-      _escapeActions = attack.getAttackActions(true/*considerSpellAsAttack*/);
+      escaperID = escaper.uniqueID;
+      escapeActions = attack.getAttackActions(true/*considerSpellAsAttack*/);
    }
 
    @Override
@@ -39,8 +39,8 @@ public class RequestGrapplingHoldMaintain extends SyncRequest implements Enums
    }
 
    public RequestActionType getActionType() {
-      if (_answer instanceof RequestActionOption) {
-         RequestActionOption reqActOpt = (RequestActionOption) _answer;
+      if (answer instanceof RequestActionOption) {
+         RequestActionOption reqActOpt = (RequestActionOption) answer;
          return reqActOpt.getValue();
       }
       return null;
@@ -102,8 +102,8 @@ public class RequestGrapplingHoldMaintain extends SyncRequest implements Enums
          RequestActionOption rao = new RequestActionOption("Maintain hold (" + actions + " actions), escape TN = " + tn,
                                                            actType, LimbType.BODY, true/*enabled*/);
          addOption(rao);
-         _mapOfActionsToTN.put(actions, tn);
-         _mapOfActionsToExplanation.put(actions, sb.toString());
+         mapOfActionsToTN.put(actions, tn);
+         mapOfActionsToExplanation.put(actions, sb.toString());
          //addOption(actions, "Maintain hold (" + actions + " actions), escape TN = " + tn, true/*enabled*/);
       }
    }
@@ -126,8 +126,8 @@ public class RequestGrapplingHoldMaintain extends SyncRequest implements Enums
          }
          sb.append("<tr><td><b>").append(tn).append("</b></td><td><b>holders TN</b></td></tr>");
          sb.append("</table>");
-         _mapOfActionsToTN.put(actions, tn);
-         _mapOfActionsToExplanation.put(actions, sb.toString());
+         mapOfActionsToTN.put(actions, tn);
+         mapOfActionsToExplanation.put(actions, sb.toString());
          RequestActionType actType = null;
          switch (actions) {
             case 0: actType = RequestActionType.OPT_NO_ACTION; break;
@@ -147,8 +147,8 @@ public class RequestGrapplingHoldMaintain extends SyncRequest implements Enums
    public void serializeFromStream(DataInputStream in) {
       super.serializeFromStream(in);
       try {
-         _escaperID = readInt(in);
-         _escapeActions = readByte(in);
+         escaperID = readInt(in);
+         escapeActions = readByte(in);
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -158,19 +158,19 @@ public class RequestGrapplingHoldMaintain extends SyncRequest implements Enums
    public void serializeToStream(DataOutputStream out) {
       super.serializeToStream(out);
       try {
-         writeToStream(_escaperID, out);
-         writeToStream(_escapeActions, out);
+         writeToStream(escaperID, out);
+         writeToStream(escapeActions, out);
       } catch (IOException e) {
          e.printStackTrace();
       }
    }
 
    public int getTn() {
-      return _mapOfActionsToTN.get((int)getActionsUsed());
+      return mapOfActionsToTN.get((int)getActionsUsed());
    }
 
    public String getTnExplanation() {
-      return _mapOfActionsToExplanation.get((int)getActionsUsed());
+      return mapOfActionsToExplanation.get((int)getActionsUsed());
    }
 
    @Override

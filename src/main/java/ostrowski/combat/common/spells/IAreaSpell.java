@@ -7,7 +7,7 @@ import ostrowski.combat.server.ArenaLocation;
 
 public interface IAreaSpell extends Cloneable
 {
-   void setTargetLocation(ArenaLocation targetLocation, Arena _arena);
+   void setTargetLocation(ArenaLocation targetLocation, Arena arena);
    ArenaLocation getTargetLocation();
 
    byte getRadiusOfAffect();

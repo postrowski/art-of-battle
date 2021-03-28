@@ -8,16 +8,16 @@ import java.util.List;
 
 public class PriestDefensiveSpell implements IPriestGroup
 {
-   static public final List<PriestSpell> _spells = new ArrayList<>();
+   static public final List<PriestSpell> spells = new ArrayList<>();
    static {
-      _spells.add(new SpellArmor(PriestDefensiveSpell.class, 1));
-      _spells.add(new SpellBlockAttack(PriestDefensiveSpell.class, 2));
-      _spells.add(new SpellPush(PriestDefensiveSpell.class, 2));
-      _spells.add(new SpellMagicShield(PriestDefensiveSpell.class, 3));
-      _spells.add(new SpellBlockSpell(PriestDefensiveSpell.class, 4));
-      _spells.add(new SpellImprovedArmor(PriestDefensiveSpell.class, 4));
-      _spells.add(new SpellMissileShield(PriestDefensiveSpell.class, 5));
-      _spells.add(new SpellReverseMissile(PriestDefensiveSpell.class, 6));
-      _spells.add(new SpellSphereOfImpenetrability(PriestDefensiveSpell.class, 7));
+      spells.add(new SpellArmor(PriestDefensiveSpell.class, 1));
+      spells.add(new SpellBlockAttack(PriestDefensiveSpell.class, 2));
+      spells.add(new SpellPush(PriestDefensiveSpell.class, 2));
+      spells.add(new SpellMagicShield(PriestDefensiveSpell.class, 3));
+      spells.add(new SpellBlockSpell(PriestDefensiveSpell.class, 4));
+      spells.add(new SpellImprovedArmor(PriestDefensiveSpell.class, 4));
+      spells.add(new SpellMissileShield(PriestDefensiveSpell.class, 5));
+      spells.add(new SpellReverseMissile(PriestDefensiveSpell.class, 6));
+      spells.add(new SpellSphereOfImpenetrability(PriestDefensiveSpell.class, 7));
    }
 }

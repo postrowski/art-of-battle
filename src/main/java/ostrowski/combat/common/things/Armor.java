@@ -15,47 +15,47 @@ import java.util.List;
 
 public class Armor extends Thing {
 
-   public final HashMap<DamageType, Byte> _barrier = new HashMap<>();
+   public final HashMap<DamageType, Byte> barrier = new HashMap<>();
 
    public Armor() {}
    Armor(String name, int pd, int blunt, int cut, int imp, int fire, int electric, double weight, int cost, Race racialBase) {
       super(name, racialBase, cost, weight, (byte)pd);
-      _barrier.put(DamageType.NONE,     (byte) 0);
-      _barrier.put(DamageType.BLUNT,    (byte) blunt);
-      _barrier.put(DamageType.CUT,      (byte) cut);
-      _barrier.put(DamageType.IMP,      (byte) imp);
-      _barrier.put(DamageType.FIRE,     (byte) fire);
-      _barrier.put(DamageType.ELECTRIC, (byte) electric);
+      barrier.put(DamageType.NONE, (byte) 0);
+      barrier.put(DamageType.BLUNT, (byte) blunt);
+      barrier.put(DamageType.CUT, (byte) cut);
+      barrier.put(DamageType.IMP, (byte) imp);
+      barrier.put(DamageType.FIRE, (byte) fire);
+      barrier.put(DamageType.ELECTRIC, (byte) electric);
    }
    @Override
    public Armor clone() {
-      return new Armor(_name, _passiveDefense,
-                       _barrier.get(DamageType.BLUNT), _barrier.get(DamageType.CUT), _barrier.get(DamageType.IMP),
-                       _barrier.get(DamageType.FIRE), _barrier.get(DamageType.ELECTRIC), _weight, _cost, getRacialBase());
+      return new Armor(name, passiveDefense,
+                       barrier.get(DamageType.BLUNT), barrier.get(DamageType.CUT), barrier.get(DamageType.IMP),
+                       barrier.get(DamageType.FIRE), barrier.get(DamageType.ELECTRIC), weight, cost, getRacialBase());
    }
    @Override
    public String toString() {
-       return super.toString() + ", barriers (blunt/cut/imp/fire/electric):" + _barrier.get(DamageType.BLUNT) + "/" + _barrier.get(DamageType.CUT) + "/" +  _barrier.get(DamageType.IMP) + "/" + _barrier.get(DamageType.FIRE) + "/" +  _barrier.get(DamageType.ELECTRIC);
+       return super.toString() + ", barriers (blunt/cut/imp/fire/electric):" + barrier.get(DamageType.BLUNT) + "/" + barrier.get(DamageType.CUT) + "/" + barrier.get(DamageType.IMP) + "/" + barrier.get(DamageType.FIRE) + "/" + barrier.get(DamageType.ELECTRIC);
    }
 
    private static Armor NO_ARMOR = null;
    static public Armor getArmor(String name, Race racialBase) {
       if (name != null) {
-         for (Armor element : _armorList) {
-            if (name.equalsIgnoreCase(element._name)) {
+         for (Armor element : armorList) {
+            if (name.equalsIgnoreCase(element.name)) {
                Armor armor = element.clone();
                armor.setRacialBase(racialBase);
                return armor;
             }
             if (NO_ARMOR == null) {
-               if (element._weight == 0) {
+               if (element.weight == 0) {
                   NO_ARMOR = element;
                }
             }
          }
          // check natural armor list:
-         for (Armor element : _naturalArmorList) {
-            if (name.equalsIgnoreCase(element._name)) {
+         for (Armor element : naturalArmorList) {
+            if (name.equalsIgnoreCase(element.name)) {
                Armor armor = element.clone();
                armor.setRacialBase(racialBase);
                return armor;
@@ -77,16 +77,16 @@ public class Armor extends Thing {
       return 0;
    }
 
-   public byte getBarrier(DamageType damType) { return _barrier.get(damType); }
+   public byte getBarrier(DamageType damType) { return barrier.get(damType); }
 
    @Override
    public void copyData(Thing source) {
       super.copyData(source);
       if (source instanceof Armor) {
          Armor armor = (Armor) source;
-         _barrier.clear();
-         for (DamageType damageType : armor._barrier.keySet()) {
-            _barrier.put(damageType, armor._barrier.get(damageType));
+         barrier.clear();
+         for (DamageType damageType : armor.barrier.keySet()) {
+            barrier.put(damageType, armor.barrier.get(damageType));
          }
       }
    }
@@ -108,7 +108,7 @@ public class Armor extends Thing {
    public static final String NAME_DwarvenScale = "Dwarven Scale";
    public static final String NAME_Mithril      = "Dwarven Mithril";
 
-   public static final Armor[] _armorList        = new Armor[] {// pd blt cut imp fire electric, lbs,  cost
+   public static final Armor[] armorList        = new Armor[] {// pd blt cut imp fire electric, lbs,  cost
            new Armor(NAME_NoArmor,           0,  0,  0,  0,   0,    0,      0,     0, null),
            new Armor(NAME_Cloth,             0,  1,  1,  1,   1,    0,      5,    50, null),
            new Armor(NAME_HeavyCloth,        0,  2,  3,  4,   2,    2,     15,   200, null),
@@ -125,8 +125,8 @@ public class Armor extends Thing {
            new Armor(NAME_HeavyPlate,        5,  9, 13, 16,   7,   10,     90,  6000, null),
            new Armor(NAME_DwarvenScale,      4,  7, 11, 13,   5,    7,     40, 15000, null),
            new Armor(NAME_Mithril,           5, 10, 15, 18,   6,    8,     50, 25000, null),
-           };
-   public static final Armor[] _naturalArmorList = new Armor[] {// pd blt cut imp fire electric, lbs.    $
+   };
+   public static final Armor[] naturalArmorList = new Armor[] {// pd blt cut imp fire electric, lbs.    $
            new Armor(Race.PROPERTIES_FEATHERS,     0,  1,  1,  0,   0,    1,      0,    0, null),
            new Armor(Race.PROPERTIES_THIN_FUR,     0,  1,  1,  0,   0,    1,      0,    0, null),
            new Armor(Race.PROPERTIES_FUR,          0,  2,  3,  1,   1,    2,      0,    0, null),
@@ -138,8 +138,8 @@ public class Armor extends Thing {
 
    public static List<String> getArmorNames() {
       List<String> list = new ArrayList<>();
-      for (Armor element : _armorList) {
-         list.add(element._name);
+      for (Armor element : armorList) {
+         list.add(element.name);
       }
       return list;
    }
@@ -185,7 +185,7 @@ public class Armor extends Thing {
    public String getDefenseName(boolean tensePast, Character defender) { return ""; }
    public static List<Armor> getArmorListForRace(Race race) {
       List<Armor> list = new ArrayList<>();
-      for (Armor armor : _armorList) {
+      for (Armor armor : armorList) {
          Armor copy = armor.clone();
          copy.setRacialBase(race);
          list.add(copy);

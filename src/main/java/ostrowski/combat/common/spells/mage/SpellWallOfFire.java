@@ -23,8 +23,8 @@ import java.util.Map;
 
 public class SpellWallOfFire extends ExpiringMageSpell implements IAreaSpell, ICastInBattle
 {
-   private ArenaLocation _targetLocation;
-   private Arena _arena;
+   private ArenaLocation      targetLocation;
+   private Arena              arena;
    public static final String NAME = "Wall Of Fire";
    public SpellWallOfFire() {
       super(NAME, (short)10/*baseExpirationTimeInTurns*/,
@@ -60,10 +60,10 @@ public class SpellWallOfFire extends ExpiringMageSpell implements IAreaSpell, IC
    @Override
    public void applyEffects(Arena arena) {
       CombatMap map = arena.getCombatMap();
-      short minCol = (short) Math.max(             0, ((_targetLocation._x - (getPower()*2)) + 2));
-      short maxCol = (short) Math.min(map.getSizeX(), ((_targetLocation._x + (getPower()*2)) - 2));
-      short minRow = (short) Math.max(             0, ((_targetLocation._y - (getPower()*2)) + 2));
-      short maxRow = (short) Math.min(map.getSizeY(), ((_targetLocation._y + (getPower()*2)) - 2));
+      short minCol = (short) Math.max(             0, ((targetLocation.x - (getPower() * 2)) + 2));
+      short maxCol = (short) Math.min(map.getSizeX(), ((targetLocation.x + (getPower() * 2)) - 2));
+      short minRow = (short) Math.max(             0, ((targetLocation.y - (getPower() * 2)) + 2));
+      short maxRow = (short) Math.min(map.getSizeY(), ((targetLocation.y + (getPower() * 2)) - 2));
       for (short col = minCol ; col<=maxCol ; col++) {
          for (short row = minRow ; row<=maxRow ; row++) {
             if ((row % 2) != (col % 2)) {
@@ -72,7 +72,7 @@ public class SpellWallOfFire extends ExpiringMageSpell implements IAreaSpell, IC
             ArenaLocation mapLoc = map.getLocationQuick(col, row);
             //mapLoc.registerAsWatcher(this, null);
             if (mapLoc != null) {
-               short dist = ArenaCoordinates.getDistance(mapLoc, _targetLocation);
+               short dist = ArenaCoordinates.getDistance(mapLoc, targetLocation);
                if (dist < getPower()) {
                   mapLoc.addSpell(this);
                }
@@ -97,13 +97,13 @@ public class SpellWallOfFire extends ExpiringMageSpell implements IAreaSpell, IC
 
    @Override
    public void setTargetLocation(ArenaLocation targetLocation, Arena arena) {
-      _targetLocation = targetLocation;
-      _arena = arena;
+      this.targetLocation = targetLocation;
+      this.arena = arena;
    }
 
    @Override
    public ArenaLocation getTargetLocation() {
-      return _targetLocation;
+      return targetLocation;
    }
 
    @Override
@@ -167,10 +167,10 @@ public class SpellWallOfFire extends ExpiringMageSpell implements IAreaSpell, IC
             woundsList.add(wound);
             Map<Character, List<Wound>> wounds = new HashMap<>();
             wounds.put(charToTakeDamage, woundsList);
-            _arena._battle.applyWounds(wounds);
+            arena.battle.applyWounds(wounds);
          }
       }
-      _arena.sendMessageTextToAllClients(sb.toString(), false/*popUp*/);
+      arena.sendMessageTextToAllClients(sb.toString(), false/*popUp*/);
       sb.setLength(0);
    }
 

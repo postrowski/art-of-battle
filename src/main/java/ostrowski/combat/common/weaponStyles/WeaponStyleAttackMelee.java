@@ -34,10 +34,10 @@ public class WeaponStyleAttackMelee extends WeaponStyleAttack
    @Override
    public WeaponStyleAttack clone()
    {
-      WeaponStyleAttack style = new WeaponStyleAttackMelee(_skillType, _minSkill, _skillPenalty, _name,
-                                        _speedBase, _slowStr, _fastStr,
-                                        _damageMod, _varianceDice, _damageType, _attackType,
-                                        _chargeType, _parryPenalty, _minRange, _maxRange, _handsRequired);
+      WeaponStyleAttack style = new WeaponStyleAttackMelee(skillType, minSkill, skillPenalty, name,
+                                                           speedBase, slowStr, fastStr,
+                                                           damageMod, varianceDice, damageType, attackType,
+                                                           chargeType, parryPenalty, minRange, maxRange, handsRequired);
       style.copyDataFrom(this);
       return style;
    }

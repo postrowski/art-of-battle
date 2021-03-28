@@ -22,72 +22,72 @@ import java.util.HashMap;
 public class StatusChit extends Dialog implements PaintListener
 {
    private static final HashMap<String, Point> LOCATION_BY_CHARACTER_NAME = new HashMap<>();
-   private final        List<TextWheel>   _textWheels                = new ArrayList<>();
-   private              Shell                  _shell                     = null;
+   private final        List<TextWheel> textWheels = new ArrayList<>();
+   private              Shell           shell      = null;
 
-   public String            _name;
+   public String            name;
    private static final int   NAME_FONT_SIZE = 20;
-   private final        Point _nameCenterLoc;
+   private final        Point nameCenterLoc;
 
-   private final TextWheel _position;
-   private final TextWheel _posAdj;
-   private final TextWheel _actions;
-   private final TextWheel _initiative;
-   private final TextWheel _wounds;
-   private final TextWheel _pain;
-   private final TextWheel _weapon;
-   private final TextWheel _magic;
-   private final TextWheel _misc;
+   private final TextWheel position;
+   private final TextWheel posAdj;
+   private final TextWheel actions;
+   private final TextWheel initiative;
+   private final TextWheel wounds;
+   private final TextWheel pain;
+   private final TextWheel weapon;
+   private final TextWheel magic;
+   private final TextWheel misc;
 
-   public Point _offsetFromParent = null; // if this is null, we are not pinned to the parent, otherwise we are.
+   public Point offsetFromParent = null; // if this is null, we are not pinned to the parent, otherwise we are.
 
    public StatusChit(Shell parent, int style) {
       super (parent, SWT.MODELESS | SWT.NO_TRIM | style);
-      TextWheel._fullWidth = 450;
-      TextWheel._fullHieght = 350;
+      TextWheel.fullWidth = 450;
+      TextWheel.fullHeight = 350;
 
-      _nameCenterLoc = new Point((int) (TextWheel._fullWidth * .6), (int)(TextWheel._fullHieght * .48));
+      nameCenterLoc = new Point((int) (TextWheel.fullWidth * .6), (int)(TextWheel.fullHeight * .48));
       //                           percentages   angle         edge       angle  labelOffset    label       label  text  text
       //                         radius cw block Open          edge       Width  Vert Horiz     label      Height  text  Height
-      _textWheels.add(_position   = new TextWheel(.79, .52, .70,  6,   TextWheel.Edge.LEFT, 40,  .10, -.60, "Position",      (18.0/500.0), "Standing", (16.0/500.0)));
-      _textWheels.add(_posAdj     = new TextWheel(.79, .52, .15,  6,   TextWheel.Edge.LEFT, 40, -.10, -.40, " a  p  d  r ",  (18.0/500.0), " 0  0  0  0 ", (16.0/500.0)));
-      _textWheels.add(_actions    = new TextWheel(.15, .30, .50, 60,    TextWheel.Edge.TOP,  0,-.035,  .00, "Actions",       (20.0/500.0), "4", (14.0/500.0)));
-      _textWheels.add(_initiative = new TextWheel(.20, .60, .60, 20,    TextWheel.Edge.TOP,  0, -.08,  .00, "Initiative",    (20.0/500.0), "2", (14.0/500.0)));
-      _textWheels.add(_wounds     = new TextWheel(.09, .20, .50, 50,  TextWheel.Edge.RIGHT,  0, -.10, -.04, "Wounds",        (20.0/500.0), "0", (14.0/500.0)));
-      _textWheels.add(_pain       = new TextWheel(.21, .48, .65, 25,  TextWheel.Edge.RIGHT,  0, -.10,  .09, "Pain",          (20.0/500.0), "0", (16.0/500.0)));
-      _textWheels.add(_weapon     = new TextWheel(.12, .78, .25, 45,  TextWheel.Edge.RIGHT,  0, -.10, -.04, "Weapon",        (20.0/500.0), "Ready", (12.0/500.0)));
-      _textWheels.add(_magic      = new TextWheel(.35, .50, .70, 25, TextWheel.Edge.BOTTOM,  0,  .12,  .00, " Magic\nPoints",(20.0/500.0), "0", (14.0/500.0)));
-      _textWheels.add(_misc       = new TextWheel(.15, .75, .55, 40, TextWheel.Edge.BOTTOM,  0, .045,  .00, "Misc",          (18.0/500.0), "+0", (14.0/500.0)));
+      textWheels.add(position = new TextWheel(.79, .52, .70, 6, TextWheel.Edge.LEFT, 40, .10, -.60, "Position", (18.0 / 500.0), "Standing", (16.0 / 500.0)));
+      textWheels.add(posAdj = new TextWheel(.79, .52, .15, 6, TextWheel.Edge.LEFT, 40, -.10, -.40, " a  p  d  r ", (18.0 / 500.0), " 0  0  0  0 ", (16.0 / 500.0)));
+      textWheels.add(actions = new TextWheel(.15, .30, .50, 60, TextWheel.Edge.TOP, 0, -.035, .00, "Actions", (20.0 / 500.0), "4", (14.0 / 500.0)));
+      textWheels.add(initiative = new TextWheel(.20, .60, .60, 20, TextWheel.Edge.TOP, 0, -.08, .00, "Initiative", (20.0 / 500.0), "2", (14.0 / 500.0)));
+      textWheels.add(wounds = new TextWheel(.09, .20, .50, 50, TextWheel.Edge.RIGHT, 0, -.10, -.04, "Wounds", (20.0 / 500.0), "0", (14.0 / 500.0)));
+      textWheels.add(pain = new TextWheel(.21, .48, .65, 25, TextWheel.Edge.RIGHT, 0, -.10, .09, "Pain", (20.0 / 500.0), "0", (16.0 / 500.0)));
+      textWheels.add(weapon = new TextWheel(.12, .78, .25, 45, TextWheel.Edge.RIGHT, 0, -.10, -.04, "Weapon", (20.0 / 500.0), "Ready", (12.0 / 500.0)));
+      textWheels.add(magic = new TextWheel(.35, .50, .70, 25, TextWheel.Edge.BOTTOM, 0, .12, .00, " Magic\nPoints", (20.0 / 500.0), "0", (14.0 / 500.0)));
+      textWheels.add(misc = new TextWheel(.15, .75, .55, 40, TextWheel.Edge.BOTTOM, 0, .045, .00, "Misc", (18.0 / 500.0), "+0", (14.0 / 500.0)));
    }
 
    public void updateFromCharacter(Character chr) {
       Condition cond = chr.getCondition();
-      _name = chr.getName();
-      if (_shell != null) {
-         Point currentLoc = LOCATION_BY_CHARACTER_NAME.get(_name);
+      name = chr.getName();
+      if (shell != null) {
+         Point currentLoc = LOCATION_BY_CHARACTER_NAME.get(name);
          if (currentLoc == null) {
-            currentLoc = _shell.getLocation();
-            LOCATION_BY_CHARACTER_NAME.put(_name, currentLoc);
+            currentLoc = shell.getLocation();
+            LOCATION_BY_CHARACTER_NAME.put(name, currentLoc);
          }
          else {
-            _shell.setLocation(currentLoc);
+            shell.setLocation(currentLoc);
          }
       }
 
-      _position._text =  cond.getPosition().name;
+      position.text =  cond.getPosition().name;
       int attackAdj = cond.getPosition().adjustmentToAttack;
       int parryAdj = cond.getPosition().adjustmentToDefenseParry;
       int dodgeAdj = cond.getPosition().adjustmentToDefenseDodge;
       int retreatAdj = cond.getPosition().adjustmentToDefenseRetreat;
 
-      _posAdj._text = " " + ((attackAdj  < 0) ? attackAdj  : ((attackAdj == 0) ? " 0" : ("+" + attackAdj)))
+      posAdj.text = " " + ((attackAdj < 0) ? attackAdj : ((attackAdj == 0) ? " 0" : ("+" + attackAdj)))
                     + " " + ((parryAdj   < 0) ? parryAdj   : ((parryAdj  == 0) ? " 0" : ("+" + parryAdj)))
                     + " " + ((dodgeAdj   < 0) ? dodgeAdj   : ((dodgeAdj  == 0) ? " 0" : ("+" + dodgeAdj)))
                     + " " + ((retreatAdj < 0) ? retreatAdj : ((retreatAdj== 0) ? " 0" : ("+" + retreatAdj)));
-      _actions._text = String.valueOf(cond.getActionsAvailable(false/*defOnly*/));
-      _initiative._text = String.valueOf(cond.getInitiative());
-      _wounds._text = String.valueOf(cond.getWounds());
-      _pain._text = String.valueOf(cond.getPenaltyPain());
+      actions.text = String.valueOf(cond.getActionsAvailable(false/*defOnly*/));
+      initiative.text = String.valueOf(cond.getInitiative());
+      wounds.text = String.valueOf(cond.getWounds());
+      pain.text = String.valueOf(cond.getPenaltyPain());
       Limb weaponHand = chr.getLimb(LimbType.HAND_RIGHT);
       if ((weaponHand == null) || weaponHand.isCrippled()) {
          weaponHand = chr.getLimb(LimbType.HAND_LEFT);
@@ -95,25 +95,25 @@ public class StatusChit extends Dialog implements PaintListener
       if (weaponHand != null) {
          byte actionsNeededToReady = weaponHand.getActionsNeededToReady();
          if (actionsNeededToReady == 0) {
-            _weapon._text = "ready";
+            weapon.text = "ready";
          }
          else {
-            _weapon._text = String.valueOf(actionsNeededToReady);
+            weapon.text = String.valueOf(actionsNeededToReady);
          }
       }
       else {
-         _weapon._text = "";
+         weapon.text = "";
       }
-      _magic._text = String.valueOf(cond.getMageSpellPointsAvailable() + cond.getPriestSpellPointsAvailable());
-      _misc._text = "+0";
-      if (_shell != null) {
-         _shell.redraw();
+      magic.text = String.valueOf(cond.getMageSpellPointsAvailable() + cond.getPriestSpellPointsAvailable());
+      misc.text = "+0";
+      if (shell != null) {
+         shell.redraw();
       }
    }
 
    public void open() {
       Shell parent = getParent();
-      _shell = new Shell(parent, SWT.MODELESS | SWT.NO_BACKGROUND | SWT.TRANSPARENT | SWT.NO_TRIM | SWT.NO_FOCUS);
+      shell = new Shell(parent, SWT.MODELESS | SWT.NO_BACKGROUND | SWT.TRANSPARENT | SWT.NO_TRIM | SWT.NO_FOCUS);
 
       ControlListener parentControlListener = new ControlListener() {
          @Override
@@ -121,10 +121,10 @@ public class StatusChit extends Dialog implements PaintListener
          }
          @Override
          public void controlMoved(ControlEvent arg0) {
-            if (_offsetFromParent != null) {
+            if (offsetFromParent != null) {
                Point parentLoc = getParent().getLocation();
-               setLocation(new Point(parentLoc.x + _offsetFromParent.x,
-                                     parentLoc.y + _offsetFromParent.y));
+               setLocation(new Point(parentLoc.x + offsetFromParent.x,
+                                     parentLoc.y + offsetFromParent.y));
             }
          }
       };
@@ -132,17 +132,17 @@ public class StatusChit extends Dialog implements PaintListener
 
       //new Snippet134(parent);
 
-      _shell.setText("Status Chit");
+      shell.setText("Status Chit");
       GridLayout layout = new GridLayout();
       layout.numColumns = 1;
       layout.makeColumnsEqualWidth = true;
       layout.horizontalSpacing = SWT.FILL;
-      _shell.setLayout(layout);
+      shell.setLayout(layout);
 
-      _shell.setLayout(new GridLayout(1/*numcolumns*/, false/*makeColumnsEqualWidth*/));
+      shell.setLayout(new GridLayout(1/*numcolumns*/, false/*makeColumnsEqualWidth*/));
 
-//      shell.setSize(TextWheel._fullWidth + 25, TextWheel._fullHieght + 50);
-      _shell.addPaintListener(this);
+//      shell.setSize(TextWheel.fullWidth + 25, TextWheel.fullHieght + 50);
+      shell.addPaintListener(this);
 
       //add ability to move shell around
       Listener l = new Listener() {
@@ -158,10 +158,10 @@ public class StatusChit extends Dialog implements PaintListener
                   break;
                case SWT.MouseMove:
                   if (origin != null) {
-                     Point p = _shell.getDisplay().map(_shell, null, e.x, e.y);
+                     Point p = shell.getDisplay().map(shell, null, e.x, e.y);
                      setLocation(new Point(p.x - origin.x, p.y - origin.y));
 
-                     if (CombatServer._uses3dMap) {
+                     if (CombatServer.uses3dMap) {
                         CombatServer._this.redrawMap();
                      }
                   }
@@ -175,41 +175,41 @@ public class StatusChit extends Dialog implements PaintListener
          }
       };
       // Register listeners for all the events we do something with:
-      _shell.addListener(SWT.MouseDown, l);
-      _shell.addListener(SWT.MouseUp, l);
-      _shell.addListener(SWT.MouseMove, l);
-      _shell.addListener(SWT.KeyDown, l);
-      _shell.addListener(SWT.KeyUp, l);
-      _shell.pack();
+      shell.addListener(SWT.MouseDown, l);
+      shell.addListener(SWT.MouseUp, l);
+      shell.addListener(SWT.MouseMove, l);
+      shell.addListener(SWT.KeyDown, l);
+      shell.addListener(SWT.KeyUp, l);
+      shell.pack();
 
       Region region = TextWheel.getRectRegion();
-      for (TextWheel wheel : _textWheels) {
+      for (TextWheel wheel : textWheels) {
          Region wheelRegion = wheel.getRegion();
          region.add(wheelRegion );
          wheelRegion.dispose();
       }
-      for (TextWheel wheel : _textWheels) {
+      for (TextWheel wheel : textWheels) {
          Region holeRegion = wheel.getHoleRegion();
          region.subtract(holeRegion );
          holeRegion.dispose();
       }
 
       Rectangle size = region.getBounds();
-      _shell.setRegion(region);
+      shell.setRegion(region);
       region.dispose();
-      _shell.setSize(size.width, size.height);
+      shell.setSize(size.width, size.height);
 
-      _shell.open();
-      //_shell.setSize(TextWheel._fullWidth + 10, TextWheel._fullHieght + 10);
+      shell.open();
+      //_shell.setSize(TextWheel.fullWidth + 10, TextWheel.fullHieght + 10);
 
-      if (_name != null) {
-         Point currentLoc = LOCATION_BY_CHARACTER_NAME.get(_name);
+      if (name != null) {
+         Point currentLoc = LOCATION_BY_CHARACTER_NAME.get(name);
          if (currentLoc == null) {
-            currentLoc = _shell.getLocation();
-            LOCATION_BY_CHARACTER_NAME.put(_name, currentLoc);
+            currentLoc = shell.getLocation();
+            LOCATION_BY_CHARACTER_NAME.put(name, currentLoc);
          }
          else {
-            _shell.setLocation(currentLoc);
+            shell.setLocation(currentLoc);
          }
       }
       checkForPinning();
@@ -217,201 +217,200 @@ public class StatusChit extends Dialog implements PaintListener
 
    private void checkForPinning() {
       Rectangle parentRect = getParent().getBounds();
-      Rectangle thisRect = _shell.getBounds();
+      Rectangle thisRect = shell.getBounds();
       if (parentRect.intersects(thisRect)) {
-         _offsetFromParent = new Point(thisRect.x - parentRect.x,
+         offsetFromParent = new Point(thisRect.x - parentRect.x,
                                        thisRect.y - parentRect.y);
       }
       else {
-         _offsetFromParent = null;
+         offsetFromParent = null;
       }
    }
 
    public void close() {
-      if (!_shell.isDisposed()) {
-         _shell.close();
+      if (!shell.isDisposed()) {
+         shell.close();
       }
    }
 
    @Override
    public void paintControl(PaintEvent event) {
       event.gc.setBackground(event.display.getSystemColor(SWT.COLOR_WHITE));
-      for (TextWheel tw : _textWheels) {
+      for (TextWheel tw : textWheels) {
          tw.drawPhase1(event.gc);
       }
       event.gc.setBackground(event.display.getSystemColor(SWT.COLOR_GRAY));
       TextWheel.drawPhase2(event.gc);
       event.gc.setBackground(event.display.getSystemColor(SWT.COLOR_WHITE));
-      for (TextWheel tw : _textWheels) {
+      for (TextWheel tw : textWheels) {
          tw.drawPhase3(event.gc);
       }
       event.gc.setBackground(event.display.getSystemColor(SWT.COLOR_GRAY));
-      for (TextWheel tw : _textWheels) {
+      for (TextWheel tw : textWheels) {
          tw.drawPhase4(event.gc);
       }
       event.gc.setBackground(event.display.getSystemColor(SWT.COLOR_GRAY));
-      for (TextWheel tw : _textWheels) {
+      for (TextWheel tw : textWheels) {
          tw.drawPhase5(event.gc);
       }
       event.gc.setBackground(event.display.getSystemColor(SWT.COLOR_WHITE));
-      for (TextWheel tw : _textWheels) {
+      for (TextWheel tw : textWheels) {
          tw.drawPhase6(event.gc);
       }
       event.gc.setBackground(event.display.getSystemColor(SWT.COLOR_GRAY));
       event.gc.setForeground(event.display.getSystemColor(SWT.COLOR_RED));
 
-      TextWheel.drawText(event.gc, _nameCenterLoc, NAME_FONT_SIZE, _name);
+      TextWheel.drawText(event.gc, nameCenterLoc, NAME_FONT_SIZE, name);
    }
 
    public void setLocation(Point location) {
-      _shell.setLocation(location);
+      shell.setLocation(location);
       checkForPinning();
-      if (_name != null) {
-         LOCATION_BY_CHARACTER_NAME.put(_name, location);
+      if (name != null) {
+         LOCATION_BY_CHARACTER_NAME.put(name, location);
       }
    }
 }
 
 class TextWheel {
-   public static int _fullWidth  = 400;
-   public static int _fullHieght = 300;
-
+   public static int fullWidth  = 400;
+   public static int fullHeight = 300;
+   static FontData   fontData   = null;
+   static Font       font       = null;
    public enum Edge { TOP, LEFT, BOTTOM, RIGHT}
 
-   private final int   _radius;
-   private       Point _blockingPoint1;
-   private       Point  _blockingPoint2;
-   private final int    _angleOpen;
-   private final Edge   _edge;
-   private final String _label;
-   private final int    _labelFontSize;
-   private       Point  _labelCenterLoc = new Point(0, 0);
-   public        String _text;
-   private final int    _textFontSize;
-   private final Point  _textCenterLoc  = new Point(0, 0);
-   private final Point  _center         = new Point(0, 0);
-   private       int _centerAngle    = 0;
-   private final int _angleWidth;
+   private final int    radius;
+   private       Point  blockingPoint1;
+   private       Point  blockingPoint2;
+   private final int    angleOpen;
+   private final Edge   edge;
+   private final String label;
+   private final int    labelFontSize;
+   private       Point  labelCenterLoc = new Point(0, 0);
+   public        String text;
+   private final int    textFontSize;
+   private final Point  textCenterLoc  = new Point(0, 0);
+   private final Point  center         = new Point(0, 0);
+   private       int    centerAngle    = 0;
+   private final int    angleWidth;
 
    public TextWheel(double radiusPercentage, double percentClockwiseAlongEdge,
                     double percentBlocking, int angleOpen, Edge edge,
                     int angleWidth, double labelVertOffsetPercent,
                     double labelHorizontalOffsetPercentage, String label,
                     double labelFontSizePercentage, String text, double textFontSizePercentage) {
-      _angleOpen = angleOpen;
-      _edge = edge;
-      _angleWidth = angleWidth;
-      _label = label;
-      _labelFontSize = (int) (labelFontSizePercentage * _fullHieght);
-      _text = text;
-      _textFontSize = (int)(textFontSizePercentage * _fullHieght);
-      if ((_edge == Edge.TOP) || (_edge == Edge.BOTTOM)) {
-         _radius = (int) (radiusPercentage * _fullHieght);
+      this.angleOpen = angleOpen;
+      this.edge = edge;
+      this.angleWidth = angleWidth;
+      this.label = label;
+      labelFontSize = (int) (labelFontSizePercentage * fullHeight);
+      this.text = text;
+      textFontSize = (int)(textFontSizePercentage * fullHeight);
+      if ((this.edge == Edge.TOP) || (this.edge == Edge.BOTTOM)) {
+         radius = (int) (radiusPercentage * fullHeight);
       }
       else {
-         _radius = (int) (radiusPercentage * _fullWidth);
+         radius = (int) (radiusPercentage * fullWidth);
       }
-      int blockingSize = (int) (_radius * percentBlocking);
+      int blockingSize = (int) (radius * percentBlocking);
 
-      switch (_edge) {
+      switch (this.edge) {
          case TOP:
-            _center.x = (int) (_fullWidth * percentClockwiseAlongEdge);
-            _center.y = _radius;
-            _centerAngle = 90;
-            _textCenterLoc.x = _center.x;
-            _textCenterLoc.y = (((_center.y - _radius) + _center.y) - blockingSize) / 2;
-            _blockingPoint1 = new Point(_center.x - blockingSize, _center.y - blockingSize);
-            _blockingPoint2 = new Point(_center.x + blockingSize, _center.y - blockingSize);
+            center.x = (int) (fullWidth * percentClockwiseAlongEdge);
+            center.y = radius;
+            centerAngle = 90;
+            textCenterLoc.x = center.x;
+            textCenterLoc.y = (((center.y - radius) + center.y) - blockingSize) / 2;
+            blockingPoint1 = new Point(center.x - blockingSize, center.y - blockingSize);
+            blockingPoint2 = new Point(center.x + blockingSize, center.y - blockingSize);
             break;
          case BOTTOM:
-            _center.x = (int) (_fullWidth * (1 - percentClockwiseAlongEdge));
-            _center.y = _fullHieght - _radius;
-            _centerAngle = 270;
-            _textCenterLoc.x = _center.x;
-            _textCenterLoc.y = ((_center.y + _radius) + _center.y + blockingSize) / 2;
-            _blockingPoint1 = new Point(_center.x + blockingSize, _center.y + blockingSize);
-            _blockingPoint2 = new Point(_center.x - blockingSize, _center.y + blockingSize);
+            center.x = (int) (fullWidth * (1 - percentClockwiseAlongEdge));
+            center.y = fullHeight - radius;
+            centerAngle = 270;
+            textCenterLoc.x = center.x;
+            textCenterLoc.y = ((center.y + radius) + center.y + blockingSize) / 2;
+            blockingPoint1 = new Point(center.x + blockingSize, center.y + blockingSize);
+            blockingPoint2 = new Point(center.x - blockingSize, center.y + blockingSize);
             break;
          case LEFT:
-            _center.x = _radius;
-            _center.y = (int) (_fullHieght * (1 - percentClockwiseAlongEdge));
-            _centerAngle = 180;
-            _textCenterLoc.y = _center.y;
-            _textCenterLoc.x = (((_center.x - _radius) + _center.x) - blockingSize) / 2;
-            _blockingPoint1 = new Point(_center.x - blockingSize, _center.y + (blockingSize / 2));
-            _blockingPoint2 = new Point(_center.x - blockingSize, _center.y - (blockingSize / 2));
+            center.x = radius;
+            center.y = (int) (fullHeight * (1 - percentClockwiseAlongEdge));
+            centerAngle = 180;
+            textCenterLoc.y = center.y;
+            textCenterLoc.x = (((center.x - radius) + center.x) - blockingSize) / 2;
+            blockingPoint1 = new Point(center.x - blockingSize, center.y + (blockingSize / 2));
+            blockingPoint2 = new Point(center.x - blockingSize, center.y - (blockingSize / 2));
             break;
          case RIGHT:
-            _center.x = _fullWidth - _radius;
-            _center.y = (int) (_fullHieght * percentClockwiseAlongEdge);
-            _centerAngle = 0;
-            _textCenterLoc.y = _center.y;
-            _textCenterLoc.x = ((_center.x + _radius) + _center.x + blockingSize) / 2;
-            _blockingPoint1 = new Point(_center.x + blockingSize, _center.y - blockingSize);
-            _blockingPoint2 = new Point(_center.x + blockingSize, _center.y + blockingSize);
+            center.x = fullWidth - radius;
+            center.y = (int) (fullHeight * percentClockwiseAlongEdge);
+            centerAngle = 0;
+            textCenterLoc.y = center.y;
+            textCenterLoc.x = ((center.x + radius) + center.x + blockingSize) / 2;
+            blockingPoint1 = new Point(center.x + blockingSize, center.y - blockingSize);
+            blockingPoint2 = new Point(center.x + blockingSize, center.y + blockingSize);
             break;
       }
-      int labelVertOffset = (int) (labelVertOffsetPercent * _fullHieght);
-      int labelHorizontalOffset = (int) (labelHorizontalOffsetPercentage * _fullWidth);
-      _labelCenterLoc = new Point(_center.x + labelHorizontalOffset, _center.y + labelVertOffset);
-      if (_edge == Edge.LEFT) {
+      int labelVertOffset = (int) (labelVertOffsetPercent * fullHeight);
+      int labelHorizontalOffset = (int) (labelHorizontalOffsetPercentage * fullWidth);
+      labelCenterLoc = new Point(center.x + labelHorizontalOffset, center.y + labelVertOffset);
+      if (this.edge == Edge.LEFT) {
          if (labelHorizontalOffsetPercentage > 0) {
-            _textCenterLoc.x = _labelCenterLoc.x;
+            textCenterLoc.x = labelCenterLoc.x;
          }
          else {
-            _labelCenterLoc.x = _textCenterLoc.x;
+            labelCenterLoc.x = textCenterLoc.x;
          }
       }
    }
 
    public void drawPhase1(GC gc) {
-      if (_angleWidth != 0) {
-         fillArc(gc, _center.x, _center.y, _radius, _centerAngle, _angleWidth);
+      if (angleWidth != 0) {
+         fillArc(gc, center.x, center.y, radius, centerAngle, angleWidth);
       }
       else {
-         fillCircle(gc, _center.x, _center.y, _radius);
+         fillCircle(gc, center.x, center.y, radius);
       }
    }
    public static void drawPhase2(GC gc) {
-      Rectangle rect = new Rectangle((int)(.03 * _fullWidth),
-                                     (int)(.03 * _fullHieght),
-                                     (int)(.94 * _fullWidth)/*width*/,
-                                     (int)(.94 * _fullHieght)/*height*/);
+      Rectangle rect = new Rectangle((int)(.03 * fullWidth),
+                                     (int)(.03 * fullHeight),
+                                     (int)(.94 * fullWidth)/*width*/,
+                                     (int)(.94 * fullHeight)/*height*/);
       gc.fillRectangle(rect);
       gc.drawRectangle(rect);
    }
    public void drawPhase3(GC gc) {
-      fillArc(gc, _center.x, _center.y, _radius, _centerAngle, _angleOpen);
+      fillArc(gc, center.x, center.y, radius, centerAngle, angleOpen);
    }
    public void drawPhase4(GC gc) {
-      gc.fillPolygon(new int[] {_center.x, _center.y,
-                                _blockingPoint1.x, _blockingPoint1.y,
-                                _blockingPoint2.x, _blockingPoint2.y});
+      gc.fillPolygon(new int[] {center.x, center.y,
+                                blockingPoint1.x, blockingPoint1.y,
+                                blockingPoint2.x, blockingPoint2.y});
    }
    public void drawPhase5(GC gc) {
-      drawText(gc, _labelCenterLoc, _labelFontSize, _label);
+      drawText(gc, labelCenterLoc, labelFontSize, label);
    }
    public void drawPhase6(GC gc) {
-      drawText(gc, _textCenterLoc, _textFontSize, _text);
-      int innerHoleRadius = _fullHieght / 50;
-      drawCircle(gc, _center.x, _center.y, innerHoleRadius);
-      fillCircle(gc, _center.x, _center.y, innerHoleRadius);
+      drawText(gc, textCenterLoc, textFontSize, text);
+      int innerHoleRadius = fullHeight / 50;
+      drawCircle(gc, center.x, center.y, innerHoleRadius);
+      fillCircle(gc, center.x, center.y, innerHoleRadius);
    }
 
-   static FontData _fontData = null;
-   static Font _font = null;
    static void drawText(GC gc, Point textCenterLoc, int textFontSize, String text) {
-      if ((_fontData == null) || (_fontData.height != textFontSize)) {
-         if (_fontData != null) {
+      if ((fontData == null) || (fontData.height != textFontSize)) {
+         if (fontData != null) {
             // TODO: dispose of this object:
-            _fontData = null;
+            fontData = null;
          }
-         _fontData = new FontData("Arial", textFontSize/*height*/, SWT.BOLD);
-         if (_font != null) {
-            _font.dispose();
+         fontData = new FontData("Arial", textFontSize/*height*/, SWT.BOLD);
+         if (font != null) {
+            font.dispose();
          }
-         _font = new Font(Display.getCurrent(), _fontData);
-         gc.setFont(_font);
+         font = new Font(Display.getCurrent(), fontData);
+         gc.setFont(font);
       }
       drawTextCentered(gc, textCenterLoc.x, textCenterLoc.y, text);
    }
@@ -439,10 +438,10 @@ class TextWheel {
    public static Region getRectRegion() {
       Region region = new Region();
       int[] polygon = new int[8];
-      polygon[0] = (int)(.03 * _fullWidth);      polygon[1] = (int)(.03 * _fullHieght);
-      polygon[2] = (int)(.97 * _fullWidth) + 2;  polygon[3] = (int)(.03 * _fullHieght);
-      polygon[4] = (int)(.97 * _fullWidth) + 2;  polygon[5] = (int)(.97 * _fullHieght) + 2;
-      polygon[6] = (int)(.03 * _fullWidth);      polygon[7] = (int)(.97 * _fullHieght) + 2;
+      polygon[0] = (int)(.03 * fullWidth);      polygon[1] = (int)(.03 * fullHeight);
+      polygon[2] = (int)(.97 * fullWidth) + 2;  polygon[3] = (int)(.03 * fullHeight);
+      polygon[4] = (int)(.97 * fullWidth) + 2;  polygon[5] = (int)(.97 * fullHeight) + 2;
+      polygon[6] = (int)(.03 * fullWidth);      polygon[7] = (int)(.97 * fullHeight) + 2;
       region.add(polygon);
       return region;
 
@@ -450,24 +449,24 @@ class TextWheel {
    public Region getRegion() {
       double startAngle = 0;
       double stopAngle = 2*Math.PI;
-      if (_angleWidth != 0) {
-         double centerAngle = _centerAngle;
-         switch (_edge) {
+      if (angleWidth != 0) {
+         double centerAngle = this.centerAngle;
+         switch (edge) {
             case LEFT: centerAngle += 90; break;
             case RIGHT: centerAngle -= 90; break;
             case BOTTOM: centerAngle += 180; break;
          }
-         startAngle = Math.toRadians(centerAngle - (_angleWidth/2));
-         stopAngle = Math.toRadians(centerAngle + (_angleWidth/2));
+         startAngle = Math.toRadians(centerAngle - (angleWidth / 2));
+         stopAngle = Math.toRadians(centerAngle + (angleWidth / 2));
       }
-      return getRegion(_radius, _center, startAngle, stopAngle);
+      return getRegion(radius, center, startAngle, stopAngle);
    }
 
    public Region getHoleRegion() {
-      double innerHoleRadius = (_fullHieght / 50.0) - 2.5;
+      double innerHoleRadius = (fullHeight / 50.0) - 2.5;
       double startAngle = 0;
       double stopAngle = 2*Math.PI;
-      return getRegion(innerHoleRadius, _center, startAngle, stopAngle);
+      return getRegion(innerHoleRadius, center, startAngle, stopAngle);
    }
 
    public static Region getRegion(double radius, Point center, double startAngle, double stopAngle) {

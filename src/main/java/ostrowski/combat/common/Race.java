@@ -26,12 +26,12 @@ public class Race implements Cloneable, Enums
       MALE("Male"),
       FEMALE("Female");
       Gender(String name) {
-         _name=name;
+         this.name =name;
       }
-      public final String _name;
+      public final String name;
       public static Gender getByName(String genderStr) {
          for (Gender gender : values()) {
-            if (gender._name.equals(genderStr)) {
+            if (gender.name.equals(genderStr)) {
                return gender;
             }
          }
@@ -56,123 +56,123 @@ public class Race implements Cloneable, Enums
       SPIDER(          new OrientationSingleSpider());
 
       BodyType(Orientation orientation) {
-         _orientation = orientation;
+         this.orientation = orientation;
       }
-      public final Orientation _orientation;
+      public final Orientation orientation;
    }
 
-
-   public final  String                   _name;
-   public final  Gender                   _gender;
-   public final  short                    _cost;
-   public final  byte                     _buildModifier;
-   public final  byte                     _bonusToBeHit;
-   public final  double                   _aveWeight;
-   public final  float                    _widthMod3d;
-   public final  float                    _lengthMod3d;
-   public final  byte                     _baseSpeed;
-   public final  HashMap<Attribute, Byte> _attributeMods    = new HashMap<>();
-   private       byte                     _headCount        = 1;
-   private       byte                     _eyeCount         = 2;
-   private       byte                     _legCount         = 2;
-   private       byte                     _armCount         = 2;
-   private       byte                     _wingCount        = 0;
-   private       Orientation              _baseOrientation  = null;
-   private final List<String>             _racialProperties = new ArrayList<>();
-   private final List<String>             _racialAdvsNames  = new ArrayList<>();
-   private final List<Spell>              _inateSpells      = new ArrayList<>();
-   private       Armor                    _naturalArmor;
-   private       boolean                  _isAquatic        = false;
-   private       boolean                  _isAnimal         = false;
-   private       boolean                  _canFly           = false;
+   public final  String                   name;
+   public final  Gender                   gender;
+   public final  short                    cost;
+   public final  byte                     buildModifier;
+   public final  byte                     bonusToBeHit;
+   public final  double                   aveWeight;
+   public final  float                    widthMod3d;
+   public final  float                    lengthMod3d;
+   public final  byte                     baseSpeed;
+   public final  HashMap<Attribute, Byte> attributeMods    = new HashMap<>();
+   private       byte                     headCount        = 1;
+   private       byte                     eyeCount         = 2;
+   private       byte                     legCount         = 2;
+   private       byte                     armCount         = 2;
+   private       byte                     wingCount        = 0;
+   private       Orientation              baseOrientation  = null;
+   private final List<String>             racialProperties = new ArrayList<>();
+   private final List<String>             racialAdvsNames  = new ArrayList<>();
+   private final List<Spell>              inateSpells      = new ArrayList<>();
+   private       Armor                    naturalArmor;
+   private       boolean                  isAquatic        = false;
+   private       boolean                  isAnimal         = false;
+   private       boolean                  canFly           = false;
+   final List<LimbType> limbSet = new ArrayList<>();
 
    public String getName() {
-      return _name;
+      return name;
    }
 
    public Gender getGender() {
-      return _gender;
+      return gender;
    }
 
    public int getCost() {
-      return _cost;
+      return cost;
    }
 
    public int getAttCost(byte attLevel, Attribute att) {
-      return Rules.getAttCost((byte) (attLevel - _attributeMods.get(att)));
+      return Rules.getAttCost((byte) (attLevel - attributeMods.get(att)));
    }
 
    public List<Spell> getInateSpells() {
-      return _inateSpells;
+      return inateSpells;
    }
 
 
    private Race(String name, Gender gender, int cost, int buildModifier, int bonusToBeHit, double aveWeight, int baseSpeed, BodyType bodyType, double lengthMod3d,
                 double widthMod3d, byte[] attributeMods, String[] racialProperties, String[] racialAdvantages, String[] inateSpellNames) {
-      this(name, gender, cost, buildModifier, bonusToBeHit, aveWeight, baseSpeed, bodyType._orientation, lengthMod3d, widthMod3d, attributeMods,
+      this(name, gender, cost, buildModifier, bonusToBeHit, aveWeight, baseSpeed, bodyType.orientation, lengthMod3d, widthMod3d, attributeMods,
            racialProperties, racialAdvantages, inateSpellNames);
    }
 
    private Race(String name, Gender gender, int cost, int buildModifier, int bonusToBeHit, double aveWeight, int baseSpeed, Orientation orientation,
                 double lengthMod3d, double widthMod3d, byte[] attributeMods, String[] racialProperties, String[] racialAdvantages, String[] inateSpellNames) {
-      _name = name;
-      _gender = gender;
-      _cost = (short) cost;
-      _buildModifier = (byte) buildModifier;
-      _bonusToBeHit = (byte) bonusToBeHit;
-      _aveWeight = aveWeight;
-      _widthMod3d = (float) widthMod3d;
-      _lengthMod3d = (float) lengthMod3d;
-      _baseSpeed = (byte) baseSpeed;
+      this.name = name;
+      this.gender = gender;
+      this.cost = (short) cost;
+      this.buildModifier = (byte) buildModifier;
+      this.bonusToBeHit = (byte) bonusToBeHit;
+      this.aveWeight = aveWeight;
+      this.widthMod3d = (float) widthMod3d;
+      this.lengthMod3d = (float) lengthMod3d;
+      this.baseSpeed = (byte) baseSpeed;
       for (Attribute att : Attribute.values()) {
-         _attributeMods.put(att, attributeMods[att.value]);
+         this.attributeMods.put(att, attributeMods[att.value]);
       }
       if (orientation != null) {
-         _baseOrientation = orientation.clone();
+         baseOrientation = orientation.clone();
       }
 
       for (String element : racialProperties) {
          int loc = element.indexOf(" arms");
          if (loc != -1) {
-            _armCount = getPropertyCount(element, loc);
+            armCount = getPropertyCount(element, loc);
          }
          loc = element.indexOf(" legs");
          if (loc != -1) {
-            _legCount = getPropertyCount(element, loc);
+            legCount = getPropertyCount(element, loc);
          }
          loc = element.indexOf(" eyes");
          if (loc != -1) {
-            _eyeCount = getPropertyCount(element, loc);
+            eyeCount = getPropertyCount(element, loc);
          }
          loc = element.indexOf(" heads");
          if (loc != -1) {
-            _headCount = getPropertyCount(element, loc);
+            headCount = getPropertyCount(element, loc);
          }
          loc = element.indexOf(" wings");
          if (loc != -1) {
-            _wingCount = getPropertyCount(element, loc);
+            wingCount = getPropertyCount(element, loc);
          }
-         _racialProperties.add(element);
+         this.racialProperties.add(element);
          Armor naturalArmor = Armor.getArmor(element, this);
          if (!naturalArmor.getName().equals(Armor.NAME_NoArmor)) {
-            _naturalArmor = naturalArmor;
+            this.naturalArmor = naturalArmor;
          }
       }
-      if (_wingCount > 0) {
-         _canFly = true;
+      if (wingCount > 0) {
+         canFly = true;
       }
-      if (_racialProperties.contains(PROPERTIES_AQUATIC)) {
-         _isAquatic = true;
+      if (this.racialProperties.contains(PROPERTIES_AQUATIC)) {
+         isAquatic = true;
       }
-      if (_racialProperties.contains(PROPERTIES_ANIMAL)) {
-         _isAnimal = true;
+      if (this.racialProperties.contains(PROPERTIES_ANIMAL)) {
+         isAnimal = true;
       }
-      if (_racialProperties.contains(PROPERTIES_HORNS) && _racialProperties.contains(PROPERTIES_FANGS)) {
+      if (this.racialProperties.contains(PROPERTIES_HORNS) && this.racialProperties.contains(PROPERTIES_FANGS)) {
          // you can't have two head attacks, only one weapon gets returned.
          // TODO: make the head the weapon, and horns one style, bite another.
          DebugBreak.debugBreak();
       }
-      _racialAdvsNames.addAll(Arrays.asList(racialAdvantages));
+      racialAdvsNames.addAll(Arrays.asList(racialAdvantages));
       for (String element : inateSpellNames) {
          int index = element.indexOf(":");
          if (index != -1) {
@@ -190,14 +190,14 @@ public class Race implements Cloneable, Enums
                spell.setPower(level);
                spell.setLevel(level);
                spell.setIsInate(true);
-               _inateSpells.add(spell);
+               inateSpells.add(spell);
             }
          }
       }
    }
 
    public Orientation getBaseOrientation() {
-      return _baseOrientation.clone();
+      return baseOrientation.clone();
    }
 
    private static byte getPropertyCount(String racialProperty, int loc) {
@@ -211,7 +211,7 @@ public class Race implements Cloneable, Enums
    @Override
    protected Race clone() {
       List<String> spellNames = new ArrayList<>();
-      for (Spell spell : _inateSpells) {
+      for (Spell spell : inateSpells) {
          //         if (spell instanceof PriestSpell) {
          //            sb.append(((PriestSpell)spell).getDeity()).append(";");
          //         }
@@ -219,66 +219,65 @@ public class Race implements Cloneable, Enums
       }
       byte[] attributeMods = new byte[Attribute.COUNT];
       for (Attribute att : Attribute.values()) {
-         attributeMods[att.value] = _attributeMods.get(att);
+         attributeMods[att.value] = this.attributeMods.get(att);
       }
-      return new Race(_name, _gender, _cost, _buildModifier, _bonusToBeHit, _aveWeight, _baseSpeed, _baseOrientation, _lengthMod3d, _widthMod3d,
-                      attributeMods, _racialProperties.toArray(new String[0]), _racialAdvsNames.toArray(new String[0]), spellNames.toArray(new String[0])) {};
+      return new Race(name, gender, cost, buildModifier, bonusToBeHit, aveWeight, baseSpeed, baseOrientation, lengthMod3d, widthMod3d,
+                      attributeMods, racialProperties.toArray(new String[0]), racialAdvsNames.toArray(new String[0]), spellNames.toArray(new String[0])) {};
    }
 
    public byte getBonusToBeHit() {
-      return _bonusToBeHit;
+      return bonusToBeHit;
    }
 
    public byte getBonusToHit() {
-      return (byte) (-_bonusToBeHit);
+      return (byte) (-bonusToBeHit);
    }
 
    private double getAveWeight() {
-      return _aveWeight;
+      return aveWeight;
    }
 
    public byte getBuildModifier() {
-      return _buildModifier;
+      return buildModifier;
    }
 
    public byte getMovementRate(byte encLevel) {
-      return (byte) Math.floor(_baseSpeed * (1.0 - (.1 * encLevel)));
+      return (byte) Math.floor(baseSpeed * (1.0 - (.1 * encLevel)));
    }
 
    public byte getArmCount() {
-      return _armCount;
+      return armCount;
    }
 
    public byte getTailCount() {
       return (byte) ((hasProperty(PROPERTIES_TAIL)) ? 1 : 0);
    }
 
-   final List<LimbType> _limbSet = new ArrayList<>();
    public List<LimbType> getLimbSet() {
-      if (_limbSet.isEmpty()) {
+      if (limbSet.isEmpty()) {
          for (LimbType limbType : LimbType.values()) {
-            if (limbType.isHead() && (limbType.setId <= _headCount)) {
-               _limbSet.add(limbType);
+            if (limbType.isHead() && (limbType.setId <= headCount)) {
+               limbSet.add(limbType);
             }
-            else if (limbType.isHand() && (limbType.setId <= (_armCount/2))) {
-               _limbSet.add(limbType);
+            else if (limbType.isHand() && (limbType.setId <= (armCount / 2))) {
+               limbSet.add(limbType);
             }
-            else if (limbType.isLeg() && (limbType.setId <= (_legCount/2))) {
-               _limbSet.add(limbType);
+            else if (limbType.isLeg() && (limbType.setId <= (legCount / 2))) {
+               limbSet.add(limbType);
             }
-            else if (limbType.isWing() && (limbType.setId <= (_wingCount/2))) {
-               _limbSet.add(limbType);
+            else if (limbType.isWing() && (limbType.setId <= (wingCount / 2))) {
+               limbSet.add(limbType);
             }
             else if (limbType.isTail() && (limbType.setId <= getTailCount())) {
-               _limbSet.add(limbType);
+               limbSet.add(limbType);
             }
          }
       }
-      return _limbSet;
+      return limbSet;
    }
 
    public byte getAttributeMods(Attribute att) {
-      return _attributeMods.get(att);
+      return attributeMods.get(att);
    }
 
    // racial build adj = log(racial average weight/150) * 13.33
@@ -380,7 +379,7 @@ public class Race implements Cloneable, Enums
    // Racial Build Adj.  = log (racial average weight/150) * 40/3
    // racial weight ave. = 150 * 10^(racial build adj. * 3 / 40);  (doubles every 4 levels)
    // hit adjustment = (buildAdjustment / 4)
-   static final Race[] _raceList = new Race[] {
+   static final Race[] raceList = new Race[] {
                   // name               gender,       cost, bld hit  ave# move   bodyConfig               length width           STR  HT TOU  IQ NIM DEX SOC
        new Race(NAME_Kobold,          Gender.MALE,     -70,  -7, -2,   45,   4,          BodyType.HUMANIOD,1.0, 1.0, new byte[] { 0,  2,  0, -3,  0,  0, -3}, new String[] {PROPERTIES_NPC, PROPERTIES_NIGHT_VISION}, new String[] {Advantage.WEALTH_MULTIPLIER_5, Advantage.NIGHT_VISION}, new String [] {}),
        new Race(NAME_Kobold,          Gender.FEMALE,   -80,  -7, -2,   45,   4,          BodyType.HUMANIOD,1.0, 1.0, new byte[] {-2,  2,  0, -3,  0,  0, -2}, new String[] {PROPERTIES_NPC, PROPERTIES_NIGHT_VISION}, new String[] {Advantage.WEALTH_MULTIPLIER_5, Advantage.NIGHT_VISION}, new String [] {}),
@@ -498,8 +497,8 @@ public class Race implements Cloneable, Enums
 
    public static Race getRace(String name, Gender gender) {
       if (name != null) {
-         for (Race race : _raceList) {
-            if ((name.equalsIgnoreCase(race._name)) && (gender == race._gender)) {
+         for (Race race : raceList) {
+            if ((name.equalsIgnoreCase(race.name)) && (gender == race.gender)) {
                return race.clone();
             }
          }
@@ -509,11 +508,11 @@ public class Race implements Cloneable, Enums
 
    public static List<String> getRaceNames(boolean includeNPCs) {
       List<String> list = new ArrayList<>();
-      for (Race element : _raceList) {
+      for (Race element : raceList) {
          if (includeNPCs || !element.isNpc()) {
             // don't repeat race names for male & female
-            if (!list.contains(element._name)) {
-               list.add(element._name);
+            if (!list.contains(element.name)) {
+               list.add(element.name);
             }
          }
       }
@@ -522,9 +521,9 @@ public class Race implements Cloneable, Enums
 
    public static List<Gender> getGendersForRace(String raceName) {
       List<Gender> list = new ArrayList<>();
-      for (Race race : _raceList) {
+      for (Race race : raceList) {
          if (raceName.equals(race.getName())) {
-            list.add(race._gender);
+            list.add(race.gender);
          }
       }
       return list;
@@ -607,7 +606,7 @@ public class Race implements Cloneable, Enums
                tr.addTD(th);
             }
             Race race = getRace(raceName, gender);
-            tr.addTD(new TableData(race.getGender()._name));
+            tr.addTD(new TableData(race.getGender().name));
             tr.addTD(new TableData(race.getCost()));
             for (Attribute att : Attribute.values()) {
                if (diffAttributePerGender.contains(att) || !allowAttrToCombineIntoSingleRow) {
@@ -741,28 +740,28 @@ public class Race implements Cloneable, Enums
    }
 
    public int getLegCount() {
-      return _legCount;
+      return legCount;
    }
 
    public int getEyeCount() {
-      return _eyeCount;
+      return eyeCount;
    }
 
    public int getHeadCount() {
-      return _headCount;
+      return headCount;
    }
 
    public int getWingCount() {
-      return _wingCount;
+      return wingCount;
    }
 
    public List<String> getRacialPropertiesList() {
-      return new ArrayList<>(_racialProperties);
+      return new ArrayList<>(racialProperties);
    }
 
    public List<Advantage> getAdvantagesList() {
       List<Advantage> advList = new ArrayList<>();
-      for (String advName : _racialAdvsNames) {
+      for (String advName : racialAdvsNames) {
          Advantage adv = Advantage.getAdvantage(advName);
          if (adv != null) {
             advList.add(adv);
@@ -772,31 +771,31 @@ public class Race implements Cloneable, Enums
    }
 
    public float getWealthMultiplier() {
-      if (_racialAdvsNames.contains(Advantage.WEALTH_MULTIPLIER_x1)) {
+      if (racialAdvsNames.contains(Advantage.WEALTH_MULTIPLIER_x1)) {
          return 1.0f;
       }
-      if (_racialAdvsNames.contains(Advantage.WEALTH_MULTIPLIER_x2)) {
+      if (racialAdvsNames.contains(Advantage.WEALTH_MULTIPLIER_x2)) {
          return 2.0f;
       }
-      else if (_racialAdvsNames.contains(Advantage.WEALTH_MULTIPLIER_x3)) {
+      else if (racialAdvsNames.contains(Advantage.WEALTH_MULTIPLIER_x3)) {
          return 3.0f;
       }
-      else if (_racialAdvsNames.contains(Advantage.WEALTH_MULTIPLIER_2)) {
+      else if (racialAdvsNames.contains(Advantage.WEALTH_MULTIPLIER_2)) {
          return 1.0f /  2.0f;
       }
-      else  if (_racialAdvsNames.contains(Advantage.WEALTH_MULTIPLIER_3)) {
+      else  if (racialAdvsNames.contains(Advantage.WEALTH_MULTIPLIER_3)) {
          return 1.0f /  3.0f;
       }
-      else if (_racialAdvsNames.contains(Advantage.WEALTH_MULTIPLIER_4)) {
+      else if (racialAdvsNames.contains(Advantage.WEALTH_MULTIPLIER_4)) {
          return 1.0f /  4.0f;
       }
-      else if (_racialAdvsNames.contains(Advantage.WEALTH_MULTIPLIER_5)) {
+      else if (racialAdvsNames.contains(Advantage.WEALTH_MULTIPLIER_5)) {
          return 1.0f /  5.0f;
       }
       return 1.0f;
    }
    public Advantage getAdvantage(String advName) {
-      for (String racialAdvName : _racialAdvsNames) {
+      for (String racialAdvName : racialAdvsNames) {
          if (racialAdvName.equalsIgnoreCase(advName)) {
             return Advantage.getAdvantage(advName);
          }
@@ -812,7 +811,7 @@ public class Race implements Cloneable, Enums
    }
 
    public boolean hasProperty(String propName) {
-      for (String racialPropName : _racialProperties) {
+      for (String racialPropName : racialProperties) {
          if (racialPropName.equals(propName)) {
             return true;
          }
@@ -821,11 +820,11 @@ public class Race implements Cloneable, Enums
    }
 
    public boolean isAquatic() {
-      return _isAquatic;
+      return isAquatic;
    }
 
    public boolean isAnimal() {
-      return _isAnimal;
+      return isAnimal;
    }
 
    public Wound alterWound(Wound wound, StringBuilder alterationExplanationBuffer) {
@@ -849,26 +848,26 @@ public class Race implements Cloneable, Enums
    }
 
    public Limb createLimb(LimbType id) {
-      if (id.isHead() && (id.setId <= _headCount)) {
+      if (id.isHead() && (id.setId <= headCount)) {
          return new Head(id, this);
       }
-      if (id.isLeg() && (id.setId <= (_legCount/2))) {
+      if (id.isLeg() && (id.setId <= (legCount / 2))) {
          return new Leg(id, this);
       }
-      if (id.isHand() && (id.setId <= (_armCount/2))) {
+      if (id.isHand() && (id.setId <= (armCount / 2))) {
          return new Hand(id, this);
       }
       if (id.isTail() && (id.setId <= getTailCount())) {
          return new Tail(id, this);
       }
-      if (id.isWing() && (id.setId <= (_wingCount/2))) {
+      if (id.isWing() && (id.setId <= (wingCount / 2))) {
          Wing.Type wingType = Wing.Type.Feathered;
-         if (_name.equals(NAME_Fairy)) {
+         if (name.equals(NAME_Fairy)) {
             wingType = Wing.Type.Fairy;
          }
-         if (_name.contains("Dragon") ||
-             _name.equals(NAME_Sturge) ||
-             _name.equals(NAME_Gargoyle)) {
+         if (name.contains("Dragon") ||
+             name.equals(NAME_Sturge) ||
+             name.equals(NAME_Gargoyle)) {
             wingType = Wing.Type.Bat;
          }
          return new Wing(id, wingType, this);
@@ -883,25 +882,25 @@ public class Race implements Cloneable, Enums
          simpleName = "arm";
       }
 
-      thing._name = "Severed " + simpleName;
+      thing.name = "Severed " + simpleName;
       return thing;
    }
 
    public Armor getNaturalArmor() {
-      return _naturalArmor;
+      return naturalArmor;
    }
 
    public byte getNaturalArmorBarrier(DamageType damType) {
-      if (_naturalArmor == null) {
+      if (naturalArmor == null) {
          return 0;
       }
-      return _naturalArmor.getBarrier(damType);
+      return naturalArmor.getBarrier(damType);
    }
 
    public void getPointEstimate() {
       Character testCharacter = new Character();
       for (Attribute att : Attribute.values()) {
-         testCharacter.setAttribute(att, _attributeMods.get(att), false/*containInLimits*/);
+         testCharacter.setAttribute(att, attributeMods.get(att), false/*containInLimits*/);
       }
       int attributeCost = testCharacter.getPointTotal();
 
@@ -914,7 +913,7 @@ public class Race implements Cloneable, Enums
       int propCost = 0;
       boolean hasFangs = false;
       boolean isAnimal = false;
-      for (String prop : _racialProperties) {
+      for (String prop : racialProperties) {
          switch (prop) {
             case PROPERTIES_2_WINGS:
                propCost += 40;
@@ -994,33 +993,33 @@ public class Race implements Cloneable, Enums
          propCost += 20;
       }
       int adjustmentForBuild;
-      int adjustmentForMove = (_baseSpeed - 5) * 10;
-      if (_buildModifier > 0) {
+      int adjustmentForMove = (baseSpeed - 5) * 10;
+      if (buildModifier > 0) {
          // +20 for level above 0, up to 5:
-         adjustmentForBuild = 20 * _buildModifier;
-         if (_buildModifier > 5) {
+         adjustmentForBuild = 20 * buildModifier;
+         if (buildModifier > 5) {
             // +40 for level above 5 (plus 100 for the first 5 levels):
-            adjustmentForBuild += (_buildModifier - 5) * 20;
+            adjustmentForBuild += (buildModifier - 5) * 20;
          }
       }
       else {
          // -10 for level below 0:
-         adjustmentForBuild = 10 * _buildModifier;
-         if (_buildModifier < -3) {
+         adjustmentForBuild = 10 * buildModifier;
+         if (buildModifier < -3) {
             // -7.5 for levels below -3:
-            adjustmentForBuild = (int) (-30 + (7.5 * (_buildModifier + 3)));
+            adjustmentForBuild = (int) (-30 + (7.5 * (buildModifier + 3)));
          }
       }
       adjustmentForBuild += getBonusToHit() * 5;
       adjustmentForBuild += getBonusToBeHit() * -5;
 
       int adjustmentForInateSpells = 0;
-      for (Spell spell : _inateSpells) {
+      for (Spell spell : inateSpells) {
          adjustmentForInateSpells += 20 * spell.getPower();
       }
 
       int total = attributeCost + adjustmentForBuild + adjustmentForMove + advCost + propCost + adjustmentForInateSpells;
-      int diff = Math.abs(_cost - total);
+      int diff = Math.abs(cost - total);
       // If it's within 5 points, ignore the difference
       if (diff < 5) {
          return;
@@ -1029,27 +1028,27 @@ public class Race implements Cloneable, Enums
       if ((diff * 20) < total) {
          return;
       }
-      Rules.diag("cost analysis of " + getName() + "(" + getGender()._name.charAt(0) + ") = " + total + "(" + attributeCost + " + " + advCost + " + " + propCost
-                 + " + " + adjustmentForBuild + " + " + adjustmentForMove + "), listed at " + _cost);
+      Rules.diag("cost analysis of " + getName() + "(" + getGender().name.charAt(0) + ") = " + total + "(" + attributeCost + " + " + advCost + " + " + propCost
+                 + " + " + adjustmentForBuild + " + " + adjustmentForMove + "), listed at " + cost);
    }
 
    public void testRacialSize() {
       // Racial Build Adj.  = log (racial average weight/150) * 40/3
       // racial weight ave. = 150 * 10^(racial build adj. * 3 / 40);
       // hit adjustment = (buildAdjustment / 4)
-      double expectedWeight = 150 * Math.pow(10, ((_buildModifier * 3.0) / 40.0));
+      double expectedWeight = 150 * Math.pow(10, ((buildModifier * 3.0) / 40.0));
       // allow a 5% margin of error:
       StringBuilder sb = new StringBuilder();
-      sb.append("analysis of ").append(getName()).append("(").append(getGender()._name.charAt(0)).append(") : ");
-      if ((Math.abs(expectedWeight - _aveWeight) / _aveWeight) > .05) {
-         sb.append("weight exp weight=").append(expectedWeight).append(", listed weight=").append(_aveWeight);
+      sb.append("analysis of ").append(getName()).append("(").append(getGender().name.charAt(0)).append(") : ");
+      if ((Math.abs(expectedWeight - aveWeight) / aveWeight) > .05) {
+         sb.append("weight exp weight=").append(expectedWeight).append(", listed weight=").append(aveWeight);
       }
-      byte expectedBonusToBeHit = (byte) Math.floor(.499d + (_buildModifier / 4.0));
-      if ((_legCount > 2) && (_armCount == 0)) {
+      byte expectedBonusToBeHit = (byte) Math.floor(.499d + (buildModifier / 4.0));
+      if ((legCount > 2) && (armCount == 0)) {
          expectedBonusToBeHit--;
       }
-      if (_bonusToBeHit != expectedBonusToBeHit ) {
-         sb.append(" exp bonusToBeHit=").append(expectedBonusToBeHit).append(", listed bonusToBeHit=").append(_bonusToBeHit);
+      if (bonusToBeHit != expectedBonusToBeHit ) {
+         sb.append(" exp bonusToBeHit=").append(expectedBonusToBeHit).append(", listed bonusToBeHit=").append(bonusToBeHit);
       }
       Rules.diag(sb.toString());
    }

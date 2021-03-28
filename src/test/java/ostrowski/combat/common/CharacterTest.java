@@ -22,7 +22,7 @@ public class CharacterTest
    public void testAnglePairs() {
       AnglePair pair = new AnglePair((30 * 2*Math.PI)/360, (50 * 2*Math.PI)/360);
       assertTrue(Math.abs(pair.width() - ((20 * 2*Math.PI)/360)) < 0.00000000001);
-      assertTrue(Math.abs(pair._startAngle - ((30 * 2*Math.PI)/360)) < 0.00000000001);
+      assertTrue(Math.abs(pair.startAngle - ((30 * 2 * Math.PI) / 360)) < 0.00000000001);
    }
 
    @Test

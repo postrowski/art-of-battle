@@ -21,7 +21,6 @@ import ostrowski.combat.common.things.Weapon;
 import ostrowski.combat.common.weaponStyles.WeaponStyleAttack;
 import ostrowski.combat.common.weaponStyles.WeaponStyleAttackRanged;
 import ostrowski.combat.common.wounds.Wound;
-import ostrowski.combat.common.wounds.WoundChart;
 import ostrowski.combat.common.wounds.WoundCharts;
 import ostrowski.combat.protocol.BeginBattle;
 import ostrowski.combat.protocol.request.*;
@@ -34,69 +33,77 @@ import ostrowski.util.SemaphoreAutoTracker;
 import java.util.*;
 
 public class Battle extends Thread implements Enums {
-   public final Arena _arena;
-   int _turnCount  = 1;
-   int _roundCount = 1;
-   int _phaseCount = 1;
-   public boolean      _startMidTurn              = false;
-   public       boolean      _resetMessageBufferOnStart = true;
-   public final CombatServer _combatServer;
-   public       int          _turnPause                 = 1000;
-   public int          _roundPause                = 1000;
-   public int          _phasePause                = 1000;
+   public final Arena arena;
+   int turnCount  = 1;
+   int roundCount = 1;
+   int phaseCount = 1;
+   public        boolean      startMidTurn              = false;
+   public        boolean      resetMessageBufferOnStart = true;
+   public final  CombatServer combatServer;
+   public        int          turnPause                 = 1000;
+   public        int          roundPause                = 1000;
+   public        int          phasePause                = 1000;
+   private       boolean      terminateBattle           = false;
+   private final List<Object> waitingObjects            = new ArrayList<>();
+
+   final HashMap<Character, Character> aimingCharacters      = new HashMap<>();
+   final Semaphore                     lock_aimingCharacters = new Semaphore("Battle_aimingCharacters", CombatSemaphore.CLASS_BATTLE_aimingCharacters);
+   final Semaphore                     lock_waitingToAttack  = new Semaphore("Battle_waitingToAttack", CombatSemaphore.CLASS_BATTLE_waitingToAttack);
+   final HashSet<Character>            waitingToAttack                    = new HashSet<>();
+   public final HashMap<Integer, Byte> berserkingCharactersOriginalTeamID = new HashMap<>();
 
    public void onPause() {
-      _turnPause = _turnCount;
-      _roundPause = _roundCount;
-      _phasePause = _phaseCount;
+      turnPause = turnCount;
+      roundPause = roundCount;
+      phasePause = phaseCount;
    }
 
    public int getTimeID() {
-      return (_turnCount * 100) + (_roundCount * 10) + _phaseCount;
+      return (turnCount * 100) + (roundCount * 10) + phaseCount;
    }
 
    public void onPlay() {
-      _turnPause = 10000;
-      _roundPause = 10000;
-      _phasePause = 10000;
+      turnPause = 10000;
+      roundPause = 10000;
+      phasePause = 10000;
    }
 
    public void forceNewTurn() {
-      _phaseCount = 1;
-      _roundCount = 1;
+      phaseCount = 1;
+      roundCount = 1;
    }
 
    public void onTurnAdvance() {
-      _phasePause = 1;
-      _roundPause = 1;
-      _turnPause = _turnCount + 1;
+      phasePause = 1;
+      roundPause = 1;
+      turnPause = turnCount + 1;
    }
 
    public void onRoundAdvance() {
-      _phasePause = 1;
-      _roundPause = _roundCount + 1;
-      _turnPause = _turnCount;
+      phasePause = 1;
+      roundPause = roundCount + 1;
+      turnPause = turnCount;
    }
 
    public void onPhaseAdvance() {
-      _phasePause = _phaseCount + 1;
-      _roundPause = _roundCount;
-      _turnPause = _turnCount;
+      phasePause = phaseCount + 1;
+      roundPause = roundCount;
+      turnPause = turnCount;
    }
 
    private void checkForPause() {
-      /*synchronized (_waitingObjects)*/
+      /*synchronized (waitingObjects)*/
       {
-         Rules.diag("### inside lock checkForPause, of waitingList = @" + Integer.toHexString(_waitingObjects.hashCode()) + ": " + _waitingObjects);
-         if (_turnCount > _turnPause) {
-            _combatServer.waitForPlay(_waitingObjects);
-         } else if (_turnCount == _turnPause) {
-            if (_roundCount > _roundPause) {
-               _combatServer.waitForPlay(_waitingObjects);
+         Rules.diag("### inside lock checkForPause, of waitingList = @" + Integer.toHexString(waitingObjects.hashCode()) + ": " + waitingObjects);
+         if (turnCount > turnPause) {
+            combatServer.waitForPlay(waitingObjects);
+         } else if (turnCount == turnPause) {
+            if (roundCount > roundPause) {
+               combatServer.waitForPlay(waitingObjects);
             }
-            if (_roundCount == _roundPause) {
-               if (_phaseCount >= _phasePause) {
-                  _combatServer.waitForPlay(_waitingObjects);
+            if (roundCount == roundPause) {
+               if (phaseCount >= phasePause) {
+                  combatServer.waitForPlay(waitingObjects);
                }
             }
          }
@@ -105,78 +112,75 @@ public class Battle extends Thread implements Enums {
 
    public Battle(String threadName, Arena arena, CombatServer combatServer) {
       super(threadName);
-      _arena = arena;
-      _combatServer = combatServer;
+      this.arena = arena;
+      this.combatServer = combatServer;
    }
 
    @Override
    public void run() {
-      if (!_startMidTurn) {
+      if (!startMidTurn) {
          // Initialize our current turn/round/phase information:
-         _turnCount = 1;
-         _roundCount = 1;
-         _phaseCount = 1;
+         turnCount = 1;
+         roundCount = 1;
+         phaseCount = 1;
       }
-      if (_resetMessageBufferOnStart) {
-         _combatServer.resetMessageBuffer();
+      if (resetMessageBufferOnStart) {
+         combatServer.resetMessageBuffer();
       }
-      _combatServer.onNewBattle();
+      combatServer.onNewBattle();
       StringBuilder sb = new StringBuilder();
-      for (Character combatant : _arena.getCombatants()) {
+      for (Character combatant : arena.getCombatants()) {
          sb.append("<br/>");
-         sb.append(combatant.getName()).append(" has entered the arena on team ").append(TEAM_NAMES[combatant._teamID]).append(".<br/>");
+         sb.append(combatant.getName()).append(" has entered the arena on team ").append(TEAM_NAMES[combatant.teamID]).append(".<br/>");
          sb.append(combatant.print()).append(".<br/>");
       }
-      _arena.sendMessageTextToAllClients(sb.toString(), false/*popUp*/);
+      arena.sendMessageTextToAllClients(sb.toString(), false/*popUp*/);
 
-      _arena.sendMessageTextToAllClients("<HR/>Battle Begins! <HR/>", false/*popUp*/);
-      _arena.sendMessageTextToAllClients("Pseudo-random number seed = " + CombatServer.getPseudoRandomNumberSeed() + "<br/>", false/*popUp*/);
-      _arena.sendMessageTextToAllClients("server version " + CombatServer.getVersionNumber() + "<br/>", false/*popUp*/);
+      arena.sendMessageTextToAllClients("<HR/>Battle Begins! <HR/>", false/*popUp*/);
+      arena.sendMessageTextToAllClients("Pseudo-random number seed = " + CombatServer.getPseudoRandomNumberSeed() + "<br/>", false/*popUp*/);
+      arena.sendMessageTextToAllClients("server version " + CombatServer.getVersionNumber() + "<br/>", false/*popUp*/);
       BeginBattle battleMsg = new BeginBattle();
-      _arena.sendEventToAllClients(battleMsg);
-      _arena.clearStartingPointLabels();
-      while (_arena.stillFighting()) {
+      arena.sendEventToAllClients(battleMsg);
+      arena.clearStartingPointLabels();
+      while (arena.stillFighting()) {
          try {
-            executeTurn(_startMidTurn);
-            _startMidTurn = false;
+            executeTurn(startMidTurn);
+            startMidTurn = false;
          } catch (BattleTerminatedException e) {
-            _arena.sendMessageTextToAllClients("<HR/>Battle terminated! <HR/>", false/*popUp*/);
-            _arena._characterGenerated = false;
+            arena.sendMessageTextToAllClients("<HR/>Battle terminated! <HR/>", false/*popUp*/);
+            arena.characterGenerated = false;
             return;
          } catch (Throwable e) {
-            _arena.sendMessageTextToAllClients(e.toString(), false/*popUp*/);
+            arena.sendMessageTextToAllClients(e.toString(), false/*popUp*/);
             e.printStackTrace();
          }
       }
-      _arena.sendMessageTextToAllClients("<HR/>Battle Complete! <HR/>", false/*popUp*/);
-      _arena.onBattleComplete(this);
+      arena.sendMessageTextToAllClients("<HR/>Battle Complete! <HR/>", false/*popUp*/);
+      arena.onBattleComplete(this);
       // reset for the next battle:
       CombatServer.resetPseudoRandomNumberGenerator();
    }
 
-   private       boolean      _terminateBattle = false;
-   private final List<Object> _waitingObjects  = new ArrayList<>();
-
    public void terminateBattle() {
-      _terminateBattle = true;
-      /*synchronized (_waitingObjects)*/
+      terminateBattle = true;
+      /*synchronized (waitingObjects)*/
       {
-         Rules.diag("### inside lock terminateBattle, of waitingList = @" + Integer.toHexString(_waitingObjects.hashCode()) + ": " + _waitingObjects);
-         while (_waitingObjects.size() > 0) {
-            Object element = _waitingObjects.remove(0);
+         Rules.diag("### inside lock terminateBattle, of waitingList = @" + Integer.toHexString(waitingObjects.hashCode()) + ": " + waitingObjects);
+         while (waitingObjects.size() > 0) {
+            Object element = waitingObjects.remove(0);
             synchronized (element) {
                Rules.diag("### about to notifyAll @" + Integer.toHexString(element.hashCode()) + ": " + element);
                element.notifyAll();
             }
          }
       }
-      synchronized (_waitingToAttack) {
-         _lock_waitingToAttack.check();
-         _waitingToAttack.clear();
+      synchronized (waitingToAttack) {
+         lock_waitingToAttack.check();
+         waitingToAttack.clear();
       }
-      synchronized (_aimingCharacters) {
-         _lock_aimingCharacters.check();
-         _aimingCharacters.clear();
+      synchronized (aimingCharacters) {
+         lock_aimingCharacters.check();
+         aimingCharacters.clear();
       }
       // reset for the next battle:
       CombatServer.resetPseudoRandomNumberGenerator();
@@ -184,21 +188,21 @@ public class Battle extends Thread implements Enums {
 
    private void executeTurn(boolean startMidTurn) throws BattleTerminatedException {
       checkForPause();
-      _arena.sendMessageTextToAllClients("<HR/><H3>Turn " + _turnCount + ":</H3>", false/*popUp*/);
+      arena.sendMessageTextToAllClients("<HR/><H3>Turn " + turnCount + ":</H3>", false/*popUp*/);
       if (!startMidTurn) {
-         _turnCount++;
+         turnCount++;
          resolvePainAndInitiative();
-         _roundCount = 1;
+         roundCount = 1;
       }
 
       // First let everyone with the highest actions go first.
       // When there is a tie, let those with the higher initiative go first.
-      List<Character> combatants = _arena.orderCombatantsByActionsAndInitiative();
+      List<Character> combatants = arena.orderCombatantsByActionsAndInitiative();
       List<Character> activeCombatants = new ArrayList<>();
       do {
          activeCombatants.clear();
          synchronized (combatants) {
-            try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_arena._lock_combatants)) {
+            try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(arena.lock_combatants)) {
                for (Character combatant : combatants) {
                   if (combatant.stillFighting()) {
                      if (combatant.getActionsAvailable(false/*usedForDefenseOnly*/) > 0) {
@@ -212,11 +216,11 @@ public class Battle extends Thread implements Enums {
             // The turn ends when no fighting combatants have any actions available.
             return;
          }
-      } while (executeRound(activeCombatants, combatants) && _arena.stillFighting());
+      } while (executeRound(activeCombatants, combatants) && arena.stillFighting());
       synchronized (combatants) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_arena._lock_combatants)) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(arena.lock_combatants)) {
             for (Character combatant : combatants) {
-               combatant.completeTurn(_arena);
+               combatant.completeTurn(arena);
             }
          }
       }
@@ -225,7 +229,7 @@ public class Battle extends Thread implements Enums {
    // return 'true' if any actions remains to be spent by any character
    private boolean executeRound(List<Character> activeCombatants, List<Character> allCombatants) throws BattleTerminatedException {
 
-      _arena.getCombatMap().onNewRound(this);
+      arena.getCombatMap().onNewRound(this);
 
       // Put all the combatants into a List of Lists. Characters in the same inner List
       // will act at the same time as each other. The outer list will be gone through
@@ -275,9 +279,9 @@ public class Battle extends Thread implements Enums {
       // now we go through the outer list, asking each combatant in the inner list to choose their
       // action, then we resolve their action.
       StringBuilder sb = new StringBuilder();
-      sb.append("<H4>Round ").append(_roundCount++).append(":</H4>");
+      sb.append("<H4>Round ").append(roundCount++).append(":</H4>");
       synchronized (allCombatants) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_arena._lock_combatants)) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(arena.lock_combatants)) {
             for (Character combatant : allCombatants) {
                if (combatant.stillFighting()) {
                   sb.append("<br/>(").append(combatant.getName());
@@ -352,19 +356,19 @@ public class Battle extends Thread implements Enums {
             }
          }
       }
-      _arena.sendMessageTextToAllClients(sb.toString(), false/*popUp*/);
+      arena.sendMessageTextToAllClients(sb.toString(), false/*popUp*/);
 
-      _phaseCount = 1;
+      phaseCount = 1;
       while (outerList.size() > 0) {
          List<Character> innerList = outerList.remove(0);
          if (innerList.size() > 0) {
             checkForPause();
-            _phaseCount++;
+            phaseCount++;
             Character actingChar = innerList.get(0);
             sb.setLength(0);
             sb.append("<b>actions=").append(actingChar.getActionsAvailable(false/*usedForDefenseOnly*/));
             sb.append(", initiative=").append(actingChar.getInitiative()).append(":</b><br/>");
-            _arena.sendMessageTextToAllClients(sb.toString(), false/*popUp*/);
+            arena.sendMessageTextToAllClients(sb.toString(), false/*popUp*/);
             Map<Character, RequestAction> results = new HashMap<>();
             if (selectActions(innerList, results, allCombatants)) {
                Map<Character, List<Wound>> wounds = new HashMap<>();
@@ -378,12 +382,12 @@ public class Battle extends Thread implements Enums {
                   applySpells(spells);
                }
             }
-            CombatServer._this._map.applyAnimations();
+            CombatServer._this.map.applyAnimations();
          }
       }
       boolean charactersWithActionsRemaining = false;
       synchronized (allCombatants) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_arena._lock_combatants)) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(arena.lock_combatants)) {
             for (Character combatant : allCombatants) {
                if (combatant.endRound()) {
                   charactersWithActionsRemaining = true;
@@ -391,7 +395,7 @@ public class Battle extends Thread implements Enums {
             }
          }
       }
-      _arena.getCombatMap().onEndRound(this);
+      arena.getCombatMap().onEndRound(this);
 
       return charactersWithActionsRemaining;
    }
@@ -419,15 +423,15 @@ public class Battle extends Thread implements Enums {
          if (currentSpell != null) {
             if (currentSpell instanceof PriestSpell) {
                if (action.isAttack() || action.isTargetEnemy()) {
-                  _arena.sendMessageTextToAllClients(actor.getName() + "'s action terminates his " + currentSpell.getName() + " spell.", false);
+                  arena.sendMessageTextToAllClients(actor.getName() + "'s action terminates his " + currentSpell.getName() + " spell.", false);
                   actor.getCurrentSpell(true/*eraseCurrentSpell*/);
                }
             }
          }
-         int targetID = action._targetID;
+         int targetID = action.targetID;
          if (action.isCompleteSpell()) {
-            if (action._targetSelection != null) {
-               targetID = action._targetSelection.getAnswerID();
+            if (action.targetSelection != null) {
+               targetID = action.targetSelection.getAnswerID();
             }
          }
          // All movement actions have already been applied.
@@ -437,11 +441,11 @@ public class Battle extends Thread implements Enums {
                if (actor.getPlacedIntoHoldThisTurn(holder)) {
                   continue;
                }
-               RequestGrapplingHoldMaintain grappleMaintain = holder.getGrapplingHoldMaintain(actor, action, _arena);
+               RequestGrapplingHoldMaintain grappleMaintain = holder.getGrapplingHoldMaintain(actor, action, arena);
                if (holder instanceof Character) {
                   sendRequestToCombatant((Character) holder, grappleMaintain);
                }
-               holder.applyHoldMaintenance(grappleMaintain, _arena);
+               holder.applyHoldMaintenance(grappleMaintain, arena);
                if (resolveBreakFree(actor, holder, action, grappleMaintain)) {
                   // If the break free succeeded, then the actor is no longer held by the holder
                   actor.setHoldLevel(holder, null);
@@ -453,7 +457,7 @@ public class Battle extends Thread implements Enums {
                DebugBreak.debugBreak();
             }
          }
-         Character target = _arena.getCharacter(targetID);
+         Character target = arena.getCharacter(targetID);
          boolean spellResolved = false;
          if (action.isCompleteSpell()) {
             if (currentSpell != null) {
@@ -476,7 +480,7 @@ public class Battle extends Thread implements Enums {
                   }
                }
                else { // currentSpell.affectsMultipleTargets()
-                  for (Character combatant : _arena.getCombatants()) {
+                  for (Character combatant : arena.getCombatants()) {
                      if (currentSpell.canTarget(actor, combatant) == null) {
                         // beneficial spells only affect allies,
                         // and non beneficial spells only affect enemies.
@@ -506,8 +510,8 @@ public class Battle extends Thread implements Enums {
                }
                // TODO: isRetreat() ALWAYS returns false
                else if (action.isRetreat()) {
-                  ArenaLocation attackFromLocation = actor.getAttackFromLocation(action, _arena.getCombatMap());
-                  _arena.moveToFrom(actor, null, attackFromLocation, null/*attackFromLimb*/);
+                  ArenaLocation attackFromLocation = actor.getAttackFromLocation(action, arena.getCombatMap());
+                  arena.moveToFrom(actor, null, attackFromLocation, null/*attackFromLimb*/);
                } else if (action.isTargetEnemy()) {
                   addAimingCharacter(actor, target);
                }
@@ -518,42 +522,42 @@ public class Battle extends Thread implements Enums {
                   Spell spell = actor.getCurrentSpell(true/*eraseCurrentSpell*/);
                   spell.setTarget(target);
                   if (spell instanceof IAreaSpell) {
-                     ArenaCoordinates coord = action._locationSelection.getAnswerCoordinates();
-                     ((IAreaSpell) spell).setTargetLocation(_arena.getLocation(coord), _arena);
+                     ArenaCoordinates coord = action.locationSelection.getAnswerCoordinates();
+                     ((IAreaSpell) spell).setTargetLocation(arena.getLocation(coord), arena);
                   }
                   spell.completeSpell();
                   spell.resolveSpell(action, null/*defense*/, spells, wounds, this);
                }
             }
          }
-         if (action.isPickupItem(actor, _arena)) {
+         if (action.isPickupItem(actor, arena)) {
             int itemIndex = action.getAnswerIndex();
             IRequestOption answer = action.answer();
             if (answer instanceof RequestActionOption) {
                RequestActionOption reqActOpt = (RequestActionOption) answer;
                itemIndex = reqActOpt.getValue().getIndexOfLocationAction();
             }
-            Object thing = _arena.pickupItem(actor, action, itemIndex, _combatServer._diag);
+            Object thing = arena.pickupItem(actor, action, itemIndex, combatServer.diag);
             if (!actor.pickupObject(thing)) {
-               actor.getLimbLocation(action.getLimb(), _arena.getCombatMap()).addThing(thing);
+               actor.getLimbLocation(action.getLimb(), arena.getCombatMap()).addThing(thing);
                // The ArenaLocation is a monitoredObject, it will report
                // the change to any watcher of the location.
                //else
-               //   _arena.sendServerStatus(null, false/*fullMap*/, false/*recomputeVisibility*/);
+               //   arena.sendServerStatus(null, false/*fullMap*/, false/*recomputeVisibility*/);
             }
          } else {
             // add the original locations of the target to the list of locations
             // that must be redrawn
             Collection<ArenaCoordinates> locationsToRedraw = new ArrayList<>(actor.getCoordinates());
-            _arena.sendCharacterUpdate(actor, locationsToRedraw);
+            arena.sendCharacterUpdate(actor, locationsToRedraw);
          }
-         if (action.isLocationAction(actor, _arena)) {
-            _arena.applyAction(actor, action);
+         if (action.isLocationAction(actor, arena)) {
+            arena.applyAction(actor, action);
          }
 
          // Attacks have already been described, don't describe them again.
          if (!action.isDefendable()) {
-            _arena.sendMessageTextToAllClients(action.getActionDescription(actor, target, _arena), false/*popUp*/);
+            arena.sendMessageTextToAllClients(action.getActionDescription(actor, target, arena), false/*popUp*/);
          }
       }
    }
@@ -577,17 +581,17 @@ public class Battle extends Thread implements Enums {
             spell.getCastingPower(action, minDistanceInHexes, range, this, null);
          }
       }
-      RequestDefense defense = target.getDefenseRequest(0, actor, action, _arena, false/*forCounterAttack*/);
+      RequestDefense defense = target.getDefenseRequest(0, actor, action, arena, false/*forCounterAttack*/);
       sendRequestToCombatant(target, defense);
-      target.applyDefense(defense, _arena);
+      target.applyDefense(defense, arena);
       // all movement actions occur as the action is received, so we don't need to do this here.
       //if (action.isAdvance()) {
-      //   _arena.moveToFrom(actor, target, false/*isRetreat*/);
+      //   arena.moveToFrom(actor, target, false/*isRetreat*/);
       //}
       Orientation originalOrientation = target.getOrientation();
       if (defense.isRetreat()) {
-         ArenaLocation attackFromLocation = actor.getAttackFromLocation(action, _arena.getCombatMap());
-         _arena.moveToFrom(target, actor, attackFromLocation/*retreatFromLocation*/, null/*attackFromLimb*/);
+         ArenaLocation attackFromLocation = actor.getAttackFromLocation(action, arena.getCombatMap());
+         arena.moveToFrom(target, actor, attackFromLocation/*retreatFromLocation*/, null/*attackFromLimb*/);
       }
       //               if (action.isChannelEnergy()) {
       //               }
@@ -604,11 +608,11 @@ public class Battle extends Thread implements Enums {
       if (actionSuccessful) {
          if (action.isGrappleAttack() || action.isDualGrappleAttack()) {
             if (defense.isRetreat()) {
-               _arena.moveCharacter(target, originalOrientation);
+               arena.moveCharacter(target, originalOrientation);
             }
             if (Arena.getMinDistance(actor, target) > 1) {
                // if the actor is still not next to the target, move the actor forward:
-               _arena.moveToFrom(actor, target, null, null/*attackFromLimb*/);
+               arena.moveToFrom(actor, target, null, null/*attackFromLimb*/);
             }
          }
       } else {
@@ -621,7 +625,7 @@ public class Battle extends Thread implements Enums {
       // that must be redrawn
       targetsLocationsToRedraw.addAll(target.getCoordinates());
 
-      _arena.sendCharacterUpdate(target, targetsLocationsToRedraw);
+      arena.sendCharacterUpdate(target, targetsLocationsToRedraw);
    }
 
    private void resolveCounterAttack(Character counterAttacker, RequestDefense defense, Character counterAttackTarget,
@@ -630,7 +634,7 @@ public class Battle extends Thread implements Enums {
       int actionsUsed = RequestDefense.getDefenseCounterActions(defense.getAnswerID());
 
 
-      RequestAction counterAttack = new RequestAction(counterAttacker._uniqueID, counterAttackTarget._uniqueID);
+      RequestAction counterAttack = new RequestAction(counterAttacker.uniqueID, counterAttackTarget.uniqueID);
       LimbType limbType = LimbType.HAND_RIGHT;
       DefenseOptions defOpts = defense.getDefenseOptions();
       if (defOpts.isCounterAttackGrab()) {
@@ -648,16 +652,16 @@ public class Battle extends Thread implements Enums {
          targetsLocationsToRedraw.addAll(counterAttackTarget.getCoordinates());
       }
 
-      RequestDefense counterDefense = counterAttackTarget.getDefenseRequest(0, counterAttacker, counterAttack, _arena, true/*forCounterAttack*/);
+      RequestDefense counterDefense = counterAttackTarget.getDefenseRequest(0, counterAttacker, counterAttack, arena, true/*forCounterAttack*/);
       sendRequestToCombatant(counterAttackTarget, counterDefense);
 
-      counterAttack._styleRequest = counterAttacker.getRequestAttackStyle(counterAttack, _arena);
-      counterAttack._styleRequest.setAnswerByOptionIndex(actionsUsed - 1);
-      //sendRequestToCombatant(counterAttacker, counterAttack._styleRequest);
+      counterAttack.styleRequest = counterAttacker.getRequestAttackStyle(counterAttack, arena);
+      counterAttack.styleRequest.setAnswerByOptionIndex(actionsUsed - 1);
+      //sendRequestToCombatant(counterAttacker, counterAttack.styleRequest);
 
       resolveAttack(counterAttacker, counterAttack, counterAttackTarget, counterDefense, wounds);
 
-      counterAttackTarget.applyDefense(counterDefense, _arena);
+      counterAttackTarget.applyDefense(counterDefense, arena);
 
       DefenseOptions counterDefOpts = counterDefense.getDefenseOptions();
       int actionsCount = counterDefOpts.getDefenseCounterDefenseActions();
@@ -754,30 +758,30 @@ public class Battle extends Thread implements Enums {
       }
       sb.append("</table>");
 
-      _arena.sendMessageTextToAllClients(sb.toString(), false/*popUp*/);
+      arena.sendMessageTextToAllClients(sb.toString(), false/*popUp*/);
       return escape;
    }
 
    private void sendRequestToCombatant(Character combatant, SyncRequest request) throws BattleTerminatedException {
-      _arena.sendObjectToCombatant(combatant, request);
-      /*synchronized (_waitingObjects)*/
+      arena.sendObjectToCombatant(combatant, request);
+      /*synchronized (waitingObjects)*/
       {
-         Rules.diag("### inside lock applyActions, of waitingList = @" + Integer.toHexString(_waitingObjects.hashCode()) + ": " + _waitingObjects);
+         Rules.diag("### inside lock applyActions, of waitingList = @" + Integer.toHexString(waitingObjects.hashCode()) + ": " + waitingObjects);
          synchronized (request) {
-            try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(request._lockThis)) {
+            try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(request.lockThis)) {
                if (!request.isAnswered()) {
-                  if (_terminateBattle) {
+                  if (terminateBattle) {
                      throw new BattleTerminatedException();
                   }
                   try {
                      Rules.diag("### about to wait in applyActions, for response in @" + Integer.toHexString(request.hashCode()) + ": " + request);
-                     _waitingObjects.add(request);
+                     waitingObjects.add(request);
                      request.wait();
                   } catch (InterruptedException e) {
                      // shouldn't get here
                   } finally {
                      Rules.diag("### done waiting in applyActions, for response in @" + Integer.toHexString(request.hashCode()) + ": " + request);
-                     _waitingObjects.remove(request);
+                     waitingObjects.remove(request);
                   }
                }
             }
@@ -795,19 +799,19 @@ public class Battle extends Thread implements Enums {
          boolean targetConsciousBeforeWound = target.getCondition().isConscious();
          List<Spell> spellsList = spells.get(target);
          for (Spell spell : spellsList) {
-            spell.applySpell(target, _arena);
+            spell.applySpell(target, arena);
          }
          boolean targetConsciousAfterWound = target.getCondition().isConscious() && target.getCondition().isAlive();
          if (targetConsciousBeforeWound && !targetConsciousAfterWound &&
              (target.getWounds() >= Rules.getUnconsciousWoundLevel(target.getAttributeLevel(Attribute.Toughness)))) {
-            _arena.sendMessageTextToAllClients(target.getName() + " falls unconscious due to " + target.getHisHer() +
-                                               " wounds.", false/*popUp*/);
+            arena.sendMessageTextToAllClients(target.getName() + " falls unconscious due to " + target.getHisHer() +
+                                              " wounds.", false/*popUp*/);
          }
          // add the new locations of the target to the list of locations
          // that must be redrawn
          locationsToRedraw.addAll(target.getCoordinates());
 
-         _arena.sendCharacterUpdate(target, locationsToRedraw);
+         arena.sendCharacterUpdate(target, locationsToRedraw);
       }
    }
 
@@ -817,25 +821,25 @@ public class Battle extends Thread implements Enums {
          boolean targetConsciousBeforeWound = target.getCondition().isConscious();
          List<Wound> woundsList = wounds.get(target);
          for (Wound wound : woundsList) {
-            target.applyWound(wound, _arena);
+            target.applyWound(wound, arena);
          }
          boolean targetConsciousAfterWound = target.getCondition().isConscious() && target.getCondition().isAlive();
          if (targetConsciousBeforeWound && !targetConsciousAfterWound &&
              (target.getWounds() >= Rules.getUnconsciousWoundLevel(target.getAttributeLevel(Attribute.Toughness)))) {
-            _arena.sendMessageTextToAllClients(target.getName() + " falls unconscious due to " + target.getHisHer() +
-                                               " wounds.", false/*popUp*/);
+            arena.sendMessageTextToAllClients(target.getName() + " falls unconscious due to " + target.getHisHer() +
+                                              " wounds.", false/*popUp*/);
          }
          // add the locations of the target to the list of locations
          // that must be redrawn
          Collection<ArenaCoordinates> locationsToRedraw = new ArrayList<>(target.getCoordinates());
 
-         _arena.sendCharacterUpdate(target, locationsToRedraw);
+         arena.sendCharacterUpdate(target, locationsToRedraw);
       }
    }
 
    private boolean resolveAttack(Character attacker, RequestAction attack, Character defender, RequestDefense defense,
                                  Map<Character, List<Wound>> wounds) throws BattleTerminatedException {
-      int attackStyle = attack._styleRequest.getAnswerIndex();
+      int attackStyle = attack.styleRequest.getAnswerIndex();
       boolean grappleAttack = attack.isGrappleAttack() || attack.isCounterAttackGrab();
       Weapon attackingWeapon = attacker.getLimb(attack.getLimb()).getWeapon(attacker);
       WeaponStyleAttack attackMode;
@@ -851,10 +855,10 @@ public class Battle extends Thread implements Enums {
       byte grapplePenalty = attacker.getPenaltyForBeingHeld();
       byte positionAdjustment = attacker.getPositionAdjustmentForAttack();
       StringBuilder terrainExplanation = new StringBuilder();
-      byte terrainAdjustment = attacker.getTerrainAdjustmentForAttack(terrainExplanation, _arena.getCombatMap());
+      byte terrainAdjustment = attacker.getTerrainAdjustmentForAttack(terrainExplanation, arena.getCombatMap());
 
       byte attackActions = (byte) Math.min(attack.getAttackActions(false/*considerSpellAsAttack*/), attackMode.getMaxAttackActions());
-      int aimActions = attacker.getAimDuration(defender._uniqueID);
+      int aimActions = attacker.getAimDuration(defender.uniqueID);
       if (aimActions > 0) {
          attackActions += (byte) (Math.min(aimActions - 1, attackMode.getMaxAimBonus()));
       }
@@ -911,7 +915,7 @@ public class Battle extends Thread implements Enums {
       sb.append("<br/>");
       DiceSet dice = null;
       if (Configuration.useExtendedDice()) {
-         dice = attack._styleRequest.getAttackDice();
+         dice = attack.styleRequest.getAttackDice();
       } else if (Configuration.useSimpleDice()) {
          dice = new DiceSet(0/*d1*/, 0/*d4*/, 0/*d6*/, 0/*d8*/, 1/*d10*/, 0/*d12*/, 0/*d20*/, 0/*dBell*/, 1.0/*multiplier*/);
       } else if (Configuration.useBellCurveDice()) {
@@ -980,7 +984,7 @@ public class Battle extends Thread implements Enums {
       //         result += sizeDiff;
       //      }
       Limb attackHand = attacker.getLimb(attack.getLimb());
-      byte offHandPenalty = attacker.getHandPenalties(attackHand._limbType, skillType);
+      byte offHandPenalty = attacker.getHandPenalties(attackHand.limbType, skillType);
       if (offHandPenalty > 0) {
          sb.append("<tr><td>-").append(offHandPenalty).append("</td>");
          sb.append("<td>using ").append(attackHand.getName()).append("</td></tr>");
@@ -1063,23 +1067,23 @@ public class Battle extends Thread implements Enums {
                   // Set this as a dual grapple attack, so we know if a retreat must alter the location of the attacker
                   attack.setDualGrappleAttack();
                   defender.setHoldLevel(attacker, newHoldLevel);
-                  ArenaLocation attackingLimbLoc = attacker.getLimbLocation(attack.getLimb(), _arena.getCombatMap());
+                  ArenaLocation attackingLimbLoc = attacker.getLimbLocation(attack.getLimb(), arena.getCombatMap());
                   if (Arena.getShortestDistance(attackingLimbLoc, defender.getOrientation()) > 1) {
                      // Try to move the smaller character until the defender is adjacent to the attacking limb that grabbed him/her.
                      if (attacker.getBuildBase() >= defender.getBuildBase()) {
                         // Move the defender closer to the attacker:
-                        for (Orientation newOrientation : defender.getOrientation().getPossibleFutureOrientations(_arena.getCombatMap())) {
+                        for (Orientation newOrientation : defender.getOrientation().getPossibleFutureOrientations(arena.getCombatMap())) {
                            if (Arena.getShortestDistance(attackingLimbLoc, newOrientation) == 1) {
-                              _arena.moveCharacter(defender, newOrientation);
+                              arena.moveCharacter(defender, newOrientation);
                               break;
                            }
                         }
                      } else {
                         // Move the attacker closer to the defender:
-                        for (Orientation newOrientation : attacker.getOrientation().getPossibleFutureOrientations(_arena.getCombatMap())) {
-                           attackingLimbLoc = newOrientation.getLimbLocation(attack.getLimb(), _arena.getCombatMap());
+                        for (Orientation newOrientation : attacker.getOrientation().getPossibleFutureOrientations(arena.getCombatMap())) {
+                           attackingLimbLoc = newOrientation.getLimbLocation(attack.getLimb(), arena.getCombatMap());
                            if (Arena.getShortestDistance(attackingLimbLoc, newOrientation) == 1) {
-                              _arena.moveCharacter(attacker, newOrientation);
+                              arena.moveCharacter(attacker, newOrientation);
                               break;
                            }
                         }
@@ -1096,7 +1100,7 @@ public class Battle extends Thread implements Enums {
             rollMessage = attacker.getName() + ", roll to see how far you've thrown " + defender.getName();
             int throwDist = throwDistDice.roll(true/*allowExplodes*/, attacker, RollType.ATTACK_TO_HIT, rollMessage);
             sb.append(defender.getName()).append(" is thrown ").append(throwDistDice).append(" hexes, rolling ").append(throwDistDice.getLastDieRoll());
-            CombatMap map = _arena.getCombatMap();
+            CombatMap map = arena.getCombatMap();
             while (throwDist-- > 0) {
                List<Orientation> possibleMoves = defender.getOrientation().getPossibleAdvanceOrientations(map, true);
                if (possibleMoves.isEmpty()) {
@@ -1113,13 +1117,13 @@ public class Battle extends Thread implements Enums {
                                           DamageType.GENERAL,
                                           0,//effectMask,
                                           defender);
-                  defender.applyWound(wound, _arena);
+                  defender.applyWound(wound, arena);
                   sb.append(defender.getName()).append(" is thrown into a wall, taking the following damage: ").append(wound.describeWound());
                   break;
                }
                //The first element in this list is the most forward-moving
                Orientation newOrientation = possibleMoves.get(0);
-               _arena.moveCharacter(defender, newOrientation);
+               arena.moveCharacter(defender, newOrientation);
             }
 
             DiceSet sideUpDice = new DiceSet(0, 1, 0, 0, 0, 0, 0, 0, 1.0);
@@ -1129,10 +1133,10 @@ public class Battle extends Thread implements Enums {
             sb.append(" To determine facing, a d4 is rolled, rolling ").append(sideUpDice.getLastDieRoll());
             if (sideUp > 2) {
                sb.append(", so the defender will be face-down.");
-               defender.getCondition().setPosition(Position.PRONE_FRONT, _arena.getCombatMap(), defender);
+               defender.getCondition().setPosition(Position.PRONE_FRONT, arena.getCombatMap(), defender);
             } else {
                sb.append(", so the defender will be face-up.");
-               defender.getCondition().setPosition(Position.PRONE_BACK, _arena.getCombatMap(), defender);
+               defender.getCondition().setPosition(Position.PRONE_BACK, arena.getCombatMap(), defender);
             }
             /* Defensive Grab:
              *   When attacked, the Aikido practitioner may counter-attack using this grab.
@@ -1191,8 +1195,8 @@ public class Battle extends Thread implements Enums {
       }
       String message = sb.toString();
       if (!message.isEmpty()) {
-         _arena.sendMessageTextToAllClients(message, false/*popUp*/);
-         _arena.sendMessageTextToParticipants(message, attacker, defender);
+         arena.sendMessageTextToAllClients(message, false/*popUp*/);
+         arena.sendMessageTextToParticipants(message, attacker, defender);
       }
 
       if (isThrowWeapon) {
@@ -1204,11 +1208,11 @@ public class Battle extends Thread implements Enums {
                List<Wound> woundsOnDefender = wounds.get(defender);
                // woundsOnDefender can be null if the hit was too small to do any effective damage
                if ((woundsOnDefender != null) && (woundsOnDefender.size() > 0)) {
-                  dropSpot = defender.getLimbLocation(woundsOnDefender.get(woundsOnDefender.size() - 1).getLimb(), _arena.getCombatMap());
+                  dropSpot = defender.getLimbLocation(woundsOnDefender.get(woundsOnDefender.size() - 1).getLimb(), arena.getCombatMap());
                }
             }
             if (dropSpot == null) {
-               dropSpot = _arena.getCombatMap().getLocation(defender.getHeadCoordinates());
+               dropSpot = arena.getCombatMap().getLocation(defender.getHeadCoordinates());
             }
             if (dropSpot != null) {
                dropSpot.addThing(attackingWeapon);
@@ -1376,10 +1380,10 @@ public class Battle extends Thread implements Enums {
          // followed by the damage roll.
          rollMessage = sb.toString();
          if (!rollMessage.isEmpty()) {
-            _arena.sendMessageTextToAllClients(rollMessage, false/*popUp*/);
+            arena.sendMessageTextToAllClients(rollMessage, false/*popUp*/);
             // To the parties involved, send the message as a popup message:
             // No need to send the message to the attacker, they will see the message as they roll damage dice.
-            _arena.sendMessageTextToParticipants(rollMessage, defender, null);
+            arena.sendMessageTextToParticipants(rollMessage, defender, null);
          }
          sb.setLength(0);
          sb.append(attacker.getName()).append(" successfully attacked ").append(defender.getName()).append(".<br/>");
@@ -1475,22 +1479,22 @@ public class Battle extends Thread implements Enums {
             Advantage adv = defender.getAdvantage(Advantage.HERO_POINTS);
             if ((adv != null) && (adv.getLevel() > 0)) {
                RequestUseOfHeroPoint reqHeroPoints = new RequestUseOfHeroPoint(wound, adv.getLevel());
-               _arena.sendObjectToCombatant(defender, reqHeroPoints);
+               arena.sendObjectToCombatant(defender, reqHeroPoints);
                synchronized (reqHeroPoints) {
-                  try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(reqHeroPoints._lockThis)) {
+                  try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(reqHeroPoints.lockThis)) {
                      if (!reqHeroPoints.isAnswered()) {
-                        if (_terminateBattle) {
+                        if (terminateBattle) {
                            throw new BattleTerminatedException();
                         }
                         try {
                            Rules.diag("### about to wait in applyActions, for response in @" + Integer.toHexString(reqHeroPoints.hashCode()) + ": "
                                       + reqHeroPoints);
-                           _waitingObjects.add(reqHeroPoints);
+                           waitingObjects.add(reqHeroPoints);
                            reqHeroPoints.wait();
                         } catch (InterruptedException e) {
                         } finally {
                            Rules.diag("### done waiting in applyActions, for response in @" + Integer.toHexString(reqHeroPoints.hashCode()) + ": " + reqHeroPoints);
-                           _waitingObjects.remove(reqHeroPoints);
+                           waitingObjects.remove(reqHeroPoints);
                         }
                      }
                      if (reqHeroPoints.isAnswerUseHeroPoint()) {
@@ -1547,7 +1551,7 @@ public class Battle extends Thread implements Enums {
          }
       }
       while (knockBack-- > 0) {
-         if (!_arena.moveToFrom(defender, attacker, attacker.getLimbLocation(LimbType.HEAD, _arena.getCombatMap())/*retreatFromLoc*/, null/*attackFromLimb*/)) {
+         if (!arena.moveToFrom(defender, attacker, attacker.getLimbLocation(LimbType.HEAD, arena.getCombatMap())/*retreatFromLoc*/, null/*attackFromLimb*/)) {
             // If moveToFrom returns false, we can't be knocked back any further, so stop trying.
             break;
          }
@@ -1581,7 +1585,7 @@ public class Battle extends Thread implements Enums {
 
             List<Character> charactersTargetingActor = getCharactersAimingAtCharacter(actor);
             Rules.diag("Battle:selectActions for actor " + actor.getName() + ", aimed at by: " + charactersTargetingActor);
-            RequestAction actReq = actor.getActionRequest(_arena, null/*delayedTarget*/, charactersTargetingActor);
+            RequestAction actReq = actor.getActionRequest(arena, null/*delayedTarget*/, charactersTargetingActor);
             Rules.diag("Battle:selectActions for actor " + actor.getName() + ", actReq= " + actReq);
             // If there is only one option, don't ask, just do it.
             if (actReq.selectSingleEnabledEntry(false/*ignoreCancel*/)) {
@@ -1597,10 +1601,10 @@ public class Battle extends Thread implements Enums {
                   Rules.diag("setting results Queue to " + resultsQueue);
                }
                actReq.setResultsQueue(resultsQueue);
-               if (_arena.sendObjectToCombatant(actor, actReq)) {
+               if (arena.sendObjectToCombatant(actor, actReq)) {
                   results.put(actor, actReq);
                   synchronized (actReq) {
-                     try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(actReq._lockThis)) {
+                     try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(actReq.lockThis)) {
                         if (actReq.isAnswered()) {
                            Rules.diag("Battle:selectActions for actor " + actor.getName() + " - action answered: " + actReq.getAnswer());
                            synchronized (resultsQueue) {
@@ -1631,26 +1635,26 @@ public class Battle extends Thread implements Enums {
       // Secondly, wait for every response, and if an action requires more information
       // (such as a movement or attack style), get the subsequent action(s).
       HashMap<Character, Integer> movementTracker = new HashMap<>();
-      /*synchronized (_waitingObjects)*/
+      /*synchronized (waitingObjects)*/
       {
-         Rules.diag("### inside lock selectActions, of waitingList = @" + Integer.toHexString(_waitingObjects.hashCode()) + ": " + _waitingObjects);
+         Rules.diag("### inside lock selectActions, of waitingList = @" + Integer.toHexString(waitingObjects.hashCode()) + ": " + waitingObjects);
          synchronized (resultsQueue) {
             Rules.diag("### inside lock of resultsQueue (=" + resultsQueue + "), waitingList.size() = " + waitingList.size());
             while ((waitingList.size() + resultsQueue.size()) > 0) {
                if (resultsQueue.size() == 0) {
                   Rules.diag("### inside lock of resultsQueue==0");
-                  if (_terminateBattle) {
+                  if (terminateBattle) {
                      throw new BattleTerminatedException();
                   }
                   try {
                      Rules.diag("### about to wait in selectActions for response in @" + Integer.toHexString(resultsQueue.hashCode()) + ": " + resultsQueue);
-                     _waitingObjects.add(resultsQueue);
+                     waitingObjects.add(resultsQueue);
                      resultsQueue.wait();
                   } catch (InterruptedException e) {
                      e.printStackTrace();
                   } finally {
                      Rules.diag("### done waiting in selectActions for response in @" + Integer.toHexString(resultsQueue.hashCode()) + ": " + resultsQueue);
-                     _waitingObjects.remove(resultsQueue);
+                     waitingObjects.remove(resultsQueue);
                   }
                }
                if (resultsQueue.size() > 0) {
@@ -1667,25 +1671,25 @@ public class Battle extends Thread implements Enums {
                         RequestAction actReq = results.get(actor);
                         if (actReq != null) {
                            if ((obj == actReq)
-                               || (obj == actReq._equipmentRequest)
-                               || (obj == actReq._movementRequest)
-                               || (obj == actReq._locationSelection)
-                               || (obj == actReq._positionRequest)
-                               || (obj == actReq._styleRequest)
-                               || (obj == actReq._targetPriorities)
-                               || (obj == actReq._spellTypeSelectionRequest)
-                               || ((actReq._spellTypeSelectionRequest != null) && (obj == actReq._spellTypeSelectionRequest._spellSelectionRequest))
-                               || (obj == actReq._targetSelection)) {
-                              if ((obj == actReq._movementRequest) || (actReq.isAttack() && actReq.isAdvance() && (obj != actReq._styleRequest))) {
-                                 if (obj == actReq._movementRequest) {
-                                    RequestMovement moveReq = actReq._movementRequest;
+                               || (obj == actReq.equipmentRequest)
+                               || (obj == actReq.movementRequest)
+                               || (obj == actReq.locationSelection)
+                               || (obj == actReq.positionRequest)
+                               || (obj == actReq.styleRequest)
+                               || (obj == actReq.targetPriorities)
+                               || (obj == actReq.spellTypeSelectionRequest)
+                               || ((actReq.spellTypeSelectionRequest != null) && (obj == actReq.spellTypeSelectionRequest.spellSelectionRequest))
+                               || (obj == actReq.targetSelection)) {
+                              if ((obj == actReq.movementRequest) || (actReq.isAttack() && actReq.isAdvance() && (obj != actReq.styleRequest))) {
+                                 if (obj == actReq.movementRequest) {
+                                    RequestMovement moveReq = actReq.movementRequest;
 
                                     Orientation destOrientation = moveReq.getAnswerOrientation(true/*removeEntry*/);
                                     if (destOrientation != null) {
                                        StringBuilder sb = new StringBuilder(actor.getName());
                                        sb.append(" is moving to ");
                                        ArenaCoordinates headCoord = destOrientation.getHeadCoordinates();
-                                       sb.append(headCoord._x).append(", ").append(headCoord._y);
+                                       sb.append(headCoord.x).append(", ").append(headCoord.y);
                                        Rules.diag(sb.toString());
 
                                        Integer moved = movementTracker.get(actor);
@@ -1713,7 +1717,7 @@ public class Battle extends Thread implements Enums {
                                                 }
                                              }
                                           }
-                                          _arena.applyMovement(actor, destOrientation, moveReq);
+                                          arena.applyMovement(actor, destOrientation, moveReq);
                                           //if (moveReq.hasMovesLeft()) {
                                           //   resultsQueue.add(actReq);
                                           //}
@@ -1721,12 +1725,12 @@ public class Battle extends Thread implements Enums {
                                        movementTracker.put(actor, moved);
                                     }
                                  } else { // (actReq.isAttack() && actReq.isAdvance()) == true
-                                    Character target = _arena.getCharacter(actReq._targetID);
+                                    Character target = arena.getCharacter(actReq.targetID);
                                     // move forward such that the attacking weapon is in range of the target
                                     Limb limb = actor.getLimb(actReq.getLimb());
                                     if (actReq.isCharge()) {
                                        HashMap<Orientation, List<Orientation>> mapOrientationToNextOrientationsLeadingToChargeAttack = new HashMap<>();
-                                       if (actor.getOrientation().getPossibleChargePathsToTarget(_arena.getCombatMap(), actor, target,
+                                       if (actor.getOrientation().getPossibleChargePathsToTarget(arena.getCombatMap(), actor, target,
                                                                                                  actor.getAvailableMovement(false/*movingEvasively*/),
                                                                                                  mapOrientationToNextOrientationsLeadingToChargeAttack)) {
                                           // starting from our current orientation, move forward through valid orientations to charge-attack:
@@ -1739,7 +1743,7 @@ public class Battle extends Thread implements Enums {
                                                 // unless straight forward would not get us to where the target is.
                                                 int randomIndex = 0;
                                                 nextOrientationInPath = possibleMoves.get(randomIndex);
-                                                _arena.moveCharacter(actor, nextOrientationInPath);
+                                                arena.moveCharacter(actor, nextOrientationInPath);
                                                 checkForAimLossDueToMovement(actor);
                                                 checkForWaitingCharactersToAttack(results, allCombatants, resultsQueue, waitingList, actedCombatants, actor);
                                                 try {
@@ -1753,13 +1757,13 @@ public class Battle extends Thread implements Enums {
                                           }
                                        }
                                     } else {
-                                       _arena.moveToFrom(actor, target, null/*retreatFromLoc*/, limb/*attackFromLimb*/);
+                                       arena.moveToFrom(actor, target, null/*retreatFromLoc*/, limb/*attackFromLimb*/);
                                     }
                                  }
                                  checkForAimLossDueToMovement(actor);
                                  checkForWaitingCharactersToAttack(results, allCombatants, resultsQueue, waitingList, actedCombatants, actor);
-                              } else if (obj == actReq._targetPriorities) {
-                                 actor.applyAction(actReq, _arena);
+                              } else if (obj == actReq.targetPriorities) {
+                                 actor.applyAction(actReq, arena);
                               }
 
                               getNextQuestionForAction(allCombatants, resultsQueue, waitingList, actor, actReq);
@@ -1779,9 +1783,9 @@ public class Battle extends Thread implements Enums {
       for (Character mover : movedCharacters) {
          Integer movement = movementTracker.get(mover);
          if (mover.getPosition() == Position.STANDING) {
-            _arena.sendMessageTextToAllClients(mover.getName() + " moves " + movement + " hexes.", false/*popUp*/);
+            arena.sendMessageTextToAllClients(mover.getName() + " moves " + movement + " hexes.", false/*popUp*/);
          } else {
-            _arena.sendMessageTextToAllClients(mover.getName() + " crawls " + movement + " hexes.", false/*popUp*/);
+            arena.sendMessageTextToAllClients(mover.getName() + " crawls " + movement + " hexes.", false/*popUp*/);
          }
       }
 
@@ -1789,7 +1793,7 @@ public class Battle extends Thread implements Enums {
       for (Character actor : actedCombatants) {
          RequestAction actReq = results.get(actor);
          if (actReq != null && actReq.isAnswered()) {
-            actor.applyAction(actReq, _arena);
+            actor.applyAction(actReq, arena);
          }
       }
       return true;
@@ -1805,10 +1809,10 @@ public class Battle extends Thread implements Enums {
          if (attacker.getActionsAvailable(false) == 0) {
             continue;
          }
-         RequestAction delayedAttackReq = attacker.getActionRequest(_arena, actor, null);
+         RequestAction delayedAttackReq = attacker.getActionRequest(arena, actor, null);
          if (delayedAttackReq == null) {
             DebugBreak.debugBreak();
-            delayedAttackReq = attacker.getActionRequest(_arena, actor, null);
+            delayedAttackReq = attacker.getActionRequest(arena, actor, null);
             if (delayedAttackReq == null) {
                continue;
             }
@@ -1821,22 +1825,22 @@ public class Battle extends Thread implements Enums {
             // The attacker has multiple ways to attack, ask which one they want
             // AND WAIT FOR THE RESPONSE HERE.
             //delayedAttackReq.setResultsQueue(resultsQueue);
-            if (_arena.sendObjectToCombatant(attacker, delayedAttackReq)) {
+            if (arena.sendObjectToCombatant(attacker, delayedAttackReq)) {
                results.put(attacker, delayedAttackReq);
                synchronized (delayedAttackReq) {
-                  try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(delayedAttackReq._lockThis)) {
+                  try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(delayedAttackReq.lockThis)) {
                      while (!delayedAttackReq.isAnswered()) {
                         try {
                            Rules.diag("### about to wait for delayedAttackReq response in @"
                                       + Integer.toHexString(delayedAttackReq.hashCode()) + ": " + delayedAttackReq);
-                           _waitingObjects.add(delayedAttackReq);
+                           waitingObjects.add(delayedAttackReq);
                            delayedAttackReq.wait(1000);
                         } catch (InterruptedException e) {
                            e.printStackTrace();
                         } finally {
                            Rules.diag("### done waiting for delayedAttackReq response in @"
                                       + Integer.toHexString(delayedAttackReq.hashCode()) + ": " + delayedAttackReq);
-                           _waitingObjects.remove(delayedAttackReq);
+                           waitingObjects.remove(delayedAttackReq);
                         }
                      }
                   }
@@ -1872,7 +1876,7 @@ public class Battle extends Thread implements Enums {
    private void getNextQuestionForAction(List<Character> allCombatants, List<SyncRequest> resultsQueue, List<SyncRequest> waitingList,
                                          Character actor, RequestAction actReq) {
       // now, any action that needs another question must be asked
-      SyncRequest req = actReq.getNextQuestion(actor, allCombatants, _arena);
+      SyncRequest req = actReq.getNextQuestion(actor, allCombatants, arena);
       if (req != null) {
          if (req.getActionCount() > 1) {
             req.setResultsQueue(resultsQueue);
@@ -1887,7 +1891,7 @@ public class Battle extends Thread implements Enums {
                }
             }
             if (sendToCombatant) {
-               _arena.sendObjectToCombatant(actor, req);
+               arena.sendObjectToCombatant(actor, req);
             }
             if (req.isAnswered()) {
                synchronized (resultsQueue) {
@@ -1917,14 +1921,14 @@ public class Battle extends Thread implements Enums {
     */
    private List<Character> getAttackerWaitingToAttack(Character actor) {
       List<Character> newAttackers = new ArrayList<>();
-      synchronized (_waitingToAttack) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_waitingToAttack)) {
-            for (Character attacker : _waitingToAttack) {
+      synchronized (waitingToAttack) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_waitingToAttack)) {
+            for (Character attacker : waitingToAttack) {
                if (attacker.stillFighting()) {
                   List<Integer> orderedTargets = attacker.getOrderedTargetPriorites();
                   for (Integer uniqueId : orderedTargets) {
-                     if (uniqueId == actor._uniqueID) {
-                        if (attacker.getOrientation().canAttack(attacker, actor, _arena.getCombatMap(), false/*allowRanged*/, false/*onlyChargeTypes*/)) {
+                     if (uniqueId == actor.uniqueID) {
+                        if (attacker.getOrientation().canAttack(attacker, actor, arena.getCombatMap(), false/*allowRanged*/, false/*onlyChargeTypes*/)) {
                            newAttackers.add(attacker);
                         }
                      }
@@ -1944,16 +1948,16 @@ public class Battle extends Thread implements Enums {
       // view of someone aiming at him, the targeting is lost.
       // It's also possible that the mover moved between an aimer and a target,
       // so we have to check all aimers, against each of their targets:
-      synchronized (_aimingCharacters) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_aimingCharacters)) {
-            TreeSet<Character> aimers = new TreeSet<>(_aimingCharacters.keySet());
+      synchronized (aimingCharacters) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_aimingCharacters)) {
+            TreeSet<Character> aimers = new TreeSet<>(aimingCharacters.keySet());
             for (Character aimer : aimers) {
-               Character target = _aimingCharacters.get(aimer);
-               if (!_arena.hasLineOfSight(aimer, target)) {
-                  if (aimer.getAimDuration(target._uniqueID) > 0) {
+               Character target = aimingCharacters.get(aimer);
+               if (!arena.hasLineOfSight(aimer, target)) {
+                  if (aimer.getAimDuration(target.uniqueID) > 0) {
                      clearAimingCharacterMap(aimer);
-                     _arena.sendMessageTextToAllClients(aimer.getName() + " has lost sight of " + target.getName() + ", and so losses " + aimer.getHisHer()
-                                                        + " targeting bonus.", false/*popUp*/);
+                     arena.sendMessageTextToAllClients(aimer.getName() + " has lost sight of " + target.getName() + ", and so losses " + aimer.getHisHer()
+                                                       + " targeting bonus.", false/*popUp*/);
                      aimer.clearAimDuration();
                   }
                }
@@ -1981,12 +1985,10 @@ public class Battle extends Thread implements Enums {
    //      return true;
    //   }
 
-   public final HashMap<Integer, Byte> _berserkingCharactersOriginalTeamID = new HashMap<>();
-
    private void resolvePainAndInitiative() {
       StringBuilder events = new StringBuilder();
-      TreeSet<Character> sortedCombatant = new TreeSet<>(Character.nameComparator);
-      sortedCombatant.addAll(_arena.getCombatants());
+      TreeSet<Character> sortedCombatant = new TreeSet<>(Character.NAME_COMPARATOR);
+      sortedCombatant.addAll(arena.getCombatants());
       int notFightingCount = 0;
       for (Character combatant : sortedCombatant) {
          if (!combatant.getCondition().isAlive() || !combatant.getCondition().isConscious()) {
@@ -2045,9 +2047,9 @@ public class Battle extends Thread implements Enums {
             Wound magicalBurn = combatant.getNewTurnBurnWound();
             if (magicalBurn != null) {
                // apply this directly to the condition, so it can't affect the spell itself.
-               combatant.getCondition().applyWound(magicalBurn, _arena, combatant);
+               combatant.getCondition().applyWound(magicalBurn, arena, combatant);
             }
-            _arena.sendEventToAllClients(combatant);
+            arena.sendEventToAllClients(combatant);
             if (painDice != null) {
                events.append(combatant.getName()).append(" rolls ").append(painDice);
                events.append(" for ");
@@ -2097,7 +2099,7 @@ public class Battle extends Thread implements Enums {
                }
                if (combatant.getPainPenalty(true/*accountForBerserking*/) >= Rules.getCollapsePainLevel(combatant.getAttributeLevel(Attribute.Toughness))) {
                   events.append(combatant.getName()).append(" collapses from the pain.<br/>");
-                  combatant.collapseFromPain(_arena.getCombatMap());
+                  combatant.collapseFromPain(arena.getCombatMap());
                }
             } else {
                if (combatant.getWounds() > 0) {
@@ -2161,7 +2163,7 @@ public class Battle extends Thread implements Enums {
             if (combatant.isBerserking()) {
                boolean recoveryAttempted = false;
                if (combatant.isUnderSpell(SpellEnrage.NAME) == null) {
-                  Character target = _arena.getCharacter(combatant._targetID);
+                  Character target = arena.getCharacter(combatant.targetID);
                   if ((target == null) || (!target.stillFighting())) {
                      recoveryAttempted = true;
                      byte iq = combatant.getAttributeLevel(Attribute.Intelligence);
@@ -2181,30 +2183,30 @@ public class Battle extends Thread implements Enums {
                         events.append(" +3 (").append(newPain + 3).append("), so ").append(combatant.getName());
                         events.append(" recovers from berserkness!<br/>");
                         combatant.setIsBerserking(false);
-                        Byte originalTeamID = _berserkingCharactersOriginalTeamID.remove(combatant._uniqueID);
+                        Byte originalTeamID = berserkingCharactersOriginalTeamID.remove(combatant.uniqueID);
                         if (originalTeamID != null) {
-                           combatant._teamID = originalTeamID;
+                           combatant.teamID = originalTeamID;
                         }
                      } else {
                         if (anyTeam) {
                            events.append(", which is all '1's, so he will attack the near person, even if on the same team!<br/>");
-                           if (combatant._teamID != TEAM_INDEPENDENT) {
-                              _berserkingCharactersOriginalTeamID.put(combatant._uniqueID, combatant._teamID);
-                              combatant._teamID = TEAM_INDEPENDENT;
+                           if (combatant.teamID != TEAM_INDEPENDENT) {
+                              berserkingCharactersOriginalTeamID.put(combatant.uniqueID, combatant.teamID);
+                              combatant.teamID = TEAM_INDEPENDENT;
                            }
                         } else {
                            events.append(", which is below the new pain level of ").append(newPain);
                            events.append(" +3 (").append(newPain + 3).append("), so ").append(combatant.getName()).append(" remains berserk.<br/>");
                         }
 
-                        Character newTarget = _arena.getNearestTarget(combatant, anyTeam);
+                        Character newTarget = arena.getNearestTarget(combatant, anyTeam);
                         if (newTarget != null) {
                            events.append("The next nearest target is ").append(newTarget.getName());
                            events.append(", so ").append(combatant.getName());
                            events.append(" is now targeting ").append(newTarget.getName());
                            events.append(".<br/>");
 
-                           combatant._targetID = newTarget._uniqueID;
+                           combatant.targetID = newTarget.uniqueID;
                         }
                      }
                   }
@@ -2220,54 +2222,48 @@ public class Battle extends Thread implements Enums {
             events.append("<br/>");
          }
       }
-      _arena.sendMessageTextToAllClients(events.toString(), false/*popUp*/);
+      arena.sendMessageTextToAllClients(events.toString(), false/*popUp*/);
    }
 
-   final HashSet<Character> _waitingToAttack = new HashSet<>();
-
    private void addWaitingForAttack(Character waitingAttacker) {
-      synchronized (_waitingToAttack) {
-         _lock_waitingToAttack.check();
-         _waitingToAttack.add(waitingAttacker);
+      synchronized (waitingToAttack) {
+         lock_waitingToAttack.check();
+         waitingToAttack.add(waitingAttacker);
       }
    }
 
    private void clearWaitingForAttackMap(Character waitingAttacker) {
-      synchronized (_waitingToAttack) {
-         _lock_waitingToAttack.check();
-         _waitingToAttack.remove(waitingAttacker);
+      synchronized (waitingToAttack) {
+         lock_waitingToAttack.check();
+         waitingToAttack.remove(waitingAttacker);
       }
    }
 
-   final HashMap<Character, Character> _aimingCharacters      = new HashMap<>();
-   final Semaphore                     _lock_aimingCharacters = new Semaphore("Battle_aimingCharacters", CombatSemaphore.CLASS_BATTLE_aimingCharacters);
-   final Semaphore                     _lock_waitingToAttack  = new Semaphore("Battle_waitingToAttack", CombatSemaphore.CLASS_BATTLE_waitingToAttack);
-
    private void addAimingCharacter(Character aimer, Character target) {
-      synchronized (_aimingCharacters) {
-         _lock_aimingCharacters.check();
-         _aimingCharacters.put(aimer, target);
+      synchronized (aimingCharacters) {
+         lock_aimingCharacters.check();
+         aimingCharacters.put(aimer, target);
       }
    }
 
    private void clearAimingCharacterMap(Character aimer) {
-      synchronized (_aimingCharacters) {
-         _lock_aimingCharacters.check();
-         _aimingCharacters.remove(aimer);
+      synchronized (aimingCharacters) {
+         lock_aimingCharacters.check();
+         aimingCharacters.remove(aimer);
       }
    }
 
    public List<Character> getCharactersAimingAtCharacter(Character target) {
       List<Character> results = new ArrayList<>();
       if (target != null) {
-         synchronized (_aimingCharacters) {
-            try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_aimingCharacters)) {
-               TreeSet<Character> aimers = new TreeSet<>(_aimingCharacters.keySet());
+         synchronized (aimingCharacters) {
+            try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_aimingCharacters)) {
+               TreeSet<Character> aimers = new TreeSet<>(aimingCharacters.keySet());
                for (Iterator<Character> iter = aimers.iterator(); iter.hasNext(); ) {
                   Character aimer = iter.next();
                   if (aimer.stillFighting()) {
-                     Character aimersTarget = _aimingCharacters.get(aimer);
-                     if ((aimersTarget != null) && (aimersTarget._uniqueID == target._uniqueID)) {
+                     Character aimersTarget = aimingCharacters.get(aimer);
+                     if ((aimersTarget != null) && (aimersTarget.uniqueID == target.uniqueID)) {
                         results.add(aimer);
                      }
                   } else {
@@ -2282,9 +2278,9 @@ public class Battle extends Thread implements Enums {
 
    public Element getXmlObject(Document parentDoc) {
       Element mainElement = parentDoc.createElement("Battle");
-      mainElement.setAttribute("turnCount", String.valueOf(_turnCount));
-      mainElement.setAttribute("roundCount", String.valueOf(_roundCount));
-      mainElement.setAttribute("phaseCount", String.valueOf(_phaseCount));
+      mainElement.setAttribute("turnCount", String.valueOf(turnCount));
+      mainElement.setAttribute("roundCount", String.valueOf(roundCount));
+      mainElement.setAttribute("phaseCount", String.valueOf(phaseCount));
       return mainElement;
    }
 
@@ -2296,9 +2292,9 @@ public class Battle extends Thread implements Enums {
       if (namedNodeMap == null) {
          return false;
       }
-      _turnCount = Integer.parseInt(namedNodeMap.getNamedItem("turnCount").getNodeValue());
-      _roundCount = Integer.parseInt(namedNodeMap.getNamedItem("roundCount").getNodeValue());
-      _phaseCount = Integer.parseInt(namedNodeMap.getNamedItem("phaseCount").getNodeValue());
+      turnCount = Integer.parseInt(namedNodeMap.getNamedItem("turnCount").getNodeValue());
+      roundCount = Integer.parseInt(namedNodeMap.getNamedItem("roundCount").getNodeValue());
+      phaseCount = Integer.parseInt(namedNodeMap.getNamedItem("phaseCount").getNodeValue());
       return true;
    }
 }

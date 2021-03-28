@@ -1,6 +1,5 @@
 package ostrowski.combat.common;
 
-import org.eclipse.swt.graphics.Point;
 import org.w3c.dom.*;
 import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.DOMImplementationLS;
@@ -31,63 +30,63 @@ import java.io.*;
 import java.util.*;
 
 public class CombatMap extends SerializableObject implements Enums, IMonitorableObject, IMonitoringObject, Cloneable {
-   transient private MonitoringObject _mapWatcher;
-   transient private MonitoredObject  _locBook;
+   transient private MonitoringObject mapWatcher;
+   transient private MonitoredObject  locBook;
 
-   private String                     _name                     = "default";
-   private short                      _level;
-   private short                      _sizeY;
-   private short                      _sizeX;
-   private ArenaLocation[][]          _locations                = null;
-   private boolean                    _hideViewFromLocalPlayers = true;
-   private boolean                    _knownByAllPlayers        = false;
-   private String                     _backgroundImagePath      = "";
-   private int                        _backgroundImageAlpha     = 192;
-   private byte                       _maxCombatantsPerTeam     = CombatServer.MAX_COMBATANTS_PER_TEAM;
-   private byte                       _teamCount                = CombatServer.MAX_TEAMS;
-   private ArenaLocation[][]          _startPoints              = new ArenaLocation[_teamCount][_maxCombatantsPerTeam];
-   private String[][]                 _stockAiName              = new String[_teamCount][_maxCombatantsPerTeam];
-   private String[][]                 _stockCharName            = new String[_teamCount][_maxCombatantsPerTeam];
-   private final List<ArenaTrigger> _triggers              = new ArrayList<>();
-   private ArenaTrigger               _selectedTrigger;
-   transient private Diagnostics      _diag;
+   private           String             name                     = "default";
+   private           short              level;
+   private           short              sizeY;
+   private           short              sizeX;
+   private           ArenaLocation[][]  locations                = null;
+   private           boolean            hideViewFromLocalPlayers = true;
+   private           boolean            knownByAllPlayers        = false;
+   private           String             backgroundImagePath      = "";
+   private           int                backgroundImageAlpha     = 192;
+   private           byte               maxCombatantsPerTeam     = CombatServer.MAX_COMBATANTS_PER_TEAM;
+   private           byte               teamCount                = CombatServer.MAX_TEAMS;
+   private           ArenaLocation[][]  startPoints              = new ArenaLocation[teamCount][maxCombatantsPerTeam];
+   private           String[][]         stockAiName              = new String[teamCount][maxCombatantsPerTeam];
+   private           String[][]         stockCharName            = new String[teamCount][maxCombatantsPerTeam];
+   private final     List<ArenaTrigger> triggers                 = new ArrayList<>();
+   private           ArenaTrigger       selectedTrigger;
+   transient private Diagnostics        diag;
 
    public CombatMap() {
-      _locBook    = new MonitoredObject("CombatMap._locBook");
-      _mapWatcher = new MonitoringObject("CombatMap._mapWatcher", _locBook);
-      IMonitorableObject._monitoredObj._objectIDString = this.getClass().getName() + "._locBook";
-      IMonitoringObject._monitoringObj._objectIDString = this.getClass().getName() + "._mapWatcher";
-      IMonitoringObject._monitoringObj._forwardObject = _locBook;
+      locBook = new MonitoredObject("CombatMap.locBook");
+      mapWatcher = new MonitoringObject("CombatMap.mapWatcher", locBook);
+      IMonitorableObject.monitoredObj.objectIDString = this.getClass().getName() + ".locBook";
+      IMonitoringObject._monitoringObj.objectIDString = this.getClass().getName() + ".mapWatcher";
+      IMonitoringObject._monitoringObj.forwardObject = locBook;
    }
    public CombatMap(short sizeX, short sizeY, Diagnostics diag) {
       this();
-      _diag = diag;
-      _locations = new ArenaLocation[sizeX][sizeY];
-      _startPoints = new ArenaLocation[_teamCount][_maxCombatantsPerTeam];
-      _stockAiName = new String[_teamCount][_maxCombatantsPerTeam];
-      _stockCharName = new String[_teamCount][_maxCombatantsPerTeam];
-      _level = 0;
-      _sizeX = sizeX;
-      _sizeY = sizeY;
+      this.diag = diag;
+      locations = new ArenaLocation[sizeX][sizeY];
+      startPoints = new ArenaLocation[teamCount][maxCombatantsPerTeam];
+      stockAiName = new String[teamCount][maxCombatantsPerTeam];
+      stockCharName = new String[teamCount][maxCombatantsPerTeam];
+      level = 0;
+      this.sizeX = sizeX;
+      this.sizeY = sizeY;
       for (short col = 0 ; col<sizeX ; col++) {
          for (short row = (short) (col%2) ; row<sizeY ; row += 2) {
-            _locations[col][row] = new ArenaLocation(col, row);
-            _locations[col][row].registerAsWatcher(this, _diag);
+            locations[col][row] = new ArenaLocation(col, row);
+            locations[col][row].registerAsWatcher(this, this.diag);
          }
       }
    }
    public List<ArenaTrigger> getTriggers() {
-      return _triggers;
+      return triggers;
    }
    public void setSize(short newX, short newY) {
-      if ((newX<_sizeX) || (newY<_sizeY)) {
+      if ((newX < sizeX) || (newY < sizeY)) {
          // If the map got smaller, clear all the starting points.
-         for (byte team=0 ; team<_teamCount ; team++) {
-            for (byte cur=0 ; cur<_maxCombatantsPerTeam ; cur ++) {
-               ArenaLocation startLoc = _startPoints[team][cur];
+         for (byte team = 0; team < teamCount; team++) {
+            for (byte cur = 0; cur < maxCombatantsPerTeam; cur ++) {
+               ArenaLocation startLoc = startPoints[team][cur];
                if (startLoc != null) {
-                  if ((startLoc._x < newX) || (startLoc._y < newY)) {
-                     _startPoints[team][cur] = null;
+                  if ((startLoc.x < newX) || (startLoc.y < newY)) {
+                     startPoints[team][cur] = null;
                   }
                }
             }
@@ -98,34 +97,34 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       ArenaLocation[][] newLocations = new ArenaLocation[newX][newY];
       for (short col = 0 ; col<newX ; col++) {
          for (short row = (short) (col%2) ; row<newY ; row += 2) {
-            if ((col<_sizeX) && (row<_sizeY)) {
-               newLocations[col][row] = _locations[col][row];
+            if ((col < sizeX) && (row < sizeY)) {
+               newLocations[col][row] = locations[col][row];
             }
             else {
                newLocations[col][row] = new ArenaLocation(col, row);
-               newLocations[col][row].registerAsWatcher(this, _diag);
+               newLocations[col][row].registerAsWatcher(this, diag);
             }
          }
       }
-      _locations = newLocations;
-      _sizeX = newX;
-      _sizeY = newY;
+      locations = newLocations;
+      sizeX = newX;
+      sizeY = newY;
    }
    public void clearCharacterStartingLocations() {
-      _startPoints = new ArenaLocation[_teamCount][_maxCombatantsPerTeam];
-      _stockAiName = new String[_teamCount][_maxCombatantsPerTeam];
-      _stockCharName = new String[_teamCount][_maxCombatantsPerTeam];
+      startPoints = new ArenaLocation[teamCount][maxCombatantsPerTeam];
+      stockAiName = new String[teamCount][maxCombatantsPerTeam];
+      stockCharName = new String[teamCount][maxCombatantsPerTeam];
    }
-   public short getLevel() { return _level;}
-   public short getSizeY() { return _sizeY;}
-   public short getSizeX() { return _sizeX;}
+   public short getLevel() { return level;}
+   public short getSizeY() { return sizeY;}
+   public short getSizeX() { return sizeX;}
    public byte getAvailableCombatantIndexOnTeam(byte team) {
       if (team == -1) {
          return -1;
       }
 
-      for (byte cur=0 ; cur<_maxCombatantsPerTeam ; cur++) {
-         ArenaLocation loc = _startPoints[team][cur];
+      for (byte cur = 0; cur < maxCombatantsPerTeam; cur++) {
+         ArenaLocation loc = startPoints[team][cur];
          if ((loc != null) && (loc.getCharacters().size() == 0)) {
             return cur;
          }
@@ -134,14 +133,14 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
    }
    public Map<Byte, List<RequestArenaEntrance.TeamMember>> getRemoteTeamMembersByTeams() {
       Map<Byte, List<RequestArenaEntrance.TeamMember>> teamMembersByTeam = new HashMap<>();
-      for (byte team=0 ; team<_teamCount ; team++) {
+      for (byte team = 0; team < teamCount; team++) {
          List<RequestArenaEntrance.TeamMember> teamMembers = new ArrayList<>();
          teamMembersByTeam.put(team, teamMembers);
-         for (byte cur=0 ; cur<_maxCombatantsPerTeam ; cur++) {
-            ArenaLocation loc = _startPoints[team][cur];
+         for (byte cur = 0; cur < maxCombatantsPerTeam; cur++) {
+            ArenaLocation loc = startPoints[team][cur];
             if (loc != null) {
-               String name = _stockCharName[team][cur];
-               boolean available = CombatServer._REMOTE_AI_NAME.equals(_stockAiName[team][cur]);
+               String name = stockCharName[team][cur];
+               boolean available = CombatServer.REMOTE_AI_NAME.equals(stockAiName[team][cur]);
                Character character = null;
                if (loc.getCharacters().isEmpty()) {
                   teamMembers.add(new RequestArenaEntrance.TeamMember(team, name, character, cur, available));
@@ -154,7 +153,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
 //                  if (available && (character != null)) {
 //                     boolean foundWaiting = false;
 //                     for (Character chr : charactersWaitingToConnect) {
-//                        if (chr._uniqueID == character._uniqueID) {
+//                        if (chr.uniqueID == character.uniqueID) {
 //                           foundWaiting = true;
 //                           break;
 //                        }
@@ -174,9 +173,9 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
    public List<ArenaLocation> getAvailablePlayerLocs()
    {
       List<ArenaLocation> availLocs = new ArrayList<>();
-      for (byte team=0 ; team<_teamCount ; team++) {
-         for (byte cur=0 ; cur<_maxCombatantsPerTeam ; cur++) {
-            ArenaLocation loc = _startPoints[team][cur];
+      for (byte team = 0; team < teamCount; team++) {
+         for (byte cur = 0; cur < maxCombatantsPerTeam; cur++) {
+            ArenaLocation loc = startPoints[team][cur];
             if ((loc != null) && (loc.getCharacters().size() == 0)) {
                availLocs.add(loc);
             }
@@ -187,9 +186,9 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
 
    public byte getCombatantsCount() {
       byte count = 0;
-      for (byte team=0 ; team<_teamCount ; team++) {
-         for (byte cur=0 ; cur<_maxCombatantsPerTeam ; cur++) {
-            ArenaLocation loc = _startPoints[team][cur];
+      for (byte team = 0; team < teamCount; team++) {
+         for (byte cur = 0; cur < maxCombatantsPerTeam; cur++) {
+            ArenaLocation loc = startPoints[team][cur];
             if (loc != null) {
                count++;
             }
@@ -213,27 +212,27 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
 
       return removed;
    }
-   public byte getTeamCount() { return _teamCount; }
+   public byte getTeamCount() { return teamCount; }
 
    public void clearItems() {
-      for (short col = 0 ; col<_sizeX ; col++) {
-         for (short row = (short)(col%2) ; row<_sizeY ; row += 2) {
+      for (short col = 0; col < sizeX; col++) {
+         for (short row = (short)(col%2); row < sizeY; row += 2) {
             // remove everything from the location.
-            _locations[col][row].clearItems();
+            locations[col][row].clearItems();
          }
       }
    }
    public void clearCharacterViewedHistory() {
-      for (short col = 0 ; col<_sizeX ; col++) {
-         for (short row = (short)(col%2) ; row<_sizeY ; row += 2) {
-            _locations[col][row].clearCharacterViewedHistory();
+      for (short col = 0; col < sizeX; col++) {
+         for (short row = (short)(col%2); row < sizeY; row += 2) {
+            locations[col][row].clearCharacterViewedHistory();
          }
       }
    }
    public void setAllHexesSelectable(boolean enabled) {
-      for (short col = 0 ; col<_sizeX ; col++) {
-         for (short row = (short)(col%2) ; row<_sizeY ; row += 2) {
-            _locations[col][row].setSelectable(enabled);
+      for (short col = 0; col < sizeX; col++) {
+         for (short row = (short)(col%2); row < sizeY; row += 2) {
+            locations[col][row].setSelectable(enabled);
          }
       }
    }
@@ -247,10 +246,10 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
             Facing startFacing = getStartingFacing(startLoc);
             for (int offset : new int[] {0, 5, 1, 4, 2, 3}) {
                Facing facing = startFacing.turn(offset);
-               if (combatant.setHeadLocation(startLoc, facing, this, _diag)) {
-                  if (CombatServer._isServer) {
+               if (combatant.setHeadLocation(startLoc, facing, this, diag)) {
+                  if (CombatServer.isServer) {
                      // Make the combatant a watcher of this map:
-                     registerAsWatcher(combatant._mapWatcher, _diag);
+                     registerAsWatcher(combatant.mapWatcher, diag);
                   }
                   return true;
                }
@@ -280,20 +279,20 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
          return;
       }
       if (isKnownByAllPlayers()) {
-         for (short col=0 ; col<_sizeX ; col++) {
-            for (short row = (short) (col % 2); row < _sizeY; row += 2) {
-               _locations[col][row].setKnownBy(self._uniqueID, true);
+         for (short col = 0; col < sizeX; col++) {
+            for (short row = (short) (col % 2); row < sizeY; row += 2) {
+               locations[col][row].setKnownBy(self.uniqueID, true);
             }
          }
       }
 
       ArenaLocation originalLoc = getLocation(self.getHeadCoordinates());
 //      short distTopLeft     = ArenaCoordinates.getDistance(originalLoc, getLocation((short)0,                 (short)0));
-//      short distTopRight    = ArenaCoordinates.getDistance(originalLoc, getLocation((short)(((_sizeX-1)/2)*2),(short)0));
-//      short distBottomLeft  = ArenaCoordinates.getDistance(originalLoc, getLocation((short)0,                 (short)(((_sizeY-1)/2)*2)));
-//      short distBottomRight = ArenaCoordinates.getDistance(originalLoc, getLocation((short)(((_sizeX-1)/2)*2),(short)(((_sizeY-1)/2)*2)));
+//      short distTopRight    = ArenaCoordinates.getDistance(originalLoc, getLocation((short)(((sizeX-1)/2)*2),(short)0));
+//      short distBottomLeft  = ArenaCoordinates.getDistance(originalLoc, getLocation((short)0,                 (short)(((sizeY-1)/2)*2)));
+//      short distBottomRight = ArenaCoordinates.getDistance(originalLoc, getLocation((short)(((sizeX-1)/2)*2),(short)(((sizeY-1)/2)*2)));
       //int maxDist = Math.max(Math.max(distTopRight, distTopLeft), Math.max(distBottomRight, distBottomLeft)) + 1;
-      //int maxDist = Math.max(_sizeX, _sizeY);
+      //int maxDist = Math.max(sizeX, sizeY);
 
       setVisibilityOrKnownBy(self, setVisibility, basedOnFacing, locsToRedraw, originalLoc, originalLoc);
 
@@ -302,8 +301,8 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       // we walk in direction FACING_NOON to our second location.
       // This means that we start our coordinates with 0 in the direction of 8 O'Clock.
 
-      int[] hexBaseDims = MapWidget2D.getHexDimensions(originalLoc._x/*column*/, originalLoc._y/*row*/, 10/*sizePerHex*/,
-                                                     0/*offsetX*/, 0/*offsetY*/, true/*cacheResults*/);
+      int[] hexBaseDims = MapWidget2D.getHexDimensions(originalLoc.x/*column*/, originalLoc.y/*row*/, 10/*sizePerHex*/,
+                                                       0/*offsetX*/, 0/*offsetY*/, true/*cacheResults*/);
       int baseCoordX = (hexBaseDims[MapWidget2D.X_SMALLEST] + hexBaseDims[MapWidget2D.X_LARGEST]) / 2;
       int baseCoordY = (hexBaseDims[MapWidget2D.Y_SMALLEST] + hexBaseDims[MapWidget2D.Y_LARGEST]) / 2;
 
@@ -336,20 +335,20 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       boolean[] xFlags = new boolean[] {true, false};
       boolean[] yFlags = new boolean[] {true, false};
       for (boolean positiveX : xFlags) {
-         for (short xAbsDelta=0 ; xAbsDelta<_sizeX ; xAbsDelta++) {
+         for (short xAbsDelta = 0; xAbsDelta < sizeX; xAbsDelta++) {
             if ((xAbsDelta == 0) && !positiveX) {
                continue;
             }
             short xDelta = (short) (positiveX ? xAbsDelta : -xAbsDelta);
-            short x = (short) (originalLoc._x + xDelta);
-            if ((x < 0) || (x>=_sizeX)) {
+            short x = (short) (originalLoc.x + xDelta);
+            if ((x < 0) || (x >= sizeX)) {
                break;
             }
             for (boolean positiveY : yFlags) {
-               for (short yAbsDelta=(short) (xAbsDelta%2) ; yAbsDelta<_sizeY ; yAbsDelta += 2) {
+               for (short yAbsDelta = (short) (xAbsDelta%2); yAbsDelta < sizeY; yAbsDelta += 2) {
                   short yDelta = (short) (positiveY ? yAbsDelta : -yAbsDelta);
-                  short y = (short) (originalLoc._y + yDelta);
-                  if ((y < 0) || (y>=_sizeY)) {
+                  short y = (short) (originalLoc.y + yDelta);
+                  if ((y < 0) || (y >= sizeY)) {
                      break;
                   }
 
@@ -359,7 +358,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
                   // compute the maximum and minimum angles to each point of the target hex.
                   // This will be used to see if this hex need to be considered, and if this hex blocks
                   // visibility, these angles will be added to the blocking angles list.
-                  int[] hexDims = MapWidget2D.getHexDimensions(loc._x/*column*/, loc._y/*row*/, 10/*sizePerHex*/,
+                  int[] hexDims = MapWidget2D.getHexDimensions(loc.x/*column*/, loc.y/*row*/, 10/*sizePerHex*/,
                                                                0/*offsetX*/, 0/*offsetY*/, true/*cacheResults*/);
                   int centerCoordX = (hexDims[MapWidget2D.X_SMALLEST] + hexDims[MapWidget2D.X_LARGEST]) / 2;
                   int centerCoordY = (hexDims[MapWidget2D.Y_SMALLEST] + hexDims[MapWidget2D.Y_LARGEST]) / 2;
@@ -369,13 +368,13 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
                   if (centerAngle > (2*Math.PI)) {
                      centerAngle -= 2*Math.PI;
                   }
-                  if ((loc._x == 2) && (loc._y == 6)) {
-                     loc._y = (short) (loc._x + 4);
+                  if ((loc.x == 2) && (loc.y == 6)) {
+                     loc.y = (short) (loc.x + 4);
                   }
                   AnglePair thisHexsFullAngle = new AnglePair(centerAngle, centerAngle);
                   long walls = loc.getWallsAndClosedDoors();
-//                  if (loc._x == 20) {
-//                     if (loc._y == 56) {
+//                  if (loc.x == 20) {
+//                     if (loc.y == 56) {
 //                        walls = walls;
 //                     }
 //                  }
@@ -447,8 +446,8 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
                      blockingAngles.add(treeTrunkAngle);
                   }
                   if (loc.getTerrain() == TerrainType.DENSE_BUSH) {
-                     AnglePair angle1 = new AnglePair(thisHexsFullAngle._startAngle, centerAngle);
-                     AnglePair angle2 = new AnglePair(centerAngle, thisHexsFullAngle._stopAngle);
+                     AnglePair angle1 = new AnglePair(thisHexsFullAngle.startAngle, centerAngle);
+                     AnglePair angle2 = new AnglePair(centerAngle, thisHexsFullAngle.stopAngle);
                      angle1 = angle1.adjustWidth(.40);
                      angle2 = angle2.adjustWidth(.40);
                      blockingAngles.add(angle1);
@@ -475,7 +474,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
                      setVisibilityOrKnownBy(self, setVisibility, basedOnFacing, locsToRedraw, loc, fromLoc);
                   }
                   else {
-                     loc.setVisible(false, this, originalLoc, self._uniqueID, false/*basedOnFacing*/);
+                     loc.setVisible(false, this, originalLoc, self.uniqueID, false/*basedOnFacing*/);
                   }
                   // add the angles that this hex blocks to the list of all angles blocked
                   angleBlockedVisually.add(blockingAngles);
@@ -490,29 +489,29 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       return addCharacter(combatant, startLoc, clientProxy);
    }
    public boolean setStockCharacter(String stockCombatantName, String ai, byte team, byte cur) {
-      if ((team < _teamCount) && (cur < _maxCombatantsPerTeam)) {
-         _stockCharName[team][cur] = stockCombatantName;
+      if ((team < teamCount) && (cur < maxCombatantsPerTeam)) {
+         stockCharName[team][cur] = stockCombatantName;
          if (ai.startsWith("AI - ")) {
             ai = ai.replace("AI - ", "");
          }
-         _stockAiName[team][cur] = ai;
+         stockAiName[team][cur] = ai;
          return true;
       }
       return false;
    }
    public String[] getStockCharacters(byte team) {
-       return _stockCharName[team];
+       return stockCharName[team];
     }
    public String[] getStockAIName(byte team) {
-       return _stockAiName[team];
+       return stockAiName[team];
     }
    public void setAllCombatantsAsAI() {
-      for (int team = 0 ; team<_teamCount ; team++) {
-         for (int combatant = 0 ; combatant<_maxCombatantsPerTeam ; combatant++) {
-            if (_stockAiName[team][combatant] != null) {
-               if ((!_stockAiName[team][combatant].equals(AI_Type.NORM.name)) &&
-                   (!_stockAiName[team][combatant].equals(AI_Type.GOD.name))) {
-                  _stockAiName[team][combatant] = AI_Type.NORM.name;
+      for (int team = 0; team < teamCount; team++) {
+         for (int combatant = 0; combatant < maxCombatantsPerTeam; combatant++) {
+            if (stockAiName[team][combatant] != null) {
+               if ((!stockAiName[team][combatant].equals(AI_Type.NORM.name)) &&
+                   (!stockAiName[team][combatant].equals(AI_Type.GOD.name))) {
+                  stockAiName[team][combatant] = AI_Type.NORM.name;
                }
             }
          }
@@ -520,20 +519,20 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
    }
 
    public String getName() {
-      return _name;
+      return name;
    }
    public void setName(String newName) {
-      _name = newName;
+      name = newName;
    }
 
    public ArenaLocation getLocation(short x, short y) {
       if ((x >= 0) && (y >= 0) && (x < getSizeX()) && (y < getSizeY())) {
-         return _locations[x][y];
+         return locations[x][y];
       }
       return null;
    }
    public ArenaLocation getLocationQuick(short x, short y) {
-      return _locations[x][y];
+      return locations[x][y];
    }
    public ArenaLocation getLocation(ArenaCoordinates coordinate) {
       if (coordinate == null) {
@@ -542,7 +541,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       if (coordinate instanceof ArenaLocation) {
          return (ArenaLocation) coordinate;
       }
-      return getLocation(coordinate._x, coordinate._y);
+      return getLocation(coordinate.x, coordinate.y);
    }
    public List<ArenaLocation> getLocations(List<ArenaCoordinates> coordinates) {
       List<ArenaLocation> locations = new ArrayList<>();
@@ -554,25 +553,25 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
 
    public ArenaLocation getHeadLocation(Character character) {
       ArenaLocation loc = character.getLimbLocation(LimbType.HEAD, this);
-      return getLocation(loc._x, loc._y);
+      return getLocation(loc.x, loc.y);
    }
    public List<ArenaLocation> getLocations(Character character) {
       List<ArenaLocation> locations = new ArrayList<>();
       for (ArenaCoordinates coord : character.getCoordinates()) {
-         locations.add(getLocation(coord._x, coord._y));
+         locations.add(getLocation(coord.x, coord.y));
       }
       return locations;
    }
    public boolean addLocation(ArenaLocation arenaLocation) {
-      if (_locations[arenaLocation._x][arenaLocation._y] != null) {
+      if (locations[arenaLocation.x][arenaLocation.y] != null) {
          return false;
       }
-      _locations[arenaLocation._x][arenaLocation._y] = arenaLocation;
+      locations[arenaLocation.x][arenaLocation.y] = arenaLocation;
       return true;
    }
 
    public boolean dropThing(Object thing, short xLoc, short yLoc) {
-      ArenaLocation location = _locations[xLoc][yLoc];
+      ArenaLocation location = locations[xLoc][yLoc];
       if (location != null) {
          location.addThing(thing);
          return true;
@@ -582,9 +581,9 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
 
    public List<Character> getCombatants() {
       List<Character> list = new ArrayList<>();
-      for (short col = 0 ; col<_sizeX ; col++) {
-          for (short row = (short)(col%2) ; row<_sizeY ; row += 2) {
-              List<Character> characters = _locations[col][row].getCharacters();
+      for (short col = 0; col < sizeX; col++) {
+          for (short row = (short)(col%2); row < sizeY; row += 2) {
+              List<Character> characters = locations[col][row].getCharacters();
               if (characters.size() > 0) {
                   list.addAll(characters);
               }
@@ -593,11 +592,11 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
        return list;
     }
    public void removeAllCombatants() {
-      for (short col = 0 ; col<_sizeX ; col++) {
-         for (short row = (short)(col%2) ; row<_sizeY ; row += 2) {
-            List<Character> characters = _locations[col][row].getCharacters();
+      for (short col = 0; col < sizeX; col++) {
+         for (short row = (short)(col%2); row < sizeY; row += 2) {
+            List<Character> characters = locations[col][row].getCharacters();
             while (characters.size() > 0) {
-               _locations[col][row].remove(characters.remove(0));
+               locations[col][row].remove(characters.remove(0));
             }
          }
       }
@@ -609,63 +608,63 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       if (!st.hasMoreElements()) {
          return false;
       }
-      _name = st.nextToken();
+      name = st.nextToken();
       if (!st.hasMoreElements()) {
          return false;
       }
-      _level = Short.parseShort(st.nextToken());
+      level = Short.parseShort(st.nextToken());
       if (!st.hasMoreElements()) {
          return false;
       }
-      _sizeX = Short.parseShort(st.nextToken());
+      sizeX = Short.parseShort(st.nextToken());
       if (!st.hasMoreElements()) {
          return false;
       }
-      _sizeY = Short.parseShort(st.nextToken());
+      sizeY = Short.parseShort(st.nextToken());
       if (!st.hasMoreElements()) {
          return false;
       }
 
-      _hideViewFromLocalPlayers = Boolean.parseBoolean(st.nextToken());
+      hideViewFromLocalPlayers = Boolean.parseBoolean(st.nextToken());
 
-      _locations = new ArenaLocation[_sizeX][_sizeY];
-      for (short col=0 ; col<_sizeX ; col++) {
-         for (short row=(short) (col%2) ; row<_sizeY ; row += 2) {
-            _locations[col][row] = new ArenaLocation(col, row);
-            _locations[col][row].registerAsWatcher(this, _diag);
+      locations = new ArenaLocation[sizeX][sizeY];
+      for (short col = 0; col < sizeX; col++) {
+         for (short row = (short) (col%2); row < sizeY; row += 2) {
+            locations[col][row] = new ArenaLocation(col, row);
+            locations[col][row].registerAsWatcher(this, diag);
             if (!st.hasMoreElements()) {
                return false;
             }
-            _locations[col][row].setData(Integer.parseInt(st.nextToken()));
+            locations[col][row].setData(Integer.parseInt(st.nextToken()));
          }
       }
-      _teamCount = CombatServer.MAX_TEAMS;
-      _maxCombatantsPerTeam = CombatServer.MAX_COMBATANTS_PER_TEAM;
+      teamCount = CombatServer.MAX_TEAMS;
+      maxCombatantsPerTeam = CombatServer.MAX_COMBATANTS_PER_TEAM;
       if (!st.hasMoreElements()) {
-         _startPoints = new ArenaLocation[_teamCount][_maxCombatantsPerTeam];
-         _stockAiName = new String[_teamCount][_maxCombatantsPerTeam];
-         _stockCharName = new String[_teamCount][_maxCombatantsPerTeam];
+         startPoints = new ArenaLocation[teamCount][maxCombatantsPerTeam];
+         stockAiName = new String[teamCount][maxCombatantsPerTeam];
+         stockCharName = new String[teamCount][maxCombatantsPerTeam];
          return true;
       }
-      _teamCount = Byte.parseByte(st.nextToken());
+      teamCount = Byte.parseByte(st.nextToken());
       if (!st.hasMoreElements()) {
-          _startPoints = new ArenaLocation[_teamCount][_maxCombatantsPerTeam];
-          _stockAiName = new String[_teamCount][_maxCombatantsPerTeam];
-          _stockCharName = new String[_teamCount][_maxCombatantsPerTeam];
+          startPoints = new ArenaLocation[teamCount][maxCombatantsPerTeam];
+          stockAiName = new String[teamCount][maxCombatantsPerTeam];
+          stockCharName = new String[teamCount][maxCombatantsPerTeam];
           return true;
        }
-      _maxCombatantsPerTeam = Byte.parseByte(st.nextToken());
-      _startPoints = new ArenaLocation[_teamCount][_maxCombatantsPerTeam];
-      _stockAiName = new String[_teamCount][_maxCombatantsPerTeam];
-      _stockCharName = new String[_teamCount][_maxCombatantsPerTeam];
+      maxCombatantsPerTeam = Byte.parseByte(st.nextToken());
+      startPoints = new ArenaLocation[teamCount][maxCombatantsPerTeam];
+      stockAiName = new String[teamCount][maxCombatantsPerTeam];
+      stockCharName = new String[teamCount][maxCombatantsPerTeam];
       if (!st.hasMoreElements()) {
           return true;
        }
-      for (byte team=0 ; team<_teamCount ; team++) {
+      for (byte team = 0; team < teamCount; team++) {
          if (!st.hasMoreElements()) {
             return false;
          }
-         for (byte cur=0 ; cur<_maxCombatantsPerTeam ; cur ++) {
+         for (byte cur = 0; cur < maxCombatantsPerTeam; cur ++) {
             if (!st.hasMoreElements()) {
                return false;
             }
@@ -675,8 +674,8 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
             }
             short startY = Short.parseShort(st.nextToken());
             if ((startX != -1) && (startY != -1)) {
-               _startPoints[team][cur] = _locations[startX][startY];
-               _startPoints[team][cur].setLabel(getLabel(team, cur));
+               startPoints[team][cur] = locations[startX][startY];
+               startPoints[team][cur].setLabel(getLabel(team, cur));
             }
             if (!st.hasMoreElements()) {
                return false;
@@ -692,62 +691,62 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       if (!st.hasMoreElements()) {
          return true;
       }
-      _backgroundImagePath = st.nextToken();
+      backgroundImagePath = st.nextToken();
       if (!st.hasMoreElements()) {
          return true;
       }
-      _backgroundImageAlpha = Byte.parseByte(st.nextToken());
+      backgroundImageAlpha = Byte.parseByte(st.nextToken());
       if (!st.hasMoreElements()) {
          return true;
       }
 
-      _knownByAllPlayers = Boolean.parseBoolean(st.nextToken());
+      knownByAllPlayers = Boolean.parseBoolean(st.nextToken());
 
       return true;
    }
    public String serializeToString() {
       StringBuilder sb = new StringBuilder();
-      sb.append(_name).append(SEPARATOR_MAIN);
-      sb.append(_level).append(SEPARATOR_MAIN);
-      sb.append(_sizeX).append(SEPARATOR_MAIN);
-      sb.append(_sizeY).append(SEPARATOR_MAIN);
-      sb.append(_hideViewFromLocalPlayers).append(SEPARATOR_MAIN);
-      for (short col = 0 ; col<_sizeX ; col++) {
-         for (short row = (short)(col%2) ; row<_sizeY ; row += 2) {
-            sb.append(_locations[col][row].getData()).append(SEPARATOR_MAIN);
+      sb.append(name).append(SEPARATOR_MAIN);
+      sb.append(level).append(SEPARATOR_MAIN);
+      sb.append(sizeX).append(SEPARATOR_MAIN);
+      sb.append(sizeY).append(SEPARATOR_MAIN);
+      sb.append(hideViewFromLocalPlayers).append(SEPARATOR_MAIN);
+      for (short col = 0; col < sizeX; col++) {
+         for (short row = (short)(col%2); row < sizeY; row += 2) {
+            sb.append(locations[col][row].getData()).append(SEPARATOR_MAIN);
          }
       }
 
-      sb.append(_teamCount).append(SEPARATOR_MAIN);
-      sb.append(_maxCombatantsPerTeam).append(SEPARATOR_MAIN);
-      for (byte team=0 ; team<_teamCount ; team++) {
-         for (byte cur=0 ; cur<_maxCombatantsPerTeam ; cur ++) {
-            ArenaLocation startLoc = _startPoints[team][cur];
+      sb.append(teamCount).append(SEPARATOR_MAIN);
+      sb.append(maxCombatantsPerTeam).append(SEPARATOR_MAIN);
+      for (byte team = 0; team < teamCount; team++) {
+         for (byte cur = 0; cur < maxCombatantsPerTeam; cur ++) {
+            ArenaLocation startLoc = startPoints[team][cur];
             if (startLoc != null ) {
-               sb.append(startLoc._x).append(SEPARATOR_MAIN);
-               sb.append(startLoc._y).append(SEPARATOR_MAIN);
+               sb.append(startLoc.x).append(SEPARATOR_MAIN);
+               sb.append(startLoc.y).append(SEPARATOR_MAIN);
             }
             else {
                sb.append(-1).append(SEPARATOR_MAIN);
                sb.append(-1).append(SEPARATOR_MAIN);
             }
-            if (_stockAiName[team][cur] == null) {
+            if (stockAiName[team][cur] == null) {
                sb.append("Off").append(SEPARATOR_MAIN);
             }
             else {
-               sb.append(_stockAiName[team][cur]).append(SEPARATOR_MAIN);
+               sb.append(stockAiName[team][cur]).append(SEPARATOR_MAIN);
             }
-            if (_stockCharName[team][cur] == null) {
+            if (stockCharName[team][cur] == null) {
                sb.append(" ").append(SEPARATOR_MAIN);
             }
             else {
-               sb.append(_stockCharName[team][cur]).append(SEPARATOR_MAIN);
+               sb.append(stockCharName[team][cur]).append(SEPARATOR_MAIN);
             }
          }
       }
-      sb.append(_backgroundImagePath).append(SEPARATOR_MAIN);
-      sb.append(_backgroundImageAlpha).append(SEPARATOR_MAIN);
-      sb.append(_knownByAllPlayers).append(SEPARATOR_MAIN);
+      sb.append(backgroundImagePath).append(SEPARATOR_MAIN);
+      sb.append(backgroundImageAlpha).append(SEPARATOR_MAIN);
+      sb.append(knownByAllPlayers).append(SEPARATOR_MAIN);
       return sb.toString();
    }
 
@@ -755,32 +754,32 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
    public void serializeToStream(DataOutputStream out)
    {
       try {
-         writeToStream(_level, out);
+         writeToStream(level, out);
          writeToStream(getSizeX(), out);
          writeToStream(getSizeY(), out);
-         writeToStream(_hideViewFromLocalPlayers, out);
-         writeToStream(_knownByAllPlayers, out);
-         writeToStream(_backgroundImagePath, out);
-         writeToStream(_backgroundImageAlpha, out);
+         writeToStream(hideViewFromLocalPlayers, out);
+         writeToStream(knownByAllPlayers, out);
+         writeToStream(backgroundImagePath, out);
+         writeToStream(backgroundImageAlpha, out);
          for (short col=0 ; col<getSizeX() ; col++) {
             for (short row=(short)(col%2) ; row<getSizeY(); row+=2) {
                getLocation(col,row).serializeContentsToStream(out);
             }
          }
-         writeToStream(_teamCount, out);
-         writeToStream(_maxCombatantsPerTeam, out);
-         for (int team = 0 ; team<_teamCount ; team++) {
-            for (int combatant = 0 ; combatant<_maxCombatantsPerTeam ; combatant++) {
-               if (_startPoints[team][combatant] != null) {
-                  writeToStream(_startPoints[team][combatant]._x, out);
-                  writeToStream(_startPoints[team][combatant]._y, out);
+         writeToStream(teamCount, out);
+         writeToStream(maxCombatantsPerTeam, out);
+         for (int team = 0; team < teamCount; team++) {
+            for (int combatant = 0; combatant < maxCombatantsPerTeam; combatant++) {
+               if (startPoints[team][combatant] != null) {
+                  writeToStream(startPoints[team][combatant].x, out);
+                  writeToStream(startPoints[team][combatant].y, out);
                }
                else {
                   writeToStream((short)(-1), out);
                   writeToStream((short)(-1), out);
                }
-               writeToStream(_stockAiName[team][combatant],   out);
-               writeToStream(_stockCharName[team][combatant], out);
+               writeToStream(stockAiName[team][combatant], out);
+               writeToStream(stockCharName[team][combatant], out);
             }
          }
       } catch (IOException e) {
@@ -791,31 +790,31 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
    public void serializeFromStream(DataInputStream in)
    {
       try {
-         _level = in.readShort();
+         level = in.readShort();
          short sizeX = in.readShort();
          short sizeY = in.readShort();
-         _hideViewFromLocalPlayers = in.readBoolean();
-         _knownByAllPlayers        = in.readBoolean();
-         _backgroundImagePath      = readString(in);
-         _backgroundImageAlpha     = readByte(in);
+         hideViewFromLocalPlayers = in.readBoolean();
+         knownByAllPlayers = in.readBoolean();
+         backgroundImagePath = readString(in);
+         backgroundImageAlpha = readByte(in);
 
          setSize(sizeX, sizeY);
-         for (short col=0 ; col<_sizeX ; col++) {
-            for (short row=(short)(col%2) ; row<_sizeY; row+=2) {
+         for (short col = 0; col < this.sizeX; col++) {
+            for (short row = (short)(col%2); row < this.sizeY; row+=2) {
                getLocation(col,row).serializeContentsFromStream(in);
             }
          }
-         _teamCount = in.readByte();
-         _maxCombatantsPerTeam = in.readByte();
-         _startPoints = new ArenaLocation[_teamCount][_maxCombatantsPerTeam];
-         _stockAiName = new String[_teamCount][_maxCombatantsPerTeam];
-         _stockCharName = new String[_teamCount][_maxCombatantsPerTeam];
-         for (byte team = 0 ; team<_teamCount ; team++) {
-            for (byte combatant = 0 ; combatant<_maxCombatantsPerTeam ; combatant++) {
+         teamCount = in.readByte();
+         maxCombatantsPerTeam = in.readByte();
+         startPoints = new ArenaLocation[teamCount][maxCombatantsPerTeam];
+         stockAiName = new String[teamCount][maxCombatantsPerTeam];
+         stockCharName = new String[teamCount][maxCombatantsPerTeam];
+         for (byte team = 0; team < teamCount; team++) {
+            for (byte combatant = 0; combatant < maxCombatantsPerTeam; combatant++) {
                short x = in.readShort();
                short y = in.readShort();
                if ((x != -1) && (y != -1)) {
-                  _startPoints[team][combatant] = getLocation(x, y);
+                  startPoints[team][combatant] = getLocation(x, y);
                }
                String ai       = readString(in);
                String charName = readString(in);
@@ -829,49 +828,49 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
 
    @Override
    public String toString() {
-      return "ComatMap: " + _sizeX +"x" + _sizeY;
+      return "ComatMap: " + sizeX + "x" + sizeY;
    }
 
    @Override
    public CombatMap clone() {
-      CombatMap newObj = new CombatMap(_sizeX, _sizeY, null);
-      newObj._level = _level;
-      newObj._hideViewFromLocalPlayers = _hideViewFromLocalPlayers;
-      newObj._knownByAllPlayers = _knownByAllPlayers;
-      newObj._name = _name;
-      for (short col = 0; col < _sizeX; col++) {
-         for (short row = (short) (col % 2); row < _sizeY; row += 2) {
-            newObj._locations[col][row].copyData(_locations[col][row]);
+      CombatMap newObj = new CombatMap(sizeX, sizeY, null);
+      newObj.level = level;
+      newObj.hideViewFromLocalPlayers = hideViewFromLocalPlayers;
+      newObj.knownByAllPlayers = knownByAllPlayers;
+      newObj.name = name;
+      for (short col = 0; col < sizeX; col++) {
+         for (short row = (short) (col % 2); row < sizeY; row += 2) {
+            newObj.locations[col][row].copyData(locations[col][row]);
          }
       }
-      newObj._teamCount = _teamCount;
+      newObj.teamCount = teamCount;
 
-      newObj._maxCombatantsPerTeam = _maxCombatantsPerTeam;
-      newObj._startPoints = new ArenaLocation[_teamCount][_maxCombatantsPerTeam];
-      newObj._stockAiName = new String[_teamCount][_maxCombatantsPerTeam];
-      newObj._stockCharName = new String[_teamCount][_maxCombatantsPerTeam];
-      for (byte team = 0; team < _teamCount; team++) {
-         for (byte cur = 0; cur < _maxCombatantsPerTeam; cur++) {
-            if (_startPoints != null) {
-               ArenaLocation startPoint = _startPoints[team][cur];
+      newObj.maxCombatantsPerTeam = maxCombatantsPerTeam;
+      newObj.startPoints = new ArenaLocation[teamCount][maxCombatantsPerTeam];
+      newObj.stockAiName = new String[teamCount][maxCombatantsPerTeam];
+      newObj.stockCharName = new String[teamCount][maxCombatantsPerTeam];
+      for (byte team = 0; team < teamCount; team++) {
+         for (byte cur = 0; cur < maxCombatantsPerTeam; cur++) {
+            if (startPoints != null) {
+               ArenaLocation startPoint = startPoints[team][cur];
                if (startPoint != null) {
-                  newObj._startPoints[team][cur] = newObj._locations[startPoint._x][startPoint._y];
+                  newObj.startPoints[team][cur] = newObj.locations[startPoint.x][startPoint.y];
                }
             }
-            if (_stockAiName != null) {
-               newObj._stockAiName[team][cur] = _stockAiName[team][cur];
+            if (stockAiName != null) {
+               newObj.stockAiName[team][cur] = stockAiName[team][cur];
             }
-            if (_stockCharName != null) {
-               newObj._stockCharName[team][cur] = _stockCharName[team][cur];
+            if (stockCharName != null) {
+               newObj.stockCharName[team][cur] = stockCharName[team][cur];
             }
          }
       }
-      newObj._triggers.clear();
-      for (ArenaTrigger trigger : _triggers) {
-         newObj._triggers.add(trigger.clone());
+      newObj.triggers.clear();
+      for (ArenaTrigger trigger : triggers) {
+         newObj.triggers.add(trigger.clone());
       }
-      newObj._backgroundImagePath = _backgroundImagePath;
-      newObj._backgroundImageAlpha = _backgroundImageAlpha;
+      newObj.backgroundImagePath = backgroundImagePath;
+      newObj.backgroundImageAlpha = backgroundImageAlpha;
       return newObj;
    }
 
@@ -879,7 +878,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       if (considerFacing && fromChar.hasPeripheralVision()) {
          considerFacing = false;
       }
-      return canSee(fromChar.getOrientation(), toChar, considerFacing, blockedByAnyStandingCharacter, fromChar._uniqueID/*markAsKnownByCharacterUniqueID*/);
+      return canSee(fromChar.getOrientation(), toChar, considerFacing, blockedByAnyStandingCharacter, fromChar.uniqueID/*markAsKnownByCharacterUniqueID*/);
    }
    /**
     * This method is used to figue out if a possible future orientation would be able to see the toChar, from a given fromOrientation
@@ -905,7 +904,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
                          boolean blockedByAnyStandingCharacter, int markAsKnownByCharacterUniqueID) {
       ArenaLocation headLoc = getLocation(fromOrientation.getHeadCoordinates());
       for (ArenaLocation toLoc : getLocations(toOrientation.getCoordinates())) {
-         toLoc = _locations[toLoc._x][toLoc._y];
+         toLoc = locations[toLoc.x][toLoc.y];
          if (canSeeLocation(fromOrientation, headLoc, toLoc, considerFacing, blockedByAnyStandingCharacter, markAsKnownByCharacterUniqueID)) {
             return true;
          }
@@ -946,7 +945,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
     * @return
     */
    public int countCharactersBetween(Character fromChar, Character toChar, boolean onlyCountStandingCharacters) {
-      if (fromChar._uniqueID == toChar._uniqueID) {
+      if (fromChar.uniqueID == toChar.uniqueID) {
          return 0;
       }
       ArenaLocation fromLoc = getLocation(fromChar.getHeadCoordinates());
@@ -1048,10 +1047,10 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       if (computeVisibilityFromCharacter != null) {
          boolean redrawLoc;
          if (setVisibility) {
-            redrawLoc = loc.setVisible(true/*isVisible*/, this, fromLoc, computeVisibilityFromCharacter._uniqueID, basedOnFacing);
+            redrawLoc = loc.setVisible(true/*isVisible*/, this, fromLoc, computeVisibilityFromCharacter.uniqueID, basedOnFacing);
          }
          else {
-            redrawLoc = loc.setKnownBy(computeVisibilityFromCharacter._uniqueID, true/*isKnown*/);
+            redrawLoc = loc.setKnownBy(computeVisibilityFromCharacter.uniqueID, true/*isKnown*/);
          }
          if (redrawLoc &&  (locsToRedraw!= null)) {
             locsToRedraw.add(loc);
@@ -1060,9 +1059,9 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
    }
 
    public void setAllLocationsAsKnownBy(Character godCharacter) {
-      for (short col=0 ; col<_sizeX ; col++) {
-         for (short row=(short)(col%2) ; row<_sizeY; row+=2) {
-            _locations[col][row].setKnownBy(godCharacter._uniqueID, true/*isKnown*/);
+      for (short col = 0; col < sizeX; col++) {
+         for (short row = (short)(col%2); row < sizeY; row+=2) {
+            locations[col][row].setKnownBy(godCharacter.uniqueID, true/*isKnown*/);
          }
       }
    }
@@ -1077,8 +1076,8 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
    public List<ArenaLocation> getLOSPath(ArenaCoordinates fromCoord, ArenaCoordinates toCoord, boolean trimPath) {
       // This method does NOT put the fromCoord or the toCoord in the path!
       List<ArenaLocation> path = new ArrayList<>();
-      int deltaX = toCoord._x - fromCoord._x;
-      int deltaY = toCoord._y - fromCoord._y;
+      int deltaX = toCoord.x - fromCoord.x;
+      int deltaY = toCoord.y - fromCoord.y;
       int absX = Math.abs(deltaX);
       int absY = Math.abs(deltaY);
       if (deltaX == 0) {
@@ -1089,8 +1088,8 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
             else {
                deltaY = -2;
             }
-            for (short y=(short)(fromCoord._y+deltaY) ; y!=toCoord._y ; y+=deltaY) {
-               ArenaLocation loc = getLocation(fromCoord._x, y);
+            for (short y = (short)(fromCoord.y + deltaY); y != toCoord.y; y+=deltaY) {
+               ArenaLocation loc = getLocation(fromCoord.x, y);
                if (loc == null) {
                   DebugBreak.debugBreak();
                }
@@ -1109,7 +1108,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       if (deltaX == deltaY) {
          if (deltaX > 0) {
             for (short i=1 ; i<deltaX ; i++) {
-               ArenaLocation loc = getLocation((short) (fromCoord._x + i), (short) (fromCoord._y + i));
+               ArenaLocation loc = getLocation((short) (fromCoord.x + i), (short) (fromCoord.y + i));
                if (loc == null) {
                   DebugBreak.debugBreak();
                }
@@ -1120,7 +1119,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
          }
          else {
             for (short i=-1 ; i>deltaX ; i--) {
-               ArenaLocation loc = getLocation((short) (fromCoord._x + i), (short) (fromCoord._y + i));
+               ArenaLocation loc = getLocation((short) (fromCoord.x + i), (short) (fromCoord.y + i));
                if (loc == null) {
                   DebugBreak.debugBreak();
                }
@@ -1140,7 +1139,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       if (deltaX == -deltaY) {
          if (deltaX > 0) {
             for (short i=1 ; i<deltaX ; i++) {
-               ArenaLocation loc = getLocation((short) (fromCoord._x + i), (short) (fromCoord._y - i));
+               ArenaLocation loc = getLocation((short) (fromCoord.x + i), (short) (fromCoord.y - i));
                if (loc == null) {
                   DebugBreak.debugBreak();
                }
@@ -1151,7 +1150,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
          }
          else {
             for (short i=-1 ; i>deltaX ; i--) {
-               ArenaLocation loc = getLocation((short) (fromCoord._x + i), (short) (fromCoord._y - i));
+               ArenaLocation loc = getLocation((short) (fromCoord.x + i), (short) (fromCoord.y - i));
                if (loc == null) {
                   DebugBreak.debugBreak();
                }
@@ -1167,11 +1166,11 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
          }
          return path;
       }
-      int[] hexDims = MapWidget2D.getHexDimensions(fromCoord._x/*column*/, fromCoord._y/*row*/, 10/*sizePerHex*/, 0/*offsetX*/, 0/*offsetY*/, true/*cacheResults*/);
+      int[] hexDims = MapWidget2D.getHexDimensions(fromCoord.x/*column*/, fromCoord.y/*row*/, 10/*sizePerHex*/, 0/*offsetX*/, 0/*offsetY*/, true/*cacheResults*/);
       int centerCoordFromX = (hexDims[MapWidget2D.X_SMALLEST] + hexDims[MapWidget2D.X_LARGEST]) / 2;
       int centerCoordFromY = (hexDims[MapWidget2D.Y_SMALLEST] + hexDims[MapWidget2D.Y_LARGEST]) / 2;
 
-            hexDims = MapWidget2D.getHexDimensions(toCoord._x/*column*/, toCoord._y/*row*/, 10/*sizePerHex*/, 0/*offsetX*/, 0/*offsetY*/, true/*cacheResults*/);
+            hexDims = MapWidget2D.getHexDimensions(toCoord.x/*column*/, toCoord.y/*row*/, 10/*sizePerHex*/, 0/*offsetX*/, 0/*offsetY*/, true/*cacheResults*/);
       int centerCoordToX = (hexDims[MapWidget2D.X_SMALLEST] + hexDims[MapWidget2D.X_LARGEST]) / 2;
       int centerCoordToY = (hexDims[MapWidget2D.Y_SMALLEST] + hexDims[MapWidget2D.Y_LARGEST]) / 2;
 
@@ -1218,7 +1217,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       }
       ArenaLocation curLocation = getLocation(fromCoord);
       while (!curLocation.sameCoordinates(toCoord)) {
-         hexDims = MapWidget2D.getHexDimensions(curLocation._x/*column*/, curLocation._y/*row*/, 10/*sizePerHex*/, 0/*offsetX*/, 0/*offsetY*/, true/*cacheResults*/);
+         hexDims = MapWidget2D.getHexDimensions(curLocation.x/*column*/, curLocation.y/*row*/, 10/*sizePerHex*/, 0/*offsetX*/, 0/*offsetY*/, true/*cacheResults*/);
          int descisionPointX = hexDims[pointIndex*2];
          int descisionPointY = hexDims[(pointIndex*2)+1];
          double descisionPointAngle = Math.atan2(descisionPointX-centerCoordFromX, descisionPointY-centerCoordFromY);
@@ -1231,7 +1230,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
             moveX = moveX2;
             moveY = moveY2;
          }
-         ArenaLocation nextLocation = getLocation((short)(curLocation._x + moveX), (short)(curLocation._y + moveY));
+         ArenaLocation nextLocation = getLocation((short)(curLocation.x + moveX), (short)(curLocation.y + moveY));
          if (nextLocation == null) {
             // Make sure that when we are at the top or bottom edge, that we don't leave the map
             // when the other equally valid choice would keep us on the map
@@ -1244,7 +1243,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
                moveY = moveY2;
             }
 
-            nextLocation = getLocation((short)(curLocation._x + moveX), (short)(curLocation._y + moveY));
+            nextLocation = getLocation((short)(curLocation.x + moveX), (short)(curLocation.y + moveY));
 
             if (nextLocation == null) {
                DebugBreak.debugBreak();
@@ -1280,19 +1279,19 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       if (fromLoc.sameCoordinates(toLoc)) {
          return fromLoc;
       }
-      int xDist = toLoc._x - fromLoc._x;
-      int yDist = toLoc._y - fromLoc._y;
+      int xDist = toLoc.x - fromLoc.x;
+      int yDist = toLoc.y - fromLoc.y;
       if ((xDist == 0) && (yDist == 0)) {
          return fromLoc;
       }
       int pointsToCheck = (Math.abs(xDist) + Math.abs(yDist)) * 2;
       double xMove = ((double)xDist) / pointsToCheck;
       double yMove = ((double)yDist) / pointsToCheck;
-      short lastX = fromLoc._x;
-      short lastY = fromLoc._y;
+      short lastX = fromLoc.x;
+      short lastY = fromLoc.y;
       for (int point = 0 ; point<=pointsToCheck ; point++) {
-         double xLoc = fromLoc._x + (point*xMove);
-         double yLoc = fromLoc._y + (point*yMove);
+         double xLoc = fromLoc.x + (point * xMove);
+         double yLoc = fromLoc.y + (point * yMove);
          short newX = (short) Math.round(xLoc);
          short newY = getYLocation(yLoc, newX);
          if ((newX == lastX) && (newY == lastY)) {
@@ -1306,11 +1305,11 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
             DebugBreak.debugBreak();
          }
          else {
-            if (testLoc._x != newX) {
+            if (testLoc.x != newX) {
                DebugBreak.debugBreak();
                testLoc = getLocation(newX, newY);
             }
-            if (testLoc._y != newY) {
+            if (testLoc.y != newY) {
                DebugBreak.debugBreak();
                testLoc = getLocation(newX, newY);
             }
@@ -1339,38 +1338,38 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       if (loc == null) {
          return false;
       }
-      if (curCombatantIndex >= _maxCombatantsPerTeam) {
+      if (curCombatantIndex >= maxCombatantsPerTeam) {
          return false;
       }
-      ArenaLocation oldStart = _startPoints[team][curCombatantIndex];
+      ArenaLocation oldStart = startPoints[team][curCombatantIndex];
       if (oldStart != null) {
-         oldStart = _locations[oldStart._x][oldStart._y];
+         oldStart = locations[oldStart.x][oldStart.y];
          oldStart.setLabel(null);
       }
       loc.setLabel(getLabel(team, curCombatantIndex));
-      loc = _locations[loc._x][loc._y];
+      loc = locations[loc.x][loc.y];
       loc.setLabel(getLabel(team, curCombatantIndex));
-      _startPoints[team][curCombatantIndex] = loc;
+      startPoints[team][curCombatantIndex] = loc;
       return true;
    }
    public ArenaLocation clearStartingLocation(byte team, byte curCombatantIndex)
    {
-       if (curCombatantIndex >= _maxCombatantsPerTeam) {
+       if (curCombatantIndex >= maxCombatantsPerTeam) {
          return null;
       }
-       ArenaLocation oldStart = _startPoints[team][curCombatantIndex];
+       ArenaLocation oldStart = startPoints[team][curCombatantIndex];
        if (oldStart != null) {
-           oldStart = _locations[oldStart._x][oldStart._y];
+           oldStart = locations[oldStart.x][oldStart.y];
            oldStart.setLabel(null);
        }
-       _startPoints[team][curCombatantIndex] = null;
+       startPoints[team][curCombatantIndex] = null;
        return oldStart;
    }
    public void clearStartingPointLabels() {
-      for (byte team=0 ; team<_teamCount ; team++) {
-         for (byte cur=0 ; cur<_maxCombatantsPerTeam ; cur++) {
-            if (_startPoints[team][cur] != null) {
-               _startPoints[team][cur].setLabel(null);
+      for (byte team = 0; team < teamCount; team++) {
+         for (byte cur = 0; cur < maxCombatantsPerTeam; cur++) {
+            if (startPoints[team][cur] != null) {
+               startPoints[team][cur].setLabel(null);
             }
          }
       }
@@ -1380,11 +1379,11 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
        return (TEAM_NAMES[team] + (cur+1));
    }
    public ArenaLocation getStartingLocation(byte team, byte curCombatantIndex) {
-      if (team < _startPoints.length) {
-         if (curCombatantIndex < _startPoints[team].length) {
-            ArenaLocation startLoc = _startPoints[team][curCombatantIndex];
+      if (team < startPoints.length) {
+         if (curCombatantIndex < startPoints[team].length) {
+            ArenaLocation startLoc = startPoints[team][curCombatantIndex];
             if (startLoc != null) {
-                return _locations[startLoc._x][startLoc._y];
+                return locations[startLoc.x][startLoc.y];
             }
          }
       }
@@ -1392,7 +1391,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
    }
    public Facing getStartingFacing(ArenaLocation startingLocation) {
        // always face the center hex.
-       ArenaLocation centerHex = getLocation((short)(_sizeX/2), (short)((_sizeY/2) + ((((_sizeX/2)%2) != ((_sizeY/2)%2)) ? 1 : 0)));
+       ArenaLocation centerHex = getLocation((short)(sizeX / 2), (short)((sizeY / 2) + ((((sizeX / 2) % 2) != ((sizeY / 2) % 2)) ? 1 : 0)));
 
        if (startingLocation.sameCoordinates(centerHex)) {
           return Facing.NOON;
@@ -1422,8 +1421,8 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
    public boolean isFacing(Orientation attackerOrient, ArenaCoordinates destination) {
       ArenaCoordinates headCoord = attackerOrient.getHeadCoordinates();
       if ((destination != null) && (headCoord != null)) {
-         int xDiff = destination._x - headCoord._x;
-         int yDiff = destination._y - headCoord._y;
+         int xDiff = destination.x - headCoord.x;
+         int yDiff = destination.y - headCoord.y;
          Facing attackerFacing = attackerOrient.getFacing();
          if (attackerFacing == Facing.NOON) {
             return (yDiff <= 0);
@@ -1462,7 +1461,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
           List<Character> chars = newLoc.getCharacters();
           boolean characterFound = false;
           for (Character newLocCharacter : chars) {
-             if (newLocCharacter._uniqueID == newCharacter._uniqueID) {
+             if (newLocCharacter.uniqueID == newCharacter.uniqueID) {
                 characterFound = true;
                 newLocCharacter.copyData(newCharacter);
                 break;
@@ -1473,9 +1472,9 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
              newLoc.addThing(newCharacter);
 
              if (checkTriggers) {
-                if (CombatServer._isServer) {
-                   if (_triggers != null) {
-                      for (ArenaTrigger trigger : _triggers) {
+                if (CombatServer.isServer) {
+                   if (triggers != null) {
+                      for (ArenaTrigger trigger : triggers) {
                          if (trigger.isTriggerAtLocation(newLoc, newCharacter, this)) {
                             trigger.trigger(newCharacter);
                          }
@@ -1493,12 +1492,12 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       // so first just check the neighboring hexes
       Set<ArenaLocation> adjacentLocations = new HashSet<>();
       for (ArenaLocation newLoc : newCharLocs) {
-         adjacentLocations.add(getLocation((short) (newLoc._x - 1), (short) (newLoc._y - 1)));
-         adjacentLocations.add(getLocation((short) (newLoc._x - 1), (short) (newLoc._y + 1)));
-         adjacentLocations.add(getLocation((short) (newLoc._x + 1), (short) (newLoc._y - 1)));
-         adjacentLocations.add(getLocation((short) (newLoc._x + 1), (short) (newLoc._y + 1)));
-         adjacentLocations.add(getLocation(newLoc._x, (short) (newLoc._y - 2)));
-         adjacentLocations.add(getLocation(newLoc._x, (short) (newLoc._y + 2)));
+         adjacentLocations.add(getLocation((short) (newLoc.x - 1), (short) (newLoc.y - 1)));
+         adjacentLocations.add(getLocation((short) (newLoc.x - 1), (short) (newLoc.y + 1)));
+         adjacentLocations.add(getLocation((short) (newLoc.x + 1), (short) (newLoc.y - 1)));
+         adjacentLocations.add(getLocation((short) (newLoc.x + 1), (short) (newLoc.y + 1)));
+         adjacentLocations.add(getLocation(newLoc.x, (short) (newLoc.y - 2)));
+         adjacentLocations.add(getLocation(newLoc.x, (short) (newLoc.y + 2)));
       }
       adjacentLocations.removeAll(newCharLocs);
       int foundCount = 0;
@@ -1506,7 +1505,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
          if (loc != null) {
             List<Character> characters = loc.getCharacters();
             for (Character charInHex : characters) {
-               if (charInHex._uniqueID == newCharacter._uniqueID) {
+               if (charInHex.uniqueID == newCharacter.uniqueID) {
                   loc.remove(charInHex);
                   foundCount++;
                }
@@ -1518,14 +1517,14 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
          return;
       }
       // find the old character location, searching everywhere!
-      for (short col=0 ; col<_sizeX ; col++) {
-         for (short row=(short)(col%2) ; row<_sizeY; row+=2) {
-            List<Character> characters = _locations[col][row].getCharacters();
+      for (short col = 0; col < sizeX; col++) {
+         for (short row = (short)(col%2); row < sizeY; row+=2) {
+            List<Character> characters = locations[col][row].getCharacters();
             for (Character charInHex : characters) {
-               if (charInHex._uniqueID == newCharacter._uniqueID) {
-                  if (!newCharLocs.contains(_locations[col][row])) {
-                     _locations[col][row].remove(charInHex);
-                     for (IAreaSpell spell : _locations[col][row].getActiveSpells()) {
+               if (charInHex.uniqueID == newCharacter.uniqueID) {
+                  if (!newCharLocs.contains(locations[col][row])) {
+                     locations[col][row].remove(charInHex);
+                     for (IAreaSpell spell : locations[col][row].getActiveSpells()) {
                         spell.affectCharacterOnExit(newCharacter);
                      }
                   }
@@ -1589,7 +1588,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
    public void addLocationActions(RequestAction actionReq, Character actor)
    {
       ArenaCoordinates location = actor.getHeadCoordinates();
-      ArenaLocation curLoc = _locations[location._x][location._y];
+      ArenaLocation curLoc = locations[location.x][location.y];
       if (curLoc != null) {
          curLoc.addLocationActions(actionReq, actor);
       }
@@ -1620,7 +1619,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
          }
          else {
             if (door.isLocked()) {
-               boolean hasKey = actor.hasKey(door._keyCode);
+               boolean hasKey = actor.hasKey(door.keyCode);
                RequestActionType reqActType = getLocActionType(doorDirectionDescription, UNLOCK_DOOR);
                actionReq.addOption(new RequestActionOption(UNLOCK_DOOR + doorDirectionDescription, reqActType, LimbType.BODY, hasKey/*enabled*/));
                //actionReq.addOption(reqIdBase + RequestAction.OPT_DOOR_ACTION_UNLOCK, UNLOCK_DOOR + doorDirectionDescription, hasKey/*enabled*/);
@@ -1629,7 +1628,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
                RequestActionType reqActType = getLocActionType(doorDirectionDescription, OPEN_DOOR);
                actionReq.addOption(new RequestActionOption(OPEN_DOOR + doorDirectionDescription, reqActType, LimbType.BODY, true/*enabled*/));
                //actionReq.addOption(reqIdBase + RequestAction.OPT_DOOR_ACTION_OPEN, OPEN_DOOR + doorDirectionDescription, true/*enabled*/);
-               boolean hasKey = actor.hasKey(door._keyCode);
+               boolean hasKey = actor.hasKey(door.keyCode);
                reqActType = getLocActionType(doorDirectionDescription, LOCK_DOOR);
                actionReq.addOption(new RequestActionOption(UNLOCK_DOOR + doorDirectionDescription, reqActType, LimbType.BODY, hasKey/*enabled*/));
                //actionReq.addOption(reqIdBase + RequestAction.OPT_DOOR_ACTION_LOCK, LOCK_DOOR + doorDirectionDescription, hasKey/*enabled*/);
@@ -1709,9 +1708,9 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       }
       // check for doors in the middle of the loLoc
       synchronized (toLoc) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(toLoc._lock_this)) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(toLoc.lock_this)) {
             for (Door toLocDoor : toLoc.getDoors()) {
-               if (toLocDoor._orientation.contains(TerrainWall.TERRAIN_ALL_CENTER_WALLS)) {
+               if (toLocDoor.orientation.contains(TerrainWall.TERRAIN_ALL_CENTER_WALLS)) {
                   return toLocDoor;
                }
             }
@@ -1721,7 +1720,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
    }
    private static Door getDoorInFacing(ArenaLocation loc, Facing dirToOtherLoc, boolean includeHalfAngles) {
       synchronized (loc) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(loc._lock_this)) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(loc.lock_this)) {
             List<Door> doors = loc.getDoors();
             if (doors.isEmpty()) {
                return null;
@@ -1732,7 +1731,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
                doorsToFind |= DOOR_DIRECTIONS_HALF_RIGHT.get(dirToOtherLoc.turnLeft()).bitMask;
             }
             for (Door door : doors) {
-               if (door._orientation.contains(doorsToFind)) {
+               if (door.orientation.contains(doorsToFind)) {
                   return door;
                }
             }
@@ -1823,7 +1822,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
    public boolean applyAction(Character actor, RequestAction actionReq) throws BattleTerminatedException
    {
       ArenaLocation location = getLocation(actor.getHeadCoordinates());
-//      location = _locations[location._x][location._y];
+//      location = locations[location.x][location.y];
       if (location == null) {
          return false;
       }
@@ -1897,7 +1896,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
                if (door != null && !door.isHalfHeightWall()) {
                   ArenaLocation doorLoc = toLoc;
                   synchronized (location) {
-                     try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(location._lock_this)) {
+                     try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(location.lock_this)) {
                         if (location.getDoors().contains(door)) {
                            doorLoc = location;
                         }
@@ -1972,22 +1971,22 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
    @Override
    public String getObjectIDString()
    {
-      return _locBook.getObjectIDString();
+      return locBook.getObjectIDString();
    }
    @Override
    public Vector<IMonitoringObject> getSnapShotOfWatchers()
    {
-      return _locBook.getSnapShotOfWatchers();
+      return locBook.getSnapShotOfWatchers();
    }
    @Override
    public void notifyWatchers(IMonitorableObject originalWatchedObject, IMonitorableObject modifiedWatchedObject, Object changeNotification, Vector<IMonitoringObject> skipList, Diagnostics diag)
    {
-      _locBook.notifyWatchers(originalWatchedObject, modifiedWatchedObject, changeNotification, skipList, diag);
+      locBook.notifyWatchers(originalWatchedObject, modifiedWatchedObject, changeNotification, skipList, diag);
    }
    @Override
    public RegisterResults registerAsWatcher(IMonitoringObject watcherObject, Diagnostics diag)
    {
-      RegisterResults retVal = _locBook.registerAsWatcher(watcherObject, diag);
+      RegisterResults retVal = locBook.registerAsWatcher(watcherObject, diag);
 //      for (short col = 0 ; col<_sizeX ; col++) {
 //         for (short row = (short)(col%2) ; row<_sizeY ; row += 2) {
 //            ArenaLocation location = getLocation(col, row);
@@ -2000,38 +1999,38 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
    @Override
    public UnRegisterResults unregisterAsWatcher(IMonitoringObject watcherObject, Diagnostics diag)
    {
-      return _locBook.unregisterAsWatcher(watcherObject, diag);
+      return locBook.unregisterAsWatcher(watcherObject, diag);
    }
    @Override
    public UnRegisterResults unregisterAsWatcherAllInstances(IMonitoringObject watcherObject, Diagnostics diag)
    {
-      return _locBook.unregisterAsWatcherAllInstances(watcherObject, diag);
+      return locBook.unregisterAsWatcherAllInstances(watcherObject, diag);
    }
 
    @Override
    public Vector<IMonitorableObject> getSnapShotOfWatchedObjects()
    {
-      return _mapWatcher.getSnapShotOfWatchedObjects();
+      return mapWatcher.getSnapShotOfWatchedObjects();
    }
    @Override
    public void monitoredObjectChanged(IMonitorableObject originalWatchedObject, IMonitorableObject modifiedWatchedObject, Object changeNotification, Vector<IMonitoringObject> skipList, Diagnostics diag)
    {
-      _mapWatcher.monitoredObjectChanged(originalWatchedObject, modifiedWatchedObject, changeNotification, skipList, diag);
+      mapWatcher.monitoredObjectChanged(originalWatchedObject, modifiedWatchedObject, changeNotification, skipList, diag);
    }
    @Override
    public boolean registerMonitoredObject(IMonitorableObject watchedObject, Diagnostics diag)
    {
-      return _mapWatcher.registerMonitoredObject(watchedObject, diag);
+      return mapWatcher.registerMonitoredObject(watchedObject, diag);
    }
    @Override
    public boolean unregisterMonitoredObject(IMonitorableObject watchedObject, Diagnostics diag)
    {
-      return _mapWatcher.unregisterMonitoredObject(watchedObject, diag);
+      return mapWatcher.unregisterMonitoredObject(watchedObject, diag);
    }
    @Override
    public boolean unregisterMonitoredObjectAllInstances(IMonitorableObject watchedObject, Diagnostics diag)
    {
-      return _mapWatcher.unregisterMonitoredObjectAllInstances(watchedObject, diag);
+      return mapWatcher.unregisterMonitoredObjectAllInstances(watchedObject, diag);
    }
    public boolean serializeToFile(File destFile)
    {
@@ -2072,10 +2071,10 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       mainElement.setAttribute("level", String.valueOf(getLevel()));
       mainElement.setAttribute("width", String.valueOf(getSizeX()));
       mainElement.setAttribute("height", String.valueOf(getSizeY()));
-      mainElement.setAttribute("backgroundImagePath", String.valueOf(_backgroundImagePath));
-      mainElement.setAttribute("backgroundImageAlpha", String.valueOf(_backgroundImageAlpha));
-      mainElement.setAttribute("hideViewFromLocalPlayers", String.valueOf(_hideViewFromLocalPlayers));
-      mainElement.setAttribute("knownByAllPlayers", String.valueOf(_knownByAllPlayers));
+      mainElement.setAttribute("backgroundImagePath", String.valueOf(backgroundImagePath));
+      mainElement.setAttribute("backgroundImageAlpha", String.valueOf(backgroundImageAlpha));
+      mainElement.setAttribute("hideViewFromLocalPlayers", String.valueOf(hideViewFromLocalPlayers));
+      mainElement.setAttribute("knownByAllPlayers", String.valueOf(knownByAllPlayers));
 
       if (includeKnownByUniqueIDInfo != null) {
          Element uniqueIdElement = parentDoc.createElement("uniqueIds");
@@ -2097,17 +2096,17 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
          mainElement.appendChild(parentDoc.createTextNode(newLine + "  "));
          mainElement.appendChild(columnsElement);
          mainElement.appendChild(parentDoc.createTextNode(newLine + "  "));
-         for (short col = 0 ; col<_sizeX ; col++) {
+         for (short col = 0; col < sizeX; col++) {
             Element columnElement = parentDoc.createElement("col");
             columnElement.setAttribute("id", String.valueOf(col));
             StringBuilder sb = new StringBuilder();
-            for (short row = (short)(col%2) ; row<_sizeY ; row += 2) {
-               sb.append(_locations[col][row].getData()).append(SEPARATOR_MAIN);
+            for (short row = (short)(col%2); row < sizeY; row += 2) {
+               sb.append(locations[col][row].getData()).append(SEPARATOR_MAIN);
                if (includeKnownByUniqueIDInfo != null) {
                   int i=1;
                   int mask = 0;
                   for (Integer uniqueID : includeKnownByUniqueIDInfo) {
-                     if (_locations[col][row].isKnownBy(uniqueID)) {
+                     if (locations[col][row].isKnownBy(uniqueID)) {
                         mask += i;
                      }
                      i*=2;
@@ -2126,17 +2125,17 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
          mainElement.appendChild(parentDoc.createTextNode(newLine + "  "));
          mainElement.appendChild(rowsElement);
          mainElement.appendChild(parentDoc.createTextNode(newLine + "  "));
-         for (short row = 0 ; row<_sizeY ; row++) {
+         for (short row = 0; row < sizeY; row++) {
             Element rowElement = parentDoc.createElement("row");
             rowElement.setAttribute("id", String.valueOf(row));
             StringBuilder sb = new StringBuilder();
-            for (short col = (short)(row%2) ; col<_sizeX ; col += 2) {
-               sb.append(_locations[col][row].getData()).append(SEPARATOR_MAIN);
+            for (short col = (short)(row%2); col < sizeX; col += 2) {
+               sb.append(locations[col][row].getData()).append(SEPARATOR_MAIN);
                if (includeKnownByUniqueIDInfo != null) {
                   int i=1;
                   int mask = 0;
                   for (Integer uniqueID : includeKnownByUniqueIDInfo) {
-                     if (_locations[col][row].isKnownBy(uniqueID)) {
+                     if (locations[col][row].isKnownBy(uniqueID)) {
                         mask += i;
                      }
                      i*=2;
@@ -2152,41 +2151,41 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       }
       {
          Element teamsElement = parentDoc.createElement("teams");
-         teamsElement.setAttribute("count", String.valueOf(_teamCount));
-         teamsElement.setAttribute("maxCombatantsPerTeam", String.valueOf(_maxCombatantsPerTeam));
+         teamsElement.setAttribute("count", String.valueOf(teamCount));
+         teamsElement.setAttribute("maxCombatantsPerTeam", String.valueOf(maxCombatantsPerTeam));
          mainElement.appendChild(parentDoc.createTextNode(newLine + "  "));
          mainElement.appendChild(teamsElement);
          mainElement.appendChild(parentDoc.createTextNode(newLine));
 
-         for (byte team=0 ; team<_teamCount ; team++) {
+         for (byte team = 0; team < teamCount; team++) {
             Element teamElement = parentDoc.createElement("team");
             teamElement.setAttribute("id", String.valueOf(team));
             teamsElement.appendChild(parentDoc.createTextNode(newLine + "    "));
             teamsElement.appendChild(teamElement);
-            for (byte cur=0 ; cur<_maxCombatantsPerTeam ; cur ++) {
+            for (byte cur = 0; cur < maxCombatantsPerTeam; cur ++) {
                Element combatantElement = parentDoc.createElement("combatant");
                combatantElement.setAttribute("id", String.valueOf(cur));
-               if (_startPoints == null) {
+               if (startPoints == null) {
                   DebugBreak.debugBreak();
                   continue;
                }
 
-               ArenaLocation startLoc = _startPoints[team][cur];
+               ArenaLocation startLoc = startPoints[team][cur];
                if (startLoc != null ) {
-                  combatantElement.setAttribute("startX", String.valueOf(startLoc._x));
-                  combatantElement.setAttribute("startY", String.valueOf(startLoc._y));
+                  combatantElement.setAttribute("startX", String.valueOf(startLoc.x));
+                  combatantElement.setAttribute("startY", String.valueOf(startLoc.y));
                }
-               if (_stockAiName[team][cur] == null) {
+               if (stockAiName[team][cur] == null) {
                   combatantElement.setAttribute("AI", "Off");
                }
                else {
-                  combatantElement.setAttribute("AI", _stockAiName[team][cur]);
+                  combatantElement.setAttribute("AI", stockAiName[team][cur]);
                }
-               if (_stockCharName[team][cur] == null) {
+               if (stockCharName[team][cur] == null) {
                   combatantElement.setAttribute("charName", " ");
                }
                else {
-                  combatantElement.setAttribute("charName", (_stockCharName[team][cur]));
+                  combatantElement.setAttribute("charName", (stockCharName[team][cur]));
                }
                teamElement.appendChild(parentDoc.createTextNode(newLine + "      "));
                teamElement.appendChild(combatantElement);
@@ -2201,7 +2200,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
          mainElement.appendChild(triggersElement);
          mainElement.appendChild(parentDoc.createTextNode(newLine));
 
-         for (ArenaTrigger event : _triggers) {
+         for (ArenaTrigger event : triggers) {
             Element eventElement = event.getXmlNode(parentDoc, newLine + "    ");
             triggersElement.appendChild(parentDoc.createTextNode(newLine + "    "));
             triggersElement.appendChild(eventElement);
@@ -2214,11 +2213,11 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
          mainElement.appendChild(itemsElement);
          mainElement.appendChild(parentDoc.createTextNode(newLine));
 
-         for (short col = 0 ; col<_sizeX ; col++) {
-            for (short row = (short)(col%2) ; row<_sizeY ; row += 2) {
-               ArenaLocation location = _locations[col][row];
+         for (short col = 0; col < sizeX; col++) {
+            for (short row = (short)(col%2); row < sizeY; row += 2) {
+               ArenaLocation location = locations[col][row];
                synchronized (location) {
-                  try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(location._lock_this)) {
+                  try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(location.lock_this)) {
                      for (Object thing : location.getThings()) {
                         // Don't include characters, because they are serialized elsewhere
                         if (thing instanceof Character) {
@@ -2242,9 +2241,9 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
                      }
                      for (Door door : location.getDoors()) {
                         Element doorElement = parentDoc.createElement("door");
-                        doorElement.setAttribute("orient", String.valueOf(door._orientation.bitMask));
-                        doorElement.setAttribute("key", door._keyCode);
-                        doorElement.setAttribute("state", String.valueOf(door._doorState.value));
+                        doorElement.setAttribute("orient", String.valueOf(door.orientation.bitMask));
+                        doorElement.setAttribute("key", door.keyCode);
+                        doorElement.setAttribute("state", String.valueOf(door.doorState.value));
                         doorElement.setAttribute("col", String.valueOf(col));
                         doorElement.setAttribute("row", String.valueOf(row));
                         itemsElement.appendChild(parentDoc.createTextNode(newLine + "    "));
@@ -2265,7 +2264,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
          if (charDoc != null) {
             if (serializeFromXmlObject(charDoc.getDocumentElement())) {
                // Make sure the map name matches the name of the file it was read from:
-               _name = sourceFile.getName().substring(0, sourceFile.getName().indexOf('.'));
+               name = sourceFile.getName().substring(0, sourceFile.getName().indexOf('.'));
                return true;
             }
          }
@@ -2279,59 +2278,59 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       if (namedNodeMap == null) {
          return false;
       }
-      _name = namedNodeMap.getNamedItem("Name").getNodeValue();
+      name = namedNodeMap.getNamedItem("Name").getNodeValue();
       Node levelNode = namedNodeMap.getNamedItem("level");
       if (levelNode != null) {
-         _level = Short.parseShort(levelNode.getNodeValue());
+         level = Short.parseShort(levelNode.getNodeValue());
       }
       else {
-         _level = 0;
+         level = 0;
       }
       short sizeX = Short.parseShort(namedNodeMap.getNamedItem("width").getNodeValue());
       short sizeY = Short.parseShort(namedNodeMap.getNamedItem("height").getNodeValue());
       setSize((short)0, (short)0);
       setSize(sizeX, sizeY);
 
-      _hideViewFromLocalPlayers = false;
+      hideViewFromLocalPlayers = false;
       Node node = namedNodeMap.getNamedItem("hideViewFromLocalPlayers");
       if (node != null) {
          String hide = node.getNodeValue();
          if (hide != null) {
-            _hideViewFromLocalPlayers = Boolean.parseBoolean(hide);
+            hideViewFromLocalPlayers = Boolean.parseBoolean(hide);
          }
       }
 
-      _knownByAllPlayers = false;
+      knownByAllPlayers = false;
       Node nodeKnown = namedNodeMap.getNamedItem("knownByAllPlayers");
       if (nodeKnown != null) {
          String hide = nodeKnown.getNodeValue();
          if (hide != null) {
-            _knownByAllPlayers = Boolean.parseBoolean(hide);
+            knownByAllPlayers = Boolean.parseBoolean(hide);
          }
       }
 
-      _backgroundImagePath = "";
+      backgroundImagePath = "";
       Node nodePath = namedNodeMap.getNamedItem("backgroundImagePath");
       if (nodePath != null) {
-         _backgroundImagePath = nodePath.getNodeValue();
+         backgroundImagePath = nodePath.getNodeValue();
       }
 
-      _backgroundImageAlpha = (byte) 192;
-      if (_backgroundImagePath.isEmpty()) {
-         _backgroundImageAlpha = 0;
+      backgroundImageAlpha = (byte) 192;
+      if (backgroundImagePath.isEmpty()) {
+         backgroundImageAlpha = 0;
       }
       Node nodeAlpha = namedNodeMap.getNamedItem("backgroundImageAlpha");
       if (nodeAlpha != null) {
-         _backgroundImageAlpha = Integer.parseInt(nodeAlpha.getNodeValue());
+         backgroundImageAlpha = Integer.parseInt(nodeAlpha.getNodeValue());
       }
 
-      _teamCount = CombatServer.MAX_TEAMS;
-      _maxCombatantsPerTeam = CombatServer.MAX_COMBATANTS_PER_TEAM;
-      _startPoints = new ArenaLocation[_teamCount][_maxCombatantsPerTeam];
-      _stockAiName = new String[_teamCount][_maxCombatantsPerTeam];
-      _stockCharName = new String[_teamCount][_maxCombatantsPerTeam];
+      teamCount = CombatServer.MAX_TEAMS;
+      maxCombatantsPerTeam = CombatServer.MAX_COMBATANTS_PER_TEAM;
+      startPoints = new ArenaLocation[teamCount][maxCombatantsPerTeam];
+      stockAiName = new String[teamCount][maxCombatantsPerTeam];
+      stockCharName = new String[teamCount][maxCombatantsPerTeam];
 
-      _triggers.clear();
+      triggers.clear();
       List<Integer> includeKnownByUniqueIDInfo = null;
 
       NodeList children = mapDoc.getChildNodes();
@@ -2362,13 +2361,13 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
                   short colId = Short.parseShort(attributes.getNamedItem("id").getNodeValue());
                   String colData = grandChild.getTextContent();
                   StringTokenizer st = new StringTokenizer(colData, SEPARATOR_MAIN);
-                  for (short row=(short) (colId%2) ; row<_sizeY ; row += 2) {
-                     _locations[colId][row] = new ArenaLocation(colId, row);
-                     _locations[colId][row].registerAsWatcher(this, _diag);
+                  for (short row = (short) (colId%2); row < this.sizeY; row += 2) {
+                     locations[colId][row] = new ArenaLocation(colId, row);
+                     locations[colId][row].registerAsWatcher(this, diag);
                      if (!st.hasMoreElements()) {
                         return false;
                      }
-                     _locations[colId][row].setData(Integer.parseInt(st.nextToken()));
+                     locations[colId][row].setData(Integer.parseInt(st.nextToken()));
                      if (includeKnownByUniqueIDInfo != null) {
                         if (!st.hasMoreElements()) {
                            return false;
@@ -2377,7 +2376,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
                         int a=1;
                         for (Integer uniqueID : includeKnownByUniqueIDInfo) {
                            if ((mask & a) != 0) {
-                              _locations[colId][row].setKnownBy(uniqueID, true);
+                              locations[colId][row].setKnownBy(uniqueID, true);
                            }
                            a *= 2;
                         }
@@ -2395,13 +2394,13 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
                   short rowId = Short.parseShort(attributes.getNamedItem("id").getNodeValue());
                   String rowData = grandChild.getTextContent();
                   StringTokenizer st = new StringTokenizer(rowData, SEPARATOR_MAIN);
-                  for (short col=(short) (rowId%2) ; col<_sizeX ; col += 2) {
-                     _locations[col][rowId] = new ArenaLocation(col, rowId);
-                     _locations[col][rowId].registerAsWatcher(this, _diag);
+                  for (short col = (short) (rowId%2); col < this.sizeX; col += 2) {
+                     locations[col][rowId] = new ArenaLocation(col, rowId);
+                     locations[col][rowId].registerAsWatcher(this, diag);
                      if (!st.hasMoreElements()) {
                         return false;
                      }
-                     _locations[col][rowId].setData(Integer.parseInt(st.nextToken()));
+                     locations[col][rowId].setData(Integer.parseInt(st.nextToken()));
                      if (includeKnownByUniqueIDInfo != null) {
                         if (!st.hasMoreElements()) {
                            return false;
@@ -2410,7 +2409,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
                         int a=1;
                         for (Integer uniqueID : includeKnownByUniqueIDInfo) {
                            if ((mask & a) != 0) {
-                              _locations[col][rowId].setKnownBy(uniqueID, true);
+                              locations[col][rowId].setKnownBy(uniqueID, true);
                            }
                            a *= 2;
                         }
@@ -2422,16 +2421,16 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
          else if (child.getNodeName().equals("teams")) {
             NamedNodeMap childAttributes = child.getAttributes();
             if (childAttributes != null) {
-               _teamCount = Byte.parseByte(childAttributes.getNamedItem("count").getNodeValue());
-               _maxCombatantsPerTeam = Byte.parseByte(childAttributes.getNamedItem("maxCombatantsPerTeam").getNodeValue());
+               teamCount = Byte.parseByte(childAttributes.getNamedItem("count").getNodeValue());
+               maxCombatantsPerTeam = Byte.parseByte(childAttributes.getNamedItem("maxCombatantsPerTeam").getNodeValue());
 
                // allow for an increase in team count or combatants per team
-               _teamCount = (byte) Math.max(_teamCount, CombatServer.MAX_TEAMS);
-               _maxCombatantsPerTeam = (byte) Math.max(_maxCombatantsPerTeam, CombatServer.MAX_COMBATANTS_PER_TEAM);
+               teamCount = (byte) Math.max(teamCount, CombatServer.MAX_TEAMS);
+               maxCombatantsPerTeam = (byte) Math.max(maxCombatantsPerTeam, CombatServer.MAX_COMBATANTS_PER_TEAM);
 
-               _startPoints = new ArenaLocation[_teamCount][_maxCombatantsPerTeam];
-               _stockAiName = new String[_teamCount][_maxCombatantsPerTeam];
-               _stockCharName = new String[_teamCount][_maxCombatantsPerTeam];
+               startPoints = new ArenaLocation[teamCount][maxCombatantsPerTeam];
+               stockAiName = new String[teamCount][maxCombatantsPerTeam];
+               stockCharName = new String[teamCount][maxCombatantsPerTeam];
                NodeList grandChildren = child.getChildNodes();
                for (int col=0 ; col<grandChildren.getLength() ; col++) {
                   Node grandChild = grandChildren.item(col);
@@ -2450,11 +2449,11 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
                            if ((startXNode != null) && (startYNode != null)) {
                               short startX = Short.parseShort(startXNode .getNodeValue());
                               short startY = Short.parseShort(startYNode.getNodeValue());
-                              _startPoints[teamId][combatantId] = _locations[startX][startY];
-                              _startPoints[teamId][combatantId].setLabel(getLabel(teamId, combatantId));
+                              startPoints[teamId][combatantId] = locations[startX][startY];
+                              startPoints[teamId][combatantId].setLabel(getLabel(teamId, combatantId));
                            }
-                           _stockAiName[teamId][combatantId] = greatGrandChildattrs.getNamedItem("AI").getNodeValue();
-                           _stockCharName[teamId][combatantId] = greatGrandChildattrs.getNamedItem("charName").getNodeValue();
+                           stockAiName[teamId][combatantId] = greatGrandChildattrs.getNamedItem("AI").getNodeValue();
+                           stockCharName[teamId][combatantId] = greatGrandChildattrs.getNamedItem("charName").getNodeValue();
                         }
                      }
                   }
@@ -2467,7 +2466,7 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
                Node grandChild = grandChildren.item(index);
                ArenaTrigger newEvent = ArenaTrigger.getArenaTrigger(grandChild);
                if (newEvent != null) {
-                  _triggers.add(newEvent);
+                  triggers.add(newEvent);
                }
             }
          }
@@ -2532,13 +2531,13 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
                      short col = Short.parseShort(colStr);
                      if ((row >= 0) && (col >= 0) && (row < getSizeY()) && (col < getSizeX())) {
                         if (thing != null) {
-                           _locations[col][row].addThing(thing);
+                           locations[col][row].addThing(thing);
                         }
                         else if (door != null) {
-                           _locations[col][row].addDoor(door);
+                           locations[col][row].addDoor(door);
                         }
                         else if ((name != null) && (name.length() > 0)) {
-                           _locations[col][row].addThing(name);
+                           locations[col][row].addThing(name);
                         }
                      }
                   }
@@ -2566,11 +2565,11 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       return null;
    }
    public Character getCombatantByUniqueID(int uniqueID) {
-      for (short col=0 ; col<_sizeX ; col++) {
-         for (short row=(short)(col%2) ; row<_sizeY; row+=2) {
-            List<Character> characters = _locations[col][row].getCharacters();
+      for (short col = 0; col < sizeX; col++) {
+         for (short row = (short)(col%2); row < sizeY; row+=2) {
+            List<Character> characters = locations[col][row].getCharacters();
             for (Character charInHex : characters) {
-               if (charInHex._uniqueID == uniqueID) {
+               if (charInHex.uniqueID == uniqueID) {
                   return charInHex;
                }
             }
@@ -2579,13 +2578,13 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
       return null;
    }
    public ArenaTrigger getSelectedTrigger() {
-      return _selectedTrigger;
+      return selectedTrigger;
    }
    public void setSelectedTrigger(ArenaTrigger trigger) {
-      _selectedTrigger = trigger;
+      selectedTrigger = trigger;
    }
    public boolean hasExitTriggers() {
-      for (ArenaTrigger trigger : _triggers) {
+      for (ArenaTrigger trigger : triggers) {
          if (trigger.hasExitEvent()) {
             return true;
          }
@@ -2594,93 +2593,93 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
    }
 
    public boolean equals(CombatMap other) {
-      if (_name == null) {
-         if (other._name != null) {
+      if (name == null) {
+         if (other.name != null) {
             return false;
          }
       }
       else {
-         if (!_name.equals(other._name)) {
+         if (!name.equals(other.name)) {
             return false;
          }
       }
-      if (_level != other._level) {
+      if (level != other.level) {
          return false;
       }
-      if (_sizeY != other._sizeY) {
+      if (sizeY != other.sizeY) {
          return false;
       }
-      if (_sizeX != other._sizeX) {
+      if (sizeX != other.sizeX) {
          return false;
       }
-      if (_hideViewFromLocalPlayers != other._hideViewFromLocalPlayers) {
+      if (hideViewFromLocalPlayers != other.hideViewFromLocalPlayers) {
          return false;
       }
-      if (_knownByAllPlayers != other._knownByAllPlayers) {
+      if (knownByAllPlayers != other.knownByAllPlayers) {
          return false;
       }
-      if (!_backgroundImagePath.equalsIgnoreCase(other._backgroundImagePath)) {
+      if (!backgroundImagePath.equalsIgnoreCase(other.backgroundImagePath)) {
          return false;
       }
-      if (_backgroundImageAlpha != other._backgroundImageAlpha) {
+      if (backgroundImageAlpha != other.backgroundImageAlpha) {
          return false;
       }
-      for (short col = 0 ; col<_sizeX ; col++) {
-         for (short row = (short) (col%2) ; row<_sizeY ; row += 2) {
-            if (!_locations[col][row].sameContents(other._locations[col][row])) {
+      for (short col = 0; col < sizeX; col++) {
+         for (short row = (short) (col%2); row < sizeY; row += 2) {
+            if (!locations[col][row].sameContents(other.locations[col][row])) {
                return false;
             }
          }
       }
-      if (_maxCombatantsPerTeam != other._maxCombatantsPerTeam) {
+      if (maxCombatantsPerTeam != other.maxCombatantsPerTeam) {
          return false;
       }
-      if (_teamCount != other._teamCount) {
+      if (teamCount != other.teamCount) {
          return false;
       }
-      for (byte team=0 ; team<_teamCount ; team++) {
-         for (byte cur=0 ; cur<_maxCombatantsPerTeam ; cur++) {
-            if ((_startPoints[team][cur] != null)   && !_startPoints[team][cur].sameCoordinates(other._startPoints[team][cur])) {
+      for (byte team = 0; team < teamCount; team++) {
+         for (byte cur = 0; cur < maxCombatantsPerTeam; cur++) {
+            if ((startPoints[team][cur] != null) && !startPoints[team][cur].sameCoordinates(other.startPoints[team][cur])) {
                return false;
             }
-            if ((_stockAiName[team][cur] != null)   && !_stockAiName[team][cur].equals(other._stockAiName[team][cur])) {
+            if ((stockAiName[team][cur] != null) && !stockAiName[team][cur].equals(other.stockAiName[team][cur])) {
                return false;
             }
-            if ((_stockCharName[team][cur] != null) && !_stockCharName[team][cur].equals(other._stockCharName[team][cur])) {
+            if ((stockCharName[team][cur] != null) && !stockCharName[team][cur].equals(other.stockCharName[team][cur])) {
                return false;
             }
          }
       }
-      if (_triggers.size() != other._triggers.size()) {
+      if (triggers.size() != other.triggers.size()) {
          return false;
       }
-      for (int i=0 ; i<_triggers.size() ; i++) {
-         if (!_triggers.get(i).equals(other._triggers.get(i))) {
+      for (int i = 0; i < triggers.size() ; i++) {
+         if (!triggers.get(i).equals(other.triggers.get(i))) {
             return false;
          }
       }
       return true;
    }
    public boolean isHideViewFromLocalPlayers() {
-      return _hideViewFromLocalPlayers;
+      return hideViewFromLocalPlayers;
    }
    public void setHideViewFromLocalPlayers(boolean hideViewFromLocalPlayers) {
-      _hideViewFromLocalPlayers = hideViewFromLocalPlayers;
+      this.hideViewFromLocalPlayers = hideViewFromLocalPlayers;
    }
 
    public boolean isKnownByAllPlayers() {
-      return _knownByAllPlayers;
+      return knownByAllPlayers;
    }
    public void setKnownByAllPlayers(boolean knownByAllPlayers) {
-      _knownByAllPlayers = knownByAllPlayers;
+      this.knownByAllPlayers = knownByAllPlayers;
    }
 
    public void onNewRound(Battle battle) {
-      for (short col=0 ; col<_sizeX ; col++) {
-         for (short row=(short)(col%2) ; row<_sizeY; row+=2) {
-            List<Character> characters = _locations[col][row].getCharacters();
+      for (short col = 0; col < sizeX; col++) {
+         for (short row = (short)(col%2); row < sizeY; row+=2) {
+            List<Character> characters = locations[col][row].getCharacters();
             for (Character charInHex : characters) {
-               for (IAreaSpell spell : _locations[col][row].getActiveSpells()) {
+               for (IAreaSpell spell : locations[col][row].getActiveSpells()) {
                   spell.affectCharacterOnRoundStart(charInHex);
                }
             }
@@ -2689,11 +2688,11 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
    }
 
    public void onEndRound(Battle battle) {
-      for (short col=0 ; col<_sizeX ; col++) {
-         for (short row=(short)(col%2) ; row<_sizeY; row+=2) {
-            List<Character> characters = _locations[col][row].getCharacters();
+      for (short col = 0; col < sizeX; col++) {
+         for (short row = (short)(col%2); row < sizeY; row+=2) {
+            List<Character> characters = locations[col][row].getCharacters();
             for (Character charInHex : characters) {
-               for (IAreaSpell spell : _locations[col][row].getActiveSpells()) {
+               for (IAreaSpell spell : locations[col][row].getActiveSpells()) {
                   spell.affectCharacterOnRoundEnd(charInHex);
                }
             }
@@ -2702,16 +2701,16 @@ public class CombatMap extends SerializableObject implements Enums, IMonitorable
    }
 
    public String getBackgroundImagePath() {
-      return _backgroundImagePath;
+      return backgroundImagePath;
    }
    public void setBackgroundImagePath(String backgroundImagePath) {
-      _backgroundImagePath = backgroundImagePath;
+      this.backgroundImagePath = backgroundImagePath;
    }
 
    public int getBackgroundImageAlpha() {
-      return _backgroundImageAlpha;
+      return backgroundImageAlpha;
    }
    public void setBackgroundImageAlpha(int backgroundImageAlpha) {
-      _backgroundImageAlpha = backgroundImageAlpha;
+      this.backgroundImageAlpha = backgroundImageAlpha;
    }
 }

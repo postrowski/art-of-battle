@@ -14,39 +14,39 @@ import ostrowski.combat.common.CombatMap;
 
 public class ArenaTrigger implements Cloneable
 {
-   private String                 _name;
-   private List<ArenaCoordinates> _triggerCoordinates = new ArrayList<>();
-   private boolean                _onlyAffectsPlayers = true;
-   private boolean                _requiresEntireTeam = false;
-   private boolean                _enabled            = true;
-   private List<ArenaEvent>       _events             = new ArrayList<>();
+   private String                 name;
+   private List<ArenaCoordinates> triggerCoordinates = new ArrayList<>();
+   private boolean                onlyAffectsPlayers = true;
+   private boolean                requiresEntireTeam = false;
+   private boolean                enabled            = true;
+   private List<ArenaEvent>       events             = new ArrayList<>();
 
    public ArenaTrigger(String name) {
-      _name = name;
+      this.name = name;
    }
    public boolean isArmed() {
-      return _enabled;
+      return enabled;
    }
 
    public Element getXmlNode(Document mapDoc, String newLine) {
       Element triggerElement = mapDoc.createElement("trigger");
-      triggerElement.setAttribute("name", String.valueOf(_name));
-      triggerElement.setAttribute("enabled", String.valueOf(_enabled));
-      triggerElement.setAttribute("requiresEntireTeam", String.valueOf(_requiresEntireTeam));
-      triggerElement.setAttribute("onlyAffectsPlayers", String.valueOf(_onlyAffectsPlayers));
-      if ((_triggerCoordinates != null) && (_triggerCoordinates.size() > 0)) {
-         for (ArenaCoordinates coord : _triggerCoordinates) {
+      triggerElement.setAttribute("name", String.valueOf(name));
+      triggerElement.setAttribute("enabled", String.valueOf(enabled));
+      triggerElement.setAttribute("requiresEntireTeam", String.valueOf(requiresEntireTeam));
+      triggerElement.setAttribute("onlyAffectsPlayers", String.valueOf(onlyAffectsPlayers));
+      if ((triggerCoordinates != null) && (triggerCoordinates.size() > 0)) {
+         for (ArenaCoordinates coord : triggerCoordinates) {
             if (coord == null) {
                continue;
             }
             Element locationElement = mapDoc.createElement("location");
-            locationElement.setAttribute("x", String.valueOf(coord._x));
-            locationElement.setAttribute("y", String.valueOf(coord._y));
+            locationElement.setAttribute("x", String.valueOf(coord.x));
+            locationElement.setAttribute("y", String.valueOf(coord.y));
             triggerElement.appendChild(mapDoc.createTextNode(newLine + "  "));
             triggerElement.appendChild(locationElement);
          }
       }
-      for (ArenaEvent event : _events) {
+      for (ArenaEvent event : events) {
          Element eventElement = event.getXmlNode(mapDoc, newLine + "  ");
          triggerElement.appendChild(mapDoc.createTextNode(newLine + "  "));
          triggerElement.appendChild(eventElement);
@@ -67,11 +67,11 @@ public class ArenaTrigger implements Cloneable
 
       String name = attributes.getNamedItem("name").getNodeValue();
       ArenaTrigger trigger = new ArenaTrigger(name);
-      trigger._enabled = Boolean.parseBoolean(attributes.getNamedItem("enabled").getNodeValue());
-      trigger._requiresEntireTeam = Boolean.parseBoolean(attributes.getNamedItem("requiresEntireTeam").getNodeValue());
-      trigger._onlyAffectsPlayers = Boolean.parseBoolean(attributes.getNamedItem("onlyAffectsPlayers").getNodeValue());
-      trigger._triggerCoordinates = new ArrayList<>();
-      trigger._events = new ArrayList<>();
+      trigger.enabled = Boolean.parseBoolean(attributes.getNamedItem("enabled").getNodeValue());
+      trigger.requiresEntireTeam = Boolean.parseBoolean(attributes.getNamedItem("requiresEntireTeam").getNodeValue());
+      trigger.onlyAffectsPlayers = Boolean.parseBoolean(attributes.getNamedItem("onlyAffectsPlayers").getNodeValue());
+      trigger.triggerCoordinates = new ArrayList<>();
+      trigger.events = new ArrayList<>();
       NodeList children = node.getChildNodes();
       for (int teamIndex=0 ; teamIndex<children.getLength() ; teamIndex++) {
          Node child = children.item(teamIndex);
@@ -81,7 +81,7 @@ public class ArenaTrigger implements Cloneable
                try {
                   short locX = Short.parseShort(childAttrs.getNamedItem("x").getNodeValue());
                   short locY = Short.parseShort(childAttrs.getNamedItem("y").getNodeValue());
-                  trigger._triggerCoordinates.add(new ArenaCoordinates(locX, locY));
+                  trigger.triggerCoordinates.add(new ArenaCoordinates(locX, locY));
                }
                catch (NumberFormatException e) {
                }
@@ -90,7 +90,7 @@ public class ArenaTrigger implements Cloneable
          else if (child.getNodeName().equals("event")) {
             ArenaEvent event = ArenaEvent.getArenaEvent(child);
             if (event != null) {
-               trigger._events.add(event);
+               trigger.events.add(event);
             }
          }
       }
@@ -98,50 +98,50 @@ public class ArenaTrigger implements Cloneable
    }
 
    public String getName() {
-      return _name;
+      return name;
    }
    public void setName(String name) {
-      _name = name;
+      this.name = name;
    }
 
    public void setRequiresEntireTeam(boolean requiresEntireTeam) {
-      _requiresEntireTeam = requiresEntireTeam;
+      this.requiresEntireTeam = requiresEntireTeam;
    }
    public boolean getRequiresEntireTeam() {
-      return _requiresEntireTeam;
+      return requiresEntireTeam;
    }
    public void setOnlyAffectsPlayers(boolean onlyAffectsPlayers) {
-      _onlyAffectsPlayers = onlyAffectsPlayers;
+      this.onlyAffectsPlayers = onlyAffectsPlayers;
    }
    public boolean getOnlyAffectsPlayers() {
-      return _onlyAffectsPlayers;
+      return onlyAffectsPlayers;
    }
    public void setEnabled(boolean enabled) {
-      _enabled = enabled;
+      this.enabled = enabled;
    }
    public boolean getEnabled() {
-      return _enabled;
+      return enabled;
    }
    public List<ArenaEvent> getEvents() {
-      return _events;
+      return events;
    }
 
    public List<ArenaCoordinates> getTriggerCoordinates() {
-      return _triggerCoordinates;
+      return triggerCoordinates;
    }
    public boolean isTriggerAtLocation(ArenaCoordinates coord, Character mover) {
-      if (_onlyAffectsPlayers && (mover != null) && (mover.isAIPlayer())) {
+      if (onlyAffectsPlayers && (mover != null) && (mover.isAIPlayer())) {
          return false;
       }
-      return _triggerCoordinates.contains(coord);
+      return triggerCoordinates.contains(coord);
    }
    public boolean isTriggerAtLocation(ArenaLocation loc, Character mover, CombatMap map) {
       if (isTriggerAtLocation(loc, mover)) {
          if (getRequiresEntireTeam()) {
             for (Character combatant : map.getCombatants()) {
-               if (combatant._teamID == mover._teamID) {
+               if (combatant.teamID == mover.teamID) {
                   if (combatant.stillFighting()) {
-                     if (!_onlyAffectsPlayers || !combatant.isAIPlayer()) {
+                     if (!onlyAffectsPlayers || !combatant.isAIPlayer()) {
                         boolean atTriggerLoc = false;
                         for (ArenaCoordinates combatantCoord : combatant.getCoordinates()) {
                            if (isTriggerAtLocation(combatantCoord, combatant)) {
@@ -162,10 +162,10 @@ public class ArenaTrigger implements Cloneable
       return false;
    }
    public boolean addTriggerAtLocation(ArenaLocation loc) {
-      return _triggerCoordinates.add(loc);
+      return triggerCoordinates.add(loc);
    }
    public boolean removeTriggerAtLocation(ArenaCoordinates loc) {
-      return _triggerCoordinates.remove(loc);
+      return triggerCoordinates.remove(loc);
    }
 
    /**
@@ -176,7 +176,7 @@ public class ArenaTrigger implements Cloneable
    public boolean trigger(Character triggeringCharacter) {
       boolean newMapInvoked = false;
       if (isArmed()) {
-         for (ArenaEvent event : _events) {
+         for (ArenaEvent event : events) {
             if (event.fireEvent(triggeringCharacter)) {
                newMapInvoked = true;
             }
@@ -185,7 +185,7 @@ public class ArenaTrigger implements Cloneable
       return newMapInvoked;
    }
    public boolean hasExitEvent() {
-      for (ArenaEvent event : _events) {
+      for (ArenaEvent event : events) {
          if (event.isExitEvent()) {
             return true;
          }
@@ -197,15 +197,15 @@ public class ArenaTrigger implements Cloneable
    public ArenaTrigger clone() {
       try {
          ArenaTrigger dup = (ArenaTrigger) super.clone();
-         dup._events = new ArrayList<>();
-         dup._triggerCoordinates = new ArrayList<>();
+         dup.events = new ArrayList<>();
+         dup.triggerCoordinates = new ArrayList<>();
 
-         for (ArenaEvent event : _events) {
-            dup._events.add(event.clone());
+         for (ArenaEvent event : events) {
+            dup.events.add(event.clone());
          }
-         for (ArenaCoordinates coord : _triggerCoordinates) {
+         for (ArenaCoordinates coord : triggerCoordinates) {
             if (coord != null) {
-               dup._triggerCoordinates.add(coord.clone());
+               dup.triggerCoordinates.add(coord.clone());
             }
          }
          return dup;
@@ -217,31 +217,31 @@ public class ArenaTrigger implements Cloneable
       if (other == null) {
          return false;
       }
-      if (!_name.equals(other._name)) {
+      if (!name.equals(other.name)) {
          return false;
       }
-      if (_triggerCoordinates.size() != other._triggerCoordinates.size()) {
+      if (triggerCoordinates.size() != other.triggerCoordinates.size()) {
          return false;
       }
-      for (int i=0 ; i<_triggerCoordinates.size(); i++) {
-         if (!_triggerCoordinates.get(i).equals(other._triggerCoordinates.get(i))) {
+      for (int i = 0; i < triggerCoordinates.size(); i++) {
+         if (!triggerCoordinates.get(i).equals(other.triggerCoordinates.get(i))) {
             return false;
          }
       }
-      if (_onlyAffectsPlayers != other._onlyAffectsPlayers) {
+      if (onlyAffectsPlayers != other.onlyAffectsPlayers) {
          return false;
       }
-      if (_requiresEntireTeam != other._requiresEntireTeam) {
+      if (requiresEntireTeam != other.requiresEntireTeam) {
          return false;
       }
-      if (_enabled != other._enabled) {
+      if (enabled != other.enabled) {
          return false;
       }
-      if (_events.size() != other._events.size()) {
+      if (events.size() != other.events.size()) {
          return false;
       }
-      for (int i=0 ; i<_events.size(); i++) {
-         if (!_events.get(i).equals(other._events.get(i))) {
+      for (int i = 0; i < events.size(); i++) {
+         if (!events.get(i).equals(other.events.get(i))) {
             return false;
          }
       }

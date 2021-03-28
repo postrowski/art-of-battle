@@ -15,24 +15,24 @@ import java.util.List;
 
 public class PriestDemonicSpell implements IPriestGroup
 {
-   static public final List<PriestSpell> _spells = new ArrayList<>();
+   static public final List<PriestSpell> spells = new ArrayList<>();
    static {
       // All Demons can have these:
-      _spells.add(new SpellArmor(PriestDemonicSpell.class, 2));            // defensive
-      _spells.add(new SpellSummonHellHounds(PriestDemonicSpell.class, 3)); // evil(6)
+      spells.add(new SpellArmor(PriestDemonicSpell.class, 2));            // defensive
+      spells.add(new SpellSummonHellHounds(PriestDemonicSpell.class, 3)); // evil(6)
       
       // Demons & Major Demons can have these:
-      _spells.add(new SpellBlockSpell(PriestDemonicSpell.class, 4));       // defensive
-      _spells.add(new SpellBlockAttack(PriestDemonicSpell.class, 4));      // defensive
-      _spells.add(new SpellSummonMinorDemon(PriestDemonicSpell.class, 5));
-      _spells.add(new SpellImprovedArmor(PriestDemonicSpell.class, 6));    // defensive
+      spells.add(new SpellBlockSpell(PriestDemonicSpell.class, 4));       // defensive
+      spells.add(new SpellBlockAttack(PriestDemonicSpell.class, 4));      // defensive
+      spells.add(new SpellSummonMinorDemon(PriestDemonicSpell.class, 5));
+      spells.add(new SpellImprovedArmor(PriestDemonicSpell.class, 6));    // defensive
       
       // Only Major Demons can have these:
-      _spells.add(new SpellSpeed(PriestDemonicSpell.class, 7));            // offensive
-      _spells.add(new SpellSummonDemon(PriestDemonicSpell.class, 8));
-      _spells.add(new SpellOpenGateToHell(PriestEvilSpell.class, 9));      // evil(10)
+      spells.add(new SpellSpeed(PriestDemonicSpell.class, 7));            // offensive
+      spells.add(new SpellSummonDemon(PriestDemonicSpell.class, 8));
+      spells.add(new SpellOpenGateToHell(PriestEvilSpell.class, 9));      // evil(10)
 
       // Not even Major Demons get these:
-      _spells.add(new SpellSummonMajorDemon(PriestDemonicSpell.class, 10));
+      spells.add(new SpellSummonMajorDemon(PriestDemonicSpell.class, 10));
    }
 }

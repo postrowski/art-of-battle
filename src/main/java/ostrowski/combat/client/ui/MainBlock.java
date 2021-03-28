@@ -23,23 +23,23 @@ import java.util.List;
 
 public class MainBlock extends Helper implements ModifyListener, SelectionListener, IUIBlock
 {
-   private       Button           _openButton;
-   private       Button           _newButton;
-   private       Button           _saveButton;
-   private       Button           _genButton;
-   private       Text             _name;
-   private       Combo            _race;
-   private       Combo            _gender;
-   private       Text             _points;
-   private final CharacterWidget  _widget;
-   private final CharacterDisplay _display;
-   public final  CharacterFile    _charFile;
-   private       String           _originalCharacterName = null;
+   private       Button           openButton;
+   private       Button           newButton;
+   private       Button           saveButton;
+   private       Button           genButton;
+   private       Text             name;
+   private       Combo            race;
+   private       Combo            gender;
+   private       Text             points;
+   private final CharacterWidget  widget;
+   private final CharacterDisplay display;
+   public final  CharacterFile    charFile;
+   private       String           originalCharacterName = null;
 
    public MainBlock(CharacterWidget widget, CharacterFile charFile, CharacterDisplay display) {
-      _widget = widget;
-      _charFile = charFile;
-      _display = display;
+      this.widget = widget;
+      this.charFile = charFile;
+      this.display = display;
    }
 
    @Override
@@ -48,40 +48,40 @@ public class MainBlock extends Helper implements ModifyListener, SelectionListen
       Group topGroup = createGroup(parent, "", 6/*columns*/, false, 3/*hSpacing*/, 3/*vSpacing*/);
 
       createLabel(topGroup, "Name:", SWT.LEFT, 2/*hSpan*/, null);
-      _name = createText(topGroup, "", true/*editable*/, 2/*hSpan*/);
-      _points = createText(topGroup, "0 points", false, 2/*hSpan*/);
+      name = createText(topGroup, "", true/*editable*/, 2/*hSpan*/);
+      points = createText(topGroup, "0 points", false, 2/*hSpan*/);
 
       createLabel(topGroup, "Race:", SWT.LEFT, 2/*hSpan*/, null);
-      _race = createCombo(topGroup, SWT.READ_ONLY, 2/*hSpan*/, Race.getRaceNames(CombatServer._isServer/*includeNPCs*/));
-      _race.setText(Race.NAME_Human);
-      List<Gender> genders = Race.getGendersForRace(_race.getText());
+      race = createCombo(topGroup, SWT.READ_ONLY, 2/*hSpan*/, Race.getRaceNames(CombatServer.isServer/*includeNPCs*/));
+      race.setText(Race.NAME_Human);
+      List<Gender> genders = Race.getGendersForRace(race.getText());
       List<String> genderNames = new ArrayList<>();
       for (Gender gender : genders) {
-         genderNames.add(gender._name);
+         genderNames.add(gender.name);
       }
-      _gender = createCombo(topGroup, SWT.READ_ONLY, 2/*hSpan*/, genderNames);
-      _gender.setText(genderNames.get(0));
+      gender = createCombo(topGroup, SWT.READ_ONLY, 2/*hSpan*/, genderNames);
+      gender.setText(genderNames.get(0));
 
       createLabel(topGroup, "", SWT.LEFT, 1/*hSpan*/, null);
-      _openButton = createButton(topGroup, " Open ", 1/*hSpan*/, null, this);
-      _newButton = createButton(topGroup, "  New ", 1/*hSpan*/, null, this);
-      _genButton = createButton(topGroup, "Generate...", 1/*hSpan*/, null, this);
-      _saveButton = createButton(topGroup, " Save ", 1/*hSpan*/, null, this);
+      openButton = createButton(topGroup, " Open ", 1/*hSpan*/, null, this);
+      newButton = createButton(topGroup, "  New ", 1/*hSpan*/, null, this);
+      genButton = createButton(topGroup, "Generate...", 1/*hSpan*/, null, this);
+      saveButton = createButton(topGroup, " Save ", 1/*hSpan*/, null, this);
       createLabel(topGroup, "", SWT.LEFT, 1/*hSpan*/, null);
 
-      topGroup.setTabList(new Control[] { _name, _race, _openButton, _newButton, _saveButton, _genButton});
-      _name.addModifyListener(this);
-      _race.addModifyListener(this);
-      _gender.addModifyListener(this);
+      topGroup.setTabList(new Control[] {name, race, openButton, newButton, saveButton, genButton});
+      name.addModifyListener(this);
+      race.addModifyListener(this);
+      gender.addModifyListener(this);
    }
 
    @Override
    public void widgetSelected(SelectionEvent e) {
       // handle the 'save/add/delete' character button
-      if (e.widget == _genButton) {
-         GenerateCharacterDialog genCharDialog = new GenerateCharacterDialog(_genButton.getShell(), _race.getText());
+      if (e.widget == genButton) {
+         GenerateCharacterDialog genCharDialog = new GenerateCharacterDialog(genButton.getShell(), race.getText());
          int genPoints = genCharDialog.open();
-         if (genCharDialog._cancelSelected) {
+         if (genCharDialog.cancelSelected) {
             return;
          }
          String race = genCharDialog.getRace();
@@ -89,60 +89,60 @@ public class MainBlock extends Helper implements ModifyListener, SelectionListen
          if (genPoints != -1) {
             Character generatedChar = CharacterGenerator.generateRandomCharacter(genPoints, race, equipment, true/*genNewPseudoRndNumber*/, true/*printCharacter*/);
             generatedChar.setName("? " + generatedChar.getRace().getName() + " " + genPoints);
-            _widget.setCharacter(generatedChar.clone());
-            _originalCharacterName = null;
-            _widget.updateDisplayFromCharacter();
+            widget.setCharacter(generatedChar.clone());
+            originalCharacterName = null;
+            widget.updateDisplayFromCharacter();
          }
       }
-      if (e.widget == _saveButton) {
-         if (!_widget._character.getName().equals(_originalCharacterName)) {
-            if (_originalCharacterName != null) {
-               _charFile.delCharacter(_originalCharacterName);
-               if (CombatServer._isServer) {
+      if (e.widget == saveButton) {
+         if (!widget.character.getName().equals(originalCharacterName)) {
+            if (originalCharacterName != null) {
+               charFile.delCharacter(originalCharacterName);
+               if (CombatServer.isServer) {
                   // remove this name from all the drop-down boxes in the arena map view:
-                  CombatServer._this.removeCharacter(_originalCharacterName);
+                  CombatServer._this.removeCharacter(originalCharacterName);
                }
             }
-            if (CombatServer._isServer) {
+            if (CombatServer.isServer) {
                // add this name to all the drop-down boxes in the arena map view:
-               CombatServer._this.addNewCharacter(_widget._character.getName());
+               CombatServer._this.addNewCharacter(widget.character.getName());
             }
          }
-         _charFile.putCharacter(_widget._character);
-         _charFile.writeNameToCharMapToFile(_name.getText());
+         charFile.putCharacter(widget.character);
+         charFile.writeNameToCharMapToFile(name.getText());
       }
-      else if (e.widget == _openButton) {
-         OpenCharacter charDialog = new OpenCharacter(e.display.getShells()[0], _charFile, 0);
+      else if (e.widget == openButton) {
+         OpenCharacter charDialog = new OpenCharacter(e.display.getShells()[0], charFile, 0);
          ExitButton exitButton = charDialog.open();
          if (exitButton != ExitButton.Cancel) {
-            String characterName = charDialog._selectedName;
-            Character selectedCharacter = _charFile.getCharacter(characterName);
+            String characterName = charDialog.selectedName;
+            Character selectedCharacter = charFile.getCharacter(characterName);
             Character copy = selectedCharacter.clone();
             Gender gender = copy.getGender();
             if (exitButton == ExitButton.Open) {
-               _originalCharacterName = characterName;
+               originalCharacterName = characterName;
             }
             if (exitButton == ExitButton.Copy) {
                copy.setName("Copy of " + characterName);
-               _originalCharacterName = null;
+               originalCharacterName = null;
             }
-            _widget.setCharacter(copy);
-            _name.setText(copy.getName());
-            _race.setText(copy.getRace().getName());
+            widget.setCharacter(copy);
+            name.setText(copy.getName());
+            race.setText(copy.getRace().getName());
             // Setting the race text can set the gender attribute of the current character (which is 'copy')
             // so we need to preserver the initial intended gender, and use that here:
-            _gender.setText(gender._name);
-            _widget.updateDisplayFromCharacter();
+            this.gender.setText(gender.name);
+            widget.updateDisplayFromCharacter();
          }
       }
-      else if (e.widget == _newButton) {
+      else if (e.widget == newButton) {
          Character newChar = new Character();
          newChar.setName("New Character");
-         _widget.setCharacter(newChar);
-         _name.setText(newChar.getName());
-         _race.setText(newChar.getRace().getName());
-         _originalCharacterName = null;
-         _widget.updateDisplayFromCharacter();
+         widget.setCharacter(newChar);
+         name.setText(newChar.getName());
+         race.setText(newChar.getRace().getName());
+         originalCharacterName = null;
+         widget.updateDisplayFromCharacter();
       }
    }
 
@@ -153,64 +153,64 @@ public class MainBlock extends Helper implements ModifyListener, SelectionListen
 
    @Override
    public void modifyText(ModifyEvent e) {
-      if (CharacterWidget._inModify) {
+      if (CharacterWidget.inModify) {
          return;
       }
       try {
-         CharacterWidget._inModify = true;
-         if (e.widget == _name) {
-            String newName = _name.getText();
-            if (_display != null) {
-               _display._shell.setText(newName);
+         CharacterWidget.inModify = true;
+         if (e.widget == name) {
+            String newName = name.getText();
+            if (display != null) {
+               display.shell.setText(newName);
             }
             boolean saveEnabled = true;
-            if (!newName.equals(_originalCharacterName)) {
-               Character newChar = _charFile.getCharacter(newName);
+            if (!newName.equals(originalCharacterName)) {
+               Character newChar = charFile.getCharacter(newName);
 
                if (newChar != null) {
                   // character name already in use!
                   saveEnabled = false;
                }
                else {
-                  if (_widget._character != null) {
-                     _widget._character.setName(_name.getText());
+                  if (widget.character != null) {
+                     widget.character.setName(name.getText());
                   }
                }
             }
-            _saveButton.setEnabled(saveEnabled);
+            saveButton.setEnabled(saveEnabled);
          }
-         else if ((e.widget == _race) || (e.widget == _gender)) {
-            if (e.widget == _race) {
-               String oldGender = _gender.getText();
-               List<Gender> genders = Race.getGendersForRace(_race.getText());
+         else if ((e.widget == race) || (e.widget == gender)) {
+            if (e.widget == race) {
+               String oldGender = gender.getText();
+               List<Gender> genders = Race.getGendersForRace(race.getText());
                boolean genderFound = false;
-               _gender.removeAll();
+               gender.removeAll();
                for (Gender gender : genders) {
-                  if (oldGender.equals(gender._name)) {
+                  if (oldGender.equals(gender.name)) {
                      genderFound = true;
                   }
-                  _gender.add(gender._name);
+                  this.gender.add(gender.name);
                }
                if (genderFound) {
-                  _gender.setText(oldGender);
+                  gender.setText(oldGender);
                }
                else {
-                  _gender.setText(genders.get(0)._name);
+                  gender.setText(genders.get(0).name);
                }
             }
-            if (_widget._character != null) {
-               _widget._character.setRace(_race.getText(), Gender.getByName(_gender.getText()));
+            if (widget.character != null) {
+               widget.character.setRace(race.getText(), Gender.getByName(gender.getText()));
             }
-            _widget.updateDisplayFromCharacter();
+            widget.updateDisplayFromCharacter();
          }
          else {
-            if (_widget._character != null) {
-               _widget.updateCharacterFromDisplay();
+            if (widget.character != null) {
+               widget.updateCharacterFromDisplay();
                updateSaveButton();
             }
          }
       } finally {
-         CharacterWidget._inModify = false;
+         CharacterWidget.inModify = false;
       }
    }
 
@@ -218,16 +218,16 @@ public class MainBlock extends Helper implements ModifyListener, SelectionListen
    public void updateDisplayFromCharacter(Character character) {
       // updateDisplayFromCharacter is used to update fields that have ModifyListeners:
       if (character == null) {
-         _name.setText("");
-         _race.setText("");
-         _gender.setText(Gender.MALE._name);
-         _saveButton.setEnabled(false);
+         name.setText("");
+         race.setText("");
+         gender.setText(Gender.MALE.name);
+         saveButton.setEnabled(false);
       }
       else {
-         _saveButton.setEnabled(true);
-         _race.setText(character.getRace().getName());
-         _gender.setText(character.getGender()._name);
-         _name.setText(character.getName());
+         saveButton.setEnabled(true);
+         race.setText(character.getRace().getName());
+         gender.setText(character.getGender().name);
+         name.setText(character.getName());
       }
       updateSaveButton();
    }
@@ -235,8 +235,8 @@ public class MainBlock extends Helper implements ModifyListener, SelectionListen
    @Override
    public void refreshDisplay(Character character) {
       // refreshDisplay is used to update fields that don't have ModifyListeners:
-      _points.setText(((character == null) ? "" : String.valueOf(character.getPointTotal())) + " points");
-      _race.setEnabled(character != null);
+      points.setText(((character == null) ? "" : String.valueOf(character.getPointTotal())) + " points");
+      race.setEnabled(character != null);
       updateSaveButton();
    }
 
@@ -245,22 +245,22 @@ public class MainBlock extends Helper implements ModifyListener, SelectionListen
       if (character == null) {
          return;
       }
-      character.setName(_name.getText());
-      character.setRace(_race.getText(), Gender.getByName(_gender.getText()));
+      character.setName(name.getText());
+      character.setRace(race.getText(), Gender.getByName(gender.getText()));
       updateSaveButton();
    }
 
    private void updateSaveButton() {
       boolean enableSaveButton = false;
-      if (_originalCharacterName == null) {
+      if (originalCharacterName == null) {
          enableSaveButton = true;
       }
       else {
-         Character origChar = _charFile.getCharacter(_originalCharacterName);
-         if ((origChar == null) || (!origChar.equals(_widget._character))) {
+         Character origChar = charFile.getCharacter(originalCharacterName);
+         if ((origChar == null) || (!origChar.equals(widget.character))) {
             enableSaveButton = true;
          }
       }
-      _saveButton.setEnabled(enableSaveButton);
+      saveButton.setEnabled(enableSaveButton);
    }
 }

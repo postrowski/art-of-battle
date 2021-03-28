@@ -13,30 +13,30 @@ import ostrowski.combat.common.enums.SkillType;
 
 public abstract class WeaponStyleAttackRanged extends WeaponStyleAttack
 {
-   public short _rangeBase;
-   public String[] _preparationSteps;
+   public short    rangeBase;
+   public String[] preparationSteps;
    public WeaponStyleAttackRanged(SkillType skillType, int minSkill, int skillPenalty, String name,
                                   int damageMod, DiceSet varianceDice, DamageType damageType, AttackType attackType,
                                   int parryPenalty, int rangeBase, int handsRequired, String[] preparationSteps)
    {
       super(skillType, minSkill, skillPenalty, name, 0/*speedBase*/, -99/*slowStr*/, 99/*fastStr*/, damageMod,
             varianceDice, damageType, attackType, Charge.Never/*chargeType*/, parryPenalty, 2/*minRange*/, rangeBase*4/*maxRange*/, handsRequired);
-      _rangeBase   = (short) rangeBase;
-      _preparationSteps = preparationSteps;
+      this.rangeBase = (short) rangeBase;
+      this.preparationSteps = preparationSteps;
    }
    public String getPreparationStepName(String weaponName, int stepIndex) {
       if ((weaponName == null) || (weaponName.length() == 0)) {
-         return _preparationSteps[stepIndex].replaceAll("<weaponName> ", "");
+         return preparationSteps[stepIndex].replaceAll("<weaponName> ", "");
       }
-      return _preparationSteps[stepIndex].replaceAll("<weaponName>", weaponName);
+      return preparationSteps[stepIndex].replaceAll("<weaponName>", weaponName);
    }
    public byte getNumberOfPreparationSteps() {
-      return (byte) _preparationSteps.length;
+      return (byte) preparationSteps.length;
    }
 
-   public short getRangeBase()   { return _rangeBase;}
+   public short getRangeBase()   { return rangeBase;}
    public short getDistanceForRange(RANGE range, byte adjustedStrength) {
-      double adjustedRangeBase = _rangeBase * Rules.getRangeAdjusterForAdjustedStr(adjustedStrength);
+      double adjustedRangeBase = rangeBase * Rules.getRangeAdjusterForAdjustedStr(adjustedStrength);
       return Rules.getDistanceForRange(range, adjustedRangeBase, isThrown());
    }
 
@@ -44,11 +44,11 @@ public abstract class WeaponStyleAttackRanged extends WeaponStyleAttack
       if (distanceInHexes < getMinRange()) {
          return RANGE.OUT_OF_RANGE;
       }
-      short rangeBase = (short) Math.round(_rangeBase * Rules.getRangeAdjusterForAdjustedStr(adjustedStrength));
+      short rangeBase = (short) Math.round(this.rangeBase * Rules.getRangeAdjusterForAdjustedStr(adjustedStrength));
       return Rules.getRangeForWeapon(distanceInHexes, rangeBase, isThrown());
    }
    public short getMaxDistance(byte rangeDeterminingAttribute) {
-      double rangeBase = _rangeBase * Rules.getRangeAdjusterForAdjustedStr(rangeDeterminingAttribute);
+      double rangeBase = this.rangeBase * Rules.getRangeAdjusterForAdjustedStr(rangeDeterminingAttribute);
       return (short) (rangeBase*4);
    }
 
@@ -63,9 +63,9 @@ public abstract class WeaponStyleAttackRanged extends WeaponStyleAttack
    public String getPreparationStepsAsHTML(String weaponName)
    {
       StringBuilder sb = new StringBuilder();
-      for (int i=_preparationSteps.length-1 ; i>=0 ; i--) {
+      for (int i = preparationSteps.length - 1; i >= 0 ; i--) {
          String step = getPreparationStepName(weaponName, i).replaceAll(" ", "&nbsp;");
-         sb.append(_preparationSteps.length-i).append(".&nbsp;").append(step).append("<br>");
+         sb.append(preparationSteps.length - i).append(".&nbsp;").append(step).append("<br>");
       }
       return sb.toString();
    }
@@ -79,14 +79,14 @@ public abstract class WeaponStyleAttackRanged extends WeaponStyleAttack
          return false;
       }
       WeaponStyleAttackRanged otherStyle = (WeaponStyleAttackRanged) other;
-      if (_rangeBase != otherStyle._rangeBase) {
+      if (rangeBase != otherStyle.rangeBase) {
          return false;
       }
-      if (_preparationSteps.length != otherStyle._preparationSteps.length) {
+      if (preparationSteps.length != otherStyle.preparationSteps.length) {
          return false;
       }
-      for (int i=0 ; i<_preparationSteps.length ; i++) {
-         if (_preparationSteps[i].equals(otherStyle._preparationSteps[i])) {
+      for (int i = 0; i < preparationSteps.length ; i++) {
+         if (preparationSteps[i].equals(otherStyle.preparationSteps[i])) {
             return false;
          }
       }
@@ -97,8 +97,8 @@ public abstract class WeaponStyleAttackRanged extends WeaponStyleAttack
    public void copyDataFrom(WeaponStyle source) {
       super.copyDataFrom(source);
       if (source instanceof WeaponStyleAttackRanged) {
-         _rangeBase = ((WeaponStyleAttackRanged)source)._rangeBase;
-         _preparationSteps = ((WeaponStyleAttackRanged)source)._preparationSteps;
+         rangeBase = ((WeaponStyleAttackRanged)source).rangeBase;
+         preparationSteps = ((WeaponStyleAttackRanged)source).preparationSteps;
       }
    }
 }

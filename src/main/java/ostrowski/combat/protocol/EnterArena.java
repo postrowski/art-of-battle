@@ -13,31 +13,31 @@ import ostrowski.protocol.SerializableObject;
 
 public class EnterArena extends SerializableObject
 {
-   boolean   _entering    = true;
-   Character _character   = null;
-   byte      _team        = 0;
-   byte      _indexOnTeam = 0;
-   public Character getCharacter() { return _character; }
-   public boolean   isEntering()   { return _entering; }
-   public byte getTeam()  {      return _team;   }
-   public byte getIndexOnTeam()  {      return _indexOnTeam;   }
+   boolean   entering    = true;
+   Character character   = null;
+   byte      team        = 0;
+   byte      indexOnTeam = 0;
+   public Character getCharacter()   { return character; }
+   public boolean   isEntering()     { return entering; }
+   public byte      getTeam()        { return team;   }
+   public byte      getIndexOnTeam() { return indexOnTeam;   }
 
    public EnterArena() {}
    public EnterArena(Character character, boolean entering, byte team, byte indexOnTeam) {
-      _character = character;
-      _entering  = entering;
-      _team      = team;
-      _indexOnTeam = indexOnTeam;
+      this.character = character;
+      this.entering = entering;
+      this.team = team;
+      this.indexOnTeam = indexOnTeam;
    }
 
    @Override
    public void serializeToStream(DataOutputStream out)
    {
       try {
-         _character.serializeToStream(out);
-         writeToStream(_entering, out);
-         writeToStream(_team, out);
-         writeToStream(_indexOnTeam, out);
+         character.serializeToStream(out);
+         writeToStream(entering, out);
+         writeToStream(team, out);
+         writeToStream(indexOnTeam, out);
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -47,11 +47,11 @@ public class EnterArena extends SerializableObject
    public void serializeFromStream(DataInputStream in)
    {
       try {
-         _character   = new Character();
-         _character.serializeFromStream(in);
-         _entering    = readBoolean(in);
-         _team        = readByte(in);
-         _indexOnTeam = readByte(in);
+         character = new Character();
+         character.serializeFromStream(in);
+         entering = readBoolean(in);
+         team = readByte(in);
+         indexOnTeam = readByte(in);
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -60,9 +60,9 @@ public class EnterArena extends SerializableObject
    @Override
    public String toString() {
       return "EnterArena: " +
-             _character +
-             ", entering: " + _entering +
-             ", team: " + _team +
-             ", indexOnTeam: " + _indexOnTeam;
+             character +
+             ", entering: " + entering +
+             ", team: " + team +
+             ", indexOnTeam: " + indexOnTeam;
    }
 }

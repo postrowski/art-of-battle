@@ -32,11 +32,11 @@ public class Head extends Limb
       return Weapons.getWeapon(Weapon.NAME_HeadButt, character.getRace());
    }
 
-   //static Weapon _headButt = Weapons.getWeapon(Weapon.NAME_HeadButt, character.getRace());
+   //static Weapon headButt = Weapons.getWeapon(Weapon.NAME_HeadButt, character.getRace());
 
    @Override
    public Head clone() {
-      return new Head(_limbType, getRacialBase());
+      return new Head(limbType, getRacialBase());
    }
 
 }

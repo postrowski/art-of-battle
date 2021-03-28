@@ -15,7 +15,7 @@ public class Tool extends Thing
    }
    @Override
    public Tool clone() {
-      return new Tool(_name, getRacialBase());
+      return new Tool(name, getRacialBase());
    }
 
    @Override

@@ -17,16 +17,16 @@ import java.util.List;
 
 public class ServerStatus extends SerializableObject implements Enums
 {
-   private List<Character>         _combatants            = new ArrayList<>();
-   private final List<Integer>     _combatantsWaitingByID = new ArrayList<>();
+   private List<Character>     combatants            = new ArrayList<>();
+   private final List<Integer> combatantsWaitingByID = new ArrayList<>();
 
    public ServerStatus() {}
    public ServerStatus(CombatMap map, List<Character> combatants,
                        List<Character> combatantsWaitingToConnect)
    {
-      _combatants = combatants;
+      this.combatants = combatants;
       for (Character chr : combatantsWaitingToConnect) {
-         _combatantsWaitingByID.add(chr._uniqueID);
+         combatantsWaitingByID.add(chr.uniqueID);
       }
    }
 
@@ -37,8 +37,8 @@ public class ServerStatus extends SerializableObject implements Enums
    public void serializeToStream(DataOutputStream out)
    {
       try {
-         writeToStream(_combatants, out);
-         writeToStream(_combatantsWaitingByID, out);
+         writeToStream(combatants, out);
+         writeToStream(combatantsWaitingByID, out);
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -56,20 +56,20 @@ public class ServerStatus extends SerializableObject implements Enums
    public void serializeFromStream(DataInputStream in)
    {
       try {
-         readIntoListCharacter(_combatants, in);
-         readIntoListInteger(_combatantsWaitingByID, in);
+         readIntoListCharacter(combatants, in);
+         readIntoListInteger(combatantsWaitingByID, in);
       } catch (IOException e) {
          e.printStackTrace();
       }
    }
 
    public List<Character> getCombatants() {
-      return new ArrayList<>(_combatants);
+      return new ArrayList<>(combatants);
    }
    public List<Character> getCombatantsWaitingToConnect() {
       List<Character> list = new ArrayList<>();
-      for (Character chr : _combatants) {
-         if (_combatantsWaitingByID.contains(chr._uniqueID)) {
+      for (Character chr : combatants) {
+         if (combatantsWaitingByID.contains(chr.uniqueID)) {
             list.add(chr);
          }
       }

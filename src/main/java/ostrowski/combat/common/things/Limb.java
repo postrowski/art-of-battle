@@ -33,20 +33,20 @@ import ostrowski.combat.server.BattleTerminatedException;
 import ostrowski.protocol.SerializableObject;
 
 public abstract class Limb extends Thing implements Cloneable {
-   public  LimbType   _limbType          = null;
+   public  LimbType limbType = null;
 
     // penalties are positive integers so a 2 means a -2 to actions.
     // A negative value means no use possible, such as a severed limb.
-    private final List<Wound> _wounds = new ArrayList<>();
-    private byte  _attackStyle  = 0;
-    private byte  _actionsNeededToReady   = 0;
+    private final List<Wound> wounds               = new ArrayList<>();
+    private       byte        attackStyle          = 0;
+    private       byte        actionsNeededToReady = 0;
 
     public Limb() {
        super(null/*name*/, null/*racialBase*/, 0/*cost*/, 10/*weight*/, (byte)0/*passiveDefense*/);
     }
     public Limb(LimbType type, Race racialBase) {
        super(type.name, racialBase, 0/*cost*/, 10/*weight*/, (byte)0/*passiveDefense*/);
-       _limbType = type;
+       limbType = type;
        if (type.isHand() != (this instanceof Hand)) { DebugBreak.debugBreak(); }
        if (type.isHead() != (this instanceof Head)) { DebugBreak.debugBreak(); }
        if (type.isLeg()  != (this instanceof Leg )) { DebugBreak.debugBreak(); }
@@ -55,7 +55,7 @@ public abstract class Limb extends Thing implements Cloneable {
     }
     public byte getWoundPenalty() {
        byte penalty = 0;
-       for (Wound wound : _wounds) {
+       for (Wound wound : wounds) {
           // severed limbs (penalty == -2) trump all other injuries to this limb,
           // even non-severing crippling injuries (penalty == -1)
           if (wound.getPenaltyLimb() == -2) {
@@ -75,26 +75,26 @@ public abstract class Limb extends Thing implements Cloneable {
     public boolean isSevered() { return (getWoundPenalty() == -2);}
 
     public boolean removeWound(Wound wound) {
-       return _wounds.remove(wound);
+       return wounds.remove(wound);
     }
 
     public boolean applyWound(Wound wound) {
-       if (_limbType == wound.getLimb()) {
+       if (limbType == wound.getLimb()) {
           if (wound.getPenaltyLimb() != 0) {
-             _wounds.add(wound);
+             wounds.add(wound);
           }
           if (wound.isUnreadyWeapon()) {
-             setActionsNeededToReady((byte) (_actionsNeededToReady+1));
+             setActionsNeededToReady((byte) (actionsNeededToReady + 1));
           }
           return true;
        }
        return false;
     }
     public byte getAttackStyle() {
-       return _attackStyle;
+       return attackStyle;
     }
     public void setAttackStyle(byte style) {
-       _attackStyle = style;
+       attackStyle = style;
     }
 
    @Override
@@ -103,23 +103,23 @@ public abstract class Limb extends Thing implements Cloneable {
       super.serializeFromStream(in);
        try {
           LimbType limbType = LimbType.getByValue(readByte(in));
-          if (_limbType == null) {
-             _limbType = limbType;
+          if (this.limbType == null) {
+             this.limbType = limbType;
           }
-          else if (_limbType != limbType) {
+          else if (this.limbType != limbType) {
              DebugBreak.debugBreak("serialized wrong object type!");
              throw new RuntimeException("serialized wrong object type!");
           }
            String raceName = readString(in);
            setRacialBase(Race.getRace(raceName, Gender.MALE));
-           _wounds.clear();
+           wounds.clear();
            for (SerializableObject obj : readIntoListSerializableObject(in)) {
               if (obj instanceof Wound) {
-                 _wounds.add((Wound) obj);
+                 wounds.add((Wound) obj);
               }
            }
-           _attackStyle  = readByte(in);
-           _actionsNeededToReady = readByte(in);
+           attackStyle = readByte(in);
+           actionsNeededToReady = readByte(in);
        } catch (IOException e) {
            e.printStackTrace();
         }
@@ -130,11 +130,11 @@ public abstract class Limb extends Thing implements Cloneable {
    {
       super.serializeToStream(out);
       try {
-         writeToStream((byte)(_limbType.value), out);
+         writeToStream((byte)(limbType.value), out);
          writeToStream(getRacialBase().getName(), out);
-         writeToStream(_wounds, out);
-         writeToStream(_attackStyle, out);
-         writeToStream(_actionsNeededToReady, out);
+         writeToStream(wounds, out);
+         writeToStream(attackStyle, out);
+         writeToStream(actionsNeededToReady, out);
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -142,10 +142,10 @@ public abstract class Limb extends Thing implements Cloneable {
 
    public Element getXMLObject(Document parentDoc, String newLine) {
       Element mainElement = parentDoc.createElement("Limb");
-      mainElement.setAttribute("id", String.valueOf(_limbType.value));
+      mainElement.setAttribute("id", String.valueOf(limbType.value));
       mainElement.setAttribute("name", String.valueOf(getName()));
-      mainElement.setAttribute("attackStyle", String.valueOf(_attackStyle));
-      mainElement.setAttribute("actionsNeededToReady", String.valueOf(_actionsNeededToReady));
+      mainElement.setAttribute("attackStyle", String.valueOf(attackStyle));
+      mainElement.setAttribute("actionsNeededToReady", String.valueOf(actionsNeededToReady));
       return mainElement;
    }
    public boolean serializeFromXmlObject(Node element)
@@ -157,10 +157,10 @@ public abstract class Limb extends Thing implements Cloneable {
       if (attributes == null) {
          return false;
       }
-      _limbType                   = LimbType.getByValue(Byte.parseByte(attributes.getNamedItem("id").getNodeValue()));
+      limbType = LimbType.getByValue(Byte.parseByte(attributes.getNamedItem("id").getNodeValue()));
                                              attributes.getNamedItem("name").getNodeValue();
-      _attackStyle          = Byte.parseByte(attributes.getNamedItem("attackStyle").getNodeValue());
-      _actionsNeededToReady = Byte.parseByte(attributes.getNamedItem("actionsNeededToReady").getNodeValue());
+      attackStyle = Byte.parseByte(attributes.getNamedItem("attackStyle").getNodeValue());
+      actionsNeededToReady = Byte.parseByte(attributes.getNamedItem("actionsNeededToReady").getNodeValue());
       return true;
    }
 
@@ -190,11 +190,11 @@ public abstract class Limb extends Thing implements Cloneable {
       }
       return false;
    }
-   public byte getActionsNeededToReady() { return _actionsNeededToReady; }
+   public byte getActionsNeededToReady() { return actionsNeededToReady; }
    public void setActionsNeededToReady(byte actions) {
       // If we aren't carrying anything, it can't become un-ready
       if (getHeldThing() != null) {
-         _actionsNeededToReady = actions;
+         actionsNeededToReady = actions;
       }
    }
 
@@ -226,10 +226,10 @@ public abstract class Limb extends Thing implements Cloneable {
       return null;
    }
    public void copyDataInto(Limb dest) {
-      dest._wounds.clear();
-      dest._wounds.addAll(_wounds);
-      dest._attackStyle          = _attackStyle;
-      dest._actionsNeededToReady = _actionsNeededToReady;
+      dest.wounds.clear();
+      dest.wounds.addAll(wounds);
+      dest.attackStyle = attackStyle;
+      dest.actionsNeededToReady = actionsNeededToReady;
    }
    @SuppressWarnings("unused")
    public void applyAction(RequestAction action, byte attribute, Character actor, Arena arena) throws BattleTerminatedException {
@@ -253,7 +253,7 @@ public abstract class Limb extends Thing implements Cloneable {
    }
 
    public DefenseOption getDefOption() {
-      switch (_limbType) {
+      switch (limbType) {
          case HAND_RIGHT:   return DefenseOption.DEF_RIGHT;
          case HAND_LEFT:    return DefenseOption.DEF_LEFT;
          case HAND_RIGHT_2: return DefenseOption.DEF_RIGHT_2;
@@ -264,7 +264,7 @@ public abstract class Limb extends Thing implements Cloneable {
       return null;
    }
    public Wound.Pair getLocationPair() {
-      switch (_limbType) {
+      switch (limbType) {
          case HAND_RIGHT:
          case HAND_LEFT:
          case LEG_RIGHT:
@@ -284,7 +284,7 @@ public abstract class Limb extends Thing implements Cloneable {
       return Wound.Pair.ANY;
    }
    public Wound.Side getLocationSide() {
-      switch (_limbType) {
+      switch (limbType) {
          case HAND_RIGHT:
          case HAND_RIGHT_2:
          case HAND_RIGHT_3:

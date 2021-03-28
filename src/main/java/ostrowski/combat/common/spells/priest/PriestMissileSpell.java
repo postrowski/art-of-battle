@@ -16,26 +16,26 @@ import ostrowski.combat.server.Battle;
 
 public abstract class PriestMissileSpell extends PriestSpell implements IMissileSpell, ICastInBattle
 {
-   final DieType    _damageDiceType;
-   final short      _rangeBase;
-   final DamageType _damageType;
-   final String     _missileWeaponName;
+   final DieType    damageDiceType;
+   final short      rangeBase;
+   final DamageType damageType;
+   final String     missileWeaponName;
 
    public PriestMissileSpell(String name, Class< ? extends IPriestGroup> group, int affinity,
                              DieType damageDiceType, short rangeBase, DamageType damageType, String missileWeaponName) {
       super(name, group, affinity);
-      _damageDiceType = damageDiceType;
-      _rangeBase = rangeBase;
-      _damageType = damageType;
-      _missileWeaponName = missileWeaponName;
+      this.damageDiceType = damageDiceType;
+      this.rangeBase = rangeBase;
+      this.damageType = damageType;
+      this.missileWeaponName = missileWeaponName;
    }
 
    @Override
    public DiceSet getDamageDice() {
-      return getDamageDice(_effectivePower);
+      return getDamageDice(effectivePower);
    }
    private DiceSet getDamageDice(int power) {
-      DiceSet damage = DiceSet.getGroupDice(_damageDiceType, power);
+      DiceSet damage = DiceSet.getGroupDice(damageDiceType, power);
       Character caster = getCaster();
       if (caster != null) {
          return damage.addBonus(getCaster().getRace().getBuildModifier());
@@ -44,10 +44,10 @@ public abstract class PriestMissileSpell extends PriestSpell implements IMissile
    }
    @Override
    public short getRangeBase() {
-      return _rangeBase;
+      return rangeBase;
    }
    @Override
-   public DamageType getDamageType() { return _damageType; }
+   public DamageType getDamageType() { return damageType; }
 
 
 
@@ -114,7 +114,7 @@ public abstract class PriestMissileSpell extends PriestSpell implements IMissile
       // damType, rngBase, hands,      preparation steps (last to first)
       return new MissileWeapon(getMissileWeaponSize(), getCaster().getRace(),
                                0/*lbs*/,  0/*cost*/,
-                               _missileWeaponName,
+                               missileWeaponName,
                                null/*skill type*/, // TODO: how to convey the spell's skill level for use in the attack?
                                0 /*minimum skill level*/,
                                getMissileWeaponSkillPenalty(),
@@ -197,7 +197,7 @@ public abstract class PriestMissileSpell extends PriestSpell implements IMissile
 
    @Override
    public String getMissileWeaponName() {
-      return _missileWeaponName;
+      return missileWeaponName;
    }
 
 }

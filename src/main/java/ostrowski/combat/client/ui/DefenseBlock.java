@@ -25,9 +25,9 @@ import java.util.HashMap;
 
 public class DefenseBlock extends Helper implements IUIBlock
 {
-   private final HashMap<RANGE, HashMap<DefenseOption, Text>>    _baseDefenseOpt = new HashMap<>();
-   private final HashMap<RANGE, HashMap<DefenseOptions, Text>>   _defenseOpts    = new HashMap<>();
-   private static final HashMap<DefenseOptions, String> OPTIONS_TO_SHOW = new HashMap<>();
+   private final HashMap<RANGE, HashMap<DefenseOption, Text>>  baseDefenseOpt  = new HashMap<>();
+   private final HashMap<RANGE, HashMap<DefenseOptions, Text>> defenseOpts     = new HashMap<>();
+   private static final HashMap<DefenseOptions, String>        OPTIONS_TO_SHOW = new HashMap<>();
    static {
       OPTIONS_TO_SHOW.put(new DefenseOptions(DefenseOption.DEF_DODGE), "Dodge:");
       OPTIONS_TO_SHOW.put(new DefenseOptions(DefenseOption.DEF_LEFT), "Block:");
@@ -41,9 +41,9 @@ public class DefenseBlock extends Helper implements IUIBlock
       OPTIONS_TO_SHOW.put(new DefenseOptions(DefenseOption.DEF_LEFT, DefenseOption.DEF_RIGHT, DefenseOption.DEF_DODGE), "Dodge, Block && Parry:");
    }
 
-   private Text             _sizeAdj      = null;
-   private Text             _pdShield     = null;
-   private Text             _pdArmor      = null;
+   private Text sizeAdj  = null;
+   private Text pdShield = null;
+   private Text pdArmor  = null;
    public DefenseBlock(CharacterWidget display) {
    }
 
@@ -53,13 +53,13 @@ public class DefenseBlock extends Helper implements IUIBlock
       defGroup.setTabList(new Control[] {});
 
       createLabel(defGroup, "Size adjuster PD adj.:", SWT.LEFT, 2, null);
-      _sizeAdj = createText(defGroup, "0", false/*editable*/, 1);
+      sizeAdj = createText(defGroup, "0", false/*editable*/, 1);
       createLabel(defGroup, "", SWT.LEFT, 4, null);
       createLabel(defGroup, "Shield PD:", SWT.LEFT, 2, null);
-      _pdShield = createText(defGroup, "0", false/*editable*/, 1);
+      pdShield = createText(defGroup, "0", false/*editable*/, 1);
       createLabel(defGroup, "Range", SWT.CENTER, 4, null);
       createLabel(defGroup, "Armor PD:", SWT.LEFT, 2, null);
-      _pdArmor = createText(defGroup, "0", false/*editable*/, 1);
+      pdArmor = createText(defGroup, "0", false/*editable*/, 1);
       createLabel(defGroup, "P.B.", SWT.CENTER, 1, null);
       createLabel(defGroup, "Short", SWT.CENTER, 1, null);
       createLabel(defGroup, "Med.", SWT.CENTER, 1, null);
@@ -70,9 +70,9 @@ public class DefenseBlock extends Helper implements IUIBlock
       createBaseDefense(defGroup, "Base Block:",      DefenseOption.DEF_LEFT, null);
       createBaseDefense(defGroup, "Base Parry:",      DefenseOption.DEF_RIGHT, null);
 
-      _defenseOpts.clear();
+      defenseOpts.clear();
       for (RANGE range : RANGE.values()) {
-         _defenseOpts.put(range, new HashMap<>());
+         defenseOpts.put(range, new HashMap<>());
       }
 
       for (int actions = 1 ; actions <= 3 ; actions++) {
@@ -98,9 +98,9 @@ public class DefenseBlock extends Helper implements IUIBlock
       if (character != null) {
          sizeAdjustForRace = (byte) (-character.getRace().getBonusToBeHit());
       }
-      _sizeAdj.setText((sizeAdjustForRace>=0) ? ("+"+sizeAdjustForRace) : String.valueOf(sizeAdjustForRace));
+      sizeAdj.setText((sizeAdjustForRace >= 0) ? ("+" + sizeAdjustForRace) : String.valueOf(sizeAdjustForRace));
       if (character != null) {
-         _pdArmor.setText(String.valueOf(character.getArmor().getPassiveDefense()));
+         pdArmor.setText(String.valueOf(character.getArmor().getPassiveDefense()));
       }
       int pdShields = 0;
       if (character != null) {
@@ -114,7 +114,7 @@ public class DefenseBlock extends Helper implements IUIBlock
             }
          }
       }
-      _pdShield.setText(String.valueOf(pdShields));
+      pdShield.setText(String.valueOf(pdShields));
       // refreshDisplay is used to update fields that don't have ModifyListeners:
       HashMap<RANGE, HashMap<DefenseOption, Byte>> defBase = null;
       if (character != null) {
@@ -123,7 +123,7 @@ public class DefenseBlock extends Helper implements IUIBlock
                                                    false/*computePdOnly*/, (short)1/*distance*/);
       }
       for (RANGE range : RANGE.values()) {
-         HashMap<DefenseOption, Text> baseDefMapToText = _baseDefenseOpt.get(range);
+         HashMap<DefenseOption, Text> baseDefMapToText = baseDefenseOpt.get(range);
          for (DefenseOption defOption : baseDefMapToText.keySet()) {
             String value = "";
             if ((defOption != null) && (defBase != null)) {
@@ -132,7 +132,7 @@ public class DefenseBlock extends Helper implements IUIBlock
             baseDefMapToText.get(defOption).setText(value);
          }
 
-         HashMap<DefenseOptions, Text> defMapToText = _defenseOpts.get(range);
+         HashMap<DefenseOptions, Text> defMapToText = defenseOpts.get(range);
          for (DefenseOptions defOptions : defMapToText.keySet()) {
             Text text = defMapToText.get(defOptions);
             if (character == null) {
@@ -170,7 +170,7 @@ public class DefenseBlock extends Helper implements IUIBlock
          // disable/enable all block defenses:
          for (RANGE range : RANGE.values()) {
             boolean isRanged = range != RANGE.OUT_OF_RANGE;
-            HashMap<DefenseOption, Text> mapBaseDefOptToTn = _baseDefenseOpt.get(range);
+            HashMap<DefenseOption, Text> mapBaseDefOptToTn = baseDefenseOpt.get(range);
             mapBaseDefOptToTn.get(DefenseOption.DEF_LEFT).setVisible(leftDefense && (!isRanged || leftDefenseRanged));
             mapBaseDefOptToTn.get(DefenseOption.DEF_RIGHT).setVisible(rightDefense && (!isRanged || rightDefenseRanged));
             mapBaseDefOptToTn.get(DefenseOption.DEF_RETREAT).setVisible(true);
@@ -183,7 +183,7 @@ public class DefenseBlock extends Helper implements IUIBlock
                if (defOptionToShow.contains(DefenseOption.DEF_RIGHT) && (!rightDefense || (isRanged && !rightDefenseRanged))) {
                   visible = false;
                }
-               HashMap<DefenseOptions, Text> mapDefOptsToTn = _defenseOpts.get(range);
+               HashMap<DefenseOptions, Text> mapDefOptsToTn = defenseOpts.get(range);
                if ((mapDefOptsToTn != null) && (mapDefOptsToTn.containsKey(defOptionToShow))) {
                   mapDefOptsToTn.get(defOptionToShow).setVisible(visible);
                }
@@ -201,17 +201,17 @@ public class DefenseBlock extends Helper implements IUIBlock
       createLabel(parent, null, SWT.LEFT, 1, null);
       createLabel(parent, name, SWT.LEFT, 1, null);
       for (RANGE range : RANGE.values()) {
-         HashMap<DefenseOptions, Text> defMapToText = _defenseOpts.get(range);
+         HashMap<DefenseOptions, Text> defMapToText = defenseOpts.get(range);
          defMapToText.put(defType, createText(parent, " ", false, 1));
       }
    }
    public void createBaseDefense(Composite parent, String name, DefenseOption defType, FontData fontData) {
       createLabel(parent, name, SWT.LEFT, 2, fontData);
       for (RANGE range : RANGE.values()) {
-         if (!_baseDefenseOpt.containsKey(range)) {
-            _baseDefenseOpt.put(range, new HashMap<>());
+         if (!baseDefenseOpt.containsKey(range)) {
+            baseDefenseOpt.put(range, new HashMap<>());
          }
-         HashMap<DefenseOption, Text> rangeMap = _baseDefenseOpt.get(range);
+         HashMap<DefenseOption, Text> rangeMap = baseDefenseOpt.get(range);
          rangeMap.put(defType, createText(parent, " ", false, 1));
       }
    }

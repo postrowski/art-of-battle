@@ -18,25 +18,25 @@ import ostrowski.protocol.SyncRequest;
 
 public class DieRoll extends Dialog implements KeyListener, FocusListener, ControlListener
 {
-   public final Shell        _shell;
-   private StatusChit2       _rollingDie = null;
-   private final SyncRequest _req;
-   private Point             _currentLoc;
+   public final Shell        shell;
+   private StatusChit2       rollingDie = null;
+   private final SyncRequest req;
+   private Point             currentLoc;
 
    public DieRoll(Shell parent, int style, SyncRequest req) {
       super(parent, checkStyle(style));
 
-      _req = req;
+      this.req = req;
 
-      _shell = new Shell(parent, SWT.DIALOG_TRIM | checkStyle(style));
+      shell = new Shell(parent, SWT.DIALOG_TRIM | checkStyle(style));
       GridLayout layout = new GridLayout(1/*numColumns*/, false/*makeColumnsEqualWidth*/);
-      _shell.setLayout(layout);
-      _shell.addFocusListener(this);
-      if (_rollingDie == null) {
-         _rollingDie = new StatusChit2(_shell, 0);//SWT.MODELESS | SWT.NO_TRIM | SWT.NO_FOCUS);
+      shell.setLayout(layout);
+      shell.addFocusListener(this);
+      if (rollingDie == null) {
+         rollingDie = new StatusChit2(shell, 0);//SWT.MODELESS | SWT.NO_TRIM | SWT.NO_FOCUS);
       }
 
-      Composite body = new Composite(_shell, SWT.NONE);
+      Composite body = new Composite(shell, SWT.NONE);
       body.addFocusListener(this);
    }
 
@@ -56,52 +56,52 @@ public class DieRoll extends Dialog implements KeyListener, FocusListener, Contr
 
    public void setTitle(String string) {
       super.setText(string);
-      _shell.setText(string);
+      shell.setText(string);
    }
 
    public void open() {
       focusGained();
-      _shell.pack();
-      _shell.open();
-      _shell.layout();
+      shell.pack();
+      shell.open();
+      shell.layout();
 
-      if (MessageDialog._topMessage != null) {
-         if (MessageDialog._topMessage._shell.isDisposed()) {
-            MessageDialog._topMessage = null;
+      if (MessageDialog.topMessage != null) {
+         if (MessageDialog.topMessage.shell.isDisposed()) {
+            MessageDialog.topMessage = null;
          }
          else {
-            MessageDialog._topMessage._shell.moveAbove(_shell);
+            MessageDialog.topMessage.shell.moveAbove(shell);
          }
       }
 
       Point statusChitLoc = null;
-      if (_currentLoc == null) {
-         _currentLoc = _shell.getLocation();
-         Point size = _shell.getSize();
-         statusChitLoc = new Point((_currentLoc.x + size.x) - 5, _currentLoc.y);
+      if (currentLoc == null) {
+         currentLoc = shell.getLocation();
+         Point size = shell.getSize();
+         statusChitLoc = new Point((currentLoc.x + size.x) - 5, currentLoc.y);
       }
       else {
-         _shell.setLocation(_currentLoc);
+         shell.setLocation(currentLoc);
       }
 
-      if (_rollingDie != null) {
-         _rollingDie.open();
-         _rollingDie.setLocation(statusChitLoc);
+      if (rollingDie != null) {
+         rollingDie.open();
+         rollingDie.setLocation(statusChitLoc);
       }
 
-      _shell.addKeyListener(this);
-      _shell.addControlListener(this);
+      shell.addKeyListener(this);
+      shell.addControlListener(this);
 
 
-      while (!_shell.isDisposed()) {
-         if (!_shell.getDisplay().readAndDispatch()) {
-            _shell.getDisplay().sleep();
+      while (!shell.isDisposed()) {
+         if (!shell.getDisplay().readAndDispatch()) {
+            shell.getDisplay().sleep();
          }
       }
-      if (_rollingDie != null) {
-         if (CombatServer._isServer) {
-            _rollingDie.close();
-            _rollingDie = null;
+      if (rollingDie != null) {
+         if (CombatServer.isServer) {
+            rollingDie.close();
+            rollingDie = null;
          }
       }
    }
@@ -111,21 +111,21 @@ public class DieRoll extends Dialog implements KeyListener, FocusListener, Contr
    }
    @Override
    public void keyPressed(KeyEvent arg0) {
-      if ((_req!= null) && (arg0.keyCode == SWT.ESC)) {
-         _req.setAnswerID(SyncRequest.OPT_CANCEL_ACTION);
+      if ((req != null) && (arg0.keyCode == SWT.ESC)) {
+         req.setAnswerID(SyncRequest.OPT_CANCEL_ACTION);
       }
    }
 
    @Override
    public void keyReleased(KeyEvent arg0) {
-      if ((_req!= null) && _req.keyPressed(arg0)) {
-         _shell.close();
+      if ((req != null) && req.keyPressed(arg0)) {
+         shell.close();
       }
    }
    @Override
    public void focusGained(FocusEvent arg0) {
       focusGained();
-      if (CombatServer._uses3dMap) {
+      if (CombatServer.uses3dMap) {
          CombatServer._this.redrawMap();
       }
    }
@@ -134,14 +134,14 @@ public class DieRoll extends Dialog implements KeyListener, FocusListener, Contr
    }
    @Override
    public void controlMoved(ControlEvent arg0) {
-      if (CombatServer._uses3dMap) {
+      if (CombatServer.uses3dMap) {
          CombatServer._this.redrawMap();
       }
-      //Point currentLoc = _shell.getLocation();
+      //Point currentLoc = shell.getLocation();
    }
    @Override
    public void controlResized(ControlEvent arg0) {
-      if (CombatServer._uses3dMap) {
+      if (CombatServer.uses3dMap) {
          CombatServer._this.redrawMap();
       }
    }

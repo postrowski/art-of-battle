@@ -24,9 +24,9 @@ public class CharacterGeneratorTest implements Enums {
 
    // make a reference to the Rules object before we get into the static initializer, because that
    // makes a reference to the PriestSpells, which need the Rules object to already have been loaded.
-   static final Attribute at = Attribute.Strength;// force load of this enum
-   static final DamageType _dummy = DamageType.NONE;
-   static final SpellFear dummy = new SpellFear();
+   static final Attribute  at     = Attribute.Strength;// force load of this enum
+   static final DamageType dummy1 = DamageType.NONE;
+   static final SpellFear  dummy  = new SpellFear();
    static final Rules dummy_ = new Rules();
 
    @Test
@@ -195,7 +195,7 @@ public class CharacterGeneratorTest implements Enums {
             }
             else if (thing instanceof Weapon) {
                weaponPrime = (Weapon) thing;
-               weaponDescPrime = new WeaponDesc(character, weaponPrime, limb._limbType);
+               weaponDescPrime = new WeaponDesc(character, weaponPrime, limb.limbType);
             }
             else if (thing.isReal()) {
                if (equipment.length() > 0) {
@@ -215,7 +215,7 @@ public class CharacterGeneratorTest implements Enums {
             if (weapon != null) {
                if (weaponPrime == null) {
                   weaponPrime = weapon;
-                  weaponDescPrime = new WeaponDesc(character, weapon, limb._limbType);
+                  weaponDescPrime = new WeaponDesc(character, weapon, limb.limbType);
                   break;
                }
                else if ((weaponAlt == null) && (weapon != weaponPrime)) {
@@ -226,7 +226,7 @@ public class CharacterGeneratorTest implements Enums {
                      weapon = limb.getWeapon(character);
                      limb.setHeldThing(oldWeap, character);
                   }
-                  weaponDescAlt = new WeaponDesc(character, weapon, limb._limbType);
+                  weaponDescAlt = new WeaponDesc(character, weapon, limb.limbType);
 //                  if ((weaponStrAlt != null) && (!weaponStrAlt.isEmpty()) && (!weaponStrPrime.equals(weaponStrAlt))) {
 //                     weaponAlt = weapon;
 //                  }
@@ -490,7 +490,7 @@ public class CharacterGeneratorTest implements Enums {
                equip.append(", ");
             }
             first = false;
-            equip.append(thing._name);
+            equip.append(thing.name);
          }
          HashMap<DefenseOption, Byte> defOptMap = defMap.get(RANGE.OUT_OF_RANGE);
          rows[0].addTD(new TableData(equip.toString()).setRowSpan(rowsToUse));
@@ -613,7 +613,7 @@ public class CharacterGeneratorTest implements Enums {
             diffSkill = false;
          }
          if (diffSkill) {
-            alteredName += " (" + skill.getType()._name;
+            alteredName += " (" + skill.getType().name;
          }
          if (weaponDesc.adjustedSkill != adjustedSkill) {
             alteredName += " [" + adjustedSkill + "]";
@@ -671,7 +671,7 @@ public class CharacterGeneratorTest implements Enums {
 
       public String describeWeapon() {
          // See if there is a single skill that governs all the possible attack styles:
-         for (WeaponStyleAttack style : this.weapon._attackStyles) {
+         for (WeaponStyleAttack style : this.weapon.attackStyles) {
             Skill skill = this.character.getSkill(style.getSkillType());
             if ((skill == null) || (skill.getLevel() <1 )) {
                continue;
@@ -713,7 +713,7 @@ public class CharacterGeneratorTest implements Enums {
             this.singleSkillBaseLevel = skillLevel;
          }
 
-         for (WeaponStyleAttack style : this.weapon._attackStyles) {
+         for (WeaponStyleAttack style : this.weapon.attackStyles) {
             WeaponStyleDesc styleDesc = new WeaponStyleDesc(style, this.character, this.limbType);
             if (styleDesc.isShowable) {
                styleDesc.describeStyle((this.singleSkillType != null), this.singleSkillBaseLevel, description);
@@ -722,11 +722,11 @@ public class CharacterGeneratorTest implements Enums {
          }
          // list the attack types corresponding to the higher skill level first:
          this.styleList.sort((o1, o2) -> {
-            if (o1.style._skillType.getName().equals(o2.style._skillType.getName())) {
+            if (o1.style.skillType.getName().equals(o2.style.skillType.getName())) {
                return 0;
             }
-            byte l1 = character.getSkillLevel(o1.style._skillType, LimbType.HAND_RIGHT, false, false, false);
-            byte l2 = character.getSkillLevel(o2.style._skillType, LimbType.HAND_RIGHT, false, false, false);
+            byte l1 = character.getSkillLevel(o1.style.skillType, LimbType.HAND_RIGHT, false, false, false);
+            byte l2 = character.getSkillLevel(o2.style.skillType, LimbType.HAND_RIGHT, false, false, false);
             if (l1 == l2) {
                return 0;
             }
@@ -737,7 +737,7 @@ public class CharacterGeneratorTest implements Enums {
             Limb leg = this.character.getLimb(LimbType.LEG_RIGHT);
             if (leg != null) {
                Weapon legWeapon = leg.getWeapon(this.character);
-               for (WeaponStyleAttack style : legWeapon._attackStyles) {
+               for (WeaponStyleAttack style : legWeapon.attackStyles) {
                   WeaponStyleDesc styleDesc = new WeaponStyleDesc(style, this.character, LimbType.LEG_RIGHT);
                   if (styleDesc.isShowable) {
                      styleDesc.describeStyle((this.singleSkillType != null), this.singleSkillBaseLevel, description);

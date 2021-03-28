@@ -18,52 +18,49 @@ import java.util.Collection;
 
 public class TriggersInterface extends Helper implements SelectionListener, ModifyListener, PaintListener
 {
-   private CombatMap  _map;
-   private final java.util.List<IMapWidget> _mapWidgets = new ArrayList<>();
-   private List       _triggersList;
-   private Button     _addTrigger;
-   private Button     _setTriggerLocationsButton;
-   private Button     _deleteTrigger;
-   private boolean    _setTriggerLocations = false;
-
-   private Text       _triggerName;
-   private Label      _triggerNameLabel;
-   private Button     _triggerEnabled;
-   private Label      _triggerEnabledLabel;
-   private Button     _triggerRequiresEntireTeam;
-   private Label      _triggerRequiresEntireTeamLabel;
-   private Button     _triggerOnlyAffectsPlayers;
-   private Label      _triggerOnlyAffectsPlayersLabel;
-
-   private List       _eventsList;
-   private Button     _addEvent;
-   private Button     _setEventLocationsButton;
-   private Button     _deleteEvent;
-   private boolean    _setEventLocations   = false;
-
-   private Text       _eventName;
-   private Label      _eventNameLabel;
-   private Label      _eventTypeLabel;
-   private Combo      _eventTypeCombo;
-   private Label      _eventArgumentLabel;
-   private Text       _eventArgumentText;
+   private       CombatMap                  map;
+   private final java.util.List<IMapWidget> mapWidgets          = new ArrayList<>();
+   private       List                       triggersList;
+   private       Button                     addTrigger;
+   private       Button                     setTriggerLocationsButton;
+   private       Button                     deleteTrigger;
+   private       boolean                    setTriggerLocations = false;
+   private       Text                       triggerName;
+   private       Label                      triggerNameLabel;
+   private       Button                     triggerEnabled;
+   private       Label                      triggerEnabledLabel;
+   private       Button                     triggerRequiresEntireTeam;
+   private       Label                      triggerRequiresEntireTeamLabel;
+   private       Button                     triggerOnlyAffectsPlayers;
+   private       Label                      triggerOnlyAffectsPlayersLabel;
+   private       List                       eventsList;
+   private       Button                     addEvent;
+   private       Button                     setEventLocationsButton;
+   private       Button                     deleteEvent;
+   private       boolean                    setEventLocations   = false;
+   private       Text                       eventName;
+   private       Label                      eventNameLabel;
+   private       Label                      eventTypeLabel;
+   private       Combo                      eventTypeCombo;
+   private       Label                      eventArgumentLabel;
+   private       Text                       eventArgumentText;
 
    public void setMap(IMapWidget mapWidget) {
       if (mapWidget != null) {
-         _mapWidgets.add(mapWidget);
+         mapWidgets.add(mapWidget);
          setMap(mapWidget.getCombatMap());
       }
    }
    public void setMap(CombatMap map) {
-      _map = map;
-      _triggersList.removeAll();
+      this.map = map;
+      triggersList.removeAll();
       if (map != null) {
          java.util.List<ArenaTrigger> triggers = map.getTriggers();
          if ((triggers != null) && (triggers.size() > 0)) {
             for (ArenaTrigger trigger : triggers) {
-               _triggersList.add(trigger.getName());
+               triggersList.add(trigger.getName());
             }
-            _triggersList.setSelection(0);
+            triggersList.setSelection(0);
             setCurrentTrigger(map.getTriggers().get(0));
             return;
          }
@@ -80,67 +77,67 @@ public class TriggersInterface extends Helper implements SelectionListener, Modi
          Composite triggerButtonsLeftBlock = new Composite(triggerButtonsBlock, SWT.TRAIL);
          grid = new GridLayout(1, false);
          triggerButtonsLeftBlock.setLayout(grid);
-         _triggersList = createList(triggerButtonsLeftBlock);
-         _addTrigger = createButton(triggerButtonsLeftBlock, "Add Trigger", 1/*hSpan*/, null/*fontData*/, this/*SelectionListener*/);
+         triggersList = createList(triggerButtonsLeftBlock);
+         addTrigger = createButton(triggerButtonsLeftBlock, "Add Trigger", 1/*hSpan*/, null/*fontData*/, this/*SelectionListener*/);
       }
       {
          Composite triggerButtonsMiddleLeftBlock = new Composite(triggerButtonsBlock, SWT.TRAIL);
          grid = new GridLayout(2, false);
          triggerButtonsMiddleLeftBlock.setLayout(grid);
-         _triggerNameLabel = createLabel(triggerButtonsMiddleLeftBlock, "Name:", SWT.RIGHT, 1/*hSpan*/, null/*fontData*/);
-         _triggerName = createText(triggerButtonsMiddleLeftBlock, "", true/*enabled*/, 1/*hSpen*/);
+         triggerNameLabel = createLabel(triggerButtonsMiddleLeftBlock, "Name:", SWT.RIGHT, 1/*hSpan*/, null/*fontData*/);
+         triggerName = createText(triggerButtonsMiddleLeftBlock, "", true/*enabled*/, 1/*hSpen*/);
 
-         _triggerEnabled = new Button(triggerButtonsMiddleLeftBlock, SWT.CHECK);
-         _triggerEnabled.setSelection(true);
-         _triggerEnabledLabel = createLabel(triggerButtonsMiddleLeftBlock, "Enabled", SWT.LEFT, 1/*hSpan*/, null/*fontData*/);
+         triggerEnabled = new Button(triggerButtonsMiddleLeftBlock, SWT.CHECK);
+         triggerEnabled.setSelection(true);
+         triggerEnabledLabel = createLabel(triggerButtonsMiddleLeftBlock, "Enabled", SWT.LEFT, 1/*hSpan*/, null/*fontData*/);
 
-         _triggerRequiresEntireTeam = new Button(triggerButtonsMiddleLeftBlock, SWT.CHECK);
-         _triggerRequiresEntireTeamLabel = createLabel(triggerButtonsMiddleLeftBlock, "Requires Entire Team", SWT.LEFT, 1/*hSpan*/, null/*fontData*/);
+         triggerRequiresEntireTeam = new Button(triggerButtonsMiddleLeftBlock, SWT.CHECK);
+         triggerRequiresEntireTeamLabel = createLabel(triggerButtonsMiddleLeftBlock, "Requires Entire Team", SWT.LEFT, 1/*hSpan*/, null/*fontData*/);
 
-         _triggerOnlyAffectsPlayers = new Button(triggerButtonsMiddleLeftBlock, SWT.CHECK);
-         _triggerOnlyAffectsPlayersLabel = createLabel(triggerButtonsMiddleLeftBlock, "Doesn't affect AI", SWT.LEFT, 1/*hSpan*/, null/*fontData*/);
+         triggerOnlyAffectsPlayers = new Button(triggerButtonsMiddleLeftBlock, SWT.CHECK);
+         triggerOnlyAffectsPlayersLabel = createLabel(triggerButtonsMiddleLeftBlock, "Doesn't affect AI", SWT.LEFT, 1/*hSpan*/, null/*fontData*/);
 
-         _setTriggerLocationsButton = createButton(triggerButtonsMiddleLeftBlock, "Set Location(s)", 2/*hSpan*/, null/*fontData*/, this/*SelectionListener*/);
-         _deleteTrigger = createButton(triggerButtonsMiddleLeftBlock, "Delete Trigger", 2/*hSpan*/, null/*fontData*/, this/*SelectionListener*/);
-         _setTriggerLocationsButton.addPaintListener(this);
+         setTriggerLocationsButton = createButton(triggerButtonsMiddleLeftBlock, "Set Location(s)", 2/*hSpan*/, null/*fontData*/, this/*SelectionListener*/);
+         deleteTrigger = createButton(triggerButtonsMiddleLeftBlock, "Delete Trigger", 2/*hSpan*/, null/*fontData*/, this/*SelectionListener*/);
+         setTriggerLocationsButton.addPaintListener(this);
 
-         _triggerName.addModifyListener(this);
-         _triggerName.addSelectionListener(this);
-         _triggerEnabled.addSelectionListener(this);
-         _triggerRequiresEntireTeam.addSelectionListener(this);
-         _triggerOnlyAffectsPlayers.addSelectionListener(this);
+         triggerName.addModifyListener(this);
+         triggerName.addSelectionListener(this);
+         triggerEnabled.addSelectionListener(this);
+         triggerRequiresEntireTeam.addSelectionListener(this);
+         triggerOnlyAffectsPlayers.addSelectionListener(this);
       }
       {
          Composite triggerButtonsMiddleRightBlock = new Composite(triggerButtonsBlock, SWT.TRAIL);
          grid = new GridLayout(1, false);
          triggerButtonsMiddleRightBlock.setLayout(grid);
-         _eventsList = createList(triggerButtonsMiddleRightBlock);
-         _addEvent = createButton(triggerButtonsMiddleRightBlock, "Add Event", 1/*hSpan*/, null/*fontData*/, this/*SelectionListener*/);
+         eventsList = createList(triggerButtonsMiddleRightBlock);
+         addEvent = createButton(triggerButtonsMiddleRightBlock, "Add Event", 1/*hSpan*/, null/*fontData*/, this/*SelectionListener*/);
       }
       {
          Composite triggerButtonsRightBlock = new Composite(triggerButtonsBlock, SWT.TRAIL);
          grid = new GridLayout(2, false);
          triggerButtonsRightBlock.setLayout(grid);
 
-         _eventNameLabel = createLabel(triggerButtonsRightBlock, "Name:", SWT.RIGHT, 1/*hSpan*/, null/*fontData*/);
-         _eventName = createText(triggerButtonsRightBlock, "", true/*enabled*/, 1/*hSpen*/);
+         eventNameLabel = createLabel(triggerButtonsRightBlock, "Name:", SWT.RIGHT, 1/*hSpan*/, null/*fontData*/);
+         eventName = createText(triggerButtonsRightBlock, "", true/*enabled*/, 1/*hSpen*/);
 
-         _eventTypeLabel = createLabel(triggerButtonsRightBlock, "Type:", SWT.RIGHT, 1/*hSpan*/, null/*fontData*/);
-         _eventTypeCombo = createCombo(triggerButtonsRightBlock, SWT.READ_ONLY | SWT.DROP_DOWN, 1/*hSpen*/, ArenaEvent.EVENT_TYPES);
+         eventTypeLabel = createLabel(triggerButtonsRightBlock, "Type:", SWT.RIGHT, 1/*hSpan*/, null/*fontData*/);
+         eventTypeCombo = createCombo(triggerButtonsRightBlock, SWT.READ_ONLY | SWT.DROP_DOWN, 1/*hSpen*/, ArenaEvent.EVENT_TYPES);
 
-         _eventArgumentLabel = createLabel(triggerButtonsRightBlock, "Data:", SWT.RIGHT, 1/*hSpan*/, null/*fontData*/);
-         _eventArgumentText = createText(triggerButtonsRightBlock, "", true /*enabled*/, 1/*hSpen*/);
+         eventArgumentLabel = createLabel(triggerButtonsRightBlock, "Data:", SWT.RIGHT, 1/*hSpan*/, null/*fontData*/);
+         eventArgumentText = createText(triggerButtonsRightBlock, "", true /*enabled*/, 1/*hSpen*/);
 
-         _setEventLocationsButton = createButton(triggerButtonsRightBlock, "Set Location(s)", 2/*hSpan*/, null/*fontData*/, this/*SelectionListener*/);
-         _deleteEvent = createButton(triggerButtonsRightBlock, "Delete Event", 2/*hSpan*/, null/*fontData*/, this/*SelectionListener*/);
-         _setEventLocationsButton.addPaintListener(this);
+         setEventLocationsButton = createButton(triggerButtonsRightBlock, "Set Location(s)", 2/*hSpan*/, null/*fontData*/, this/*SelectionListener*/);
+         deleteEvent = createButton(triggerButtonsRightBlock, "Delete Event", 2/*hSpan*/, null/*fontData*/, this/*SelectionListener*/);
+         setEventLocationsButton.addPaintListener(this);
 
          setEventEnabled(false);
-         _eventName.addModifyListener(this);
-         _eventName.addSelectionListener(this);
+         eventName.addModifyListener(this);
+         eventName.addSelectionListener(this);
 
-         _eventTypeCombo.addModifyListener(this);
-         _eventArgumentText.addModifyListener(this);
+         eventTypeCombo.addModifyListener(this);
+         eventArgumentText.addModifyListener(this);
       }
       setTriggerEnabled(false);
    }
@@ -159,39 +156,39 @@ public class TriggersInterface extends Helper implements SelectionListener, Modi
       return list;
    }
    private void setTriggerEnabled(boolean enabled) {
-      _triggerName.setEnabled(enabled);
-      _triggerNameLabel.setEnabled(enabled);
-      _triggerEnabled.setEnabled(enabled);
-      _triggerEnabledLabel.setEnabled(enabled);
-      _triggerRequiresEntireTeam.setEnabled(enabled);
-      _triggerRequiresEntireTeamLabel.setEnabled(enabled);
-      _triggerOnlyAffectsPlayers.setEnabled(enabled);
-      _triggerOnlyAffectsPlayersLabel.setEnabled(enabled);
-      _deleteTrigger.setEnabled(enabled);
-      _addEvent.setEnabled(enabled);
+      triggerName.setEnabled(enabled);
+      triggerNameLabel.setEnabled(enabled);
+      triggerEnabled.setEnabled(enabled);
+      triggerEnabledLabel.setEnabled(enabled);
+      triggerRequiresEntireTeam.setEnabled(enabled);
+      triggerRequiresEntireTeamLabel.setEnabled(enabled);
+      triggerOnlyAffectsPlayers.setEnabled(enabled);
+      triggerOnlyAffectsPlayersLabel.setEnabled(enabled);
+      deleteTrigger.setEnabled(enabled);
+      addEvent.setEnabled(enabled);
       if (!enabled) {
          setEventEnabled(false);
       }
-      _setTriggerLocationsButton.setEnabled(enabled);
+      setTriggerLocationsButton.setEnabled(enabled);
       if (!enabled) {
-         _setTriggerLocations = false;
+         setTriggerLocations = false;
       }
-      _setTriggerLocationsButton.redraw();
+      setTriggerLocationsButton.redraw();
    }
    private void setEventEnabled(boolean enabled) {
-      _eventsList.setEnabled(enabled);
-      _eventNameLabel.setEnabled(enabled);
-      _eventName.setEnabled(enabled);
-      _eventTypeLabel.setEnabled(enabled);
-      _eventTypeCombo.setEnabled(enabled);
-      _eventArgumentLabel.setEnabled(enabled);
-      _eventArgumentText.setEnabled(enabled);
-      _deleteEvent.setEnabled(enabled);
-      _setEventLocationsButton.setEnabled(enabled);
+      eventsList.setEnabled(enabled);
+      eventNameLabel.setEnabled(enabled);
+      eventName.setEnabled(enabled);
+      eventTypeLabel.setEnabled(enabled);
+      eventTypeCombo.setEnabled(enabled);
+      eventArgumentLabel.setEnabled(enabled);
+      eventArgumentText.setEnabled(enabled);
+      deleteEvent.setEnabled(enabled);
+      setEventLocationsButton.setEnabled(enabled);
       if (!enabled) {
-         _setEventLocations = false;
+         setEventLocations = false;
       }
-      _setEventLocationsButton.redraw();
+      setEventLocationsButton.redraw();
    }
 
    @Override
@@ -200,80 +197,80 @@ public class TriggersInterface extends Helper implements SelectionListener, Modi
 
    @Override
    public void widgetSelected(SelectionEvent e) {
-      if (e.widget == _addTrigger) {
+      if (e.widget == addTrigger) {
          ArenaTrigger newTrigger = new ArenaTrigger("New Trigger");
          // assume this is a single-shot trigger
          ArenaEvent singleShot = new ArenaEvent("single shot");
          singleShot.setType(ArenaEvent.EVENT_TYPE_DISABLE_THIS_TRIGGER);
          newTrigger.getEvents().add(singleShot);
-         _map.getTriggers().add(newTrigger);
-         _triggersList.add(newTrigger.getName());
-         _triggersList.select(_triggersList.getItemCount()-1);
-         if (_map != null) {
-            _map.setSelectedTrigger(newTrigger);
+         map.getTriggers().add(newTrigger);
+         triggersList.add(newTrigger.getName());
+         triggersList.select(triggersList.getItemCount() - 1);
+         if (map != null) {
+            map.setSelectedTrigger(newTrigger);
          }
-         for (IMapWidget mapWidget : _mapWidgets) {
+         for (IMapWidget mapWidget : mapWidgets) {
             mapWidget.redraw();
          }
-         _triggerName.setText(newTrigger.getName());
-         _triggerEnabled.setSelection(newTrigger.getEnabled());
+         triggerName.setText(newTrigger.getName());
+         triggerEnabled.setSelection(newTrigger.getEnabled());
          setCurrentTrigger(newTrigger);
-         _triggerRequiresEntireTeam.setSelection(newTrigger.getRequiresEntireTeam());
-         _triggerOnlyAffectsPlayers.setSelection(newTrigger.getOnlyAffectsPlayers());
+         triggerRequiresEntireTeam.setSelection(newTrigger.getRequiresEntireTeam());
+         triggerOnlyAffectsPlayers.setSelection(newTrigger.getOnlyAffectsPlayers());
       }
-      else if (e.widget == _setTriggerLocationsButton) {
-         _setTriggerLocations = !_setTriggerLocations;
-         _setEventLocations = false;
-         _setEventLocationsButton.redraw();
-         _setTriggerLocationsButton.redraw();
+      else if (e.widget == setTriggerLocationsButton) {
+         setTriggerLocations = !setTriggerLocations;
+         setEventLocations = false;
+         setEventLocationsButton.redraw();
+         setTriggerLocationsButton.redraw();
       }
-      else if (e.widget == _setEventLocationsButton) {
-         _setEventLocations = !_setEventLocations;
-         _setTriggerLocations = false;
-         _setTriggerLocationsButton.redraw();
-         _setEventLocationsButton.redraw();
+      else if (e.widget == setEventLocationsButton) {
+         setEventLocations = !setEventLocations;
+         setTriggerLocations = false;
+         setTriggerLocationsButton.redraw();
+         setEventLocationsButton.redraw();
       }
-      else if (e.widget == _deleteTrigger) {
+      else if (e.widget == deleteTrigger) {
          ArenaTrigger selectedTrigger = getCurrentlySelectedTrigger();
-         for (ArenaTrigger trigger : _map.getTriggers()) {
+         for (ArenaTrigger trigger : map.getTriggers()) {
             if (selectedTrigger.getName().equals(trigger.getName())) {
-               _map.getTriggers().remove(trigger);
+               map.getTriggers().remove(trigger);
                break;
             }
          }
-         _triggersList.remove(selectedTrigger.getName());
+         triggersList.remove(selectedTrigger.getName());
          // select the last item in the list
-         int index = _triggersList.getItemCount()-1;
-         _triggersList.select(index);
+         int index = triggersList.getItemCount() - 1;
+         triggersList.select(index);
          ArenaTrigger trigger = null;
          if (index >= 0) {
-            trigger = _map.getTriggers().get(index);
+            trigger = map.getTriggers().get(index);
          }
-         if (_map != null) {
-            _map.setSelectedTrigger(trigger);
+         if (map != null) {
+            map.setSelectedTrigger(trigger);
          }
-         for (IMapWidget mapWidget : _mapWidgets) {
+         for (IMapWidget mapWidget : mapWidgets) {
             mapWidget.redraw();
          }
-         _triggerName.setText(trigger==null ? "" : trigger.getName());
-         _triggerEnabled.setSelection(trigger != null && trigger.getEnabled());
-         _triggerRequiresEntireTeam.setSelection(trigger != null && trigger.getRequiresEntireTeam());
-         _triggerOnlyAffectsPlayers.setSelection(trigger != null && trigger.getOnlyAffectsPlayers());
+         triggerName.setText(trigger == null ? "" : trigger.getName());
+         triggerEnabled.setSelection(trigger != null && trigger.getEnabled());
+         triggerRequiresEntireTeam.setSelection(trigger != null && trigger.getRequiresEntireTeam());
+         triggerOnlyAffectsPlayers.setSelection(trigger != null && trigger.getOnlyAffectsPlayers());
          setCurrentTrigger(trigger);
       }
-      else if (e.widget == _deleteEvent) {
+      else if (e.widget == deleteEvent) {
          ArenaTrigger selectedTrigger = getCurrentlySelectedTrigger();
          ArenaEvent selectedEvent = getCurrentlySelectedEvent();
          if ((selectedTrigger != null) && (selectedEvent != null)) {
             selectedTrigger.getEvents().remove(selectedEvent);
-            _eventsList.remove(selectedEvent.getName());
+            eventsList.remove(selectedEvent.getName());
             // select the last item in the list
-            int index = _eventsList.getItemCount()-1;
-            _eventsList.select(index);
-            if (_map != null) {
-               _map.setSelectedTrigger(null);
+            int index = eventsList.getItemCount() - 1;
+            eventsList.select(index);
+            if (map != null) {
+               map.setSelectedTrigger(null);
             }
-            for (IMapWidget mapWidget : _mapWidgets) {
+            for (IMapWidget mapWidget : mapWidgets) {
                mapWidget.redraw();
             }
             if (index >= 0) {
@@ -285,54 +282,54 @@ public class TriggersInterface extends Helper implements SelectionListener, Modi
             }
          }
       }
-      else if (e.widget == _addEvent) {
+      else if (e.widget == addEvent) {
          ArenaTrigger trigger = getCurrentlySelectedTrigger();
          if (trigger != null) {
             ArenaEvent newEvent = new ArenaEvent("New Event");
             trigger.getEvents().add(newEvent);
-            _eventsList.add(newEvent.getName());
-            _eventsList.select(_eventsList.getItemCount()-1);
+            eventsList.add(newEvent.getName());
+            eventsList.select(eventsList.getItemCount() - 1);
             setEvent(newEvent);
             setEventEnabled(true);
          }
       }
-      else if (e.widget == _triggersList) {
+      else if (e.widget == triggersList) {
          ArenaTrigger trigger = getCurrentlySelectedTrigger();
          setCurrentTrigger(trigger);
       }
-      else if (e.widget == _eventsList) {
+      else if (e.widget == eventsList) {
          ArenaEvent event = getCurrentlySelectedEvent();
          if (event != null) {
             setEvent(event);
          }
       }
-      else if ((e.widget == _triggerEnabled)       ||
-               (e.widget == _triggerRequiresEntireTeam) ||
-               (e.widget == _triggerOnlyAffectsPlayers) ) {
+      else if ((e.widget == triggerEnabled) ||
+               (e.widget == triggerRequiresEntireTeam) ||
+               (e.widget == triggerOnlyAffectsPlayers) ) {
          ArenaTrigger trigger = getCurrentlySelectedTrigger();
          if (trigger != null) {
-            trigger.setEnabled(_triggerEnabled.getSelection());
-            trigger.setRequiresEntireTeam(_triggerRequiresEntireTeam.getSelection());
-            trigger.setOnlyAffectsPlayers(_triggerOnlyAffectsPlayers.getSelection());
+            trigger.setEnabled(triggerEnabled.getSelection());
+            trigger.setRequiresEntireTeam(triggerRequiresEntireTeam.getSelection());
+            trigger.setOnlyAffectsPlayers(triggerOnlyAffectsPlayers.getSelection());
          }
       }
-      CombatServer._this._mapInterface.refreshSaveButton();
+      CombatServer._this.mapInterface.refreshSaveButton();
    }
 
    private void setEvent(ArenaEvent event) {
-      _eventName.setText((event==null) ? "" : event.getName());
-      _eventTypeCombo.setText((event==null) ? "" : event.getType());
-      _eventArgumentText.setText((event==null) ? "" : event.getData());
+      eventName.setText((event == null) ? "" : event.getName());
+      eventTypeCombo.setText((event == null) ? "" : event.getType());
+      eventArgumentText.setText((event == null) ? "" : event.getData());
    }
 
    private void setCurrentTrigger(ArenaTrigger trigger) {
       ArenaTrigger oldTrigger = null;
-      if (_map != null) {
-         oldTrigger = _map.getSelectedTrigger();
-         _map.setSelectedTrigger(trigger);
+      if (map != null) {
+         oldTrigger = map.getSelectedTrigger();
+         map.setSelectedTrigger(trigger);
       }
       boolean contains2Dmap = false;
-      for (IMapWidget mapWidget : _mapWidgets) {
+      for (IMapWidget mapWidget : mapWidgets) {
          if (mapWidget instanceof MapWidget2D) {
             contains2Dmap = true;
             break;
@@ -359,7 +356,7 @@ public class TriggersInterface extends Helper implements SelectionListener, Modi
                }
             }
          }
-         for (IMapWidget mapWidget : _mapWidgets) {
+         for (IMapWidget mapWidget : mapWidgets) {
             if (mapWidget instanceof MapWidget2D) {
                ((MapWidget2D)mapWidget).redraw(locs);
             }
@@ -368,11 +365,11 @@ public class TriggersInterface extends Helper implements SelectionListener, Modi
 
       setEventEnabled(trigger != null);
       setTriggerEnabled(trigger != null);
-      _triggerName.setText((trigger != null) ? trigger.getName() : "");
-      _triggerEnabled.setSelection((trigger != null) && trigger.getEnabled());
-      _triggerRequiresEntireTeam.setSelection((trigger != null) && trigger.getRequiresEntireTeam());
-      _triggerOnlyAffectsPlayers.setSelection((trigger != null) && trigger.getOnlyAffectsPlayers());
-      _eventsList.removeAll();
+      triggerName.setText((trigger != null) ? trigger.getName() : "");
+      triggerEnabled.setSelection((trigger != null) && trigger.getEnabled());
+      triggerRequiresEntireTeam.setSelection((trigger != null) && trigger.getRequiresEntireTeam());
+      triggerOnlyAffectsPlayers.setSelection((trigger != null) && trigger.getOnlyAffectsPlayers());
+      eventsList.removeAll();
       setEvent(null);
       setEventEnabled(false);
 
@@ -385,9 +382,9 @@ public class TriggersInterface extends Helper implements SelectionListener, Modi
                if (firstEvent == null) {
                   firstEvent = event;
                }
-               _eventsList.add(event.getName());
+               eventsList.add(event.getName());
             }
-            _eventsList.setSelection(0);
+            eventsList.setSelection(0);
             setEvent(firstEvent);
             setEventEnabled(true);
          }
@@ -396,39 +393,39 @@ public class TriggersInterface extends Helper implements SelectionListener, Modi
 
    @Override
    public void modifyText(ModifyEvent e) {
-      if (!CombatServer._inModify) {
-         CombatServer._inModify = true;
+      if (!CombatServer.inModify) {
+         CombatServer.inModify = true;
          try {
-            if (e.widget == _triggerName) {
+            if (e.widget == triggerName) {
                ArenaTrigger trigger = getCurrentlySelectedTrigger();
                if (trigger != null) {
-                  int index = _triggersList.getSelectionIndex();
-                  _triggersList.setItem(index, _triggerName.getText());
-                  trigger.setName(_triggerName.getText());
+                  int index = triggersList.getSelectionIndex();
+                  triggersList.setItem(index, triggerName.getText());
+                  trigger.setName(triggerName.getText());
                }
             }
-            else if ((e.widget == _eventName)      ||
-                     (e.widget == _eventTypeCombo) ||
-                     (e.widget == _eventArgumentText)) {
+            else if ((e.widget == eventName) ||
+                     (e.widget == eventTypeCombo) ||
+                     (e.widget == eventArgumentText)) {
                ArenaEvent event = getCurrentlySelectedEvent();
                if (event != null) {
-                  int index = _eventsList.getSelectionIndex();
-                  _eventsList.setItem(index, _eventName.getText());
-                  if (e.widget == _eventName) {
-                     event.setName(_eventName.getText());
+                  int index = eventsList.getSelectionIndex();
+                  eventsList.setItem(index, eventName.getText());
+                  if (e.widget == eventName) {
+                     event.setName(eventName.getText());
                   }
-                  if (e.widget == _eventTypeCombo) {
-                     event.setType(_eventTypeCombo.getText());
+                  if (e.widget == eventTypeCombo) {
+                     event.setType(eventTypeCombo.getText());
                   }
-                  if (e.widget == _eventArgumentText) {
-                     event.setData(_eventArgumentText.getText());
+                  if (e.widget == eventArgumentText) {
+                     event.setData(eventArgumentText.getText());
                   }
                }
             }
-            CombatServer._this._mapInterface.refreshSaveButton();
+            CombatServer._this.mapInterface.refreshSaveButton();
          }
          finally {
-            CombatServer._inModify = false;
+            CombatServer.inModify = false;
          }
       }
    }
@@ -436,7 +433,7 @@ public class TriggersInterface extends Helper implements SelectionListener, Modi
    private ArenaEvent getCurrentlySelectedEvent() {
       ArenaTrigger trigger = getCurrentlySelectedTrigger();
       if (trigger != null) {
-         String[] selections = _eventsList.getSelection();
+         String[] selections = eventsList.getSelection();
          if (selections.length == 1) {
             String selection = selections[0];
             for (ArenaEvent event : trigger.getEvents()) {
@@ -449,10 +446,10 @@ public class TriggersInterface extends Helper implements SelectionListener, Modi
       return null;
    }
    public ArenaTrigger getCurrentlySelectedTrigger() {
-      String[] selections = _triggersList.getSelection();
+      String[] selections = triggersList.getSelection();
       if (selections.length == 1) {
          String selection = selections[0];
-         for (ArenaTrigger trigger : _map.getTriggers()) {
+         for (ArenaTrigger trigger : map.getTriggers()) {
             if (trigger.getName().equals(selection)) {
                return trigger;
             }
@@ -462,10 +459,10 @@ public class TriggersInterface extends Helper implements SelectionListener, Modi
    }
    @Override
    public void paintControl(PaintEvent event) {
-      if (((event.widget == _setEventLocationsButton) && _setEventLocations)
-          || ((event.widget == _setTriggerLocationsButton) && _setTriggerLocations)) {
+      if (((event.widget == setEventLocationsButton) && setEventLocations)
+          || ((event.widget == setTriggerLocationsButton) && setTriggerLocations)) {
          RGB fillColor = new RGB(255, 192, 192);
-         if (_setEventLocations) {
+         if (setEventLocations) {
             fillColor = new RGB(192, 192, 255);
          }
          RGB textColor = MapWidget2D.invertColor(fillColor);
@@ -494,22 +491,22 @@ public class TriggersInterface extends Helper implements SelectionListener, Modi
          return;
       }
       boolean redrawLoc = false;
-      if (_setEventLocations) {
+      if (setEventLocations) {
          ArenaEvent event = getCurrentlySelectedEvent();
          if (event != null) {
-            if (event._eventLocations == null) {
-               event._eventLocations = new ArrayList<>();
+            if (event.eventLocations == null) {
+               event.eventLocations = new ArrayList<>();
             }
-            if (event._eventLocations.contains(loc)) {
-               event._eventLocations.remove(loc);
+            if (event.eventLocations.contains(loc)) {
+               event.eventLocations.remove(loc);
             }
             else {
-               event._eventLocations.add(loc);
+               event.eventLocations.add(loc);
             }
             redrawLoc = true;
          }
       }
-      if (_setTriggerLocations) {
+      if (setTriggerLocations) {
          ArenaTrigger trigger = getCurrentlySelectedTrigger();
          if (trigger != null) {
             if (trigger.isTriggerAtLocation(loc, null/*mover*/)) {

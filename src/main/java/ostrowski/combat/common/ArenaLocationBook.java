@@ -16,25 +16,25 @@ import ostrowski.util.MonitoringObject;
 
 public class ArenaLocationBook implements IMonitorableObject, IMonitoringObject
 {
-   private final MonitoringObject _mapWatcher;
-   private final MonitoredObject  _mapBook;
-   private final Character        _owner;
-   private final CombatMap        _viewOfMap;
-   private final CombatMap        _realMap;
-   private final MapVisibility    _mapVisibility;
+   private final MonitoringObject mapWatcher;
+   private final MonitoredObject  mapBook;
+   private final Character        owner;
+   private final CombatMap        viewOfMap;
+   private final CombatMap        realMap;
+   private final MapVisibility    mapVisibility;
 
    public ArenaLocationBook(Character owner, CombatMap map, Diagnostics diag) {
-      IMonitorableObject._monitoredObj._objectIDString = this.getClass().getName() + "for " + owner.getObjectIDString();
-      IMonitoringObject._monitoringObj._objectIDString = this.getClass().getName() + "for " + owner.getObjectIDString();
-      _owner = owner;
-      _realMap = map;
-      _viewOfMap = map.clone();
-      _mapVisibility = new MapVisibility(_realMap);
+      IMonitorableObject.monitoredObj.objectIDString = this.getClass().getName() + "for " + owner.getObjectIDString();
+      IMonitoringObject._monitoringObj.objectIDString = this.getClass().getName() + "for " + owner.getObjectIDString();
+      this.owner = owner;
+      realMap = map;
+      viewOfMap = map.clone();
+      mapVisibility = new MapVisibility(realMap);
       recomputeVisibility(diag);
-      _mapBook = new MonitoredObject("ArenaLocationBook._mapBook for " + _owner.getObjectIDString());
-      _mapWatcher = new MonitoringObject("ArenaLocationBook.mapWatcher for " + _owner.getObjectIDString(), _mapBook);
-      _owner.registerAsWatcher(this, null/*diag*/);
-      _realMap.registerAsWatcher(this, diag);
+      mapBook = new MonitoredObject("ArenaLocationBook._mapBook for " + this.owner.getObjectIDString());
+      mapWatcher = new MonitoringObject("ArenaLocationBook.mapWatcher for " + this.owner.getObjectIDString(), mapBook);
+      this.owner.registerAsWatcher(this, null/*diag*/);
+      realMap.registerAsWatcher(this, diag);
       registerAsWatcher(owner, diag);
    }
 
@@ -45,28 +45,28 @@ public class ArenaLocationBook implements IMonitorableObject, IMonitoringObject
    private void recomputeVisibility(Diagnostics diag) {
       // This method is called any time the owner moves,
       // or a door is opened or closed
-      MapVisibility origObj = _mapVisibility.clone();
+      MapVisibility origObj = mapVisibility.clone();
 
-      ArenaLocation ownerHeadLoc = _realMap.getHeadLocation(_owner);
+      ArenaLocation ownerHeadLoc = realMap.getHeadLocation(owner);
       boolean visibilityChanged = false;
-      for (short col = 0; col < _realMap.getSizeX(); col++) {
-         for (short row = (short) (col % 2); row < _realMap.getSizeY(); row += 2) {
-            ArenaLocation realLoc = _realMap.getLocation(col, row);
-            boolean hasLineOfSight = _realMap.hasLineOfSight(ownerHeadLoc, realLoc, false/*blockedByAnyStandingCharacter*/);
+      for (short col = 0; col < realMap.getSizeX(); col++) {
+         for (short row = (short) (col % 2); row < realMap.getSizeY(); row += 2) {
+            ArenaLocation realLoc = realMap.getLocation(col, row);
+            boolean hasLineOfSight = realMap.hasLineOfSight(ownerHeadLoc, realLoc, false/*blockedByAnyStandingCharacter*/);
             // is the character looking at this hex?
-            if (hasLineOfSight && !_realMap.isFacing(_owner, realLoc) && !_owner.hasPeripheralVision()) {
+            if (hasLineOfSight && !realMap.isFacing(owner, realLoc) && !owner.hasPeripheralVision()) {
                hasLineOfSight = false;
                // basedOnFacing can be set to false now that we know he IS facing the location
             }
             // setVisibile returns true when the visibility changes
-            if (_mapVisibility.setVisible(col, row, hasLineOfSight)) {
-               realLoc.setVisible(hasLineOfSight, _realMap, ownerHeadLoc, _owner._uniqueID, false/*basedOnFacing*/);
+            if (mapVisibility.setVisible(col, row, hasLineOfSight)) {
+               realLoc.setVisible(hasLineOfSight, realMap, ownerHeadLoc, owner.uniqueID, false/*basedOnFacing*/);
                visibilityChanged = true;
             }
          }
       }
-      if (visibilityChanged && (_mapBook != null)) {
-         MapVisibility newObj = _mapVisibility.clone();
+      if (visibilityChanged && (mapBook != null)) {
+         MapVisibility newObj = mapVisibility.clone();
          ObjectChanged objChanged = new ObjectChanged(origObj, newObj);
          notifyWatchers(this, this, objChanged, null/*skipList*/, diag);
       }
@@ -74,38 +74,38 @@ public class ArenaLocationBook implements IMonitorableObject, IMonitoringObject
 
    @Override
    public String getObjectIDString() {
-      return _mapBook.getObjectIDString();
+      return mapBook.getObjectIDString();
    }
 
    @Override
    public Vector<IMonitoringObject> getSnapShotOfWatchers() {
-      return _mapBook.getSnapShotOfWatchers();
+      return mapBook.getSnapShotOfWatchers();
    }
 
    @Override
    public void notifyWatchers(IMonitorableObject originalWatchedObject, IMonitorableObject modifiedWatchedObject, Object changeNotification,
                               Vector<IMonitoringObject> skipList, Diagnostics diag) {
-      _mapBook.notifyWatchers(originalWatchedObject, modifiedWatchedObject, changeNotification, skipList, diag);
+      mapBook.notifyWatchers(originalWatchedObject, modifiedWatchedObject, changeNotification, skipList, diag);
    }
 
    @Override
    public RegisterResults registerAsWatcher(IMonitoringObject watcherObject, Diagnostics diag) {
-      return _mapBook.registerAsWatcher(watcherObject, diag);
+      return mapBook.registerAsWatcher(watcherObject, diag);
    }
 
    @Override
    public UnRegisterResults unregisterAsWatcher(IMonitoringObject watcherObject, Diagnostics diag) {
-      return _mapBook.unregisterAsWatcher(watcherObject, diag);
+      return mapBook.unregisterAsWatcher(watcherObject, diag);
    }
 
    @Override
    public UnRegisterResults unregisterAsWatcherAllInstances(IMonitoringObject watcherObject, Diagnostics diag) {
-      return _mapBook.unregisterAsWatcherAllInstances(watcherObject, diag);
+      return mapBook.unregisterAsWatcherAllInstances(watcherObject, diag);
    }
 
    @Override
    public Vector<IMonitorableObject> getSnapShotOfWatchedObjects() {
-      return _mapWatcher.getSnapShotOfWatchedObjects();
+      return mapWatcher.getSnapShotOfWatchedObjects();
    }
 
    @Override
@@ -124,19 +124,19 @@ public class ArenaLocationBook implements IMonitorableObject, IMonitoringObject
                   recomputeVisibility(diag);
                   // recomuteVisibility would have sent any changes to the visible flag.
                }
-//               ArenaLocation headLoc = _owner.getLimbLocation(LimbType.HEAD, _realMap);
-//               boolean hasLineOfSight = _realMap.hasLineOfSight(headLoc, origLoc, false/*blockedByAnyStandingCharacter*/);
+//               ArenaLocation headLoc = owner.getLimbLocation(LimbType.HEAD, realMap);
+//               boolean hasLineOfSight = realMap.hasLineOfSight(headLoc, origLoc, false/*blockedByAnyStandingCharacter*/);
 //               if (hasLineOfSight) {
-               if (_mapVisibility.isVisible(origLoc._x, origLoc._y)) {
+               if (mapVisibility.isVisible(origLoc.x, origLoc.y)) {
                   // If the location is visible, make sure its up to date with the
                   // viewed version
-                  ArenaLocation viewOfLocation = _viewOfMap.getLocation(origLoc._x, origLoc._y);
-                  ArenaLocation realLocation = _realMap.getLocation(origLoc._x, origLoc._y);
+                  ArenaLocation viewOfLocation = viewOfMap.getLocation(origLoc.x, origLoc.y);
+                  ArenaLocation realLocation = realMap.getLocation(origLoc.x, origLoc.y);
                   if (!viewOfLocation.hasSameContents(realLocation)) {
                      ObjectChanged changeLocation = new ObjectChanged(viewOfLocation, realLocation);
                      notifyWatchers(viewOfLocation, realLocation, changeLocation, null/*skipList*/, diag);
                      // update the view version
-                     _viewOfMap.getLocation(origLoc._x, origLoc._y).copyData(modLoc);
+                     viewOfMap.getLocation(origLoc.x, origLoc.y).copyData(modLoc);
                   }
                }
                else {
@@ -157,22 +157,22 @@ public class ArenaLocationBook implements IMonitorableObject, IMonitoringObject
          }
       }
       if (forwardNotification) {
-         _mapWatcher.monitoredObjectChanged(originalWatchedObject, modifiedWatchedObject, changeNotification, skipList, diag);
+         mapWatcher.monitoredObjectChanged(originalWatchedObject, modifiedWatchedObject, changeNotification, skipList, diag);
       }
    }
 
    @Override
    public boolean registerMonitoredObject(IMonitorableObject watchedObject, Diagnostics diag) {
-      return _mapWatcher.registerMonitoredObject(watchedObject, diag);
+      return mapWatcher.registerMonitoredObject(watchedObject, diag);
    }
 
    @Override
    public boolean unregisterMonitoredObject(IMonitorableObject watchedObject, Diagnostics diag) {
-      return _mapWatcher.unregisterMonitoredObject(watchedObject, diag);
+      return mapWatcher.unregisterMonitoredObject(watchedObject, diag);
    }
 
    @Override
    public boolean unregisterMonitoredObjectAllInstances(IMonitorableObject watchedObject, Diagnostics diag) {
-      return _mapWatcher.unregisterMonitoredObjectAllInstances(watchedObject, diag);
+      return mapWatcher.unregisterMonitoredObjectAllInstances(watchedObject, diag);
    }
 }

@@ -23,12 +23,13 @@ import java.util.HashMap;
 
 public class ServerConnection extends CombatSocket
 {
-   final CharacterDisplay _display;
-   StatusChit _statusChit = null;
+   final CharacterDisplay display;
+   StatusChit statusChit = null;
+   public static final HashMap<Integer, Character> CHARACTERS_MAP = new HashMap<>();
 
    public ServerConnection(CharacterDisplay display) {
       super("ServerConnection");
-      _display = display;
+      this.display = display;
    }
 
    @Override
@@ -36,67 +37,66 @@ public class ServerConnection extends CombatSocket
    {
       // we can't modify any UI element from another thread,
       // so we must use the Display.asyncExec() method:
-      if (!_display._shell.isDisposed()) {
-         Display display = _display._shell.getDisplay();
+      if (!display.shell.isDisposed()) {
+         Display display = this.display.shell.getDisplay();
          display.asyncExec(() -> processReceivedObjectInUIThread(inObj));
       }
    }
 
-   public static final HashMap<Integer, Character> _charactersMap = new HashMap<>();
    public void processReceivedObjectInUIThread(SerializableObject inObj) {
-      if (_display._shell.isDisposed()) {
+      if (display.shell.isDisposed()) {
          return;
       }
       // First check for events that apply to the display:
       if (inObj instanceof Character) {
          Character newChar = (Character) inObj;
-         Integer uniqueID = newChar._uniqueID;
-         Character existingChar = _charactersMap.get(uniqueID);
+         Integer uniqueID = newChar.uniqueID;
+         Character existingChar = CHARACTERS_MAP.get(uniqueID);
          if (existingChar == null) {
-            _charactersMap.put(uniqueID, newChar);
+            CHARACTERS_MAP.put(uniqueID, newChar);
          }
          else {
             existingChar.copyData(newChar);
          }
-         _display.updateCharacter(newChar);
+         display.updateCharacter(newChar);
       }
       else if (inObj instanceof ServerStatus) {
          ServerStatus status = (ServerStatus) inObj;
-         _display.updateServerStatus(status);
+         display.updateServerStatus(status);
       }
       else if (inObj instanceof CombatMap) {
          CombatMap map = (CombatMap) inObj;
-         _display.updateMap(map);
+         display.updateMap(map);
       }
       else if (inObj instanceof Condition) {
-         _display._charWidget._character.setCondition((Condition) inObj);
+         display.charWidget.character.setCondition((Condition) inObj);
       }
       else if (inObj instanceof BeginBattle) {
          BeginBattle battleMsg = (BeginBattle) inObj;
-         _display.beginBattle(battleMsg);
+         display.beginBattle(battleMsg);
       }
       else if (inObj instanceof ClientID) {
          ClientID msgIn = (ClientID) inObj;
-         _display.setUniqueConnectionID(msgIn.getID());
+         display.setUniqueConnectionID(msgIn.getID());
       }
       else if (inObj instanceof MessageText) {
          MessageText msgIn = (MessageText) inObj;
          if (msgIn.isPopUp()) {
-            MessageDialog msgDlg = new MessageDialog(_display._shell, SWT.ICON | SWT.MODELESS);
+            MessageDialog msgDlg = new MessageDialog(display.shell, SWT.ICON | SWT.MODELESS);
             msgDlg.open(msgIn.getText(), msgIn.isPublic());
          }
          if (msgIn.getText().trim().isEmpty()){
-            _display.appendMessage("");
+            display.appendMessage("");
          }
          else {
-            _display.appendMessage("<b>" + msgIn.getSource() + ":</b> " + msgIn.getText());
+            display.appendMessage("<b>" + msgIn.getSource() + ":</b> " + msgIn.getText());
          }
          return;
       }
 
       // then tell the AI about everything:
-      if (_display._charWidget._ai != null) {
-         if (_display._charWidget._ai.processObject(inObj, null/*arena*/, _display.getCombatMap(), _display)) {
+      if (display.charWidget.ai != null) {
+         if (display.charWidget.ai.processObject(inObj, null/*arena*/, display.getCombatMap(), display)) {
             sendObject(inObj, "server");
             return;
          }
@@ -105,7 +105,7 @@ public class ServerConnection extends CombatSocket
       if (inObj instanceof SyncRequest) {
          SyncRequest req = (SyncRequest) inObj;
          if (req instanceof RequestAttackStyle) {
-            if (_display.requestAttackStyle((RequestAttackStyle)req)) {
+            if (display.requestAttackStyle((RequestAttackStyle)req)) {
                Response resp = new Response(req);
                resp.setFullAnswerID(req.getFullAnswerID());
                resp.setAnswerStr(req.getAnswer());
@@ -114,33 +114,33 @@ public class ServerConnection extends CombatSocket
             }
          }
          if (req instanceof RequestMovement) {
-            _display.requestMovement((RequestMovement)req);
+            display.requestMovement((RequestMovement)req);
             // the response will be sent after the user selects a location.
             return;
          }
          if (req instanceof RequestLocation) {
-            _display.requestLocation((RequestLocation)req);
+            display.requestLocation((RequestLocation)req);
             // the response will be sent after the user selects a location.
             return;
          }
          if (Configuration.showChit())
          {
             if (!(req instanceof RequestArenaEntrance)) {
-               if (_statusChit == null) {
-                  _statusChit = new StatusChit(_display._shell, SWT.MODELESS | SWT.NO_TRIM);
-                  _statusChit.open();
+               if (statusChit == null) {
+                  statusChit = new StatusChit(display.shell, SWT.MODELESS | SWT.NO_TRIM);
+                  statusChit.open();
                }
-               if (_display._charWidget._character != null) {
-                  _statusChit.updateFromCharacter(_display._charWidget._character);
+               if (display.charWidget.character != null) {
+                  statusChit.updateFromCharacter(display.charWidget.character);
                }
             }
          }
 
-         if ((_statusChit != null) && !Configuration.showChit()) {
-            _statusChit.close();
-            _statusChit = null;
+         if ((statusChit != null) && !Configuration.showChit()) {
+            statusChit.close();
+            statusChit = null;
          }
-         RequestUserInput reqUI = new RequestUserInput(_display._shell,
+         RequestUserInput reqUI = new RequestUserInput(display.shell,
                                                        SWT.ICON_QUESTION | SWT.MODELESS,
                                                        req, false/*showChit*/);
          reqUI.setDefault(req.getDefaultIndex());
@@ -159,11 +159,11 @@ public class ServerConnection extends CombatSocket
             RequestArenaEntrance entReq = (RequestArenaEntrance) req;
             Character chr = entReq.getSelectedCharacter();
             if (chr != null) {
-               _display.setCharacter(chr);
+               display.setCharacter(chr);
             }
             else {
-               chr = _display._charWidget._character;
-               chr._uniqueID = _display._uniqueConnectionID;
+               chr = display.charWidget.character;
+               chr.uniqueID = display.uniqueConnectionID;
                entReq.setSelectedCharacter(chr);
             }
             EnterArena enterMsg = new EnterArena(chr, true, entReq.getSelectedCharacterTeam(), entReq.getSelectedCharacterTeamPosition());
@@ -180,11 +180,11 @@ public class ServerConnection extends CombatSocket
          Object modObject = objChanged.getModifiedObj();
          if (modObject instanceof ArenaLocation) {
             ArenaLocation arenaLoc = (ArenaLocation) modObject;
-            _display.updateArenaLocation(arenaLoc);
+            display.updateArenaLocation(arenaLoc);
          }
          else if (modObject instanceof MapVisibility) {
             MapVisibility mapVisibility = (MapVisibility) modObject;
-            _display.updateMapVisibility(mapVisibility);
+            display.updateMapVisibility(mapVisibility);
          }
       }
       else if (inObj instanceof ObjectInfo) {
@@ -192,7 +192,7 @@ public class ServerConnection extends CombatSocket
          SerializableObject newObject = objInfo.getObject();
          if (newObject instanceof ArenaLocation) {
             ArenaLocation arenaLoc = (ArenaLocation) newObject;
-            _display.updateArenaLocation(arenaLoc);
+            display.updateArenaLocation(arenaLoc);
          }
       }
       else if (inObj instanceof ObjectDelete) {
@@ -200,8 +200,8 @@ public class ServerConnection extends CombatSocket
          SerializableObject newObject = objDelete.getObject();
          if (newObject instanceof ArenaLocation) {
             ArenaLocation arenaLoc = (ArenaLocation) newObject;
-            arenaLoc.setVisible(false, null, null, _display._charWidget._character._uniqueID, true/*basedOnFacing*/);
-            _display.updateArenaLocation(arenaLoc);
+            arenaLoc.setVisible(false, null, null, display.charWidget.character.uniqueID, true/*basedOnFacing*/);
+            display.updateArenaLocation(arenaLoc);
          }
       }
    }
@@ -210,9 +210,9 @@ public class ServerConnection extends CombatSocket
    public void handleConnect(SocketConnector connectedConnection) {
       // we can't modify any UI element from another thread,
       // so we must use the Display.asyncExec() method:
-      if (!_display._shell.isDisposed()) {
-         Display display = _display._shell.getDisplay();
-         display.asyncExec(_display::handleConnect);
+      if (!display.shell.isDisposed()) {
+         Display display = this.display.shell.getDisplay();
+         display.asyncExec(this.display::handleConnect);
       }
    }
 
@@ -220,9 +220,9 @@ public class ServerConnection extends CombatSocket
    public void handleDisconnect(SocketConnector diconnectedConnection) {
       // we can't modify any UI element from another thread,
       // so we must use the Display.asyncExec() method:
-      if (!_display._shell.isDisposed()) {
-         Display display = _display._shell.getDisplay();
-         display.asyncExec(_display::handleDisconnect);
+      if (!display.shell.isDisposed()) {
+         Display display = this.display.shell.getDisplay();
+         display.asyncExec(this.display::handleDisconnect);
       }
    }
 

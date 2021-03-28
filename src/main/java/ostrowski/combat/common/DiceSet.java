@@ -25,43 +25,41 @@ import java.util.*;
 public class DiceSet extends SerializableObject implements Enums
 {
 
-   public int getDiceCount(DieType type) {
-      return _diceCount.get(type);
-   }
+   static        TreeSet<DiceSet>          diceAllowed = null;
+   static final  HashMap<String, Double>   map         = new HashMap<>();
+   private final HashMap<DieType, Integer> diceCount   = new HashMap<>() {
+      {
+         for (DieType dieType : DieType.values()) {
+            put(dieType, 0);
+         }
+      }
 
-   private final HashMap<DieType, Integer> _diceCount         = new HashMap<>() {
-     {
-        for (DieType dieType : DieType.values()) {
-           put(dieType, 0);
-        }
-     }
-     private static final long serialVersionUID = 1L;
-  };
-
-   public double                     _multiplier        = 1.0;
-   public StringBuilder              _lastDieRolls      = null;
-   private boolean                   _lastRollIsAllOnes = false;
+      private static final long serialVersionUID = 1L;
+   };
+   public        double                    multiplier        = 1.0;
+   public        StringBuilder             lastDieRolls      = null;
+   private       boolean                   lastRollIsAllOnes = false;
 
    public DiceSet() {
    }
 
    public DiceSet(int d1, int d4, int d6, int d8, int d10, int d12, int d20, int dbell, double multiplier) {
-      _diceCount.put(DieType.D1, d1);
-      _diceCount.put(DieType.D4, d4);
-      _diceCount.put(DieType.D6, d6);
-      _diceCount.put(DieType.D8, d8);
-      _diceCount.put(DieType.D10, d10);
-      _diceCount.put(DieType.D12, d12);
-      _diceCount.put(DieType.D20, d20);
-      _diceCount.put(DieType.Dbell, dbell);
-      _multiplier = multiplier;
+      diceCount.put(DieType.D1, d1);
+      diceCount.put(DieType.D4, d4);
+      diceCount.put(DieType.D6, d6);
+      diceCount.put(DieType.D8, d8);
+      diceCount.put(DieType.D10, d10);
+      diceCount.put(DieType.D12, d12);
+      diceCount.put(DieType.D20, d20);
+      diceCount.put(DieType.Dbell, dbell);
+      this.multiplier = multiplier;
    }
 
    public DiceSet(String diceDescription) {
       for (DieType die : DieType.values()) {
-         _diceCount.put(die, 0);
+         diceCount.put(die, 0);
       }
-      _multiplier = 1;
+      multiplier = 1;
 
       diceDescription = diceDescription.trim();
       int locStart = diceDescription.indexOf('(');
@@ -69,18 +67,18 @@ public class DiceSet extends SerializableObject implements Enums
       if ((locStart != -1) && (locEnd != -1)) {
          DiceSet pureDice = new DiceSet(diceDescription.substring(locStart + 1, locEnd));
          for (DieType die : DieType.values()) {
-            _diceCount.put(die, pureDice._diceCount.get(die));
+            diceCount.put(die, pureDice.diceCount.get(die));
          }
-         _multiplier *= pureDice._multiplier;
+         multiplier *= pureDice.multiplier;
 
          String remainder = diceDescription.substring(locEnd + 1).trim();
          if ((remainder.charAt(0) == '/') || (remainder.charAt(0) == '*')) {
             String number = remainder.substring(1).trim();
             if (remainder.charAt(0) == '/') {
-               _multiplier /= Integer.parseInt(number);
+               multiplier /= Integer.parseInt(number);
             }
             else {
-               _multiplier *= Float.parseFloat(number);
+               multiplier *= Float.parseFloat(number);
             }
          }
       }
@@ -106,58 +104,62 @@ public class DiceSet extends SerializableObject implements Enums
             int nDieType = dieType.equals("10±") ? 13 : Integer.parseInt(dieType);
             switch (nDieType) {
                case 1:
-                  _diceCount.put(DieType.D1, nDieCount);
+                  diceCount.put(DieType.D1, nDieCount);
                   break;
                case 4:
-                  _diceCount.put(DieType.D4, nDieCount);
+                  diceCount.put(DieType.D4, nDieCount);
                   break;
                case 6:
-                  _diceCount.put(DieType.D6, nDieCount);
+                  diceCount.put(DieType.D6, nDieCount);
                   break;
                case 8:
-                  _diceCount.put(DieType.D8, nDieCount);
+                  diceCount.put(DieType.D8, nDieCount);
                   break;
                case 10:
-                  _diceCount.put(DieType.D10, nDieCount);
+                  diceCount.put(DieType.D10, nDieCount);
                   break;
-               //case 10+: _diceCount.put(DieType.Dbell, nDieCount); break;
+               //case 10+: diceCount.put(DieType.Dbell, nDieCount); break;
                case 12:
-                  _diceCount.put(DieType.D12, nDieCount);
+                  diceCount.put(DieType.D12, nDieCount);
                   break;
                case 13:
-                  _diceCount.put(DieType.Dbell, nDieCount);
+                  diceCount.put(DieType.Dbell, nDieCount);
                   break;
                case 20:
-                  _diceCount.put(DieType.D20, nDieCount);
+                  diceCount.put(DieType.D20, nDieCount);
                   break;
             }
          }
       }
    }
 
+   public int getDiceCount(DieType type) {
+      return diceCount.get(type);
+   }
+
    public DiceSet addBonus(int bonus) {
       if (bonus == 0) {
          return this;
       }
-      return new DiceSet(_diceCount.get(DieType.D1) + (int) (_multiplier * bonus),
-                         _diceCount.get(DieType.D4),  _diceCount.get(DieType.D6),
-                         _diceCount.get(DieType.D8),  _diceCount.get(DieType.D10),
-                         _diceCount.get(DieType.D12), _diceCount.get(DieType.D20),
-                         _diceCount.get(DieType.Dbell), _multiplier);
+      return new DiceSet(diceCount.get(DieType.D1) + (int) (multiplier * bonus),
+                         diceCount.get(DieType.D4), diceCount.get(DieType.D6),
+                         diceCount.get(DieType.D8), diceCount.get(DieType.D10),
+                         diceCount.get(DieType.D12), diceCount.get(DieType.D20),
+                         diceCount.get(DieType.Dbell), multiplier);
    }
 
    public DiceSet addDie(DiceSet addend) {
-      if (_multiplier != addend._multiplier) {
+      if (multiplier != addend.multiplier) {
          throw new InvalidParameterException("incompatible multipliers between added dice");
       }
-      return new DiceSet(_diceCount.get(DieType.D1) + addend._diceCount.get(DieType.D1),
-                         _diceCount.get(DieType.D4) + addend._diceCount.get(DieType.D4),
-                         _diceCount.get(DieType.D6) + addend._diceCount.get(DieType.D6),
-                         _diceCount.get(DieType.D8) + addend._diceCount.get(DieType.D8),
-                         _diceCount.get(DieType.D10) + addend._diceCount.get(DieType.D10),
-                         _diceCount.get(DieType.D12) + addend._diceCount.get(DieType.D12),
-                         _diceCount.get(DieType.D20) + addend._diceCount.get(DieType.D20),
-                         _diceCount.get(DieType.Dbell) + addend._diceCount.get(DieType.Dbell), _multiplier);
+      return new DiceSet(diceCount.get(DieType.D1) + addend.diceCount.get(DieType.D1),
+                         diceCount.get(DieType.D4) + addend.diceCount.get(DieType.D4),
+                         diceCount.get(DieType.D6) + addend.diceCount.get(DieType.D6),
+                         diceCount.get(DieType.D8) + addend.diceCount.get(DieType.D8),
+                         diceCount.get(DieType.D10) + addend.diceCount.get(DieType.D10),
+                         diceCount.get(DieType.D12) + addend.diceCount.get(DieType.D12),
+                         diceCount.get(DieType.D20) + addend.diceCount.get(DieType.D20),
+                         diceCount.get(DieType.Dbell) + addend.diceCount.get(DieType.Dbell), multiplier);
    }
 
    public double getAverageRoll(boolean allowExplodes) {
@@ -167,13 +169,13 @@ public class DiceSet extends SerializableObject implements Enums
       double total = 0;
       for (DieType dieType : DieType.values()) {
          if (dieType == DieType.Dbell) {
-            total += (1 + 10) * _diceCount.get(dieType);
+            total += (1 + 10) * diceCount.get(dieType);
          }
          else {
-            total += (1 + dieType.getSides()) * _diceCount.get(dieType);
+            total += (1 + dieType.getSides()) * diceCount.get(dieType);
          }
       }
-      return (total * _multiplier) / 2.0;
+      return (total * multiplier) / 2.0;
    }
 
    @Deprecated
@@ -202,37 +204,37 @@ public class DiceSet extends SerializableObject implements Enums
    }
    private int roll(boolean allowExplodes, Map<DieType, List<List<Integer>>> results) {
       results.clear();
-      _lastRollIsAllOnes = true;
-      _lastDieRolls = new StringBuilder();
-      _lastDieRolls.append("{ ");
-      int sum = _diceCount.get(DieType.D1);
+      lastRollIsAllOnes = true;
+      lastDieRolls = new StringBuilder();
+      lastDieRolls.append("{ ");
+      int sum = diceCount.get(DieType.D1);
       boolean dieActuallyRolled = false;
       for (DieType dieType : new DieType[] { DieType.D4, DieType.D6, DieType.D8, DieType.D10, DieType.D12, DieType.D20, DieType.Dbell}) {
          List<List<Integer>> rollDataThisDieType = new ArrayList<>();
          results.put(dieType, rollDataThisDieType);
-         for (int die = 0; die < _diceCount.get(dieType); die++) {
+         for (int die = 0; die < diceCount.get(dieType); die++) {
             dieActuallyRolled = true;
             List<Integer> fullRollData = new ArrayList<>();
             rollDataThisDieType.add(fullRollData);
             int dieRoll = rollDie(allowExplodes /*up*/, allowExplodes /*down*/, dieType, fullRollData);
             sum += dieRoll;
             if ((dieRoll != 1) || (dieType == DieType.Dbell)) {
-               _lastRollIsAllOnes = false;
+               lastRollIsAllOnes = false;
             }
          }
       }
       if (!dieActuallyRolled) {
-         _lastRollIsAllOnes = false;
+         lastRollIsAllOnes = false;
       }
-      int add = _diceCount.get(DieType.D1);
+      int add = diceCount.get(DieType.D1);
       if (add != 0) {
          if (add > 0) {
-            _lastDieRolls.append("+");
+            lastDieRolls.append("+");
          }
-         _lastDieRolls.append(add);
+         lastDieRolls.append(add);
       }
-      _lastDieRolls.append("}");
-      return (int) Math.floor((sum * _multiplier) + .4999999);
+      lastDieRolls.append("}");
+      return (int) Math.floor((sum * multiplier) + .4999999);
    }
 
    private int rollDie(boolean allowExplodesUp, boolean allowExplodesDown, DieType dieType, List<Integer> fullRollData) {
@@ -242,7 +244,7 @@ public class DiceSet extends SerializableObject implements Enums
       int modRoll = roll;
       if (dieType == DieType.Dbell) {
          if (roll == 11) {
-            _lastDieRolls.append("-");
+            lastDieRolls.append("-");
             if (!allowExplodesDown) {
                return 0;
             }
@@ -250,7 +252,7 @@ public class DiceSet extends SerializableObject implements Enums
             allowExplodesUp = false;
          }
          else if (roll == 12) {
-            _lastDieRolls.append("+");
+            lastDieRolls.append("+");
             if (!allowExplodesUp) {
                return 10;
             }
@@ -258,26 +260,26 @@ public class DiceSet extends SerializableObject implements Enums
             allowExplodesDown = false;
          }
          else {
-            _lastDieRolls.append(roll);
+            lastDieRolls.append(roll);
             if (allowExplodesDown && !allowExplodesUp) {
                // this change make a '7' rolled after a '-' be a -7.
                modRoll = 10 - modRoll;
             }
          }
-         _lastDieRolls.append("/10±");
+         lastDieRolls.append("/10±");
       }
       else {
-         _lastDieRolls.append(modRoll).append("/").append(dieType.getSides());
+         lastDieRolls.append(modRoll).append("/").append(dieType.getSides());
       }
 
-      _lastDieRolls.append(", ");
+      lastDieRolls.append(", ");
       if (allowExplodesUp || (dieType == DieType.Dbell)) {
          if (allowExplodesUp && (roll == dieType.getSides())) {
-            _lastDieRolls.append("+");
+            lastDieRolls.append("+");
             return modRoll + rollDie(allowExplodesUp, allowExplodesDown, dieType, fullRollData);
          }
          if ((roll == 11) && (dieType == DieType.Dbell)) {
-            _lastDieRolls.append("-");
+            lastDieRolls.append("-");
             return modRoll + rollDie(allowExplodesUp, allowExplodesDown, dieType, fullRollData);
          }
       }
@@ -285,14 +287,14 @@ public class DiceSet extends SerializableObject implements Enums
    }
 
    public String getLastDieRoll() {
-      if (_lastDieRolls == null) {
+      if (lastDieRolls == null) {
          return null;
       }
-      return _lastDieRolls.toString();
+      return lastDieRolls.toString();
    }
 
    public boolean lastRollRolledAllOnes() {
-      return _lastRollIsAllOnes;
+      return lastRollIsAllOnes;
    }
 
    /* (non-Javadoc)
@@ -303,11 +305,11 @@ public class DiceSet extends SerializableObject implements Enums
       StringBuilder sb = new StringBuilder();
       int typesOfDice = 0;
       for (DieType dieType : new DieType[] { DieType.D4, DieType.D6, DieType.D8, DieType.D10, DieType.D12, DieType.D20, DieType.Dbell}) {
-         if (_diceCount.get(dieType) > 0) {
+         if (diceCount.get(dieType) > 0) {
             if (sb.length() > 0) {
                sb.append(" + ");
             }
-            sb.append(_diceCount.get(dieType));
+            sb.append(diceCount.get(dieType));
             if (dieType == DieType.Dbell) {
                sb.append("d10±");
             }
@@ -317,22 +319,22 @@ public class DiceSet extends SerializableObject implements Enums
             typesOfDice++;
          }
       }
-      if (_diceCount.get(DieType.D1) != 0) {
-         if (_diceCount.get(DieType.D1) > 0) {
+      if (diceCount.get(DieType.D1) != 0) {
+         if (diceCount.get(DieType.D1) > 0) {
             sb.append("+");
          }
-         sb.append(_diceCount.get(DieType.D1));
+         sb.append(diceCount.get(DieType.D1));
       }
-      if (_multiplier != 1) {
+      if (multiplier != 1) {
          if (typesOfDice > 1) {
             sb.insert(0, '(');
             sb.append(')');
          }
-         if (_multiplier < 1) {
-            sb.append(" / ").append((int) (1 / _multiplier));
+         if (multiplier < 1) {
+            sb.append(" / ").append((int) (1 / multiplier));
          }
          else {
-            sb.append(" * ").append((int) _multiplier);
+            sb.append(" * ").append((int) multiplier);
          }
       }
       return sb.toString();
@@ -362,11 +364,11 @@ public class DiceSet extends SerializableObject implements Enums
          return false;
       }
       DiceSet other = (DiceSet) obj;
-      if (_multiplier != other._multiplier) {
+      if (multiplier != other.multiplier) {
          return false;
       }
       for (DieType dieType : DieType.values()) {
-         if (!_diceCount.get(dieType).equals(other._diceCount.get(dieType))) {
+         if (!diceCount.get(dieType).equals(other.diceCount.get(dieType))) {
             return false;
          }
       }
@@ -375,10 +377,10 @@ public class DiceSet extends SerializableObject implements Enums
 
    @Override
    public int hashCode() {
-      int hash = (int) (_multiplier * 100);
+      int hash = (int) (multiplier * 100);
       for (DieType dieType : DieType.values()) {
          hash = hash << 2;
-         hash += _diceCount.get(dieType);
+         hash += diceCount.get(dieType);
       }
       return hash;
    }
@@ -387,12 +389,12 @@ public class DiceSet extends SerializableObject implements Enums
    public void serializeFromStream(DataInputStream in) {
       try {
          for (DieType dieType : DieType.values()) {
-            _diceCount.put(dieType, readInt(in));
+            diceCount.put(dieType, readInt(in));
          }
-         _multiplier = readDouble(in);
-         _lastDieRolls = new StringBuilder(readString(in));
-         if (_lastDieRolls.length() == 0) {
-            _lastDieRolls = null;
+         multiplier = readDouble(in);
+         lastDieRolls = new StringBuilder(readString(in));
+         if (lastDieRolls.length() == 0) {
+            lastDieRolls = null;
          }
       } catch (IOException e) {
          e.printStackTrace();
@@ -403,14 +405,14 @@ public class DiceSet extends SerializableObject implements Enums
    public void serializeToStream(DataOutputStream out) {
       try {
          for (DieType dieType : DieType.values()) {
-            writeToStream(_diceCount.get(dieType), out);
+            writeToStream(diceCount.get(dieType), out);
          }
-         writeToStream(_multiplier, out);
-         if (_lastDieRolls == null) {
+         writeToStream(multiplier, out);
+         if (lastDieRolls == null) {
             writeToStream("", out);
          }
          else {
-            writeToStream(_lastDieRolls.toString(), out);
+            writeToStream(lastDieRolls.toString(), out);
          }
       } catch (IOException e) {
          e.printStackTrace();
@@ -418,8 +420,8 @@ public class DiceSet extends SerializableObject implements Enums
    }
 
    public double getOddsForTN(double TN) {
-      return getOddsForTN(_diceCount.get(DieType.D4), _diceCount.get(DieType.D6), _diceCount.get(DieType.D8), _diceCount.get(DieType.D10),
-                          _diceCount.get(DieType.D12), _diceCount.get(DieType.D20), _diceCount.get(DieType.Dbell), TN - _diceCount.get(DieType.D1), // TN
+      return getOddsForTN(diceCount.get(DieType.D4), diceCount.get(DieType.D6), diceCount.get(DieType.D8), diceCount.get(DieType.D10),
+                          diceCount.get(DieType.D12), diceCount.get(DieType.D20), diceCount.get(DieType.Dbell), TN - diceCount.get(DieType.D1), // TN
                           0); // rollSoFar
    }
 
@@ -448,8 +450,6 @@ public class DiceSet extends SerializableObject implements Enums
       return 0;
    }
 
-   static final HashMap<String, Double> _map = new HashMap<>();
-
    private double getOddsForTNWithOneDie(DieType die, int d4s, int d6s, int d8s, int d10s, int d12s, int d20s, int dBell, double TN, int rollSoFar) {
       if (die == DieType.Dbell) {
          double odds = 1.0;
@@ -477,10 +477,10 @@ public class DiceSet extends SerializableObject implements Enums
       }
       // We can speed up the processing by caching all results for re-use.
       String key = die + ";" + d4s + ";" + d6s + ";" + d8s + ";" + d10s + ";" + d12s + ";" + d20s + ";" + dBell + ";" + TN + ";" + rollSoFar;
-      Double results = _map.get(key);
+      Double results = map.get(key);
       if (results == null) {
          double chance = 0.0;
-         int dice = _diceCount.get(die);
+         int dice = diceCount.get(die);
          for (int roll = 1; roll <= dice; roll++) {
             if (TN > Math.round(rollSoFar + roll)) {
                if (roll == dice) {
@@ -508,42 +508,40 @@ public class DiceSet extends SerializableObject implements Enums
             }
          }
          results = chance / dice;
-         _map.put(key, results);
+         map.put(key, results);
       }
       return results;
    }
 
-   static final HashMap<DieType, Double> _EXPECTED = new HashMap<>();
+   static final HashMap<DieType, Double> EXPECTED = new HashMap<>();
    static {
-      _EXPECTED.put(DieType.D1, 1.0);
-      _EXPECTED.put(DieType.D4, 3.33333333277187);
-      _EXPECTED.put(DieType.D6, 4.19999997624934);
-      _EXPECTED.put(DieType.D8, 5.14285670500248);
-      _EXPECTED.put(DieType.D10, 6.1111064);
-      _EXPECTED.put(DieType.D12, 7.09088670602387);
-      _EXPECTED.put(DieType.D20, 11.04965625);
-      _EXPECTED.put(DieType.Dbell, 5.5);
+      EXPECTED.put(DieType.D1, 1.0);
+      EXPECTED.put(DieType.D4, 3.33333333277187);
+      EXPECTED.put(DieType.D6, 4.19999997624934);
+      EXPECTED.put(DieType.D8, 5.14285670500248);
+      EXPECTED.put(DieType.D10, 6.1111064);
+      EXPECTED.put(DieType.D12, 7.09088670602387);
+      EXPECTED.put(DieType.D20, 11.04965625);
+      EXPECTED.put(DieType.Dbell, 5.5);
    }
 
    public double getExpectedRoll() {
       double expectedRoll = 0;
       for (DieType dieType : DieType.values()) {
-         expectedRoll += _diceCount.get(dieType) * _EXPECTED.get(dieType);
+         expectedRoll += diceCount.get(dieType) * EXPECTED.get(dieType);
       }
       return expectedRoll;
    }
 
-   static TreeSet<DiceSet> _diceAllowed = null;
-
    public static DiceSet getDieClosestToExpectedRoll(double expectedRoll) {
-      if (_diceAllowed == null) {
+      if (diceAllowed == null) {
          getAllowedDice();
       }
 
       double difference;
       double previousDifference = 1000;
       DiceSet previousDiceSet = null;
-      for (DiceSet dice : _diceAllowed) {
+      for (DiceSet dice : diceAllowed) {
          difference = dice.getExpectedRoll() - expectedRoll;
          if (difference == 0) {
             return dice;
@@ -566,37 +564,37 @@ public class DiceSet extends SerializableObject implements Enums
    }
 
    public static TreeSet<DiceSet> getAllowedDice() {
-      if (_diceAllowed != null) {
-         return _diceAllowed;
+      if (diceAllowed != null) {
+         return diceAllowed;
       }
-      _diceAllowed = new TreeSet<>((dice1, dice2) -> Double.compare(dice1.getExpectedRoll(), dice2.getExpectedRoll()));
+      diceAllowed = new TreeSet<>((dice1, dice2) -> Double.compare(dice1.getExpectedRoll(), dice2.getExpectedRoll()));
       // We allow dice sets that combine not more that two different types of dice
       // Further, we allow up to 6 total dice, in any combination
 
       // First, allow D4, D6 * D8 combination that subtract numbers from the die:
-      _diceAllowed.add(new DiceSet("1d4-8"));
-      _diceAllowed.add(new DiceSet("1d4-7"));
-      _diceAllowed.add(new DiceSet("1d4-6"));
-      _diceAllowed.add(new DiceSet("1d6-6"));
-      _diceAllowed.add(new DiceSet("1d4-5"));
-      _diceAllowed.add(new DiceSet("1d6-5"));
-      _diceAllowed.add(new DiceSet("1d4-4"));
-      _diceAllowed.add(new DiceSet("1d4-3"));
-      _diceAllowed.add(new DiceSet("1d6-4"));
-      _diceAllowed.add(new DiceSet("1d8-5"));
-      _diceAllowed.add(new DiceSet("1d4-2"));
-      _diceAllowed.add(new DiceSet("1d6-3"));
-      _diceAllowed.add(new DiceSet("1d8-4"));
-      _diceAllowed.add(new DiceSet("1d6-2"));
-      _diceAllowed.add(new DiceSet("1d4-1"));
-      _diceAllowed.add(new DiceSet("1d6-1"));
+      diceAllowed.add(new DiceSet("1d4-8"));
+      diceAllowed.add(new DiceSet("1d4-7"));
+      diceAllowed.add(new DiceSet("1d4-6"));
+      diceAllowed.add(new DiceSet("1d6-6"));
+      diceAllowed.add(new DiceSet("1d4-5"));
+      diceAllowed.add(new DiceSet("1d6-5"));
+      diceAllowed.add(new DiceSet("1d4-4"));
+      diceAllowed.add(new DiceSet("1d4-3"));
+      diceAllowed.add(new DiceSet("1d6-4"));
+      diceAllowed.add(new DiceSet("1d8-5"));
+      diceAllowed.add(new DiceSet("1d4-2"));
+      diceAllowed.add(new DiceSet("1d6-3"));
+      diceAllowed.add(new DiceSet("1d8-4"));
+      diceAllowed.add(new DiceSet("1d6-2"));
+      diceAllowed.add(new DiceSet("1d4-1"));
+      diceAllowed.add(new DiceSet("1d6-1"));
 
       // then, consider single dice types in multiples of 1,2,3,4,5 and 6:
       for (DieType die1 : new DieType[] { DieType.D4, DieType.D6, DieType.D8, DieType.D10, DieType.D12, DieType.D20}) {
          for (byte diceCount1 = 1; diceCount1 <= 6; diceCount1++) {
             DiceSet dice = DiceSet.getGroupDice(die1, diceCount1);
             if (dice.isInRange()) {
-               _diceAllowed.add(dice);
+               diceAllowed.add(dice);
             }
          }
       }
@@ -638,7 +636,7 @@ public class DiceSet extends SerializableObject implements Enums
                      dice = dice.addDie(DiceSet.getGroupDice(die2, diceCount2));
                      if (dice != null) {
                         if (dice.isInRange()) {
-                           _diceAllowed.add(dice);
+                           diceAllowed.add(dice);
                         }
                      }
                   }
@@ -646,7 +644,7 @@ public class DiceSet extends SerializableObject implements Enums
             }
          }
       }
-      return _diceAllowed;
+      return diceAllowed;
    }
 
    private boolean isInRange() {
@@ -665,7 +663,7 @@ public class DiceSet extends SerializableObject implements Enums
    public int getDiceCount() {
       int count = 0;
       for (DieType dieType : new DieType[] { DieType.D4, DieType.D6, DieType.D8, DieType.D10, DieType.D12, DieType.D20, DieType.Dbell}) {
-         count += _diceCount.get(dieType);
+         count += diceCount.get(dieType);
       }
       return count;
    }

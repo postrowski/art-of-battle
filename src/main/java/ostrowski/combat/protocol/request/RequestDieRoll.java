@@ -15,14 +15,14 @@ import java.io.IOException;
 
 public class RequestDieRoll extends SyncRequest
 {
-   private DiceSet _diceSet;
-   private Enums.RollType _rollType;
+   private DiceSet        diceSet;
+   private Enums.RollType rollType;
 
    public RequestDieRoll(String messageToRoller, DiceSet diceSet, Enums.RollType rollType) {
-      _message = messageToRoller;
-      this._diceSet = diceSet;
-      this._rollType = rollType;
-      addOption(new RequestActionOption("Roll " + _diceSet.toString(),
+      message = messageToRoller;
+      this.diceSet = diceSet;
+      this.rollType = rollType;
+      addOption(new RequestActionOption("Roll " + this.diceSet.toString(),
                                         RequestActionType.OPT_NO_ACTION, LimbType.BODY, true));
    }
    public RequestDieRoll() {
@@ -37,11 +37,11 @@ public class RequestDieRoll extends SyncRequest
    public void serializeFromStream(DataInputStream in) {
       super.serializeFromStream(in);
       try {
-         _diceSet          = new DiceSet(readString(in));
+         diceSet = new DiceSet(readString(in));
          byte rollType     = readByte(in);
          for (Enums.RollType rt : Enums.RollType.values()) {
             if (rt.ordinal() == rollType) {
-               _rollType = rt;
+               this.rollType = rt;
             }
          }
       } catch (IOException e) {
@@ -52,8 +52,8 @@ public class RequestDieRoll extends SyncRequest
    public void serializeToStream(DataOutputStream out) {
       super.serializeToStream(out);
       try {
-         writeToStream(_diceSet.toString(), out);
-         writeToStream((byte)(_rollType.ordinal()), out);
+         writeToStream(diceSet.toString(), out);
+         writeToStream((byte)(rollType.ordinal()), out);
       } catch (IOException e) {
          e.printStackTrace();
       }

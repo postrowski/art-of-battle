@@ -52,7 +52,7 @@ public class Leg extends Limb
 
    @Override
    public Leg clone() {
-      return new Leg(_limbType, getRacialBase());
+      return new Leg(limbType, getRacialBase());
    }
 
 }

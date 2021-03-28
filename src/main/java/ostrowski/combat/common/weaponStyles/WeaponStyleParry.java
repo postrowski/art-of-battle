@@ -10,13 +10,13 @@ import ostrowski.combat.common.enums.SkillType;
 
 public class WeaponStyleParry extends WeaponStyle
 {
-   double _effectiveness;
+   double effectiveness;
    public WeaponStyleParry(SkillType skillType, int minSkill, int skillPenalty, String name, int speedBase, int slowStr, int fastStr, double effectiveness, int handsRequired)
    {
       super(skillType, minSkill, skillPenalty, name, speedBase, slowStr, fastStr, handsRequired);
-      _effectiveness = effectiveness;
+      this.effectiveness = effectiveness;
    }
-   public double getEffectiveness() { return _effectiveness; }
+   public double getEffectiveness() { return effectiveness; }
    public boolean canDefendAgainstDamageType(DamageType damType, boolean isGrapple, short distance) {
       if (isGrapple) {
          return false;
@@ -41,8 +41,8 @@ public class WeaponStyleParry extends WeaponStyle
 
    @Override
    public WeaponStyleParry clone() {
-      WeaponStyleParry style =  new WeaponStyleParry(_skillType, _minSkill, _skillPenalty, _name, _speedBase, _slowStr,
-                                                     _fastStr, _effectiveness, _handsRequired);
+      WeaponStyleParry style =  new WeaponStyleParry(skillType, minSkill, skillPenalty, name, speedBase, slowStr,
+                                                     fastStr, effectiveness, handsRequired);
       style.copyDataFrom(this);
       return style;
    }
@@ -50,7 +50,7 @@ public class WeaponStyleParry extends WeaponStyle
    public void copyDataFrom(WeaponStyle source) {
       super.copyDataFrom(source);
       if (source instanceof WeaponStyleParry) {
-         _effectiveness = ((WeaponStyleParry)source)._effectiveness;
+         effectiveness = ((WeaponStyleParry)source).effectiveness;
       }
    }
    @Override
@@ -62,6 +62,6 @@ public class WeaponStyleParry extends WeaponStyle
          return false;
       }
       WeaponStyleParry otherStyle = (WeaponStyleParry) other;
-      return _effectiveness == otherStyle._effectiveness;
+      return effectiveness == otherStyle.effectiveness;
    }
 }

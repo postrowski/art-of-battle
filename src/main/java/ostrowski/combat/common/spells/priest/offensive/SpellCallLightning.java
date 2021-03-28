@@ -9,7 +9,6 @@ import ostrowski.combat.common.spells.IRangedSpell;
 import ostrowski.combat.common.spells.priest.IPriestGroup;
 import ostrowski.combat.common.spells.priest.PriestSpell;
 import ostrowski.combat.common.wounds.Wound;
-import ostrowski.combat.common.wounds.WoundChart;
 import ostrowski.combat.common.wounds.WoundCharts;
 import ostrowski.combat.server.Arena;
 import ostrowski.combat.server.BattleTerminatedException;
@@ -142,10 +141,10 @@ public class SpellCallLightning extends PriestSpell implements IRangedSpell, ICa
             boolean computeDamage = false;
             if (!computeDamage) {
                byte successRollOverTN = (byte) (getCastingLevel() - roll);
-               arena._battle.resolveDamage(getCaster(), hitCharacter, "Lightning bolt", "2d12",
-                                           0/*baseDamage*/, (byte)0/*bonusDamage*/, damageDice, DamageType.ELECTRIC/*damageType*/,
-                                           new SpecialDamage(SpecialDamage.MOD_NONE), ""/*specialDamageModifierExplanation*/,
-                                           sb, wounds, successRollOverTN, false/*isCharge*/);
+               arena.battle.resolveDamage(getCaster(), hitCharacter, "Lightning bolt", "2d12",
+                                          0/*baseDamage*/, (byte)0/*bonusDamage*/, damageDice, DamageType.ELECTRIC/*damageType*/,
+                                          new SpecialDamage(SpecialDamage.MOD_NONE), ""/*specialDamageModifierExplanation*/,
+                                          sb, wounds, successRollOverTN, false/*isCharge*/);
             }
             else {
                damageDice = getCaster().adjustDieRoll(damageDice, RollType.DAMAGE_SPELL, hitCharacter/*target*/);
@@ -181,7 +180,7 @@ public class SpellCallLightning extends PriestSpell implements IRangedSpell, ICa
          }
          arena.sendMessageTextToAllClients(sb.toString(), false/*popUp*/);
          sb.setLength(0);
-         arena._battle.applyWounds(wounds);
+         arena.battle.applyWounds(wounds);
       }
    }
 

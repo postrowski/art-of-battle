@@ -19,6 +19,7 @@ import ostrowski.combat.server.Arena;
 
 public class SpellCharmPerson extends ResistedPriestSpell implements ICastInBattle
 {
+   private byte previousTeamID;
    public static final String NAME = "Charm Person";
    public SpellCharmPerson() {
    }
@@ -32,9 +33,9 @@ public class SpellCharmPerson extends ResistedPriestSpell implements ICastInBatt
    @Override
    public String describeEffects(Character defender, boolean firstTime) {
       if (firstTime) {
-         return getTargetName() + " becomes an ally to " + getCasterName() + ", and is now on team " + TEAM_NAMES[_caster._teamID] + ".";
+         return getTargetName() + " becomes an ally to " + getCasterName() + ", and is now on team " + TEAM_NAMES[caster.teamID] + ".";
       }
-      return "(currently on team " + TEAM_NAMES[_caster._teamID] + ")";
+      return "(currently on team " + TEAM_NAMES[caster.teamID] + ")";
    }
 
    @Override
@@ -54,20 +55,19 @@ public class SpellCharmPerson extends ResistedPriestSpell implements ICastInBatt
       return TargetType.TARGET_OTHER_FIGHTING;
    }
 
-   private byte _previousTeamID;
    @Override
    public void applyEffects(Arena arena) {
-      _previousTeamID = _target._teamID;
-      _target._teamID = _caster._teamID;
-      _target._targetID = -1;
-      arena.recomputeAllTargets(_target);
+      previousTeamID = target.teamID;
+      target.teamID = caster.teamID;
+      target.targetID = -1;
+      arena.recomputeAllTargets(target);
    }
 
    @Override
    public void removeEffects(Arena arena) {
-      _target._teamID = _previousTeamID;
-      arena.sendMessageTextToAllClients(_target.getName() + " is back on team " + TEAM_NAMES[_previousTeamID], false/*popUp*/);
-      arena.recomputeAllTargets(_target);
+      target.teamID = previousTeamID;
+      arena.sendMessageTextToAllClients(target.getName() + " is back on team " + TEAM_NAMES[previousTeamID], false/*popUp*/);
+      arena.recomputeAllTargets(target);
    }
 
    @Override
@@ -75,7 +75,7 @@ public class SpellCharmPerson extends ResistedPriestSpell implements ICastInBatt
    {
       super.serializeToStream(out);
       try {
-         writeToStream(_previousTeamID, out);
+         writeToStream(previousTeamID, out);
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -85,7 +85,7 @@ public class SpellCharmPerson extends ResistedPriestSpell implements ICastInBatt
    {
       super.serializeFromStream(in);
       try {
-         _previousTeamID = readByte(in);
+         previousTeamID = readByte(in);
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -95,14 +95,14 @@ public class SpellCharmPerson extends ResistedPriestSpell implements ICastInBatt
    {
       super.copyDataFrom(source);
       if (source instanceof SpellCharmPerson) {
-         _previousTeamID = ((SpellCharmPerson) source)._previousTeamID;
+         previousTeamID = ((SpellCharmPerson) source).previousTeamID;
       }
    }
 
    @Override
    public Element getXMLObject(Document parentDoc, String newLine) {
       Element node = super.getXMLObject(parentDoc, newLine);
-      node.setAttribute("previousTeamID", String.valueOf(_previousTeamID));
+      node.setAttribute("previousTeamID", String.valueOf(previousTeamID));
       return node;
    }
    @Override
@@ -110,7 +110,7 @@ public class SpellCharmPerson extends ResistedPriestSpell implements ICastInBatt
       super.readFromXMLObject(namedNodeMap);
       Node node = namedNodeMap.getNamedItem("previousTeamID");
       if (node != null) {
-         _previousTeamID  = Byte.parseByte(node.getNodeValue());
+         previousTeamID = Byte.parseByte(node.getNodeValue());
       }
    }
 

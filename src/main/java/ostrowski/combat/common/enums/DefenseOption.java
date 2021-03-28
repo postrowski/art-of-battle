@@ -36,44 +36,44 @@ public enum DefenseOption {
    DEF_COUNTER_DEFENSE_2 (2, "2-action counter-attack defense", null),
    DEF_COUNTER_DEFENSE_3 (3, "3-action counter-attack defense", null);
 
-   private static final HashMap<DefenseOption, Integer> _MAGIC_POINTS_USED = new HashMap<>();
-   private static final HashMap<DefenseOption, Integer> _DEFENSE_COUNTER_POINTS_USED = new HashMap<>();
-   private static final List<List<DefenseOption>> _INCOMPATIBLE_SETS = new ArrayList<>();
+   private static final HashMap<DefenseOption, Integer> MAGIC_POINTS_USED           = new HashMap<>();
+   private static final HashMap<DefenseOption, Integer> DEFENSE_COUNTER_POINTS_USED = new HashMap<>();
+   private static final List<List<DefenseOption>>       INCOMPATIBLE_SETS           = new ArrayList<>();
    static {
-      _MAGIC_POINTS_USED.put(DEF_MAGIC_1, 1);
-      _MAGIC_POINTS_USED.put(DEF_MAGIC_2, 2);
-      _MAGIC_POINTS_USED.put(DEF_MAGIC_3, 3);
-      _MAGIC_POINTS_USED.put(DEF_MAGIC_4, 4);
-      _MAGIC_POINTS_USED.put(DEF_MAGIC_5, 5);
-      _DEFENSE_COUNTER_POINTS_USED.put(DEF_COUNTER_GRAB_1, 1);
-      _DEFENSE_COUNTER_POINTS_USED.put(DEF_COUNTER_DEFENSE_2, 2);
-      _DEFENSE_COUNTER_POINTS_USED.put(DEF_COUNTER_DEFENSE_3, 3);
-      _INCOMPATIBLE_SETS.add(new ArrayList<>(Arrays.asList(DEF_DODGE,
-                                                           DEF_RETREAT)));
-      _INCOMPATIBLE_SETS.add(new ArrayList<>(Arrays.asList(DEF_RETREAT,
-                                                           DEF_COUNTER_DEFENSE_1,
-                                                           DEF_COUNTER_DEFENSE_2,
-                                                           DEF_COUNTER_DEFENSE_3,
-                                                           DEF_COUNTER_GRAB_1,
-                                                           DEF_COUNTER_GRAB_2,
-                                                           DEF_COUNTER_GRAB_3,
-                                                           DEF_COUNTER_THROW_1,
-                                                           DEF_COUNTER_THROW_2,
-                                                           DEF_COUNTER_THROW_3)));
-      _INCOMPATIBLE_SETS.add(new ArrayList<>(Arrays.asList(DEF_MAGIC_1,
-                                                           DEF_MAGIC_2,
-                                                           DEF_MAGIC_3,
-                                                           DEF_MAGIC_4,
-                                                           DEF_MAGIC_5,
-                                                           DEF_COUNTER_DEFENSE_1,
-                                                           DEF_COUNTER_DEFENSE_2,
-                                                           DEF_COUNTER_DEFENSE_3)));
+      MAGIC_POINTS_USED.put(DEF_MAGIC_1, 1);
+      MAGIC_POINTS_USED.put(DEF_MAGIC_2, 2);
+      MAGIC_POINTS_USED.put(DEF_MAGIC_3, 3);
+      MAGIC_POINTS_USED.put(DEF_MAGIC_4, 4);
+      MAGIC_POINTS_USED.put(DEF_MAGIC_5, 5);
+      DEFENSE_COUNTER_POINTS_USED.put(DEF_COUNTER_GRAB_1, 1);
+      DEFENSE_COUNTER_POINTS_USED.put(DEF_COUNTER_DEFENSE_2, 2);
+      DEFENSE_COUNTER_POINTS_USED.put(DEF_COUNTER_DEFENSE_3, 3);
+      INCOMPATIBLE_SETS.add(new ArrayList<>(Arrays.asList(DEF_DODGE,
+                                                          DEF_RETREAT)));
+      INCOMPATIBLE_SETS.add(new ArrayList<>(Arrays.asList(DEF_RETREAT,
+                                                          DEF_COUNTER_DEFENSE_1,
+                                                          DEF_COUNTER_DEFENSE_2,
+                                                          DEF_COUNTER_DEFENSE_3,
+                                                          DEF_COUNTER_GRAB_1,
+                                                          DEF_COUNTER_GRAB_2,
+                                                          DEF_COUNTER_GRAB_3,
+                                                          DEF_COUNTER_THROW_1,
+                                                          DEF_COUNTER_THROW_2,
+                                                          DEF_COUNTER_THROW_3)));
+      INCOMPATIBLE_SETS.add(new ArrayList<>(Arrays.asList(DEF_MAGIC_1,
+                                                          DEF_MAGIC_2,
+                                                          DEF_MAGIC_3,
+                                                          DEF_MAGIC_4,
+                                                          DEF_MAGIC_5,
+                                                          DEF_COUNTER_DEFENSE_1,
+                                                          DEF_COUNTER_DEFENSE_2,
+                                                          DEF_COUNTER_DEFENSE_3)));
    }
    public boolean isCompatibleWith(DefenseOption otherOpt) {
       if (this == otherOpt) {
          return true;
       }
-      for (List<DefenseOption> opts : _INCOMPATIBLE_SETS) {
+      for (List<DefenseOption> opts : INCOMPATIBLE_SETS) {
          if (opts.contains(this) && opts.contains(otherOpt)) {
             return false;
          }
@@ -99,7 +99,7 @@ public enum DefenseOption {
       return actionsUsed;
    }
    public byte getDefenseMagicPointsUsed() {
-      Integer points = _MAGIC_POINTS_USED.get(this);
+      Integer points = MAGIC_POINTS_USED.get(this);
       if (points == null) {
          return 0;
       }
@@ -109,9 +109,9 @@ public enum DefenseOption {
    public String getName(boolean pastTense, Character actor, RequestAction attack) {
       int magicActions = getDefenseMagicPointsUsed();
       if (magicActions > 0) {
-         IInstantaneousSpell defensiveSpell_spell  = actor._bestDefensiveSpell_spell;
-         IInstantaneousSpell defensiveSpell_ranged = actor._bestDefensiveSpell_ranged;
-         IInstantaneousSpell defensiveSpell_melee  = actor._bestDefensiveSpell_melee;
+         IInstantaneousSpell defensiveSpell_spell  = actor.bestDefensiveSpell_spell;
+         IInstantaneousSpell defensiveSpell_ranged = actor.bestDefensiveSpell_ranged;
+         IInstantaneousSpell defensiveSpell_melee  = actor.bestDefensiveSpell_melee;
          if (attack != null) {
             if (attack.isCompleteSpell()) {
                if (defensiveSpell_spell != null) {

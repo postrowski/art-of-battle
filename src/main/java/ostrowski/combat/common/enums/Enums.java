@@ -58,14 +58,14 @@ public interface Enums {
    enum RANGE {
       OUT_OF_RANGE, POINT_BLANK, SHORT, MEDIUM, LONG;
       RANGE() {
-         _name = this.name().charAt(0) + // first character in upper case
-                 this.name().replaceAll("_", " ")
+         name = this.name().charAt(0) + // first character in upper case
+                this.name().replaceAll("_", " ")
                             .substring(1, this.name().length()).toLowerCase();
       }
       public String getName() {
-         return this._name;
+         return this.name;
       }
-      private final String _name;
+      private final String name;
    }
 
    // wound data:

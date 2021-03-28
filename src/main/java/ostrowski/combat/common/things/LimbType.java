@@ -45,7 +45,7 @@ public enum LimbType {
        this.name = name;
     }
 
-   public final Byte value;
+    public final Byte value;
     public final Location baseType;
     public final Side side;
     public final int setId;
@@ -106,24 +106,24 @@ public enum LimbType {
        }
        return null;
     }
-    private final static HashMap<Byte, LimbType>    _typeByValue = new HashMap<>();
-    private final static HashMap<String, LimbType> _typeByName = new HashMap<>();
-    public  final static List<LimbType>            _armTypes   = new ArrayList<>();
+    private final static HashMap<Byte, LimbType>   TYPE_BY_VALUE = new HashMap<>();
+    private final static HashMap<String, LimbType> TYPE_BY_NAME  = new HashMap<>();
+    public  final static List<LimbType>            ARM_TYPES     = new ArrayList<>();
 
     static {
        for (LimbType type : values()) {
-          _typeByValue.put(type.value, type);
-          _typeByName.put(type.name.toLowerCase(), type);
+          TYPE_BY_VALUE.put(type.value, type);
+          TYPE_BY_NAME.put(type.name.toLowerCase(), type);
           if (type.isHand()) {
-             _armTypes.add(type);
+             ARM_TYPES.add(type);
           }
        }
     }
     public static LimbType getByValue(byte val) {
-       return _typeByValue.get(val);
+       return TYPE_BY_VALUE.get(val);
     }
     static public LimbType getByName(String name)
     {
-       return _typeByName.get(name.toLowerCase());
+       return TYPE_BY_NAME.get(name.toLowerCase());
     }
  }

@@ -5,12 +5,12 @@ import java.util.List;
 
 public class Table extends HtmlElement
 {
-   public final List<TableRow> _data = new ArrayList<>();
+   public final List<TableRow> data = new ArrayList<>();
    public Table() {
    }
 
    public Table addRow(TableRow tr) {
-      _data.add(tr);
+      data.add(tr);
       return this;
    }
 
@@ -20,7 +20,7 @@ public class Table extends HtmlElement
    @Override
    protected String getElementContents() {
       StringBuilder sb = new StringBuilder();
-      for (TableRow tr : _data) {
+      for (TableRow tr : data) {
          sb.append(tr);
       }
       return sb.toString();

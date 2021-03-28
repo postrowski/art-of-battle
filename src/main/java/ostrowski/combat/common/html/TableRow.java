@@ -5,8 +5,8 @@ import java.util.List;
 
 public class TableRow extends HtmlElement
 {
-   int _rowIndex = 0;
-   public final List<TableData> _data = new ArrayList<>();
+   int rowIndex = 0;
+   public final List<TableData> data = new ArrayList<>();
 
    public TableRow() {
       this(0);
@@ -40,7 +40,7 @@ public class TableRow extends HtmlElement
    }
 
    public void setRowIndex(int rowIndex) {
-      _rowIndex = rowIndex;
+      this.rowIndex = rowIndex;
       if (rowIndex == -1) {
          setClassName("header-row");
       }
@@ -51,14 +51,14 @@ public class TableRow extends HtmlElement
 
    public TableRow addTD(Object td) {
       if (td instanceof TableData) {
-         _data.add((TableData)(td));
+         data.add((TableData)(td));
       }
       else {
-         if (_rowIndex == -1) {
-            _data.add(new TableHeader(td.toString()));
+         if (rowIndex == -1) {
+            data.add(new TableHeader(td.toString()));
          }
          else {
-            _data.add(new TableData(td.toString()));
+            data.add(new TableData(td.toString()));
          }
       }
       return this;
@@ -66,10 +66,10 @@ public class TableRow extends HtmlElement
 
    public TableRow addHeader(Object td) {
       if (td instanceof TableHeader) {
-         _data.add((TableHeader)(td));
+         data.add((TableHeader)(td));
       }
       else {
-         _data.add(new TableHeader(td.toString()));
+         data.add(new TableHeader(td.toString()));
       }
       return this;
    }
@@ -80,7 +80,7 @@ public class TableRow extends HtmlElement
    @Override
    protected String getElementContents() {
       StringBuilder sb = new StringBuilder();
-      for (TableData td : _data) {
+      for (TableData td : data) {
          sb.append(td);
       }
       return sb.toString();

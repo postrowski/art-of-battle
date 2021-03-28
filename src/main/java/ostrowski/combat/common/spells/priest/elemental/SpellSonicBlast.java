@@ -151,17 +151,17 @@ public class SpellSonicBlast extends ResistedPriestSpell implements IRangedSpell
 
    @Override
    public void applyEffects(Arena arena) {
-      if (_castingEffectiveness > 0) {
-         //int tnDeafness = getTNDeafness(_effectivePower);
-         int tnDisorient = getTNDisorient(_effectivePower);
-         int tnKnockBack = getTNKnockBack(_effectivePower);
-         int tnKnockDown = getTNKnockDown(_effectivePower);
-         int tnKnockOut = getTNKnockOut(_effectivePower);
-         int tnDeath = getTNDeath(_effectivePower);
+      if (castingEffectiveness > 0) {
+         //int tnDeafness = getTNDeafness(effectivePower);
+         int tnDisorient = getTNDisorient(effectivePower);
+         int tnKnockBack = getTNKnockBack(effectivePower);
+         int tnKnockDown = getTNKnockDown(effectivePower);
+         int tnKnockOut = getTNKnockOut(effectivePower);
+         int tnDeath = getTNDeath(effectivePower);
 
          StringBuilder damageExplanationButtfer = new StringBuilder();
          byte damage = 0;
-         int wounds = resolveTN(tnDisorient, "disorientation", damageExplanationButtfer) ? 0 : _effectivePower;
+         int wounds = resolveTN(tnDisorient, "disorientation", damageExplanationButtfer) ? 0 : effectivePower;
          int pain = wounds * 2;
          boolean knockedBack = !resolveTN(tnKnockBack, "knock back", damageExplanationButtfer);
          boolean knockedDown = !resolveTN(tnKnockDown, "knock down", damageExplanationButtfer);
@@ -178,9 +178,9 @@ public class SpellSonicBlast extends ResistedPriestSpell implements IRangedSpell
             effectsMask |= EFFECT_DEATH;
          }
 
-         int knockedBackDist = (int) Math.pow(2, _effectivePower - (knockedBack ? 3 : 4));
+         int knockedBackDist = (int) Math.pow(2, effectivePower - (knockedBack ? 3 : 4));
 
-         Wound wound = new Wound(damage, Location.BODY, getDescriptionForPower(_power), pain, wounds, 0/*bleedrate*/, 0/*armPenalty*/, 0/*movementPenalty*/,
+         Wound wound = new Wound(damage, Location.BODY, getDescriptionForPower(power), pain, wounds, 0/*bleedrate*/, 0/*armPenalty*/, 0/*movementPenalty*/,
                                  knockedBackDist, DamageType.BLUNT, effectsMask, getTarget());
 
          damageExplanationButtfer.append(getTargetName()).append(" takes damage from the ").append(getName()).append(" spell: ").append(wound.describeEffects());

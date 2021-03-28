@@ -22,7 +22,7 @@ public class SpellSummonChampion extends SpellSummonBeing
    }
    @Override
    public String summonedTypeRaceName() {
-      return _caster.getRace().getName();
+      return caster.getRace().getName();
    }
 
 }

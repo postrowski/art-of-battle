@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 
 public class WoundCharts {
-   static final HashMap<DamageType, WoundChart> _charts = new HashMap<>();
+   static final HashMap<DamageType, WoundChart> charts = new HashMap<>();
    static { // static initializer
       @SuppressWarnings("unused")
       WoundChart a = new WoundChartBlunt();
@@ -25,18 +25,18 @@ public class WoundCharts {
 
    // factory class:
    static public boolean registerWithFactory(WoundChart chart) {
-      DamageType key = chart._damageType;
-      if (_charts.containsKey(key)) {
+      DamageType key = chart.damageType;
+      if (charts.containsKey(key)) {
          return false;
       }
-      _charts.put(key, chart);
+      charts.put(key, chart);
       return true;
    }
    static public Wound getWound(byte damageLevel, DamageType damageType, Character target, StringBuilder alterationExplanationBuffer) {
       if (Configuration.useSimpleDamage()) {
          damageType = DamageType.GENERAL;
       }
-      WoundChart chart = _charts.get(damageType);
+      WoundChart chart = charts.get(damageType);
       if (chart != null) {
          do {
             try {
@@ -65,12 +65,12 @@ public class WoundCharts {
    public static String generateHtmlTable() {
       StringBuilder sb = new StringBuilder();
       List<WoundChart> woundCharts = new ArrayList<>();
-      woundCharts.add(_charts.get(DamageType.GENERAL));
-      woundCharts.add(_charts.get(DamageType.BLUNT));
-      woundCharts.add(_charts.get(DamageType.CUT));
-      woundCharts.add(_charts.get(DamageType.IMP));
-      woundCharts.add(_charts.get(DamageType.FIRE));
-      woundCharts.add(_charts.get(DamageType.ELECTRIC));
+      woundCharts.add(charts.get(DamageType.GENERAL));
+      woundCharts.add(charts.get(DamageType.BLUNT));
+      woundCharts.add(charts.get(DamageType.CUT));
+      woundCharts.add(charts.get(DamageType.IMP));
+      woundCharts.add(charts.get(DamageType.FIRE));
+      woundCharts.add(charts.get(DamageType.ELECTRIC));
       for (WoundChart element : woundCharts) {
          sb.append(generateHtmlTable(element));
       }
@@ -78,23 +78,23 @@ public class WoundCharts {
       return sb.toString();
    }
    public static String generateHtmlTable(DamageType damType) {
-      return generateHtmlTable(_charts.get(damType));
+      return generateHtmlTable(charts.get(damType));
    }
    public static String generateCombinedHtmlTable() {
       List<WoundChart> woundCharts = new ArrayList<>();
-      woundCharts.add(_charts.get(DamageType.GENERAL));
-      woundCharts.add(_charts.get(DamageType.BLUNT));
-      woundCharts.add(_charts.get(DamageType.CUT));
-      woundCharts.add(_charts.get(DamageType.IMP));
-      woundCharts.add(_charts.get(DamageType.FIRE));
-      woundCharts.add(_charts.get(DamageType.ELECTRIC));
+      woundCharts.add(charts.get(DamageType.GENERAL));
+      woundCharts.add(charts.get(DamageType.BLUNT));
+      woundCharts.add(charts.get(DamageType.CUT));
+      woundCharts.add(charts.get(DamageType.IMP));
+      woundCharts.add(charts.get(DamageType.FIRE));
+      woundCharts.add(charts.get(DamageType.ELECTRIC));
       return generateCombinedHtmlTable(woundCharts);
    }
    public static String generateHtmlTable(WoundChart chart) {
       StringBuilder sb = new StringBuilder();
       sb.append(HtmlBuilder.getHTMLHeader("TblWounds", 400, 62));
       sb.append("<body>");
-      sb.append("<H4>Wound Chart for ").append(chart.getWound((byte)0, null/*target*/)._damageType.fullname).append(" damage:</H4>");
+      sb.append("<H4>Wound Chart for ").append(chart.getWound((byte)0, null/*target*/).damageType.fullname).append(" damage:</H4>");
       sb.append("<div style=\"overflow: hidden;\" id=\"DivHeaderRow\">\n");
       sb.append("</div>\n");
       sb.append("<div style=\"overflow:scroll;overflow-x:hidden; border-width:0px; border-bottom:1px; border-style:solid;\" onscroll=\"OnScrollDiv(this)\" id=\"DivMainContent\">\n");
@@ -164,7 +164,7 @@ public class WoundCharts {
    private static String getDataForWoundInColumn(Wound wound, int column) {
       switch (column) {
          case 0: return wound.getBaseLocationName();
-         case 1: return wound._description;
+         case 1: return wound.description;
          case 2: return String.valueOf(wound.getPain());
          case 3: return String.valueOf(wound.getWounds());
          case 4: return String.valueOf(wound.getBleedRate());

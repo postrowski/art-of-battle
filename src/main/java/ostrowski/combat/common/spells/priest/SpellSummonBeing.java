@@ -50,14 +50,14 @@ public abstract class SpellSummonBeing extends ExpiringPriestSpell implements IC
       int pointTotal = getBaseCharPoints() + (getPower() * getCharPointsPerPowerPoint());
       String charSoruce = pointTotal + "  " + summonedTypeRaceName();
       Character summonedBeing = CharacterGenerator.generateRandomCharacter(charSoruce, arena, true/*printCharacter*/);
-      summonedBeing._teamID = _caster._teamID;
+      summonedBeing.teamID = caster.teamID;
       ArenaLocation loc = ArenaLocation.getForwardMovement(getCaster().getHeadCoordinates(), getCaster().getFacing(), arena.getCombatMap());
       loc = loc.clone();
       int count = 0;
-      while (!arena.addCombatant(summonedBeing, _caster._teamID, loc._x, loc._y, AI_Type.NORM/*aiEngineType*/)) {
+      while (!arena.addCombatant(summonedBeing, caster.teamID, loc.x, loc.y, AI_Type.NORM/*aiEngineType*/)) {
          Facing direction = Facing.getByValue((byte) (CombatServer.random() * Facing.values().length));
-         loc._x += direction.moveX;
-         loc._y += direction.moveY;
+         loc.x += direction.moveX;
+         loc.y += direction.moveY;
          if (count ++ > 20) {
             arena.sendMessageTextToAllClients(getCasterName() + "'s " + getName() +
                                               " spell failed, because there is no room for the "

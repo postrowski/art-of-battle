@@ -11,7 +11,6 @@ import ostrowski.combat.common.enums.DamageType;
 import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.things.Weapon;
 import ostrowski.combat.common.wounds.Wound;
-import ostrowski.combat.common.wounds.WoundChart;
 import ostrowski.combat.common.wounds.WoundCharts;
 
 public class SpellShockingGrasp extends ExpiringMageSpell implements ICastInBattle
@@ -105,7 +104,7 @@ public class SpellShockingGrasp extends ExpiringMageSpell implements ICastInBatt
          }
       }
       // expire the spell once its cast:
-      _duration = -1;
+      duration = -1;
 
       return wound;
    }

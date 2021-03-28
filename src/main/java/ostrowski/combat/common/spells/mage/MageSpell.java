@@ -30,9 +30,9 @@ public abstract class MageSpell extends Spell implements Enums
    public final static String FAM_KNOWN             = "known";
    public final static String FAM_MEMORIZED         = "memorized";
 
-   public       Class<MageSpell>[]       _prerequisiteSpells;
-   public final MageCollege[]            _prerequisiteColleges;
-   protected    HashMap<Attribute, Byte> _attributeMod         = new HashMap<>();
+   public       Class<MageSpell>[]       prerequisiteSpells;
+   public final MageCollege[]            prerequisiteColleges;
+   protected    HashMap<Attribute, Byte> attributeMod = new HashMap<>();
 
    public MageSpell() {
       this("", null, null);
@@ -41,8 +41,8 @@ public abstract class MageSpell extends Spell implements Enums
    @SuppressWarnings({ "unchecked", "rawtypes"})
    protected MageSpell(String name, Class[] prerequisiteSpellClasses, MageCollege[] colleges) {
       super(name);
-      _prerequisiteSpells = prerequisiteSpellClasses;
-      _prerequisiteColleges = colleges;
+      prerequisiteSpells = prerequisiteSpellClasses;
+      prerequisiteColleges = colleges;
    }
 
    @Override
@@ -56,20 +56,20 @@ public abstract class MageSpell extends Spell implements Enums
    }
 
    public void setFamiliarity(String familiarity) {
-      _level = 0;
+      level = 0;
 //      if (FAM_UNFAMILIAR.equals(familiarity)) {
-//         _level = 0;
+//         level = 0;
 //      }
       if (FAM_KNOWN.equals(familiarity)) {
-         _level = 1;
+         level = 1;
       }
       else if (FAM_MEMORIZED.equals(familiarity)) {
-         _level = 2;
+         level = 2;
       }
    }
 
    public String getFamiliarity() {
-      switch (_level) {
+      switch (level) {
          case 0:
             return FAM_UNFAMILIAR;
          case 1:
@@ -82,13 +82,13 @@ public abstract class MageSpell extends Spell implements Enums
 
    @Override
    public byte getIncantationTime() {
-      if (_level == 0) {// unknown
+      if (level == 0) {// unknown
          return (byte) 5;
       }
-      if (_level == 1) {// known
+      if (level == 1) {// known
          return (byte) 3;
       }
-      if (_level == 2) {// memorized
+      if (level == 2) {// memorized
          return 1;
       }
       DebugBreak.debugBreak();
@@ -128,7 +128,7 @@ public abstract class MageSpell extends Spell implements Enums
    //   private static void printSkillInGroups() {
 //      List<ArrayList<MageSpell>> listOfGroupedSpells = new ArrayList<>();
 //      List<MageSpell> spellsToGroup = new ArrayList<>();
-//      spellsToGroup.addAll(_spellsList);
+//      spellsToGroup.addAll(spellsList);
 //      while (spellsToGroup.size() > 0) {
 //         MageSpell spellToGroup = spellsToGroup.remove(0);
 //         List<MageSpell> preProcessedGroup = new ArrayList<>();
@@ -140,14 +140,14 @@ public abstract class MageSpell extends Spell implements Enums
 //            for (int i=0 ; i<spellsToGroup.size(); i++) {
 //               boolean inGroup = false;
 //               MageSpell spellToGroupRemaing = spellsToGroup.get(i);
-//               for (Class<MageSpell> relatedSpellClass : spellToProcess._prerequisiteSpells) {
+//               for (Class<MageSpell> relatedSpellClass : spellToProcess.prerequisiteSpells) {
 //                  if (spellToGroupRemaing.getClass() == relatedSpellClass) {
 //                     inGroup = true;
 //                     break;
 //                  }
 //               }
 //               if (!inGroup) {
-//                  for (Class<MageSpell> relatedSpellClass : spellToGroupRemaing._prerequisiteSpells) {
+//                  for (Class<MageSpell> relatedSpellClass : spellToGroupRemaing.prerequisiteSpells) {
 //                     if (spellToProcess.getClass() == relatedSpellClass) {
 //                        inGroup = true;
 //                        break;
@@ -180,10 +180,10 @@ public abstract class MageSpell extends Spell implements Enums
    public byte getEffectiveSkill(Character character, boolean includeKnowledgePenalty) {
       byte minSkill = -1;
       // check for the required Colleges
-      if (_prerequisiteColleges == null) {
+      if (prerequisiteColleges == null) {
          return 0;
       }
-      for (MageCollege college : _prerequisiteColleges) {
+      for (MageCollege college : prerequisiteColleges) {
          byte collegeLevel = character.getCollegeLevel(college.getName());
          if ((minSkill == -1) || (collegeLevel < minSkill)) {
             minSkill = collegeLevel;
@@ -199,11 +199,11 @@ public abstract class MageSpell extends Spell implements Enums
    public byte getKnowledgePenalty(Character character) {
       byte penalty = 0;
       // If this spell is known (level >0), then all prerequisite spells must also already be known.
-      if (_level == 0) {
+      if (level == 0) {
          // Spell is not known (level 0 means 'familiar'), so penalty is 4.
          penalty = 4;
          // check for other required spells that may also not be known
-         for (Class<MageSpell> prereqSpellClass : _prerequisiteSpells) {
+         for (Class<MageSpell> prereqSpellClass : prerequisiteSpells) {
             try {
                MageSpell prereqSpell = prereqSpellClass.getDeclaredConstructor().newInstance();
                byte knownSpellLevel = character.getSpellLevel(prereqSpell.getName());
@@ -250,8 +250,8 @@ public abstract class MageSpell extends Spell implements Enums
 
    protected void copyDataFrom(MageSpell source) {
       super.copyDataFrom(source);
-      _attributeMod = source._attributeMod;
-      _prerequisiteSpells = source._prerequisiteSpells;
+      attributeMod = source.attributeMod;
+      prerequisiteSpells = source.prerequisiteSpells;
    }
 
    public byte getBurnLevel() {
@@ -267,7 +267,7 @@ public abstract class MageSpell extends Spell implements Enums
          // Spell burn possible, is over-powered
          Wound wound = getFailureBurnWound();
          if (wound != null) {
-            _caster.applyWound(wound, arena);
+            caster.applyWound(wound, arena);
             String message = getCasterName() + "'s failed spell causes " + wound.getWounds() + " wounds " + "and " + wound.getPain() + "points of pain";
             arena.sendMessageTextToAllClients(message, false/*popUp*/);
             return wound;
@@ -281,7 +281,7 @@ public abstract class MageSpell extends Spell implements Enums
       byte burnLevel = getBurnLevel();
       if (burnLevel > 0) {
          return new Wound((byte) (burnLevel * 3), Enums.Location.BODY, "Magical burn", burnLevel /*painLevel*/, burnLevel/*wound*/, 0 /*bleedRate*/,
-                          0 /*armPenalty*/, 0 /*movePenalty*/, 0 /*knockedDownDist*/, DamageType.ELECTRIC, 0 /*effectMask*/, _caster);
+                          0 /*armPenalty*/, 0 /*movePenalty*/, 0 /*knockedDownDist*/, DamageType.ELECTRIC, 0 /*effectMask*/, caster);
       }
       return null;
    }
@@ -291,7 +291,7 @@ public abstract class MageSpell extends Spell implements Enums
       byte burnLevel = getBurnLevel();
       if (burnLevel > 0) {
          return new Wound(burnLevel, Enums.Location.BODY, "Magical burn", burnLevel /*painLevel*/, 0/*wound*/, 0 /*bleedRate*/, 0 /*armPenalty*/,
-                          0 /*movePenalty*/, 0 /*knockedDownDist*/, DamageType.ELECTRIC, 0 /*effectMask*/, _caster);
+                          0 /*movePenalty*/, 0 /*knockedDownDist*/, DamageType.ELECTRIC, 0 /*effectMask*/, caster);
       }
       return null;
    }
@@ -367,9 +367,9 @@ public abstract class MageSpell extends Spell implements Enums
 
    private String getCollegesNames() {
       StringBuilder sb = new StringBuilder();
-      if (_prerequisiteColleges != null) {
+      if (prerequisiteColleges != null) {
          boolean showComma = false;
-         for (MageCollege college : _prerequisiteColleges) {
+         for (MageCollege college : prerequisiteColleges) {
             if (showComma) {
                sb.append(", ");
             }
@@ -383,7 +383,7 @@ public abstract class MageSpell extends Spell implements Enums
 //   private String getPrerequisiteNames() {
 //      StringBuilder sb = new StringBuilder();
 //      int spellCount = 0;
-//      for (Class< ? extends MageSpell> prereq : _prerequisiteSpells) {
+//      for (Class< ? extends MageSpell> prereq : prerequisiteSpells) {
 //         if (spellCount++ > 0) {
 //            sb.append(", ");
 //         }
@@ -402,15 +402,15 @@ public abstract class MageSpell extends Spell implements Enums
    private String getImmediatePrerequisiteNames() {
       StringBuilder sb = new StringBuilder();
       int spellCount = 0;
-      for (Class< ? extends MageSpell> prereq : _prerequisiteSpells) {
+      for (Class< ? extends MageSpell> prereq : prerequisiteSpells) {
          try {
             // Check if any of the other prerequisite spells list this spell as a prerequisite
             boolean skip = false;
-            for (Class< ? extends MageSpell> prereq2 : _prerequisiteSpells) {
+            for (Class< ? extends MageSpell> prereq2 : prerequisiteSpells) {
                if (prereq != prereq2) {
                   try {
                      MageSpell spell2 = prereq2.getDeclaredConstructor().newInstance();
-                     for (Class< ? extends MageSpell> prereq3 : spell2._prerequisiteSpells) {
+                     for (Class< ? extends MageSpell> prereq3 : spell2.prerequisiteSpells) {
                         if (prereq == prereq3) {
                            skip = true;
                            break;
@@ -442,8 +442,8 @@ public abstract class MageSpell extends Spell implements Enums
    private String getRequiredByNames() {
       StringBuilder sb = new StringBuilder();
       int spellCount = 0;
-      for (MageSpell spell : MageSpells._spellsList) {
-         for (Class<MageSpell> prereq : spell._prerequisiteSpells) {
+      for (MageSpell spell : MageSpells.spellsList) {
+         for (Class<MageSpell> prereq : spell.prerequisiteSpells) {
             if (prereq == this.getClass()) {
                if (spellCount++ > 0) {
                   sb.append(", ");
@@ -462,7 +462,7 @@ public abstract class MageSpell extends Spell implements Enums
       TableRow tr = new TableRow();
       tr.addTD(spellTN);
       tr.addTD("spell Casting TN (power=" + getPower() +
-               ", MA=" + _caster.getMagicalAptitude() + ")");
+               ", MA=" + caster.getMagicalAptitude() + ")");
       sbDescription.append(tr);
       return spellTN;
    }

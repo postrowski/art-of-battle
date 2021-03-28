@@ -16,30 +16,45 @@ import java.util.List;
 
 public class Shield extends Thing {
 
-   private byte _damageDone;
+   private             byte     damageDone;
+   public static final String   NAME_None    = "No Shield";
+   public static final String   NAME_Buckler = "Buckler";
+   public static final String   NAME_Small   = "Small Shield";
+   public static final String   NAME_Medium  = "Medium Shield";
+   public static final String   NAME_Large   = "Large Shield";
+   public static final String   NAME_Tower   = "Tower Shield";
+   static private      Shield   noShield     = null;
+   public static final Shield[] shieldList   = new Shield[]{     //  dam  pd lbs   $
+                               new Shield(NAME_None,     0,  0,  0,   0, null),
+                               new Shield(NAME_Buckler,  8,  0,  2,  30, null),
+                               new Shield(NAME_Small,   12,  1,  4,  50, null),
+                               new Shield(NAME_Medium,  14,  2,  8,  70, null),
+                               new Shield(NAME_Large,   16,  3, 15,  90, null),
+                               new Shield(NAME_Tower,   18,  4, 25, 120, null),
+                            };
+
    public Shield() {}
    private Shield(String name, int damage, int pd, double weight, int cost, Race racialBase) {
       super(name, racialBase, cost, weight, (byte) pd);
-      _damageDone = (byte) damage;
+      damageDone = (byte) damage;
    }
 
    @Override
    public Shield clone() {
-      return new Shield(_name, _damageDone, _passiveDefense, _weight, _cost, getRacialBase());
+      return new Shield(name, damageDone, passiveDefense, weight, cost, getRacialBase());
    }
 
-   static private Shield _noShield = null;
    static public Shield getShield(String name, Race racialBase) {
       if (name != null) {
-         for (Shield element : _shieldList) {
-            if (name.equalsIgnoreCase(element._name)) {
+         for (Shield element : shieldList) {
+            if (name.equalsIgnoreCase(element.name)) {
                Shield shield = element.clone();
                shield.setRacialBase(racialBase);
                return shield;
             }
-            if (_noShield == null) {
-               if (element._weight == 0) {
-                  _noShield = element;
+            if (noShield == null) {
+               if (element.weight == 0) {
+                  noShield = element;
                }
             }
          }
@@ -49,13 +64,13 @@ public class Shield extends Thing {
          if (name.startsWith("Magic ")) {
             Shield nonMagicShield = getShield(name.substring("Magic ".length()), racialBase);
             Shield magicShield = nonMagicShield.clone();
-            magicShield._name = name;
-            magicShield._weight = 0;
-            magicShield._cost   = 1;// don't set to zero, because that causes isReal() to return false.
+            magicShield.name = name;
+            magicShield.weight = 0;
+            magicShield.cost = 1;// don't set to zero, because that causes isReal() to return false.
             return magicShield;
          }
       }
-      Shield shield = _noShield.clone();
+      Shield shield = noShield.clone();
       shield.setRacialBase(racialBase);
       return shield;
    }
@@ -83,24 +98,10 @@ public class Shield extends Thing {
       super.copyData(source);
    }
 
-   public static final String   NAME_None    = "No Shield";
-   public static final String   NAME_Buckler = "Buckler";
-   public static final String   NAME_Small   = "Small Shield";
-   public static final String   NAME_Medium  = "Medium Shield";
-   public static final String   NAME_Large   = "Large Shield";
-   public static final String   NAME_Tower   = "Tower Shield";
-   public static final Shield[] _shieldList  = new Shield[] {     //  dam  pd lbs   $
-                                                                  new Shield(NAME_None,     0,  0,  0,   0, null),
-                                                                  new Shield(NAME_Buckler,  8,  0,  2,  30, null),
-                                                                  new Shield(NAME_Small,   12,  1,  4,  50, null),
-                                                                  new Shield(NAME_Medium,  14,  2,  8,  70, null),
-                                                                  new Shield(NAME_Large,   16,  3, 15,  90, null),
-                                                                  new Shield(NAME_Tower,   18,  4, 25, 120, null),
-                                                                  };
    static public List<String> getShieldNames() {
       List<String> list = new ArrayList<>();
-      for (Shield element : _shieldList) {
-         list.add(element._name);
+      for (Shield element : shieldList) {
+         list.add(element.name);
       }
       return list;
    }
@@ -144,7 +145,7 @@ public class Shield extends Thing {
       return "block";
    }
    public byte getDamage() {
-      return _damageDone;
+      return damageDone;
    }
    @Override
    public DrawnObject drawThing(int size, RGB foreground, RGB background)
@@ -153,7 +154,7 @@ public class Shield extends Thing {
          return null;
       }
       double width;
-      switch (_name) {
+      switch (name) {
          case NAME_Buckler: width = 0.6;  break;
          case NAME_Small:   width = 0.75; break;
          case NAME_Medium:  width = 1.0;  break;
@@ -175,7 +176,7 @@ public class Shield extends Thing {
 
    public static List<Shield> getShieldListForRace(Race race) {
       List<Shield> list = new ArrayList<>();
-      for (Shield shield : _shieldList) {
+      for (Shield shield : shieldList) {
          Shield copy = shield.clone();
          copy.setRacialBase(race);
          list.add(copy);

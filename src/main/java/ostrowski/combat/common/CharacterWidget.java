@@ -26,22 +26,26 @@ import java.util.List;
 public class CharacterWidget implements Enums, ModifyListener {
 
    // these object all implement the IUIBlock Interface:
-   private final AdvantagesBlock     _advantagesBlock    = new AdvantagesBlock(this);
-   private final ArmorBlock          _armorBlock         = new ArmorBlock(this);
-   private final AttributesBlock     _attributesBlock    = new AttributesBlock(this);
-   private final DefenseBlock        _defenseBlock       = new DefenseBlock(this);
-   private final DiceBlock           _diceBlock          = new DiceBlock(this);
-   private final SkillsBlock _skillsBlock        = new SkillsBlock(this);
-   private final MainBlock   _topBlock;
-   private final WeaponBlock _weaponBlock        = new WeaponBlock(this);
-   private final EncumbranceBlock    _encumbranceBlock   = new EncumbranceBlock(this);
-   private final SpellsBlock         _spellsBlock        = new SpellsBlock(this);
+   private final AdvantagesBlock  advantagesBlock    = new AdvantagesBlock(this);
+   private final ArmorBlock       armorBlock         = new ArmorBlock(this);
+   private final AttributesBlock  attributesBlock    = new AttributesBlock(this);
+   private final DefenseBlock     defenseBlock       = new DefenseBlock(this);
+   private final DiceBlock        diceBlock          = new DiceBlock(this);
+   private final SkillsBlock      skillsBlock        = new SkillsBlock(this);
+   private final MainBlock        topBlock;
+   private final WeaponBlock      weaponBlock        = new WeaponBlock(this);
+   private final EncumbranceBlock encumbranceBlock   = new EncumbranceBlock(this);
+   private final SpellsBlock      spellsBlock        = new SpellsBlock(this);
    // these don't:
-   public        Character           _character          = null;
-   public final  List<IUIBlock> _uiBlocks           = new ArrayList<>();
-   private       int                 _uniqueConnectionID = -1;
-   public        AI                  _ai;
-   private       boolean             _blocksInitialized  = false;
+   public        Character        character          = null;
+   public final  List<IUIBlock>   uiBlocks           = new ArrayList<>();
+   private       int              uniqueConnectionID = -1;
+   public        AI               ai;
+   private       boolean          blocksInitialized  = false;
+
+   public static boolean inModify = false;
+   boolean inRefreshDisplay = false;
+
    public CharacterWidget(String preferedCharName, CharacterFile charFile) {
        this(preferedCharName, charFile, null);
    }
@@ -68,46 +72,45 @@ public class CharacterWidget implements Enums, ModifyListener {
             setCharacter(charFile.getCharacter(preferedCharName));
          }
       }
-      _topBlock= new MainBlock(this, charFile, display);
+      topBlock = new MainBlock(this, charFile, display);
 
-      if (_advantagesBlock != null) {
-         _uiBlocks.add(_advantagesBlock);
+      if (advantagesBlock != null) {
+         uiBlocks.add(advantagesBlock);
       }
-      if (_armorBlock != null) {
-         _uiBlocks.add(_armorBlock);
+      if (armorBlock != null) {
+         uiBlocks.add(armorBlock);
       }
-      if (_attributesBlock != null) {
-         _uiBlocks.add(_attributesBlock);
+      if (attributesBlock != null) {
+         uiBlocks.add(attributesBlock);
       }
-      if (_defenseBlock != null) {
-         _uiBlocks.add(_defenseBlock);
+      if (defenseBlock != null) {
+         uiBlocks.add(defenseBlock);
       }
-      if (_diceBlock != null) {
-         _uiBlocks.add(_diceBlock);
+      if (diceBlock != null) {
+         uiBlocks.add(diceBlock);
       }
-      if (_skillsBlock != null) {
-         _uiBlocks.add(_skillsBlock);
+      if (skillsBlock != null) {
+         uiBlocks.add(skillsBlock);
       }
-      if (_weaponBlock != null) {
-         _uiBlocks.add(_weaponBlock);
+      if (weaponBlock != null) {
+         uiBlocks.add(weaponBlock);
       }
-      if (_advantagesBlock != null)
-       {
-         _uiBlocks.add(_advantagesBlock); // weaponBlock updates may adjust the wealth advantage, so add it here after the _weaponBlock update
+      if (advantagesBlock != null) {
+         uiBlocks.add(advantagesBlock); // weaponBlock updates may adjust the wealth advantage, so add it here after the weaponBlock update
       }
-      if (_encumbranceBlock != null) {
-         _uiBlocks.add(_encumbranceBlock);
+      if (encumbranceBlock != null) {
+         uiBlocks.add(encumbranceBlock);
       }
-      if (_spellsBlock != null) {
-         _uiBlocks.add(_spellsBlock);
+      if (spellsBlock != null) {
+         uiBlocks.add(spellsBlock);
       }
       // Put the top block at the bottom, so it can update the add/edit/delete button
       // after all other block have been updated.
-      _uiBlocks.add(_topBlock);
+      uiBlocks.add(topBlock);
    }
 
    public CharacterFile getCharacterFile() {
-      return _topBlock._charFile;
+      return topBlock.charFile;
    }
    public void buildCharSheet(Composite parent)
    {
@@ -120,129 +123,127 @@ public class CharacterWidget implements Enums, ModifyListener {
       Composite middleBlock = Helper.createComposite(midRightBlock, 1, GridData.FILL_BOTH);
       Composite rightBlock = Helper.createComposite(midRightBlock, 1, GridData.FILL_BOTH);
 
-      _topBlock.buildBlock(leftBlock);
-      if (_attributesBlock != null) {
-         _attributesBlock.buildBlock(leftBlock);
+      this.topBlock.buildBlock(leftBlock);
+      if (attributesBlock != null) {
+         attributesBlock.buildBlock(leftBlock);
       }
-      if (_diceBlock != null) {
-         _diceBlock.buildBlock(leftBlock);
+      if (diceBlock != null) {
+         diceBlock.buildBlock(leftBlock);
       }
-      if (_advantagesBlock != null) {
-         _advantagesBlock.buildBlock(leftBlock);
+      if (advantagesBlock != null) {
+         advantagesBlock.buildBlock(leftBlock);
       }
-      if (_encumbranceBlock != null) {
-         _encumbranceBlock.buildBlock(leftBlock);
-      }
-
-      if (_weaponBlock != null) {
-         _weaponBlock.buildBlock(topBlock);
+      if (encumbranceBlock != null) {
+         encumbranceBlock.buildBlock(leftBlock);
       }
 
-      if (_skillsBlock != null) {
-         _skillsBlock.buildBlock(middleBlock);
-      }
-      if (_spellsBlock != null) {
-         _spellsBlock.buildBlock(middleBlock);
+      if (weaponBlock != null) {
+         weaponBlock.buildBlock(topBlock);
       }
 
-      if (_armorBlock != null) {
-         _armorBlock.buildBlock(rightBlock);
+      if (skillsBlock != null) {
+         skillsBlock.buildBlock(middleBlock);
       }
-      if (_defenseBlock != null) {
-         _defenseBlock.buildBlock(rightBlock);
+      if (spellsBlock != null) {
+         spellsBlock.buildBlock(middleBlock);
       }
 
-      _blocksInitialized = true;
+      if (armorBlock != null) {
+         armorBlock.buildBlock(rightBlock);
+      }
+      if (defenseBlock != null) {
+         defenseBlock.buildBlock(rightBlock);
+      }
+
+      blocksInitialized = true;
       updateDisplayFromCharacter();
    }
 
    public void updateDisplayFromCharacter() {
-      if (_character != null) {
-         _inModify = true;
-         for (IUIBlock helper : _uiBlocks) {
-            helper.updateDisplayFromCharacter(_character);
+      if (character != null) {
+         inModify = true;
+         for (IUIBlock helper : uiBlocks) {
+            helper.updateDisplayFromCharacter(character);
          }
          refreshDisplay();
-         _inModify = false;
+         inModify = false;
       }
    }
 
-   boolean _inRefreshDisplay = false;
    public void refreshDisplay() {
-      if (_inRefreshDisplay) {
+      if (inRefreshDisplay) {
          return;
       }
-      _inRefreshDisplay = true;
+      inRefreshDisplay = true;
       try {
-         if (_blocksInitialized) {
-            for (IUIBlock helper : _uiBlocks) {
+         if (blocksInitialized) {
+            for (IUIBlock helper : uiBlocks) {
 //               long startTime = System.currentTimeMillis();
-               helper.refreshDisplay(_character);
+               helper.refreshDisplay(character);
 //               long endTime = System.currentTimeMillis();
 //Rules.diag("received Character - refreshDisplay of " + block.getClass().getName() + " took " + ((endTime - startTime) / 1000.0) + " seconds");
             }
          }
       }
       finally {
-         _inRefreshDisplay = false;
+         inRefreshDisplay = false;
       }
    }
 
    public void updateCharacterFromDisplay() {
-      if (_character != null) {
-         for (IUIBlock helper : _uiBlocks) {
-            helper.updateCharacterFromDisplay(_character);
+      if (character != null) {
+         for (IUIBlock helper : uiBlocks) {
+            helper.updateCharacterFromDisplay(character);
          }
-         _character.refreshDefenses();
+         character.refreshDefenses();
       }
    }
 
 
    public void setControls(boolean enabledFlag, boolean visibleFlag)
    {
-      if (_character == null) {
+      if (character == null) {
           enabledFlag = false;
       }
-      if (_attributesBlock != null) {
-         _attributesBlock.enableControls(enabledFlag);
+      if (attributesBlock != null) {
+         attributesBlock.enableControls(enabledFlag);
       }
-                                    _topBlock.enableControls(enabledFlag);
-      if (_skillsBlock != null) {
-         _skillsBlock.enableControls(enabledFlag);
+                                    topBlock.enableControls(enabledFlag);
+      if (skillsBlock != null) {
+         skillsBlock.enableControls(enabledFlag);
       }
-      if (_weaponBlock != null) {
-         _weaponBlock.enableControls(enabledFlag);
+      if (weaponBlock != null) {
+         weaponBlock.enableControls(enabledFlag);
       }
-      if (_spellsBlock != null) {
-         _spellsBlock.enableControls(enabledFlag);
+      if (spellsBlock != null) {
+         spellsBlock.enableControls(enabledFlag);
       }
    }
 
-   public static boolean _inModify = false;
    @Override
    public void modifyText(ModifyEvent e) {
       modifyText(e, null);
    }
    public void modifyText(ModifyEvent e, IUIBlock sourceBlock) {
-      if (!_inModify) {
-         _inModify = true;
+      if (!inModify) {
+         inModify = true;
          if (sourceBlock != null) {
             // If one block was changed, the only change to the character should be from data within that block:
-            sourceBlock.updateCharacterFromDisplay(_character);
+            sourceBlock.updateCharacterFromDisplay(character);
          }
          else {
             updateCharacterFromDisplay();
          }
          refreshDisplay();
-         _inModify = false;
+         inModify = false;
       }
    }
 
    public void updateCharacter(Character character)
    {
-      if (_character != null) {
-         if (character._uniqueID == _character._uniqueID) {
-            _character.copyData(character);
+      if (this.character != null) {
+         if (character.uniqueID == this.character.uniqueID) {
+            this.character.copyData(character);
             refreshDisplay();
          }
       }
@@ -250,29 +251,29 @@ public class CharacterWidget implements Enums, ModifyListener {
    }
 
    public void setUniqueConnectionID(int id) {
-      _uniqueConnectionID = id;
+      uniqueConnectionID = id;
       Rules.setDiagComponentName("Client"+id);
    }
 
    public void setCharacter(Character character) {
-      _character = character;
-      if (_character != null) {
-         _character._uniqueID = _uniqueConnectionID;
+      this.character = character;
+      if (this.character != null) {
+         this.character.uniqueID = uniqueConnectionID;
       }
 //      refreshDisplay();
-      if (!_inModify) {
-         _inModify = true;
+      if (!inModify) {
+         inModify = true;
          refreshDisplay();
-         _inModify = false;
+         inModify = false;
       }
    }
 
    public void setAIEngine(String aiEngine) {
       if (aiEngine.equalsIgnoreCase("Off")) {
-         _ai = null;
+         ai = null;
       }
       else {
-         _ai = new AI(_character, AI_Type.getByString(aiEngine));
+         ai = new AI(character, AI_Type.getByString(aiEngine));
       }
    }
 }

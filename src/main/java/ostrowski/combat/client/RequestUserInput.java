@@ -25,18 +25,18 @@ import java.util.HashMap;
 import java.util.List;
 
 public class RequestUserInput extends Dialog implements KeyListener, FocusListener, ControlListener {
-   public final Shell                     _shell;
-   private Button[]                       _buttons;
-   private boolean                        _backupSelected;
-   private boolean                        _executed                = false;
-   private boolean                        _twoStepExecute          = false;
-   private final String                   _message;
-   private Object                         _result;
-   private final SyncRequest              _req;
-   private TargetPrioritiesWidget         _targetPrioritiesWidget  = null;
-   private final IMapWidget               _reportSelectMapWidget;
-   private final Character                _actingCharacter;
-   private              StatusChit              _statusChit              = null;
+   public final         Shell                   shell;
+   private              Button[]                buttons;
+   private              boolean                 backupSelected;
+   private              boolean                 executed                 = false;
+   private              boolean                 twoStepExecute           = false;
+   private final        String                  message;
+   private              Object                  result;
+   private final        SyncRequest             req;
+   private              TargetPrioritiesWidget  targetPrioritiesWidget   = null;
+   private final        IMapWidget              reportSelectMapWidget;
+   private final        Character               actingCharacter;
+   private              StatusChit              statusChit               = null;
    private static final HashMap<Integer, Point> LOCATION_BY_CHARACTER_ID = new HashMap<>();
 
    public RequestUserInput(Shell parent, int style, SyncRequest req, boolean showChit) {
@@ -47,11 +47,11 @@ public class RequestUserInput extends Dialog implements KeyListener, FocusListen
                            IMapWidget reportSelectMapWidget, Character actingCharacter, boolean showChit) {
       super(parent, checkStyle(style));
 
-      _reportSelectMapWidget = reportSelectMapWidget;
-      _actingCharacter = actingCharacter;
-      _req = req;
+      this.reportSelectMapWidget = reportSelectMapWidget;
+      this.actingCharacter = actingCharacter;
+      this.req = req;
       if (req instanceof RequestTarget) {
-         _twoStepExecute = true;
+         twoStepExecute = true;
       }
       String    message  = req.getMessage();
       String[]  options  = req.getOptions();
@@ -60,31 +60,31 @@ public class RequestUserInput extends Dialog implements KeyListener, FocusListen
       if (message == null) {
          SWT.error(SWT.ERROR_NULL_ARGUMENT);
       }
-      _message = message;
+      this.message = message;
 
-      _shell = new Shell(parent, SWT.DIALOG_TRIM | checkStyle(style));
-      _shell.setText(getText());
-      _shell.setLayout(new GridLayout(2/*numColumns*/, false/*makeColumnsEqualWidth*/));
-      _shell.addFocusListener(this);
+      shell = new Shell(parent, SWT.DIALOG_TRIM | checkStyle(style));
+      shell.setText(getText());
+      shell.setLayout(new GridLayout(2/*numColumns*/, false/*makeColumnsEqualWidth*/));
+      shell.addFocusListener(this);
       if (showChit)
       {
-         if (_statusChit == null) {
-            _statusChit = new StatusChit(_shell, SWT.MODELESS | SWT.NO_TRIM | SWT.NO_FOCUS);
+         if (statusChit == null) {
+            statusChit = new StatusChit(shell, SWT.MODELESS | SWT.NO_TRIM | SWT.NO_FOCUS);
          }
          if (actingCharacter != null) {
-            _statusChit.updateFromCharacter(actingCharacter);
+            statusChit.updateFromCharacter(actingCharacter);
          }
          // TODO: figure how to regain focus:
          //       these 4 attempts don't work:
-         _shell.setFocus();
-         _shell.forceActive();
-         _shell.setActive();
-         _shell.forceFocus();
+         shell.setFocus();
+         shell.forceActive();
+         shell.setActive();
+         shell.forceFocus();
       }
 
-      new Label(_shell, SWT.CENTER).setImage(_shell.getDisplay().getSystemImage(checkImageStyle(style)));
+      new Label(shell, SWT.CENTER).setImage(shell.getDisplay().getSystemImage(checkImageStyle(style)));
 
-      Composite body = new Composite(_shell, SWT.NONE);
+      Composite body = new Composite(shell, SWT.NONE);
       body.addFocusListener(this);
 
 
@@ -122,10 +122,10 @@ public class RequestUserInput extends Dialog implements KeyListener, FocusListen
          layout.verticalSpacing = 5;
          optionsGroup.setLayout(layout);
 
-         _targetPrioritiesWidget  = new TargetPrioritiesWidget(null, null);
+         targetPrioritiesWidget = new TargetPrioritiesWidget(null, null);
          List<Character> combatants = ((RequestTarget)req).getTargetCharacters();
-         _targetPrioritiesWidget.buildBlock(optionsGroup);
-         _targetPrioritiesWidget.updateCombatants(combatants );
+         targetPrioritiesWidget.buildBlock(optionsGroup);
+         targetPrioritiesWidget.updateCombatants(combatants);
       }
       else if (options != null) {
          int columns = 1;
@@ -144,7 +144,7 @@ public class RequestUserInput extends Dialog implements KeyListener, FocusListen
 
          Color shortcutColor = new Color(body.getDisplay(), 128, 128, 128);
 
-         _buttons = new Button[options.length];
+         buttons = new Button[options.length];
          Composite column = new Composite(optionsGroup, SWT.NONE);
          GridLayout grid = new GridLayout();
          boolean showShortCutInItsOwnColumn = true;
@@ -158,7 +158,7 @@ public class RequestUserInput extends Dialog implements KeyListener, FocusListen
                column.setLayout(grid);
             }
             else {
-               String shortcut = _req.getStringOfKeyStrokeAssignedToOption(i);
+               String shortcut = this.req.getStringOfKeyStrokeAssignedToOption(i);
                String buttonText = options[i];
                if (showShortCutInItsOwnColumn) {
                   Label shortcutLabel = new Label(column, SWT.RIGHT);
@@ -172,57 +172,57 @@ public class RequestUserInput extends Dialog implements KeyListener, FocusListen
                }
 
                // Two-step operations use radio buttons. one-step operations use push buttons
-               _buttons[i] = new Button(column, (_twoStepExecute ? (SWT.LEFT | SWT.RADIO) : (SWT.PUSH)));
-               _buttons[i].setText(buttonText);
-               _buttons[i].setEnabled(enableds[i]);
-               _buttons[i].addKeyListener(this);
-               _buttons[i].addFocusListener(this);
-               _buttons[i].addSelectionListener(new SelectionAdapter() {
+               buttons[i] = new Button(column, (twoStepExecute ? (SWT.LEFT | SWT.RADIO) : (SWT.PUSH)));
+               buttons[i].setText(buttonText);
+               buttons[i].setEnabled(enableds[i]);
+               buttons[i].addKeyListener(this);
+               buttons[i].addFocusListener(this);
+               buttons[i].addSelectionListener(new SelectionAdapter() {
 
                   @Override
                   public void widgetSelected(SelectionEvent e) {
                      int index = -1;
-                     for (int j=0 ; j<_buttons.length ; j++) {
-                        if (_buttons[j] == e.widget) {
+                     for (int j = 0; j < buttons.length ; j++) {
+                        if (buttons[j] == e.widget) {
                            index = j;
                         }
                      }
                      if (index != -1) {
-                        for (int k=0 ; k<_buttons.length ; k++) {
-                           if (_buttons[k] != null) {
-                              _buttons[k].setSelection(k == index);
+                        for (int k = 0; k < buttons.length ; k++) {
+                           if (buttons[k] != null) {
+                              buttons[k].setSelection(k == index);
                            }
                         }
-                        _result = index;
+                        result = index;
                      }
                      focusGained();
 
-                     if (!_twoStepExecute) {
-                        _shell.dispose();
-                        _executed = true;
+                     if (!twoStepExecute) {
+                        shell.dispose();
+                        executed = true;
                      }
 
                   }
                });
-               if (!_twoStepExecute) {
+               if (!twoStepExecute) {
                   // Make the button fill the width of the current column,
                   // so they all have the same width and look nicer.
                   GridData gridData = new GridData();
                   gridData.horizontalAlignment = GridData.FILL;
                   gridData.grabExcessHorizontalSpace = true;
-                  _buttons[i].setLayoutData(gridData);
+                  buttons[i].setLayoutData(gridData);
                }
             }
          }
          shortcutColor.dispose();
          //            int maxWidth = 0;
-         //            for (Button button : _buttons) {
+         //            for (Button button : buttons) {
          //               if (button == null)
          //                  continue;
          //               String text = button.getText();
-         //               Point extent = _shell.getDisplay().get.stringExtent(text);
+         //               Point extent = shell.getDisplay().get.stringExtent(text);
          //            }
-         //            for (Button button : _buttons) {
+         //            for (Button button : buttons) {
          //               if (button == null)
          //                  continue;
          //               button.setSize(maxSize);
@@ -230,7 +230,7 @@ public class RequestUserInput extends Dialog implements KeyListener, FocusListen
       }
 
 
-      Composite footer = new Composite(_shell, SWT.NONE);
+      Composite footer = new Composite(shell, SWT.NONE);
 
       GridData data3 = new GridData();
       data3.grabExcessHorizontalSpace = true;
@@ -243,18 +243,18 @@ public class RequestUserInput extends Dialog implements KeyListener, FocusListen
       rowlayout.fill = true;
       footer.setLayout(rowlayout);
 
-      if (_twoStepExecute) {
+      if (twoStepExecute) {
          Button ok = new Button(footer, SWT.PUSH);
          ok.setText("  Execute ");
          ok.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-               _shell.dispose();
-               _executed = true;
+               shell.dispose();
+               executed = true;
             }
          });
          ok.addKeyListener(this);
-         _shell.setDefaultButton(ok);
+         shell.setDefaultButton(ok);
       }
 
       if (allowBackup) {
@@ -263,8 +263,8 @@ public class RequestUserInput extends Dialog implements KeyListener, FocusListen
          backupButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-               _backupSelected = true;
-               _shell.dispose();
+               backupSelected = true;
+               shell.dispose();
             }
          });
       }
@@ -315,23 +315,23 @@ public class RequestUserInput extends Dialog implements KeyListener, FocusListen
    public void setDefault(int defaultIndex)
    {
       if (defaultIndex != -1) {
-         if (_twoStepExecute) {
-            if (_buttons[defaultIndex] != null) {
-               _buttons[defaultIndex].setSelection(true);
+         if (twoStepExecute) {
+            if (buttons[defaultIndex] != null) {
+               buttons[defaultIndex].setSelection(true);
             }
-            if (_result == null) {
-               _result = defaultIndex;
+            if (result == null) {
+               result = defaultIndex;
             }
          }
          else {
-            _shell.setDefaultButton(_buttons[defaultIndex]);
+            shell.setDefaultButton(buttons[defaultIndex]);
          }
       }
    }
 
    public void setTitle(String string) {
       super.setText(string);
-      _shell.setText(string);
+      shell.setText(string);
    }
 
    /*
@@ -340,116 +340,116 @@ public class RequestUserInput extends Dialog implements KeyListener, FocusListen
     */
    public Object open() {
       focusGained();
-      _shell.pack();
-      _shell.open();
-      _shell.layout();
+      shell.pack();
+      shell.open();
+      shell.layout();
 
-      if (MessageDialog._topMessage != null) {
-         if (MessageDialog._topMessage._shell.isDisposed()) {
-            MessageDialog._topMessage = null;
+      if (MessageDialog.topMessage != null) {
+         if (MessageDialog.topMessage.shell.isDisposed()) {
+            MessageDialog.topMessage = null;
          }
          else {
-            MessageDialog._topMessage._shell.moveAbove(_shell);
+            MessageDialog.topMessage.shell.moveAbove(shell);
          }
       }
 
       Point statusChitLoc = null;
-      if (_actingCharacter != null) {
-         Point currentLoc = LOCATION_BY_CHARACTER_ID.get(_actingCharacter._uniqueID);
+      if (actingCharacter != null) {
+         Point currentLoc = LOCATION_BY_CHARACTER_ID.get(actingCharacter.uniqueID);
          if (currentLoc == null) {
-            currentLoc = _shell.getLocation();
-            LOCATION_BY_CHARACTER_ID.put(_actingCharacter._uniqueID, currentLoc);
-            Point size = _shell.getSize();
+            currentLoc = shell.getLocation();
+            LOCATION_BY_CHARACTER_ID.put(actingCharacter.uniqueID, currentLoc);
+            Point size = shell.getSize();
             statusChitLoc = new Point((currentLoc.x + size.x) - 5, currentLoc.y);
          }
          else {
-            _shell.setLocation(currentLoc);
+            shell.setLocation(currentLoc);
          }
       }
-      if (_statusChit != null)
+      if (statusChit != null)
       {
-         _statusChit.open();
+         statusChit.open();
          if (statusChitLoc != null) {
-            _statusChit.setLocation(statusChitLoc);
+            statusChit.setLocation(statusChitLoc);
          }
       }
 
-      _shell.addKeyListener(this);
-      _shell.addControlListener(this);
+      shell.addKeyListener(this);
+      shell.addControlListener(this);
 
 
-      while (!_shell.isDisposed()) {
-         if (!_shell.getDisplay().readAndDispatch()) {
-            _shell.getDisplay().sleep();
+      while (!shell.isDisposed()) {
+         if (!shell.getDisplay().readAndDispatch()) {
+            shell.getDisplay().sleep();
          }
       }
-      if (_statusChit != null) {
-         if (CombatServer._isServer || !Configuration.showChit()) {
-            _statusChit.close();
-            _statusChit = null;
+      if (statusChit != null) {
+         if (CombatServer.isServer || !Configuration.showChit()) {
+            statusChit.close();
+            statusChit = null;
          }
       }
 
-      if (!_executed) {
-         int[] optionIds = _req.getOptionIDs();
+      if (!executed) {
+         int[] optionIds = req.getOptionIDs();
          for (int i=0 ; i<optionIds.length ; i++) {
-            if (_buttons[i] == null) {
+            if (buttons[i] == null) {
                continue;
             }
             if (optionIds[i] == SyncRequest.OPT_CANCEL_ACTION) {
-               _req.setAnswerByOptionIndex(i);
-               _result = i;
+               req.setAnswerByOptionIndex(i);
+               result = i;
             }
          }
       }
-      if ((_req instanceof RequestTarget) && (_targetPrioritiesWidget != null)) {
-         RequestTarget reqTarget = (RequestTarget) _req;
-         reqTarget.setOrderedTargetIds(_targetPrioritiesWidget.getOrderedEnemies());
+      if ((req instanceof RequestTarget) && (targetPrioritiesWidget != null)) {
+         RequestTarget reqTarget = (RequestTarget) req;
+         reqTarget.setOrderedTargetIds(targetPrioritiesWidget.getOrderedEnemies());
          return null;
       }
-      return _result;
+      return result;
    }
    public boolean isBackupSelected() {
-      return _backupSelected;
+      return backupSelected;
    }
    public void focusGained() {
-      if (_reportSelectMapWidget != null) {
-         _reportSelectMapWidget.setFocusForCharacter(_actingCharacter, _req);
+      if (reportSelectMapWidget != null) {
+         reportSelectMapWidget.setFocusForCharacter(actingCharacter, req);
       }
    }
    @Override
    public void keyPressed(KeyEvent arg0) {
       if (arg0.keyCode == SWT.ESC) {
-         _req.setAnswerID(SyncRequest.OPT_CANCEL_ACTION);
+         req.setAnswerID(SyncRequest.OPT_CANCEL_ACTION);
       }
    }
 
    @Override
    public void keyReleased(KeyEvent arg0) {
-      if (_req.keyPressed(arg0)) {
-         int answerId = _req.getFullAnswerID();
-         int[] optionIds = _req.getOptionIDs();
+      if (req.keyPressed(arg0)) {
+         int answerId = req.getFullAnswerID();
+         int[] optionIds = req.getOptionIDs();
          for (int i=0 ; i<optionIds.length ; i++) {
-            if (_buttons[i] == null) {
+            if (buttons[i] == null) {
                continue;
             }
             if (optionIds[i] == answerId) {
-               _buttons[i].setSelection(true);
-               _req.setAnswerByOptionIndex(i);
-               _result = i;
+               buttons[i].setSelection(true);
+               req.setAnswerByOptionIndex(i);
+               result = i;
             }
             else {
-               _buttons[i].setSelection(false);
+               buttons[i].setSelection(false);
             }
          }
-         _executed = true;
-         _shell.close();
+         executed = true;
+         shell.close();
       }
    }
    @Override
    public void focusGained(FocusEvent arg0) {
       focusGained();
-      if (CombatServer._uses3dMap) {
+      if (CombatServer.uses3dMap) {
          CombatServer._this.redrawMap();
       }
    }
@@ -458,20 +458,20 @@ public class RequestUserInput extends Dialog implements KeyListener, FocusListen
    }
    @Override
    public void controlMoved(ControlEvent arg0) {
-      if (CombatServer._uses3dMap) {
+      if (CombatServer.uses3dMap) {
          CombatServer._this.redrawMap();
       }
-      Point currentLoc = _shell.getLocation();
-      if (_actingCharacter != null) {
-         Point oldLoc = LOCATION_BY_CHARACTER_ID.get(_actingCharacter._uniqueID);
+      Point currentLoc = shell.getLocation();
+      if (actingCharacter != null) {
+         Point oldLoc = LOCATION_BY_CHARACTER_ID.get(actingCharacter.uniqueID);
          if ((oldLoc == null) || !(oldLoc.equals(currentLoc))) {
-            LOCATION_BY_CHARACTER_ID.put(_actingCharacter._uniqueID, currentLoc);
+            LOCATION_BY_CHARACTER_ID.put(actingCharacter.uniqueID, currentLoc);
          }
       }
    }
    @Override
    public void controlResized(ControlEvent arg0) {
-      if (CombatServer._uses3dMap) {
+      if (CombatServer.uses3dMap) {
          CombatServer._this.redrawMap();
       }
    }

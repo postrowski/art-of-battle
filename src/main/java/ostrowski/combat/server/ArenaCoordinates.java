@@ -10,30 +10,30 @@ import ostrowski.protocol.SerializableObject;
 
 public class ArenaCoordinates extends SerializableObject implements Enums, Comparable<ArenaCoordinates>
 {
-   public    short              _x              = -1;
-   public    short              _y              = -1;
-   public    float              _altitude       = 0f;
+   public    short x        = -1;
+   public    short y        = -1;
+   public    float altitude = 0f;
    public ArenaCoordinates(short x, short y) {
-      _x = x;
-      _y = y;
+      this.x = x;
+      this.y = y;
    }
    public ArenaCoordinates() {
       // This constructor is only used by serialization.
    }
 
    public float getAltitude() {
-      return _altitude;
+      return altitude;
    }
    public void adjustAltitude(float delta) {
-      _altitude += delta;
+      altitude += delta;
    }
 
    @Override
    public void serializeFromStream(DataInputStream in) {
       try {
-         _x = readShort(in);
-         _y = readShort(in);
-         // _altitude = readFloat(in);
+         x = readShort(in);
+         y = readShort(in);
+         // altitude = readFloat(in);
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -42,9 +42,9 @@ public class ArenaCoordinates extends SerializableObject implements Enums, Compa
    @Override
    public void serializeToStream(DataOutputStream out) {
       try {
-         writeToStream(_x, out);
-         writeToStream(_y, out);
-         //writeToStream(_altitude, out);
+         writeToStream(x, out);
+         writeToStream(y, out);
+         //writeToStream(altitude, out);
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -60,30 +60,30 @@ public class ArenaCoordinates extends SerializableObject implements Enums, Compa
       }
    }
    public void copyData(ArenaCoordinates source) {
-      _x = source._x;
-      _y = source._y;
-      _altitude = source._altitude;
+      x = source.x;
+      y = source.y;
+      altitude = source.altitude;
    }
 
    @Override
    public int compareTo(ArenaCoordinates arg0) {
-      if (_x < arg0._x) {
+      if (x < arg0.x) {
          return -1;
       }
-      if (_x > arg0._x) {
+      if (x > arg0.x) {
          return 1;
       }
-      return Short.compare(_y, arg0._y);
+      return Short.compare(y, arg0.y);
    }
 
    public boolean sameCoordinates(ArenaCoordinates otherCoord) {
       if (otherCoord == null) {
          return false;
       }
-      if (otherCoord._x != _x) {
+      if (otherCoord.x != x) {
          return false;
       }
-      return otherCoord._y == _y;
+      return otherCoord.y == y;
    }
 
    @Override
@@ -96,54 +96,54 @@ public class ArenaCoordinates extends SerializableObject implements Enums, Compa
 
    @Override
    public int hashCode() {
-      return ((_x<<11) + _y) << 11;// + (int)(_altitude * 100);
+      return ((x << 11) + y) << 11;// + (int)(altitude * 100);
    }
 
    @Override
    public String toString() {
-      return "ArenaCoord{"+_x+","+_y+" ^"+_altitude+"}";
+      return "ArenaCoord{" + x + "," + y + " ^" + altitude + "}";
    }
 
    public static short getDistance(ArenaCoordinates coord1, ArenaCoordinates coord2) {
-      return getDistance((short)(Math.abs(coord1._x - coord2._x)),
-                         (short)(Math.abs(coord1._y - coord2._y)));
+      return getDistance((short)(Math.abs(coord1.x - coord2.x)),
+                         (short)(Math.abs(coord1.y - coord2.y)));
    }
    public static Facing getFacingToLocation(ArenaCoordinates fromCoord, ArenaCoordinates toCoord) {
-      if (fromCoord._x == toCoord._x) {
-         if (fromCoord._y == (toCoord._y+2)) {
+      if (fromCoord.x == toCoord.x) {
+         if (fromCoord.y == (toCoord.y + 2)) {
             return Facing.NOON;
          }
-         if (fromCoord._y == (toCoord._y-2)) {
+         if (fromCoord.y == (toCoord.y - 2)) {
             return Facing._6_OCLOCK;
          }
       }
-      else if (fromCoord._x == (toCoord._x-1)) {
-         if (toCoord._y == (fromCoord._y+1)) {
+      else if (fromCoord.x == (toCoord.x - 1)) {
+         if (toCoord.y == (fromCoord.y + 1)) {
             return Facing._4_OCLOCK;
          }
-         if (toCoord._y == (fromCoord._y-1)) {
+         if (toCoord.y == (fromCoord.y - 1)) {
             return Facing._2_OCLOCK;
          }
       }
-      else if (fromCoord._x == (toCoord._x+1)) {
-         if (toCoord._y == (fromCoord._y+1)) {
+      else if (fromCoord.x == (toCoord.x + 1)) {
+         if (toCoord.y == (fromCoord.y + 1)) {
             return Facing._8_OCLOCK;
          }
-         if (toCoord._y == (fromCoord._y-1)) {
+         if (toCoord.y == (fromCoord.y - 1)) {
             return Facing._10_OCLOCK;
          }
       }
       return null;
    }
    public static ArenaCoordinates getForwardMovement(ArenaCoordinates curCoord, Facing direction) {
-      return new ArenaCoordinates((short)(curCoord._x + direction.moveX),
-                                  (short)(curCoord._y + direction.moveY));
+      return new ArenaCoordinates((short)(curCoord.x + direction.moveX),
+                                  (short)(curCoord.y + direction.moveY));
    }
 
    public static byte getFacingToward(ArenaCoordinates fromCoord, ArenaCoordinates toCoord) {
       if ((toCoord != null) && (fromCoord != null)) {
-         int xDiff = toCoord._x - fromCoord._x;
-         int yDiff = toCoord._y - fromCoord._y;
+         int xDiff = toCoord.x - fromCoord.x;
+         int yDiff = toCoord.y - fromCoord.y;
          boolean above3OclockLine = (yDiff <=0 );
          boolean above1OclockLine = (yDiff <= (-xDiff*3));
          boolean above5OclockLine = (yDiff <= (xDiff*3));

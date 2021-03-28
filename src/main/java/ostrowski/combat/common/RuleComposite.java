@@ -17,9 +17,7 @@ import ostrowski.combat.common.spells.mage.MageSpell;
 import ostrowski.combat.common.spells.priest.PriestSpell;
 import ostrowski.combat.common.things.Armor;
 import ostrowski.combat.common.things.Shield;
-import ostrowski.combat.common.things.Weapon;
 import ostrowski.combat.common.things.Weapons;
-import ostrowski.combat.common.wounds.WoundChart;
 import ostrowski.combat.common.wounds.WoundCharts;
 import ostrowski.combat.server.Configuration;
 import ostrowski.ui.Helper;
@@ -38,8 +36,8 @@ public class RuleComposite extends Composite
    private static final int BROWSER_MISC            = 9;
    private static final int BROWSER_TAB_COUNT       = 10;
 
-   private final Browser[]                        _rulesBrowser       = new Browser[BROWSER_TAB_COUNT];
-   private final HashMap<DamageType, Browser>     _rulesWoundsBrowser = new HashMap<>();
+   private final Browser[]                    rulesBrowser       = new Browser[BROWSER_TAB_COUNT];
+   private final HashMap<DamageType, Browser> rulesWoundsBrowser = new HashMap<>();
 
    public RuleComposite(Composite parent, int hSpan, int gridDataStyle, Configuration configuration,
                         int windowWidth, Color backgroundColor) {
@@ -96,24 +94,24 @@ public class RuleComposite extends Composite
                subComposite = Helper.createComposite(woundsSubFolder, 1, GridData.FILL_BOTH);
                // add the control to the TabItem
                item.setControl( subComposite );
-               _rulesWoundsBrowser.put(damType, new Browser(subComposite, SWT.NONE | SWT.BORDER));
+               rulesWoundsBrowser.put(damType, new Browser(subComposite, SWT.NONE | SWT.BORDER));
                data = new GridData(SWT.FILL, SWT.FILL, true/*grabExcessHorizontalSpace*/, true/*grabExcessVerticalSpace*/);
                data.minimumHeight = 550;
                data.minimumWidth  = windowWidth-30;
                data.horizontalSpan = 3;
-               _rulesWoundsBrowser.get(damType).setLayoutData(data);
-               _rulesWoundsBrowser.get(damType).setBackground(backgroundColor);
+               rulesWoundsBrowser.get(damType).setLayoutData(data);
+               rulesWoundsBrowser.get(damType).setBackground(backgroundColor);
             }
          }
          else
          {
-            _rulesBrowser[tab] = new Browser(subComposite, SWT.NONE | SWT.BORDER);
+            rulesBrowser[tab] = new Browser(subComposite, SWT.NONE | SWT.BORDER);
             data = new GridData(SWT.FILL, SWT.FILL, true/*grabExcessHorizontalSpace*/, true/*grabExcessVerticalSpace*/);
             data.minimumHeight = 600;
             data.minimumWidth  = windowWidth;
             data.horizontalSpan = 3;
-            _rulesBrowser[tab].setLayoutData(data);
-            _rulesBrowser[tab].setBackground(backgroundColor);
+            rulesBrowser[tab].setLayoutData(data);
+            rulesBrowser[tab].setBackground(backgroundColor);
          }
       }
       updateRulesSection();
@@ -124,7 +122,7 @@ public class RuleComposite extends Composite
    */
   public void updateRulesSection()
   {
-     if (_rulesBrowser == null) {
+     if (rulesBrowser == null) {
         return;
      }
      String sb = HtmlBuilder.getHTMLHeader() +
@@ -135,21 +133,21 @@ public class RuleComposite extends Composite
                  Shield.generateHtmlTable() +
                  "</td></tr></table>" +
                  "</body>";
-     _rulesBrowser[BROWSER_ARMOR_SHIELDS].setText(sb);
-     _rulesBrowser[BROWSER_RACES].setText(Race.generateHtmlTable());
-     _rulesBrowser[BROWSER_SKILLS].setText(Rules.generateSkillsHtmlTable());
-     _rulesBrowser[BROWSER_ATTRIBUTES].setText(Rules.generateAttributesHtmlTable());
-     _rulesBrowser[BROWSER_ADVANTAGES].setText(Advantage.generateHtmlTable());
-     _rulesBrowser[BROWSER_SPELLS_MAGE].setText(MageSpell.generateHtmlTableMageSpells());
-     _rulesBrowser[BROWSER_SPELLS_PRIEST].setText(PriestSpell.generateHtmlTablePriestSpells());
-     _rulesBrowser[BROWSER_WEAPONS].setText(Weapons.generateHtmlTable());
+     rulesBrowser[BROWSER_ARMOR_SHIELDS].setText(sb);
+     rulesBrowser[BROWSER_RACES].setText(Race.generateHtmlTable());
+     rulesBrowser[BROWSER_SKILLS].setText(Rules.generateSkillsHtmlTable());
+     rulesBrowser[BROWSER_ATTRIBUTES].setText(Rules.generateAttributesHtmlTable());
+     rulesBrowser[BROWSER_ADVANTAGES].setText(Advantage.generateHtmlTable());
+     rulesBrowser[BROWSER_SPELLS_MAGE].setText(MageSpell.generateHtmlTableMageSpells());
+     rulesBrowser[BROWSER_SPELLS_PRIEST].setText(PriestSpell.generateHtmlTablePriestSpells());
+     rulesBrowser[BROWSER_WEAPONS].setText(Weapons.generateHtmlTable());
 
      for (DamageType damType : DamageType.values()) {
         if (damType != DamageType.NONE) {
-           _rulesWoundsBrowser.get(damType).setText(WoundCharts.generateHtmlTable(damType));
+           rulesWoundsBrowser.get(damType).setText(WoundCharts.generateHtmlTable(damType));
         }
      }
-     _rulesWoundsBrowser.get(DamageType.GENERAL).setText(WoundCharts.generateCombinedHtmlTable());
-     _rulesBrowser[BROWSER_MISC].setText(Rules.generateMiscHtmlTable());
+     rulesWoundsBrowser.get(DamageType.GENERAL).setText(WoundCharts.generateCombinedHtmlTable());
+     rulesBrowser[BROWSER_MISC].setText(Rules.generateMiscHtmlTable());
   }
 }

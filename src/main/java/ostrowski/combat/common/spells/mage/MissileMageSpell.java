@@ -17,21 +17,21 @@ import ostrowski.combat.common.weaponStyles.WeaponStyleAttackRanged;
 
 public abstract class MissileMageSpell extends MageSpell implements IMissileSpell, ICastInBattle
 {
-   final byte       _damageBase;
-   final DieType    _damageDieType;
-   final DamageType _damageType;
-   final byte       _damagePerPower;
-   final short      _missileRangeBase;
+   final byte       damageBase;
+   final DieType    damageDieType;
+   final DamageType damageType;
+   final byte       damagePerPower;
+   final short      missileRangeBase;
 
    @SuppressWarnings("rawtypes")
    public MissileMageSpell(String name, Class[] prerequisiteSpells, MageCollege[] colleges,
                            byte damageBase, byte damagePerPower, DieType damageDieType, DamageType damageType, short missileRangeBase) {
       super(name, prerequisiteSpells, colleges);
-      _damageBase       = damageBase;
-      _damagePerPower   = damagePerPower;
-      _damageDieType    = damageDieType;
-      _damageType       = damageType;
-      _missileRangeBase = missileRangeBase;
+      this.damageBase = damageBase;
+      this.damagePerPower = damagePerPower;
+      this.damageDieType = damageDieType;
+      this.damageType = damageType;
+      this.missileRangeBase = missileRangeBase;
    }
 
    @Override
@@ -47,13 +47,13 @@ public abstract class MissileMageSpell extends MageSpell implements IMissileSpel
    public String describeSpell() {
       return "The '" + getName() + "' spell creates a " + getName() + " from the caster's hand, which immediately travels towards the target." +
              " The missile may be dodged or blocked as any missile weapon. The attack roll is the same as the casting roll." +
-             "<br/>The damage done by the missile is " + _damageBase + " + " + _damagePerPower + "*(spell power) + " +
-             DiceSet.getSingleDie(_damageDieType) + " in " + _damageType.shortname + " damage." +
+             "<br/>The damage done by the missile is " + damageBase + " + " + damagePerPower + "*(spell power) + " +
+             DiceSet.getSingleDie(damageDieType) + " in " + damageType.shortname + " damage." +
              " If the caster is larger or smaller than human, the caster's racial build adjustment is added to the damage done.";
    }
 
    @Override
-   public String getMissileWeaponName()            {return _name;}
+   public String getMissileWeaponName()            {return name;}
    @Override
    public int    getMissileWeaponSize()            {return 0;}
    @Override
@@ -64,9 +64,9 @@ public abstract class MissileMageSpell extends MageSpell implements IMissileSpel
    @Override
    public String explainDamage() {
       StringBuilder sb = new StringBuilder();
-      sb.append(_damageBase).append(" + ").append(_damagePerPower).append(" * ").append(getPower()).append(" (power points) + ").append(getDamageDice());
-      if (_caster != null) {
-         byte size = _caster.getRace().getBuildModifier();
+      sb.append(damageBase).append(" + ").append(damagePerPower).append(" * ").append(getPower()).append(" (power points) + ").append(getDamageDice());
+      if (caster != null) {
+         byte size = caster.getRace().getBuildModifier();
          sb.append(" ");
          if (size > 0) {
             sb.append("+");
@@ -81,10 +81,10 @@ public abstract class MissileMageSpell extends MageSpell implements IMissileSpel
    @Override
    public byte   getSpellDamageBase() {
       byte sizeAdjust = 0;
-      if (_caster != null) {
-         sizeAdjust = _caster.getRace().getBuildModifier();
+      if (caster != null) {
+         sizeAdjust = caster.getRace().getBuildModifier();
       }
-      return (byte) (_damageBase + (getPower() * _damagePerPower) + sizeAdjust);
+      return (byte) (damageBase + (getPower() * damagePerPower) + sizeAdjust);
    }
    @Override
    public MissileWeapon getMissileWeapon() {
@@ -96,9 +96,9 @@ public abstract class MissileMageSpell extends MageSpell implements IMissileSpel
                                0 /*minimum skill level*/,
                                getMissileWeaponSkillPenalty(),
                                getSpellDamageBase(),
-                               _damageDieType,
-                               _damageType,
-                               _missileRangeBase,
+                               damageDieType,
+                               damageType,
+                               missileRangeBase,
                                getHandsRequired(),
                                new String[] {});
    }
@@ -150,15 +150,15 @@ public abstract class MissileMageSpell extends MageSpell implements IMissileSpel
 
    @Override
    public DiceSet getDamageDice() {
-      //return DiceSet.getSingleDie(_damageDieType).addBonus(getCaster().getRace().getBuildModifier());
-      return DiceSet.getSingleDie(_damageDieType);
+      //return DiceSet.getSingleDie(damageDieType).addBonus(getCaster().getRace().getBuildModifier());
+      return DiceSet.getSingleDie(damageDieType);
    }
    @Override
    public DamageType getDamageType() {
-      return _damageType;
+      return damageType;
    }
    @Override
    public short getRangeBase() {
-      return _missileRangeBase;
+      return missileRangeBase;
    }
 }

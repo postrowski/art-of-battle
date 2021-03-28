@@ -28,8 +28,8 @@ import ostrowski.combat.server.Configuration;
 
 public abstract class ResistedPriestSpell extends ExpiringPriestSpell implements IResistedSpell
 {
-   protected Attribute _resistedAtt  = null;
-   protected byte _resistedActions = 1;
+   protected Attribute resistedAtt     = null;
+   protected byte      resistedActions = 1;
 
    protected ResistedPriestSpell() {}
    protected ResistedPriestSpell(String name, Attribute resistedAtt, byte resistedActions, boolean expires,
@@ -42,8 +42,8 @@ public abstract class ResistedPriestSpell extends ExpiringPriestSpell implements
    protected ResistedPriestSpell(String name, Attribute resistedAtt, byte resistedActions, short baseExpirationTimeInTurns, short bonusTimeInTurnsPerPower,
                                  Class< ? extends IPriestGroup> group, int affinity) {
       super(name, baseExpirationTimeInTurns,bonusTimeInTurnsPerPower, group, affinity);
-      _resistedAtt = resistedAtt;
-      _resistedActions = resistedActions;
+      this.resistedAtt = resistedAtt;
+      this.resistedActions = resistedActions;
    }
 
    @Override
@@ -68,18 +68,18 @@ public abstract class ResistedPriestSpell extends ExpiringPriestSpell implements
     */
    @Override
    public byte getResistanceAttribute(Character target) {
-      return target.getAttributeLevel(_resistedAtt);
+      return target.getAttributeLevel(resistedAtt);
    }
    @Override
    public byte getResistanceActions() {
-      return _resistedActions;
+      return resistedActions;
    }
    @Override
    public DiceSet getResistanceDice(Character target) {
       byte resistanceAttrLevel = getResistanceAttribute(target);
       byte resistanceActions = getResistanceActions();
-      if (Configuration._useExtendedDice) {
-         return Rules.getDice(resistanceAttrLevel, resistanceActions, _resistedAtt/*attribute*/, RollType.MAGIC_RESISTANCE);
+      if (Configuration.useExtendedDice) {
+         return Rules.getDice(resistanceAttrLevel, resistanceActions, resistedAtt/*attribute*/, RollType.MAGIC_RESISTANCE);
       }
       byte bonus = (byte) ((resistanceActions -2) * 5);
       resistanceAttrLevel += bonus;
@@ -100,7 +100,7 @@ public abstract class ResistedPriestSpell extends ExpiringPriestSpell implements
 
    @Override
    public String getResistanceAttributeName() {
-      return _resistedAtt.shortName;
+      return resistedAtt.shortName;
    }
 
    @Override
@@ -115,7 +115,7 @@ public abstract class ResistedPriestSpell extends ExpiringPriestSpell implements
             }
             else {
                sbDescription.append(getCasterName()).append("'s ");
-               sbDescription.append(_name);
+               sbDescription.append(name);
                sbDescription.append(" spell has an effective power of ").append(effectivePower);
             }
          }
@@ -137,8 +137,8 @@ public abstract class ResistedPriestSpell extends ExpiringPriestSpell implements
       super.copyDataFrom(source);
       if (source instanceof ResistedPriestSpell) {
          ResistedPriestSpell resistedSource = (ResistedPriestSpell) source;
-         _resistedAtt  = resistedSource._resistedAtt;
-         _resistedActions = resistedSource._resistedActions;
+         resistedAtt = resistedSource.resistedAtt;
+         resistedActions = resistedSource.resistedActions;
       }
    }
 
@@ -147,8 +147,8 @@ public abstract class ResistedPriestSpell extends ExpiringPriestSpell implements
    {
       super.serializeToStream(out);
       try {
-         writeToStream(_resistedAtt.value, out);
-         writeToStream(_resistedActions, out);
+         writeToStream(resistedAtt.value, out);
+         writeToStream(resistedActions, out);
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -158,8 +158,8 @@ public abstract class ResistedPriestSpell extends ExpiringPriestSpell implements
    {
       super.serializeFromStream(in);
       try {
-         _resistedAtt  = Attribute.getByValue(readByte(in));
-         _resistedActions = readByte(in);
+         resistedAtt = Attribute.getByValue(readByte(in));
+         resistedActions = readByte(in);
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -168,8 +168,8 @@ public abstract class ResistedPriestSpell extends ExpiringPriestSpell implements
    @Override
    public Element getXMLObject(Document parentDoc, String newLine) {
       Element node = super.getXMLObject(parentDoc, newLine);
-      node.setAttribute("resistedAtt", String.valueOf(_resistedAtt.value));
-      node.setAttribute("resistedActions", String.valueOf(_resistedActions));
+      node.setAttribute("resistedAtt", String.valueOf(resistedAtt.value));
+      node.setAttribute("resistedActions", String.valueOf(resistedActions));
       return node;
    }
    @Override
@@ -177,17 +177,17 @@ public abstract class ResistedPriestSpell extends ExpiringPriestSpell implements
       super.readFromXMLObject(namedNodeMap);
       Node node = namedNodeMap.getNamedItem("resistedAtt");
       if (node != null) {
-         _resistedAtt  = Attribute.getByValue(Byte.parseByte(node.getNodeValue()));
+         resistedAtt = Attribute.getByValue(Byte.parseByte(node.getNodeValue()));
       }
       node = namedNodeMap.getNamedItem("resistedActions");
       if (node != null) {
-         _resistedActions  = Byte.parseByte(node.getNodeValue());
+         resistedActions = Byte.parseByte(node.getNodeValue());
       }
    }
    @Override
    protected int resolveCast(RequestAction attack, byte rangeAdjustedCastingTN, byte castingPower, short distanceInHexes, RANGE range, Battle battle,
                            StringBuilder sbDescription) {
-      _castRolledAllOnes = false;
+      castRolledAllOnes = false;
       return 0;
    }
 

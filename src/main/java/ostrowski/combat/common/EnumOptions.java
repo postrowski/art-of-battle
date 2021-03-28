@@ -7,43 +7,43 @@ import java.util.List;
 
 public abstract class EnumOptions <T> extends SerializableObject implements Cloneable
 {
-   protected final List<T> _list = new ArrayList<>();
+   protected final List<T> list = new ArrayList<>();
    protected EnumOptions() {}
 
 
    public void add(T opt) {
-      if (!_list.contains(opt)) {
-         _list.add(opt);
+      if (!list.contains(opt)) {
+         list.add(opt);
       }
    }
 
    public void add(T... opts) {
       for (T opt : opts) {
-         if (!_list.contains(opt)) {
-            _list.add(opt);
+         if (!list.contains(opt)) {
+            list.add(opt);
          }
       }
    }
    @SafeVarargs
    public final void remove(T... opts) {
       for (T opt : opts) {
-         _list.remove(opt);
+         list.remove(opt);
       }
    }
    public boolean contains(T opt) {
-      return _list.contains(opt);
+      return list.contains(opt);
    }
 
    public T get(int index) {
-      return _list.get(index);
+      return list.get(index);
    }
 
    public int size() {
-      return _list.size();
+      return list.size();
    }
 
    public void clear() {
-      _list.clear();
+      list.clear();
    }
 
 }

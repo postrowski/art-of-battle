@@ -16,26 +16,26 @@ import java.util.List;
 
 public class TargetPriorities extends SerializableObject implements Enums
 {
-   final List<Integer> _orderedEnemyIDs = new ArrayList<>();
+   final List<Integer> orderedEnemyIDs = new ArrayList<>();
    public TargetPriorities() {}
    public TargetPriorities(List<Character> enemyCharacters) {
       setEnemies(enemyCharacters);
    }
 
    public void setEnemies(List<Character> enemyCharacters) {
-      _orderedEnemyIDs.clear();
+      orderedEnemyIDs.clear();
       for (Character enemy : enemyCharacters) {
-         _orderedEnemyIDs.add(enemy._uniqueID);
+         orderedEnemyIDs.add(enemy.uniqueID);
       }
    }
    public List<Integer> getOrderedEnemyIdsList() {
-      return _orderedEnemyIDs;
+      return orderedEnemyIDs;
    }
    @Override
    public void serializeToStream(DataOutputStream out)
    {
       try {
-         writeToStream(_orderedEnemyIDs, out);
+         writeToStream(orderedEnemyIDs, out);
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -45,7 +45,7 @@ public class TargetPriorities extends SerializableObject implements Enums
    public void serializeFromStream(DataInputStream in)
    {
       try {
-         readIntoListInteger(_orderedEnemyIDs, in);
+         readIntoListInteger(orderedEnemyIDs, in);
       } catch (IOException e) {
          e.printStackTrace();
       }

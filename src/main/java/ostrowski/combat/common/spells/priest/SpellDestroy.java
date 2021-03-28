@@ -6,7 +6,6 @@ import ostrowski.combat.common.enums.DamageType;
 import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.IRangedSpell;
 import ostrowski.combat.common.wounds.Wound;
-import ostrowski.combat.common.wounds.WoundChart;
 import ostrowski.combat.common.wounds.WoundCharts;
 import ostrowski.combat.server.Arena;
 
@@ -66,7 +65,7 @@ public abstract class SpellDestroy extends ResistedPriestSpell implements IRange
    }
 
    public byte getDamageAmount() {
-      return (byte) (_castingEffectiveness * getPower());
+      return (byte) (castingEffectiveness * getPower());
    }
 
    @Override

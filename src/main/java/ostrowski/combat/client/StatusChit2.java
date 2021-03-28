@@ -16,75 +16,75 @@ import org.eclipse.swt.widgets.Shell;
 
 public class StatusChit2 extends Dialog implements PaintListener
 {
-   private static Point LOCATION = null;
-   private final List<TextWheel> _textWheels = new ArrayList<>();
-   private Shell _shell = null;
+   private static Point          LOCATION   = null;
+   private final List<TextWheel> textWheels = new ArrayList<>();
+   private Shell                 shell      = null;
 
-   private TextWheel _initiative;
+   private TextWheel initiative;
 
    public StatusChit2(Shell parent, int style) {
       super (parent, SWT.MODELESS | SWT.NO_TRIM | style);
-      TextWheel._fullWidth = 150;
-      TextWheel._fullHieght = 150;
+      TextWheel.fullWidth = 150;
+      TextWheel.fullHeight = 150;
 
       //                                         percentages   angle         edge       angle  labelOffset    label       label  text  text
       //                                       radius cw block Open          edge       Width  Vert Horiz     label      Height  text  Height
-      _textWheels.add(new TextWheel(1.0, 1.0, .60, 20,    TextWheel.Edge.TOP,  0, -.08,  .00, "Initiative",    (20.0/500.0),        "2", (14.0/500.0)));
+      textWheels.add(new TextWheel(1.0, 1.0, .60, 20, TextWheel.Edge.TOP, 0, -.08, .00, "Initiative", (20.0 / 500.0), "2", (14.0 / 500.0)));
    }
 
    public void open() {
-      _shell = new Shell(getParent(), SWT.MODELESS | SWT.NO_BACKGROUND | SWT.TRANSPARENT | SWT.NO_TRIM | SWT.NO_FOCUS);
+      shell = new Shell(getParent(), SWT.MODELESS | SWT.NO_BACKGROUND | SWT.TRANSPARENT | SWT.NO_TRIM | SWT.NO_FOCUS);
 
-      _shell.setText("Status Chit");
+      shell.setText("Status Chit");
 
-      _shell.setLayout(new GridLayout(1/*numcolumns*/, false/*makeColumnsEqualWidth*/));
-      _shell.addPaintListener(this);
+      shell.setLayout(new GridLayout(1/*numcolumns*/, false/*makeColumnsEqualWidth*/));
+      shell.addPaintListener(this);
 
-      _shell.pack();
+      shell.pack();
 
       Region region = TextWheel.getRectRegion();
-      for (TextWheel wheel : _textWheels) {
+      for (TextWheel wheel : textWheels) {
          Region wheelRegion = wheel.getRegion();
          region.add(wheelRegion );
          wheelRegion.dispose();
       }
 
       Rectangle size = region.getBounds();
-      _shell.setRegion(region);
+      shell.setRegion(region);
       region.dispose();
-      _shell.setSize(size.width, size.height);
+      shell.setSize(size.width, size.height);
 
-      _shell.open();
+      shell.open();
       //_shell.setSize(TextWheel._fullWidth + 10, TextWheel._fullHieght + 10);
       if (LOCATION != null) {
-         _shell.setLocation(LOCATION);
+         shell.setLocation(LOCATION);
       }
    }
 
    public void close() {
-      if (!_shell.isDisposed()) {
-         _shell.close();
+      if (!shell.isDisposed()) {
+         shell.close();
       }
    }
 
    @Override
    public void paintControl(PaintEvent event) {
       event.gc.setBackground(event.display.getSystemColor(SWT.COLOR_WHITE));
-      for (TextWheel tw : _textWheels) {
+      for (TextWheel tw : textWheels) {
          tw.drawPhase1(event.gc);
       }
       event.gc.setBackground(event.display.getSystemColor(SWT.COLOR_GRAY));
       TextWheel.drawPhase2(event.gc);
       event.gc.setBackground(event.display.getSystemColor(SWT.COLOR_WHITE));
-      for (TextWheel tw : _textWheels) {
+      for (TextWheel tw : textWheels) {
          tw.drawPhase3(event.gc);
       }
       event.gc.setBackground(event.display.getSystemColor(SWT.COLOR_GRAY));
-      for (TextWheel tw : _textWheels) {
+      for (TextWheel tw : textWheels) {
          tw.drawPhase4(event.gc);
       }
       event.gc.setBackground(event.display.getSystemColor(SWT.COLOR_GRAY));
-      for (TextWheel tw : _textWheels) {
+      for (TextWheel tw : textWheels) {
          tw.drawPhase5(event.gc);
       }
       event.gc.setBackground(event.display.getSystemColor(SWT.COLOR_GRAY));
@@ -93,7 +93,7 @@ public class StatusChit2 extends Dialog implements PaintListener
    }
 
    public void setLocation(Point location) {
-      _shell.setLocation(location);
+      shell.setLocation(location);
       LOCATION = location;
    }
 }

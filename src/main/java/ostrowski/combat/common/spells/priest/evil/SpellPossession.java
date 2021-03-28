@@ -9,6 +9,7 @@ import ostrowski.combat.server.Arena;
 
 public class SpellPossession extends ResistedPriestSpell implements ICastInBattle
 {
+   private byte previousTeamID;
    public static final String NAME = "Possession";
    public SpellPossession() {
    }
@@ -23,9 +24,9 @@ public class SpellPossession extends ResistedPriestSpell implements ICastInBattl
 //         return getTargetName() + " falls under the control of " + getCasterName() + " 'Mind Control' spell.";
 //      return " is under the control of " + getCasterName() +" 'Mind Control' spell.";
       if (firstTime) {
-         return getTargetName() + " becomes an ally to " + getCasterName() + ", and is now on team " + TEAM_NAMES[_caster._teamID] + ".";
+         return getTargetName() + " becomes an ally to " + getCasterName() + ", and is now on team " + TEAM_NAMES[caster.teamID] + ".";
       }
-      return "(currently on team " + TEAM_NAMES[_caster._teamID] + ")";
+      return "(currently on team " + TEAM_NAMES[caster.teamID] + ")";
    }
 
    @Override
@@ -49,19 +50,18 @@ public class SpellPossession extends ResistedPriestSpell implements ICastInBattl
       return TargetType.TARGET_OTHER_FIGHTING;
    }
 
-   private byte _previousTeamID;
    @Override
    public void applyEffects(Arena arena) {
-      _previousTeamID = _target._teamID;
-      _target._teamID = _caster._teamID;
-      _target._targetID = -1;
-      arena.recomputeAllTargets(_target);
+      previousTeamID = target.teamID;
+      target.teamID = caster.teamID;
+      target.targetID = -1;
+      arena.recomputeAllTargets(target);
    }
 
    @Override
    public void removeEffects(Arena arena) {
-      _target._teamID = _previousTeamID;
-      arena.recomputeAllTargets(_target);
+      target.teamID = previousTeamID;
+      arena.recomputeAllTargets(target);
    }
 
 }

@@ -18,67 +18,67 @@ import java.util.List;
 
 public class Configuration implements SelectionListener
 {
-   public RuleComposite  _ruleComposite                = null;
+   public RuleComposite ruleComposite = null;
 
-   static public boolean _spellTnAffectedByMa          = true;
-   static public boolean _useSimpleDamage              = false;
-   static public boolean _useSimpleDice                = false;
-   static public boolean _useExtendedDice              = false;
-   static public boolean _useBellCurveDice             = true;
-   static public boolean _useComplexTOUDice            = true;
-   static public boolean _useD6ForAttributeRolls       = true;
-   static public boolean _use3DMap                     = false;
-   static public boolean _showChit                     = false;
-   static public boolean _rollDice                     = false;
-   static public int    _serverPort                    = 1777;
-   private       Button _spellTnAffectedByMaButton     = null;
-   private       Button _useSimpleDamageButton         = null;
-   //private Button        _useSimpleDiceButton        = null;
-   private Button        _useComplexTOUDiceButton      = null;
-   private Button        _useD6ForAttributeRollsButton = null;
-   private Button        _diceExtendedButton           = null;
-   private Button        _diceSimpleButton             = null;
-   private Button        _diceBellCurveButton          = null;
-   private Button        _use3DMapButton               = null;
-   private Button        _showChitButton               = null;
-   private Button        _rollDiceButton               = null;
-   private Text          _serverPortText               = null;
+   static public boolean spellTnAffectedByMa          = true;
+   static public boolean useSimpleDamage              = false;
+   static public boolean useSimpleDice                = false;
+   static public boolean useExtendedDice              = false;
+   static public boolean useBellCurveDice             = true;
+   static public boolean useComplexTOUDice            = true;
+   static public boolean useD6ForAttributeRolls       = true;
+   static public boolean use3DMap                     = false;
+   static public boolean showChit                     = false;
+   static public boolean rollDice                     = false;
+   static public int     serverPort                   = 1777;
+   private       Button  spellTnAffectedByMaButton    = null;
+   private       Button  useSimpleDamageButton        = null;
+   //private Button        useSimpleDiceButton        = null;
+   private       Button  useComplexTOUDiceButton      = null;
+   private       Button  useD6ForAttributeRollsButton = null;
+   private       Button  diceExtendedButton           = null;
+   private       Button  diceSimpleButton             = null;
+   private       Button  diceBellCurveButton          = null;
+   private       Button  use3DMapButton               = null;
+   private       Button  showChitButton               = null;
+   private       Button  rollDiceButton               = null;
+   private       Text    serverPortText               = null;
 
    public static boolean isSpellTnAffectedByMa() {
-      return _spellTnAffectedByMa;
+      return spellTnAffectedByMa;
    }
 
    public static boolean useSimpleDamage() {
-      return _useSimpleDamage;
+      return useSimpleDamage;
    }
 
    public static boolean useExtendedDice() {
-      return _useExtendedDice;
+      return useExtendedDice;
    }
    public static boolean useSimpleDice() {
-      return _useSimpleDice;
+      return useSimpleDice;
    }
    public static boolean useBellCurveDice() {
-      return _useBellCurveDice;
+      return useBellCurveDice;
    }
 
    public static boolean useComplexTOUDice() {
-      return _useComplexTOUDice;
+      return useComplexTOUDice;
    }
    public static boolean useD6ForAttributeRolls() {
-      return _useD6ForAttributeRolls;
+      return useD6ForAttributeRolls;
    }
    public static boolean use3DMap() {
-      return _use3DMap;
+      return use3DMap;
    }
    public static boolean showChit() {
-      return _showChit;
+      return showChit;
    }
    public static boolean rollDice() {
-      return _rollDice;
+      return rollDice;
    }
    public static int serverPort() {
-      return _serverPort;
+      return serverPort;
    }
 
    public Configuration() {
@@ -86,7 +86,7 @@ public class Configuration implements SelectionListener
 
    public void buildDisplay(Composite parent, boolean isServer) {
       if (parent instanceof RuleComposite) {
-         _ruleComposite = (RuleComposite) parent;
+         ruleComposite = (RuleComposite) parent;
       }
       readFromFile();
       Composite topGridBlock = new Composite(parent, SWT.NONE);
@@ -110,67 +110,67 @@ public class Configuration implements SelectionListener
       }
 
       if (leftGroup != null) {
-         _spellTnAffectedByMaButton = new Button(leftGroup, SWT.CHECK);
-         _spellTnAffectedByMaButton.setSelection(_spellTnAffectedByMa);
-         _spellTnAffectedByMaButton.addSelectionListener(this);
-         _spellTnAffectedByMaButton.setText("Spell TN affected by MA");
+         spellTnAffectedByMaButton = new Button(leftGroup, SWT.CHECK);
+         spellTnAffectedByMaButton.setSelection(spellTnAffectedByMa);
+         spellTnAffectedByMaButton.addSelectionListener(this);
+         spellTnAffectedByMaButton.setText("Spell TN affected by MA");
 
-         _useSimpleDamageButton = new Button(leftGroup, SWT.CHECK);
-         _useSimpleDamageButton.setSelection(_useSimpleDamage);
-         _useSimpleDamageButton.addSelectionListener(this);
-         _useSimpleDamageButton.setText("Use simple damage");
+         useSimpleDamageButton = new Button(leftGroup, SWT.CHECK);
+         useSimpleDamageButton.setSelection(useSimpleDamage);
+         useSimpleDamageButton.addSelectionListener(this);
+         useSimpleDamageButton.setText("Use simple damage");
       }
 
 
-      _showChitButton = new Button(rightGroup, SWT.CHECK);
-      _showChitButton.setSelection(_showChit);
-      _showChitButton.addSelectionListener(this);
-      _showChitButton.setText("Show Game Chit");
+      showChitButton = new Button(rightGroup, SWT.CHECK);
+      showChitButton.setSelection(showChit);
+      showChitButton.addSelectionListener(this);
+      showChitButton.setText("Show Game Chit");
 
-      _rollDiceButton = new Button(rightGroup, SWT.CHECK);
-      _rollDiceButton.setSelection(_rollDice);
-      _rollDiceButton.addSelectionListener(this);
-      _rollDiceButton.setText("Roll Dice");
+      rollDiceButton = new Button(rightGroup, SWT.CHECK);
+      rollDiceButton.setSelection(rollDice);
+      rollDiceButton.addSelectionListener(this);
+      rollDiceButton.setText("Roll Dice");
 
-      _use3DMapButton = new Button(rightGroup, SWT.CHECK);
-      _use3DMapButton.setSelection(_use3DMap);
-      _use3DMapButton.addSelectionListener(this);
-      _use3DMapButton.setText("Use 3D Map (requires restart)");
+      use3DMapButton = new Button(rightGroup, SWT.CHECK);
+      use3DMapButton.setSelection(use3DMap);
+      use3DMapButton.addSelectionListener(this);
+      use3DMapButton.setText("Use 3D Map (requires restart)");
 
       if (isServer) {
          Label serverPortLabel = new Label(rightGroup, SWT.NONE);
          serverPortLabel.setText("Server Port:");
-         _serverPortText = new Text(rightGroup, (SWT.LEFT | SWT.BORDER));
-         _serverPortText.setText(String.valueOf(_serverPort));
-         _serverPortText.addModifyListener(e -> _serverPort = Integer.parseInt(_serverPortText.getText()));
+         serverPortText = new Text(rightGroup, (SWT.LEFT | SWT.BORDER));
+         serverPortText.setText(String.valueOf(serverPort));
+         serverPortText.addModifyListener(e -> serverPort = Integer.parseInt(serverPortText.getText()));
       }
 
       if (middleGroup != null) {
-         _diceExtendedButton  = Helper.createRadioButton(middleGroup, "Complex set", null, this);
-         _diceSimpleButton    = Helper.createRadioButton(middleGroup, "Simple set (d10)", null, this);
-         _diceBellCurveButton = Helper.createRadioButton(middleGroup, "Bell curve (d10±)", null, this);
-         _diceExtendedButton.setSelection(_useExtendedDice);
-         _diceSimpleButton.setSelection(_useSimpleDice);
-         _diceBellCurveButton.setSelection(_useBellCurveDice);
+         diceExtendedButton = Helper.createRadioButton(middleGroup, "Complex set", null, this);
+         diceSimpleButton = Helper.createRadioButton(middleGroup, "Simple set (d10)", null, this);
+         diceBellCurveButton = Helper.createRadioButton(middleGroup, "Bell curve (d10±)", null, this);
+         diceExtendedButton.setSelection(useExtendedDice);
+         diceSimpleButton.setSelection(useSimpleDice);
+         diceBellCurveButton.setSelection(useBellCurveDice);
       }
 
-//      _useSimpleDiceButton = new Button(parent, SWT.CHECK);
-//      _useSimpleDiceButton.setSelection(_useSimpleDice);
-//      _useSimpleDiceButton.addSelectionListener(this);
-//      _useSimpleDiceButton.setText("Use simple dice (d10s)");
+//      useSimpleDiceButton = new Button(parent, SWT.CHECK);
+//      useSimpleDiceButton.setSelection(useSimpleDice);
+//      useSimpleDiceButton.addSelectionListener(this);
+//      useSimpleDiceButton.setText("Use simple dice (d10s)");
 
       if (middleGroup != null) {
-         _useComplexTOUDiceButton = new Button(middleGroup, SWT.CHECK);
-         _useComplexTOUDiceButton.setSelection(_useComplexTOUDice);
-         _useComplexTOUDiceButton.addSelectionListener(this);
-         _useComplexTOUDiceButton.setText("Use complex dice for TOU rolls");
+         useComplexTOUDiceButton = new Button(middleGroup, SWT.CHECK);
+         useComplexTOUDiceButton.setSelection(useComplexTOUDice);
+         useComplexTOUDiceButton.addSelectionListener(this);
+         useComplexTOUDiceButton.setText("Use complex dice for TOU rolls");
 
-         // make _useComplexTOUDiceButton span all three columns:
+         // make useComplexTOUDiceButton span all three columns:
          GridData layoutData = new GridData();
          layoutData.horizontalSpan = 3;
          layoutData.grabExcessHorizontalSpace = true;
          layoutData.grabExcessVerticalSpace = true;
-         _useComplexTOUDiceButton.setLayoutData(layoutData);
+         useComplexTOUDiceButton.setLayoutData(layoutData);
       }
    }
 
@@ -181,46 +181,46 @@ public class Configuration implements SelectionListener
    @Override
    public void widgetSelected(SelectionEvent e) {
       boolean updateRules = true;
-      if ((e.widget == _spellTnAffectedByMaButton) && (_spellTnAffectedByMaButton != null)) {
-         _spellTnAffectedByMa = _spellTnAffectedByMaButton.getSelection();
+      if ((e.widget == spellTnAffectedByMaButton) && (spellTnAffectedByMaButton != null)) {
+         spellTnAffectedByMa = spellTnAffectedByMaButton.getSelection();
       }
-      else if ((e.widget == _useSimpleDamageButton) && (_useSimpleDamageButton != null)) {
-         _useSimpleDamage = _useSimpleDamageButton.getSelection();
+      else if ((e.widget == useSimpleDamageButton) && (useSimpleDamageButton != null)) {
+         useSimpleDamage = useSimpleDamageButton.getSelection();
       }
-//      else if (e.widget == _useSimpleDiceButton) {
-//         _useSimpleDice = _useSimpleDiceButton.getSelection();
-//         _useComplexTOUDiceButton.setEnabled(_useSimpleDice);
-//         if (!_useSimpleDice) {
-//            _useComplexTOUDice = true;
+//      else if (e.widget == useSimpleDiceButton) {
+//         useSimpleDice = useSimpleDiceButton.getSelection();
+//         useComplexTOUDiceButton.setEnabled(useSimpleDice);
+//         if (!useSimpleDice) {
+//            useComplexTOUDice = true;
 //         }
 //      }
-      else if ((e.widget == _diceExtendedButton) && (_diceExtendedButton != null)) {
-         _useExtendedDice = _diceExtendedButton.getSelection();
+      else if ((e.widget == diceExtendedButton) && (diceExtendedButton != null)) {
+         useExtendedDice = diceExtendedButton.getSelection();
       }
-      else if ((e.widget == _diceSimpleButton) && ( _diceSimpleButton != null)) {
-         _useSimpleDice = _diceSimpleButton.getSelection();
+      else if ((e.widget == diceSimpleButton) && (diceSimpleButton != null)) {
+         useSimpleDice = diceSimpleButton.getSelection();
       }
-      else if ((e.widget == _diceBellCurveButton ) && (_diceBellCurveButton != null)) {
-         _useBellCurveDice = _diceBellCurveButton.getSelection();
+      else if ((e.widget == diceBellCurveButton) && (diceBellCurveButton != null)) {
+         useBellCurveDice = diceBellCurveButton.getSelection();
       }
-      else if ((e.widget == _useComplexTOUDiceButton) && (_useComplexTOUDiceButton != null)) {
-         _useComplexTOUDice = _useComplexTOUDiceButton.getSelection();
+      else if ((e.widget == useComplexTOUDiceButton) && (useComplexTOUDiceButton != null)) {
+         useComplexTOUDice = useComplexTOUDiceButton.getSelection();
       }
-      else if (e.widget == _use3DMapButton) {
-         _use3DMap = _use3DMapButton.getSelection();
+      else if (e.widget == use3DMapButton) {
+         use3DMap = use3DMapButton.getSelection();
          updateRules = false;
       }
-      else if (e.widget == _showChitButton) {
-         _showChit = _showChitButton.getSelection();
+      else if (e.widget == showChitButton) {
+         showChit = showChitButton.getSelection();
          updateRules = false;
       }
-      else if (e.widget == _rollDiceButton) {
-         _rollDice = _rollDiceButton.getSelection();
+      else if (e.widget == rollDiceButton) {
+         rollDice = rollDiceButton.getSelection();
          updateRules = false;
       }
       writeToFile();
-      if ((_ruleComposite != null) && updateRules) {
-         _ruleComposite.updateRulesSection();
+      if ((ruleComposite != null) && updateRules) {
+         ruleComposite.updateRulesSection();
       }
    }
 
@@ -228,27 +228,27 @@ public class Configuration implements SelectionListener
       File configFile = new File("Config.cnf");
       try (FileWriter out = new FileWriter(configFile))
       {
-         writeBoolean(out, "spellTnAffectedByMa", _spellTnAffectedByMa);
+         writeBoolean(out, "spellTnAffectedByMa", spellTnAffectedByMa);
          out.write("\n");
-         writeBoolean(out, "useSimpleDamage", _useSimpleDamage);
+         writeBoolean(out, "useSimpleDamage", useSimpleDamage);
          out.write("\n");
-         writeBoolean(out, "useSimpleDice", _useSimpleDice);
+         writeBoolean(out, "useSimpleDice", useSimpleDice);
          out.write("\n");
-         writeBoolean(out, "useExtendedDice", _useExtendedDice);
+         writeBoolean(out, "useExtendedDice", useExtendedDice);
          out.write("\n");
-         writeBoolean(out, "useBellCurveDice", _useBellCurveDice);
+         writeBoolean(out, "useBellCurveDice", useBellCurveDice);
          out.write("\n");
-         writeBoolean(out, "useComplexTOUDice", _useComplexTOUDice);
+         writeBoolean(out, "useComplexTOUDice", useComplexTOUDice);
          out.write("\n");
-         writeBoolean(out, "useD6ForAttributeRolls", _useD6ForAttributeRolls);
+         writeBoolean(out, "useD6ForAttributeRolls", useD6ForAttributeRolls);
          out.write("\n");
-         writeBoolean(out, "use3DMap", _use3DMap);
+         writeBoolean(out, "use3DMap", use3DMap);
          out.write("\n");
-         writeBoolean(out, "showChit", _showChit);
+         writeBoolean(out, "showChit", showChit);
          out.write("\n");
-         writeBoolean(out, "rollDice", _rollDice);
+         writeBoolean(out, "rollDice", rollDice);
          out.write("\n");
-         writeString(out, "serverPort", String.valueOf(_serverPort));
+         writeString(out, "serverPort", String.valueOf(serverPort));
          out.write("\n");
       } catch (IOException e) {
          e.printStackTrace();
@@ -272,19 +272,19 @@ public class Configuration implements SelectionListener
             e.printStackTrace();
          }
 
-         _spellTnAffectedByMa    = readBoolean(fileLines, "spellTnAffectedByMa",    _spellTnAffectedByMa);
-         _useSimpleDamage        = readBoolean(fileLines, "useSimpleDamage",        _useSimpleDamage);
-         _useSimpleDice          = readBoolean(fileLines, "useSimpleDice",          _useSimpleDice);
-         _useExtendedDice        = readBoolean(fileLines, "useExtendedDice",        _useExtendedDice);
-         _useBellCurveDice       = readBoolean(fileLines, "useBellCurveDice",       _useBellCurveDice);
-         _useComplexTOUDice      = readBoolean(fileLines, "useComplexTOUDice",      _useComplexTOUDice);
-         _useD6ForAttributeRolls = readBoolean(fileLines, "useD6ForAttributeRolls", _useD6ForAttributeRolls);
-         _use3DMap               = readBoolean(fileLines, "use3DMap",               _use3DMap);
-         _showChit               = readBoolean(fileLines, "showChit",               _showChit);
-         _rollDice               = readBoolean(fileLines, "rollDice",               _rollDice);
+         spellTnAffectedByMa = readBoolean(fileLines, "spellTnAffectedByMa", spellTnAffectedByMa);
+         useSimpleDamage = readBoolean(fileLines, "useSimpleDamage", useSimpleDamage);
+         useSimpleDice = readBoolean(fileLines, "useSimpleDice", useSimpleDice);
+         useExtendedDice = readBoolean(fileLines, "useExtendedDice", useExtendedDice);
+         useBellCurveDice = readBoolean(fileLines, "useBellCurveDice", useBellCurveDice);
+         useComplexTOUDice      = readBoolean(fileLines, "useComplexTOUDice",      useComplexTOUDice);
+         useD6ForAttributeRolls = readBoolean(fileLines, "useD6ForAttributeRolls", useD6ForAttributeRolls);
+         use3DMap = readBoolean(fileLines, "use3DMap", use3DMap);
+         showChit = readBoolean(fileLines, "showChit", showChit);
+         rollDice = readBoolean(fileLines, "rollDice", rollDice);
          String serverPort       = readString(fileLines,  "serverPort");
          if (serverPort != null) {
-            _serverPort = Integer.parseInt(serverPort);
+            Configuration.serverPort = Integer.parseInt(serverPort);
          }
       } catch (FileNotFoundException e1) {
          writeToFile();

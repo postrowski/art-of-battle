@@ -16,31 +16,31 @@ import java.util.stream.Collectors;
 
 public class MouseOverCharacterInfoPopup
 {
-   ArenaLocation _currentMouseLoc = null;
-   ToolTip _popupMessage = null;
+   ArenaLocation currentMouseLoc = null;
+   ToolTip       popupMessage    = null;
 
    public void onMouseMove(ArenaLocation loc, Event event, double angleFromCenter, double normalizedDistFromCenter) {
-      if (_currentMouseLoc == loc) {
+      if (currentMouseLoc == loc) {
          return;
       }
 
-      _currentMouseLoc = loc;
-      if ((_popupMessage == null) || _popupMessage.isDisposed()) {
+      currentMouseLoc = loc;
+      if ((popupMessage == null) || popupMessage.isDisposed()) {
 
          Shell shell = event.display.getActiveShell();
          if (shell == null) {
             return;
          }
-         _popupMessage = new ToolTip(shell, SWT.NONE);
+         popupMessage = new ToolTip(shell, SWT.NONE);
       }
       else {
-         _popupMessage.setVisible(false);
+         popupMessage.setVisible(false);
       }
       if ((loc == null) || loc.isEmpty()) {
          return;
       }
 
-      IMapWidget map = CombatServer._this._map;
+      IMapWidget map = CombatServer._this.map;
       int selfId = map.getSelfId();
       ArenaCoordinates selfHeadLoc = (selfId == -1) ? loc : map.getCombatMap().getCombatantByUniqueID(selfId).getHeadCoordinates();
       short distance = ArenaCoordinates.getDistance(loc, selfHeadLoc);
@@ -73,11 +73,11 @@ public class MouseOverCharacterInfoPopup
                }
             }
          }
-         _popupMessage.setMessage(sb.toString());
-         _popupMessage.setLocation(Display.getCurrent().getCursorLocation().x,
-                                   Display.getCurrent().getCursorLocation().y);
-         _popupMessage.setVisible(true);
-         _currentMouseLoc = loc;
+         popupMessage.setMessage(sb.toString());
+         popupMessage.setLocation(Display.getCurrent().getCursorLocation().x,
+                                  Display.getCurrent().getCursorLocation().y);
+         popupMessage.setVisible(true);
+         currentMouseLoc = loc;
       }
    }
 

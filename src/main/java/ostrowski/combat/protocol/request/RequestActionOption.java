@@ -11,70 +11,70 @@ import ostrowski.protocol.SyncRequest;
 
 public class RequestActionOption extends SerializableObject implements IRequestOption
 {
-   private String            _name;
-   private RequestActionType _actionType;
-   private LimbType          _limbType;
-   private boolean           _enabled;
+   private String            name;
+   private RequestActionType actionType;
+   private LimbType          limbType;
+   private boolean           enabled;
 
    public static final int LIMB_MULTIPLIER = 200;
 
    public RequestActionOption() {}
    public RequestActionOption(String name, RequestActionType actionType, LimbType limbType, boolean enabled) {
-      this._name       = name;
-      this._actionType = actionType;
-      this._limbType   = limbType;
-      this._enabled    = enabled;
+      this.name = name;
+      this.actionType = actionType;
+      this.limbType = limbType;
+      this.enabled = enabled;
    }
 
    @Override
    public String getName() {
-      return this._name;
+      return this.name;
    }
 
    @Override
    public int getIntValue() {
-      if (this._actionType == RequestActionType.OPT_CANCEL_ACTION) {
+      if (this.actionType == RequestActionType.OPT_CANCEL_ACTION) {
          return SyncRequest.OPT_CANCEL_ACTION;
       }
-      return this._actionType.ordinal() + (this._limbType.ordinal() * LIMB_MULTIPLIER);
+      return this.actionType.ordinal() + (this.limbType.ordinal() * LIMB_MULTIPLIER);
    }
 
    public RequestActionType getValue() {
-      return this._actionType;
+      return this.actionType;
    }
 
    public LimbType getLimbType() {
-      return this._limbType;
+      return this.limbType;
    }
 
    @Override
    public boolean isEnabled() {
-      return this._enabled;
+      return this.enabled;
    }
 
    @Override
    public void setAnswerStr(String name) {
-      this._name = name;
+      this.name = name;
    }
 
    @Override
    public void setAnswerID(int value) {
-      this._actionType = RequestActionType.lookupByOrdinal(value % LIMB_MULTIPLIER);
-      this._limbType = LimbType.getByValue((byte)(value / LIMB_MULTIPLIER));
+      this.actionType = RequestActionType.lookupByOrdinal(value % LIMB_MULTIPLIER);
+      this.limbType = LimbType.getByValue((byte)(value / LIMB_MULTIPLIER));
    }
 
    @Override
    public void setEnabled(boolean enabled) {
-      this._enabled = enabled;
+      this.enabled = enabled;
    }
 
    @Override
    public void serializeToStream(DataOutputStream out) {
       try {
-         writeToStream(_name, out);
-         writeToStream(_actionType.ordinal(), out);
-         writeToStream(_limbType.ordinal(), out);
-         writeToStream(_enabled, out);
+         writeToStream(name, out);
+         writeToStream(actionType.ordinal(), out);
+         writeToStream(limbType.ordinal(), out);
+         writeToStream(enabled, out);
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -83,10 +83,10 @@ public class RequestActionOption extends SerializableObject implements IRequestO
    @Override
    public void serializeFromStream(DataInputStream in) {
       try {
-         _name       =                                   readString(in);
-         _actionType = RequestActionType.lookupByOrdinal(readInt(in));
-         _limbType   =         LimbType.getByValue((byte)readInt(in));
-         _enabled    =                                   readBoolean(in);
+         name =                                   readString(in);
+         actionType = RequestActionType.lookupByOrdinal(readInt(in));
+         limbType =         LimbType.getByValue((byte)readInt(in));
+         enabled =                                   readBoolean(in);
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -94,6 +94,6 @@ public class RequestActionOption extends SerializableObject implements IRequestO
 
    @Override
    public String toString() {
-      return _name + ": " + _actionType + " - " + _limbType.name;
+      return name + ": " + actionType + " - " + limbType.name;
    }
 }

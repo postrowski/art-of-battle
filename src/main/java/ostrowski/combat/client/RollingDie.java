@@ -20,13 +20,13 @@ import java.util.List;
 
 public class RollingDie extends Dialog implements PaintListener
 {
-   private Shell         _shell            = null;
- //  private final GLView  _view;
-   private       Thread _animationThread  = null;
-   //private TexturedObject _die;
-   private final Point  _centerLoc;
-   public final  Point  _offsetFromParent = null; // if this is null, we are not pinned to the parent, otherwise we are.
-   public       Thing _die;
+   private Shell        shell           = null;
+ //  private final GLView  view;
+   private       Thread animationThread = null;
+   //private TexturedObject die;
+   private final Point centerLoc;
+   public final  Point      offsetFromParent = null; // if this is null, we are not pinned to the parent, otherwise we are.
+   public       Thing       die;
    public static RollingDie _this;
 
    public RollingDie(Shell parentShell, int style) {
@@ -34,9 +34,9 @@ public class RollingDie extends Dialog implements PaintListener
 
       _this = this;
 
-      _centerLoc = new Point(0, 0);
+      centerLoc = new Point(0, 0);
 
-      _animationThread = new Thread() {
+      animationThread = new Thread() {
          @Override
          public void run() {
             try {
@@ -47,9 +47,9 @@ public class RollingDie extends Dialog implements PaintListener
                   Thread.sleep(40); // ~25 redraws per second
                   //Rules.diag("in loop, about to call run()");
                   Display.getDefault().asyncExec(() -> {
-                     _die._facingOffset = new Tuple3(_die._facingOffset.getX() + 10,
-                                                     _die._facingOffset.getY() + 0,
-                                                     _die._facingOffset.getZ() + 0);
+                     die.facingOffset = new Tuple3(die.facingOffset.getX() + 10,
+                                                   die.facingOffset.getY() + 0,
+                                                   die.facingOffset.getZ() + 0);
                      redraw();
                   });
                }
@@ -61,27 +61,27 @@ public class RollingDie extends Dialog implements PaintListener
             } catch (InterruptedException | IllegalMonitorStateException e) {
                System.out.println(e);
             } finally {
-               _animationThread = null;
+               animationThread = null;
             }
          }
       };
 
-//      GLView _view = new GLView(parentShell, false/*withControls*/);
-//      _view._cameraPosition = new Tuple3(600, 600, 600);
-//      _view.setCameraAngle(225, 35);
-//      _view.clearModels();
+//      GLView view = new GLView(parentShell, false/*withControls*/);
+//      view.cameraPosition = new Tuple3(600, 600, 600);
+//      view.setCameraAngle(225, 35);
+//      view.clearModels();
 //      try {
-//         _die = new Thing(Dice.d12, _view, 10/*sizeFactor*/, "Blue");
+//         die = new Thing(Dice.d12, view, 10/*sizeFactor*/, "Blue");
 //
-//         _die._locationOffset = new Tuple3(0, 0, 0);
-//         _view.addModel(_die);
+//         die.locationOffset = new Tuple3(0, 0, 0);
+//         view.addModel(die);
 //      } catch (IOException e) {
 //         e.printStackTrace();
 //      }
 
       parentShell.getDisplay();
       //_animationThread.start();
-      _animationThread = null;
+      animationThread = null;
    }
 
    public static Region getRegion(double radius, Point center, double startAngle, double stopAngle) {
@@ -119,11 +119,11 @@ public class RollingDie extends Dialog implements PaintListener
       WEST(-1, 0),
       NORTHWEST(-1,-1);
 
-      public final int _x;
-      public final int _y;
+      public final int x;
+      public final int y;
       DIRS(int x, int y) {
-         _x = x;
-         _y = y;
+         this.x = x;
+         this.y = y;
       }
       public DIRS next() {
          switch (this) {
@@ -177,12 +177,12 @@ public class RollingDie extends Dialog implements PaintListener
 //   }
 
    public void redraw() {
-//      _view.drawScene(_display);
+//      view.drawScene(display);
    }
 
    public void open() {
       Shell parent = getParent();
-      _shell = new Shell(parent, SWT.MODELESS | SWT.NO_BACKGROUND | SWT.TRANSPARENT | SWT.NO_TRIM | SWT.NO_FOCUS);
+      shell = new Shell(parent, SWT.MODELESS | SWT.NO_BACKGROUND | SWT.TRANSPARENT | SWT.NO_TRIM | SWT.NO_FOCUS);
 
       ControlListener parentControlListener = new ControlListener() {
          @Override
@@ -190,10 +190,10 @@ public class RollingDie extends Dialog implements PaintListener
          }
          @Override
          public void controlMoved(ControlEvent arg0) {
-            if (_offsetFromParent != null) {
+            if (offsetFromParent != null) {
                Point parentLoc = getParent().getLocation();
-               setLocation(new Point(parentLoc.x + _offsetFromParent.x,
-                                     parentLoc.y + _offsetFromParent.y));
+               setLocation(new Point(parentLoc.x + offsetFromParent.x,
+                                     parentLoc.y + offsetFromParent.y));
             }
          }
       };
@@ -201,16 +201,16 @@ public class RollingDie extends Dialog implements PaintListener
 
       //new Snippet134(parent);
 
-      _shell.setText("Rolling Die");
+      shell.setText("Rolling Die");
       GridLayout layout = new GridLayout();
       layout.numColumns = 1;
       layout.makeColumnsEqualWidth = true;
       layout.horizontalSpacing = SWT.FILL;
-      _shell.setLayout(layout);
+      shell.setLayout(layout);
 
       //_shell.setLayout(new GridLayout(1/*numcolumns*/, false/*makeColumnsEqualWidth*/));
 
-      _shell.addPaintListener(this);
+      shell.addPaintListener(this);
 
       //add ability to move shell around
       Listener l = new Listener() {
@@ -226,10 +226,10 @@ public class RollingDie extends Dialog implements PaintListener
                   break;
                case SWT.MouseMove:
                   if (origin != null) {
-                     Point p = _shell.getDisplay().map(_shell, null, e.x, e.y);
+                     Point p = shell.getDisplay().map(shell, null, e.x, e.y);
                      setLocation(new Point(p.x - origin.x, p.y - origin.y));
 
-                     if (CombatServer._uses3dMap) {
+                     if (CombatServer.uses3dMap) {
                         CombatServer._this.redrawMap();
                      }
                   }
@@ -243,28 +243,28 @@ public class RollingDie extends Dialog implements PaintListener
          }
       };
       // Register listeners for all the events we do something with:
-      _shell.addListener(SWT.MouseDown, l);
-      _shell.addListener(SWT.MouseUp, l);
-      _shell.addListener(SWT.MouseMove, l);
-      _shell.addListener(SWT.KeyDown, l);
-      _shell.addListener(SWT.KeyUp, l);
-      _shell.pack();
+      shell.addListener(SWT.MouseDown, l);
+      shell.addListener(SWT.MouseUp, l);
+      shell.addListener(SWT.MouseMove, l);
+      shell.addListener(SWT.KeyDown, l);
+      shell.addListener(SWT.KeyUp, l);
+      shell.pack();
 
       // Define the overall shape
       Region region = getRegion(25.0, new Point(25, 25), 0, 2*Math.PI);
       Rectangle size = region.getBounds();
-      _shell.setRegion(region);
+      shell.setRegion(region);
       region.dispose();
-      _shell.setSize(size.width, size.height);
+      shell.setSize(size.width, size.height);
 
-      _shell.open();
+      shell.open();
 
-      _shell.setLocation(_centerLoc);
+      shell.setLocation(centerLoc);
    }
 
    public void close() {
-      if (!_shell.isDisposed()) {
-         _shell.close();
+      if (!shell.isDisposed()) {
+         shell.close();
       }
    }
 
@@ -275,6 +275,6 @@ public class RollingDie extends Dialog implements PaintListener
    }
 
    public void setLocation(Point location) {
-      _shell.setLocation(location);
+      shell.setLocation(location);
    }
 }

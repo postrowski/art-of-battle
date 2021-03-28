@@ -39,55 +39,55 @@ import java.util.Map;
  */
 public abstract class Spell extends SerializableObject implements Enums, Cloneable, Comparable<Spell>
 {
-   protected String    _name;
+   protected String    name;
    // These attributes are serialized, because they may differ from one 'fire' spell to another 'fire' spell:
-   protected byte      _power                     = 0;
-   protected byte      _level                     = 0;
-   protected Character _caster                    = null;
-   protected Character _target                    = null;
-   public int          _casterID                  = -1;
-   public int          _targetID                  = -1;
-   private boolean     _maintainedThisTurn        = true;
-   private boolean     _isInateSpell              = false;
-   private byte        _incantationRoundsRequired = 0;
-   private byte        _defenseTN;
-   private int         _castRoll;
-   protected boolean   _castRolledAllOnes         = false;
-   private int         _defenseRoll;
-   private int         _resistanceRoll;
-   protected byte      _castingEffectiveness      = EFFECTIVENESS_FAILURE;
-   protected byte      _excessSuccess;
+   protected byte      power                     = 0;
+   protected byte      level                     = 0;
+   protected Character caster                    = null;
+   protected Character target                    = null;
+   public    int       casterID                  = -1;
+   public    int       targetID                  = -1;
+   private   boolean   maintainedThisTurn        = true;
+   private   boolean   isInateSpell              = false;
+   private   byte      incantationRoundsRequired = 0;
+   private   byte      defenseTN;
+   private   int       castRoll;
+   protected boolean   castRolledAllOnes         = false;
+   private   int       defenseRoll;
+   private   int       resistanceRoll;
+   protected byte      castingEffectiveness      = EFFECTIVENESS_FAILURE;
+   protected byte      excessSuccess;
 
    public Spell() {
    }
 
    public Spell(String name) {
-      _name = name;
+      this.name = name;
    }
 
    public String getName() {
-      return _name;
+      return name;
    }
 
    public byte getPower() {
-      return _power;
+      return power;
    }
 
    public void setPower(byte power) {
-      _power = power;
+      this.power = power;
    }
 
    public byte getLevel() {
-      return _level;
+      return level;
    }
 
    public void setLevel(byte level) {
-      _level = level;
+      this.level = level;
    }
 
    public Wound channelEnergy(byte additionalPower) {
-      _maintainedThisTurn = true;
-      _power += additionalPower;
+      maintainedThisTurn = true;
+      power += additionalPower;
       return null;
    }
 
@@ -95,45 +95,45 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
     * Each turn, this method should be called on all active spells.
     */
    public void newTurn() {
-      _maintainedThisTurn = false;
+      maintainedThisTurn = false;
    }
 
    public void completeSpell() {
-      _maintainedThisTurn = true;
+      maintainedThisTurn = true;
    }
 
    public void maintainSpell() {
-      _maintainedThisTurn = true;
+      maintainedThisTurn = true;
    }
 
    public void discardSpell() {
-      _maintainedThisTurn = false;
+      maintainedThisTurn = false;
    }
 
    public void setIsInate(boolean isInate) {
-      _isInateSpell = isInate;
+      isInateSpell = isInate;
    }
 
    public boolean isInate() {
-      return _isInateSpell;
+      return isInateSpell;
    }
 
    public boolean isMaintainedThisTurn() {
-      return _maintainedThisTurn;
+      return maintainedThisTurn;
    }
 
    public void beginIncantation() {
-      _incantationRoundsRequired = getIncantationTime();
+      incantationRoundsRequired = getIncantationTime();
    }
 
    public boolean incant() {
       maintainSpell();
-      _incantationRoundsRequired--;
-      return (_incantationRoundsRequired <= 0);
+      incantationRoundsRequired--;
+      return (incantationRoundsRequired <= 0);
    }
 
    public byte getIncantationRoundsRequired() {
-      return _incantationRoundsRequired;
+      return incantationRoundsRequired;
    }
 
    public abstract String describeEffects(Character defender, boolean firstTime);
@@ -323,19 +323,19 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
    }
 
    public void setCaster(Character caster) {
-      _caster = caster;
-      _casterID = caster._uniqueID;
+      this.caster = caster;
+      casterID = caster.uniqueID;
    }
 
    public Character getCaster() {
-      return _caster;
+      return caster;
    }
 
    public String getCasterName() {
-      if (_caster == null) {
+      if (caster == null) {
          return "";
       }
-      return _caster.getName();
+      return caster.getName();
    }
 
    public void setTarget(Character target) {
@@ -349,22 +349,22 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
          return;
       }
       if (getTargetType() == TargetType.TARGET_SELF) {
-         _target = _caster;
+         this.target = caster;
       }
       else {
-         _target = target;
+         this.target = target;
       }
    }
 
    public Character getTarget() {
-      return _target;
+      return target;
    }
 
    public String getTargetName() {
-      if (_target == null) {
+      if (target == null) {
          return "";
       }
-      return _target.getName();
+      return target.getName();
    }
 
    public TargetType getTargetType() {
@@ -387,7 +387,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
       return null;
    }
 
-   public Wound setResults(int excessSuccess, boolean success, boolean effective, int castRoll, byte skill, Arena _arena) {
+   public Wound setResults(int excessSuccess, boolean success, boolean effective, int castRoll, byte skill, Arena arena) {
       return null;
    }
 
@@ -420,20 +420,20 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
    public void serializeToStream(DataOutputStream out) {
       try {
 // No need to serialize the name, the serialization key uniquely defined this spell
-//         writeToStream(_name, out);
-         writeToStream(_power, out);
-         writeToStream(_level, out);
-         // _resistedAtt, _prerequisiteSpellNames & _attributeMod don't need to be serialized,
+//         writeToStream(name, out);
+         writeToStream(power, out);
+         writeToStream(level, out);
+         // resistedAtt, prerequisiteSpellNames & attributeMod don't need to be serialized,
          // because they are constant for a given spell (defined by its name).
-         writeToStream(_maintainedThisTurn, out);
-         writeToStream(_isInateSpell, out);
-         writeToStream(_incantationRoundsRequired, out);
-         writeToStream(_defenseTN, out);
-         writeToStream(_castRoll, out);
-         writeToStream(_castRolledAllOnes, out);
-         writeToStream(_defenseRoll, out);
-         writeToStream(_resistanceRoll, out);
-         writeToStream(_castingEffectiveness, out);
+         writeToStream(maintainedThisTurn, out);
+         writeToStream(isInateSpell, out);
+         writeToStream(incantationRoundsRequired, out);
+         writeToStream(defenseTN, out);
+         writeToStream(castRoll, out);
+         writeToStream(castRolledAllOnes, out);
+         writeToStream(defenseRoll, out);
+         writeToStream(resistanceRoll, out);
+         writeToStream(castingEffectiveness, out);
 
       } catch (IOException e) {
          e.printStackTrace();
@@ -447,39 +447,39 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
 //         String name = readString(in);
 //         Spell spell = MageSpells.getSpell(name).clone();
 //         this.copyDataFrom(spell);
-         _power = readByte(in);
-         _level = readByte(in);
-         // _resistedAtt, _prerequisiteSpellNames & _attributeMod don't need to be serialized,
+         power = readByte(in);
+         level = readByte(in);
+         // resistedAtt, prerequisiteSpellNames & attributeMod don't need to be serialized,
          // because they are constant for a given spell (defined by its name).
-         _maintainedThisTurn = readBoolean(in);
-         _isInateSpell = readBoolean(in);
-         _incantationRoundsRequired = readByte(in);
-         _defenseTN = readByte(in);
-         _castRoll = readInt(in);
-         _castRolledAllOnes = readBoolean(in);
-         _defenseRoll = readInt(in);
-         _resistanceRoll = readInt(in);
-         _castingEffectiveness = readByte(in);
+         maintainedThisTurn = readBoolean(in);
+         isInateSpell = readBoolean(in);
+         incantationRoundsRequired = readByte(in);
+         defenseTN = readByte(in);
+         castRoll = readInt(in);
+         castRolledAllOnes = readBoolean(in);
+         defenseRoll = readInt(in);
+         resistanceRoll = readInt(in);
+         castingEffectiveness = readByte(in);
       } catch (IOException e) {
          e.printStackTrace();
       }
    }
 
    protected void copyDataFrom(Spell source) {
-      _caster = source._caster;
-      _name = source._name;
-      _power = source._power;
-      _level = source._level;
-      _target = source._target;
-      _maintainedThisTurn = source._maintainedThisTurn;
-      _isInateSpell = source._isInateSpell;
-      _incantationRoundsRequired = source._incantationRoundsRequired;
-      _defenseTN = source._defenseTN;
-      _castRoll = source._castRoll;
-      _castRolledAllOnes = source._castRolledAllOnes;
-      _defenseRoll = source._defenseRoll;
-      _resistanceRoll = source._resistanceRoll;
-      _castingEffectiveness = source._castingEffectiveness;
+      caster = source.caster;
+      name = source.name;
+      power = source.power;
+      level = source.level;
+      target = source.target;
+      maintainedThisTurn = source.maintainedThisTurn;
+      isInateSpell = source.isInateSpell;
+      incantationRoundsRequired = source.incantationRoundsRequired;
+      defenseTN = source.defenseTN;
+      castRoll = source.castRoll;
+      castRolledAllOnes = source.castRolledAllOnes;
+      defenseRoll = source.defenseRoll;
+      resistanceRoll = source.resistanceRoll;
+      castingEffectiveness = source.castingEffectiveness;
    }
 
    @Override
@@ -502,7 +502,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
       sb.append(", power=").append(getPower());
       sb.append(", level=").append(getLevel());
       sb.append(", caster=").append(getCasterName());
-      if (_target != null) {
+      if (target != null) {
          sb.append(", target=").append(getTargetName());
       }
       return sb.toString();
@@ -543,7 +543,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
       short distanceInHexes = describeDistance(battle, sbDescription);
       RANGE range = getRange(distanceInHexes);
       byte rangeTNAdjustment = getRangeTNAdjustment(distanceInHexes);
-      byte spellTN = getTN(_caster);
+      byte spellTN = getTN(caster);
       // defense information:
       // result:
 
@@ -557,7 +557,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
          sbDescription.append(sbCastingDescription);
       }
 
-      _castingEffectiveness = EFFECTIVENESS_FAILURE;
+      castingEffectiveness = EFFECTIVENESS_FAILURE;
       byte castingPower;
       if (this instanceof ResistedPriestSpell) {
          // don't fill in the description here, cause it will be filled in in the call to getDefenseTn/resolveEffectivePower
@@ -566,17 +566,17 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
          castingPower = getCastingPower(attack, distanceInHexes, range, battle, sbDescription);
       }
       if (this instanceof IAreaSpell) {
-         RequestLocation locationSelection = attack._locationSelection;
+         RequestLocation locationSelection = attack.locationSelection;
          ArenaCoordinates coord = locationSelection.getAnswerCoordinates();
-         ArenaLocation loc = battle._arena.getCombatMap().getLocation(coord);
-         ((IAreaSpell) this).setTargetLocation(loc, battle._arena);
+         ArenaLocation loc = battle.arena.getCombatMap().getLocation(coord);
+         ((IAreaSpell) this).setTargetLocation(loc, battle.arena);
       }
       boolean missingTarget = false;
       if (getTargetType() == TargetType.TARGET_AREA) {
          if (((IAreaSpell) this).getTargetLocation() == null) {
             missingTarget = true;
          }
-      } else if ((getTargetType() != TargetType.TARGET_NONE) && (_target == null)) {
+      } else if ((getTargetType() != TargetType.TARGET_NONE) && (target == null)) {
          missingTarget = true;
       }
       if (missingTarget) {
@@ -585,41 +585,41 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
       }
       else {
          if (!(this instanceof PriestSpell) || (castingPower > 0)) {
-            _defenseTN = getDefenseTn(attack, defense, distanceInHexes, range, battle, sbDescription);
-            _castRoll = resolveCast(attack, rangeAdjustedCastingTN, castingPower, distanceInHexes, range, battle, sbDescription);
-            _defenseRoll = getDefenseResult(defense, castingPower, battle, sbDescription);
-            _resistanceRoll = getResistanceResult(defense, distanceInHexes, battle, sbDescription);
-            _castingEffectiveness = getEffectiveness(attack, defense, distanceInHexes, castingTN, rangeAdjustedCastingTN, battle, sbDescription);
+            defenseTN = getDefenseTn(attack, defense, distanceInHexes, range, battle, sbDescription);
+            castRoll = resolveCast(attack, rangeAdjustedCastingTN, castingPower, distanceInHexes, range, battle, sbDescription);
+            defenseRoll = getDefenseResult(defense, castingPower, battle, sbDescription);
+            resistanceRoll = getResistanceResult(defense, distanceInHexes, battle, sbDescription);
+            castingEffectiveness = getEffectiveness(attack, defense, distanceInHexes, castingTN, rangeAdjustedCastingTN, battle, sbDescription);
          }
       }
-      if (_castingEffectiveness >= 0) {
+      if (castingEffectiveness >= 0) {
          if (this instanceof IMissileSpell) {
             IMissileSpell missileSpell = ((IMissileSpell) this);
 
-            byte bonusDamage = _castingEffectiveness;
+            byte bonusDamage = castingEffectiveness;
             DiceSet damageDie = missileSpell.getDamageDice();
             String damageExplanation = missileSpell.explainDamage();
-            battle.resolveDamage(_caster, _target, getName() + " spell", damageExplanation, missileSpell.getSpellDamageBase(), bonusDamage, damageDie,
+            battle.resolveDamage(caster, target, getName() + " spell", damageExplanation, missileSpell.getSpellDamageBase(), bonusDamage, damageDie,
                                  missileSpell.getDamageType(), getSpecialDamageModifier(), getSpecialDamageModifierExplanation(), sbDescription, wounds,
-                                 _excessSuccess, false/*isCharge*/);
+                                 excessSuccess, false/*isCharge*/);
          }
-         String effects = describeEffects(_target, true/*firstTime*/);
+         String effects = describeEffects(target, true/*firstTime*/);
          if (effects != null) {
             sbDescription.append("<br/>").append(effects);
          }
 
          Character target = getTarget();
          if (target == null) {
-            target = _caster;
+            target = caster;
          }
          List<Spell> spellList = spells.computeIfAbsent(target, k -> new ArrayList<>());
          spellList.add(this);
       }
       String message = sbDescription.toString();
-      battle._arena.sendMessageTextToAllClients(message, false/*popUp*/);
-      battle._arena.sendMessageTextToParticipants(message, getCaster(), getTarget());
+      battle.arena.sendMessageTextToAllClients(message, false/*popUp*/);
+      battle.arena.sendMessageTextToParticipants(message, getCaster(), getTarget());
 
-      return (_castingEffectiveness >= 0);
+      return (castingEffectiveness >= 0);
    }
 
    protected int resolveCast(RequestAction attack, byte rangeAdjustedCastingTN, byte castingPower, short distanceInHexes, RANGE range, Battle battle,
@@ -635,19 +635,19 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
       }
       DiceSet adjCastDice = getCaster().adjustDieRoll(castDice, RollType.SPELL_CASTING, null/*target*/);
       byte woundsAndPain = getCaster().getWoundsAndPainPenalty();
-      String rollMessage = _caster.getName() + ", roll to cast your " + getName() + " spell.";
+      String rollMessage = caster.getName() + ", roll to cast your " + getName() + " spell.";
       int castRoll = adjCastDice.roll(true/*allowExplodes*/, getCaster(), RollType.SPELL_CASTING, rollMessage);
-      _castRolledAllOnes = adjCastDice.lastRollRolledAllOnes();
-      if ((adjCastDice.getDiceCount() > 0) || (_castRoll != 0)) {
+      castRolledAllOnes = adjCastDice.lastRollRolledAllOnes();
+      if ((adjCastDice.getDiceCount() > 0) || (this.castRoll != 0)) {
          sbDescription.append("<br/>");
-         sbDescription.append(_caster.getName()).append(" rolls ").append(adjCastDice);
+         sbDescription.append(caster.getName()).append(" rolls ").append(adjCastDice);
          sbDescription.append(", rolling ").append(adjCastDice.getLastDieRoll());
          sbDescription.append(", for a total of ").append(castRoll);
          if (!Configuration.useExtendedDice() && (this instanceof MageSpell)) {
             sbDescription.append("<table border=1>");
             sbDescription.append("<tr><td>").append(castRoll).append("</td><td>Die Roll.</td></tr>");
 
-            byte adjSkillLevel = getAdjustedCastingSkillLevel(_caster);
+            byte adjSkillLevel = getAdjustedCastingSkillLevel(caster);
             castRoll += adjSkillLevel;
             sbDescription.append("<tr><td>").append(adjSkillLevel).append("</td><td>Adj. Skill.</td></tr>");
 
@@ -677,7 +677,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
             castRoll += skill;
 
             Attribute attribute = Attribute.Dexterity;
-            byte attrLevel = _caster.getAttributeLevel(attribute);
+            byte attrLevel = caster.getAttributeLevel(attribute);
             sbDescription.append("<tr><td>").append(attrLevel)
                          .append("</td><td>").append(attribute.shortName).append("</td></tr>");
             castRoll += attrLevel;
@@ -707,8 +707,8 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
 
    protected short describeDistance(Battle battle, StringBuilder sbDescription) {
       short distanceInHexes = 0;
-      if (_target != null) {
-         distanceInHexes = Arena.getMinDistance(_caster, _target);
+      if (target != null) {
+         distanceInHexes = Arena.getMinDistance(caster, target);
       }
       if (this instanceof IRangedSpell) {
          sbDescription.append("The ").append(getName()).append(" spell");
@@ -737,13 +737,13 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
    abstract protected int getDefenseResult(RequestDefense defense, byte distanceModifiedPower, Battle battle, StringBuilder sbDescription);
 
    public byte getCastingLevel() {
-      return _caster.getSpellSkill(getName());
+      return caster.getSpellSkill(getName());
    }
 
    protected String describeCastingAction(boolean isAdvance, int spellActions) {
       StringBuilder sbDescription = new StringBuilder();
       sbDescription.append("<span style=\"color:red\">");
-      sbDescription.append(_caster.getName());
+      sbDescription.append(caster.getName());
       if (isAdvance) {
          sbDescription.append(" advances to cast a ");
       }
@@ -752,13 +752,13 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
       }
       sbDescription.append(getPower()).append("-power '");
       sbDescription.append(getName()).append("' spell");
-      if (_target != null) {
+      if (target != null) {
          sbDescription.append(" on ");
-         if (_target == _caster) {
+         if (target == caster) {
             sbDescription.append("himself");
          }
          else {
-            sbDescription.append(_target.getName());
+            sbDescription.append(target.getName());
          }
       }
       if (spellActions > 0) {
@@ -771,7 +771,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
    protected byte getDefenseTn(RequestAction attack, RequestDefense defense, short distanceInHexes,
                                RANGE range, Battle battle, StringBuilder sbDescription) {
       if (isDefendable()) {
-         return battle.resolveDefenses(_target, defense, (byte) 0/*attackParryPenalty*/, distanceInHexes,
+         return battle.resolveDefenses(target, defense, (byte) 0/*attackParryPenalty*/, distanceInHexes,
                                        range, attack, sbDescription);
       }
       return 0;
@@ -788,8 +788,8 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
       int distanceModifier = getRangeTNAdjustment(distanceInHexes);
       int defenderWoundPenalty = 0;// - defender.getWounds();
       //defenderWoundPenalty = 0 - defender.getWoundsAndPainPenalty();
-      byte resistanceAttributeLevel = resistedThis.getResistanceAttribute(_target);
-      DiceSet resistanceDice = resistedThis.getResistanceDice(_target);
+      byte resistanceAttributeLevel = resistedThis.getResistanceAttribute(target);
+      DiceSet resistanceDice = resistedThis.getResistanceDice(target);
       resistanceDice = getTarget().adjustDieRoll(resistanceDice, RollType.MAGIC_RESISTANCE, null/*target*/);
       String rollMessage = getTarget() + ", roll to resist the effects of the " + this.getName() +
                            " spell, cast by " + getCasterName();
@@ -874,17 +874,17 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
    protected byte getEffectiveness(RequestAction attack, RequestDefense defense, short distanceInHexes, byte castingTN,
                                    byte rangeAdjustedCastingTN, Battle battle, StringBuilder sbDescription) {
       byte skill = getCastingLevel();
-      byte result = (byte) _castRoll;
+      byte result = (byte) castRoll;
       if (!Configuration.useSimpleDice() && !Configuration.useBellCurveDice()) {
          result += skill;
       }
 
       sbDescription.append("<table border=1>");
-      if (_castRoll > 0) {
+      if (castRoll > 0) {
          if (this instanceof PriestSpell) {
             // Priest missile spell have already had the D.A. added in
             if (!(this instanceof PriestMissileSpell)) {
-               sbDescription.append("<tr><td>").append(_castRoll).append("</td><td>Dice roll</td></tr>");
+               sbDescription.append("<tr><td>").append(castRoll).append("</td><td>Dice roll</td></tr>");
                sbDescription.append("<tr><td>+").append(skill).append("</td><td>Divine Affinity</td></tr>");
                if (Configuration.useSimpleDice() || Configuration.useBellCurveDice()) {
                   result += skill;
@@ -893,7 +893,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
          }
          else {
             if (!Configuration.useSimpleDice() && !Configuration.useBellCurveDice()) {
-               sbDescription.append("<tr><td>").append(_castRoll).append("</td><td>Dice roll</td></tr>");
+               sbDescription.append("<tr><td>").append(castRoll).append("</td><td>Dice roll</td></tr>");
                sbDescription.append("<tr><td>+").append(skill).append("</td><td>Spell skill</td></tr>");
             }
          }
@@ -910,69 +910,69 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
             }
          }
          if (isDefendable()) {
-            sbDescription.append("<tr><td><b>").append(_defenseTN).append("</b></td>");
+            sbDescription.append("<tr><td><b>").append(defenseTN).append("</b></td>");
             sbDescription.append("<td>Defenders TN</td></tr>");
          }
          if (this instanceof IResistedSpell) {
-            sbDescription.append("<tr><td><b>").append(_resistanceRoll).append("</b></td>");
+            sbDescription.append("<tr><td><b>").append(resistanceRoll).append("</b></td>");
             sbDescription.append("<td>Resistance TN</td></tr>");
          }
       }
-      _excessSuccess = (byte) (result - castingTN);
-      boolean success = (isInate() || (this instanceof PriestSpell) || (_excessSuccess >= 0)) && !_castRolledAllOnes;
+      excessSuccess = (byte) (result - castingTN);
+      boolean success = (isInate() || (this instanceof PriestSpell) || (excessSuccess >= 0)) && !castRolledAllOnes;
       boolean effective = false;
       if (success) {
          // This instanceof check is replaced by isDefendable, with a check of validity in the
          // static initializer of Spell.
          //if ((this instanceof IMissileSpell) || (this instanceof SpellSpiderWeb)) {
          if (isDefendable()) {
-            effective = (result >= _defenseTN);
-            _excessSuccess = (byte) (result - _defenseTN);
+            effective = (result >= defenseTN);
+            excessSuccess = (byte) (result - defenseTN);
          }
          else if (this instanceof IResistedSpell) {
             if (this instanceof ResistedPriestSpell) {
-               _excessSuccess = (byte) (_defenseTN - _resistanceRoll);
-               effective = (_excessSuccess > 0);
+               excessSuccess = (byte) (defenseTN - resistanceRoll);
+               effective = (excessSuccess > 0);
             }
             else {
-               _excessSuccess = (byte) (result - _resistanceRoll);
-               effective = (_excessSuccess >= 0);
+               excessSuccess = (byte) (result - resistanceRoll);
+               effective = (excessSuccess >= 0);
             }
          }
          else {
             effective = (result >= rangeAdjustedCastingTN);
-            _excessSuccess = (byte) (result - rangeAdjustedCastingTN);
+            excessSuccess = (byte) (result - rangeAdjustedCastingTN);
          }
       }
 
-      Wound burn = setResults(_excessSuccess, success, effective, _castRoll, skill, battle._arena);
-      _castingEffectiveness = EFFECTIVENESS_SUCCESS;
+      Wound burn = setResults(excessSuccess, success, effective, castRoll, skill, battle.arena);
+      castingEffectiveness = EFFECTIVENESS_SUCCESS;
       if (success) {
          if (this instanceof IMissileSpell) {
             if (effective) {
-               byte bonusDamage = Rules.getDamageBonusForSkillExcess((byte) (result - _defenseTN));
+               byte bonusDamage = Rules.getDamageBonusForSkillExcess((byte) (result - defenseTN));
                sbDescription.append("<tr><td><b>").append(bonusDamage).append("</b></td>");
                sbDescription.append("<td><b>spell succeeded</b>, bonus damage</td></tr>");
-               _castingEffectiveness = bonusDamage;
+               castingEffectiveness = bonusDamage;
             }
             else {
                sbDescription.append("<tr><td colspan=2><b>spell succeeded</b>, but missed the target</td></tr>");
-               _castingEffectiveness = EFFECTIVENESS_MISSED;
+               castingEffectiveness = EFFECTIVENESS_MISSED;
             }
          }
          else if (effective) {
             sbDescription.append("<tr><td colspan=2><b>spell succeeded</b></td></tr>");
-            //_castingEffectiveness = (byte) (result - _defenseTN);
-            _castingEffectiveness = _excessSuccess;
+            //_castingEffectiveness = (byte) (result - defenseTN);
+            castingEffectiveness = excessSuccess;
          }
          else {
             if (this instanceof IResistedSpell) {
                sbDescription.append("<tr><td colspan=2><b>spell cast succesfully, but was resisted.</b></td></tr>");
-               _castingEffectiveness = EFFECTIVENESS_RESISTED;
+               castingEffectiveness = EFFECTIVENESS_RESISTED;
             }
             else {
                sbDescription.append("<tr><td colspan=2><b>spell cast succesfully, but was ineffective.</b></td></tr>");
-               _castingEffectiveness = EFFECTIVENESS_NO_EFFECT;
+               castingEffectiveness = EFFECTIVENESS_NO_EFFECT;
             }
          }
       }
@@ -980,25 +980,25 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
          if (burn != null) {
             sbDescription.append("<tr><td>").append(burn.getWounds());
             sbDescription.append("</td><td><b>Casting failure!</b>");
-            if (_castRolledAllOnes) {
+            if (castRolledAllOnes) {
                sbDescription.append("(all 1s rolled)");
             }
             sbDescription.append("  Spell burn level (");
-            sbDescription.append(getPower()).append(" - ").append(_caster.getMagicalAptitude());
+            sbDescription.append(getPower()).append(" - ").append(caster.getMagicalAptitude());
             sbDescription.append(")</td></tr>");
          }
          else {
             sbDescription.append("<tr><td colspan=2><b>Spell failed</b>");
-            if (_castRolledAllOnes) {
+            if (castRolledAllOnes) {
                sbDescription.append("(all 1s rolled)");
             }
             sbDescription.append("</td></tr>");
          }
-         _castingEffectiveness = EFFECTIVENESS_FAILURE;
+         castingEffectiveness = EFFECTIVENESS_FAILURE;
       }
       sbDescription.append("</table>");
 
-      return _castingEffectiveness;
+      return castingEffectiveness;
    }
 
    public DamageType getDamageType() {
@@ -1060,23 +1060,23 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
 
    public Element getXMLObject(Document parentDoc, String newLine) {
       Element mainElement = parentDoc.createElement("Spell");
-      mainElement.setAttribute("Name", _name);
-      mainElement.setAttribute("power", String.valueOf(_power));
-      if (_caster != null) {
-         mainElement.setAttribute("casterID", String.valueOf(_caster._uniqueID));
+      mainElement.setAttribute("Name", name);
+      mainElement.setAttribute("power", String.valueOf(power));
+      if (caster != null) {
+         mainElement.setAttribute("casterID", String.valueOf(caster.uniqueID));
       }
-      if (_target != null) {
-         mainElement.setAttribute("targetID", String.valueOf(_target._uniqueID));
+      if (target != null) {
+         mainElement.setAttribute("targetID", String.valueOf(target.uniqueID));
       }
-      mainElement.setAttribute("maintainedThisTurn", String.valueOf(_maintainedThisTurn));
-      mainElement.setAttribute("isInateSpell", String.valueOf(_isInateSpell));
-      mainElement.setAttribute("incantationRoundsRequired", String.valueOf(_incantationRoundsRequired));
-      mainElement.setAttribute("defenseTN", String.valueOf(_defenseTN));
-      mainElement.setAttribute("castRoll", String.valueOf(_castRoll));
-      mainElement.setAttribute("castRolledAllOnes", String.valueOf(_castRolledAllOnes));
-      mainElement.setAttribute("defenseRoll", String.valueOf(_defenseRoll));
-      mainElement.setAttribute("resistanceRoll", String.valueOf(_resistanceRoll));
-      mainElement.setAttribute("castingEffectiveness", String.valueOf(_castingEffectiveness));
+      mainElement.setAttribute("maintainedThisTurn", String.valueOf(maintainedThisTurn));
+      mainElement.setAttribute("isInateSpell", String.valueOf(isInateSpell));
+      mainElement.setAttribute("incantationRoundsRequired", String.valueOf(incantationRoundsRequired));
+      mainElement.setAttribute("defenseTN", String.valueOf(defenseTN));
+      mainElement.setAttribute("castRoll", String.valueOf(castRoll));
+      mainElement.setAttribute("castRolledAllOnes", String.valueOf(castRolledAllOnes));
+      mainElement.setAttribute("defenseRoll", String.valueOf(defenseRoll));
+      mainElement.setAttribute("resistanceRoll", String.valueOf(resistanceRoll));
+      mainElement.setAttribute("castingEffectiveness", String.valueOf(castingEffectiveness));
       return mainElement;
    }
 
@@ -1084,23 +1084,23 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
       Node targetIDNode = namedNodeMap.getNamedItem("targetID");
       if (targetIDNode != null) {
          String targetID = targetIDNode.getNodeValue();
-         _targetID = Integer.parseInt(targetID);
+         this.targetID = Integer.parseInt(targetID);
       }
       Node casterIDNode = namedNodeMap.getNamedItem("casterID");
       if (casterIDNode != null) {
          String casterID = casterIDNode.getNodeValue();
-         _casterID = Integer.parseInt(casterID);
+         this.casterID = Integer.parseInt(casterID);
       }
-      _power                     = Byte.parseByte(namedNodeMap.getNamedItem("power").getNodeValue());
-      _maintainedThisTurn        = Boolean.parseBoolean(namedNodeMap.getNamedItem("maintainedThisTurn").getNodeValue());
-      _isInateSpell              = Boolean.parseBoolean(namedNodeMap.getNamedItem("isInateSpell").getNodeValue());
-      _incantationRoundsRequired = Byte.parseByte(namedNodeMap.getNamedItem("incantationRoundsRequired").getNodeValue());
-      _defenseTN                 = Byte.parseByte(namedNodeMap.getNamedItem("defenseTN").getNodeValue());
-      _castRoll                  = Byte.parseByte(namedNodeMap.getNamedItem("castRoll").getNodeValue());
-      _castRolledAllOnes         = Boolean.parseBoolean(namedNodeMap.getNamedItem("castRolledAllOnes").getNodeValue());
-      _defenseRoll               = Byte.parseByte(namedNodeMap.getNamedItem("defenseRoll").getNodeValue());
-      _resistanceRoll            = Byte.parseByte(namedNodeMap.getNamedItem("resistanceRoll").getNodeValue());
-      _castingEffectiveness      = Byte.parseByte(namedNodeMap.getNamedItem("castingEffectiveness").getNodeValue());
+      power = Byte.parseByte(namedNodeMap.getNamedItem("power").getNodeValue());
+      maintainedThisTurn = Boolean.parseBoolean(namedNodeMap.getNamedItem("maintainedThisTurn").getNodeValue());
+      isInateSpell = Boolean.parseBoolean(namedNodeMap.getNamedItem("isInateSpell").getNodeValue());
+      incantationRoundsRequired = Byte.parseByte(namedNodeMap.getNamedItem("incantationRoundsRequired").getNodeValue());
+      defenseTN = Byte.parseByte(namedNodeMap.getNamedItem("defenseTN").getNodeValue());
+      castRoll = Byte.parseByte(namedNodeMap.getNamedItem("castRoll").getNodeValue());
+      castRolledAllOnes = Boolean.parseBoolean(namedNodeMap.getNamedItem("castRolledAllOnes").getNodeValue());
+      defenseRoll = Byte.parseByte(namedNodeMap.getNamedItem("defenseRoll").getNodeValue());
+      resistanceRoll = Byte.parseByte(namedNodeMap.getNamedItem("resistanceRoll").getNodeValue());
+      castingEffectiveness = Byte.parseByte(namedNodeMap.getNamedItem("castingEffectiveness").getNodeValue());
    }
 
    public static Spell serializeFromXmlObject(Node mainElement) {
@@ -1140,11 +1140,11 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
 
    public void setCasterAndTargetFromIDs(List<Character> combatants) {
       for (Character character : combatants) {
-         if (_casterID == character._uniqueID) {
-            _caster = character;
+         if (casterID == character.uniqueID) {
+            caster = character;
          }
-         if (_targetID == character._uniqueID) {
-            _target = character;
+         if (targetID == character.uniqueID) {
+            target = character;
          }
       }
    }

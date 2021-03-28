@@ -21,10 +21,12 @@ import java.util.List;
 
 public class SpellFlamingWeapon extends ExpiringMageSpell implements ICastInBattle
 {
-   public static final String NAME               = "Flaming Weapon";
-   public boolean             _forMissileWeapons = false;
-   protected Weapon           _weapon            = null;
-   private SpecialDamage      _specDam;
+   public static final String NAME              = "Flaming Weapon";
+   public boolean        forMissileWeapons = false;
+   protected Weapon      weapon            = null;
+   private SpecialDamage specDam;
+   LimbType limbType = null;
+
 
    public SpellFlamingWeapon() {
       super(NAME, (short) 10/*baseExpirationTimeInTurns*/, (short) 5/*bonusTimeInTurnsPerPower*/,
@@ -35,19 +37,19 @@ public class SpellFlamingWeapon extends ExpiringMageSpell implements ICastInBatt
    protected SpellFlamingWeapon(Class<? extends MageSpell>[] requiredClasses) {
       super(SpellFlamingMissileWeapon.NAME, (short) 10/*baseExpirationTimeInTurns*/, (short) 5/*bonusTimeInTurnsPerPower*/, requiredClasses,
             new MageCollege[] { MageCollege.CONJURATION, MageCollege.FIRE});
-      _forMissileWeapons = true;
+      forMissileWeapons = true;
    }
 
    @Override
    public String describeEffects(Character defender, boolean firstTime) {
-      if (_weapon == null) {
+      if (weapon == null) {
          return null;
       }
       StringBuilder sb = new StringBuilder();
       if (firstTime) {
          sb.append(getTargetName()).append("'s ");
       }
-      sb.append(_weapon.getName());
+      sb.append(weapon.getName());
       if (firstTime) {
          sb.append(" bursts into a ");
       }
@@ -55,9 +57,9 @@ public class SpellFlamingWeapon extends ExpiringMageSpell implements ICastInBatt
          sb.append(" is burning with a ");
       }
       sb.append(getPower()).append("-point flame (");
-      if (_weapon.isMissileWeapon() != _forMissileWeapons) {
+      if (weapon.isMissileWeapon() != forMissileWeapons) {
          sb.append("which will do NOTHING, since it is ");
-         if (!_weapon.isMissileWeapon()) {
+         if (!weapon.isMissileWeapon()) {
             sb.append("not ");
          }
          sb.append("a missile weapon!)");
@@ -129,25 +131,25 @@ public class SpellFlamingWeapon extends ExpiringMageSpell implements ICastInBatt
    public void applyEffects(Arena arena) {
       Weapon weapon = getTarget().getWeapon();
       if (weapon != null) {
-         _weapon = weapon;
-         if (_weapon.isMissileWeapon() == _forMissileWeapons) {
-            _specDam = new SpecialDamage(SpecialDamage.MOD_FLAMING);
-            _specDam.setPainModifier(getPain(getPower()));
-            _specDam.setWoundModifier(getWounds(getPower()));
-            weapon.setSpecialDamageModifier(_specDam, getName() + " spell (power level " + getPower() + ": +" + getPain(getPower()) + " pain, +"
-                                                      + getWounds(getPower()) + " wounds)");
+         this.weapon = weapon;
+         if (this.weapon.isMissileWeapon() == forMissileWeapons) {
+            specDam = new SpecialDamage(SpecialDamage.MOD_FLAMING);
+            specDam.setPainModifier(getPain(getPower()));
+            specDam.setWoundModifier(getWounds(getPower()));
+            weapon.setSpecialDamageModifier(specDam, getName() + " spell (power level " + getPower() + ": +" + getPain(getPower()) + " pain, +"
+                                                     + getWounds(getPower()) + " wounds)");
          }
       }
    }
 
    @Override
    public void removeEffects(Arena arena) {
-      if (_specDam != null) {
-         _specDam.setPainModifier((byte) 0);
-         _specDam.setWoundModifier((byte) 0);
-         if (_weapon != null) {
+      if (specDam != null) {
+         specDam.setPainModifier((byte) 0);
+         specDam.setWoundModifier((byte) 0);
+         if (weapon != null) {
             // TODO: what if the weapon has other special damage modifiers?
-            _weapon.setSpecialDamageModifier(_specDam, "");
+            weapon.setSpecialDamageModifier(specDam, "");
          }
       }
    }
@@ -162,27 +164,25 @@ public class SpellFlamingWeapon extends ExpiringMageSpell implements ICastInBatt
       return TargetType.TARGET_ANYONE;
    }
 
-   LimbType _limbType = null;
-
    @Override
    public void setCasterAndTargetFromIDs(List<Character> combatants) {
       super.setCasterAndTargetFromIDs(combatants);
-      if ((_limbType != null) && (_target != null)) {
-         Limb limb = _target.getLimb(_limbType);
-         _weapon = limb.getWeapon(_target);
-         _weapon.setSpecialDamageModifier(_specDam, "Flaming Weapon spell (power level " +
-                                                    getPower() + ": +" + getPain(getPower()) + " pain, +"
-                                                    + getWounds(getPower()) + " wounds)");
+      if ((limbType != null) && (target != null)) {
+         Limb limb = target.getLimb(limbType);
+         weapon = limb.getWeapon(target);
+         weapon.setSpecialDamageModifier(specDam, "Flaming Weapon spell (power level " +
+                                                  getPower() + ": +" + getPain(getPower()) + " pain, +"
+                                                  + getWounds(getPower()) + " wounds)");
       }
    }
 
    @Override
    public Element getXMLObject(Document parentDoc, String newLine) {
       Element node = super.getXMLObject(parentDoc, newLine);
-      if (_target != null) {
-         for (Limb limb : _target.getLimbs()) {
-            if (_weapon == limb.getWeapon(_target)) {
-               node.setAttribute("weaponLimbIndex", String.valueOf(limb._limbType.value));
+      if (target != null) {
+         for (Limb limb : target.getLimbs()) {
+            if (weapon == limb.getWeapon(target)) {
+               node.setAttribute("weaponLimbIndex", String.valueOf(limb.limbType.value));
                break;
             }
          }
@@ -195,10 +195,10 @@ public class SpellFlamingWeapon extends ExpiringMageSpell implements ICastInBatt
       super.readFromXMLObject(namedNodeMap);
       Node node = namedNodeMap.getNamedItem("weaponLimbIndex");
       if (node != null) {
-         _limbType = LimbType.getByValue(Byte.parseByte(node.getNodeValue()));
-         _specDam = new SpecialDamage(SpecialDamage.MOD_FLAMING);
-         _specDam.setPainModifier(getPain(getPower()));
-         _specDam.setWoundModifier(getWounds(getPower()));
+         limbType = LimbType.getByValue(Byte.parseByte(node.getNodeValue()));
+         specDam = new SpecialDamage(SpecialDamage.MOD_FLAMING);
+         specDam.setPainModifier(getPain(getPower()));
+         specDam.setWoundModifier(getWounds(getPower()));
       }
    }
 }

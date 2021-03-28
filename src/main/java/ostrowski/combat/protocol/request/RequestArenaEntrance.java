@@ -21,38 +21,38 @@ import java.util.Map.Entry;
 public class RequestArenaEntrance extends SyncRequest
 {
    public static class TeamMember implements Cloneable {
-      public final byte      _team;
-      public final String    _name;
-      public final Character _character;
-      public final byte      _teamPosition;
-      public final boolean   _available;
+      public final byte      team;
+      public final String    name;
+      public final Character character;
+      public final byte      teamPosition;
+      public final boolean   available;
 
       public TeamMember(byte team, String name, Character character, byte teamPosition, boolean available) {
-         _team = team;
+         this.team = team;
          if ((name == null) || name.trim().isEmpty()) {
-            _name = Enums.TEAM_NAMES[team] + (teamPosition+1);
+            this.name = Enums.TEAM_NAMES[team] + (teamPosition + 1);
             //_name = "Any";
          }
          else {
-            _name = name;
+            this.name = name;
          }
-         _character = character;
-         _teamPosition = teamPosition;
-         _available = available;
+         this.character = character;
+         this.teamPosition = teamPosition;
+         this.available = available;
       }
 
       @Override
       public TeamMember clone() {
-         return new TeamMember(_team, _name, ((_character == null) ? null : _character.clone()), _teamPosition, _available);
+         return new TeamMember(team, name, ((character == null) ? null : character.clone()), teamPosition, available);
       }
    }
 
-   private final Map<Byte, List<TeamMember>> _mapTeamToListTeamMembers = new HashMap<>();
-   private Character _newCharacter;
+   private final Map<Byte, List<TeamMember>> mapTeamToListTeamMembers = new HashMap<>();
+   private Character                         newCharacter;
 
    public RequestArenaEntrance() {
       super();
-      _message = "Please select your character.";
+      message = "Please select your character.";
    }
    public RequestArenaEntrance(Map<Byte, List<TeamMember>> availableCombatantNamesByTeams) {
       this();
@@ -79,25 +79,25 @@ public class RequestArenaEntrance extends SyncRequest
    {
       super.serializeToStream(out);
       try {
-         Set<Entry<Byte, List<TeamMember>>> entrySet = _mapTeamToListTeamMembers.entrySet();
+         Set<Entry<Byte, List<TeamMember>>> entrySet = mapTeamToListTeamMembers.entrySet();
          writeToStream(entrySet.size(), out);
          for (Map.Entry<Byte, List<TeamMember>> e : entrySet) {
             writeToStream(e.getKey().byteValue(), out);
             List<TeamMember> listCharacterNamesAndAvailability = e.getValue();
             writeToStream(listCharacterNamesAndAvailability.size(), out);
             for (TeamMember teamMember : listCharacterNamesAndAvailability) {
-               writeToStream(teamMember._name,         out);
-               writeToStream((teamMember._character != null), out);
-               if (teamMember._character != null) {
-                  teamMember._character.serializeToStream(out);
+               writeToStream(teamMember.name, out);
+               writeToStream((teamMember.character != null), out);
+               if (teamMember.character != null) {
+                  teamMember.character.serializeToStream(out);
                }
-               writeToStream(teamMember._teamPosition, out);
-               writeToStream(teamMember._available,    out);
+               writeToStream(teamMember.teamPosition, out);
+               writeToStream(teamMember.available, out);
             }
          }
-         writeToStream((_newCharacter != null), out);
-         if (_newCharacter != null) {
-            _newCharacter.serializeToStream(out);
+         writeToStream((newCharacter != null), out);
+         if (newCharacter != null) {
+            newCharacter.serializeToStream(out);
          }
       } catch (IOException e) {
          e.printStackTrace();
@@ -126,13 +126,13 @@ public class RequestArenaEntrance extends SyncRequest
                boolean avail = readBoolean(in);
                teamMembers.add(new TeamMember(team, name, chr, teamPosition, avail));
             }
-            _mapTeamToListTeamMembers.put(team, teamMembers);
+            mapTeamToListTeamMembers.put(team, teamMembers);
          }
          if (readBoolean(in)) {
-            _newCharacter = (Character) SerializableFactory.readObject(readString(in), in);
+            newCharacter = (Character) SerializableFactory.readObject(readString(in), in);
          }
          else {
-            _newCharacter = null;
+            newCharacter = null;
          }
       } catch (IOException e) {
          e.printStackTrace();
@@ -140,36 +140,36 @@ public class RequestArenaEntrance extends SyncRequest
    }
    @Override
    public synchronized void copyDataInto(SyncRequest newObj) {
-      try (SemaphoreAutoLocker sal = new SemaphoreAutoLocker(_lockThis)) {
+      try (SemaphoreAutoLocker sal = new SemaphoreAutoLocker(lockThis)) {
          super.copyDataInto(newObj);
          if (newObj instanceof RequestArenaEntrance) {
             RequestArenaEntrance newReq = ((RequestArenaEntrance)newObj);
-            for (Map.Entry<Byte, List<TeamMember>> team : _mapTeamToListTeamMembers.entrySet()) {
+            for (Map.Entry<Byte, List<TeamMember>> team : mapTeamToListTeamMembers.entrySet()) {
                List<TeamMember> newTeam = new ArrayList<>();
                for (TeamMember teamMember : team.getValue()) {
                   newTeam.add(teamMember.clone());
                }
-               newReq._mapTeamToListTeamMembers.put(team.getKey(), newTeam);
+               newReq.mapTeamToListTeamMembers.put(team.getKey(), newTeam);
             }
-            newReq._newCharacter = _newCharacter.clone();
+            newReq.newCharacter = newCharacter.clone();
          }
       }
    }
    private void addCharacterByTeam(Byte team, TeamMember teamMember) {
-      List<TeamMember> teamMembers = _mapTeamToListTeamMembers.computeIfAbsent(team, k -> new ArrayList<>());
+      List<TeamMember> teamMembers = mapTeamToListTeamMembers.computeIfAbsent(team, k -> new ArrayList<>());
       teamMembers.add(teamMember.clone());
    }
    public void rebuildQuestion() {
-      _options.clear();
-      _answer = null;
+      options.clear();
+      answer = null;
       boolean separatorNeededNextTeam = false;
       int i = 0;
-      for (Map.Entry<Byte, List<TeamMember>> team : _mapTeamToListTeamMembers.entrySet()) {
+      for (Map.Entry<Byte, List<TeamMember>> team : mapTeamToListTeamMembers.entrySet()) {
          if (separatorNeededNextTeam) {
             addSeparatorOption();
          }
          for (TeamMember teamMember : team.getValue()) {
-            addOption(new RequestOption(teamMember._name, i++, teamMember._available));
+            addOption(new RequestOption(teamMember.name, i++, teamMember.available));
             separatorNeededNextTeam = true;
          }
       }
@@ -177,9 +177,9 @@ public class RequestArenaEntrance extends SyncRequest
 
    public Byte getSelectedCharacterTeam() {
       int i = 0;
-      for (Map.Entry<Byte, List<TeamMember>> team : _mapTeamToListTeamMembers.entrySet()) {
+      for (Map.Entry<Byte, List<TeamMember>> team : mapTeamToListTeamMembers.entrySet()) {
          for (TeamMember teamMember : team.getValue()) {
-            if (i++ == _answer.getIntValue()) {
+            if (i++ == answer.getIntValue()) {
                return team.getKey();
             }
          }
@@ -189,18 +189,18 @@ public class RequestArenaEntrance extends SyncRequest
 
    public byte getSelectedCharacterTeamPosition() {
       TeamMember teamMember = getSelectedTeamMember();
-      return (teamMember == null) ? -1 : teamMember._teamPosition;
+      return (teamMember == null) ? -1 : teamMember.teamPosition;
    }
    public Character getSelectedCharacter() {
       TeamMember teamMember = getSelectedTeamMember();
-      return (teamMember == null) ? null : teamMember._character;
+      return (teamMember == null) ? null : teamMember.character;
    }
    private TeamMember getSelectedTeamMember() {
-      if (_answer != null) {
+      if (answer != null) {
          int i = 0;
-         for (Map.Entry<Byte, List<TeamMember>> team : _mapTeamToListTeamMembers.entrySet()) {
+         for (Map.Entry<Byte, List<TeamMember>> team : mapTeamToListTeamMembers.entrySet()) {
             for (TeamMember teamMember : team.getValue()) {
-               if (i++ == _answer.getIntValue()) {
+               if (i++ == answer.getIntValue()) {
                   return teamMember;
                }
             }
@@ -210,6 +210,6 @@ public class RequestArenaEntrance extends SyncRequest
    }
 
    public void setSelectedCharacter(Character character) {
-      _newCharacter = character;
+      newCharacter = character;
    }
 }

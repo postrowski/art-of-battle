@@ -17,25 +17,25 @@ import ostrowski.combat.common.enums.TerrainWall;
 
 public class Wall extends Thing implements Enums
 {
-   public TerrainWall _orientation = TerrainWall.VERT_CENTER;
+   public TerrainWall orientation = TerrainWall.VERT_CENTER;
 
    public Wall() {
       // default 'ctor used for serialization
    }
    public Wall(TerrainWall orientation) {
       super("Wall", null/*racialBase*/, 0/*cost*/, 100/*weight*/, (byte)0/*pd*/);
-      _orientation = orientation;
+      this.orientation = orientation;
    }
    public Wall(String name, double weight, TerrainWall orientation) {
       super(name, null/*racialBase*/, 0/*cost*/, 100/*weight*/, (byte)0/*pd*/);
-      _orientation = orientation;
+      this.orientation = orientation;
    }
 
    public boolean equals(Wall other) {
       if (other == null) {
          return false;
       }
-      if (_orientation  != other._orientation) {
+      if (orientation != other.orientation) {
          return false;
       }
       return super.equals(other);
@@ -47,7 +47,7 @@ public class Wall extends Thing implements Enums
       super.copyData(source);
       if (source instanceof Wall) {
          Wall doorSource = (Wall) source;
-         _orientation = doorSource._orientation;
+         orientation = doorSource.orientation;
       }
    }
    @Override
@@ -55,7 +55,7 @@ public class Wall extends Thing implements Enums
    {
       super.serializeFromStream(in);
       try {
-         _orientation = TerrainWall.getByBitMask(readLong(in));
+         orientation = TerrainWall.getByBitMask(readLong(in));
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -65,7 +65,7 @@ public class Wall extends Thing implements Enums
    {
       super.serializeToStream(out);
       try {
-         writeToStream(_orientation.bitMask, out);
+         writeToStream(orientation.bitMask, out);
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -77,7 +77,7 @@ public class Wall extends Thing implements Enums
    }
    @Override
    public Wall clone() {
-      return new Wall(_name, _weight, _orientation);
+      return new Wall(name, weight, orientation);
    }
 
    @Override

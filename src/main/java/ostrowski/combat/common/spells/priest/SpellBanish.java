@@ -10,7 +10,7 @@ import ostrowski.combat.server.Arena;
 
 public abstract class SpellBanish extends ResistedPriestSpell implements IRangedSpell, ICastInBattle
 {
-   private int _painAmount;
+   private int painAmount;
 
    public SpellBanish() {
    }
@@ -61,13 +61,13 @@ public abstract class SpellBanish extends ResistedPriestSpell implements IRanged
    @Override
    public Wound setResults(int excessSuccess, boolean success, boolean effective, int castRoll, byte skill, Arena arena) {
       // The pain from this spell is based upon
-      _painAmount = excessSuccess * getPower();
+      painAmount = excessSuccess * getPower();
       return super.setResults(excessSuccess, success, effective, castRoll, skill, arena);
    }
 
    public byte getPainAmount() {
       byte curPain = getTarget().getPainPenalty(false/*accountForBerserking*/);
-      return (byte) (Math.min((9 - curPain), _painAmount));
+      return (byte) (Math.min((9 - curPain), painAmount));
    }
 
    @Override

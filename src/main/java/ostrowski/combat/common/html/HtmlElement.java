@@ -6,7 +6,7 @@ import java.util.Map.Entry;
 public abstract class HtmlElement
 {
 
-   protected HashMap<String, String> _attributes;
+   protected HashMap<String, String> attributes;
    public HtmlElement setClassName(String className) {
       setAttribute("class", className);
       return this;
@@ -22,8 +22,8 @@ public abstract class HtmlElement
    }
 
    public String getAttributeValue(String key) {
-      if (_attributes != null) {
-         String value = _attributes.get(key.toLowerCase());
+      if (attributes != null) {
+         String value = attributes.get(key.toLowerCase());
          if (value != null) {
             return value;
          }
@@ -31,10 +31,10 @@ public abstract class HtmlElement
       return "";
    }
    public HtmlElement setAttribute(String attributeName, Object attributeValue) {
-      if (_attributes == null) {
-         _attributes = new HashMap<>();
+      if (attributes == null) {
+         attributes = new HashMap<>();
       }
-      _attributes.put(attributeName.toLowerCase(), attributeValue.toString());
+      attributes.put(attributeName.toLowerCase(), attributeValue.toString());
       return this;
    }
 
@@ -50,8 +50,8 @@ public abstract class HtmlElement
 //      }
       lastWriteDepth = indentDepth;
       sb.append("<").append(getElementName());
-      if (_attributes != null) {
-         for (Entry<String, String> set : _attributes.entrySet()) {
+      if (attributes != null) {
+         for (Entry<String, String> set : attributes.entrySet()) {
             sb.append(' ');
             sb.append(set.getKey());
             sb.append("='");

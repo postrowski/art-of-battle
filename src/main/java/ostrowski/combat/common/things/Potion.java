@@ -32,9 +32,9 @@ public class Potion extends Thing implements Cloneable
    public static final String POTION_INCR_DEXTERITY  = "Potion:Increase Dexterity";
    public static final String POTION_SPEED           = "Potion:Speed";
    public static final String POTION_MANA            = "Potion:Restore Mana";
-   byte _strength; // potency (points healed, strength gained, etc.)
-   byte _duration; // number of turns this potion remains in effect.
-   private RGB _background;
+   byte strength; // potency (points healed, strength gained, etc.)
+   byte duration; // number of turns this potion remains in effect.
+   private RGB background;
 
    public Potion()
    {
@@ -43,14 +43,14 @@ public class Potion extends Thing implements Cloneable
    public Potion(String name, int strength, int duration, int cost, RGB background)
    {
       super(name, null/*racialBase*/, cost, 1/*weight*/, (byte)0/*passive Defense*/);
-      _strength = (byte) strength;
-      _duration = (byte) duration;
-      _background = background;
+      this.strength = (byte) strength;
+      this.duration = (byte) duration;
+      this.background = background;
    }
 
    @Override
    public Potion clone() {
-      return new Potion(_name, _strength, _duration, _cost, _background);
+      return new Potion(name, strength, duration, cost, background);
    }
 
    @Override
@@ -91,41 +91,41 @@ public class Potion extends Thing implements Cloneable
    @Override
    public boolean apply(Character character, Arena arena) throws BattleTerminatedException {
       PriestSpell spell = null;
-      if (_name.equals(POTION_MINOR_HEALING)) {
+      if (name.equals(POTION_MINOR_HEALING)) {
          spell = new SpellCureSeriousWound();
       }
-      else if (_name.equals(POTION_HEALING)) {
+      else if (name.equals(POTION_HEALING)) {
          spell = new SpellCureSeriousWound();
       }
-      else if (_name.equals(POTION_MAJOR_HEALING)) {
+      else if (name.equals(POTION_MAJOR_HEALING)) {
          spell = new SpellCureSeriousWound();
       }
-      else if (_name.equals(POTION_FULL_HEALING)) {
+      else if (name.equals(POTION_FULL_HEALING)) {
          spell = new SpellHeal();
       }
-      else if (_name.equals(POTION_SPEED)) {
+      else if (name.equals(POTION_SPEED)) {
          spell = new SpellSpeed();
       }
 
       if (spell != null) {
-         spell.setPower(_strength);
+         spell.setPower(strength);
          spell.setTarget(character);
          spell.completeSpell();
          spell.applySpell(character/*target*/, arena);
       }
       else {
-         int index = _name.indexOf("Increase ");
+         int index = name.indexOf("Increase ");
          if (index != -1) {
-            String attributeName = _name.substring(index + "Increase ".length());
+            String attributeName = name.substring(index + "Increase ".length());
             for (Attribute attr : Attribute.values()) {
                if (attributeName.equalsIgnoreCase(attr.shortName) ||
                    attributeName.equalsIgnoreCase(attr.name())) {
-                  character.setAttribute(attr, (byte) (character.getAttributeLevel(attr) + _strength), false/*containInLimits*/);
+                  character.setAttribute(attr, (byte) (character.getAttributeLevel(attr) + strength), false/*containInLimits*/);
                   break;
                }
             }
          }
-         if (_name.equals(POTION_MANA)) {
+         if (name.equals(POTION_MANA)) {
             character.resetSpellPoints();
          }
       }
@@ -133,20 +133,20 @@ public class Potion extends Thing implements Cloneable
       return true;
    }
 
-   static final Potion[] _potionList = new Potion[] {                //  strength, duration, cost
-                                  new Potion(POTION_MINOR_HEALING,     1,           0,  250, new RGB(  0,   0, 100)),
-                                  new Potion(POTION_HEALING,           3,           0,  500, new RGB(  0,   0, 150)),
-                                  new Potion(POTION_MAJOR_HEALING,     5,           0, 1000, new RGB(  0,   0, 200)),
-                                  new Potion(POTION_FULL_HEALING,     10,           0, 5000, new RGB(  0,   0, 255)),
-                                  new Potion(POTION_INCR_STRENGTH,     3,          50,  600, new RGB(255,   0,   0)),
-                                  new Potion(POTION_INCR_NIMBLENESS,   3,          50,  750, new RGB(255, 255,   0)),
-                                  new Potion(POTION_INCR_DEXTERITY,    3,          50, 1500, new RGB(  0, 255,   0)),
-                                  new Potion(POTION_SPEED,             3,          50, 3000, new RGB(222, 222, 222)),
-                                  new Potion(POTION_MANA,              1,           0, 5000, new RGB(  0, 222, 222)),
+   static final Potion[] POTION_LIST = new Potion[] {                //  strength, duration, cost
+            new Potion(POTION_MINOR_HEALING,     1,           0,  250, new RGB(  0,   0, 100)),
+            new Potion(POTION_HEALING,           3,           0,  500, new RGB(  0,   0, 150)),
+            new Potion(POTION_MAJOR_HEALING,     5,           0, 1000, new RGB(  0,   0, 200)),
+            new Potion(POTION_FULL_HEALING,     10,           0, 5000, new RGB(  0,   0, 255)),
+            new Potion(POTION_INCR_STRENGTH,     3,          50,  600, new RGB(255,   0,   0)),
+            new Potion(POTION_INCR_NIMBLENESS,   3,          50,  750, new RGB(255, 255,   0)),
+            new Potion(POTION_INCR_DEXTERITY,    3,          50, 1500, new RGB(  0, 255,   0)),
+            new Potion(POTION_SPEED,             3,          50, 3000, new RGB(222, 222, 222)),
+            new Potion(POTION_MANA,              1,           0, 5000, new RGB(  0, 222, 222)),
    };
    public static Potion getPotion(String thingName, Race racialBase)
    {
-      for (Potion potion : _potionList) {
+      for (Potion potion : POTION_LIST) {
          if (potion.getName().equals(thingName))
          {
             Potion duplicatePotion = potion.clone();
@@ -161,7 +161,7 @@ public class Potion extends Thing implements Cloneable
    public DrawnObject drawThing(int size, RGB foreground, RGB background) {
       int radius = size/5;
       int pointCount = 50;
-      DrawnObject potion = new DrawnObject(foreground, _background);
+      DrawnObject potion = new DrawnObject(foreground, this.background);
       double stepSize  = (2 * Math.PI)/pointCount;
       for (int point=2 ; point<(pointCount-2) ; point++) {
          double ang = point * stepSize;
@@ -190,7 +190,7 @@ public class Potion extends Thing implements Cloneable
 
    public static List<String> getPotionNames() {
       List<String> names = new ArrayList<>();
-      for (Potion potion : _potionList) {
+      for (Potion potion : POTION_LIST) {
          names.add(potion.getName());
       }
       return names;

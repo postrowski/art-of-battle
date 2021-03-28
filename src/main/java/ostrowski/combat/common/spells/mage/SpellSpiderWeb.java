@@ -15,8 +15,8 @@ import ostrowski.combat.server.Arena;
 
 public class SpellSpiderWeb extends MageSpell implements IHolder, IRangedSpell, ICastInBattle
 {
-   public byte                _holdReductionAmount = 0;
-   public static final String NAME                 = "Spider Web";
+   public byte                holdReductionAmount = 0;
+   public static final String NAME                = "Spider Web";
 
    public SpellSpiderWeb() {
       super(NAME, new Class[] { SpellCreateEarth.class, SpellCreateRope.class, SpellCreateForce.class, SpellGlue.class, SpellThrowSpell.class},
@@ -29,9 +29,9 @@ public class SpellSpiderWeb extends MageSpell implements IHolder, IRangedSpell, 
          StringBuilder sb = new StringBuilder();
          sb.append(getCasterName()).append(" creates a spider web with a hold level of ").append(getHoldingLevel());
          sb.append(" (power level ").append(getPower());
-         sb.append(" times two, plus bonus damage of ").append(_excessSuccess / 2);
-         byte casterSize = (_caster == null) ? 0 : _caster.getRace().getBuildModifier();
-         byte targetSize = (_target == null) ? 0 : (byte) (-1 * _target.getRace().getBuildModifier());
+         sb.append(" times two, plus bonus damage of ").append(excessSuccess / 2);
+         byte casterSize = (caster == null) ? 0 : caster.getRace().getBuildModifier();
+         byte targetSize = (target == null) ? 0 : (byte) (-1 * target.getRace().getBuildModifier());
 
          if ((targetSize != 0) || (casterSize != 0)) {
             sb.append(", ");
@@ -75,7 +75,7 @@ public class SpellSpiderWeb extends MageSpell implements IHolder, IRangedSpell, 
 
    @Override
    public void applyEffects(Arena arena) {
-      if (_excessSuccess >= 0) {
+      if (excessSuccess >= 0) {
          getTarget().setHoldLevel(this, getHoldingLevel());
       }
    }
@@ -104,13 +104,13 @@ public class SpellSpiderWeb extends MageSpell implements IHolder, IRangedSpell, 
 
    @Override
    public Byte getHoldingLevel() {
-      byte casterSize = _caster == null ? 0 : _caster.getRace().getBuildModifier();
-      byte targetSize = _target == null ? 0 : _target.getRace().getBuildModifier();
-      return (byte) (((((getPower() * 2) + (byte) (_excessSuccess / 2)) - _holdReductionAmount) + casterSize) - targetSize);
+      byte casterSize = caster == null ? 0 : caster.getRace().getBuildModifier();
+      byte targetSize = target == null ? 0 : target.getRace().getBuildModifier();
+      return (byte) (((((getPower() * 2) + (byte) (excessSuccess / 2)) - holdReductionAmount) + casterSize) - targetSize);
    }
 
    public boolean reduceHoldingLevel(byte reductionAmount) {
-      _holdReductionAmount += reductionAmount;
+      holdReductionAmount += reductionAmount;
       return getHoldingLevel() <= 0;
    }
 

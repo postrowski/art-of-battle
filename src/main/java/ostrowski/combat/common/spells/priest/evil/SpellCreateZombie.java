@@ -80,33 +80,33 @@ public class SpellCreateZombie extends PriestSpell implements ICastInBattle
 
    @Override
    public void applyEffects(Arena arena) {
-      if ((_target != null) && (!_target.getCondition().isAlive())) {
+      if ((target != null) && (!target.getCondition().isAlive())) {
          // lower IQ by 5.
-         _target.setAttribute(Attribute.Intelligence, (byte) (_target.getAttributeLevel(Attribute.Intelligence)-5), false /*containInLimits*/);
+         target.setAttribute(Attribute.Intelligence, (byte) (target.getAttributeLevel(Attribute.Intelligence) - 5), false /*containInLimits*/);
          // max out all attributes at effective power.
          byte maxAtt = getEffectivePower();
          for (Attribute att : Attribute.values()) {
-            if (_target.getAttributeLevel(att) > maxAtt) {
-               _target.setAttribute(att, maxAtt, false /*containInLimits*/);
+            if (target.getAttributeLevel(att) > maxAtt) {
+               target.setAttribute(att, maxAtt, false /*containInLimits*/);
             }
          }
          // max out all skill at effective power * 2
          byte maxSkill = (byte) (getEffectivePower() * 2);
-         for (Skill skill : _target.getSkillsList()) {
+         for (Skill skill : target.getSkillsList()) {
             if (skill.getLevel() > maxSkill) {
                skill.setLevel(maxSkill);
             }
          }
          // cure all the wounds on the character, except lost limbs.
-         for (Wound wound : _target.getWoundsList()) {
+         for (Wound wound : target.getWoundsList()) {
             if (!wound.isSeveredArm() && !wound.isSeveredLeg()) {
                getTarget().cureWound(wound, (byte)10/*woundReduction*/, (byte)10/*bleedingReduction*/);
             }
          }
-         _target.getCondition().raiseFromDead(true/*asZombie*/);
-         _target._teamID = getCaster()._teamID;
-         _target.addAdvantage(Advantage.getAdvantage(Advantage.NO_PAIN));
-         _target.addAdvantage(Advantage.getAdvantage(Advantage.UNDEAD));
+         target.getCondition().raiseFromDead(true/*asZombie*/);
+         target.teamID = getCaster().teamID;
+         target.addAdvantage(Advantage.getAdvantage(Advantage.NO_PAIN));
+         target.addAdvantage(Advantage.getAdvantage(Advantage.UNDEAD));
          // TODO: how do we attach this to a new AI engine, if it was a player character?
       }
    }

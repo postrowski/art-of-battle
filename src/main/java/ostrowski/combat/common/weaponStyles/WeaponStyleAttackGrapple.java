@@ -25,8 +25,8 @@ public class WeaponStyleAttackGrapple extends WeaponStyleAttackMelee
    @Override
    public WeaponStyleAttackGrapple clone()
    {
-      WeaponStyleAttackGrapple style = new WeaponStyleAttackGrapple(_skillType, _minSkill, _skillPenalty, _name,
-                                                                   _parryPenalty, _minRange, _maxRange, _handsRequired);
+      WeaponStyleAttackGrapple style = new WeaponStyleAttackGrapple(skillType, minSkill, skillPenalty, name,
+                                                                    parryPenalty, minRange, maxRange, handsRequired);
       style.copyDataFrom(this);
       return style;
    }

@@ -22,13 +22,13 @@ public class SpellFear extends ResistedPriestSpell implements ICastInBattle
    @Override
    public String describeEffects(Character defender, boolean firstTime) {
       if (firstTime) {
-         return getTargetName() + " is now in fear of " + getCasterName() + ", and all rolls to attack " + _caster.getHimHer() + " will be at a " + getPenalty();
+         return getTargetName() + " is now in fear of " + getCasterName() + ", and all rolls to attack " + caster.getHimHer() + " will be at a " + getPenalty();
       }
-      return getTargetName() + " is fearful of " + getCasterName() + ", and all rolls against " + _caster.getHimHer() + " are at a " + getPenalty();
+      return getTargetName() + " is fearful of " + getCasterName() + ", and all rolls against " + caster.getHimHer() + " are at a " + getPenalty();
    }
 
    public byte getPenalty() {
-      Advantage divineAff = _caster.getAdvantage(Advantage.DIVINE_AFFINITY_ + getDeity());
+      Advantage divineAff = caster.getAdvantage(Advantage.DIVINE_AFFINITY_ + getDeity());
       if (divineAff == null && isInate()) {
          return (byte) (0-this.getAffinity());
       }

@@ -44,7 +44,7 @@ public class CombatClient
       boolean aiOn = ((aiArg != null) && (aiArg.equalsIgnoreCase("ai")));
 
       CharacterDisplay combat = new CharacterDisplay(preferedCharName);
-      boolean startOnArenaPage = combat._charWidget._character.getName().equals(preferedCharName);
+      boolean startOnArenaPage = combat.charWidget.character.getName().equals(preferedCharName);
       combat.buildCharSheet(shell, startOnArenaPage, aiOn);
 
       shell.pack();

@@ -23,14 +23,14 @@ public abstract class WeaponStyleAttack extends WeaponStyle
       Anytime
    }
 
-   protected byte    _damageMod;
-   protected DiceSet _varianceDice;
-   protected DamageType    _damageType;
-   protected AttackType    _attackType;
-   protected byte    _parryPenalty;
-   protected Charge  _chargeType;
-   protected short   _minRange;
-   protected short   _maxRange;
+   protected byte       damageMod;
+   protected DiceSet    varianceDice;
+   protected DamageType damageType;
+   protected AttackType attackType;
+   protected byte       parryPenalty;
+   protected Charge     chargeType;
+   protected short      minRange;
+   protected short      maxRange;
 
    public WeaponStyleAttack(SkillType skillType, int minSkill, int skillPenalty, String name,
                             int speedBase, int slowStr, int fastStr, int damageMod,
@@ -38,87 +38,87 @@ public abstract class WeaponStyleAttack extends WeaponStyle
                             Charge chargeType, int parryPenalty, int minRange, int maxRange, int handsRequired)
    {
       super(skillType, minSkill, skillPenalty, name, speedBase, slowStr, fastStr, handsRequired);
-      _damageMod     = (byte) damageMod;
-      _varianceDice  = varianceDice;
-      _damageType    = damageType;
-      _attackType    = attackType;
-      _parryPenalty  = (byte) parryPenalty;
-      _chargeType    = chargeType;
-      _minRange      = (short) minRange;
-      _maxRange      = (short) maxRange;
+      this.damageMod = (byte) damageMod;
+      this.varianceDice = varianceDice;
+      this.damageType = damageType;
+      this.attackType = attackType;
+      this.parryPenalty = (byte) parryPenalty;
+      this.chargeType = chargeType;
+      this.minRange = (short) minRange;
+      this.maxRange = (short) maxRange;
    }
    public DiceSet getVarianceDie() {
-      return _varianceDice;
+      return varianceDice;
    }
    public String getDamageString(byte damBase) {
-      return "" + (_damageMod + damBase) + " + " + getVarianceDie() + " " + _damageType.shortname;
+      return "" + (damageMod + damBase) + " + " + getVarianceDie() + " " + damageType.shortname;
    }
    public byte getDamage(byte damBase) {
-      return (byte) (_damageMod + damBase);
+      return (byte) (damageMod + damBase);
    }
    public AttackType getAttackType() {
-      return _attackType;
+      return attackType;
    }
    public byte getParryPenalty() {
-      return _parryPenalty;
+      return parryPenalty;
    }
    public DamageType getDamageType() {
-      return _damageType;
+      return damageType;
    }
    public String getDamageTypeString() {
-      return _damageType.fullname;
+      return damageType.fullname;
    }
    public byte getDamageMod() {
-      return _damageMod;
+      return damageMod;
    }
 
    @Override
    public String toString()
    {
       return super.toString() +
-             ", damageMod: " + _damageMod +
-             ", varianceDie: " + _varianceDice +
-             ", damageType: " + _damageType +
-             ", attackType: " + _attackType +
-             ", parryPenalty: " + _parryPenalty +
-             ", chargeType: " + _chargeType;
+             ", damageMod: " + damageMod +
+             ", varianceDie: " + varianceDice +
+             ", damageType: " + damageType +
+             ", attackType: " + attackType +
+             ", parryPenalty: " + parryPenalty +
+             ", chargeType: " + chargeType;
    }
    public short getMaxRange()
    {
       if (!isRanged()) {
-         if (_weapon != null) {
-            Race racialBase = _weapon.getRacialBase();
+         if (weapon != null) {
+            Race racialBase = weapon.getRacialBase();
             if (racialBase != null) {
                byte buildModifier = racialBase.getBuildModifier();
-               short adjMaxRange = Rules.adjustMeleeRangeForSize(_maxRange, buildModifier);
+               short adjMaxRange = Rules.adjustMeleeRangeForSize(maxRange, buildModifier);
                // don't let the maximum range drop below 1 due to size adjustment
-               if ((adjMaxRange == 0) && (_maxRange > 0)) {
+               if ((adjMaxRange == 0) && (maxRange > 0)) {
                   return 1;
                }
                return adjMaxRange;
             }
          }
       }
-      return _maxRange;
+      return maxRange;
    }
    public short getMinRange()
    {
       if (!isRanged()) {
-         if (_weapon != null) {
-            Race racialBase = _weapon.getRacialBase();
+         if (weapon != null) {
+            Race racialBase = weapon.getRacialBase();
             if (racialBase != null) {
                byte buildModifier = racialBase.getBuildModifier();
-               return Rules.adjustMeleeRangeForSize(_minRange, buildModifier);
+               return Rules.adjustMeleeRangeForSize(minRange, buildModifier);
             }
          }
       }
-      return _minRange;
+      return minRange;
    }
    public boolean isThrown() {
-      return _attackType == AttackType.THROW;
+      return attackType == AttackType.THROW;
    }
    public boolean isMissile() {
-      return _attackType == AttackType.MISSILE;
+      return attackType == AttackType.MISSILE;
    }
    public boolean isRanged() {
       return isThrown() || isMissile();
@@ -143,7 +143,7 @@ public abstract class WeaponStyleAttack extends WeaponStyle
       }
       // unarmed combat skills that require two hands should only show for the right hand
       if (isTwoHanded()) {
-         Limb otherLimb = character.getLimb(useFromLimb._limbType.getPairedType());
+         Limb otherLimb = character.getLimb(useFromLimb.limbType.getPairedType());
          if ((otherLimb == null) || (otherLimb.isCrippled())) {
             return false;
          }
@@ -161,54 +161,54 @@ public abstract class WeaponStyleAttack extends WeaponStyle
          return false;
       }
       WeaponStyleAttack otherStyle = (WeaponStyleAttack) other;
-      if (this._damageMod != otherStyle._damageMod) {
+      if (this.damageMod != otherStyle.damageMod) {
          return false;
       }
-      if (!this._varianceDice.equals(otherStyle._varianceDice)) {
+      if (!this.varianceDice.equals(otherStyle.varianceDice)) {
          return false;
       }
-      if (this._damageType != otherStyle._damageType) {
+      if (this.damageType != otherStyle.damageType) {
          return false;
       }
-      if (this._attackType != otherStyle._attackType) {
+      if (this.attackType != otherStyle.attackType) {
          return false;
       }
-      if (this._parryPenalty != otherStyle._parryPenalty) {
+      if (this.parryPenalty != otherStyle.parryPenalty) {
          return false;
       }
-      if (this._chargeType != otherStyle._chargeType) {
+      if (this.chargeType != otherStyle.chargeType) {
          return false;
       }
-      if (this._minRange != otherStyle._minRange) {
+      if (this.minRange != otherStyle.minRange) {
          return false;
       }
-      return this._maxRange == otherStyle._maxRange;
+      return this.maxRange == otherStyle.maxRange;
    }
    public boolean canCharge(boolean isMounted, boolean hasFourLegs) {
-      if (_chargeType == Charge.Never) {
+      if (chargeType == Charge.Never) {
          return false;
       }
-      if (_chargeType == Charge.Anytime) {
+      if (chargeType == Charge.Anytime) {
          return true;
       }
-      if ((_chargeType == Charge.WhenMounted) && !isMounted) {
+      if ((chargeType == Charge.WhenMounted) && !isMounted) {
          return false;
       }
-      return (_chargeType != Charge.With4Legs) || hasFourLegs;
+      return (chargeType != Charge.With4Legs) || hasFourLegs;
    }
    @Override
    public void copyDataFrom(WeaponStyle source) {
       super.copyDataFrom(source);
       if (source instanceof WeaponStyleAttack) {
          WeaponStyleAttack sourceAttack = (WeaponStyleAttack) source;
-         _damageMod    = sourceAttack._damageMod;
-         _varianceDice = new DiceSet(sourceAttack._varianceDice.toString());
-         _damageType   = sourceAttack._damageType;
-         _attackType   = sourceAttack._attackType;
-         _parryPenalty = sourceAttack._parryPenalty;
-         _chargeType   = sourceAttack._chargeType;
-         _minRange     = sourceAttack._minRange;
-         _maxRange     = sourceAttack._maxRange;
+         damageMod = sourceAttack.damageMod;
+         varianceDice = new DiceSet(sourceAttack.varianceDice.toString());
+         damageType = sourceAttack.damageType;
+         attackType = sourceAttack.attackType;
+         parryPenalty = sourceAttack.parryPenalty;
+         chargeType = sourceAttack.chargeType;
+         minRange = sourceAttack.minRange;
+         maxRange = sourceAttack.maxRange;
       }
    }
 }

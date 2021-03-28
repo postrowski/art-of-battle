@@ -30,65 +30,65 @@ import java.util.Comparator;
 
 public abstract class Thing extends SerializableObject implements Cloneable, Enums
 {
-   public String _name           = "";
-   public double _weight         = 0;
-   public int    _cost           = 0;
-   private Race  _racialBase     = null;
-   public byte   _passiveDefense = 0;
+   public  String name           = "";
+   public  double weight         = 0;
+   public  int    cost           = 0;
+   private Race   racialBase     = null;
+   public  byte   passiveDefense = 0;
 
    @Override
    public String toString() {
-       return _name + ", $" + _cost + ", " + _weight + " lbs, pd=" +_passiveDefense;
+       return name + ", $" + cost + ", " + weight + " lbs, pd=" + passiveDefense;
    }
 
    public Thing() {
    }
 
    public Thing (String name, Race racialBase, int cost, double weight, byte passiveDefense) {
-      _name           = name;
-      _racialBase     = racialBase;
-      _cost           = cost;
-      _weight         = weight;
-      _passiveDefense = passiveDefense;
+      this.name = name;
+      this.racialBase = racialBase;
+      this.cost = cost;
+      this.weight = weight;
+      this.passiveDefense = passiveDefense;
    }
 
-   public Race getRacialBase() { return _racialBase; }
-   public void setRacialBase(Race racialBase) { _racialBase = racialBase; }
-   public String getName() { return _name; }
-   public int    getCost() { return _cost; }
-   public double getWeight() { return _weight; }
+   public Race getRacialBase() { return racialBase; }
+   public void setRacialBase(Race racialBase) { this.racialBase = racialBase; }
+   public String getName() { return name; }
+   public int    getCost() { return cost; }
+   public double getWeight() { return weight; }
    public double getAdjustedWeight() {
-      if (_weight == 0) {
+      if (weight == 0) {
          return 0;
       }
-      double weightForHuman = _weight;
+      double weightForHuman = weight;
       if (!isSizeAdjusted()) {
          return weightForHuman;
       }
       double adjWeight = weightForHuman;
-      if (_racialBase == null) {
+      if (racialBase == null) {
          DebugBreak.debugBreak(getName() + " has no racial base.");
       }
       else {
-         if (_racialBase.getName().equals(Race.NAME_Skeleton)) {
+         if (racialBase.getName().equals(Race.NAME_Skeleton)) {
             return weightForHuman;
          }
-         if (_racialBase.getName().equals(Race.NAME_Centaur)) {
+         if (racialBase.getName().equals(Race.NAME_Centaur)) {
             if ((this instanceof Weapon) || (this instanceof Shield)) {
                return weightForHuman;
             }
          }
-         adjWeight = (weightForHuman  * _racialBase._aveWeight) / Race.HUMAN_AVE_WEIGHT;
+         adjWeight = (weightForHuman * racialBase.aveWeight) / Race.HUMAN_AVE_WEIGHT;
       }
       return Rules.roundWeight(adjWeight);
    }
-   public byte getPassiveDefense()   { return _passiveDefense; }
+   public byte getPassiveDefense()   { return passiveDefense; }
    public abstract String getActiveDefenseName();
    public abstract List<SkillType> getDefenseSkillTypes();
    public abstract byte getBestDefenseOption(Character wielder, LimbType useHand, boolean canUse2Hands,
                                              DamageType damType, boolean isGrappleAttack, short distance);
    public boolean canDefendAgainstRangedWeapons() { return false;}
-   public boolean isReal() { return _cost > 0;}
+   public boolean isReal() { return cost > 0;}
    public static Thing getThing(String thingName, Race racialBase) {
       return getThing(thingName, true/*allowTool*/, racialBase);
    }
@@ -156,11 +156,11 @@ public abstract class Thing extends SerializableObject implements Cloneable, Enu
    public void serializeFromStream(DataInputStream in)
    {
       try {
-         _name  = readString(in);
+         name = readString(in);
          String race = readString(in);
          Gender gender = Gender.getByName(readString(in));
-         _racialBase = Race.getRace(race, gender);
-         Thing source = Thing.getThing(_name, _racialBase);
+         racialBase = Race.getRace(race, gender);
+         Thing source = Thing.getThing(name, racialBase);
          copyData(source);
       } catch (IOException e) {
          e.printStackTrace();
@@ -171,9 +171,9 @@ public abstract class Thing extends SerializableObject implements Cloneable, Enu
    public void serializeToStream(DataOutputStream out)
    {
       try {
-         writeToStream(_name, out);
-         writeToStream(_racialBase.getName(), out);
-         writeToStream(_racialBase.getGender()._name, out);
+         writeToStream(name, out);
+         writeToStream(racialBase.getName(), out);
+         writeToStream(racialBase.getGender().name, out);
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -181,10 +181,10 @@ public abstract class Thing extends SerializableObject implements Cloneable, Enu
    public void copyData(Thing source)
    {
       if (source != null) {
-         _name           = source._name;
-         _cost           = source._cost;
-         _weight         = source._weight;
-         _passiveDefense = source._passiveDefense;
+         name = source.name;
+         cost = source.cost;
+         weight = source.weight;
+         passiveDefense = source.passiveDefense;
       }
    }
    public boolean equals(Thing other)
@@ -192,16 +192,16 @@ public abstract class Thing extends SerializableObject implements Cloneable, Enu
       if (other == null) {
          return false;
       }
-      if (!_name.equals(other._name)) {
+      if (!name.equals(other.name)) {
          return false;
       }
-      if (_cost           != other._cost) {
+      if (cost != other.cost) {
          return false;
       }
-      if (_weight         != other._weight) {
+      if (weight != other.weight) {
          return false;
       }
-      return _passiveDefense == other._passiveDefense;
+      return passiveDefense == other.passiveDefense;
    }
 
    @Override

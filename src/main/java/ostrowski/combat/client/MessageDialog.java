@@ -21,8 +21,11 @@ import org.eclipse.swt.widgets.Shell;
 import ostrowski.combat.server.Arena;
 
 public class MessageDialog extends Dialog implements FocusListener{
-   String _targetName;
-   public Shell _shell;
+   String targetName;
+   public Shell shell;
+
+   public static final List<MessageDialog> ACTIVE_MESSAGES = new ArrayList<>();
+   public static       MessageDialog       topMessage      = null;
 
    public MessageDialog (Shell parent, int style) {
       super (parent, style);
@@ -31,19 +34,19 @@ public class MessageDialog extends Dialog implements FocusListener{
       this (parent, 0); // your default style bits go here (not the Shell's style bits)
    }
    public void setTargetName(String targetName) {
-      _targetName = targetName;
+      this.targetName = targetName;
    }
    public void open (String message, boolean isPublic) {
       Shell parent = getParent();
-      _shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
+      shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
       if (isPublic) {
-         _shell.setText("Public message from server");
+         shell.setText("Public message from server");
       }
       else {
-         _shell.setText("Private message from server" + ((_targetName == null) ? "" : (" to " + _targetName)));
+         shell.setText("Private message from server" + ((targetName == null) ? "" : (" to " + targetName)));
       }
-      _shell.setLayout(new GridLayout(1, false));
-      Label label = new Label(_shell, SWT.LEFT);
+      shell.setLayout(new GridLayout(1, false));
+      Label label = new Label(shell, SWT.LEFT);
       GridData data1 = new GridData();
       label.setSize(300, 40);
       label.setLayoutData(data1);
@@ -59,7 +62,7 @@ public class MessageDialog extends Dialog implements FocusListener{
       label.setText(message);
 
 
-      Composite footer = new Composite(_shell, SWT.NONE);
+      Composite footer = new Composite(shell, SWT.NONE);
 
       GridData data3 = new GridData();
       data3.horizontalAlignment = SWT.FILL;
@@ -75,33 +78,33 @@ public class MessageDialog extends Dialog implements FocusListener{
       ok.addSelectionListener(new SelectionAdapter() {
           @Override
           public void widgetSelected(SelectionEvent e) {
-              _shell.dispose();
+              shell.dispose();
           }
       });
-      _shell.setDefaultButton(ok);
+      shell.setDefaultButton(ok);
 //      body.pack();
-      _shell.pack();
+      shell.pack();
 
-      _shell.addFocusListener(this);
+      shell.addFocusListener(this);
 
-      _topMessage = this;
-      _activeMessages.add(this);
-      _shell.open();
+      topMessage = this;
+      ACTIVE_MESSAGES.add(this);
+      shell.open();
       Display display = parent.getDisplay();
-      while (!_shell.isDisposed()) {
+      while (!shell.isDisposed()) {
          if (!display.readAndDispatch()) {
             display.sleep();
          }
       }
-      _activeMessages.remove(this);
-      if (_topMessage == this) {
-         while (!_activeMessages.isEmpty()) {
-            _topMessage = _activeMessages.get(0);
-            if (MessageDialog._topMessage._shell.isDisposed()) {
-               _activeMessages.remove(_topMessage);
+      ACTIVE_MESSAGES.remove(this);
+      if (topMessage == this) {
+         while (!ACTIVE_MESSAGES.isEmpty()) {
+            topMessage = ACTIVE_MESSAGES.get(0);
+            if (MessageDialog.topMessage.shell.isDisposed()) {
+               ACTIVE_MESSAGES.remove(topMessage);
             }
             else {
-               _topMessage._shell.forceActive();
+               topMessage.shell.forceActive();
                break;
             }
          }
@@ -109,17 +112,17 @@ public class MessageDialog extends Dialog implements FocusListener{
    }
    @Override
    public void focusLost(FocusEvent arg0) {
-      if (_topMessage == this) {
-         if (_shell.isDisposed()) {
+      if (topMessage == this) {
+         if (shell.isDisposed()) {
             return;
          }
 
-         _shell.forceActive();
-         _shell.forceFocus();
-         _shell.setFocus();
-         for (RequestUserInput userInput : Arena._activeRequestUserInputs) {
-            if (!userInput._shell.isDisposed()) {
-               _shell.moveAbove(userInput._shell);
+         shell.forceActive();
+         shell.forceFocus();
+         shell.setFocus();
+         for (RequestUserInput userInput : Arena.activeRequestUserInputs) {
+            if (!userInput.shell.isDisposed()) {
+               shell.moveAbove(userInput.shell);
             }
          }
       }
@@ -127,9 +130,6 @@ public class MessageDialog extends Dialog implements FocusListener{
 
    @Override
    public void focusGained(FocusEvent arg0) {
-      _topMessage = this;
+      topMessage = this;
    }
-
-   public static final List<MessageDialog> _activeMessages = new ArrayList<>();
-   public static       MessageDialog       _topMessage     = null;
 }

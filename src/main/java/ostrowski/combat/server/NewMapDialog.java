@@ -20,38 +20,38 @@ import ostrowski.ui.Helper;
 
 public class NewMapDialog extends Dialog implements ModifyListener
 {
-   private final Shell   _shell;
-   private final Text    _nameTextBox;
-   private final Text    _sizeXTextBox;
-   private final Text    _sizeYTextBox;
-   private short   _sizeX;
-   private short   _sizeY;
-   private String  _name;
-   private boolean _cancelSelected;
+   private final Shell   shell;
+   private final Text    nameTextBox;
+   private final Text    sizeXTextBox;
+   private final Text    sizeYTextBox;
+   private       short   sizeX;
+   private       short   sizeY;
+   private       String  name;
+   private       boolean cancelSelected;
 
   public NewMapDialog(Shell parent) {
      super(parent);
-     _shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.MODELESS);
-     _shell.setText(getText());
-     _shell.setLayout(new GridLayout(2, false));
+     shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.MODELESS);
+     shell.setText(getText());
+     shell.setLayout(new GridLayout(2, false));
 
      Helper helper = new Helper();
-     new Label(_shell, SWT.CENTER).setImage(_shell.getDisplay().getSystemImage(SWT.ICON_QUESTION));
+     new Label(shell, SWT.CENTER).setImage(shell.getDisplay().getSystemImage(SWT.ICON_QUESTION));
 
-     Group body = helper.createGroup(_shell, "New Map creation", 2, false/*sameSize*/, 3, 3);
+     Group body = helper.createGroup(shell, "New Map creation", 2, false/*sameSize*/, 3, 3);
 
      helper.createLabel(body, "Map Name:", SWT.LEFT, 1, null);
-     _nameTextBox = helper.createText(body, "", true/*editable*/, 1/*hSpan*/);
+     nameTextBox = helper.createText(body, "", true/*editable*/, 1/*hSpan*/);
 
      helper.createLabel(body, "Size X:", SWT.LEFT, 1, null);
-     _sizeXTextBox = helper.createText(body, "43", true/*editable*/, 1/*hSpan*/);
+     sizeXTextBox = helper.createText(body, "43", true/*editable*/, 1/*hSpan*/);
 
      helper.createLabel(body, "Size Y:", SWT.LEFT, 1, null);
-     _sizeYTextBox = helper.createText(body, "30", true/*editable*/, 1/*hSpan*/);
+     sizeYTextBox = helper.createText(body, "30", true/*editable*/, 1/*hSpan*/);
 
-     _nameTextBox.addModifyListener(this);
-     _sizeXTextBox.addModifyListener(this);
-     _sizeYTextBox.addModifyListener(this);
+     nameTextBox.addModifyListener(this);
+     sizeXTextBox.addModifyListener(this);
+     sizeYTextBox.addModifyListener(this);
 
      Composite footer = new Composite(body, SWT.NONE);
 
@@ -71,7 +71,7 @@ public class NewMapDialog extends Dialog implements ModifyListener
      ok.addSelectionListener(new SelectionAdapter() {
          @Override
          public void widgetSelected(SelectionEvent e) {
-             _shell.dispose();
+             shell.dispose();
          }
      });
 
@@ -81,21 +81,21 @@ public class NewMapDialog extends Dialog implements ModifyListener
 
       @Override
         public void widgetSelected(SelectionEvent e) {
-           _cancelSelected = true;
-           _shell.dispose();
+           cancelSelected = true;
+           shell.dispose();
         }
      });
-     _shell.setDefaultButton(ok);
+     shell.setDefaultButton(ok);
   }
 
   public void open() {
-     _shell.pack();
-     _shell.open();
-     _shell.layout();
+     shell.pack();
+     shell.open();
+     shell.layout();
 
-     while (!_shell.isDisposed()) {
-        if (!_shell.getDisplay().readAndDispatch()) {
-           _shell.getDisplay().sleep();
+     while (!shell.isDisposed()) {
+        if (!shell.getDisplay().readAndDispatch()) {
+           shell.getDisplay().sleep();
         }
      }
   }
@@ -103,23 +103,23 @@ public class NewMapDialog extends Dialog implements ModifyListener
 public void modifyText(ModifyEvent e)
   {
      try {
-        _name = _nameTextBox.getText();
-        _sizeX = Short.parseShort(_sizeXTextBox.getText());
-        _sizeY = Short.parseShort(_sizeYTextBox.getText());
+        name = nameTextBox.getText();
+        sizeX = Short.parseShort(sizeXTextBox.getText());
+        sizeY = Short.parseShort(sizeYTextBox.getText());
      }
      catch (NumberFormatException ex) {
      }
   }
   public String getName() {
-     return _name;
+     return name;
   }
   public short getSizeX() {
-     return _sizeX;
+     return sizeX;
   }
   public short getSizeY() {
-     return _sizeY;
+     return sizeY;
   }
   public boolean isCanceled() {
-     return _cancelSelected;
+     return cancelSelected;
   }
 }

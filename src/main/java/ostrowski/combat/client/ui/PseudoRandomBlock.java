@@ -14,12 +14,12 @@ import ostrowski.ui.Helper;
 
 public class PseudoRandomBlock extends Helper implements IUIBlock, ModifyListener, SelectionListener
 {
-   public        Button       _usePseudoRandomNumbers;
-   private       Text         _pseudoRandomNumberSeedText;
-   private final CombatServer _combatServer;
+   public        Button       usePseudoRandomNumbers;
+   private       Text         pseudoRandomNumberSeedText;
+   private final CombatServer combatServer;
 
    public PseudoRandomBlock(CombatServer combatServer) {
-      _combatServer = combatServer;
+      this.combatServer = combatServer;
    }
 
    @Override
@@ -33,17 +33,17 @@ public class PseudoRandomBlock extends Helper implements IUIBlock, ModifyListene
       data.horizontalAlignment = SWT.BEGINNING;
       block.setLayoutData(data);
 
-      _usePseudoRandomNumbers = new Button(block, SWT.CHECK);
-      _usePseudoRandomNumbers.setText("Use pseudo-random number seed:");
-      _usePseudoRandomNumbers.setSelection(false);
-      _usePseudoRandomNumbers.addSelectionListener(this);
+      usePseudoRandomNumbers = new Button(block, SWT.CHECK);
+      usePseudoRandomNumbers.setText("Use pseudo-random number seed:");
+      usePseudoRandomNumbers.setSelection(false);
+      usePseudoRandomNumbers.addSelectionListener(this);
 
-      _pseudoRandomNumberSeedText = new Text(block, SWT.LEFT | SWT.BORDER);
+      pseudoRandomNumberSeedText = new Text(block, SWT.LEFT | SWT.BORDER);
       // over-write the Text field with a large empty string to keep it large for the initial pack.
-      _pseudoRandomNumberSeedText.setText("       ");
-      _pseudoRandomNumberSeedText.setEditable(false);
-      _pseudoRandomNumberSeedText.setEnabled(false);
-      _pseudoRandomNumberSeedText.addModifyListener(this);
+      pseudoRandomNumberSeedText.setText("       ");
+      pseudoRandomNumberSeedText.setEditable(false);
+      pseudoRandomNumberSeedText.setEnabled(false);
+      pseudoRandomNumberSeedText.addModifyListener(this);
 
    }
 
@@ -61,8 +61,8 @@ public class PseudoRandomBlock extends Helper implements IUIBlock, ModifyListene
 
    @Override
    public void modifyText(ModifyEvent e) {
-      if (e.widget == _pseudoRandomNumberSeedText) {
-         String value = _pseudoRandomNumberSeedText.getText();
+      if (e.widget == pseudoRandomNumberSeedText) {
+         String value = pseudoRandomNumberSeedText.getText();
          StringBuilder validatedValue = new StringBuilder();
          for (int i=0 ; i<value.length() ; i++) {
             if (java.lang.Character.isDigit(value.charAt(i))) {
@@ -73,7 +73,7 @@ public class PseudoRandomBlock extends Helper implements IUIBlock, ModifyListene
          if (validatedValue.length() > 0) {
             val = Integer.parseInt(validatedValue.toString());
          }
-         _combatServer.setPseudoRandomNumberSeed(val);
+         combatServer.setPseudoRandomNumberSeed(val);
       }
    }
 
@@ -83,27 +83,27 @@ public class PseudoRandomBlock extends Helper implements IUIBlock, ModifyListene
 
    @Override
    public void widgetSelected(SelectionEvent e) {
-      if (e.widget == _usePseudoRandomNumbers) {
-//         _pseudoRandomNumberSeedText.setEditable(_usePseudoRandomNumbers.getSelection());
-         _pseudoRandomNumberSeedText.setEnabled(_usePseudoRandomNumbers.getSelection());
-         _pseudoRandomNumberSeedText.setText(String.valueOf(_combatServer._pseudoRandomNumberSeed));
+      if (e.widget == usePseudoRandomNumbers) {
+//        pseudoRandomNumberSeedText.setEditable(usePseudoRandomNumbers.getSelection());
+         pseudoRandomNumberSeedText.setEnabled(usePseudoRandomNumbers.getSelection());
+         pseudoRandomNumberSeedText.setText(String.valueOf(combatServer.pseudoRandomNumberSeed));
       }
    }
 
 
    public void setSeedText(int pseudoRandomNumberSeed) {
-      _pseudoRandomNumberSeedText.setText(String.valueOf(pseudoRandomNumberSeed));
+      pseudoRandomNumberSeedText.setText(String.valueOf(pseudoRandomNumberSeed));
    }
    public String getSeedText() {
-      return _pseudoRandomNumberSeedText.getText();
+      return pseudoRandomNumberSeedText.getText();
    }
    public boolean isUsingPseudoRandomNumber() {
-      return _usePseudoRandomNumbers.getSelection();
+      return usePseudoRandomNumbers.getSelection();
    }
    public void setUsingPseudoRandomNumber(boolean usingPseudoRandomNumber) {
-      _usePseudoRandomNumbers.setSelection(usingPseudoRandomNumber);
+      usePseudoRandomNumbers.setSelection(usingPseudoRandomNumber);
       if (usingPseudoRandomNumber) {
-         _pseudoRandomNumberSeedText.setEnabled(true);
+         pseudoRandomNumberSeedText.setEnabled(true);
       }
    }
 }

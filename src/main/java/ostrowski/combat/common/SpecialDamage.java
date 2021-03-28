@@ -23,40 +23,40 @@ public class SpecialDamage
    public static final int MOD_NO_ARMOR         = 1 << 16;
    //public static final int MOD_NO_BUILD         = 1 << 17;
 
-   private int _bits;
+   private int bits;
 
    public SpecialDamage(int modifiers) {
-      _bits = modifiers;
+      bits = modifiers;
    }
    public int getBits() {
-      return _bits;
+      return bits;
    }
    public void setBits(int bits) {
-      _bits = bits;
+      this.bits = bits;
    }
    public void setPainModifier(byte painModifier) {
       // clear the pain bits
-      _bits &= (~(MOD_ADDITIONAL_PAIN | MOD_REDUCED_PAIN | MOD_PAIN_MASK));
+      bits &= (~(MOD_ADDITIONAL_PAIN | MOD_REDUCED_PAIN | MOD_PAIN_MASK));
 
       if (painModifier > 0) {
-         _bits |= MOD_ADDITIONAL_PAIN;
+         bits |= MOD_ADDITIONAL_PAIN;
       }
       if (painModifier < 0) {
-         _bits |= MOD_REDUCED_PAIN;
+         bits |= MOD_REDUCED_PAIN;
       }
-      _bits |= (MOD_PAIN_MASK & (MOD_PAIN_1 * Math.abs(painModifier)));
+      bits |= (MOD_PAIN_MASK & (MOD_PAIN_1 * Math.abs(painModifier)));
       if (getPainModifier() != painModifier) {
          throw new IllegalArgumentException("pain modifier out of range " + painModifier + " != " + getPainModifier());
       }
    }
    public byte getPainModifier()
    {
-      int value = (_bits & MOD_PAIN_MASK) / MOD_PAIN_1;
+      int value = (bits & MOD_PAIN_MASK) / MOD_PAIN_1;
       if (value != 0) {
-         if ((_bits & MOD_ADDITIONAL_PAIN) != 0) {
+         if ((bits & MOD_ADDITIONAL_PAIN) != 0) {
             return (byte) value;
          }
-         if ((_bits & MOD_REDUCED_PAIN) != 0) {
+         if ((bits & MOD_REDUCED_PAIN) != 0) {
             return (byte) (-value);
          }
       }
@@ -64,27 +64,27 @@ public class SpecialDamage
    }
    public void setWoundModifier(byte woundModifier) {
       // clear the wound bits
-      _bits &= (~(MOD_ADDITIONAL_WOUNDS | MOD_REDUCED_WOUNDS | MOD_WOUND_MASK));
+      bits &= (~(MOD_ADDITIONAL_WOUNDS | MOD_REDUCED_WOUNDS | MOD_WOUND_MASK));
 
       if (woundModifier > 0) {
-         _bits |= MOD_ADDITIONAL_WOUNDS;
+         bits |= MOD_ADDITIONAL_WOUNDS;
       }
       if (woundModifier < 0) {
-         _bits |= MOD_REDUCED_WOUNDS;
+         bits |= MOD_REDUCED_WOUNDS;
       }
-      _bits |= (MOD_WOUND_MASK & (MOD_WOUND_1 * Math.abs(woundModifier)));
+      bits |= (MOD_WOUND_MASK & (MOD_WOUND_1 * Math.abs(woundModifier)));
       if (getWoundModifier() != woundModifier) {
          throw new IllegalArgumentException("woundmodifier out of range " + woundModifier + " != " + getWoundModifier());
       }
    }
    public byte getWoundModifier()
    {
-      int value = (_bits & MOD_WOUND_MASK) / MOD_WOUND_1;
+      int value = (bits & MOD_WOUND_MASK) / MOD_WOUND_1;
       if (value != 0) {
-         if ((_bits & MOD_ADDITIONAL_WOUNDS) != 0) {
+         if ((bits & MOD_ADDITIONAL_WOUNDS) != 0) {
             return (byte) value;
          }
-         if ((_bits & MOD_REDUCED_WOUNDS) != 0) {
+         if ((bits & MOD_REDUCED_WOUNDS) != 0) {
             return (byte) (-value);
          }
       }

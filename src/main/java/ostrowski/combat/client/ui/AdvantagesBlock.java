@@ -18,55 +18,61 @@ import java.util.List;
 
 public class AdvantagesBlock extends Helper implements Enums, IUIBlock, ModifyListener
 {
-   private final CharacterWidget  _display;
-   private Group            _advGroup;
-   private static final int ADV_COUNT = 9;
-   private final Combo[]            _advCombo      = new Combo[ADV_COUNT];
-   private final Combo[]            _advLevel      = new Combo[ADV_COUNT];
-   private final Text[]             _advCost       = new Text[_advCombo.length];
+   private final        CharacterWidget display;
+   private              Group           advGroup;
+   private static final int             ADV_COUNT               = 9;
+   private final        Combo[]         advCombo                = new Combo[ADV_COUNT];
+   private final        Combo[]         advLevel                = new Combo[ADV_COUNT];
+   private final        Text[]          advCost                 = new Text[advCombo.length];
+   // These are used to cache the current advantages set. If this set doesn't change
+   // in updateDisplayFromCharacter, then there is nothing to do in this block:
+   private final        List<Advantage> currentRacialAdvantages = new ArrayList<>();
+   private final        List<Advantage> currentAdvantages       = new ArrayList<>();
+   private              Race            currentRace             = null;
+
 
    public AdvantagesBlock(CharacterWidget display) {
-      _display = display;
+      this.display = display;
    }
 
    @Override
    public void buildBlock(Composite parent)
    {
-      _advGroup = createGroup(parent, "Dis/Advantages", 3/*columns*/, false, 3/*hSpacing*/, 1/*vSpacing*/);
-      createLabel(_advGroup, "Name", SWT.LEFT, 1, null);
-      createLabel(_advGroup, "Level", SWT.CENTER, 1, null);
-      createLabel(_advGroup, "Cost", SWT.CENTER, 1, null);
+      advGroup = createGroup(parent, "Dis/Advantages", 3/*columns*/, false, 3/*hSpacing*/, 1/*vSpacing*/);
+      createLabel(advGroup, "Name", SWT.LEFT, 1, null);
+      createLabel(advGroup, "Level", SWT.CENTER, 1, null);
+      createLabel(advGroup, "Cost", SWT.CENTER, 1, null);
       List<String> existingProperties = new ArrayList<>();
-      List<String> advNames = Advantage.getAdvantagesNames(existingProperties, _display._character.getRace());
+      List<String> advNames = Advantage.getAdvantagesNames(existingProperties, display.character.getRace());
       advNames.add(0, "---");
-      for (int i=0 ; i<_advCombo.length ; i++) {
-         _advCombo[i] = createCombo(_advGroup, SWT.READ_ONLY, 1, advNames);
-         _advLevel[i] = createCombo(_advGroup, SWT.READ_ONLY, 1, new ArrayList<>());
-         _advLevel[i].setEnabled(false);
-         _advLevel[i].setSize(50, _advLevel[i].getItemHeight());
-         _advLevel[i].add("---");
-         _advLevel[i].setText("---");
-         _advCost[i] = createText(_advGroup, "0", false/*editable*/, 1/*hSpan*/);
-         _advCombo[i].addModifyListener(this);
-         _advLevel[i].addModifyListener(this);
+      for (int i = 0; i < advCombo.length ; i++) {
+         advCombo[i] = createCombo(advGroup, SWT.READ_ONLY, 1, advNames);
+         advLevel[i] = createCombo(advGroup, SWT.READ_ONLY, 1, new ArrayList<>());
+         advLevel[i].setEnabled(false);
+         advLevel[i].setSize(50, advLevel[i].getItemHeight());
+         advLevel[i].add("---");
+         advLevel[i].setText("---");
+         advCost[i] = createText(advGroup, "0", false/*editable*/, 1/*hSpan*/);
+         advCombo[i].addModifyListener(this);
+         advLevel[i].addModifyListener(this);
       }
-      _advGroup.setTabList(_advCombo);
+      advGroup.setTabList(advCombo);
    }
 
    @Override
    public void refreshDisplay(Character character)
    {
       // refreshDisplay is used to update fields that don't have ModifyListeners:
-      boolean oldInModify = CharacterWidget._inModify;
-      CharacterWidget._inModify = true;
+      boolean oldInModify = CharacterWidget.inModify;
+      CharacterWidget.inModify = true;
       updateDisplayFromCharacter(character);
-      CharacterWidget._inModify = oldInModify;
+      CharacterWidget.inModify = oldInModify;
 //       int i=0;
 //       if (character != null) {
 //          List<Advantage> racialAdvantages =  character.getRace().getAdvantagesList();
 //          for (Advantage advantage : racialAdvantages) {
-//             _advCost[i].setText("(" + advantage.getCost(character.getRace()) + ")");
-//             _advLevel[i].setEnabled(advantage.hasLevels());
+//             advCost[i].setText("(" + advantage.getCost(character.getRace()) + ")");
+//             advLevel[i].setEnabled(advantage.hasLevels());
 //             i++;
 //          }
 //          List<Advantage> advantages = character.getAdvantagesList();
@@ -79,8 +85,8 @@ public class AdvantagesBlock extends Helper implements Enums, IUIBlock, ModifyLi
 //                }
 //             }
 //             if (!isRacial) {
-//                _advCost[i].setText("(" + advantage.getCost(character.getRace()) + ")");
-//                _advLevel[i].setEnabled(advantage.hasLevels());
+//                advCost[i].setText("(" + advantage.getCost(character.getRace()) + ")");
+//                advLevel[i].setEnabled(advantage.hasLevels());
 //                i++;
 //             }
 //          }
@@ -88,9 +94,9 @@ public class AdvantagesBlock extends Helper implements Enums, IUIBlock, ModifyLi
 //       boolean enabled = true;
 //       // clear out any remaining advantages combo boxes
 //       for ( ; i<_advCombo.length ; i++) {
-//          _advCost[i].setText("(0)");
-//          _advLevel[i].setEnabled(false);
-//          _advCombo[i].setEnabled(enabled);
+//          advCost[i].setText("(0)");
+//          advLevel[i].setEnabled(false);
+//          advCombo[i].setEnabled(enabled);
 //          enabled = false;
 //       }
    }
@@ -100,13 +106,13 @@ public class AdvantagesBlock extends Helper implements Enums, IUIBlock, ModifyLi
    {
       List<Advantage> newAdv = new ArrayList<>();
       List<Advantage> racialAdvantages = (character==null) ? new ArrayList<>() : character.getRace().getAdvantagesList();
-      for (int i=0 ; i<_advCombo.length ; i++) {
-         String advName = _advCombo[i].getText();
+      for (int i = 0; i < advCombo.length ; i++) {
+         String advName = advCombo[i].getText();
          if (!advName.equals("---")) {
             Advantage adv = Advantage.getAdvantage(advName);
             if (adv != null) {
                if (adv.hasLevels()) {
-                  String levelStr = _advLevel[i].getText();
+                  String levelStr = advLevel[i].getText();
                   adv.setLevelByName(levelStr);
                }
                boolean isRacial = false;
@@ -129,17 +135,11 @@ public class AdvantagesBlock extends Helper implements Enums, IUIBlock, ModifyLi
       }
    }
 
-   // These are used to cache the current advantages set. If this set doesn't change
-   // in updateDisplayFromCharacter, then there is nothing to do in this block:
-   private final List<Advantage> _currentRacialAdvantages = new ArrayList<>();
-   private final List<Advantage> _currentAdvantages = new ArrayList<>();
-   private Race _currentRace = null;
-
    @Override
    public void updateDisplayFromCharacter(Character character)
    {
-      boolean old = CharacterWidget._inModify;
-      CharacterWidget._inModify = true;
+      boolean old = CharacterWidget.inModify;
+      CharacterWidget.inModify = true;
       // updateDisplayFromCharacter is used to update fields that do have ModifyListeners:
       long start = System.currentTimeMillis();
 
@@ -149,48 +149,48 @@ public class AdvantagesBlock extends Helper implements Enums, IUIBlock, ModifyLi
       long end = System.currentTimeMillis();
       Rules.diag("getAdvantages took " + ((end-start) /1000.0) + " seconds.");
 
-      if ((racialAdvantages.size() == _currentRacialAdvantages.size()) &&
-          racialAdvantages.containsAll(_currentRacialAdvantages) &&
-          (advantages.size() == _currentAdvantages.size()) &&
-          advantages.containsAll(_currentAdvantages) &&
-          (race == _currentRace)) {
+      if ((racialAdvantages.size() == currentRacialAdvantages.size()) &&
+          racialAdvantages.containsAll(currentRacialAdvantages) &&
+          (advantages.size() == currentAdvantages.size()) &&
+          advantages.containsAll(currentAdvantages) &&
+          (race == currentRace)) {
          // both list match, nothing to do
          return;
       }
 
-      _currentAdvantages.clear();
-      _currentRacialAdvantages.clear();
+      currentAdvantages.clear();
+      currentRacialAdvantages.clear();
       // add clones of each advantage, so if a level of one changes,
       // we don't reflect that change in our list.
       for (Advantage adv : advantages) {
-         _currentAdvantages.add(adv.clone());
+         currentAdvantages.add(adv.clone());
       }
       for (Advantage adv : racialAdvantages) {
-         _currentRacialAdvantages.add(adv.clone());
+         currentRacialAdvantages.add(adv.clone());
       }
-      _currentRace = race;
+      currentRace = race;
 
       int i=0;
       for (Advantage advantage : racialAdvantages) {
-         if (i >= _advCombo.length) {
+         if (i >= advCombo.length) {
             break;
          }
-         _advCombo[i].removeAll();
-         _advCombo[i].add(advantage.getName());
-         _advCombo[i].setText(advantage.getName());
-         _advCombo[i].setEnabled(false);
-         _advCost[i].setText("---");
+         advCombo[i].removeAll();
+         advCombo[i].add(advantage.getName());
+         advCombo[i].setText(advantage.getName());
+         advCombo[i].setEnabled(false);
+         advCost[i].setText("---");
          if (advantage.hasLevels()) {
             List<String> levelNames = advantage.getLevelNames();
             String levelName = advantage.getLevelName();
-            setComboContents(_advLevel[i], levelNames);
-            _advLevel[i].setEnabled(true);
-            _advLevel[i].setText(levelName);
+            setComboContents(advLevel[i], levelNames);
+            advLevel[i].setEnabled(true);
+            advLevel[i].setText(levelName);
          }
          else {
-            _advLevel[i].setEnabled(false);
-            _advLevel[i].add("---");
-            _advLevel[i].setText("---");
+            advLevel[i].setEnabled(false);
+            advLevel[i].add("---");
+            advLevel[i].setText("---");
          }
          i++;
       }
@@ -199,21 +199,21 @@ public class AdvantagesBlock extends Helper implements Enums, IUIBlock, ModifyLi
          int currentI = i;
          boolean racialAdv = false;
          for (int j=0 ; j<racialAdvCount ; j++) {
-            if (j >= _advCombo.length) {
+            if (j >= advCombo.length) {
                break;
             }
-            if (_advCombo[j].getText().equals(advantage.getName())) {
+            if (advCombo[j].getText().equals(advantage.getName())) {
                i = j;
                currentI--;
                racialAdv = true;
                break;
             }
          }
-         if (i >= _advCost.length) {
+         if (i >= advCost.length) {
             break;
          }
 
-         _advCost[i].setText("(" + advantage.getCost(race) + ")");
+         advCost[i].setText("(" + advantage.getCost(race) + ")");
          if (!racialAdv) {
             List<String> existingProperties;
             if (character != null) {
@@ -225,23 +225,23 @@ public class AdvantagesBlock extends Helper implements Enums, IUIBlock, ModifyLi
             existingProperties.remove(advantage.getName());
             existingProperties = Advantage.getAdvantagesNames(existingProperties, race);
             existingProperties.add(0, "---");
-            _advCombo[i].add(advantage.getName());
-            _advCombo[i].setText(advantage.getName());
-            setComboContents(_advCombo[i], existingProperties);
+            advCombo[i].add(advantage.getName());
+            advCombo[i].setText(advantage.getName());
+            setComboContents(advCombo[i], existingProperties);
 
-            _advCombo[i].setEnabled(character != null);
+            advCombo[i].setEnabled(character != null);
          }
          if (advantage.hasLevels()) {
             List<String> levelNames = advantage.getLevelNames();
             String levelName = advantage.getLevelName();
-            setComboContents(_advLevel[i], levelNames);
-            _advLevel[i].setText(levelName);
-            _advLevel[i].setEnabled(true);
+            setComboContents(advLevel[i], levelNames);
+            advLevel[i].setText(levelName);
+            advLevel[i].setEnabled(true);
          }
          else {
-            _advLevel[i].setEnabled(false);
-            _advLevel[i].add("---");
-            _advLevel[i].setText("---");
+            advLevel[i].setEnabled(false);
+            advLevel[i].add("---");
+            advLevel[i].setText("---");
          }
          i = currentI + 1;
       }
@@ -253,23 +253,23 @@ public class AdvantagesBlock extends Helper implements Enums, IUIBlock, ModifyLi
       }
       List<String> advNames = Advantage.getAdvantagesNames(existingProperties, race);
       boolean enabled = true;
-      for ( ; i<_advCombo.length ; i++) {
-         _advCombo[i].removeAll();
-         _advCombo[i].add("---");
+      for (; i < advCombo.length ; i++) {
+         advCombo[i].removeAll();
+         advCombo[i].add("---");
          for (String advName : advNames) {
             if (!existingProperties.contains(advName)) {
-               _advCombo[i].add(advName);
+               advCombo[i].add(advName);
             }
          }
-         _advCombo[i].setText("---");
-         _advCombo[i].setEnabled(enabled);
+         advCombo[i].setText("---");
+         advCombo[i].setEnabled(enabled);
          enabled = false;
-         _advCost[i].setText("(0)");
-         _advLevel[i].setEnabled(false);
-         _advLevel[i].add("---");
-         _advLevel[i].setText("---");
+         advCost[i].setText("(0)");
+         advLevel[i].setEnabled(false);
+         advLevel[i].add("---");
+         advLevel[i].setText("---");
       }
-      CharacterWidget._inModify = old;
+      CharacterWidget.inModify = old;
    }
 
    /**
@@ -297,22 +297,22 @@ public class AdvantagesBlock extends Helper implements Enums, IUIBlock, ModifyLi
    @Override
    public void modifyText(ModifyEvent e)
    {
-      if (CharacterWidget._inModify) {
+      if (CharacterWidget.inModify) {
          return;
       }
 
-      _display.modifyText(e, this);
+      display.modifyText(e, this);
       updateTabList();
    }
 
    public void updateTabList() {
       List<Control> tabList = new ArrayList<>();
-      for (int i=0 ; i<_advCombo.length ; i++) {
-         tabList.add(_advCombo[i]);
-         if (_advLevel[i].isEnabled()) {
-            tabList.add(_advLevel[i]);
+      for (int i = 0; i < advCombo.length ; i++) {
+         tabList.add(advCombo[i]);
+         if (advLevel[i].isEnabled()) {
+            tabList.add(advLevel[i]);
          }
       }
-      _advGroup.setTabList(tabList.toArray(new Control[0]));
+      advGroup.setTabList(tabList.toArray(new Control[0]));
    }
 }

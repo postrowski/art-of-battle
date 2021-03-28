@@ -13,25 +13,25 @@ import java.util.List;
 
 public class RequestEquipment extends SyncRequest implements Enums {
 
-   final List<String> _readyEqu = new ArrayList<>();
-   final List<String> _applyEqu = new ArrayList<>();
-   final List<LimbType> _hand     = new ArrayList<>();
+   final List<String>   readyEqu = new ArrayList<>();
+   final List<String>   applyEqu = new ArrayList<>();
+   final List<LimbType> hand     = new ArrayList<>();
    public RequestEquipment() {
    }
    public RequestEquipment(RequestAction parentReq) {
    }
 
    public LimbType getLimb() {
-      if (_answer instanceof RequestActionOption) {
-         RequestActionOption act = (RequestActionOption) _answer;
+      if (answer instanceof RequestActionOption) {
+         RequestActionOption act = (RequestActionOption) answer;
          return act.getLimbType();
       }
       return null;
    }
 
    public RequestActionType getActionType() {
-      if (_answer instanceof RequestActionOption) {
-         RequestActionOption reqActOpt = (RequestActionOption) _answer;
+      if (answer instanceof RequestActionOption) {
+         RequestActionOption reqActOpt = (RequestActionOption) answer;
          return reqActOpt.getValue();
       }
       return null;
@@ -51,29 +51,29 @@ public class RequestEquipment extends SyncRequest implements Enums {
    }
    public void addDropSheathOptions(Hand hand, byte actionsAvailable) {
       String equipmentName = hand.getHeldThingName();
-      addOption(new RequestActionOption("drop " + equipmentName, RequestActionType.OPT_EQUIP_UNEQUIP_DROP, hand._limbType, true));
+      addOption(new RequestActionOption("drop " + equipmentName, RequestActionType.OPT_EQUIP_UNEQUIP_DROP, hand.limbType, true));
       if (actionsAvailable>=2) {
          addOption(new RequestActionOption("sheath " + equipmentName + " (2 actions)",
-                                           RequestActionType.OPT_EQUIP_UNEQUIP_SHEATH, hand._limbType, true));
+                                           RequestActionType.OPT_EQUIP_UNEQUIP_SHEATH, hand.limbType, true));
       }
       else {
          addOption(new RequestActionOption("sheath " + equipmentName + " (would require 2 actions)",
-                                           RequestActionType.OPT_EQUIP_UNEQUIP_SHEATH, hand._limbType, false));
+                                           RequestActionType.OPT_EQUIP_UNEQUIP_SHEATH, hand.limbType, false));
       }
    }
    public void addReadyOption(String equipmentName, int equipmentIndex, LimbType hand, boolean enabled) {
       String name = "ready " + equipmentName;
       name += " (" + hand.name + ")";
-      RequestActionType type = RequestActionType.getEquipUnequipReadyActionByIndex(_readyEqu.size());
+      RequestActionType type = RequestActionType.getEquipUnequipReadyActionByIndex(readyEqu.size());
       addOption(new RequestActionOption(name, type, hand, enabled));
-      _readyEqu.add(equipmentName);
-      _hand.add(hand);
+      readyEqu.add(equipmentName);
+      this.hand.add(hand);
    }
    public void addApplyOption(String equipmentName, int equipmentIndex, LimbType hand, boolean enabled) {
       String name = "apply " + equipmentName;
-      RequestActionType type = RequestActionType.getEquipUnequipApplyActionByIndex(_applyEqu.size());
+      RequestActionType type = RequestActionType.getEquipUnequipApplyActionByIndex(applyEqu.size());
       addOption(new RequestActionOption(name, type, hand, enabled));
-      _applyEqu.add(equipmentName);
+      applyEqu.add(equipmentName);
    }
    @Override
    public void addOption(int optionID, String optionStr, boolean enabled) {
@@ -94,20 +94,20 @@ public class RequestEquipment extends SyncRequest implements Enums {
       return 0;
    }
 
-   public String getEquToReady() { return (_readyEqu.get(getEquipmentIndex())); }
-   public String getEquToApply() { return (_applyEqu.get(getEquipmentIndex())); }
+   public String getEquToReady() { return (readyEqu.get(getEquipmentIndex())); }
+   public String getEquToApply() { return (applyEqu.get(getEquipmentIndex())); }
    @Override
    public void serializeFromStream(DataInputStream in)
    {
       super.serializeFromStream(in);
       try {
-         readIntoListString(_readyEqu, in);
-         readIntoListString(_applyEqu, in);
-         _hand.clear();
+         readIntoListString(readyEqu, in);
+         readIntoListString(applyEqu, in);
+         hand.clear();
          int count = readInt(in);
          for (int i=0 ; i<count ; i++) {
             byte value = readByte(in);
-            _hand.add(LimbType.getByValue(value));
+            hand.add(LimbType.getByValue(value));
          }
       } catch (IOException e) {
          e.printStackTrace();
@@ -118,10 +118,10 @@ public class RequestEquipment extends SyncRequest implements Enums {
    {
       super.serializeToStream(out);
       try {
-         writeToStream(_readyEqu, out);
-         writeToStream(_applyEqu, out);
-         writeToStream(_hand.size(), out);
-         for (LimbType hand : _hand) {
+         writeToStream(readyEqu, out);
+         writeToStream(applyEqu, out);
+         writeToStream(hand.size(), out);
+         for (LimbType hand : hand) {
             writeToStream(hand.value, out);
          }
       } catch (IOException e) {
@@ -129,10 +129,10 @@ public class RequestEquipment extends SyncRequest implements Enums {
       }
    }
 
-   public boolean isApply()  { return _answer != null && ((RequestActionOption)_answer).getValue().isApplyEquip();}
-   public boolean isDrop()   { return _answer != null && ((RequestActionOption)_answer).getValue().isDrop();      }
-   public boolean isReady()  { return _answer != null && ((RequestActionOption)_answer).getValue().isReadyEquip();}
-   public boolean isSheath() { return _answer != null && ((RequestActionOption)_answer).getValue().isSheath();    }
+   public boolean isApply()  { return answer != null && ((RequestActionOption) answer).getValue().isApplyEquip();}
+   public boolean isDrop()   { return answer != null && ((RequestActionOption) answer).getValue().isDrop();      }
+   public boolean isReady()  { return answer != null && ((RequestActionOption) answer).getValue().isReadyEquip();}
+   public boolean isSheath() { return answer != null && ((RequestActionOption) answer).getValue().isSheath();    }
 
    @Override
    protected String getAllowedKeyStrokesForOption(int optionID) {

@@ -35,27 +35,29 @@ import java.util.List;
  */
 public class CharacterDisplay implements Enums, ModifyListener, IMapListener //, Listener
 {
-   public final CharacterWidget _charWidget;
-   public final CharacterFile   _charFile            = new CharacterFile("character.data");
+   public final  CharacterWidget     charWidget;
+   public final  CharacterFile       charFile            = new CharacterFile("character.data");
    // these object all implement the IUIBlock Interface:
-   private final AttackBlock         _attackBlock         = new AttackBlock(this);
-   private final CharInfoBlock       _charInfoBlock       = new CharInfoBlock(this);
-   private final TargetPriorityBlock _targetPriorityBlock = new TargetPriorityBlock(this);
-   public        ServerConnection    _serverConnection    = null;
-   //private SpellsBlock         _spellsBlock         = new SpellsBlock(this);
+   private final AttackBlock         attackBlock         = new AttackBlock(this);
+   private final CharInfoBlock       charInfoBlock       = new CharInfoBlock(this);
+   private final TargetPriorityBlock targetPriorityBlock = new TargetPriorityBlock(this);
+   public        ServerConnection    serverConnection    = null;
+   //private SpellsBlock         spellsBlock         = new SpellsBlock(this);
    // these dont:
-   private final ConditionBlock      _conditionBlock      = new ConditionBlock(this);
-   private final Configuration       _configurationBlock  = new Configuration();
-   private final ConnectionBlock     _connectionBlock     = new ConnectionBlock(this);
-   private final MessagesBlock       _messagesBlock       = new MessagesBlock(this);
-   private final ArenaMapBlock       _arenaMapBlock       = new ArenaMapBlock();
-   private final AIBlock             _aiBlock             = new AIBlock(this);
-   public        int                 _uniqueConnectionID  = -1;
-   private final List<SyncRequest>   _pendingRequests     = new ArrayList<>();
-   public        Shell               _shell;
-   public final  List<Helper>   _uiBlocks            = new ArrayList<>();
+   private final ConditionBlock      conditionBlock      = new ConditionBlock(this);
+   private final Configuration       configurationBlock  = new Configuration();
+   private final ConnectionBlock     connectionBlock     = new ConnectionBlock(this);
+   private final MessagesBlock       messagesBlock       = new MessagesBlock(this);
+   private final ArenaMapBlock       arenaMapBlock       = new ArenaMapBlock();
+   private final AIBlock             aiBlock             = new AIBlock(this);
+   public        int                 uniqueConnectionID  = -1;
+   private final List<SyncRequest>   pendingRequests     = new ArrayList<>();
+   public        Shell               shell;
+   public final  List<Helper>        uiBlocks            = new ArrayList<>();
+   boolean inRefreshDisplay = false;
 
-   transient private final MouseOverCharacterInfoPopup _mouseOverCharInfoPopup = new MouseOverCharacterInfoPopup();
+
+   transient private final MouseOverCharacterInfoPopup mouseOverCharInfoPopup = new MouseOverCharacterInfoPopup();
 
 //   @Override
 //   public void handleEvent(Event event) {
@@ -68,16 +70,16 @@ public class CharacterDisplay implements Enums, ModifyListener, IMapListener //,
 //   }
 
    public CharacterDisplay(String preferedCharName) {
-      _charWidget = new CharacterWidget(preferedCharName, _charFile, this);
-      _uiBlocks.add(_attackBlock);
-      _uiBlocks.add(_charInfoBlock);
-      _uiBlocks.add(_targetPriorityBlock);
-      _uiBlocks.add(_conditionBlock);
-      //_uiBlocks.add(_spellsBlock);
+      charWidget = new CharacterWidget(preferedCharName, charFile, this);
+      uiBlocks.add(attackBlock);
+      uiBlocks.add(charInfoBlock);
+      uiBlocks.add(targetPriorityBlock);
+      uiBlocks.add(conditionBlock);
+      //_uiBlocks.add(spellsBlock);
    }
 
    public void buildCharSheet(Shell shell, boolean startOnArenaPage, boolean aiOn) {
-      _shell = shell;
+      this.shell = shell;
       shell.setLayout(new FillLayout());
 
       TabFolder tabFolder = new TabFolder(shell, SWT.NONE);
@@ -90,7 +92,7 @@ public class CharacterDisplay implements Enums, ModifyListener, IMapListener //,
          Composite characterData = Helper.createComposite(tabFolder, 1, GridData.FILL_BOTH);
          // add the control to the TabItem
          item.setControl(characterData);
-         _charWidget.buildCharSheet(characterData);
+         charWidget.buildCharSheet(characterData);
       }
       // create the next tab
       {
@@ -143,24 +145,24 @@ public class CharacterDisplay implements Enums, ModifyListener, IMapListener //,
          data.horizontalAlignment = SWT.CENTER;
          page2RightBlock.setLayoutData(data);
 
-         _connectionBlock.buildBlock(page2LeftBlock);
-         _arenaMapBlock.buildBlock(page2MiddleBlock, 2); // arenaMapBlock uses to rows & 2 column
-         _arenaMapBlock.addControlGroup(page2MiddleBlock);
-         _aiBlock.buildBlock(page2MiddleBlock);
-         _targetPriorityBlock.buildBlock(page2RightBlock);
-         _charInfoBlock.buildBlock(page2RightBlock);
-         _conditionBlock.buildBlock(page2LeftBlock);
-         _configurationBlock.buildDisplay(page2LeftBlock, false/*isServer*/);
+         connectionBlock.buildBlock(page2LeftBlock);
+         arenaMapBlock.buildBlock(page2MiddleBlock, 2); // arenaMapBlock uses to rows & 2 column
+         arenaMapBlock.addControlGroup(page2MiddleBlock);
+         aiBlock.buildBlock(page2MiddleBlock);
+         targetPriorityBlock.buildBlock(page2RightBlock);
+         charInfoBlock.buildBlock(page2RightBlock);
+         conditionBlock.buildBlock(page2LeftBlock);
+         configurationBlock.buildDisplay(page2LeftBlock, false/*isServer*/);
          //    new Label(page2Block, 0);
-         _attackBlock.buildBlock(page2RightBlock);
+         attackBlock.buildBlock(page2RightBlock);
 
-         _messagesBlock.buildBlock(botBlock);
+         messagesBlock.buildBlock(botBlock);
 
          // setup the listener mechanism so we are told about clicks on the map that change the target.
-         _arenaMapBlock.addListener(this);
+         arenaMapBlock.addListener(this);
 
          // disable the controls that should not be enabled until we connect.
-         _messagesBlock.enableControls(false/*enabledFlag*/);
+         messagesBlock.enableControls(false/*enabledFlag*/);
       }
       {
          TabItem item = new TabItem(tabFolder, SWT.NULL);
@@ -170,57 +172,57 @@ public class CharacterDisplay implements Enums, ModifyListener, IMapListener //,
                                            900/*width*/, shell.getDisplay().getSystemColor(SWT.COLOR_WHITE)));
       }
       if (aiOn) {
-         _aiBlock.setAI(true);
+         aiBlock.setAI(true);
       }
 
       //      List<Control> tabArray = new ArrayList();
-      //      _connectionBlock.getTabItems(tabArray);
+      //      connectionBlock.getTabItems(tabArray);
       //      Control[] tabList = new Control[tabArray.size()];
       //      arenaData.setTabList(tabArray.toArray(tabList));
       updateDisplayFromCharacter();
    }
 
    public void sendMessageText(String message) {
-      MessageText msg = new MessageText(_charWidget._character.getName(), message, null, false/*popUp*/, true/*isPublic*/);
-      if (_serverConnection != null) {
-         _serverConnection.sendObject(msg, "server");
+      MessageText msg = new MessageText(charWidget.character.getName(), message, null, false/*popUp*/, true/*isPublic*/);
+      if (serverConnection != null) {
+         serverConnection.sendObject(msg, "server");
       }
    }
 
    public void appendMessage(String string) {
-      _messagesBlock.appendMesage(string);
+      messagesBlock.appendMesage(string);
    }
 
    public void connectToServer(String ipAddress, int port) {
-      _serverConnection = new ServerConnection(this);
-      _serverConnection.connect(ipAddress, port);
-      _serverConnection.start();
+      serverConnection = new ServerConnection(this);
+      serverConnection.connect(ipAddress, port);
+      serverConnection.start();
    }
 
    public void disconnectFromServer() {
-      if (_serverConnection != null) {
-         _serverConnection.shutdown();
-         _serverConnection = null;
+      if (serverConnection != null) {
+         serverConnection.shutdown();
+         serverConnection = null;
       }
    }
 
    public void handleDisconnect() {
-      _connectionBlock.handleDisconnect();
-      _messagesBlock.enableControls(false/*enabledFlag*/);
+      connectionBlock.handleDisconnect();
+      messagesBlock.enableControls(false/*enabledFlag*/);
       CombatMap map = new CombatMap((short) 0, (short) 0, null/*diag*/);
-      if (_charWidget._character != null) {
-         _arenaMapBlock.updateMap(map, _charWidget._character._uniqueID, _charWidget._character._teamID,
-                                  null/*availableLocs*/, _charInfoBlock.getTargetUniqueID());
+      if (charWidget.character != null) {
+         arenaMapBlock.updateMap(map, charWidget.character.uniqueID, charWidget.character.teamID,
+                                 null/*availableLocs*/, charInfoBlock.getTargetUniqueID());
       }
       else {
-         _arenaMapBlock.updateMap(map, -1/*selfID*/, (byte) -1/*teamID*/, null/*availableLocs*/, _charInfoBlock.getTargetUniqueID());
+         arenaMapBlock.updateMap(map, -1/*selfID*/, (byte) -1/*teamID*/, null/*availableLocs*/, charInfoBlock.getTargetUniqueID());
       }
       setControls(true/*enabledFlag*/, true/*visibleFlag*/);
    }
 
    public void handleConnect() {
-      _connectionBlock.handleConnect();
-      _messagesBlock.enableControls(true/*enabledFlag*/);
+      connectionBlock.handleConnect();
+      messagesBlock.enableControls(true/*enabledFlag*/);
    }
 
    public void beginBattle(BeginBattle battleMsg) {
@@ -231,7 +233,7 @@ public class CharacterDisplay implements Enums, ModifyListener, IMapListener //,
    //   {
    //      // we can't modify any UI element from another thread,
    //      // so we must use the Display.asyncExec() method:
-   //      Display display = _shell.getDisplay();
+   //      Display display = shell.getDisplay();
    //      display.asyncExec(new Runnable() {
    //         public void run() {
    //            handleMessageInUIThread(inputLine);
@@ -240,102 +242,100 @@ public class CharacterDisplay implements Enums, ModifyListener, IMapListener //,
    //   }
 
    public void updateDisplayFromCharacter() {
-      CharacterWidget._inModify = true;
+      CharacterWidget.inModify = true;
       try {
-         for (Helper helper : _uiBlocks) {
+         for (Helper helper : uiBlocks) {
             IUIBlock block = (IUIBlock) helper;
-            block.updateDisplayFromCharacter(_charWidget._character);
+            block.updateDisplayFromCharacter(charWidget.character);
          }
-         _charWidget.updateCharacterFromDisplay();
+         charWidget.updateCharacterFromDisplay();
          refreshDisplay();
       } finally {
-         CharacterWidget._inModify = false;
+         CharacterWidget.inModify = false;
       }
    }
 
-   boolean _inRefreshDisplay = false;
-
    public void refreshDisplay() {
-      if (_inRefreshDisplay) {
+      if (inRefreshDisplay) {
          return;
       }
-      _inRefreshDisplay = true;
+      inRefreshDisplay = true;
       try {
-         for (Helper helper : _uiBlocks) {
+         for (Helper helper : uiBlocks) {
             IUIBlock block = (IUIBlock) helper;
-            block.refreshDisplay(_charWidget._character);
+            block.refreshDisplay(charWidget.character);
          }
-         _charWidget.refreshDisplay();
-         _shell.setText((_charWidget._character == null) ? "character" : _charWidget._character.getName());
-         _arenaMapBlock.redraw();
+         charWidget.refreshDisplay();
+         shell.setText((charWidget.character == null) ? "character" : charWidget.character.getName());
+         arenaMapBlock.redraw();
       } finally {
-         _inRefreshDisplay = false;
+         inRefreshDisplay = false;
       }
    }
 
    public void updateCharacterFromDisplay() {
-      for (Helper helper : _uiBlocks) {
+      for (Helper helper : uiBlocks) {
          IUIBlock block = (IUIBlock) helper;
-         block.updateCharacterFromDisplay(_charWidget._character);
+         block.updateCharacterFromDisplay(charWidget.character);
       }
-      _charWidget.updateCharacterFromDisplay();
+      charWidget.updateCharacterFromDisplay();
    }
 
    public void setControls(boolean enabledFlag, boolean visibleFlag) {
-      _charWidget.setControls(enabledFlag, visibleFlag);
-      _conditionBlock.enableControls(enabledFlag);
+      charWidget.setControls(enabledFlag, visibleFlag);
+      conditionBlock.enableControls(enabledFlag);
    }
 
    public void updateServerStatus(ServerStatus status) {
       List<Character> combatants = status.getCombatants();
-      _charInfoBlock.updateCombatants(combatants);
-      _targetPriorityBlock.updateCombatants(combatants);
+      charInfoBlock.updateCombatants(combatants);
+      targetPriorityBlock.updateCombatants(combatants);
       for (Character combatant : combatants) {
-         if (combatant._uniqueID == _charWidget._character._uniqueID) {
-            _charWidget._character.copyData(combatant);
+         if (combatant.uniqueID == charWidget.character.uniqueID) {
+            charWidget.character.copyData(combatant);
             updateDisplayFromCharacter();
          }
-         _arenaMapBlock.updateCombatant(combatant);
+         arenaMapBlock.updateCombatant(combatant);
       }
-      _connectionBlock.updateServerStatus(status);
+      connectionBlock.updateServerStatus(status);
    }
 
    public void updateMap(CombatMap map) {
       if (map != null) {
-         _arenaMapBlock.updateMap(map, _charWidget._character._uniqueID, _charWidget._character._teamID,
-                                  map.getAvailablePlayerLocs(), _charInfoBlock.getTargetUniqueID());
-//         if ((_charWidget._character._locX != -1) && (_charWidget._character._locY != -1)) {
-//            _arenaMapBlock.updateCombatant(_charWidget._character);
+         arenaMapBlock.updateMap(map, charWidget.character.uniqueID, charWidget.character.teamID,
+                                 map.getAvailablePlayerLocs(), charInfoBlock.getTargetUniqueID());
+//         if ((charWidget._character._locX != -1) && (charWidget._character._locY != -1)) {
+//            arenaMapBlock.updateCombatant(charWidget._character);
 //         }
       }
    }
 
    public void updateCharacter(Character character) {
       boolean selfMoved = false;
-      if (character._uniqueID == _charWidget._character._uniqueID) {
+      if (character.uniqueID == charWidget.character.uniqueID) {
          // using the compareTo method compares the locations of the characters
-         if (_charWidget._character.getCondition().getOrientation().getCoordinates().isEmpty() ||
-             (_charWidget._character.compareTo(character) != 0)) {
+         if (charWidget.character.getCondition().getOrientation().getCoordinates().isEmpty() ||
+             (charWidget.character.compareTo(character) != 0)) {
             selfMoved = true;
          }
-         _charWidget._character.copyData(character);
+         charWidget.character.copyData(character);
       }
-      _charInfoBlock.updateCombatant(character);
-      _targetPriorityBlock.updateCombatant(character);
-      _arenaMapBlock.updateCombatant(character);
-      if (!CharacterWidget._inModify) {
-         CharacterWidget._inModify = true;
+      charInfoBlock.updateCombatant(character);
+      targetPriorityBlock.updateCombatant(character);
+      arenaMapBlock.updateCombatant(character);
+      if (!CharacterWidget.inModify) {
+         CharacterWidget.inModify = true;
          try {
-            _charWidget.updateCharacter(character);
-            if (character._uniqueID == _charWidget._character._uniqueID) {
+            charWidget.updateCharacter(character);
+            if (character.uniqueID == charWidget.character.uniqueID) {
                refreshDisplay();
             }
          } finally {
-            CharacterWidget._inModify = false;
+            CharacterWidget.inModify = false;
          }
       }
       if (selfMoved) {
-         _arenaMapBlock.recomputeVisibility(character, null/*diag*/);
+         arenaMapBlock.recomputeVisibility(character, null/*diag*/);
       }
    }
 
@@ -346,14 +346,14 @@ public class CharacterDisplay implements Enums, ModifyListener, IMapListener //,
    @Override
    public void onMouseMove(ArenaLocation loc, Event event, double angleFromCenter, double normalizedDistFromCenter) {
       // are we waiting on a location request?
-      if (!_pendingRequests.isEmpty()) {
-         SyncRequest syncReq = _pendingRequests.get(0);
+      if (!pendingRequests.isEmpty()) {
+         SyncRequest syncReq = pendingRequests.get(0);
          if (syncReq instanceof RequestMovement) {
             // If we are in the middle of a movement, don't display character information.
             return;
          }
       }
-      _mouseOverCharInfoPopup.onMouseMove(loc, event, angleFromCenter, normalizedDistFromCenter);
+      mouseOverCharInfoPopup.onMouseMove(loc, event, angleFromCenter, normalizedDistFromCenter);
    }
 
    @Override
@@ -362,8 +362,8 @@ public class CharacterDisplay implements Enums, ModifyListener, IMapListener //,
          return;
       }
       // are we waiting on a location request?
-      if (!_pendingRequests.isEmpty()) {
-         SyncRequest syncReq = _pendingRequests.get(0);
+      if (!pendingRequests.isEmpty()) {
+         SyncRequest syncReq = pendingRequests.get(0);
          boolean rightClick = (event.button != 1);
          if (rightClick) {
             return;
@@ -373,32 +373,32 @@ public class CharacterDisplay implements Enums, ModifyListener, IMapListener //,
             // fill in the location into the request, and send it back.
             // If it's a valid location, then this will return true.
             if (moveReq.setOrientation(loc, angleFromCenter, normalizedDistFromCenter)) {
-               _serverConnection.sendObject(syncReq, "server");
-               _pendingRequests.remove(syncReq);
-               _arenaMapBlock.endHexSelection();
+               serverConnection.sendObject(syncReq, "server");
+               pendingRequests.remove(syncReq);
+               arenaMapBlock.endHexSelection();
                return;
             }
          }
          if (syncReq instanceof RequestLocation) {
             RequestLocation locReq = (RequestLocation) syncReq;
-            if (locReq.setAnswer(loc._x, loc._y)) {
-               _serverConnection.sendObject(syncReq, "server");
-               _pendingRequests.remove(syncReq);
-               _arenaMapBlock.endHexSelection();
+            if (locReq.setAnswer(loc.x, loc.y)) {
+               serverConnection.sendObject(syncReq, "server");
+               pendingRequests.remove(syncReq);
+               arenaMapBlock.endHexSelection();
                return;
             }
          }
       }
-      // If this didn't match the first _pendingRequest, maybe they are changing targets
+      // If this didn't match the first pendingRequest, maybe they are changing targets
       // A click on a character means 'target this character'.
       List<Character> characters = loc.getCharacters();
       for (Character target : characters) {
          // Never target yourself.
          // TODO: what about healing spells? targeting yourself should be allowed for this.
-         if (!target.getName().equals(_charWidget._character.getName())) {
-            _charInfoBlock.updateTargetFromCharacter(target);
-            _arenaMapBlock.updateTargetID(target._uniqueID);
-            _arenaMapBlock.redraw();
+         if (!target.getName().equals(charWidget.character.getName())) {
+            charInfoBlock.updateTargetFromCharacter(target);
+            arenaMapBlock.updateTargetID(target.uniqueID);
+            arenaMapBlock.redraw();
             break;
          }
       }
@@ -409,58 +409,58 @@ public class CharacterDisplay implements Enums, ModifyListener, IMapListener //,
    }
 
    public void setUniqueConnectionID(int id) {
-      _uniqueConnectionID = id;
-      _charWidget._character._uniqueID = _uniqueConnectionID;
+      uniqueConnectionID = id;
+      charWidget.character.uniqueID = uniqueConnectionID;
       Rules.setDiagComponentName("Client" + id);
    }
 
    public void setCharacter(Character character) {
-      _charWidget._character = character;
-      _charWidget._character._uniqueID = _uniqueConnectionID;
+      charWidget.character = character;
+      charWidget.character.uniqueID = uniqueConnectionID;
    }
 
    public void requestMovement(RequestMovement moveRequest) {
-      _pendingRequests.add(moveRequest);
-      _arenaMapBlock.requestMovement(moveRequest);
+      pendingRequests.add(moveRequest);
+      arenaMapBlock.requestMovement(moveRequest);
    }
 
    public void requestLocation(RequestLocation locRequest) {
-      _pendingRequests.add(locRequest);
-      _arenaMapBlock.requestLocation(locRequest);
+      pendingRequests.add(locRequest);
+      arenaMapBlock.requestLocation(locRequest);
    }
 
    public boolean requestAttackStyle(RequestAttackStyle styleRequest) {
-      return styleRequest.setAnswerID(_attackBlock.getAttackStyle(styleRequest));
+      return styleRequest.setAnswerID(attackBlock.getAttackStyle(styleRequest));
    }
 
    public void updateTargetPriorities(List<Character> orderedEnemies) {
       TargetPriorities targets = new TargetPriorities(orderedEnemies);
-      if (_serverConnection != null) {
-         _serverConnection.sendObject(targets, "server");
+      if (serverConnection != null) {
+         serverConnection.sendObject(targets, "server");
       }
-      if (_charWidget._ai != null) {
-         _charWidget._ai.updateTargetPriorities(orderedEnemies);
+      if (charWidget.ai != null) {
+         charWidget.ai.updateTargetPriorities(orderedEnemies);
       }
    }
 
    public CombatMap getCombatMap() {
-      return _arenaMapBlock.getCombatMap();
+      return arenaMapBlock.getCombatMap();
    }
 
    public List<Character> getOrderedEnemies() {
-      return _targetPriorityBlock.getOrderedEnemies();
+      return targetPriorityBlock.getOrderedEnemies();
    }
 
    public boolean ignoreEnemy(Character enemy) {
-      return _targetPriorityBlock.ignoreEnemy(enemy);
+      return targetPriorityBlock.ignoreEnemy(enemy);
    }
 
    public void setAIEngine(String aiEngine) {
       if (aiEngine.equalsIgnoreCase("Off")) {
-         _charWidget._ai = null;
+         charWidget.ai = null;
       }
       else {
-         _charWidget._ai = new AI(_charWidget._character, AI_Type.getByString(aiEngine));
+         charWidget.ai = new AI(charWidget.character, AI_Type.getByString(aiEngine));
       }
    }
 
@@ -469,10 +469,10 @@ public class CharacterDisplay implements Enums, ModifyListener, IMapListener //,
    }
 
    public void updateArenaLocation(ArenaLocation arenaLoc) {
-      _arenaMapBlock.updateArenaLocation(arenaLoc);
+      arenaMapBlock.updateArenaLocation(arenaLoc);
    }
 
    public void updateMapVisibility(MapVisibility mapVisibilty) {
-      _arenaMapBlock.updateMapVisibility(mapVisibilty);
+      arenaMapBlock.updateMapVisibility(mapVisibilty);
    }
 }

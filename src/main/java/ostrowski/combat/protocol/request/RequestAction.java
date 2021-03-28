@@ -42,30 +42,31 @@ import ostrowski.util.SemaphoreAutoLocker;
 
 public class RequestAction extends SyncRequest implements Enums
 {
-   public int                          _actorID                   = -1;
-   public int                          _targetID                  = -1;
-   public RequestPosition              _positionRequest           = null;
-   public RequestAttackStyle           _styleRequest              = null;
-   public RequestMovement              _movementRequest           = null;
-   public RequestLocation              _locationSelection         = null;
-   public RequestEquipment             _equipmentRequest          = null;
-   public RequestTarget                _targetPriorities          = null;
-   public RequestSpellTypeSelection    _spellTypeSelectionRequest = null;
-   public RequestSpellSelection        _spellSelectionRequest     = null;
-   public RequestSingleTargetSelection _targetSelection           = null;
-   private Spell                       _spell                     = null;
-   private boolean                     _dualGrappleAttack         = false;
+   public  int                          actorID                   = -1;
+   public  int                          targetID                  = -1;
+   public  RequestPosition              positionRequest           = null;
+   public  RequestAttackStyle           styleRequest              = null;
+   public  RequestMovement              movementRequest           = null;
+   public  RequestLocation              locationSelection         = null;
+   public  RequestEquipment             equipmentRequest          = null;
+   public  RequestTarget                targetPriorities          = null;
+   public  RequestSpellTypeSelection    spellTypeSelectionRequest = null;
+   public  RequestSpellSelection        spellSelectionRequest     = null;
+   public  RequestSingleTargetSelection targetSelection           = null;
+   private Spell                        spell                     = null;
+   private boolean                      dualGrappleAttack         = false;
+   private LimbType limbType = null;
 
    @Override
    public RequestActionOption[] getReqOptions()
    {
-      RequestActionOption[] result = new RequestActionOption[_options.size()];
-      for (int i=0 ; i<_options.size() ; i++) {
-         if (_options.get(i) instanceof RequestActionOption) {
-            result[i] = (RequestActionOption) _options.get(i);
+      RequestActionOption[] result = new RequestActionOption[options.size()];
+      for (int i = 0; i < options.size() ; i++) {
+         if (options.get(i) instanceof RequestActionOption) {
+            result[i] = (RequestActionOption) options.get(i);
          }
          else {
-            if (_options.get(i).getIntValue() == -1) {
+            if (options.get(i).getIntValue() == -1) {
                result[i] = new RequestActionOption("", RequestActionType.OPT_NO_ACTION, null, false);
             }
             else {
@@ -85,37 +86,35 @@ public class RequestAction extends SyncRequest implements Enums
       return "";
    }
 
-   private LimbType _limbType    = null;
-
    public RequestAction() {
       // c'tor used by the SerializableFactory class, when reading in a object of this class
    }
    public RequestAction(int actorID, int targetID) {
-      _actorID = actorID;
-      _targetID = targetID;
+      this.actorID = actorID;
+      this.targetID = targetID;
    }
    @Override
    public void init() {
       super.init();
-      _limbType = null;
+      limbType = null;
    }
    @Override
    public synchronized void setAnswerByOptionIndex(int i) {
-      try (SemaphoreAutoLocker sal = new SemaphoreAutoLocker(_lockThis)) {
+      try (SemaphoreAutoLocker sal = new SemaphoreAutoLocker(lockThis)) {
          super.setAnswerByOptionIndex(i);
          computeHand();
       }
    }
    @Override
    public synchronized void setCustAnswer(String answer)  {
-      try (SemaphoreAutoLocker sal = new SemaphoreAutoLocker(_lockThis)) {
+      try (SemaphoreAutoLocker sal = new SemaphoreAutoLocker(lockThis)) {
          super.setCustAnswer(answer);
          computeHand();
       }
    }
    @Override
    public synchronized boolean setAnswerID(int answerID ) {
-      try (SemaphoreAutoLocker sal = new SemaphoreAutoLocker(_lockThis)) {
+      try (SemaphoreAutoLocker sal = new SemaphoreAutoLocker(lockThis)) {
          if (!super.setAnswerID(answerID)) {
             return false;
          }
@@ -127,25 +126,25 @@ public class RequestAction extends SyncRequest implements Enums
    public void copyAnswer(SyncRequest source)
    {
       if (source instanceof RequestAction) {
-         _limbType = ((RequestAction)source)._limbType;
+         limbType = ((RequestAction)source).limbType;
       }
       super.copyAnswer(source);
    }
    public LimbType getLimb() {
       if (isEquipUnequip()) {
-         return _equipmentRequest.getLimb();
+         return equipmentRequest.getLimb();
       }
-      if (_limbType == null) {
+      if (limbType == null) {
          computeHand();
       }
-      return _limbType;
+      return limbType;
    }
 
    private void computeHand() {
-      if (_limbType == null) {
-         if (_answer instanceof RequestActionOption) {
-            RequestActionOption reqAct = (RequestActionOption) _answer;
-            _limbType = reqAct.getLimbType();
+      if (limbType == null) {
+         if (answer instanceof RequestActionOption) {
+            RequestActionOption reqAct = (RequestActionOption) answer;
+            limbType = reqAct.getLimbType();
          }
       }
    }
@@ -158,46 +157,46 @@ public class RequestAction extends SyncRequest implements Enums
          return true;
       }
       if (isCompleteSpell()) {
-         if (_spell != null) {
-            return _spell.isDefendable();
+         if (spell != null) {
+            return spell.isDefendable();
          }
       }
       return false;
    }
    public boolean isAttack() {
-      return (_answer != null) && (getAttackActions(false/*considerSpellAsAttack*/) > 0);
+      return (answer != null) && (getAttackActions(false/*considerSpellAsAttack*/) > 0);
    }
 
-   public boolean isCharge()             { return (_answer != null) && ((RequestActionOption)_answer).getValue().isCharge(); }
-   public boolean isAdvance()            { return (_answer != null) && ((RequestActionOption)_answer).getValue().isAdvance(); }
-   public boolean isEvasiveMove()        { return (_answer != null) && ((RequestActionOption)_answer).getValue().isEvasiveMove(); }
+   public boolean isCharge()             { return (answer != null) && ((RequestActionOption) answer).getValue().isCharge(); }
+   public boolean isAdvance()            { return (answer != null) && ((RequestActionOption) answer).getValue().isAdvance(); }
+   public boolean isEvasiveMove()        { return (answer != null) && ((RequestActionOption) answer).getValue().isEvasiveMove(); }
    public boolean isRetreat()            { return false; }
-   public boolean isReadyWeapon()        { return (_answer != null) && ((RequestActionOption)_answer).getValue().isReadyWeapon(); }
-   public boolean isChangePosition()     { return (_answer != null) && ((RequestActionOption)_answer).getValue().isChangePosition();}
-   public boolean isEquipUnequip()       { return (_answer != null) && ((RequestActionOption)_answer).getValue().isEquipUnequip(); }
-   public boolean isChangeTargets()      { return (_answer != null) && ((RequestActionOption)_answer).getValue().isChangeTargets(); }
-   public boolean isBeginSpell()         { return (_answer != null) && ((RequestActionOption)_answer).getValue().isBeginSpell(); }
-   public boolean isPrepareInateSpell()  { return (_answer != null) && ((RequestActionOption)_answer).getValue().isPrepareInateSpell();}
-   public boolean isContinueSpell()      { return (_answer != null) && ((RequestActionOption)_answer).getValue().isContinueSpell();}
-   public boolean isChannelEnergy()      { return (_answer != null) && ((RequestActionOption)_answer).getValue().isChannelEnergy(); }
-   public boolean isMaintainSpell()      { return (_answer != null) && ((RequestActionOption)_answer).getValue().isMaintainSpell(); }
-   public boolean isDiscardSpell()       { return (_answer != null) && ((RequestActionOption)_answer).getValue().isDiscardSpell();}
-   public boolean isCompleteMageSpell()  { return (_answer != null) && ((RequestActionOption)_answer).getValue().isCompleteMageSpell(); }
-   public boolean isCompletePriestSpell(){ return (_answer != null) && ((RequestActionOption)_answer).getValue().isCompletePriestSpell(); }
-   public boolean isCompleteSpell()      { return (_answer != null) && ((RequestActionOption)_answer).getValue().isCompleteSpell(); }
-   public boolean isApplyItem()          { return (_answer != null) && ((RequestActionOption)_answer).getValue().isApplyItem(); }
-   public boolean isFinalDefense()       { return (_answer != null) && ((RequestActionOption)_answer).getValue().isFinalDefense(); }
-   public boolean isTargetEnemy()        { return (_answer != null) && ((RequestActionOption)_answer).getValue().isTargetEnemy(); }
-   public boolean isPrepareRanged()      { return (_answer != null) && ((RequestActionOption)_answer).getValue().isPrepareRanged(); }
-   public boolean isWaitForAttack()      { return (_answer != null) && ((RequestActionOption)_answer).getValue().isWaitForAttack();}
+   public boolean isReadyWeapon()        { return (answer != null) && ((RequestActionOption) answer).getValue().isReadyWeapon(); }
+   public boolean isChangePosition()     { return (answer != null) && ((RequestActionOption) answer).getValue().isChangePosition();}
+   public boolean isEquipUnequip()       { return (answer != null) && ((RequestActionOption) answer).getValue().isEquipUnequip(); }
+   public boolean isChangeTargets()      { return (answer != null) && ((RequestActionOption) answer).getValue().isChangeTargets(); }
+   public boolean isBeginSpell()         { return (answer != null) && ((RequestActionOption) answer).getValue().isBeginSpell(); }
+   public boolean isPrepareInateSpell()  { return (answer != null) && ((RequestActionOption) answer).getValue().isPrepareInateSpell();}
+   public boolean isContinueSpell()      { return (answer != null) && ((RequestActionOption) answer).getValue().isContinueSpell();}
+   public boolean isChannelEnergy()      { return (answer != null) && ((RequestActionOption) answer).getValue().isChannelEnergy(); }
+   public boolean isMaintainSpell()      { return (answer != null) && ((RequestActionOption) answer).getValue().isMaintainSpell(); }
+   public boolean isDiscardSpell()       { return (answer != null) && ((RequestActionOption) answer).getValue().isDiscardSpell();}
+   public boolean isCompleteMageSpell()  { return (answer != null) && ((RequestActionOption) answer).getValue().isCompleteMageSpell(); }
+   public boolean isCompletePriestSpell(){ return (answer != null) && ((RequestActionOption) answer).getValue().isCompletePriestSpell(); }
+   public boolean isCompleteSpell()      { return (answer != null) && ((RequestActionOption) answer).getValue().isCompleteSpell(); }
+   public boolean isApplyItem()          { return (answer != null) && ((RequestActionOption) answer).getValue().isApplyItem(); }
+   public boolean isFinalDefense()       { return (answer != null) && ((RequestActionOption) answer).getValue().isFinalDefense(); }
+   public boolean isTargetEnemy()        { return (answer != null) && ((RequestActionOption) answer).getValue().isTargetEnemy(); }
+   public boolean isPrepareRanged()      { return (answer != null) && ((RequestActionOption) answer).getValue().isPrepareRanged(); }
+   public boolean isWaitForAttack()      { return (answer != null) && ((RequestActionOption) answer).getValue().isWaitForAttack();}
    public boolean isPickupItem(Character actor, Arena arena) {
-      if ((_answer != null) && ((RequestActionOption)_answer).getValue().isLocationAction()) {
+      if ((answer != null) && ((RequestActionOption) answer).getValue().isLocationAction()) {
          return arena.isPickupItem(actor, this);
       }
       return false;
    }
    public boolean isLocationAction(Character actor, Arena arena) {
-      if ((_answer != null) && ((RequestActionOption)_answer).getValue().isAnyLocationAction()) {
+      if ((answer != null) && ((RequestActionOption) answer).getValue().isAnyLocationAction()) {
          return arena.isLocationAction(actor, this);
       }
       return false;
@@ -210,9 +209,9 @@ public class RequestAction extends SyncRequest implements Enums
             byte moveAvailable = actor.getAvailableMovement(false/*movingEvasively*/);
             // Can we continue moving? If not, return null
             if ((moveAvailable > 0) && (!actor.isMoveComplete())) {
-               if ((_movementRequest == null) || (!_movementRequest.hasMovesLeft())) {
-                  _movementRequest = new RequestMovement();
-                  Character target = arena.getCharacter(actor._targetID);
+               if ((movementRequest == null) || (!movementRequest.hasMovesLeft())) {
+                  movementRequest = new RequestMovement();
+                  Character target = arena.getCharacter(actor.targetID);
                   if (target != null) {
                      HashMap<Orientation, List<Orientation>> mapOrientationToNextOrientationsLeadingToChargeAttack = new HashMap<>();
                      List<Orientation> validDestinations = new ArrayList<>();
@@ -237,24 +236,24 @@ public class RequestAction extends SyncRequest implements Enums
                      }
 
 
-                     _movementRequest.setOrientations(validDestinations, mapOfFutureOrientToSourceOrient, actor);
+                     movementRequest.setOrientations(validDestinations, mapOfFutureOrientToSourceOrient, actor);
                      //_locationRequest.addOption(0, "move");
-                     _movementRequest.setMessage(actor.getName() + ", please select your destination on the arena map.");
-                     nextReq = _movementRequest;
+                     movementRequest.setMessage(actor.getName() + ", please select your destination on the arena map.");
+                     nextReq = movementRequest;
                   }
                }
             }
          }
-         if (_styleRequest == null) {
-            _styleRequest = actor.getRequestAttackStyle(this, arena);
+         if (styleRequest == null) {
+            styleRequest = actor.getRequestAttackStyle(this, arena);
          }
-         nextReq = _styleRequest;
+         nextReq = styleRequest;
       }
       else if (isChangePosition()) {
-         if (_positionRequest == null) {
-            _positionRequest = actor.getRequestPosition(this);
+         if (positionRequest == null) {
+            positionRequest = actor.getRequestPosition(this);
          }
-         nextReq = _positionRequest;
+         nextReq = positionRequest;
       }
       else if (isAdvance()) { // but not an attack! (isAttack() check above rules that out)
          byte moveAvailable = actor.getAvailableMovement(isEvasiveMove());
@@ -262,75 +261,75 @@ public class RequestAction extends SyncRequest implements Enums
          if ((moveAvailable == 0) || (actor.isMoveComplete())) {
             return null;
          }
-         if ((_movementRequest == null) || (!_movementRequest.hasMovesLeft())) {
-            _movementRequest = new RequestMovement();
+         if ((movementRequest == null) || (!movementRequest.hasMovesLeft())) {
+            movementRequest = new RequestMovement();
             List<Orientation> futureOrientations = new ArrayList<>();
 
             HashMap<Orientation, Orientation> mapOfFutureOrientToSourceOrient = new HashMap<>();
             arena.getMoveableLocations(actor, moveAvailable, arena.getCombatMap(), futureOrientations, mapOfFutureOrientToSourceOrient);
-            _movementRequest.setOrientations(futureOrientations, mapOfFutureOrientToSourceOrient, actor);
+            movementRequest.setOrientations(futureOrientations, mapOfFutureOrientToSourceOrient, actor);
             //_locationRequest.addOption(0, "move");
-            _movementRequest.setMessage(actor.getName() + ", please select your destination on the arena map.");
+            movementRequest.setMessage(actor.getName() + ", please select your destination on the arena map.");
          }
-         nextReq = _movementRequest;
+         nextReq = movementRequest;
       }
       else if (isChangeTargets()) {
          arena.getCombatMap().recomputeKnownLocations(actor, true, true, null);
-         if (_targetSelection == null) {
-            // If _spell is 'null', this will use the actor's missile weapon for range assessment
-            _targetSelection = new RequestSingleTargetSelection(actor, _spell, arena, this);
-            nextReq = _targetSelection;
+         if (targetSelection == null) {
+            // If spell is 'null', this will use the actor's missile weapon for range assessment
+            targetSelection = new RequestSingleTargetSelection(actor, spell, arena, this);
+            nextReq = targetSelection;
          }
          else {
             // make sure the new order is in place before we ask for the next action.
-            int newTargetUniqueID = _targetSelection.getAnswerID();
+            int newTargetUniqueID = targetSelection.getAnswerID();
             if (newTargetUniqueID != -1) {
                actor.setTarget(newTargetUniqueID);
             }
-            List<Character> charactersTargetingActor = arena._battle.getCharactersAimingAtCharacter(actor);
+            List<Character> charactersTargetingActor = arena.battle.getCharactersAimingAtCharacter(actor);
             nextReq = actor.getActionRequest(arena, null/*delayedTarget*/, charactersTargetingActor);
             nextReq.copyDataInto(this);
             nextReq = this;
          }
-         //         if (_targetPriorities == null) {
-         //            _targetPriorities = actor.getTargetPrioritiesRequest(this, arena);
-         //            nextReq = _targetPriorities;
+         //         if (targetPriorities == null) {
+         //            targetPriorities = actor.getTargetPrioritiesRequest(this, arena);
+         //            nextReq = targetPriorities;
          //         }
          //         else {
          //            // make sure the new order is in place before we ask for the next action.
-         //            actor.setTargetPriorities(_targetPriorities.getOrderedTargetIds());
-         //            List<Character> charactersTargetingActor = arena._battle.getCharactersAimingAtCharacter(actor);
+         //            actor.setTargetPriorities(targetPriorities.getOrderedTargetIds());
+         //            List<Character> charactersTargetingActor = arena.battle.getCharactersAimingAtCharacter(actor);
          //            nextReq = actor.getActionRequest(arena, null/*delayedTarget*/, charactersTargetingActor);
          //            nextReq.copyDataInto(this);
          //            nextReq = this;
          //         }
       }
       else if (isEquipUnequip()) {
-         if (_equipmentRequest == null) {
-            _equipmentRequest = actor.getEquipmentRequest();
+         if (equipmentRequest == null) {
+            equipmentRequest = actor.getEquipmentRequest();
          }
-         nextReq = _equipmentRequest;
+         nextReq = equipmentRequest;
       }
       else if (isBeginSpell()) {
-         if (_spellTypeSelectionRequest == null) {
-            _spellTypeSelectionRequest = actor.getSpellTypeSelectionRequest();
-            nextReq = _spellTypeSelectionRequest;
+         if (spellTypeSelectionRequest == null) {
+            spellTypeSelectionRequest = actor.getSpellTypeSelectionRequest();
+            nextReq = spellTypeSelectionRequest;
          }
          else {
-            _spellSelectionRequest = (RequestSpellSelection) _spellTypeSelectionRequest.getNextQuestion(actor, combatants, arena);
-            nextReq = _spellSelectionRequest;
+            spellSelectionRequest = (RequestSpellSelection) spellTypeSelectionRequest.getNextQuestion(actor, combatants, arena);
+            nextReq = spellSelectionRequest;
          }
       }
       else if (isCompleteSpell()) {
-         if (_spell.getTargetType() == TargetType.TARGET_AREA) {
-            if (_locationSelection == null) {
-               _locationSelection = new RequestLocation(((IAreaSpell)_spell).getImageResourceName());
+         if (spell.getTargetType() == TargetType.TARGET_AREA) {
+            if (locationSelection == null) {
+               locationSelection = new RequestLocation(((IAreaSpell) spell).getImageResourceName());
                ArenaCoordinates actorCoords = actor.getOrientation().getHeadCoordinates();
                CombatMap map = arena.getCombatMap();
                ArenaLocation curLoc = map.getLocation(actorCoords);
                List<ArenaCoordinates> visibleLocationsInRange = new ArrayList<>();
-               short maxRange = _spell.getMaxRange(actor);
-               short minRange = _spell.getMinRange(actor);
+               short maxRange = spell.getMaxRange(actor);
+               short minRange = spell.getMinRange(actor);
                for (short col = 0 ; col<map.getSizeX() ; col++) {
                   for (short row = (short) (col%2) ; row<map.getSizeY() ; row += 2) {
                      ArenaCoordinates mapLoc = map.getLocationQuick(col, row);
@@ -347,15 +346,15 @@ public class RequestAction extends SyncRequest implements Enums
                      }
                   }
                }
-               _locationSelection.setCoordinates(visibleLocationsInRange);
+               locationSelection.setCoordinates(visibleLocationsInRange);
             }
-            nextReq = _locationSelection;
+            nextReq = locationSelection;
          }
-         else if (_spell.requiresTargetToCast()) {
-            if (_targetSelection == null) {
-               _targetSelection = new RequestSingleTargetSelection(actor, _spell, arena, this);
+         else if (spell.requiresTargetToCast()) {
+            if (targetSelection == null) {
+               targetSelection = new RequestSingleTargetSelection(actor, spell, arena, this);
             }
-            nextReq = _targetSelection;
+            nextReq = targetSelection;
          }
       }
       if (nextReq != null) {
@@ -367,32 +366,32 @@ public class RequestAction extends SyncRequest implements Enums
             if (nextReq.getEnabledCount(true/*includeCancelAction*/) == 1) {
                // If the action we took have only a cancel sub action,
                // then the action itself is invalid, disallow it.
-               _answer.setEnabled(false);
+               answer.setEnabled(false);
             }
             init();
-            _answer = null;
-            if (nextReq == _equipmentRequest) {
-               _equipmentRequest           = null;
+            answer = null;
+            if (nextReq == equipmentRequest) {
+               equipmentRequest = null;
             }
-            else if (nextReq == _movementRequest) {
-               _movementRequest            = null;
+            else if (nextReq == movementRequest) {
+               movementRequest = null;
             }
-            else if (nextReq == _positionRequest) {
-               _positionRequest            = null;
+            else if (nextReq == positionRequest) {
+               positionRequest = null;
             }
-            else if (nextReq == _styleRequest) {
-               _styleRequest               = null;
+            else if (nextReq == styleRequest) {
+               styleRequest = null;
             }
-            else if (nextReq == _targetPriorities) {
-               _targetPriorities           = null;
+            else if (nextReq == targetPriorities) {
+               targetPriorities = null;
             }
-            else if (nextReq == _targetSelection) {
-               _targetSelection            = null;
+            else if (nextReq == targetSelection) {
+               targetSelection = null;
             }
-            else if ((nextReq == _spellTypeSelectionRequest) ||
-                     (nextReq == _spellSelectionRequest)) {
-               _spellTypeSelectionRequest  = null;
-               _spellSelectionRequest      = null;
+            else if ((nextReq == spellTypeSelectionRequest) ||
+                     (nextReq == spellSelectionRequest)) {
+               spellTypeSelectionRequest = null;
+               spellSelectionRequest = null;
             }
             return this;
          }
@@ -410,21 +409,21 @@ public class RequestAction extends SyncRequest implements Enums
       return nextReq;
    }
 
-   public boolean isRangedAttack()       { return (_answer != null) && ((RequestActionOption)_answer).getValue().isRangedAttack();       }
-   public boolean isGrappleAttack()      { return (_answer != null) && ((RequestActionOption)_answer).getValue().isGrappleAttack();      }
-   public boolean isBreakFree()          { return (_answer != null) && ((RequestActionOption)_answer).getValue().isBreakFree();          }
-   public boolean isCounterAttack()      { return (_answer != null) && ((RequestActionOption)_answer).getValue().isCounterAttack();      }
-   public boolean isCounterAttackThrow() { return (_answer != null) && ((RequestActionOption)_answer).getValue().isCounterAttackThrow(); }
-   public boolean isCounterAttackGrab()  { return (_answer != null) && ((RequestActionOption)_answer).getValue().isCounterAttackGrab();  }
-   public byte getAttackActions(boolean considerSpellAsAttack) { return _answer == null ? 0 : ((RequestActionOption)_answer).getValue().getAttackActions(considerSpellAsAttack); }
+   public boolean isRangedAttack()       { return (answer != null) && ((RequestActionOption) answer).getValue().isRangedAttack();       }
+   public boolean isGrappleAttack()      { return (answer != null) && ((RequestActionOption) answer).getValue().isGrappleAttack();      }
+   public boolean isBreakFree()          { return (answer != null) && ((RequestActionOption) answer).getValue().isBreakFree();          }
+   public boolean isCounterAttack()      { return (answer != null) && ((RequestActionOption) answer).getValue().isCounterAttack();      }
+   public boolean isCounterAttackThrow() { return (answer != null) && ((RequestActionOption) answer).getValue().isCounterAttackThrow(); }
+   public boolean isCounterAttackGrab()  { return (answer != null) && ((RequestActionOption) answer).getValue().isCounterAttackGrab();  }
+   public byte getAttackActions(boolean considerSpellAsAttack) { return answer == null ? 0 : ((RequestActionOption) answer).getValue().getAttackActions(considerSpellAsAttack); }
    public byte getActionsUsed()
    {
-      return (_answer == null) ? 0 : ((RequestActionOption)_answer).getValue()
-                                                                   .getActionsUsed((_equipmentRequest != null) ?
-                                                                                   _equipmentRequest.getActionsUsed() : 1);
+      return (answer == null) ? 0 : ((RequestActionOption) answer).getValue()
+                                                                  .getActionsUsed((equipmentRequest != null) ?
+                                                                                   equipmentRequest.getActionsUsed() : 1);
    }
    public String getActionDescription(Character actor, Character target, Arena arena) {
-      switch (((RequestActionOption)_answer).getValue()) {
+      switch (((RequestActionOption) answer).getValue()) {
          case OPT_NO_ACTION               : return actor.getName() + " does nothing.";
          case OPT_MOVE                    : return actor.getName() + ((actor.getPosition() == Position.STANDING) ? " moves." : " crawls.");
          case OPT_MOVE_EVASIVE            : return actor.getName() + " moves evasively.";
@@ -454,9 +453,9 @@ public class RequestAction extends SyncRequest implements Enums
          case OPT_FINAL_DEFENSE_3         :
          case OPT_FINAL_DEFENSE_4         :
          case OPT_FINAL_DEFENSE_5         : return actor.getName() + " makes a final defensive action ("+getActionsUsed()+"-actions).";
-         case OPT_CHANGE_POS              : return actor.getName() + " changes "+actor.getHisHer()+" position. (" + _positionRequest.getAnswer() + ")";
+         case OPT_CHANGE_POS              : return actor.getName() + " changes " + actor.getHisHer() + " position. (" + positionRequest.getAnswer() + ")";
          case OPT_WAIT_TO_ATTACK          : return actor.getName() + " waits for an opportunatey to attack.";
-         case OPT_EQUIP_UNEQUIP           : return actor.getName() + " equips or unequips gear: " + ((_equipmentRequest == null) ? "" : _equipmentRequest.getAnswer());
+         case OPT_EQUIP_UNEQUIP           : return actor.getName() + " equips or unequips gear: " + ((equipmentRequest == null) ? "" : equipmentRequest.getAnswer());
          case OPT_CHANGE_TARGET_PRIORITIES: return actor.getName() + " changes targets.";
          case OPT_BEGIN_SPELL             : return actor.getName() + " begins a '"+actor.getCurrentSpellName() +"' spell";
          case OPT_CONTINUE_INCANTATION    : return actor.getName() + " continues casting a '"+actor.getCurrentSpellName() +"' spell";
@@ -469,12 +468,12 @@ public class RequestAction extends SyncRequest implements Enums
          case OPT_DISCARD_SPELL           : return actor.getName() + " discards a spell";
          case OPT_COMPLETE_SPELL_1        :
          case OPT_COMPLETE_SPELL_2        :
-         case OPT_COMPLETE_SPELL_3        : return actor.getName() + " casts a '"+_spell.getName() +"' spell (" + _spell.getPower()+" power points)";
-         case OPT_COMPLETE_PRIEST_SPELL_1 : return actor.getName() + " casts a '"+_spell.getName() +"' spell (1 power points)";
-         case OPT_COMPLETE_PRIEST_SPELL_2 : return actor.getName() + " casts a '"+_spell.getName() +"' spell (2 power points)";
-         case OPT_COMPLETE_PRIEST_SPELL_3 : return actor.getName() + " casts a '"+_spell.getName() +"' spell (3 power points)";
-         case OPT_COMPLETE_PRIEST_SPELL_4 : return actor.getName() + " casts a '"+_spell.getName() +"' spell (4 power points)";
-         case OPT_COMPLETE_PRIEST_SPELL_5 : return actor.getName() + " casts a '"+_spell.getName() +"' spell (5 power points)";
+         case OPT_COMPLETE_SPELL_3        : return actor.getName() + " casts a '" + spell.getName() + "' spell (" + spell.getPower() + " power points)";
+         case OPT_COMPLETE_PRIEST_SPELL_1 : return actor.getName() + " casts a '" + spell.getName() + "' spell (1 power points)";
+         case OPT_COMPLETE_PRIEST_SPELL_2 : return actor.getName() + " casts a '" + spell.getName() + "' spell (2 power points)";
+         case OPT_COMPLETE_PRIEST_SPELL_3 : return actor.getName() + " casts a '" + spell.getName() + "' spell (3 power points)";
+         case OPT_COMPLETE_PRIEST_SPELL_4 : return actor.getName() + " casts a '" + spell.getName() + "' spell (4 power points)";
+         case OPT_COMPLETE_PRIEST_SPELL_5 : return actor.getName() + " casts a '" + spell.getName() + "' spell (5 power points)";
          case OPT_APPLY_ITEM              : return actor.getName() + " applys an item: " + actor.getLimb(getLimb()).getHeldThingName();
          case OPT_COUNTER_ATTACK_GRAB_1   :
          case OPT_COUNTER_ATTACK_GRAB_2   :
@@ -497,7 +496,7 @@ public class RequestAction extends SyncRequest implements Enums
          case OPT_PREPARE_INITATE_SPELL_4 : return actor.getName() + " prepares inate spell ("+actor.getRace().getInateSpells().get(3).getName() + ", power = "+actor.getRace().getInateSpells().get(3).getPower() + ").";
          case OPT_PREPARE_INITATE_SPELL_5 : return actor.getName() + " prepares inate spell ("+actor.getRace().getInateSpells().get(4).getName() + ", power = "+actor.getRace().getInateSpells().get(4).getPower() + ").";
       }
-      if (((RequestActionOption)_answer).getValue().isAnyLocationAction()) {
+      if (((RequestActionOption) answer).getValue().isAnyLocationAction()) {
          return arena.getActionDescription(actor, this);
       }
 
@@ -508,10 +507,10 @@ public class RequestAction extends SyncRequest implements Enums
    {
       super.serializeFromStream(in);
       try {
-         _actorID       = readInt(in);
-         _targetID      = readInt(in);
+         actorID = readInt(in);
+         targetID = readInt(in);
          byte limbVal   = readByte(in);
-         _limbType      = (limbVal == -1) ? null : LimbType.getByValue(limbVal);
+         limbType = (limbVal == -1) ? null : LimbType.getByValue(limbVal);
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -521,9 +520,9 @@ public class RequestAction extends SyncRequest implements Enums
    {
       super.serializeToStream(out);
       try {
-         writeToStream(_actorID, out);
-         writeToStream(_targetID, out);
-         writeToStream((_limbType == null) ? ((byte)-1) : _limbType.value, out);
+         writeToStream(actorID, out);
+         writeToStream(targetID, out);
+         writeToStream((limbType == null) ? ((byte)-1) : limbType.value, out);
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -531,21 +530,21 @@ public class RequestAction extends SyncRequest implements Enums
    @Override
    public synchronized void copyDataInto(SyncRequest newObj)
    {
-      try (SemaphoreAutoLocker sal = new SemaphoreAutoLocker(_lockThis)) {
+      try (SemaphoreAutoLocker sal = new SemaphoreAutoLocker(lockThis)) {
          super.copyDataInto(newObj);
          if (newObj instanceof RequestAction) {
             RequestAction reqAct = (RequestAction) newObj;
-            reqAct._actorID                   = _actorID;
-            reqAct._equipmentRequest          = _equipmentRequest;
-            reqAct._movementRequest           = _movementRequest;
-            reqAct._positionRequest           = _positionRequest;
-            reqAct._styleRequest              = _styleRequest;
-            reqAct._targetPriorities          = _targetPriorities;
-            reqAct._spellTypeSelectionRequest = _spellTypeSelectionRequest;
-            reqAct._spellSelectionRequest     = _spellSelectionRequest;
-            reqAct._targetSelection           = _targetSelection;
-            reqAct._targetID                  = _targetID;
-            reqAct._limbType                      = _limbType;
+            reqAct.actorID = actorID;
+            reqAct.equipmentRequest = equipmentRequest;
+            reqAct.movementRequest = movementRequest;
+            reqAct.positionRequest = positionRequest;
+            reqAct.styleRequest = styleRequest;
+            reqAct.targetPriorities = targetPriorities;
+            reqAct.spellTypeSelectionRequest = spellTypeSelectionRequest;
+            reqAct.spellSelectionRequest = spellSelectionRequest;
+            reqAct.targetSelection = targetSelection;
+            reqAct.targetID = targetID;
+            reqAct.limbType = limbType;
          }
       }
    }
@@ -553,35 +552,35 @@ public class RequestAction extends SyncRequest implements Enums
    @Override
    public String toString()
    {
-      return super.toString() + ", actorID = " + _actorID +
-             ", equReq = " + _equipmentRequest +
-             ", movReq = " + _movementRequest +
-             ", posReq = " + _positionRequest +
-             ", styReq = " + _styleRequest +
-             ", targetPriorities = " + _targetPriorities +
-             ", spellTypeSelectionRequest = " + _spellTypeSelectionRequest +
-             ", spellSelectionRequest = " + _spellSelectionRequest +
-             ", targetSelection = " + _targetSelection +
-             ", targetID = " + _targetID +
-             ", hand = " + _limbType;
+      return super.toString() + ", actorID = " + actorID +
+             ", equReq = " + equipmentRequest +
+             ", movReq = " + movementRequest +
+             ", posReq = " + positionRequest +
+             ", styReq = " + styleRequest +
+             ", targetPriorities = " + targetPriorities +
+             ", spellTypeSelectionRequest = " + spellTypeSelectionRequest +
+             ", spellSelectionRequest = " + spellSelectionRequest +
+             ", targetSelection = " + targetSelection +
+             ", targetID = " + targetID +
+             ", hand = " + limbType;
    }
 
    public RANGE getRange(Character attacker, short distanceInHexes) {
       byte rangedDeterminingAttribute = 0;
-      if ((_styleRequest != null) && (_styleRequest.isRanged())) {
+      if ((styleRequest != null) && (styleRequest.isRanged())) {
          rangedDeterminingAttribute = attacker.getAdjustedStrength();
       }
-      if (_spell != null) {
-         if (_spell instanceof IRangedSpell) {
+      if (spell != null) {
+         if (spell instanceof IRangedSpell) {
             // When an attacker has a web spell ready, but they choose to attack with a weapon instead,
             // don't let the spell affect the range results. This results in the range being returned
             // as Point_blank, or similar, when a melee attack is taking place.
             if (!isAttack()) {
-               if (_spell instanceof SpellSpiderWeb) {
-                  SpellSpiderWeb web = (SpellSpiderWeb) _spell;
+               if (spell instanceof SpellSpiderWeb) {
+                  SpellSpiderWeb web = (SpellSpiderWeb) spell;
                   return web.getRange(distanceInHexes);
                }
-               rangedDeterminingAttribute = attacker.getAttributeLevel(_spell.getCastingAttribute());
+               rangedDeterminingAttribute = attacker.getAttributeLevel(spell.getCastingAttribute());
                rangedDeterminingAttribute += attacker.getRace().getBuildModifier();
             }
          }
@@ -599,22 +598,22 @@ public class RequestAction extends SyncRequest implements Enums
       if (weapon == null) {
          return null;
       }
-      if (_styleRequest != null) {
-         if (_styleRequest.isGrapple()) {
-            return weapon.getGrappleStyle(_styleRequest.getAnswerIndex());
+      if (styleRequest != null) {
+         if (styleRequest.isGrapple()) {
+            return weapon.getGrappleStyle(styleRequest.getAnswerIndex());
          }
-         return weapon.getAttackStyle(_styleRequest.getAnswerIndex());
+         return weapon.getAttackStyle(styleRequest.getAnswerIndex());
       }
       return weapon.getAttackStyle(0);
    }
 
    public Weapon getAttackingWeapon(Character attacker) {
-      if (_styleRequest != null) {
+      if (styleRequest != null) {
          return attacker.getLimb(getLimb()).getWeapon(attacker);
       }
-      if (_spell != null) {
-         if (_spell instanceof IMissileSpell) {
-            IMissileSpell missileSpell = (IMissileSpell) _spell;
+      if (spell != null) {
+         if (spell instanceof IMissileSpell) {
+            IMissileSpell missileSpell = (IMissileSpell) spell;
             return missileSpell.getMissileWeapon();
          }
       }
@@ -622,23 +621,23 @@ public class RequestAction extends SyncRequest implements Enums
    }
 
    public boolean isRanged() {
-      if (_styleRequest != null) {
-         return _styleRequest.isRanged();
+      if (styleRequest != null) {
+         return styleRequest.isRanged();
       }
 
-      if (_spell != null) {
-         return _spell instanceof IRangedSpell;
+      if (spell != null) {
+         return spell instanceof IRangedSpell;
       }
       return false;
    }
    public DamageType getDamageType()
    {
-      if (_styleRequest != null) {
-         return _styleRequest.getDamageType();
+      if (styleRequest != null) {
+         return styleRequest.getDamageType();
       }
 
-      if (_spell != null) {
-         return _spell.getDamageType();
+      if (spell != null) {
+         return spell.getDamageType();
       }
       return ostrowski.combat.common.enums.DamageType.NONE;
    }
@@ -647,32 +646,32 @@ public class RequestAction extends SyncRequest implements Enums
       if (isCharge()) {
          return "charge attack.";
       }
-      if (_styleRequest != null) {
-         if (_styleRequest.isThrown()) {
+      if (styleRequest != null) {
+         if (styleRequest.isThrown()) {
             return "thrown weapon.";
          }
-         if (_styleRequest.isMissile()) {
+         if (styleRequest.isMissile()) {
             return "missile weapon.";
          }
       }
-      if (_spell != null) {
-         if (_spell instanceof IMissileSpell) {
-            return _spell.getName() + " spell.";
+      if (spell != null) {
+         if (spell instanceof IMissileSpell) {
+            return spell.getName() + " spell.";
          }
       }
       return null;
    }
    public void setSpell(Spell spell) {
-      _spell = spell;
+      this.spell = spell;
    }
    public Spell getSpell() {
-      return _spell;
+      return spell;
    }
    public WeaponStyleAttack getWeaponStyleAttack(Character attacker)
    {
       if (isCompleteSpell()) {
-         if (_spell instanceof IMissileSpell) {
-            IMissileSpell missileSpell = (IMissileSpell) _spell;
+         if (spell instanceof IMissileSpell) {
+            IMissileSpell missileSpell = (IMissileSpell) spell;
             return missileSpell.getMissileWeapon().getAttackStyle(0);
          }
       }
@@ -683,8 +682,8 @@ public class RequestAction extends SyncRequest implements Enums
       }
       Weapon attackingWeapon = attackersLimb.getWeapon(attacker);
       if (attackingWeapon != null) {
-         if (_styleRequest != null) {
-            return attackingWeapon.getAttackStyle(_styleRequest.getAnswerIndex());
+         if (styleRequest != null) {
+            return attackingWeapon.getAttackStyle(styleRequest.getAnswerIndex());
          }
          return attackingWeapon.getAttackStyle(0);
       }
@@ -692,11 +691,11 @@ public class RequestAction extends SyncRequest implements Enums
    }
 
    public DiceSet getAttackDice(RANGE range) {
-      if (_styleRequest != null) {
-         return _styleRequest.getAttackDice();
+      if (styleRequest != null) {
+         return styleRequest.getAttackDice();
       }
       if (isCompleteSpell()) {
-         return _spell.getCastDice(getActionsUsed(), range);
+         return spell.getCastDice(getActionsUsed(), range);
       }
       return null;
    }
@@ -708,10 +707,10 @@ public class RequestAction extends SyncRequest implements Enums
       byte rollModifier = 0;
       if (isCompleteSpell()) {
          if (includeSkill) {
-            if (_spell instanceof PriestMissileSpell) {
-               rollModifier += attacker.getAttributeLevel(Attribute.Dexterity) + ((PriestSpell)_spell).getAffinity();
+            if (spell instanceof PriestMissileSpell) {
+               rollModifier += attacker.getAttributeLevel(Attribute.Dexterity) + ((PriestSpell) spell).getAffinity();
             }
-            rollModifier += _spell.getLevel();
+            rollModifier += spell.getLevel();
          }
          if (includeWoundsAndPain) {
             rollModifier -= attacker.getWoundsAndPainPenalty();
@@ -719,8 +718,8 @@ public class RequestAction extends SyncRequest implements Enums
       }
       else {
          if (includeSkill) {
-            rollModifier += attacker.getWeaponSkill(getLimb(), _styleRequest.getAnswerIndex(), _styleRequest.isGrapple(),
-                                                    _styleRequest.isCounterAttack(),
+            rollModifier += attacker.getWeaponSkill(getLimb(), styleRequest.getAnswerIndex(), styleRequest.isGrapple(),
+                                                    styleRequest.isCounterAttack(),
                                                     false/*accountForHandPenalty*/, true/*adjustForHoldPenalties*/);
          }
          // Even without pain & wounds, an off-hand may suffer penalties
@@ -739,8 +738,8 @@ public class RequestAction extends SyncRequest implements Enums
    }
    public byte getMinimumDamage(Character attacker)
    {
-      if (isCompleteSpell() && (_spell instanceof IMissileSpell)) {
-         IMissileSpell missileSpell = (IMissileSpell) _spell;
+      if (isCompleteSpell() && (spell instanceof IMissileSpell)) {
+         IMissileSpell missileSpell = (IMissileSpell) spell;
          return missileSpell.getSpellDamageBase();
       }
       WeaponStyleAttack style = getWeaponStyleAttack(attacker);
@@ -750,9 +749,9 @@ public class RequestAction extends SyncRequest implements Enums
       return 0;
    }
    public void setDualGrappleAttack() {
-      _dualGrappleAttack = true;
+      dualGrappleAttack = true;
    }
    public boolean isDualGrappleAttack() {
-      return _dualGrappleAttack;
+      return dualGrappleAttack;
    }
 }

@@ -16,7 +16,7 @@ public class RequestDefenseOfCounterAttack extends RequestDefense implements Enu
    @Override
    public synchronized void copyDataInto(SyncRequest newObj)
    {
-      try (SemaphoreAutoLocker sal = new SemaphoreAutoLocker(_lockThis)) {
+      try (SemaphoreAutoLocker sal = new SemaphoreAutoLocker(lockThis)) {
          super.copyDataInto(newObj);
 //         if (newObj instanceof RequestDefenseOfCounterAttack) {
 //            RequestDefenseOfCounterAttack reqDef = (RequestDefenseOfCounterAttack) newObj;

@@ -38,18 +38,18 @@ import java.util.TreeSet;
 
 public abstract class PriestSpell extends Spell
 {
-   private byte                           _affinityLevel;
-   protected byte                         _effectivePower;
-   private Class< ? extends IPriestGroup> _group;
-   private String                         _deity = null;
+   private byte                           affinityLevel;
+   protected byte                         effectivePower;
+   private Class< ? extends IPriestGroup> group;
+   private String                         deity = null;
 
    public PriestSpell() {
    }
 
    public PriestSpell(String name, Class< ? extends IPriestGroup> group, int affinityLevel) {
       super(name);
-      _group = group;
-      _affinityLevel = (byte) affinityLevel;
+      this.group = group;
+      this.affinityLevel = (byte) affinityLevel;
    }
 
    @Override
@@ -58,7 +58,7 @@ public abstract class PriestSpell extends Spell
    }
 
    public byte getEffectivePower() {
-      return _effectivePower;
+      return effectivePower;
    }
 
    @Override
@@ -68,7 +68,7 @@ public abstract class PriestSpell extends Spell
 
    @Override
    public byte getIncantationTime() {
-      return _affinityLevel;
+      return affinityLevel;
    }
 
    @Override
@@ -77,7 +77,7 @@ public abstract class PriestSpell extends Spell
    }
 
    static public PriestSpell getSpell(String name) {
-      for (String deity : PriestSpell._deities) {
+      for (String deity : PriestSpell.DEITIES) {
          List<PriestSpell> deitySpells = PriestSpell.getSpellsForDeity(deity, 10, false/*addNullBetweenGroups*/);
          for (PriestSpell priestSpell : deitySpells) {
             if (priestSpell.getName().equalsIgnoreCase(name)) {
@@ -128,10 +128,10 @@ public abstract class PriestSpell extends Spell
          spellsInGroup[col] = getSpellsInGroup(GROUP_NAMES.get(col));
       }
 
-      for (int row = 0; row < _deities.size(); row++) {
+      for (int row = 0; row < DEITIES.size(); row++) {
          TableRow tableRow = new TableRow(row);
 
-         String deity = _deities.get(row);
+         String deity = DEITIES.get(row);
          tableRow.addHeader(deity);
          List<String> groupsForDeity = getSpellGroups(deity);
          for (String groupName : GROUP_NAMES) {
@@ -208,15 +208,15 @@ public abstract class PriestSpell extends Spell
    static private final String             DRUID             = "Druid";
    static private final String             HADES             = "Hades";
    static private final String             TAO               = "Tao";
-   static private final String             DEMONIC           = "Demonic";
-   static public final List<String>   _deities          = new ArrayList<>();
+   static private final String      DEMONIC = "Demonic";
+   static public final List<String> DEITIES = new ArrayList<>();
    static {
-      _deities.add(THOR);
-      _deities.add(APHRODITE);
-      _deities.add(DRUID);
-      _deities.add(HADES);
-      _deities.add(TAO);
-      _deities.add(DEMONIC);
+      DEITIES.add(THOR);
+      DEITIES.add(APHRODITE);
+      DEITIES.add(DRUID);
+      DEITIES.add(HADES);
+      DEITIES.add(TAO);
+      DEITIES.add(DEMONIC);
    }
 
    static public final String              GROUP_DEFENSIVE   = "Defensive";
@@ -296,31 +296,31 @@ public abstract class PriestSpell extends Spell
    static public List<PriestSpell> getSpellsInGroup(String group) {
       List<PriestSpell> spells = new ArrayList<>();
       if ((group == null) || (group.equals(GROUP_OFFENSIVE))) {
-         spells.addAll(PriestOffensiveSpell._spells);
+         spells.addAll(PriestOffensiveSpell.spells);
       }
       if ((group == null) || (group.equals(GROUP_DEFENSIVE))) {
-         spells.addAll(PriestDefensiveSpell._spells);
+         spells.addAll(PriestDefensiveSpell.spells);
       }
       if ((group == null) || (group.equals(GROUP_HEALING))) {
-         spells.addAll(PriestHealingSpell._spells);
+         spells.addAll(PriestHealingSpell.spells);
       }
       if ((group == null) || (group.equals(GROUP_GOOD))) {
-         spells.addAll(PriestGoodSpell._spells);
+         spells.addAll(PriestGoodSpell.spells);
       }
       if ((group == null) || (group.equals(GROUP_EVIL))) {
-         spells.addAll(PriestEvilSpell._spells);
+         spells.addAll(PriestEvilSpell.spells);
       }
       if ((group == null) || (group.equals(GROUP_INFORMATION))) {
-         spells.addAll(PriestInformationSpell._spells);
+         spells.addAll(PriestInformationSpell.spells);
       }
       if ((group == null) || (group.equals(GROUP_NATURE))) {
-         spells.addAll(PriestNatureSpell._spells);
+         spells.addAll(PriestNatureSpell.spells);
       }
       if ((group == null) || (group.equals(GROUP_ELEMENTAL))) {
-         spells.addAll(PriestElementalSpell._spells);
+         spells.addAll(PriestElementalSpell.spells);
       }
       if ((group == null) || (group.equals(GROUP_DEMON))) {
-         spells.addAll(PriestDemonicSpell._spells);
+         spells.addAll(PriestDemonicSpell.spells);
       }
       // add the deity-specific spells
 //      if ((group == null) || (group.equalsIgnoreCase(THOR))) {
@@ -357,7 +357,7 @@ public abstract class PriestSpell extends Spell
    }
 
    public byte getAffinity() {
-      return _affinityLevel;
+      return affinityLevel;
    }
 
    @Override
@@ -427,13 +427,13 @@ public abstract class PriestSpell extends Spell
       if (Configuration.useExtendedDice()) {
          byte actionDice = getActionsDice(effectivePower);
          byte bonusToDice = getBonusDice(effectivePower);
-         DiceSet dice = Rules.getDice(_caster.getAttributeLevel(castingAttr), actionDice, castingAttr/*attribute*/, RollType.SPELL_CASTING);
+         DiceSet dice = Rules.getDice(caster.getAttributeLevel(castingAttr), actionDice, castingAttr/*attribute*/, RollType.SPELL_CASTING);
          if (bonusToDice != 0) {
             return dice.addBonus(bonusToDice);
          }
          return dice;
       }
-      DiceSet dice = Rules.getDice(_caster.getAttributeLevel(castingAttr), (byte) 1/*actions*/, castingAttr/*attribute*/, RollType.SPELL_CASTING);
+      DiceSet dice = Rules.getDice(caster.getAttributeLevel(castingAttr), (byte) 1/*actions*/, castingAttr/*attribute*/, RollType.SPELL_CASTING);
       byte powerBonus = (byte) ((effectivePower - 1) * 3);
       return dice.addBonus(powerBonus);
    }
@@ -467,7 +467,7 @@ public abstract class PriestSpell extends Spell
 
    @Override
    public byte getCastingLevel() {
-      return _caster.getAffinity(_deity);
+      return caster.getAffinity(deity);
    }
 
    @Override
@@ -481,9 +481,9 @@ public abstract class PriestSpell extends Spell
    public void serializeToStream(DataOutputStream out) {
       super.serializeToStream(out);
       try {
-         writeToStream(_affinityLevel, out);
-         writeToStream(_group.getName(), out);
-         writeToStream(_deity, out);
+         writeToStream(affinityLevel, out);
+         writeToStream(group.getName(), out);
+         writeToStream(deity, out);
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -493,12 +493,12 @@ public abstract class PriestSpell extends Spell
    public void serializeFromStream(DataInputStream in) {
       super.serializeFromStream(in);
       try {
-         _affinityLevel = readByte(in);
+         affinityLevel = readByte(in);
          String groupClassName = readString(in);
-         _deity = readString(in);
+         deity = readString(in);
          for (Class< ? extends IPriestGroup> element : GROUPS) {
             if (groupClassName.equalsIgnoreCase(element.getName())) {
-               _group = element;
+               group = element;
                break;
             }
          }
@@ -511,18 +511,18 @@ public abstract class PriestSpell extends Spell
    protected void copyDataFrom(Spell source) {
       super.copyDataFrom(source);
       if (source instanceof PriestSpell) {
-         _affinityLevel = ((PriestSpell) source)._affinityLevel;
-         _group = ((PriestSpell) source)._group;
-         _deity = ((PriestSpell) source)._deity;
+         affinityLevel = ((PriestSpell) source).affinityLevel;
+         group = ((PriestSpell) source).group;
+         deity = ((PriestSpell) source).deity;
       }
    }
 
    public void setDeity(String deity) {
-      _deity = deity;
+      this.deity = deity;
    }
 
    public String getDeity() {
-      return _deity;
+      return deity;
    }
 
    protected byte resolveEffectivePower(StringBuilder sbDescription, short distanceInHexes, RANGE range) {
@@ -538,9 +538,9 @@ public abstract class PriestSpell extends Spell
             }
          }
       }
-      _effectivePower = (byte) (getPower() - attackerPowerPainPenalty - attackerPowerRangePenalty - magicResLevel);
-      if (_effectivePower < 0 ) {
-         _effectivePower = 0;
+      effectivePower = (byte) (getPower() - attackerPowerPainPenalty - attackerPowerRangePenalty - magicResLevel);
+      if (effectivePower < 0 ) {
+         effectivePower = 0;
       }
 
       if (sbDescription != null) {
@@ -568,13 +568,13 @@ public abstract class PriestSpell extends Spell
             table.addRow(tr);
          }
          tr = new TableRow();
-         tr.addTD(_effectivePower);
+         tr.addTD(effectivePower);
          tr.addTD("Effective power");
          table.addRow(tr);
          sbDescription.append(table);
          sbDescription.append("<br/>");
       }
-      return _effectivePower;
+      return effectivePower;
    }
 
    @Override
@@ -621,9 +621,9 @@ public abstract class PriestSpell extends Spell
    @Override
    public Element getXMLObject(Document parentDoc, String newLine) {
       Element node = super.getXMLObject(parentDoc, newLine);
-      node.setAttribute("affinityLevel", String.valueOf(_affinityLevel));
-      node.setAttribute("effectivePower", String.valueOf(_effectivePower));
-      node.setAttribute("deity", String.valueOf(_deity));
+      node.setAttribute("affinityLevel", String.valueOf(affinityLevel));
+      node.setAttribute("effectivePower", String.valueOf(effectivePower));
+      node.setAttribute("deity", String.valueOf(deity));
       return node;
    }
 
@@ -632,15 +632,15 @@ public abstract class PriestSpell extends Spell
       super.readFromXMLObject(namedNodeMap);
       Node node = namedNodeMap.getNamedItem("affinityLevel");
       if (node != null) {
-         _affinityLevel = Byte.parseByte(node.getNodeValue());
+         affinityLevel = Byte.parseByte(node.getNodeValue());
       }
       node = namedNodeMap.getNamedItem("effectivePower");
       if (node != null) {
-         _effectivePower = Byte.parseByte(node.getNodeValue());
+         effectivePower = Byte.parseByte(node.getNodeValue());
       }
       node = namedNodeMap.getNamedItem("deity");
       if (node != null) {
-         _deity = node.getNodeValue();
+         deity = node.getNodeValue();
       }
    }
 

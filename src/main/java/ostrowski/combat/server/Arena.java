@@ -24,7 +24,6 @@ import ostrowski.combat.common.enums.Facing;
 import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.orientations.Orientation;
 import ostrowski.combat.common.spells.IAreaSpell;
-import ostrowski.combat.common.spells.Spell;
 import ostrowski.combat.common.things.Limb;
 import ostrowski.combat.common.things.LimbType;
 import ostrowski.combat.common.things.Shield;
@@ -56,36 +55,50 @@ import java.util.*;
 
 public class Arena implements Enums, IMapListener
 {
-   final         Semaphore       _lock_combatants        = new Semaphore("Arena_combatants", CombatSemaphore.CLASS_ARENA_combatants);
-   final         Semaphore       _lock_mapCombatantsToAI = new Semaphore("Arena_mapCombatantsToAI", CombatSemaphore.CLASS_ARENA_mapCombatantsToAI);
-   final         Semaphore       _lock_proxyList         = new Semaphore("Arena_proxyList", CombatSemaphore.CLASS_ARENA_proxyList);
-   final         Semaphore       _lock_locationRequests  = new Semaphore("Arena_locationRequests", CombatSemaphore.CLASS_ARENA_locationRequests);
-   private final List<Character> _combatants             = new ArrayList<>();
-   private final List<ClientProxy>           _proxyList           = new ArrayList<>();
-   private final List<Character>             _charactersWaitingToConnect = new ArrayList<>();
-   private final Map<Character, AI>          _mapCombatantToAI    = new HashMap<>();
-   private final Set<Character>              _localCombatants     = new HashSet<>();
-   private final Map<Character, ClientProxy> _mapCombatantToProxy = new HashMap<>();
-   private final Map<ClientProxy, Character> _mapProxyToCombatant = new HashMap<>();
-   public        Battle       _battle              = null;
-   private final CombatServer _server;
-   private       CombatMap    _combatMap;
-   private CombatMap                       _autoRunMap          = null;
-   private AutoRunBlock                    _autoRunBlock        = null;
+   final         Semaphore                   lock_combatants            = new Semaphore("Arena_combatants", CombatSemaphore.CLASS_ARENA_combatants);
+   final         Semaphore                   lock_mapCombatantsToAI     = new Semaphore("Arena_mapCombatantsToAI", CombatSemaphore.CLASS_ARENA_mapCombatantsToAI);
+   final         Semaphore                   lock_proxyList             = new Semaphore("Arena_proxyList", CombatSemaphore.CLASS_ARENA_proxyList);
+   final         Semaphore                   lock_locationRequests      = new Semaphore("Arena_locationRequests", CombatSemaphore.CLASS_ARENA_locationRequests);
+   private final List<Character>             combatants                 = new ArrayList<>();
+   private final List<ClientProxy>           proxyList                  = new ArrayList<>();
+   private final List<Character>             charactersWaitingToConnect = new ArrayList<>();
+   private final Map<Character, AI>          mapCombatantToAI           = new HashMap<>();
+   private final Set<Character>              localCombatants            = new HashSet<>();
+   private final Map<Character, ClientProxy> mapCombatantToProxy        = new HashMap<>();
+   private final Map<ClientProxy, Character> mapProxyToCombatant        = new HashMap<>();
+   public        Battle                      battle                     = null;
+   private final CombatServer                server;
+   private       CombatMap                   combatMap;
+   private       CombatMap                   autoRunMap                 = null;
+   private       AutoRunBlock                autoRunBlock               = null;
+   final HashMap<String, Integer> registeredNames = new HashMap<>();
 
-   transient private final MouseOverCharacterInfoPopup _mouseOverCharInfoPopup = new MouseOverCharacterInfoPopup();
-   transient private final RightClickPopupMenu _characterMenuPopup = new RightClickPopupMenu(this);
+   transient private final MouseOverCharacterInfoPopup mouseOverCharInfoPopup = new MouseOverCharacterInfoPopup();
+   transient private final RightClickPopupMenu         characterMenuPopup     = new RightClickPopupMenu(this);
+
+   public static final int        PLAYBACK_MODE_OFF    = 0;
+   public static final int        PLAYBACK_MODE_RECORD = 1;
+   public static final int        PLAYBACK_MODE_PLAY = 2;
+   public       int               playbackMode       = PLAYBACK_MODE_OFF;
+   public final List<SyncRequest> recordedActions    = null;//new ArrayList<>();
+   public       int               playbackIndex   = 0;
+
+   private final List<SyncRequest>            locationRequests        = new ArrayList<>();
+   public static final List<RequestUserInput> activeRequestUserInputs = new ArrayList<>();
+   boolean characterGenerated = false;
+   public boolean paused = false;
+
 
    public Arena(CombatServer server, short sizeX, short sizeY) {
-      _server    = server;
-      _combatMap = new CombatMap(sizeX, sizeY, server._diag);
+      this.server = server;
+      combatMap = new CombatMap(sizeX, sizeY, server.diag);
    }
    public void setSize(short newX, short newY) {
-      _combatMap.setSize(newX, newY);
+      combatMap.setSize(newX, newY);
    }
    public boolean addCombatant(Character combatant, byte team, short startingLocationX, short startingLocationY,
                                AI_Type aiEngineType) {
-      ArenaLocation startingLocation = _combatMap.getLocation(startingLocationX, startingLocationY);
+      ArenaLocation startingLocation = combatMap.getLocation(startingLocationX, startingLocationY);
       if (startingLocation == null) {
          return false;
       }
@@ -93,20 +106,20 @@ public class Arena implements Enums, IMapListener
       if ((chars != null) && (chars.size() > 0)) {
          return false;
       }
-      if (!_combatMap.addCharacter(combatant, startingLocation, null/*clientProxy*/)) {
+      if (!combatMap.addCharacter(combatant, startingLocation, null/*clientProxy*/)) {
          return false;
       }
-      combatant._teamID = team;
-      if (combatant._uniqueID == -1) {
-         combatant._uniqueID = ClientProxy.getNextServerID();
-         while (getCharacter(combatant._uniqueID) != null) {
-            combatant._uniqueID = ClientProxy.getNextServerID();
+      combatant.teamID = team;
+      if (combatant.uniqueID == -1) {
+         combatant.uniqueID = ClientProxy.getNextServerID();
+         while (getCharacter(combatant.uniqueID) != null) {
+            combatant.uniqueID = ClientProxy.getNextServerID();
          }
       }
       return addCombatant(combatant, aiEngineType, true/*setInitiativeAndSpendActions*/);
    }
    private boolean addCombatant(Character combatant, AI_Type AIEngineType, boolean setInitiativeAndSpendActions) {
-      Character existingCharacter = getCharacter(combatant._uniqueID);
+      Character existingCharacter = getCharacter(combatant.uniqueID);
       if (existingCharacter != null) {
          if (!combatant.equals(existingCharacter)) {
             DebugBreak.debugBreak();
@@ -114,52 +127,51 @@ public class Arena implements Enums, IMapListener
          }
       }
 
-      _combatMap.updateCombatant(combatant, false/*checkTriggers*/);
+      combatMap.updateCombatant(combatant, false/*checkTriggers*/);
       if (AIEngineType != null) {
          AI ai = new AI(combatant, AIEngineType);
-         _mapCombatantToAI.put(combatant, ai);
+         mapCombatantToAI.put(combatant, ai);
       }
       else {
          // add as a local player
-         _localCombatants.add(combatant);
+         localCombatants.add(combatant);
       }
       addCombatant(combatant, false/*checkForAutoStart*/);
       if (setInitiativeAndSpendActions) {
          // slow the new guy down, so he doesn't show up in round 5 with 5 actions left....
-         for (int i=1 ; i<_battle._roundCount ; i++) {
+         for (int i = 1; i < battle.roundCount; i++) {
             combatant.endRound();
          }
       }
       return true;
    }
 
-   final HashMap<String, Integer> _registeredNames = new HashMap<>();
    public boolean addCombatant(Character combatant, byte team, byte combatantIndexOnTeam, ClientProxy clientProxy, boolean checkForAutoStart) {
       if (combatantIndexOnTeam == -1) {
-          combatantIndexOnTeam = _combatMap.getAvailableCombatantIndexOnTeam(team);
+          combatantIndexOnTeam = combatMap.getAvailableCombatantIndexOnTeam(team);
       }
       String newCombatantsName = combatant.getName();
-      Integer currentDupCount = _registeredNames.get(newCombatantsName);
+      Integer currentDupCount = registeredNames.get(newCombatantsName);
       boolean foundWaiting = false;
       boolean nameChanged = false;
       if (currentDupCount == null) {
-         _registeredNames.put(newCombatantsName, 1);
+         registeredNames.put(newCombatantsName, 1);
       }
       else {
-         // Look for a character with a matching _uniqueID
-         for (Character waitingCharacter : _charactersWaitingToConnect) {
-            if (waitingCharacter._uniqueID == combatant._uniqueID) {
-               _charactersWaitingToConnect.remove(waitingCharacter);
+         // Look for a character with a matching uniqueID
+         for (Character waitingCharacter : charactersWaitingToConnect) {
+            if (waitingCharacter.uniqueID == combatant.uniqueID) {
+               charactersWaitingToConnect.remove(waitingCharacter);
                foundWaiting = true;
                break;
             }
          }
          if (!foundWaiting) {
-            // Try looking up by name, and set the _uniqueID
-            for (Character waitingCharacter : _charactersWaitingToConnect) {
+            // Try looking up by name, and set the uniqueID
+            for (Character waitingCharacter : charactersWaitingToConnect) {
                if (waitingCharacter.getName().equals(combatant.getName())) {
-                  _charactersWaitingToConnect.remove(waitingCharacter);
-                  waitingCharacter._uniqueID = combatant._uniqueID;
+                  charactersWaitingToConnect.remove(waitingCharacter);
+                  waitingCharacter.uniqueID = combatant.uniqueID;
                   foundWaiting = true;
                   break;
                }
@@ -175,7 +187,7 @@ public class Arena implements Enums, IMapListener
                   }
                }
                int curCount = currentDupCount + 1;
-               _registeredNames.put(newCombatantsName, curCount);
+               registeredNames.put(newCombatantsName, curCount);
                combatant.setName(newCombatantsName + "-" + curCount);
                nameChanged = true;
             }
@@ -183,7 +195,7 @@ public class Arena implements Enums, IMapListener
       }
       if (!foundWaiting) {
          if ((combatantIndexOnTeam == -1) ||
-                  (!_combatMap.addCharacter(combatant, team, combatantIndexOnTeam, clientProxy))) {
+                  (!combatMap.addCharacter(combatant, team, combatantIndexOnTeam, clientProxy))) {
             if (checkForAutoStart) {
                checkForAutoStart();
             }
@@ -196,35 +208,35 @@ public class Arena implements Enums, IMapListener
       if (nameChanged) {
          sendCharacterUpdate(combatant, null);
       }
-      combatant._teamID = team;
+      combatant.teamID = team;
       if (clientProxy != null) {
-         _mapCombatantToProxy.put(combatant, clientProxy);
-         _mapProxyToCombatant.put(clientProxy, combatant);
+         mapCombatantToProxy.put(combatant, clientProxy);
+         mapProxyToCombatant.put(clientProxy, combatant);
          clientProxy.setClientName(combatant.getName());
-         combatant.setClientProxy(clientProxy, _combatMap, null/*diag*/);
-         combatant._uniqueID = clientProxy.getClientID();
+         combatant.setClientProxy(clientProxy, combatMap, null/*diag*/);
+         combatant.uniqueID = clientProxy.getClientID();
       }
       else {
-         combatant._uniqueID = ClientProxy.getNextServerID();
-         String aiEngineStr = _combatMap.getStockAIName(team)[combatantIndexOnTeam];
+         combatant.uniqueID = ClientProxy.getNextServerID();
+         String aiEngineStr = combatMap.getStockAIName(team)[combatantIndexOnTeam];
          AI_Type aiType = AI_Type.getByString(aiEngineStr);
          if (aiType == null) {
-            if (CombatServer._REMOTE_AI_NAME.equals(aiEngineStr)) {
-               _charactersWaitingToConnect.add(combatant);
+            if (CombatServer.REMOTE_AI_NAME.equals(aiEngineStr)) {
+               charactersWaitingToConnect.add(combatant);
             }
             else {
                if (!aiEngineStr.equalsIgnoreCase("Local")) {
                   DebugBreak.debugBreak("Can't find AI for " + aiEngineStr);
                   // Assume 'Local' for now...
                }
-               _localCombatants.add(combatant);
+               localCombatants.add(combatant);
             }
          }
          else {
             AI ai = new AI(combatant, aiType);
-            _mapCombatantToAI.put(combatant, ai);
+            mapCombatantToAI.put(combatant, ai);
             if (aiType == AI_Type.GOD) {
-               _combatMap.setAllLocationsAsKnownBy(combatant);
+               combatMap.setAllLocationsAsKnownBy(combatant);
             }
          }
       }
@@ -236,10 +248,10 @@ public class Arena implements Enums, IMapListener
       // Set the visibility without considering the facing.
       // This will allow the player to know the terrain behind them,
       // even though they will not see the objects and characters there.
-      // (We can't do this until after we set the combatant's _uniqueID)
-      _combatMap.recomputeKnownLocations(combatant, false/*basedOnFacing*/, false/*setVisibility*/, null/*locsToRedraw*/);
+      // (We can't do this until after we set the combatant's uniqueID)
+      combatMap.recomputeKnownLocations(combatant, false/*basedOnFacing*/, false/*setVisibility*/, null/*locsToRedraw*/);
 
-      if ((_battle != null) && (_battle._turnCount > 1 || _battle._roundCount > 1 || _battle._phaseCount > 1)) {
+      if ((battle != null) && (battle.turnCount > 1 || battle.roundCount > 1 || battle.phaseCount > 1)) {
          if (!combatant.hasInitiativeAndActionsEverBeenInitialized()) {
             DiceSet initiativeDice = Rules.getInitiativeDieType();
             String rollMessage = combatant.getName() + ", roll for initiative.";
@@ -249,18 +261,18 @@ public class Arena implements Enums, IMapListener
          }
       }
 
-      synchronized (_combatants) {
-         _lock_combatants.check();
-         for (Character character : _combatants) {
+      synchronized (combatants) {
+         lock_combatants.check();
+         for (Character character : combatants) {
             if (character.getName().equals(combatant.getName())) {
-               _combatants.remove(character);
+               combatants.remove(character);
                break;
             }
          }
-         _combatants.add(combatant);
+         combatants.add(combatant);
       }
       sendServerStatus(null);
-      _combatMap.registerAsWatcher(combatant._mapWatcher, _server._diag);
+      combatMap.registerAsWatcher(combatant.mapWatcher, server.diag);
       recomputeAllTargets(combatant/*combatantSwitchingSides*/);
 
       if (checkForAutoStart) {
@@ -270,27 +282,27 @@ public class Arena implements Enums, IMapListener
 
    private void recomputeAllKnownLocations() {
       // Make sure all the AI player have selected targets.
-      synchronized(_mapCombatantToAI) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_mapCombatantsToAI)) {
-            TreeSet<Character> aiCombatants = new TreeSet<>(_mapCombatantToAI.keySet());
+      synchronized(mapCombatantToAI) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_mapCombatantsToAI)) {
+            TreeSet<Character> aiCombatants = new TreeSet<>(mapCombatantToAI.keySet());
             for (Character aiCombatant : aiCombatants) {
-               _combatMap.recomputeKnownLocations(aiCombatant, false/*basedOnFacing*/, false/*setVisibility*/, null/*locsToRedraw*/);
+               combatMap.recomputeKnownLocations(aiCombatant, false/*basedOnFacing*/, false/*setVisibility*/, null/*locsToRedraw*/);
             }
          }
       }
       // Make sure all the local players have something targeted too.
-      for (Character localCombatant : _localCombatants) {
-         _combatMap.recomputeKnownLocations(localCombatant, false/*basedOnFacing*/, false/*setVisibility*/, null/*locsToRedraw*/);
+      for (Character localCombatant : localCombatants) {
+         combatMap.recomputeKnownLocations(localCombatant, false/*basedOnFacing*/, false/*setVisibility*/, null/*locsToRedraw*/);
       }
    }
 
 
    public boolean checkForAutoStart() {
-      if (!_charactersWaitingToConnect.isEmpty()) {
+      if (!charactersWaitingToConnect.isEmpty()) {
          return false;
       }
-      int combatants = _mapCombatantToProxy.size() + _mapCombatantToAI.size() + _localCombatants.size();
-      if (_combatMap.getCombatantsCount() != combatants) {
+      int combatants = mapCombatantToProxy.size() + mapCombatantToAI.size() + localCombatants.size();
+      if (combatMap.getCombatantsCount() != combatants) {
          return false;
       }
       beginBattle();
@@ -299,23 +311,23 @@ public class Arena implements Enums, IMapListener
 
    public void removeCombatant(Character combatant) {
       if (combatant != null) {
-         _mapCombatantToProxy.remove(combatant);
-         _mapCombatantToAI.remove(combatant);
-         _localCombatants.remove(combatant);
-         synchronized (_combatants) {
-            _lock_combatants.check();
-            _combatants.remove(combatant);
+         mapCombatantToProxy.remove(combatant);
+         mapCombatantToAI.remove(combatant);
+         localCombatants.remove(combatant);
+         synchronized (combatants) {
+            lock_combatants.check();
+            combatants.remove(combatant);
          }
          sendMessageTextToAllClients(combatant.getName() + " has exited the arena.", false/*popUp*/);
          sendServerStatus(null);
-         _combatMap.unregisterAsWatcher(combatant._mapWatcher, _server._diag);
+         combatMap.unregisterAsWatcher(combatant.mapWatcher, server.diag);
       }
    }
    public void removeCombatant(Character combatant, ClientProxy clientProxy) {
-      Character localCombatant = _mapProxyToCombatant.remove(clientProxy);
+      Character localCombatant = mapProxyToCombatant.remove(clientProxy);
       if (localCombatant != null) {
          removeCombatant(localCombatant);
-         _combatMap.unregisterAsWatcher(combatant._mapWatcher, _server._diag);
+         combatMap.unregisterAsWatcher(combatant.mapWatcher, server.diag);
       }
       else {
          removeCombatant(combatant);
@@ -323,28 +335,28 @@ public class Arena implements Enums, IMapListener
    }
 
    public void beginBattle() {
-      synchronized (_combatants) {
-         _lock_combatants.check();
-         if (_combatants.size() <= 1) {
+      synchronized (combatants) {
+         lock_combatants.check();
+         if (combatants.size() <= 1) {
             return;
          }
       }
-      if (_battle != null) {
+      if (battle != null) {
          return;
       }
 
       recomputeAllTargets(null);
 
-      _battle = new Battle("BattleThread", this, _server);
-      if (_paused) {
-         _battle.onPause();
+      battle = new Battle("BattleThread", this, server);
+      if (paused) {
+         battle.onPause();
       }
-      if (_autoRunBlock != null) {
-         _battle._resetMessageBufferOnStart = false;
+      if (autoRunBlock != null) {
+         battle.resetMessageBufferOnStart = false;
       }
-      _battle.start();
-      if (_autoRunBlock != null) {
-         _autoRunBlock.battleStarted();
+      battle.start();
+      if (autoRunBlock != null) {
+         autoRunBlock.battleStarted();
       }
 
    }
@@ -352,14 +364,14 @@ public class Arena implements Enums, IMapListener
    public void recomputeAllTargets(Character combatantSwitchingSides)
    {
       // Make sure all the AI player have selected targets.
-      // We have to lock the _combatants list before we lock the mapCombatantsToAI lock,
-      // because the call to recomputeTargetForCharacter will lock the _combatants list,
+      // We have to lock the combatants list before we lock the mapCombatantsToAI lock,
+      // because the call to recomputeTargetForCharacter will lock the combatants list,
       // and this would be an order violation, resulting in a possible deadlock
-      synchronized (_combatants) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_combatants)) {
-            synchronized(_mapCombatantToAI) {
-               try (SemaphoreAutoTracker sat2 = new SemaphoreAutoTracker(_lock_mapCombatantsToAI)) {
-                  TreeSet<Character> aiCombatants = new TreeSet<>(_mapCombatantToAI.keySet());
+      synchronized (combatants) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_combatants)) {
+            synchronized(mapCombatantToAI) {
+               try (SemaphoreAutoTracker sat2 = new SemaphoreAutoTracker(lock_mapCombatantsToAI)) {
+                  TreeSet<Character> aiCombatants = new TreeSet<>(mapCombatantToAI.keySet());
                   for (Character aiCombatant : aiCombatants) {
                      recomputeTargetForCharacter(aiCombatant, combatantSwitchingSides);
                   }
@@ -368,7 +380,7 @@ public class Arena implements Enums, IMapListener
          }
       }
       // Make sure all the local players have something targeted too.
-      for (Character localCombatant : _localCombatants) {
+      for (Character localCombatant : localCombatants) {
          recomputeTargetForCharacter(localCombatant, combatantSwitchingSides);
       }
    }
@@ -377,14 +389,14 @@ public class Arena implements Enums, IMapListener
    {
       List<Character> targetPriorities = new ArrayList<>();
       List<Integer> targetPriorityIDs = new ArrayList<>();
-      synchronized (_combatants) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_combatants)) {
-            for (Character otherCombatant : _combatants) {
-               if (otherCombatant._uniqueID != combatant._uniqueID) {
-                  boolean sameTeam = (otherCombatant._teamID == combatant._teamID);
-                  if ((!sameTeam) || (combatant._teamID == TEAM_INDEPENDENT)) {
+      synchronized (combatants) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_combatants)) {
+            for (Character otherCombatant : combatants) {
+               if (otherCombatant.uniqueID != combatant.uniqueID) {
+                  boolean sameTeam = (otherCombatant.teamID == combatant.teamID);
+                  if ((!sameTeam) || (combatant.teamID == TEAM_INDEPENDENT)) {
                      targetPriorities.add(otherCombatant);
-                     targetPriorityIDs.add(otherCombatant._uniqueID);
+                     targetPriorityIDs.add(otherCombatant.uniqueID);
                   }
                }
             }
@@ -392,36 +404,36 @@ public class Arena implements Enums, IMapListener
       }
       combatant.setTargetPriorities(targetPriorityIDs);
       // Is this combatant an AI player?
-      AI ai = _mapCombatantToAI.get(combatant);
+      AI ai = mapCombatantToAI.get(combatant);
       if (ai != null) {
          // If so, update the AI engine too.
          ai.updateTargetPriorities(targetPriorities);
       }
    }
    public void terminateBattle() {
-      if (_battle == null) {
+      if (battle == null) {
          return;
       }
-      _battle.terminateBattle();
-      _battle = null;
+      battle.terminateBattle();
+      battle = null;
    }
 
    public boolean hasNonAICombatantsStillFighting() {
-      if (_battle == null) {
+      if (battle == null) {
          return false;
       }
-      synchronized (_combatants) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_combatants)) {
-            for (Character combatant : _combatants) {
+      synchronized (combatants) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_combatants)) {
+            for (Character combatant : combatants) {
                if (combatant.stillFighting()) {
                   // Make sure the client is still connected
-                  ClientProxy proxy = _mapCombatantToProxy.get(combatant);
+                  ClientProxy proxy = mapCombatantToProxy.get(combatant);
                   if (proxy != null) {
                      if (proxy.isAlive()) {
                         return true;
                      }
                   }
-                  else if (_localCombatants.contains(combatant)) {
+                  else if (localCombatants.contains(combatant)) {
                      return true;
                   }
                }
@@ -435,36 +447,36 @@ public class Arena implements Enums, IMapListener
       return stillAnyoneStillFighting() || (hasNonAICombatantsStillFighting() && hasExitTriggers());
    }
    public boolean stillAnyoneStillFighting() {
-      if (_battle == null) {
+      if (battle == null) {
          return false;
       }
 
       int aliveCount = 0;
       byte teamAlive = -1;
-      synchronized (_combatants) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_combatants)) {
-            for (Character combatant : _combatants) {
+      synchronized (combatants) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_combatants)) {
+            for (Character combatant : combatants) {
                if (combatant.stillFighting()) {
                   boolean stillFighting = false;
                   // Make sure the client is still connected
-                  ClientProxy proxy = _mapCombatantToProxy.get(combatant);
+                  ClientProxy proxy = mapCombatantToProxy.get(combatant);
                   if (proxy != null) {
                      if (proxy.isAlive()) {
                         stillFighting = true;
                      }
                   }
-                  else if (_mapCombatantToAI.get(combatant) != null) {
+                  else if (mapCombatantToAI.get(combatant) != null) {
                      stillFighting = true;
                   }
-                  else if (_localCombatants.contains(combatant)) {
+                  else if (localCombatants.contains(combatant)) {
                      stillFighting = true;
                   }
                   if (stillFighting) {
                      if (++aliveCount == 1) {
-                        teamAlive = combatant._teamID;
+                        teamAlive = combatant.teamID;
                      }
-                     else if ((teamAlive != combatant._teamID) ||
-                              (combatant._teamID == TEAM_INDEPENDENT))  {
+                     else if ((teamAlive != combatant.teamID) ||
+                              (combatant.teamID == TEAM_INDEPENDENT))  {
                         return true;
                      }
                   }
@@ -476,11 +488,11 @@ public class Arena implements Enums, IMapListener
    }
 
    public boolean isTeamAlive(int teamIndex) {
-      if (_battle != null) {
-         synchronized (_combatants) {
-            try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_combatants)) {
-               for (Character combatant : _combatants) {
-                  if (combatant._teamID == teamIndex) {
+      if (battle != null) {
+         synchronized (combatants) {
+            try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_combatants)) {
+               for (Character combatant : combatants) {
+                  if (combatant.teamID == teamIndex) {
                      if (combatant.stillFighting()) {
                         return true;
                      }
@@ -494,12 +506,12 @@ public class Arena implements Enums, IMapListener
    }
    public List<Character> orderCombatantsByActionsAndInitiative()
    {
-      synchronized (_combatants) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_combatants)) {
-            for (int i=0 ; i<_combatants.size(); i++) {
-               Character combatantI = _combatants.get(i);
-               for (int j=i+1 ; j<_combatants.size(); j++) {
-                  Character combatantJ = _combatants.get(j);
+      synchronized (combatants) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_combatants)) {
+            for (int i = 0; i < combatants.size(); i++) {
+               Character combatantI = combatants.get(i);
+               for (int j =i+1; j < combatants.size(); j++) {
+                  Character combatantJ = combatants.get(j);
                   byte actionsI = combatantI.getActionsAvailable(false/*usedForDefenseOnly*/);
                   byte actionsJ = combatantJ.getActionsAvailable(false/*usedForDefenseOnly*/);
 
@@ -519,23 +531,23 @@ public class Arena implements Enums, IMapListener
                      }
                   }
 
-                  _combatants.set(j, combatantI);
-                  _combatants.set(i, combatantJ);
+                  combatants.set(j, combatantI);
+                  combatants.set(i, combatantJ);
                   combatantI = combatantJ;
                }
             }
          }
       }
-      return _combatants;
+      return combatants;
    }
-   public List<Character> getCombatants() { return _combatants; }
+   public List<Character> getCombatants() { return combatants; }
 
    public Character getCharacter(int charID) {
-      synchronized (_combatants) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_combatants)) {
-            // TODO : when I lock the _combatants lock, lock the same lock on calls to getCombatants()
-            for (Character character : _combatants) {
-               if (character._uniqueID == charID) {
+      synchronized (combatants) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_combatants)) {
+            // TODO : when I lock the combatants lock, lock the same lock on calls to getCombatants()
+            for (Character character : combatants) {
+               if (character.uniqueID == charID) {
                   return character;
                }
             }
@@ -544,34 +556,27 @@ public class Arena implements Enums, IMapListener
       return null;
    }
 
-   public static final int               PLAYBACK_MODE_OFF    = 0;
-   public static final int               PLAYBACK_MODE_RECORD = 1;
-   public static final int               PLAYBACK_MODE_PLAY   = 2;
-   public       int               _playbackMode    = PLAYBACK_MODE_OFF;
-   public final List<SyncRequest> _recordedActions = null;//new ArrayList<>();
-   public       int               _playbackIndex   = 0;
-
    public boolean sendObjectToCombatant(final Character combatant, SerializableObject obj) {
-      ClientProxy proxy = (_mapCombatantToProxy.get(combatant));
+      ClientProxy proxy = (mapCombatantToProxy.get(combatant));
       if (proxy != null) {
          return proxy.sendObject(obj);
       }
 
-      if (_localCombatants.contains(combatant)) {
+      if (localCombatants.contains(combatant)) {
          if (obj instanceof SyncRequest) {
             SyncRequest req = (SyncRequest) obj;
             SyncRequest response = null;
-            if (_recordedActions != null) {
-               if (_recordedActions.size() > _playbackIndex) {
-                  response = _recordedActions.get(_playbackIndex);
+            if (recordedActions != null) {
+               if (recordedActions.size() > playbackIndex) {
+                  response = recordedActions.get(playbackIndex);
                }
-               boolean allowBackup = (_recordedActions.size() > 0) && (_mapCombatantToProxy.size() == 0) && CombatServer.allowBackup();
+               boolean allowBackup = (recordedActions.size() > 0) && (mapCombatantToProxy.size() == 0) && CombatServer.allowBackup();
                boolean responseFoundInPlayback = false;
                if (response != null) {
                   if (response.isSameQuestion(req)) {
                      req.copyAnswer(response);
                      stopWaitingForResponse(req);
-                     _playbackIndex++;
+                     playbackIndex++;
                      responseFoundInPlayback = true;
                   }
                   else {
@@ -602,18 +607,18 @@ public class Arena implements Enums, IMapListener
          return true;
       }
 
-      AI ai = _mapCombatantToAI.get(combatant);
+      AI ai = mapCombatantToAI.get(combatant);
       if (ai == null) {
          Rules.diag("unable to find proxy to send message to:" + obj);
 //         Rules.debugBreak();
          return false;
       }
 
-      if (ai.processObject(obj, this, _combatMap, null/*display*/)) {
+      if (ai.processObject(obj, this, combatMap, null/*display*/)) {
          return true;
       }
       DebugBreak.debugBreak("AI did not processObject");
-      if (ai.processObject(obj, this, _combatMap, null/*display*/)) {
+      if (ai.processObject(obj, this, combatMap, null/*display*/)) {
          return true;
       }
 
@@ -623,68 +628,64 @@ public class Arena implements Enums, IMapListener
       }
       return false;
    }
-   /**
-    */
-   private final List<SyncRequest> _locationRequests = new ArrayList<>();
-   public static final List<RequestUserInput> _activeRequestUserInputs = new ArrayList<>();
 
    private void askLocalPlayer(final SyncRequest req, final boolean allowBackup, final Character combatant)
    {
       if ((req instanceof RequestLocation) || (req instanceof RequestMovement)) {
-         synchronized (_locationRequests) {
-            try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_locationRequests)) {
-               Rules.diag("askLocalPlayer, _locationRequest.size=" + _locationRequests.size());
-               //if (_locationRequests.size() > 0) {
+         synchronized (locationRequests) {
+            try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_locationRequests)) {
+               Rules.diag("askLocalPlayer, locationRequest.size=" + locationRequests.size());
+               //if (locationRequests.size() > 0) {
                //   DebugBreak.debugBreak("multiple local player requests at once");
                //}
-               _locationRequests.add(req);
+               locationRequests.add(req);
             }
          }
       }
-      if (!_server.getShell().isDisposed()) {
-         Display display = _server.getShell().getDisplay();
+      if (!server.getShell().isDisposed()) {
+         Display display = server.getShell().getDisplay();
          Runnable askQuestionRunnable = () -> {
             // Hide the hexes that the player can't see
-            _server._map.recomputeVisibility(combatant, null/*diag*/);
+            server.map.recomputeVisibility(combatant, null/*diag*/);
             if (req instanceof RequestLocation) {
                RequestLocation reqLoc = (RequestLocation) req;
                // selectHex does its own redraw(), so we avoid calling that before calling selectHex
-               _server._map.requestLocation(reqLoc);
+               server.map.requestLocation(reqLoc);
                // continue hiding the hexes that the player can't see until they click on a valid movement location.
-               if (_recordedActions != null) {
-                  _recordedActions.add(req);
-                  _playbackIndex++;
+               if (recordedActions != null) {
+                  recordedActions.add(req);
+                  playbackIndex++;
                }
             } else if (req instanceof RequestMovement) {
                RequestMovement reqMove = (RequestMovement) req;
                // selectHex does its own redraw(), so we avoid calling that before calling selectHex
-               _server._map.requestMovement(reqMove);
+               server.map.requestMovement(reqMove);
                // continue hiding the hexes that the player can't see until they clink on a valid movement location.
-               if (_recordedActions != null) {
-                  _recordedActions.add(req);
-                  _playbackIndex++;
+               if (recordedActions != null) {
+                  recordedActions.add(req);
+                  playbackIndex++;
                }
             } else {
-               _server._map.redraw();
-               RequestUserInput reqUI = new RequestUserInput(_server.getShell(),
+               server.map.redraw();
+               RequestUserInput reqUI = new RequestUserInput(server.getShell(),
                                                              SWT.ICON_QUESTION | SWT.MODELESS,
                                                              req, allowBackup,
-                                                             _server._map, combatant,
+                                                             server.map, combatant,
                                                              Configuration.showChit());
                reqUI.setDefault(req.getDefaultIndex());
                reqUI.setTitle("Question from the Server");
-               _activeRequestUserInputs.add(reqUI);
+               activeRequestUserInputs.add(reqUI);
 
                Object answer = reqUI.open();
 
-               _activeRequestUserInputs.remove(reqUI);
-               while (!_activeRequestUserInputs.isEmpty()) {
+               activeRequestUserInputs.remove(reqUI);
+               while (!activeRequestUserInputs.isEmpty()) {
                   // Set another open dialog to have focus
-                  RequestUserInput next = _activeRequestUserInputs.get(0);
-                  if (next._shell.isDisposed()) {
-                     _activeRequestUserInputs.remove(next);
+                  RequestUserInput next = activeRequestUserInputs.get(0);
+                  if (next.shell.isDisposed()) {
+                     activeRequestUserInputs.remove(next);
                   } else {
-                     next._shell.setFocus();
+                     next.shell.setFocus();
                      break;
                   }
                }
@@ -698,25 +699,25 @@ public class Arena implements Enums, IMapListener
                }
                // Since the player has made his/her choice,
                // stop hiding the hexes that the player can't see
-               _server._map.recomputeVisibility(null/*self*/, null/*diag*/);
-               _server.redrawMap();
+               server.map.recomputeVisibility(null/*self*/, null/*diag*/);
+               server.redrawMap();
 
                req.set_backupSelected(reqUI.isBackupSelected());
                stopWaitingForResponse(req);
 
-               if (_recordedActions != null) {
+               if (recordedActions != null) {
                   if (reqUI.isBackupSelected()) {
                      // remove the last question in our playback record
-                     SyncRequest lastAction = _recordedActions.remove(_recordedActions.size() - 1);
+                     SyncRequest lastAction = recordedActions.remove(recordedActions.size() - 1);
                      // If the last action was a movement request, remove all the movement requests
                      // until we remove a non movement request (the RequestAction whose answer was 'move')
                      while (lastAction instanceof RequestMovement) {
-                        lastAction = _recordedActions.remove(_recordedActions.size() - 1);
+                        lastAction = recordedActions.remove(recordedActions.size() - 1);
                      }
                      restart();
                   } else {
-                     _recordedActions.add(req);
-                     _playbackIndex++;
+                     recordedActions.add(req);
+                     playbackIndex++;
                   }
                }
             }
@@ -787,7 +788,7 @@ public class Arena implements Enums, IMapListener
       List<ClientProxy> proxiesSentTo = new ArrayList<>();
       for (Character participant : participants) {
          if ((participant != null) && (participant.getAIType() != null)) {
-            ClientProxy proxy = _mapCombatantToProxy.get(participant);
+            ClientProxy proxy = mapCombatantToProxy.get(participant);
             if (proxiesSentTo.contains(proxy)) {
                // This prevents the same message from being sent to the two participants that are both on the server.
                continue;
@@ -820,7 +821,7 @@ public class Arena implements Enums, IMapListener
    public void sendMessageTextToAllClients(String message, boolean popUp) {
       MessageText msgText = new MessageText("Server", message, null, popUp, true/*isPublic*/);
       sendEventToAllClients(msgText);
-      _server.appendMessage(message);
+      server.appendMessage(message);
    }
    public void sendMessageTextToClient(String message, Character target, boolean popUp)
    {
@@ -830,24 +831,24 @@ public class Arena implements Enums, IMapListener
    public void sendEventToAllClients(SerializableObject serObj)
    {
       Rules.diag(serObj.toString());
-      synchronized(_proxyList) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_proxyList)) {
-            for (ClientProxy proxy : _proxyList) {
+      synchronized(proxyList) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_proxyList)) {
+            for (ClientProxy proxy : proxyList) {
                proxy.sendObject(serObj);
             }
          }
       }
-      synchronized(_mapCombatantToAI) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_mapCombatantsToAI)) {
-//         TreeSet<Character> aiCombatants = new TreeSet<Character>(_mapCombatantToAI.keySet());
-            for (AI ai : _mapCombatantToAI.values()) {
+      synchronized(mapCombatantToAI) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_mapCombatantsToAI)) {
+//         TreeSet<Character> aiCombatants = new TreeSet<Character>(mapCombatantToAI.keySet());
+            for (AI ai : mapCombatantToAI.values()) {
                if (ai == null) {
                   DebugBreak.debugBreak();
                }
                else {
-                  if (!ai.processObject(serObj, this, _combatMap, null/*display*/)) {
+                  if (!ai.processObject(serObj, this, combatMap, null/*display*/)) {
                      DebugBreak.debugBreak();
-                     ai.processObject(serObj, this, _combatMap, null/*display*/);
+                     ai.processObject(serObj, this, combatMap, null/*display*/);
                   }
                }
             }
@@ -862,22 +863,22 @@ public class Arena implements Enums, IMapListener
             });
          }
       }
-      // events sent to all clients never need to be sent to _localCombatants
+      // events sent to all clients never need to be sent to localCombatants
    }
    public void disconnectClient(ClientProxy disconnectingProxy)
    {
-      synchronized(_proxyList) {
-         _lock_proxyList.check();
-         _proxyList.remove(disconnectingProxy);
+      synchronized(proxyList) {
+         lock_proxyList.check();
+         proxyList.remove(disconnectingProxy);
       }
-      Character combatant = _mapProxyToCombatant.remove(disconnectingProxy);
+      Character combatant = mapProxyToCombatant.remove(disconnectingProxy);
       if (combatant != null) {
-         _charactersWaitingToConnect.add(combatant);
-         _mapCombatantToProxy.remove(combatant);
-//         _combatMap.removeCharacter(combatant);
-//         synchronized (_combatants) {
-//            _lock_combatants.check();
-//            _combatants.remove(combatant);
+         charactersWaitingToConnect.add(combatant);
+         mapCombatantToProxy.remove(combatant);
+//         combatMap.removeCharacter(combatant);
+//         synchronized (combatants) {
+//            lock_combatants.check();
+//            combatants.remove(combatant);
 //         }
          sendServerStatus(null);
          sendMessageTextToAllClients(combatant.getName() + " has disconnected.", false/*popUp*/);
@@ -887,10 +888,10 @@ public class Arena implements Enums, IMapListener
    }
 
    public void disconnectAllClients() {
-      synchronized(_proxyList) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_proxyList)) {
-            while (!_proxyList.isEmpty()) {
-               ClientProxy disconnectingProxy = _proxyList.remove(0);
+      synchronized(proxyList) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_proxyList)) {
+            while (!proxyList.isEmpty()) {
+               ClientProxy disconnectingProxy = proxyList.remove(0);
                disconnectClient(disconnectingProxy);
                disconnectingProxy.shutdown();
             }
@@ -900,25 +901,25 @@ public class Arena implements Enums, IMapListener
    }
    public void connectClient(ClientProxy proxy)
    {
-      proxy._arena = this;
-      synchronized(_proxyList) {
-         _lock_proxyList.check();
-         _proxyList.add(proxy);
+      proxy.arena = this;
+      synchronized(proxyList) {
+         lock_proxyList.check();
+         proxyList.add(proxy);
       }
-      proxy.sendObject(_combatMap);
+      proxy.sendObject(combatMap);
       sendServerStatus(proxy);
 
       Map<Byte, List<TeamMember>> availableCombatantNamesByTeams;
-      if ((_battle == null) || ( (_battle._turnCount == 1 ) &&
-                                (_battle._roundCount == 1 ) &&
-                                (_battle._phaseCount == 1 ))) {
+      if ((battle == null) || ((battle.turnCount == 1 ) &&
+                               (battle.roundCount == 1 ) &&
+                               (battle.phaseCount == 1 ))) {
          // battle is not yet in progress.
-         availableCombatantNamesByTeams = _combatMap.getRemoteTeamMembersByTeams();
+         availableCombatantNamesByTeams = combatMap.getRemoteTeamMembersByTeams();
       }
-      // Add the people who are those in the _charactersWaitingToConnect list.
+      // Add the people who are those in the charactersWaitingToConnect list.
       availableCombatantNamesByTeams = new HashMap<>();
-      for (Character combatant : _charactersWaitingToConnect) {
-         byte team = combatant._teamID;
+      for (Character combatant : charactersWaitingToConnect) {
+         byte team = combatant.teamID;
          List<TeamMember> members = availableCombatantNamesByTeams.computeIfAbsent(team, k -> new ArrayList<>());
          members.add(new TeamMember(team, combatant.getName(), combatant, (byte)-1/*teamPosition*/, true/*available*/));
       }
@@ -926,32 +927,32 @@ public class Arena implements Enums, IMapListener
    }
 
    public void sendServerStatus(ClientProxy target) {
-      ServerStatus status = new ServerStatus(_combatMap, _combatants, _charactersWaitingToConnect);
+      ServerStatus status = new ServerStatus(combatMap, combatants, charactersWaitingToConnect);
       if (target == null) {
          sendEventToAllClients(status);
       }
       else {
          target.sendObject(status);
       }
-      _server.updateMap(this);
-      _server.updateCombatants(status.getCombatants());
+      server.updateMap(this);
+      server.updateCombatants(status.getCombatants());
    }
    public void sendCharacterUpdate(Character newData, Collection<ArenaCoordinates> locationsToRedraw) {
       sendEventToAllClients(newData);
-      if ((_battle != null) && (_battle._combatServer != null) && (_battle._combatServer._map != null)) {
-         _battle._combatServer._map.updateCombatant(newData, false/*redraw*/);
+      if ((battle != null) && (battle.combatServer != null) && (battle.combatServer.map != null)) {
+         battle.combatServer.map.updateCombatant(newData, false/*redraw*/);
       }
       if (locationsToRedraw == null) {
-         int mapSelfID = _server._map.getSelfId();
-         if ((mapSelfID == -1) || (mapSelfID == newData._uniqueID)) {
-            _server.redrawMap();
+         int mapSelfID = server.map.getSelfId();
+         if ((mapSelfID == -1) || (mapSelfID == newData.uniqueID)) {
+            server.redrawMap();
          }
          else {
             locationsToRedraw = null;
          }
       }
       else {
-         _server.redrawMap(locationsToRedraw);
+         server.redrawMap(locationsToRedraw);
       }
    }
    public boolean moveToFrom(Character mover, Character toChar, ArenaLocation retreatFromLocation, Limb attackFromLimb) {
@@ -974,14 +975,14 @@ public class Arena implements Enums, IMapListener
       locs.addAll(newOrientation.getCoordinates());
 
       // leave the old locations
-      // TODO: optimize this; the sendCharcterUpdate calls _combatMap.updateCombatant(), which scans all the
+      // TODO: optimize this; the sendCharcterUpdate calls combatMap.updateCombatant(), which scans all the
       //       ArenaLocations for existence of the character in previous location, and removes them. This
-      //       step is repetitive, since we are doing that already with the call to _combatMap.removeCharacter().
-      _combatMap.removeCharacter(mover);
+      //       step is repetitive, since we are doing that already with the call to combatMap.removeCharacter().
+      combatMap.removeCharacter(mover);
       mover.setOrientation(newOrientation, null/*diag*/);
 
       sendCharacterUpdate(mover, locs);
-      _combatMap.recomputeKnownLocations(mover, true/*basedOnFacing*/, false/*setVisibility*/, null/*locsToRedraw*/);
+      combatMap.recomputeKnownLocations(mover, true/*basedOnFacing*/, false/*setVisibility*/, null/*locsToRedraw*/);
 
       return true;
    }
@@ -1003,10 +1004,10 @@ public class Arena implements Enums, IMapListener
    public List<ArenaLocation> canCharacterMove(Character mover, Facing direction) {
       List<ArenaLocation> newLocs = new ArrayList<>();
       for (ArenaCoordinates coord : mover.getCoordinates()) {
-         short newX = (short) (coord._x + direction.moveX);
-         short newY = (short) (coord._y + direction.moveY);
-         ArenaLocation toLoc = _combatMap.getLocation(newX, newY);
-         ArenaLocation fromLoc = _combatMap.getLocation(coord);
+         short newX = (short) (coord.x + direction.moveX);
+         short newY = (short) (coord.y + direction.moveY);
+         ArenaLocation toLoc = combatMap.getLocation(newX, newY);
+         ArenaLocation fromLoc = combatMap.getLocation(coord);
          if (!ArenaLocation.canMoveBetween(fromLoc, toLoc, true/*blockByCharacters*/)) {
             return null;
          }
@@ -1038,8 +1039,8 @@ public class Arena implements Enums, IMapListener
          }
 
          // leave the old locations
-         _combatMap.removeCharacter(mover);
-         mover.setOrientation(destination, _server._diag);
+         combatMap.removeCharacter(mover);
+         mover.setOrientation(destination, server.diag);
          // enter the new locations
          for (ArenaLocation destLocation : getLocations(destination.getCoordinates())) {
             destLocation.addThing(mover);
@@ -1049,8 +1050,8 @@ public class Arena implements Enums, IMapListener
                e.printStackTrace();
             }
             boolean moverMustStop = false;
-            for (ArenaTrigger trigger : _combatMap.getTriggers()) {
-               if (trigger.isTriggerAtLocation(destLocation, mover, _combatMap)) {
+            for (ArenaTrigger trigger : combatMap.getTriggers()) {
+               if (trigger.isTriggerAtLocation(destLocation, mover, combatMap)) {
                   if (trigger.trigger(mover)) {
                      moverMustStop = true;
                   }
@@ -1067,12 +1068,12 @@ public class Arena implements Enums, IMapListener
          Collection<ArenaCoordinates> locs = new ArrayList<>();
          locs.addAll(curOrientation.getCoordinates());
          locs.addAll(destination.getCoordinates());
-         int mapSelfID = _server._map.getSelfId();
-         if ((mapSelfID == -1) || (mapSelfID == mover._uniqueID)) {
+         int mapSelfID = server.map.getSelfId();
+         if ((mapSelfID == -1) || (mapSelfID == mover.uniqueID)) {
             // force a redraw of everything
             locs = null;
          }
-         _combatMap.recomputeKnownLocations(mover, true/*basedOnFacing*/, false/*setVisibility*/, locs);
+         combatMap.recomputeKnownLocations(mover, true/*basedOnFacing*/, false/*setVisibility*/, locs);
          sendCharacterUpdate(mover, locs);
          return true;
       }
@@ -1211,7 +1212,7 @@ public class Arena implements Enums, IMapListener
                   // If we already found a route to this location, even if the facing is different,
                   // don't enter, unless this is the first turn of this round.
                   StringBuilder destOrientKey = new StringBuilder();
-                  destOrientKey.append(destOrientation.getHeadCoordinates()._x).append(',').append(destOrientation.getHeadCoordinates()._y);
+                  destOrientKey.append(destOrientation.getHeadCoordinates().x).append(',').append(destOrientation.getHeadCoordinates().y);
                   if (isFirstTurnOfRound) {
                      destOrientKey.append('-').append(destOrientation.getFacing());
                   }
@@ -1275,7 +1276,7 @@ public class Arena implements Enums, IMapListener
                            }
                         }
                         if (destinationValid) {
-                           CombatServer._this._map.setRouteMap(null, null/*path*/, false/*allowRedraw*/);
+                           CombatServer._this.map.setRouteMap(null, null/*path*/, false/*allowRedraw*/);
                            return destOrientation;
                         }
 // If we are trying to reach a destination, we must actually walk there, we don't care about weather or not our weapon can reach it
@@ -1288,7 +1289,7 @@ public class Arena implements Enums, IMapListener
                   }
                   if (toLoc != null) {
                      if (toLoc.sameCoordinates(destOrientation.getHeadCoordinates())) {
-                        CombatServer._this._map.setRouteMap(null, null/*path*/, false/*allowRedraw*/);
+                        CombatServer._this.map.setRouteMap(null, null/*path*/, false/*allowRedraw*/);
                         return destOrientation;
                      }
                   }
@@ -1296,13 +1297,13 @@ public class Arena implements Enums, IMapListener
                      List<ArenaLocation> destLocations = map.getLocations(destOrientation.getCoordinates());
                      for (ArenaLocation destLoc : destLocations) {
                         synchronized (destLoc) {
-                           try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(destLoc._lock_this)) {
+                           try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(destLoc.lock_this)) {
                               for (Object obj : destLoc.getThings()) {
                                  if (obj instanceof Weapon) {
                                     Weapon weap = (Weapon) obj;
                                     //if (mover.canPickup(weap)) {
-                                    for (WeaponStyleAttack style : weap._attackStyles) {
-                                       if (style._handsRequired <= handsAvailable) {
+                                    for (WeaponStyleAttack style : weap.attackStyles) {
+                                       if (style.handsRequired <= handsAvailable) {
                                           if (itemsToPickupUsingSkill.contains(style.getSkillType())) {
                                              return destOrientation;
                                           }
@@ -1349,7 +1350,7 @@ public class Arena implements Enums, IMapListener
                            if (!considerUnknownLocations) {
                               ArenaCoordinates headCoord = futureOrient.getHeadCoordinates();
                               ArenaLocation headLoc = map.getLocation(headCoord);
-                              if (!headLoc.isKnownBy(mover._uniqueID)) {
+                              if (!headLoc.isKnownBy(mover.uniqueID)) {
                                  continue;
                               }
                            }
@@ -1402,7 +1403,7 @@ public class Arena implements Enums, IMapListener
          }
          devianceAllowance++;
          //if ((target != null) || (toLoc != null)) {
-            CombatServer._this._map.setRouteMap(bestFromMap, null/*path*/, false/*allowRedraw*/);
+            CombatServer._this.map.setRouteMap(bestFromMap, null/*path*/, false/*allowRedraw*/);
          //}
          if ((devianceAllowance%5) == 0) {
             if (devianceAllowance == 5) {
@@ -1414,13 +1415,13 @@ public class Arena implements Enums, IMapListener
                   if (!CombatServer._this.getShell().isDisposed()) {
                      Display display = CombatServer._this.getShell().getDisplay();
                      final Character movingCharacter = mover;
-                     final int selfId = CombatServer._this._map.getSelfId();
-                     if (movingCharacter._uniqueID != selfId) {
-                        display.asyncExec(() -> CombatServer._this._map.recomputeVisibility(movingCharacter, null/*diag*/));
-                        // wait until the UIThread has set its _self to this mover
+                     final int selfId = CombatServer._this.map.getSelfId();
+                     if (movingCharacter.uniqueID != selfId) {
+                        display.asyncExec(() -> CombatServer._this.map.recomputeVisibility(movingCharacter, null/*diag*/));
+                        // wait until the UIThread has set its self to this mover
                         int maxWait = 5000; // 5 seconds
                         try {
-                           while ((movingCharacter._uniqueID != CombatServer._this._map.getSelfId()) && (maxWait >= 0)) {
+                           while ((movingCharacter.uniqueID != CombatServer._this.map.getSelfId()) && (maxWait >= 0)) {
                               Thread.sleep(100);
                               maxWait -= 100;
                            }
@@ -1433,10 +1434,10 @@ public class Arena implements Enums, IMapListener
                         display.asyncExec(() -> {
                            Character previousSelf = null;
                            if (selfId != -1) {
-                              previousSelf = CombatServer._this._map.getCombatMap().getCombatantByUniqueID(selfId);
+                              previousSelf = CombatServer._this.map.getCombatMap().getCombatantByUniqueID(selfId);
                            }
 
-                           CombatServer._this._map.recomputeVisibility(previousSelf, null/*diag*/);
+                           CombatServer._this.map.recomputeVisibility(previousSelf, null/*diag*/);
                         });
                      }
                   }
@@ -1444,7 +1445,7 @@ public class Arena implements Enums, IMapListener
             }
          }
       } while (unexploredMovesExists);
-      CombatServer._this._map.setRouteMap(null, null/*path*/, false/*allowRedraw*/);
+      CombatServer._this.map.setRouteMap(null, null/*path*/, false/*allowRedraw*/);
       return null;
    }
 
@@ -1539,53 +1540,52 @@ public class Arena implements Enums, IMapListener
       return maxDistance;
    }
    public boolean serializeFromString(String inputLine) {
-      return _combatMap.serializeFromString(inputLine);
+      return combatMap.serializeFromString(inputLine);
    }
    public String serializeToString() {
-      return _combatMap.serializeToString();
+      return combatMap.serializeToString();
    }
    public void setName(String newName) {
-      _combatMap.setName(newName);
+      combatMap.setName(newName);
    }
    public String getName() {
-      return _combatMap.getName();
+      return combatMap.getName();
    }
    public void dropThing(Object thing, short xLoc, short yLoc) {
-      _combatMap.dropThing(thing, xLoc, yLoc);
+      combatMap.dropThing(thing, xLoc, yLoc);
       // Since the ArenaLocation is a monitoredObject, it will report
       // the change to any watcher of the location.
       //sendServerStatus(null, false/*fullMap*/, false/*recomputeVisibility*/);
    }
    public CombatMap getCombatMap() {
-      return _combatMap;
+      return combatMap;
    }
    public void setCombatMap(CombatMap combatMap, boolean clearCombatants) {
-      if (_combatMap != null) {
-         _combatMap.clearItems();
+      if (this.combatMap != null) {
+         this.combatMap.clearItems();
       }
       if (clearCombatants) {
-         synchronized (_combatants) {
-            _lock_combatants.check();
-            _combatants.clear();
+         synchronized (combatants) {
+            lock_combatants.check();
+            combatants.clear();
          }
-         synchronized(_mapCombatantToAI) {
-            _lock_mapCombatantsToAI.check();
-            _mapCombatantToAI.clear();
+         synchronized(mapCombatantToAI) {
+            lock_mapCombatantsToAI.check();
+            mapCombatantToAI.clear();
          }
-         _localCombatants.clear();
+         localCombatants.clear();
       }
-      _combatMap = combatMap;
+      this.combatMap = combatMap;
       if (clearCombatants) {
-         _combatMap.clearCharacterViewedHistory();
+         this.combatMap.clearCharacterViewedHistory();
       }
    }
-   boolean _characterGenerated = false;
    public void addStockCombatants() {
-      _combatMap.clearCharacterViewedHistory();
-      _characterGenerated = false;
-      for (byte team=0 ; team<_combatMap.getTeamCount() ; team++) {
-         String[] stockAINames = _combatMap.getStockAIName(team);
-         String[] stockCharacters = _combatMap.getStockCharacters(team);
+      combatMap.clearCharacterViewedHistory();
+      characterGenerated = false;
+      for (byte team = 0; team < combatMap.getTeamCount() ; team++) {
+         String[] stockAINames = combatMap.getStockAIName(team);
+         String[] stockCharacters = combatMap.getStockCharacters(team);
          for (byte cur=0 ; cur<stockCharacters.length; cur++) {
             String stockAIName = stockAINames[cur];
             String stockCharacterName = stockCharacters[cur];
@@ -1593,16 +1593,16 @@ public class Arena implements Enums, IMapListener
                 (stockCharacterName != null) && (stockCharacterName.trim().length() > 0)) {
                Character stockCharacter;
                if (stockCharacterName.startsWith("? ")) {
-                  if (!_characterGenerated) {
-                     _characterGenerated = true;
-                     if (!_server.isUsingPseudoRandomNumbers()) {
+                  if (!characterGenerated) {
+                     characterGenerated = true;
+                     if (!server.isUsingPseudoRandomNumbers()) {
                         CombatServer.generateNewPseudoRandomNumberSeed();
                      }
                   }
                   stockCharacter = CharacterGenerator.generateRandomCharacter(stockCharacterName, this, true/*printCharacter*/);
                }
                else {
-                  stockCharacter = _server._charFile.getCharacter(stockCharacterName);
+                  stockCharacter = server.charFile.getCharacter(stockCharacterName);
                }
                if (stockCharacter != null) {
                   addCombatant(stockCharacter, team, cur/*combatantIndexOnTeam*/, null, true/*checkForAutoStart*/);
@@ -1612,28 +1612,28 @@ public class Arena implements Enums, IMapListener
       }
    }
    public void removeAllCombatants() {
-      _registeredNames.clear();
-       _mapCombatantToProxy.clear();
-       synchronized(_mapCombatantToAI) {
-          try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_mapCombatantsToAI)) {
-             for (AI ai : _mapCombatantToAI.values()) {
+      registeredNames.clear();
+       mapCombatantToProxy.clear();
+       synchronized(mapCombatantToAI) {
+          try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_mapCombatantsToAI)) {
+             for (AI ai : mapCombatantToAI.values()) {
                 ai.removeCachedDataOnArenaExit();
              }
-             _mapCombatantToAI.clear();
+             mapCombatantToAI.clear();
           }
        }
-       _localCombatants.clear();
-       synchronized (_combatants) {
-          _lock_combatants.check();
-          _combatants.clear();
+       localCombatants.clear();
+       synchronized (combatants) {
+          lock_combatants.check();
+          combatants.clear();
        }
-       if (_combatMap != null) {
-          _combatMap.removeAllCombatants();
+       if (combatMap != null) {
+          combatMap.removeAllCombatants();
        }
    }
    public void handleTargetPriorities(TargetPriorities priorities, ClientProxy proxy)
    {
-      Character combatant = _mapProxyToCombatant.get(proxy);
+      Character combatant = mapProxyToCombatant.get(proxy);
       // The combatant may have not yet entered the arena
       if (combatant != null) {
          combatant.setTargetPriorities(priorities.getOrderedEnemyIdsList());
@@ -1642,14 +1642,14 @@ public class Arena implements Enums, IMapListener
 
    public List<Character> getEnemies(Character attacker, boolean includeFallenFoes) {
       List<Character> enemies = new ArrayList<>();
-      synchronized (_combatants) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_combatants)) {
-            for (Character enemy : _combatants) {
+      synchronized (combatants) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_combatants)) {
+            for (Character enemy : combatants) {
                // Don't bother attacking an enemy that is unconscious or dead.
                if (includeFallenFoes || enemy.stillFighting()) {
-                  if ((enemy._teamID == TEAM_INDEPENDENT) ||
-                           (enemy._teamID != attacker._teamID)) {
-                     if (enemy._uniqueID != attacker._uniqueID) {
+                  if ((enemy.teamID == TEAM_INDEPENDENT) ||
+                      (enemy.teamID != attacker.teamID)) {
+                     if (enemy.uniqueID != attacker.uniqueID) {
                         enemies.add(enemy);
                      }
                   }
@@ -1665,19 +1665,19 @@ public class Arena implements Enums, IMapListener
       if (orderedTargets == null) {
          return null;
       }
-      synchronized (_combatants) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_combatants)) {
+      synchronized (combatants) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_combatants)) {
             for (Integer uniqueId : orderedTargets) {
-               if (uniqueId != attacker._uniqueID) {
-                  for (Character enemy : _combatants) {
-                     if (enemy._uniqueID == uniqueId) {
+               if (uniqueId != attacker.uniqueID) {
+                  for (Character enemy : combatants) {
+                     if (enemy.uniqueID == uniqueId) {
                         // Don't bother attacking an enemy that is unconscious or dead.
                         if (enemy.stillFighting()) {
-                           if ((enemy._teamID == TEAM_INDEPENDENT) ||
-                                    (enemy._teamID != attacker._teamID)) {
+                           if ((enemy.teamID == TEAM_INDEPENDENT) ||
+                               (enemy.teamID != attacker.teamID)) {
                               // Don't allow an attack on someone you can't see,
                               // even if they advance first!
-                              if (_combatMap.canSee(attacker, enemy, false/*considerFacing*/, false/*blockedByAnyStandingCharacter*/)) {
+                              if (combatMap.canSee(attacker, enemy, false/*considerFacing*/, false/*blockedByAnyStandingCharacter*/)) {
                                  if (canAttack(attacker, enemy)) {
                                     return enemy;
                                  }
@@ -1707,17 +1707,17 @@ public class Arena implements Enums, IMapListener
    {
       Character nearestTarget = null;
       int nearestTargetdistance = 1000;
-      synchronized (_combatants) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_combatants)) {
-            for (Character enemy : _combatants) {
+      synchronized (combatants) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_combatants)) {
+            for (Character enemy : combatants) {
                // Don't bother attacking an enemy that is unconscious or dead.
                if (enemy.stillFighting()) {
-                  if ((enemy._teamID == TEAM_INDEPENDENT) ||
-                           (enemy._teamID != attacker._teamID) || anyTeam) {
+                  if ((enemy.teamID == TEAM_INDEPENDENT) ||
+                      (enemy.teamID != attacker.teamID) || anyTeam) {
                      // Don't attack yourself
-                     if (attacker._uniqueID != enemy._uniqueID) {
+                     if (attacker.uniqueID != enemy.uniqueID) {
                         // Don't allow an attack on someone you can't see
-                        if (_combatMap.canSee(attacker, enemy, false/*considerFacing*/, false/*blockedByAnyStandingCharacter*/)) {
+                        if (combatMap.canSee(attacker, enemy, false/*considerFacing*/, false/*blockedByAnyStandingCharacter*/)) {
                            int dist = getMinDistance(attacker, enemy);
                            if (dist < nearestTargetdistance) {
                               nearestTargetdistance = dist;
@@ -1734,10 +1734,10 @@ public class Arena implements Enums, IMapListener
    }
 
    public boolean hasLineOfSight(Character fromChar, Character toChar) {
-      if (fromChar._uniqueID == toChar._uniqueID) {
+      if (fromChar.uniqueID == toChar.uniqueID) {
          return true;
       }
-      return _combatMap.countCharactersBetween(fromChar, toChar, true/*onlyCountStandingCharacters*/) == 0;
+      return combatMap.countCharactersBetween(fromChar, toChar, true/*onlyCountStandingCharacters*/) == 0;
    }
 
    private Orientation getAdvancementMoveOrientation(Character attacker, Character defender, Limb attackFromLimb) {
@@ -1773,7 +1773,7 @@ public class Arena implements Enums, IMapListener
       Orientation curOrientation = character.getOrientation();
       List<Orientation> possibleMoves = new ArrayList<>();
       List<Orientation> distancingMoves = new ArrayList<>();
-      getFutureMoves(possibleMoves, character, curOrientation, movementAllowed, _combatMap,
+      getFutureMoves(possibleMoves, character, curOrientation, movementAllowed, combatMap,
                      true, null, true);
 
       short curDistanceFromLocation = getShortestDistance(attackFromLocation, curOrientation);
@@ -1806,10 +1806,10 @@ public class Arena implements Enums, IMapListener
       return canAttack(attacker, defender, false/*withAdvance*/, false/*withCharge*/);
    }
    public boolean canAttack(Character attacker, Character defender, boolean withAdvance, boolean withCharge) {
-      if (!_combatMap.isFacing(attacker, defender) && !attacker.hasPeripheralVision()) {
+      if (!combatMap.isFacing(attacker, defender) && !attacker.hasPeripheralVision()) {
          if (withAdvance) {
             // check to see if turning 1 hex will allow us to attack the target
-            for (Orientation advancedOrientation : attacker.getOrientation().getPossibleAdvanceOrientations(_combatMap, true/*blockByCharacters*/)) {
+            for (Orientation advancedOrientation : attacker.getOrientation().getPossibleAdvanceOrientations(combatMap, true/*blockByCharacters*/)) {
                if (advancedOrientation.getHeadCoordinates().sameCoordinates(attacker.getHeadCoordinates())) {
                   if (advancedOrientation.canAttack(attacker, defender, getCombatMap(), false/*allowRanged*/, false/*onlyChargeTypes*/)) {
                      return true;
@@ -1825,7 +1825,7 @@ public class Arena implements Enums, IMapListener
          return true;
       }
       if (withAdvance) {
-         for (Orientation advancedOrientation : attacker.getOrientation().getPossibleAdvanceOrientations(_combatMap, true/*blockByCharacters*/)) {
+         for (Orientation advancedOrientation : attacker.getOrientation().getPossibleAdvanceOrientations(combatMap, true/*blockByCharacters*/)) {
             if (advancedOrientation.canAttack(attacker, defender, getCombatMap(), false/*allowRanged*/, false/*onlyChargeTypes*/)) {
                return true;
             }
@@ -1842,27 +1842,26 @@ public class Arena implements Enums, IMapListener
       return false;
    }
    public void clearStartingPointLabels() {
-      _combatMap.clearStartingPointLabels();
+      combatMap.clearStartingPointLabels();
    }
 
-   public boolean _paused = false;
    public void onPause() {
-      if (_battle != null) {
-         _battle.onPause();
+      if (battle != null) {
+         battle.onPause();
       }
-      _paused = true;
+      paused = true;
    }
    public void onPlay()  {
-      if (_battle != null) {
-         _battle.onPlay();
+      if (battle != null) {
+         battle.onPlay();
       }
-      _paused = false;
+      paused = false;
    }
    public void onAutoRun(AutoRunBlock autoRunBlock)  {
-      _combatMap.setAllCombatantsAsAI();
-      _autoRunMap = _combatMap.clone();
-      _autoRunBlock = autoRunBlock;
-      _paused = false;
+      combatMap.setAllCombatantsAsAI();
+      autoRunMap = combatMap.clone();
+      this.autoRunBlock = autoRunBlock;
+      paused = false;
       removeAllCombatants();
       terminateBattle();
       // re-initialize the psudeo-random number generator:
@@ -1870,32 +1869,32 @@ public class Arena implements Enums, IMapListener
 
       addStockCombatants();
    }
-   public void onTurnAdvance()  { if (_battle != null) {
-      _battle.onTurnAdvance();
+   public void onTurnAdvance()  { if (battle != null) {
+      battle.onTurnAdvance();
    } }
-   public void onRoundAdvance() { if (_battle != null) {
-      _battle.onRoundAdvance();
+   public void onRoundAdvance() { if (battle != null) {
+      battle.onRoundAdvance();
    }}
-   public void onPhaseAdvance() { if (_battle != null) {
-      _battle.onPhaseAdvance();
+   public void onPhaseAdvance() { if (battle != null) {
+      battle.onPhaseAdvance();
    }}
    public void addLocationActions(RequestAction actionReq, Character actor) {
-      _combatMap.addLocationActions(actionReq, actor);
+      combatMap.addLocationActions(actionReq, actor);
    }
    public String getActionDescription(Character actor, RequestAction actionReq) {
-      return _combatMap.getActionDescription(actor, actionReq);
+      return combatMap.getActionDescription(actor, actionReq);
    }
    public boolean isPickupItem(Character actor, RequestAction actionReq) {
-      return _combatMap.isPickupItem(actor, actionReq);
+      return combatMap.isPickupItem(actor, actionReq);
    }
    public Object pickupItem(Character actor, RequestAction actionReq, int itemIndex, Diagnostics diag) {
-      return _combatMap.pickupItem(actor, actionReq, itemIndex, diag);
+      return combatMap.pickupItem(actor, actionReq, itemIndex, diag);
    }
    public boolean isLocationAction(Character actor, RequestAction actionReq) {
-      return _combatMap.isLocationAction(actor, actionReq);
+      return combatMap.isLocationAction(actor, actionReq);
    }
    public boolean applyAction(Character actor, RequestAction actionReq) throws BattleTerminatedException {
-      return _combatMap.applyAction(actor, actionReq);
+      return combatMap.applyAction(actor, actionReq);
    }
 
    // IMapListener methods:
@@ -1906,7 +1905,7 @@ public class Arena implements Enums, IMapListener
    @Override
    public void onMouseMove(ArenaLocation loc, Event event, double angleFromCenter, double normalizedDistFromCenter)
    {
-      _mouseOverCharInfoPopup.onMouseMove(loc, event, angleFromCenter, normalizedDistFromCenter);
+      mouseOverCharInfoPopup.onMouseMove(loc, event, angleFromCenter, normalizedDistFromCenter);
    }
    @Override
    public void onMouseDown(ArenaLocation loc, Event event, double angleFromCenter, double normalizedDistFromCenter)
@@ -1916,8 +1915,8 @@ public class Arena implements Enums, IMapListener
    @Override
    public void onRightMouseDown(ArenaLocation loc, Event event, double angleFromCenter, double normalizedDistFromCenter)
    {
-      if (CombatServer._isServer) {
-         _characterMenuPopup.onRightMouseDown(loc, event, angleFromCenter, normalizedDistFromCenter);
+      if (CombatServer.isServer) {
+         characterMenuPopup.onRightMouseDown(loc, event, angleFromCenter, normalizedDistFromCenter);
       }
       Rules.diag("Arena:onRightMouseDown (" + event.x + "," + event.y + "), event.button=" + event.button);
    }
@@ -1933,10 +1932,10 @@ public class Arena implements Enums, IMapListener
          return;
       }
       // are we waiting on a location request?
-      synchronized (_locationRequests) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_locationRequests)) {
-            if (!_locationRequests.isEmpty()) {
-               for (SyncRequest syncReq : _locationRequests) {
+      synchronized (locationRequests) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_locationRequests)) {
+            if (!locationRequests.isEmpty()) {
+               for (SyncRequest syncReq : locationRequests) {
                   if (syncReq instanceof RequestMovement) {
                      RequestMovement moveReq = (RequestMovement) syncReq;
                      // fill in the location into the request, and send it back.
@@ -1950,10 +1949,10 @@ public class Arena implements Enums, IMapListener
                      RequestLocation locReq = (RequestLocation) syncReq;
                      // fill in the location into the request, and send it back.
                      // If it's a valid location, then this will return true.
-                     if (locReq.setAnswer(loc._x, loc._y)) {
+                     if (locReq.setAnswer(loc.x, loc.y)) {
                         stopWaitingForResponse(syncReq);
-                        _server._map.endHexSelection();
-                        _locationRequests.remove(syncReq);
+                        server.map.endHexSelection();
+                        locationRequests.remove(syncReq);
                         return;
                      }
                   }
@@ -1965,22 +1964,22 @@ public class Arena implements Enums, IMapListener
 
    public void completeMove(SyncRequest syncReq) {
       stopWaitingForResponse(syncReq);
-      _locationRequests.remove(syncReq);
+      locationRequests.remove(syncReq);
       RequestMovement nextMoveReq = null;
-      for (SyncRequest syncRequest : _locationRequests) {
+      for (SyncRequest syncRequest : locationRequests) {
          if (syncRequest instanceof RequestMovement) {
             nextMoveReq = (RequestMovement) syncRequest;
             break;
          }
       }
       if (nextMoveReq == null) {
-         _server._map.endHexSelection();
+         server.map.endHexSelection();
          // Stop hiding the hexes that the player can't see
-         _server._map.recomputeVisibility(null/*self*/, null/*diag*/);
+         server.map.recomputeVisibility(null/*self*/, null/*diag*/);
       }
       else {
-         _server._map.requestMovement(nextMoveReq);
-         _server._map.recomputeVisibility(getCharacter(nextMoveReq.getActorID()), null/*diag*/);
+         server.map.requestMovement(nextMoveReq);
+         server.map.recomputeVisibility(getCharacter(nextMoveReq.getActorID()), null/*diag*/);
       }
    }
 
@@ -1993,18 +1992,18 @@ public class Arena implements Enums, IMapListener
       // re-initialize the psudeo-random number generator:
       CombatServer.resetPseudoRandomNumberGenerator();
       // set this index back to zero, so we know to start using the first response
-      _playbackIndex = 0;
+      playbackIndex = 0;
       // Adding the stock combatants will auto-launch the battle if complete.
       addStockCombatants();
    }
    public boolean hasExitTriggers() {
-      return _combatMap.hasExitTriggers();
+      return combatMap.hasExitTriggers();
    }
    public ArenaLocation getLocation(ArenaCoordinates coord) {
-      return _combatMap.getLocation(coord);
+      return combatMap.getLocation(coord);
    }
    public List<ArenaLocation> getLocations(List<ArenaCoordinates> headCoord) {
-      return _combatMap.getLocations(headCoord);
+      return combatMap.getLocations(headCoord);
    }
    public boolean serializeToFile(File battleFile) {
       if (battleFile != null) {
@@ -2065,7 +2064,7 @@ public class Arena implements Enums, IMapListener
 
          List<Integer> uniqueIDs = new ArrayList<>();
          mainElement.appendChild(arenaDoc.createTextNode(newLine));
-         mainElement.appendChild(_battle.getXmlObject(arenaDoc));
+         mainElement.appendChild(battle.getXmlObject(arenaDoc));
          mainElement.appendChild(arenaDoc.createTextNode(newLine));
 
          Node curMap = arenaDoc.createElement("CurrentMap");
@@ -2088,31 +2087,31 @@ public class Arena implements Enums, IMapListener
          mainElement.appendChild(aiCharactersList);
          mainElement.appendChild(arenaDoc.createTextNode(newLine));
 
-         for (Character localChar : _localCombatants) {
+         for (Character localChar : localCombatants) {
             localCharactersList.appendChild(arenaDoc.createTextNode(newLine + "  "));
             localCharactersList.appendChild(localChar.getXmlObject(arenaDoc, true/*includeConditionData*/, newLine + "  "));
             if (localChar.stillFighting()) {
-               uniqueIDs.add(localChar._uniqueID);
+               uniqueIDs.add(localChar.uniqueID);
             }
          }
          localCharactersList.appendChild(arenaDoc.createTextNode(newLine));
-         for (Character remoteChar : _mapCombatantToProxy.keySet()) {
+         for (Character remoteChar : mapCombatantToProxy.keySet()) {
             remoteCharactersList.appendChild(arenaDoc.createTextNode(newLine + "  "));
             remoteCharactersList.appendChild(remoteChar.getXmlObject(arenaDoc, true/*includeConditionData*/, newLine + "  "));
             if (remoteChar.stillFighting()) {
-               uniqueIDs.add(remoteChar._uniqueID);
+               uniqueIDs.add(remoteChar.uniqueID);
             }
          }
          remoteCharactersList.appendChild(arenaDoc.createTextNode(newLine));
-         synchronized(_mapCombatantToAI) {
-            try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_mapCombatantsToAI)) {
-               for (Character aiChar : _mapCombatantToAI.keySet()) {
+         synchronized(mapCombatantToAI) {
+            try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_mapCombatantsToAI)) {
+               for (Character aiChar : mapCombatantToAI.keySet()) {
                   aiCharactersList.appendChild(arenaDoc.createTextNode(newLine + "  "));
                   Element aiCharXml = aiChar.getXmlObject(arenaDoc, true/*includeConditionData*/, newLine + "  ");
-                  aiCharXml.setAttribute("aiType", _mapCombatantToAI.get(aiChar).getAiType().name);
+                  aiCharXml.setAttribute("aiType", mapCombatantToAI.get(aiChar).getAiType().name);
                   aiCharactersList.appendChild(aiCharXml);
                   if (aiChar.stillFighting()) {
-                     uniqueIDs.add(aiChar._uniqueID);
+                     uniqueIDs.add(aiChar.uniqueID);
                   }
                }
             }
@@ -2120,9 +2119,9 @@ public class Arena implements Enums, IMapListener
          aiCharactersList.appendChild(arenaDoc.createTextNode(newLine));
          // now that we have the complete list of characters we care about, we can include the maps
          curMap.appendChild(arenaDoc.createTextNode(newLine + "  "));
-         curMap.appendChild(_combatMap.getXmlObject(arenaDoc, uniqueIDs/*includeKnownByUniqueIDInfo*/, newLine + "  "));
+         curMap.appendChild(combatMap.getXmlObject(arenaDoc, uniqueIDs/*includeKnownByUniqueIDInfo*/, newLine + "  "));
          curMap.appendChild(arenaDoc.createTextNode(newLine));
-         for (CombatMap storedMap : ArenaEvent._savedMaps.values()) {
+         for (CombatMap storedMap : ArenaEvent.savedMaps.values()) {
             if (storedMap.getSizeX() > 0) {
                mapList.appendChild(arenaDoc.createTextNode(newLine + "  "));
                mapList.appendChild(storedMap.getXmlObject(arenaDoc, uniqueIDs/*includeKnownByUniqueIDInfo*/, newLine + "  "));
@@ -2147,15 +2146,15 @@ public class Arena implements Enums, IMapListener
       }
       terminateBattle();
       removeAllCombatants();
-      _battle = new Battle("BattleThread", this, _server);
+      battle = new Battle("BattleThread", this, server);
 
       NodeList children = mainElement.getChildNodes();
-      ArenaEvent._savedMaps = new HashMap<>();
+      ArenaEvent.savedMaps = new HashMap<>();
       for (int index=0 ; index<children.getLength() ; index++) {
          Node child = children.item(index);
          String name = child.getNodeName();
-         if (!_battle.serializeFromXmlObject(child) &&
-                 (name.equals("localCharacters")  ||
+         if (!battle.serializeFromXmlObject(child) &&
+             (name.equals("localCharacters")  ||
                   name.equals("remoteCharacters") ||
                   name.equals("aiCharacters"))) {
             NodeList grandChildren = child.getChildNodes();
@@ -2188,7 +2187,7 @@ public class Arena implements Enums, IMapListener
             NodeList grandChildren = child.getChildNodes();
             for (int i=0 ; i<grandChildren.getLength() ; i++) {
                Node grandChild = grandChildren.item(i);
-               _combatMap.serializeFromXmlObject(grandChild);
+               combatMap.serializeFromXmlObject(grandChild);
             }
          }
          else if (name.equals("StoredMaps")) {
@@ -2197,7 +2196,7 @@ public class Arena implements Enums, IMapListener
                Node grandChild = grandChildren.item(i);
                CombatMap map = new CombatMap();
                map.serializeFromXmlObject(grandChild);
-               ArenaEvent._savedMaps.put(map.getName(), map);
+               ArenaEvent.savedMaps.put(map.getName(), map);
             }
          }
       }
@@ -2205,8 +2204,8 @@ public class Arena implements Enums, IMapListener
       List<Character> combatants = getCombatants();
       for (Character character : combatants) {
          character.setCasterAndTargetFromIDs(combatants);
-         if (character._uniqueID > highestUniqueID) {
-            highestUniqueID = character._uniqueID;
+         if (character.uniqueID > highestUniqueID) {
+            highestUniqueID = character.uniqueID;
          }
       }
       // make sure that any new characters don't get created with an already used uniqueID;
@@ -2215,15 +2214,15 @@ public class Arena implements Enums, IMapListener
       recomputeAllTargets(null);
       recomputeAllKnownLocations();
 
-      if (_paused) {
-         _battle.onPause();
+      if (paused) {
+         battle.onPause();
       }
-      _battle._startMidTurn = true;
-      _battle.start();
+      battle.startMidTurn = true;
+      battle.start();
       return false;
    }
    public void onBattleComplete(Battle battle) {
-      if (_autoRunBlock != null) {
+      if (autoRunBlock != null) {
          int teamAlive = -1;
          for (int t=0 ; t<TEAM_NAMES.length ; t++) {
             if (isTeamAlive(t)) {
@@ -2237,28 +2236,28 @@ public class Arena implements Enums, IMapListener
             }
          }
 
-         if (_autoRunBlock.battleEnded(teamAlive)) {
-            _combatMap = _autoRunMap.clone();
+         if (autoRunBlock.battleEnded(teamAlive)) {
+            combatMap = autoRunMap.clone();
             CombatServer._this.getShell().getDisplay().asyncExec(this::restart);
          }
          else {
-            _autoRunBlock = null;
-            _autoRunMap = null;
+            autoRunBlock = null;
+            autoRunMap = null;
          }
       }
    }
 
    public boolean doLocalPlayersExist() {
-      return !_localCombatants.isEmpty();
+      return !localCombatants.isEmpty();
    }
 
    public boolean isRemotelyControlled(Character combatant) {
-      return _charactersWaitingToConnect.contains(combatant) ||
-               _mapProxyToCombatant.containsValue(combatant);
+      return charactersWaitingToConnect.contains(combatant) ||
+             mapProxyToCombatant.containsValue(combatant);
    }
    public AI_Type getAiType(Character combatant) {
-      if (!_localCombatants.contains(combatant)) {
-         AI ai = _mapCombatantToAI.get(combatant);
+      if (!localCombatants.contains(combatant)) {
+         AI ai = mapCombatantToAI.get(combatant);
          if (ai != null) {
             return ai.getAiType();
          }
@@ -2267,29 +2266,29 @@ public class Arena implements Enums, IMapListener
    }
    public void setControl(Character combatant, boolean localControl, AI_Type AIEngineType) {
       if (localControl) {
-         _charactersWaitingToConnect.remove(combatant);
+         charactersWaitingToConnect.remove(combatant);
          // make sure we don't duplicate this combatant by removing it first (no harm if not in list)
-         _localCombatants.remove(combatant);
+         localCombatants.remove(combatant);
          if (AIEngineType == null) {
-            _mapCombatantToAI.remove(combatant);
-            _localCombatants.add(combatant);
+            mapCombatantToAI.remove(combatant);
+            localCombatants.add(combatant);
          }
          else {
-            _mapCombatantToAI.put(combatant, new AI(combatant, AIEngineType));
+            mapCombatantToAI.put(combatant, new AI(combatant, AIEngineType));
          }
 
-         ClientProxy clientProxy = _mapCombatantToProxy.remove(combatant);
+         ClientProxy clientProxy = mapCombatantToProxy.remove(combatant);
          if (clientProxy != null) {
-            _mapProxyToCombatant.remove(clientProxy);
+            mapProxyToCombatant.remove(clientProxy);
          }
       }
       else {
          // changing to remote connection
          // make sure we don't duplicate this combatant by removing it first (no harm if not in list)
-         _charactersWaitingToConnect.remove(combatant);
-         _charactersWaitingToConnect.add(combatant);
-         _mapCombatantToAI.remove(combatant);
-         _localCombatants.remove(combatant);
+         charactersWaitingToConnect.remove(combatant);
+         charactersWaitingToConnect.add(combatant);
+         mapCombatantToAI.remove(combatant);
+         localCombatants.remove(combatant);
       }
    }
 

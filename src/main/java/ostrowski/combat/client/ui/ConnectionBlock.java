@@ -5,8 +5,6 @@
 package ostrowski.combat.client.ui;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -25,27 +23,27 @@ import ostrowski.ui.Helper;
 
 public class ConnectionBlock extends Helper implements SelectionListener, Enums
 {
-   private Combo            _cmbIpAddresses      = null;
-   private String           _ipAddress           = "";
-   private Button           _connectButton       = null;
-   private final CharacterDisplay _display;
+   private Combo                  cmbIpAddresses = null;
+   private String                 ipAddress     = "";
+   private Button                 connectButton = null;
+   private final CharacterDisplay display;
 
    public ConnectionBlock(CharacterDisplay display) {
-      _display = display;
+      this.display = display;
    }
    @Override
    public void widgetSelected(SelectionEvent e)
    {
       // handle the 'connect' button
-      if (e.widget == _connectButton) {
-         if (_connectButton.getText().equals("  Connect  ")) {
-            _display.connectToServer(_ipAddress, Configuration.serverPort());
+      if (e.widget == connectButton) {
+         if (connectButton.getText().equals("  Connect  ")) {
+            display.connectToServer(ipAddress, Configuration.serverPort());
          }
          else {
-            _display.disconnectFromServer();
+            display.disconnectFromServer();
          }
          // disable the button until we get a success or failure.
-         _connectButton.setEnabled(false);
+         connectButton.setEnabled(false);
       }
    }
    @Override
@@ -54,42 +52,42 @@ public class ConnectionBlock extends Helper implements SelectionListener, Enums
    }
    public void handleDisconnect()
    {
-      _connectButton.setText("  Connect  ");
-      _cmbIpAddresses.setEnabled(true);
-      _connectButton.setEnabled(true);
+      connectButton.setText("  Connect  ");
+      cmbIpAddresses.setEnabled(true);
+      connectButton.setEnabled(true);
    }
    public void handleConnect()
    {
-      _connectButton.setText("Disconnect");
-      _cmbIpAddresses.setEnabled(false);
-      _connectButton.setEnabled(true);
+      connectButton.setText("Disconnect");
+      cmbIpAddresses.setEnabled(false);
+      connectButton.setEnabled(true);
    }
 
    public void buildBlock(Composite parent)
    {
       Group group = createGroup(parent, "Server Connection", 2/*columns*/, false, 3/*hSpacing*/, 3/*vSpacing*/);
-      _controlList.remove(group);
+      controlList.remove(group);
       createLabel(group, "Server IP:", SWT.TRAIL, 1, null);
-      _cmbIpAddresses = new Combo(group, SWT.DROP_DOWN);
+      cmbIpAddresses = new Combo(group, SWT.DROP_DOWN);
       GridData data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-      _cmbIpAddresses.setLayoutData(data);
-      _cmbIpAddresses.setItems(new String[] {"127.0.0.1", "localhost"});
-      _ipAddress = _cmbIpAddresses.getItem(0);
-      _cmbIpAddresses.setText(_ipAddress);
-      _cmbIpAddresses.addModifyListener(e -> {
-         if (!CharacterWidget._inModify) {
-            CharacterWidget._inModify = true;
-            _ipAddress = ((Combo)e.widget).getText();
-            CharacterWidget._inModify = false;
+      cmbIpAddresses.setLayoutData(data);
+      cmbIpAddresses.setItems(new String[] {"127.0.0.1", "localhost"});
+      ipAddress = cmbIpAddresses.getItem(0);
+      cmbIpAddresses.setText(ipAddress);
+      cmbIpAddresses.addModifyListener(e -> {
+         if (!CharacterWidget.inModify) {
+            CharacterWidget.inModify = true;
+            ipAddress = ((Combo)e.widget).getText();
+            CharacterWidget.inModify = false;
          }
       });
 
-      _connectButton = createButton(group, "  Connect  ", 2, null, this);
-      _controlList.remove(_connectButton);
-      group.setTabList(new Control[] {_cmbIpAddresses, _connectButton});
+      connectButton = createButton(group, "  Connect  ", 2, null, this);
+      controlList.remove(connectButton);
+      group.setTabList(new Control[] {cmbIpAddresses, connectButton});
    }
    public void updateServerStatus(ServerStatus status)
    {
-      _connectButton.setEnabled(true);
+      connectButton.setEnabled(true);
    }
 }

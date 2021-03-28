@@ -10,14 +10,13 @@ import ostrowski.combat.common.weaponStyles.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
 public class Weapons {
-   static final SizelessWeapon[] _specialWeaponsList;
-   static final SizelessWeapon[] _weaponsList;
+   static final SizelessWeapon[] specialWeaponsList;
+   static final SizelessWeapon[] weaponsList;
    static {
-      _specialWeaponsList = new SizelessWeapon[] {
+      specialWeaponsList = new SizelessWeapon[] {
               //           size,lbs,  $, name                                              2                       (SkillType,       min,pen.,   StyleName,spd,Str-,Str+, dam,       Die,        damageType,       attackType,         charge type,  pry-,ranges hands)
               new WeaponBase(-1,0,   0, Weapon.NAME_HornGore,       new WeaponStyle[] {new WeaponStyleAttackMelee(SkillType.Brawling, 0, 0, "Horn Gore", 0, -99, 99, 3, DieType.D6, DamageType.IMP, AttackType.THRUST, WeaponStyleAttack.Charge.Anytime, 0, 1, 1, 0)}),
               new WeaponBase(-1,0,   0, Weapon.NAME_Fangs,          new WeaponStyle[] {new WeaponStyleAttackMelee(SkillType.Brawling, 0, 0, "Bite", 0, -99, 99, 3, DieType.D6, DamageType.CUT, AttackType.THRUST, WeaponStyleAttack.Charge.With4Legs, 0, 0, 1, 0)}),
@@ -27,7 +26,7 @@ public class Weapons {
               new WeaponBase(-1,0,   0, Weapon.NAME_TailStrike,     new WeaponStyle[] {new WeaponStyleAttackMelee(SkillType.Brawling, 0, 0, "Tail strike", 1, -99, 99, 2, DieType.D6, DamageType.BLUNT, AttackType.SWING, WeaponStyleAttack.Charge.Never, 0, -2, 1, 0)}),
               };
 
-      _weaponsList = new SizelessWeapon[] {
+      weaponsList = new SizelessWeapon[] {
               //           size,lbs,  $, name                                             2               (SkillType,                 min,pen.,   StyleName,spd,Str-,Str+, dam,  Die,            damageType,     attackType,      charge type, pry-,ranges hands)
               new WeaponBase(-1,0,   0, Weapon.NAME_KarateKick,     new WeaponStyle[] {new WeaponStyleAttackMelee(SkillType.Karate, 3, 2, "Kick", 1, -99, 4, 2, DieType.D6, DamageType.BLUNT, AttackType.THRUST, WeaponStyleAttack.Charge.Never, 0, 1, 2, 0),
                                                                                 new WeaponStyleAttackMelee(SkillType.Karate, 5, 4, "Spin kick", 1, -99, 4, 4, DieType.D6, DamageType.BLUNT, AttackType.THRUST, WeaponStyleAttack.Charge.Never, 0, 2, 2, 0),
@@ -163,13 +162,13 @@ public class Weapons {
               new MissileWeaponBase(1, 3, 100, Weapon.NAME_StaffSling,    SkillType.Sling,      1, 0,   7,  DieType.D6, DamageType.BLUNT, 20,  2, new String[] {"Spin sling", "Load stone in staff sling", "Ready stone"}),
               };
       // sort this array, so they can be listed in alphabetical order
-      Arrays.sort(_weaponsList, (o1, o2) -> o1.getName().compareTo(o2.getName()));
-      Arrays.sort(_specialWeaponsList, (o1, o2) -> o1.getName().compareTo(o2.getName()));
+      Arrays.sort(weaponsList, (o1, o2) -> o1.getName().compareTo(o2.getName()));
+      Arrays.sort(specialWeaponsList, (o1, o2) -> o1.getName().compareTo(o2.getName()));
    }
 
    public static List<String> getWeaponNames(boolean includeNaturalWeapons) {
       List<String> list = new ArrayList<>();
-      for (SizelessWeapon element : _weaponsList) {
+      for (SizelessWeapon element : weaponsList) {
          if (includeNaturalWeapons || element.isReal()) {
             list.add(element.getName());
          }
@@ -179,7 +178,7 @@ public class Weapons {
 
    public static List<Weapon> getWeaponListForRace(Race race) {
       List<Weapon> list = new ArrayList<>();
-      for (SizelessWeapon weapon : _weaponsList) {
+      for (SizelessWeapon weapon : weaponsList) {
          Weapon copy = weapon.clone();
          copy.setRacialBase(race);
          list.add(copy);
@@ -189,13 +188,13 @@ public class Weapons {
 
    static public Weapon getWeapon(String name, Race racialBase) {
       if (name != null) {
-         for (SizelessWeapon element : _weaponsList) {
+         for (SizelessWeapon element : weaponsList) {
             if (element.getName().equalsIgnoreCase(name)) {
                return element.copyWithRace(racialBase);
             }
          }
          // check for special weapons
-         for (SizelessWeapon element : _specialWeaponsList) {
+         for (SizelessWeapon element : specialWeaponsList) {
             if (element.getName().equalsIgnoreCase(name)) {
                Weapon weap = element.clone();
                weap.setRacialBase(racialBase);
@@ -392,7 +391,7 @@ public class Weapons {
       sb.append("<th>Weight</th>");
       sb.append("</tr>\n");
       int htmlRow = 0;
-      for (SizelessWeapon weap : _weaponsList) {
+      for (SizelessWeapon weap : weaponsList) {
          for (WeaponStyleAttack attack : weap.getAttackStyles()) {
             if (attack instanceof WeaponStyleAttackRanged) {
                if ((missile && attack.isMissile()) || (thrown && attack.isThrown())) {

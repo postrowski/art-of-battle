@@ -51,8 +51,8 @@ public class SpellEnrage extends ResistedPriestSpell implements ICastInBattle
 
    @Override
    public void applyEffects(Arena arena) {
-      if (_castingEffectiveness >= 0) {
-         _duration = (short) ((_castingEffectiveness+1) * 3);
+      if (castingEffectiveness >= 0) {
+         duration = (short) ((castingEffectiveness + 1) * 3);
       }
       getTarget().setIsBerserking(true);
    }

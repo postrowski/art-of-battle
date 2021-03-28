@@ -32,15 +32,81 @@ import ostrowski.util.ClientListener;
 import ostrowski.util.*;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.*;
 
 public class CombatServer extends Helper implements SelectionListener, Enums, IMapListener, ModifyListener, Listener, KeyListener, ControlListener, ShellListener
 {
    private static final String VERSION_NUMBER = "4.2.0";
+   static final         int    WINDOW_WIDTH   = 950;
+   private              Shell  shell;
+   Diagnostics diag = null;
+   public static boolean                  isServer              = false;
+   public static CombatServer             _this                 = null;
+   // UI elements:
+   private       Button                   startStopBattleButton;
+   public        IMapWidget               map;
+   private final Browser                  fullMessages;
+   private       Browser                  messages;
+   private       ClientListener           clientListener;
+   private final Arena                    arena;
+   private       Button[/*team*/][/*id*/] combatantsButtons;
+   private       Combo[/*team*/][/*id*/]  combatantsName;
+   private       Combo[/*team*/][/*id*/]  combatantsAI;
+   private final byte                     maxTeams              = CombatServer.MAX_TEAMS;
+   private       byte                     currentTeam           = -1;
+   private       byte                     currentCombatant      = -1;
+   private       boolean                  changingMap           = false;
+   private       Button                   loadBattleButton;
+   private       Button                   saveBattleButton;
+   private       Button                   pausePlayButton;
+   private       Button                   turnButton;
+   private       Button                   roundButton;
+   private       Button                   phaseButton;
+   private final Object                   pausePlayControl      = new Object();
+   private final Semaphore                lock_pausePlayControl = new Semaphore("CombatServer_pausePalyControl",
+                                                                                CombatSemaphore.CLASS_COMBATSERVER_pausePlayControl);
+   public final  CharacterWidget          charWidget;
+   public final  CharacterFile            charFile              = new CharacterFile("Character.data");
+   private final CharInfoBlock            charInfoBlock         = new CharInfoBlock(null);
+   private       PseudoRandomBlock        pseudoRandomBlock     = new PseudoRandomBlock(this);
 
-   public static final HashMap<Thread, HashMap<String, Object>> threadStorage_ = new HashMap<>();
+   public static final List<MapWidget3D> widgets   = new ArrayList<>();
+   public static boolean                 uses3dMap = false;
+
+   public static final byte MAX_COMBATANTS_PER_TEAM = 15;
+   public static final byte MAX_TEAMS               = (byte) (TEAM_NAMES.length);
+
+   private      TabFolder tabFolder;
+   public final TabFolder tabFolderMain;
+   private      TabItem   mapTabItem;
+   private      TabItem   terrainTabItem;
+   private      TabItem   triggersTabItem;
+   private      TabItem   combatantsTabItem;
+   private      TabItem   messagesTabItem;
+
+   public  MapInterface      mapInterface;
+   public  TerrainInterface  terrainInterface;
+   private TriggersInterface triggersInterface;
+   private CombatMap         originalMap = null;
+   private boolean           autoStart   = false;
+
+   public static final String REMOTE_AI_NAME   = "Remote Connection";
+   public static final String INACTIVE_AI_NAME = "Off";
+
+   private static boolean USE_CACHED_DRAWING = true;
+   private static boolean ALLOW_BACKUP = false;
+
+   public static final HashMap<Thread, HashMap<String, Object>> threadStorage_      = new HashMap<>();
+   final               Semaphore                                lock_pendingMessage = new Semaphore("CombatServer_pendingMessage",
+                                                                                                    CombatSemaphore.CLASS_COMBATSERVER_pendingMessage);
+   private final       StringBuilder                            pendingMessage      = new StringBuilder();
+
+   public static boolean inModify = false;
+
+   public static int    pseudoRandomNumberSeed     = 123;
+   public static int    pseudoRandomNumberUseCount = 0;
+   public static Random pseudoRandom               = null;
 
    public static Object getThreadStorage(String key) {
       HashMap<String, Object> threadsStorage = threadStorage_.get(Thread.currentThread());
@@ -101,66 +167,9 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       dice = null;
    }
 
-   static final int WINDOW_WIDTH = 950;
-   private Shell _shell;
-   Diagnostics _diag = null;
-   public static boolean                  _isServer              = false;
-   public static CombatServer _this                  = null;
-   // UI elements:
-   private       Button       _startStopBattleButton;
-   public        IMapWidget               _map;
-   private final Browser                  _fullMessages;
-   private       Browser                  _messages;
-   private       ClientListener           _clientListener;
-   private final Arena                    _arena;
-   private       Button[/*team*/][/*id*/] _combatantsButtons;
-   private       Combo[/*team*/][/*id*/]  _combatantsName;
-   private       Combo[/*team*/][/*id*/]  _combatantsAI;
-   private final byte                     _maxTeams              = CombatServer.MAX_TEAMS;
-   private       byte                     _currentTeam           = -1;
-   private       byte                     _currentCombatant      = -1;
-   private       boolean                  _changingMap           = false;
-   private       Button                   _loadBattleButton;
-   private       Button                   _saveBattleButton;
-   private       Button                   _pausePlayButton;
-   private       Button                   _turnButton;
-   private       Button                   _roundButton;
-   private       Button                   _phaseButton;
-   private final Object                   _pausePlayControl      = new Object();
-   private final Semaphore                _lock_pausePlayControl = new Semaphore("CombatServer_pausePalyControl",
-                                                                                 CombatSemaphore.CLASS_COMBATSERVER_pausePlayControl);
-   public final  CharacterWidget          _charWidget;
-   public final  CharacterFile            _charFile              = new CharacterFile("Character.data");
-   private final CharInfoBlock            _charInfoBlock         = new CharInfoBlock(null);
-   private       PseudoRandomBlock        _pseudoRandomBlock     = new PseudoRandomBlock(this);
-
-
-   public static final byte MAX_COMBATANTS_PER_TEAM = 15;
-   public static final byte MAX_TEAMS               = (byte)(TEAM_NAMES.length);
-
-   private      TabFolder _tabFolder;
-   public final TabFolder _tabFolderMain;
-   private      TabItem   _mapTabItem;
-   private      TabItem   _terrainTabItem;
-   private      TabItem   _triggersTabItem;
-   private      TabItem   _combatantsTabItem;
-   private      TabItem   _messagesTabItem;
-
-   public MapInterface     _mapInterface;
-   public TerrainInterface _terrainInterface;
-   private TriggersInterface _triggersInterface;
-   private CombatMap         _originalMap = null;
-   private boolean           _autoStart   = false;
-
-   public static final String _REMOTE_AI_NAME = "Remote Connection";
-   public static final String _INACTIVE_AI_NAME = "Off";
-
-   private static boolean USE_CACHED_DRAWING = true;
-   private static boolean ALLOW_BACKUP = false;
-
    public CombatServer(List<String> args)
    {
-      _isServer = true;
+      isServer = true;
       _this = this;
       resetMessageBuffer();
       //String propertiesFileName = "PropertiesFileName.properties";
@@ -182,40 +191,40 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       setShell(new Shell(display));
       getShell().setText("Art of Battle"); // the window's title
 
-      _charWidget = new CharacterWidget(null, _charFile);
+      charWidget = new CharacterWidget(null, charFile);
 
       getShell().setLayout(new FillLayout());
       getShell().addKeyListener(this);
-      _tabFolderMain = new TabFolder(getShell(), SWT.NONE);
+      tabFolderMain = new TabFolder(getShell(), SWT.NONE);
 
       TabItem item;
       // create a TabItem
-      item = new TabItem( _tabFolderMain, SWT.NULL);
+      item = new TabItem(tabFolderMain, SWT.NULL);
       item.setText( "Arena Map");
       // create a control
-      Composite arenaMap = createComposite(_tabFolderMain, 1, GridData.FILL_BOTH);
+      Composite arenaMap = createComposite(tabFolderMain, 1, GridData.FILL_BOTH);
       // add the control to the TabItem
       item.setControl( arenaMap );
 
       // create the next tab
-      item = new TabItem( _tabFolderMain, SWT.NULL);
+      item = new TabItem(tabFolderMain, SWT.NULL);
       item.setText( "Characters");
-      Composite characterData = createComposite(_tabFolderMain, 1, GridData.FILL_BOTH);
+      Composite characterData = createComposite(tabFolderMain, 1, GridData.FILL_BOTH);
       // add the control to the TabItem
       item.setControl( characterData );
 
       // create the next tab
-      item = new TabItem( _tabFolderMain, SWT.NULL);
+      item = new TabItem(tabFolderMain, SWT.NULL);
       item.setText( "Full Messages");
-      Composite fullMessageData = createComposite(_tabFolderMain, 1, GridData.FILL_BOTH);
+      Composite fullMessageData = createComposite(tabFolderMain, 1, GridData.FILL_BOTH);
       // add the control to the TabItem
       item.setControl( fullMessageData );
 
       // create the next tab
-      item = new TabItem( _tabFolderMain, SWT.NULL);
+      item = new TabItem(tabFolderMain, SWT.NULL);
       item.setText( "Rules");
       // add the control to the TabItem
-      item.setControl(new RuleComposite(_tabFolderMain, 1, GridData.FILL_BOTH, new Configuration(),
+      item.setControl(new RuleComposite(tabFolderMain, 1, GridData.FILL_BOTH, new Configuration(),
                                         WINDOW_WIDTH, display.getSystemColor(SWT.COLOR_WHITE)));
 
       Composite mainGridBlock = new Composite(arenaMap, SWT.NONE);
@@ -238,17 +247,17 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       buildBottomBlock(mainSash);
       mainSash.setWeights(new int[]{2, 1});
       {
-         _fullMessages = new Browser(fullMessageData, SWT.NONE | SWT.BORDER);
-         _fullMessages.setText("<br><br><br><br><br>");
+         fullMessages = new Browser(fullMessageData, SWT.NONE | SWT.BORDER);
+         fullMessages.setText("<br><br><br><br><br>");
          data = new GridData(SWT.FILL, SWT.FILL, true/*grabExcessHorizontalSpace*/, true/*grabExcessVerticalSpace*/);
          data.minimumHeight = 700;
          data.minimumWidth  = WINDOW_WIDTH;
-         _fullMessages.setLayoutData(data);
-         _fullMessages.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
+         fullMessages.setLayoutData(data);
+         fullMessages.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
       }
-      _arena = new Arena(this, _mapInterface.getMapSizeX(), _mapInterface.getMapSizeY());
-      if (_map != null) {
-         _map.addListener(_arena);
+      arena = new Arena(this, mapInterface.getMapSizeX(), mapInterface.getMapSizeY());
+      if (map != null) {
+         map.addListener(arena);
       }
 
       String arenaName = null;
@@ -283,22 +292,22 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
                }
                if (name.equalsIgnoreCase("seed")) {
                   setPseudoRandomNumberSeed(Integer.parseInt(value));
-                  _pseudoRandomBlock.setUsingPseudoRandomNumber(true);
+                  pseudoRandomBlock.setUsingPseudoRandomNumber(true);
                }
             }
          }
       }
-      _tabFolderMain.setSelection(initialTab);
+      tabFolderMain.setSelection(initialTab);
 
       if (arenaName != null) {
          setMap(arenaName);
       }
       else {
-         updateMap(_arena);
+         updateMap(arena);
       }
       if ((battleName != null) && (battleName.length()>0)) {
          File battleFile = new File(battleName);
-         _arena.serializeFromFile(battleFile);
+         arena.serializeFromFile(battleFile);
       }
 
 //      List<String> mapLocNames = new ArrayList<>();
@@ -307,29 +316,29 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
 //            mapLocNames.add(CombatMap.getLabel(team, cur));
 //         }
 //      }
-      _charWidget.buildCharSheet(characterData);
+      charWidget.buildCharSheet(characterData);
 
       getShell().pack();
       getShell().open();
 
-      _map.setZoomToFit();
+      map.setZoomToFit();
       if (port != null) {
-         Configuration._serverPort = Integer.parseInt(port);
+         Configuration.serverPort = Integer.parseInt(port);
          // If the port was passed in on the command line, open it up.
-         _autoStart  = true;
+         autoStart = true;
       }
    }
 
 
    public void execute() {
-      if (_autoStart) {
+      if (autoStart) {
          openPort(true/*startup*/);
       }
 
       Display display = getShell().getDisplay();
       while (!getShell().isDisposed()) {
          if (!display.readAndDispatch()) {
-            for (MapWidget3D widget : _widgets) {
+            for (MapWidget3D widget : widgets) {
                widget.redraw();
             }
             display.sleep ();
@@ -339,22 +348,22 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    }
 
    private void cleanUpOnExit() {
-      synchronized (_pausePlayControl) {
-         _lock_pausePlayControl.check();
-         _pausePlayControl.notifyAll();
+      synchronized (pausePlayControl) {
+         lock_pausePlayControl.check();
+         pausePlayControl.notifyAll();
       }
-      if (_clientListener != null) {
-         _clientListener.closePort();
-         _clientListener = null;
+      if (clientListener != null) {
+         clientListener.closePort();
+         clientListener = null;
       }
-      if (_arena != null) {
-         _arena.removeAllCombatants();
-         _arena.terminateBattle();
+      if (arena != null) {
+         arena.removeAllCombatants();
+         arena.terminateBattle();
       }
-      if (_diag != null) {
-         _diag.endDiagnostics();
+      if (diag != null) {
+         diag.endDiagnostics();
       }
-      _diag = null;
+      diag = null;
       System.out.println("end diagnostics called.");
    }
 
@@ -364,9 +373,9 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    protected void finalize() throws Throwable
    {
       try {
-         if (_diag != null) {
-            _diag.endDiagnostics();
-            _diag = null;
+         if (diag != null) {
+            diag.endDiagnostics();
+            diag = null;
             System.out.println("end diagnostics called in finalize!");
          }
       }
@@ -397,7 +406,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       Composite bottomGridBlock = new Composite(mainGridBlock, SWT.NONE);
       FillLayout layout = new FillLayout();
       bottomGridBlock.setLayout(layout);
-      _tabFolder = new TabFolder(bottomGridBlock, SWT.NONE);
+      tabFolder = new TabFolder(bottomGridBlock, SWT.NONE);
 
 
       { // Make the bottom section resize with the main window:
@@ -409,151 +418,151 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       }
 
       // create a TabItem
-      _mapTabItem = new TabItem( _tabFolder, SWT.NULL);
-      _mapTabItem.setText( "Map layout");
+      mapTabItem = new TabItem(tabFolder, SWT.NULL);
+      mapTabItem.setText("Map layout");
       // create a control
-      Composite mapComposite = createComposite(_tabFolder, 1, GridData.FILL_BOTH);
+      Composite mapComposite = createComposite(tabFolder, 1, GridData.FILL_BOTH);
       // add the control to the TabItem
-      _mapTabItem.setControl( mapComposite );
+      mapTabItem.setControl(mapComposite);
 
       // create a TabItem
-      _terrainTabItem = new TabItem( _tabFolder, SWT.NULL);
-      _terrainTabItem.setText( "Terrain and Walls");
+      terrainTabItem = new TabItem(tabFolder, SWT.NULL);
+      terrainTabItem.setText("Terrain and Walls");
       // create a control
-      Composite terrainComposite = createComposite(_tabFolder, 1, GridData.FILL_BOTH);
+      Composite terrainComposite = createComposite(tabFolder, 1, GridData.FILL_BOTH);
       // add the control to the TabItem
-      _terrainTabItem.setControl( terrainComposite );
+      terrainTabItem.setControl(terrainComposite);
 
       // create the next tab
-      _triggersTabItem = new TabItem( _tabFolder, SWT.NULL);
-      _triggersTabItem.setText( "Triggers");
-      Composite triggersComposite = createComposite(_tabFolder, 1, GridData.FILL_BOTH);
+      triggersTabItem = new TabItem(tabFolder, SWT.NULL);
+      triggersTabItem.setText("Triggers");
+      Composite triggersComposite = createComposite(tabFolder, 1, GridData.FILL_BOTH);
       // add the control to the TabItem
-      _triggersTabItem.setControl( triggersComposite );
+      triggersTabItem.setControl(triggersComposite);
 
       // create the next tab
-      _combatantsTabItem = new TabItem( _tabFolder, SWT.NULL);
-      _combatantsTabItem.setText( "Combatants");
-      Composite combatantsComposite = createComposite(_tabFolder, 1, GridData.FILL_BOTH);
+      combatantsTabItem = new TabItem(tabFolder, SWT.NULL);
+      combatantsTabItem.setText("Combatants");
+      Composite combatantsComposite = createComposite(tabFolder, 1, GridData.FILL_BOTH);
       // add the control to the TabItem
-      _combatantsTabItem.setControl( combatantsComposite );
+      combatantsTabItem.setControl(combatantsComposite);
 
       // create the next tab
-      _messagesTabItem = new TabItem( _tabFolder, SWT.NULL);
-      _messagesTabItem.setText( "Messages");
-      Composite messagesComposite = createComposite(_tabFolder, 1, GridData.FILL_BOTH);
+      messagesTabItem = new TabItem(tabFolder, SWT.NULL);
+      messagesTabItem.setText("Messages");
+      Composite messagesComposite = createComposite(tabFolder, 1, GridData.FILL_BOTH);
       // add the control to the TabItem
-      _messagesTabItem.setControl( messagesComposite );
+      messagesTabItem.setControl(messagesComposite);
 
       int selectedTabIndex = 0;
-      _tabFolder.setSelection(selectedTabIndex);
-      _tabFolder.addSelectionListener(this);
+      tabFolder.setSelection(selectedTabIndex);
+      tabFolder.addSelectionListener(this);
 
       // When the server starts up, disable the pan feature of the map so you can drag a paintbrush
       // with terrain over multiple hexes at once.
-      _map.allowPan(false);
-      _map.setMode(IMapWidget.MapMode.NONE);
+      map.allowPan(false);
+      map.setMode(IMapWidget.MapMode.NONE);
 
-      TabItem selectedTab = _tabFolder.getItem(selectedTabIndex);
-      if (_map != null) {
-         CombatMap combatMap = _map.getCombatMap();
+      TabItem selectedTab = tabFolder.getItem(selectedTabIndex);
+      if (map != null) {
+         CombatMap combatMap = map.getCombatMap();
          if (combatMap != null) {
-            if (selectedTab != _triggersTabItem) {
+            if (selectedTab != triggersTabItem) {
                combatMap.setSelectedTrigger(null);
             }
             else {
-               combatMap.setSelectedTrigger(_triggersInterface.getCurrentlySelectedTrigger());
+               combatMap.setSelectedTrigger(triggersInterface.getCurrentlySelectedTrigger());
             }
          }
       }
 
       GridData data;
       GridLayout grid;
-      _mapInterface = new MapInterface(this);
-      _terrainInterface = new TerrainInterface();
-      _triggersInterface = new TriggersInterface();
-      if (_map instanceof MapWidget3D) {
-         ((MapWidget3D) _map).addGLViewListener(_terrainInterface);
+      mapInterface = new MapInterface(this);
+      terrainInterface = new TerrainInterface();
+      triggersInterface = new TriggersInterface();
+      if (map instanceof MapWidget3D) {
+         ((MapWidget3D) map).addGLViewListener(terrainInterface);
       }
-      _mapInterface.buildBlock(mapComposite);
-      _terrainInterface.buildBlock(terrainComposite);
-      _triggersInterface.buildBlock(triggersComposite);
-      _triggersInterface.setMap(_map);
-      _terrainInterface.setMap(_map);
+      mapInterface.buildBlock(mapComposite);
+      terrainInterface.buildBlock(terrainComposite);
+      triggersInterface.buildBlock(triggersComposite);
+      triggersInterface.setMap(map);
+      terrainInterface.setMap(map);
 
       {
          Composite combatantButtonsBlock = new Composite(combatantsComposite, SWT.TRAIL);
-         grid = new GridLayout(_maxTeams/*columns*/, false);
+         grid = new GridLayout(maxTeams/*columns*/, false);
          grid.verticalSpacing = 1;
          grid.horizontalSpacing = 1;
          combatantButtonsBlock.setLayout(grid);
          data = new GridData();
          data.horizontalSpan = 3;
          combatantButtonsBlock.setLayoutData(data);
-         _combatantsButtons = new Button[_maxTeams][MAX_COMBATANTS_PER_TEAM];
-         _combatantsAI      = new Combo[_maxTeams][MAX_COMBATANTS_PER_TEAM];
-         _combatantsName    = new Combo[_maxTeams][MAX_COMBATANTS_PER_TEAM];
-         List<String> charNames = _charWidget.getCharacterFile().getCharacterNames();
+         combatantsButtons = new Button[maxTeams][MAX_COMBATANTS_PER_TEAM];
+         combatantsAI = new Combo[maxTeams][MAX_COMBATANTS_PER_TEAM];
+         combatantsName = new Combo[maxTeams][MAX_COMBATANTS_PER_TEAM];
+         List<String> charNames = charWidget.getCharacterFile().getCharacterNames();
          charNames.add("Random...");
          List<String> aiNames = new ArrayList<>();
-         aiNames.add(_INACTIVE_AI_NAME);
-         aiNames.add(_REMOTE_AI_NAME);
+         aiNames.add(INACTIVE_AI_NAME);
+         aiNames.add(REMOTE_AI_NAME);
          aiNames.add("Local");
          for (AI_Type aiType : AI_Type.values()) {
             aiNames.add("AI - " + aiType.name);
          }
-         for (int team=0 ; team<_maxTeams ; team++) {
+         for (int team = 0; team < maxTeams; team++) {
             Group teamGroup = createGroup(combatantButtonsBlock, TEAM_NAMES[team], 3/*columns*/, false/*sameSize*/, 3/*hSpacing*/, 3/*vSpacing*/);
             for (int combatant=0 ; combatant<MAX_COMBATANTS_PER_TEAM ; combatant++) {
-               _combatantsButtons[team][combatant] = new Button(teamGroup, SWT.PUSH);
-               _combatantsAI[team][combatant] = createCombo(teamGroup, SWT.DROP_DOWN | SWT.READ_ONLY, 1/*hSpan*/, aiNames);
-               _combatantsName[team][combatant] = createCombo(teamGroup, SWT.NONE, 1/*hSpan*/, charNames);
-               _combatantsButtons[team][combatant].addListener(SWT.Paint, this);
+               combatantsButtons[team][combatant] = new Button(teamGroup, SWT.PUSH);
+               combatantsAI[team][combatant] = createCombo(teamGroup, SWT.DROP_DOWN | SWT.READ_ONLY, 1/*hSpan*/, aiNames);
+               combatantsName[team][combatant] = createCombo(teamGroup, SWT.NONE, 1/*hSpan*/, charNames);
+               combatantsButtons[team][combatant].addListener(SWT.Paint, this);
                data = new GridData();
                data.minimumWidth = 35;
                data.horizontalAlignment = SWT.CENTER;
                data.grabExcessHorizontalSpace = true;
-               _combatantsButtons[team][combatant].setLayoutData(data);
-               _combatantsButtons[team][combatant].addSelectionListener(this);
+               combatantsButtons[team][combatant].setLayoutData(data);
+               combatantsButtons[team][combatant].addSelectionListener(this);
                // enable only the first button.
-               _combatantsButtons[team][combatant].setEnabled(true);
-               _combatantsAI[team][combatant].setEnabled(false);
-               _combatantsName[team][combatant].setEnabled(false);
-               _combatantsAI[team][combatant].setText(aiNames.get(0)); // 'Off'
+               combatantsButtons[team][combatant].setEnabled(true);
+               combatantsAI[team][combatant].setEnabled(false);
+               combatantsName[team][combatant].setEnabled(false);
+               combatantsAI[team][combatant].setText(aiNames.get(0)); // 'Off'
 
-               _combatantsName[team][combatant].addSelectionListener(this);
-               _combatantsName[team][combatant].addModifyListener(this);
-               _combatantsAI[team][combatant].addSelectionListener(this);
-               _combatantsAI[team][combatant].addModifyListener(this);
+               combatantsName[team][combatant].addSelectionListener(this);
+               combatantsName[team][combatant].addModifyListener(this);
+               combatantsAI[team][combatant].addSelectionListener(this);
+               combatantsAI[team][combatant].addModifyListener(this);
             }
          }
       }
       {
-         _messages = new Browser(messagesComposite, SWT.NONE | SWT.BORDER);
-         _messages.setText("<br><br><br><br><br>");
+         messages = new Browser(messagesComposite, SWT.NONE | SWT.BORDER);
+         messages.setText("<br><br><br><br><br>");
          data = new GridData(SWT.FILL, SWT.FILL, true/*grabExcessHorizontalSpace*/, true/*grabExcessVerticalSpace*/);
          data.minimumHeight = 175;
          data.minimumWidth  = WINDOW_WIDTH;
          data.horizontalSpan = 3;
-         _messages.setLayoutData(data);
+         messages.setLayoutData(data);
          Display display = getShell().getDisplay();
          if (display != null) {
-            _messages.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
+            messages.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
          }
       }
    }
 
    public void addNewCharacter(String characterName) {
-      for (int team=0 ; team<_maxTeams ; team++) {
-         for (int combatant=0 ; combatant<_combatantsName[team].length ; combatant++) {
-            _combatantsName[team][combatant].add(characterName);
+      for (int team = 0; team < maxTeams; team++) {
+         for (int combatant = 0; combatant < combatantsName[team].length ; combatant++) {
+            combatantsName[team][combatant].add(characterName);
          }
       }
    }
    public void removeCharacter(String characterName) {
-      for (int team=0 ; team<_maxTeams ; team++) {
-         for (int combatant=0 ; combatant<_combatantsName[team].length ; combatant++) {
-            _combatantsName[team][combatant].remove(characterName);
+      for (int team = 0; team < maxTeams; team++) {
+         for (int combatant = 0; combatant < combatantsName[team].length ; combatant++) {
+            combatantsName[team][combatant].remove(characterName);
          }
       }
    }
@@ -575,21 +584,21 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       data.grabExcessHorizontalSpace = true;
       midGridBlock.setLayoutData(data);
 
-      _uses3dMap = Configuration.use3DMap();
+      uses3dMap = Configuration.use3DMap();
 
-      if (_uses3dMap) {
-         _map = new MapWidget3D(midGridBlock);
+      if (uses3dMap) {
+         map = new MapWidget3D(midGridBlock);
       }
       else {
-         _map = new MapWidget2D(midGridBlock);
+         map = new MapWidget2D(midGridBlock);
       }
-      _map.addListener(this);
+      map.addListener(this);
       data = new GridData(SWT.FILL, SWT.FILL, true/*grabExcessHorizontalSpace*/, true/*grabExcessVerticalSpace*/);
       data.minimumHeight = MAP_SIZE_HEIGHT;
       data.minimumWidth  = MAP_SIZE_WIDTH;
 
       data.horizontalAlignment = GridData.FILL;
-      _map.setLayoutData(data);
+      map.setLayoutData(data);
       {
          Composite midRightBlock = new Composite(midGridBlock, SWT.CENTER);
          grid = new GridLayout(1, false);
@@ -597,7 +606,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
          data = new GridData(SWT.FILL, SWT.FILL, false/*grabExcessHorizontalSpace*/, true/*grabExcessVerticalSpace*/);
          data.horizontalAlignment = SWT.BEGINNING;
          midRightBlock.setLayoutData(data);
-         _map.addControlGroup(midRightBlock);
+         map.addControlGroup(midRightBlock);
          {
             Composite midRightTopBlock = new Composite(midRightBlock, SWT.CENTER);
             grid = new GridLayout(2, false);
@@ -616,17 +625,17 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
                @SuppressWarnings("unused")
                Label dummy = new Label(midRightTopLeftBlock, SWT.LEFT);
                dummy = new Label(midRightTopLeftBlock, SWT.LEFT);
-               _pausePlayButton = createButton(midRightTopLeftBlock, "Pause", 1/*hSpan*/, null/*fontData*/, this);
-               _turnButton = createButton(midRightTopLeftBlock, "Turn++", 1/*hSpan*/, null/*fontData*/, this);
-               _roundButton = createButton(midRightTopLeftBlock, "Round++", 1/*hSpan*/, null/*fontData*/, this);
-               _phaseButton = createButton(midRightTopLeftBlock, "Phase++", 1/*hSpan*/, null/*fontData*/, this);
+               pausePlayButton = createButton(midRightTopLeftBlock, "Pause", 1/*hSpan*/, null/*fontData*/, this);
+               turnButton = createButton(midRightTopLeftBlock, "Turn++", 1/*hSpan*/, null/*fontData*/, this);
+               roundButton = createButton(midRightTopLeftBlock, "Round++", 1/*hSpan*/, null/*fontData*/, this);
+               phaseButton = createButton(midRightTopLeftBlock, "Phase++", 1/*hSpan*/, null/*fontData*/, this);
                resetPlayPauseControls();
 
                Group group = createGroup(midRightTopLeftBlock, "Battle", 1/*columns*/, false/*sameSize*/, 3/*hSpacing*/, 3/*vSpacing*/);
-               _loadBattleButton = createButton(group, "Load", 1/*hSpan*/, null/*fontData*/, this);
-               _saveBattleButton = createButton(group, "Save", 1/*hSpan*/, null/*fontData*/, this);
+               loadBattleButton = createButton(group, "Load", 1/*hSpan*/, null/*fontData*/, this);
+               saveBattleButton = createButton(group, "Save", 1/*hSpan*/, null/*fontData*/, this);
             }
-            _charInfoBlock.buildBlock(midRightTopBlock);
+            charInfoBlock.buildBlock(midRightTopBlock);
          }
          {
             Composite midRightBottomBlock = new Composite(midRightBlock, SWT.CENTER);
@@ -639,17 +648,17 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
             AutoRunBlock autoRunBlock = new AutoRunBlock(this);
             autoRunBlock.buildBlock(midRightBottomBlock);
 
-            _pseudoRandomBlock.buildBlock(midRightBottomBlock);
+            pseudoRandomBlock.buildBlock(midRightBottomBlock);
          }
       }
    }
 
    private void resetPlayPauseControls() {
-      _pausePlayButton.setEnabled(true);
-      _pausePlayButton.setText("Pause");
-      _turnButton.setEnabled(false);
-      _roundButton.setEnabled(false);
-      _phaseButton.setEnabled(false);
+      pausePlayButton.setEnabled(true);
+      pausePlayButton.setText("Pause");
+      turnButton.setEnabled(false);
+      roundButton.setEnabled(false);
+      phaseButton.setEnabled(false);
    }
 
    /**
@@ -657,20 +666,20 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
     */
    private void addStartButton(Composite parent)
    {
-      _startStopBattleButton = new Button(parent, SWT.LEFT);
+      startStopBattleButton = new Button(parent, SWT.LEFT);
       setOpenButtonText(true/*start*/);
-      _startStopBattleButton.addSelectionListener(this);
+      startStopBattleButton.addSelectionListener(this);
    }
    private void setOpenButtonText(boolean start) {
       Color bgColor;
       if (start) {
-         _startStopBattleButton.setText("Start Battle");
-         bgColor = new Color(_startStopBattleButton.getDisplay(), 128, 255, 128);
+         startStopBattleButton.setText("Start Battle");
+         bgColor = new Color(startStopBattleButton.getDisplay(), 128, 255, 128);
       } else {
-         _startStopBattleButton.setText("Stop Battle");
-         bgColor = new Color(_startStopBattleButton.getDisplay(), 255, 128, 128);
+         startStopBattleButton.setText("Stop Battle");
+         bgColor = new Color(startStopBattleButton.getDisplay(), 255, 128, 128);
       }
-      _startStopBattleButton.setBackground(bgColor);
+      startStopBattleButton.setBackground(bgColor);
       bgColor.dispose();
    }
 
@@ -694,24 +703,24 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       setMap(map, true/*clearCombatants*/);
    }
    public void setMap(CombatMap map, boolean clearCombatants) {
-      if (_map != null) {
-         _map.endHexSelection();
+      if (this.map != null) {
+         this.map.endHexSelection();
       }
       if (map != null) {
          map = map.clone();
-         _changingMap = true;
-         _arena.setCombatMap(map, clearCombatants);
-         _map.updateMap(map, (byte)-1/*selfID*/, (byte)-1/*selfTeam*/, null/*availableLocs*/, (byte)-1/*targetID*/);
-         _triggersInterface.setMap(map);
-         _originalMap = map.clone();
-         _mapInterface.setMap(map);
-         for (byte team=0 ; team<_maxTeams ; team++) {
+         changingMap = true;
+         arena.setCombatMap(map, clearCombatants);
+         this.map.updateMap(map, (byte)-1/*selfID*/, (byte)-1/*selfTeam*/, null/*availableLocs*/, (byte)-1/*targetID*/);
+         triggersInterface.setMap(map);
+         originalMap = map.clone();
+         mapInterface.setMap(map);
+         for (byte team = 0; team < maxTeams; team++) {
             for (byte curCombatantIndex=0 ; curCombatantIndex<map.getStockAIName(team).length ; curCombatantIndex++) {
                boolean locExists = (map.getStartingLocation(team, curCombatantIndex) != null);
                String aiName = map.getStockAIName(team)[curCombatantIndex];
                String combatantName = map.getStockCharacters(team)[curCombatantIndex];
-               if ((aiName == null) || _REMOTE_AI_NAME.equals(aiName) || _INACTIVE_AI_NAME.equals(aiName)) {
-                  aiName = locExists ? _REMOTE_AI_NAME : _INACTIVE_AI_NAME;
+               if ((aiName == null) || REMOTE_AI_NAME.equals(aiName) || INACTIVE_AI_NAME.equals(aiName)) {
+                  aiName = locExists ? REMOTE_AI_NAME : INACTIVE_AI_NAME;
                }
                else {
                   AI_Type aiType = AI_Type.getByString(aiName);
@@ -722,21 +731,21 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
                if (combatantName == null) {
                   combatantName = "";
                }
-               if (_combatantsAI != null) {
-                  _combatantsAI[team][curCombatantIndex].setText(aiName);
-                  _combatantsAI[team][curCombatantIndex].setEnabled(locExists);
+               if (combatantsAI != null) {
+                  combatantsAI[team][curCombatantIndex].setText(aiName);
+                  combatantsAI[team][curCombatantIndex].setEnabled(locExists);
                }
-               if (_combatantsName != null) {
-                  _combatantsName[team][curCombatantIndex].setText(combatantName);
-                  boolean enableNameEdit = locExists && !_INACTIVE_AI_NAME.equals(aiName);
-                  _combatantsName[team][curCombatantIndex].setEnabled(enableNameEdit);
+               if (combatantsName != null) {
+                  combatantsName[team][curCombatantIndex].setText(combatantName);
+                  boolean enableNameEdit = locExists && !INACTIVE_AI_NAME.equals(aiName);
+                  combatantsName[team][curCombatantIndex].setEnabled(enableNameEdit);
                }
             }
          }
-         _changingMap = false;
+         changingMap = false;
          resetPlayPauseControls();
       }
-      updateMap(_arena);
+      updateMap(arena);
    }
    @Override
    public void handleEvent(Event event)
@@ -745,11 +754,11 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       int offsetX = 6;
       int offsetY = 2;
       if (event.type == SWT.Paint) {
-         for (byte team=0 ; team<_combatantsButtons.length ; team++) {
-            for (byte cur=0 ; cur<_combatantsButtons[team].length ; cur++) {
-               if (event.widget == _combatantsButtons[team][cur]) {
+         for (byte team = 0; team < combatantsButtons.length ; team++) {
+            for (byte cur = 0; cur < combatantsButtons[team].length ; cur++) {
+               if (event.widget == combatantsButtons[team][cur]) {
                   ArenaLocation loc = new ArenaLocation((short)0,(short)0);
-                  if (_combatantsButtons[team][cur].isEnabled()) {
+                  if (combatantsButtons[team][cur].isEnabled()) {
                      loc.setTerrain(TerrainType.GRASS);
                      loc.setLabel(CombatMap.getLabel(team, cur));
                   }
@@ -757,7 +766,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
                      loc.setTerrain(TerrainType.GRAVEL);
                      loc.setLabel(" -- ");
                   }
-                  if ((_currentTeam == team) && (_currentCombatant == cur)) {
+                  if ((currentTeam == team) && (currentCombatant == cur)) {
                      event.gc.setBackground(event.display.getSystemColor(SWT.COLOR_GRAY));
                      event.gc.setForeground(event.display.getSystemColor(SWT.COLOR_GRAY));
                      event.gc.fillRectangle(2, 2, event.width-4, event.height-4);
@@ -768,7 +777,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
                   int[] bounds = MapWidget2D.getHexDimensions((short)0/*column*/, (short)0/*row*/, sizePerHex, 0/*offsetX*/, 0/*offsetY*/, true/*cacheResults*/);
                   int x = bounds[MapWidget2D.X_SMALLEST] + 5;
                   int y = bounds[MapWidget2D.Y_SMALLEST] + 3;
-                  if (_combatantsButtons[team][cur].isEnabled()) {
+                  if (combatantsButtons[team][cur].isEnabled()) {
                      event.gc.setForeground(event.display.getSystemColor(SWT.COLOR_RED));
                   }
                   else {
@@ -786,21 +795,21 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    public void widgetSelected(SelectionEvent e)
    {
       try {
-         if (e.widget == _startStopBattleButton) {
-            if (_startStopBattleButton.getText().equals("Start Battle")) {
-//               Shell shell = new Shell(_shell, SWT.DIALOG_TRIM | SWT.MODELESS);
+         if (e.widget == startStopBattleButton) {
+            if (startStopBattleButton.getText().equals("Start Battle")) {
+//               Shell shell = new Shell(shell, SWT.DIALOG_TRIM | SWT.MODELESS);
 //               shell.setText("test");
 //               shell.setLayout(new GridLayout(2/*numColumns*/, false/*makeColumnsEqualWidth*/));
 //               //shell.addFocusListener(this);
                openPort(true/*startup*/);
-            } else { // _openButton.getText().equals("Stop Battle")
+            } else { // openButton.getText().equals("Stop Battle")
                onPlay();
                closePort();
             }
          }
-         else if ((e.widget == _loadBattleButton) || (e.widget == _saveBattleButton)) {
-            boolean save = (e.widget == _saveBattleButton);
-            FileDialog fileDlg = new FileDialog(_loadBattleButton.getShell(), save ? SWT.SAVE : 0);
+         else if ((e.widget == loadBattleButton) || (e.widget == saveBattleButton)) {
+            boolean save = (e.widget == saveBattleButton);
+            FileDialog fileDlg = new FileDialog(loadBattleButton.getShell(), save ? SWT.SAVE : 0);
             fileDlg.setFilterExtensions(new String[] {"*.btl"});
             fileDlg.setFilterNames(new String[] {"battle files (*.btl)"});
             fileDlg.setText("Select battle file to " + (save ? "save battle to" : "load battle from"));
@@ -808,92 +817,92 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
             if ((filename != null) && (filename.length()>0)) {
                File battleFile = new File(filename);
                if (save) {
-                  _arena.serializeToFile(battleFile);
+                  arena.serializeToFile(battleFile);
                }
                else {
-                  _arena.serializeFromFile(battleFile);
-                  setMap(_arena.getCombatMap(), false/*clearCombatants*/);
+                  arena.serializeFromFile(battleFile);
+                  setMap(arena.getCombatMap(), false/*clearCombatants*/);
                   setOpenButtonText(false/*start*/);
                   // Open the Messages tab:
-                  this._tabFolder.setSelection(3);
-                  this._map.allowPan(true);
+                  this.tabFolder.setSelection(3);
+                  this.map.allowPan(true);
                }
             }
          }
-         else if (e.widget == _pausePlayButton) {
-            if (_pausePlayButton.getText().equals("Pause")) {
-               _pausePlayButton.setEnabled(false);
-               if (_arena != null) {
-                  _arena.onPause();
+         else if (e.widget == pausePlayButton) {
+            if (pausePlayButton.getText().equals("Pause")) {
+               pausePlayButton.setEnabled(false);
+               if (arena != null) {
+                  arena.onPause();
                }
             }
             else {
                onPlay();
             }
          }
-         else if ((e.widget == _turnButton) || (e.widget == _roundButton) || (e.widget == _phaseButton)) {
+         else if ((e.widget == turnButton) || (e.widget == roundButton) || (e.widget == phaseButton)) {
             resetPlayPauseControls();
-            if (_arena != null) {
-               if (e.widget == _turnButton) {
-                  _arena.onTurnAdvance();
+            if (arena != null) {
+               if (e.widget == turnButton) {
+                  arena.onTurnAdvance();
                }
-               if (e.widget == _roundButton) {
-                  _arena.onRoundAdvance();
+               if (e.widget == roundButton) {
+                  arena.onRoundAdvance();
                }
-               if (e.widget == _phaseButton) {
-                  _arena.onPhaseAdvance();
+               if (e.widget == phaseButton) {
+                  arena.onPhaseAdvance();
                }
             }
-            synchronized (_pausePlayControl ) {
-               _lock_pausePlayControl.check();
-               _pausePlayControl.notifyAll();
+            synchronized (pausePlayControl) {
+               lock_pausePlayControl.check();
+               pausePlayControl.notifyAll();
             }
          }
-         else if (e.widget == _tabFolder){
-            int selectedTabIndex = _tabFolder.getSelectionIndex();
-            TabItem selectedTab = _tabFolder.getItem(selectedTabIndex);
-            boolean isDraggable = (selectedTab != _terrainTabItem) || (_terrainInterface.allowPan());
-            _map.allowPan(isDraggable);
-            _map.setMode(isDraggable ? IMapWidget.MapMode.DRAG :
-                                       IMapWidget.MapMode.NONE);
+         else if (e.widget == tabFolder){
+            int selectedTabIndex = tabFolder.getSelectionIndex();
+            TabItem selectedTab = tabFolder.getItem(selectedTabIndex);
+            boolean isDraggable = (selectedTab != terrainTabItem) || (terrainInterface.allowPan());
+            map.allowPan(isDraggable);
+            map.setMode(isDraggable ? IMapWidget.MapMode.DRAG :
+                        IMapWidget.MapMode.NONE);
 
-            if (selectedTab != _triggersTabItem) {
-               _map.getCombatMap().setSelectedTrigger(null);
-               _map.redraw();
+            if (selectedTab != triggersTabItem) {
+               map.getCombatMap().setSelectedTrigger(null);
+               map.redraw();
             }
             else {
-               ArenaTrigger trigger = _triggersInterface.getCurrentlySelectedTrigger();
-               _map.getCombatMap().setSelectedTrigger(trigger);
+               ArenaTrigger trigger = triggersInterface.getCurrentlySelectedTrigger();
+               map.getCombatMap().setSelectedTrigger(trigger);
                if (trigger != null) {
-                  _map.redraw();
+                  map.redraw();
                }
             }
          }
          else {
-            for (byte team=0 ; team<_combatantsButtons.length ; team++) {
-               for (byte cur=0 ; cur<_combatantsButtons[team].length ; cur++) {
-                  byte prevCurrentTeam = _currentTeam;
-                  byte prevCurrentCombatant = _currentCombatant;
-                  if (e.widget == _combatantsButtons[team][cur]) {
-                     ArenaLocation oldStartLoc = _arena.getCombatMap().clearStartingLocation(team, cur);
-                     _currentTeam = team;
-                     _currentCombatant = cur;
-                     _combatantsAI[team][cur].setEnabled(false);
-                     _combatantsName[team][cur].setEnabled(false);
-                     _combatantsButtons[team][cur].redraw();
-                     if ((_map != null) && (_map instanceof MapWidget2D)){
+            for (byte team = 0; team < combatantsButtons.length ; team++) {
+               for (byte cur = 0; cur < combatantsButtons[team].length ; cur++) {
+                  byte prevCurrentTeam = currentTeam;
+                  byte prevCurrentCombatant = currentCombatant;
+                  if (e.widget == combatantsButtons[team][cur]) {
+                     ArenaLocation oldStartLoc = arena.getCombatMap().clearStartingLocation(team, cur);
+                     currentTeam = team;
+                     currentCombatant = cur;
+                     combatantsAI[team][cur].setEnabled(false);
+                     combatantsName[team][cur].setEnabled(false);
+                     combatantsButtons[team][cur].redraw();
+                     if ((map != null) && (map instanceof MapWidget2D)){
                         if (oldStartLoc != null) {
                            List<ArenaCoordinates> locs = new ArrayList<>();
                            locs.add(oldStartLoc);
-                           ((MapWidget2D)_map).redraw(locs);
+                           ((MapWidget2D) map).redraw(locs);
                         }
                      }
-                     _mapInterface.refreshSaveButton();
+                     mapInterface.refreshSaveButton();
                   }
-                  else if (e.widget == _combatantsAI[team][cur]) {
+                  else if (e.widget == combatantsAI[team][cur]) {
                      changeAI(team, cur);
                   }
-                  else if (e.widget == _combatantsName[team][cur]) {
+                  else if (e.widget == combatantsName[team][cur]) {
                      changeName(team, cur, true/*checkForRandom*/);
                      //refreshSaveButton();
                   }
@@ -901,7 +910,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
                      continue;
                   }
                   if ((prevCurrentTeam != -1) && (prevCurrentCombatant != -1)) {
-                     _combatantsButtons[prevCurrentTeam][prevCurrentCombatant].redraw();
+                     combatantsButtons[prevCurrentTeam][prevCurrentCombatant].redraw();
                   }
                   return;
                }
@@ -915,7 +924,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
 
    private void changeName(byte team, byte cur, boolean checkForRandom)
    {
-      String newName = _combatantsName[team][cur].getText();
+      String newName = combatantsName[team][cur].getText();
       if (checkForRandom) {
          if (newName.equals("Random...")) {
             GenerateCharacterDialog dialog = new GenerateCharacterDialog(getShell(), null);
@@ -923,63 +932,63 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
             String race = dialog.getRace();
             String equipment = dialog.getEquipment();
             newName = "? " + race + " " + points + " " + equipment;
-            _combatantsName[team][cur].setText(newName);
+            combatantsName[team][cur].setText(newName);
          }
       }
       // new AI player selected
-      if (_map != null) {
-         CombatMap combatMap = _map.getCombatMap();
+      if (map != null) {
+         CombatMap combatMap = map.getCombatMap();
          if (combatMap != null) {
-            Combo AICombo = _combatantsAI[team][cur];
+            Combo AICombo = combatantsAI[team][cur];
             if (AICombo != null) {
                combatMap.setStockCharacter(newName, AICombo.getText(), team, cur);
             }
          }
       }
-      _mapInterface.refreshSaveButton();
+      mapInterface.refreshSaveButton();
    }
 
    private void changeAI(byte team, byte cur) {
       // new AI engine selected
 
-      String newAI = _combatantsAI[team][cur].getText();
+      String newAI = combatantsAI[team][cur].getText();
       if (newAI.startsWith("AI - ")) {
          newAI = newAI.replace("AI - ", "");
       }
-      Combo nameCombo = _combatantsName[team][cur];
+      Combo nameCombo = combatantsName[team][cur];
       if (nameCombo != null) {
-         if (_INACTIVE_AI_NAME.equals(newAI)) {
+         if (INACTIVE_AI_NAME.equals(newAI)) {
             nameCombo.setText("");
             nameCombo.setEnabled(false);
          }
          else {
             nameCombo.setEnabled(true);
          }
-         if (_map != null) {
-            CombatMap combatMap = _map.getCombatMap();
+         if (map != null) {
+            CombatMap combatMap = map.getCombatMap();
             if (combatMap != null) {
                combatMap.setStockCharacter(nameCombo.getText(), newAI, team, cur);
             }
          }
       }
-      _mapInterface.refreshSaveButton();
+      mapInterface.refreshSaveButton();
    }
    public void onPlay() {
       resetPlayPauseControls();
-      if (_arena != null) {
-         _arena.onPlay();
+      if (arena != null) {
+         arena.onPlay();
       }
-      synchronized (_pausePlayControl ) {
-         _lock_pausePlayControl.check();
-         _pausePlayControl.notifyAll();
+      synchronized (pausePlayControl) {
+         lock_pausePlayControl.check();
+         pausePlayControl.notifyAll();
       }
    }
    public void onPause() {
-      _pausePlayButton.setEnabled(true);
-      _pausePlayButton.setText("Play ");
-      _turnButton.setEnabled(true);
-      _roundButton.setEnabled(true);
-      _phaseButton.setEnabled(true);
+      pausePlayButton.setEnabled(true);
+      pausePlayButton.setText("Play ");
+      turnButton.setEnabled(true);
+      roundButton.setEnabled(true);
+      phaseButton.setEnabled(true);
    }
    public void waitForPlay(List<Object> waitingObjects) {
       try {
@@ -989,93 +998,93 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
                display.asyncExec(this::onPause);
             }
          }
-         synchronized (_pausePlayControl) {
-            _lock_pausePlayControl.check();
-            waitingObjects.add(_pausePlayControl);
-            _pausePlayControl.wait();
+         synchronized (pausePlayControl) {
+            lock_pausePlayControl.check();
+            waitingObjects.add(pausePlayControl);
+            pausePlayControl.wait();
          }
       } catch (InterruptedException e) {
          e.printStackTrace();
       }
       finally {
-         waitingObjects.remove(_pausePlayControl);
+         waitingObjects.remove(pausePlayControl);
       }
    }
 
    public void onAutoRun(AutoRunBlock autoRunBlock) {
       openPort(false/*startup*/);
-      _arena.onAutoRun(autoRunBlock);
+      arena.onAutoRun(autoRunBlock);
    }
 
    private void openPort(boolean startup)
    {
       resetMessageBuffer();
-      TabFolder bottomTabFolder = _messagesTabItem.getParent();
-      bottomTabFolder.setSelection(bottomTabFolder.indexOf(_messagesTabItem));
-      _mapTabItem.getControl().setVisible(false);
-      _terrainTabItem.getControl().setVisible(false);
-      _triggersTabItem.getControl().setVisible(false);
-      _combatantsTabItem.getControl().setVisible(false);
+      TabFolder bottomTabFolder = messagesTabItem.getParent();
+      bottomTabFolder.setSelection(bottomTabFolder.indexOf(messagesTabItem));
+      mapTabItem.getControl().setVisible(false);
+      terrainTabItem.getControl().setVisible(false);
+      triggersTabItem.getControl().setVisible(false);
+      combatantsTabItem.getControl().setVisible(false);
 
-      _mapInterface.openPort();
+      mapInterface.openPort();
       setOpenButtonText(false/*start*/);
 
       if (startup) {
-         _clientListener = new ClientListener(this);
-         _clientListener.start();
+         clientListener = new ClientListener(this);
+         clientListener.start();
          CombatServer.resetPseudoRandomNumberGenerator();
-         _arena.addStockCombatants();
+         arena.addStockCombatants();
       }
    }
    private void closePort()
    {
       resetPlayPauseControls();
 
-      TabFolder bottomTabFolder = _messagesTabItem.getParent();
-      bottomTabFolder.setSelection(bottomTabFolder.indexOf(_terrainTabItem));
-      _mapTabItem.getControl().setVisible(true);
-      _terrainTabItem.getControl().setVisible(true);
-      _triggersTabItem.getControl().setVisible(true);
-      _combatantsTabItem.getControl().setVisible(true);
+      TabFolder bottomTabFolder = messagesTabItem.getParent();
+      bottomTabFolder.setSelection(bottomTabFolder.indexOf(terrainTabItem));
+      mapTabItem.getControl().setVisible(true);
+      terrainTabItem.getControl().setVisible(true);
+      triggersTabItem.getControl().setVisible(true);
+      combatantsTabItem.getControl().setVisible(true);
 
-      if (_clientListener != null) {
-         _clientListener.closePort();
-         _clientListener = null;
+      if (clientListener != null) {
+         clientListener.closePort();
+         clientListener = null;
       }
-      _mapInterface.closePort();
+      mapInterface.closePort();
       setOpenButtonText(true/*start*/);
 
-      _arena.removeAllCombatants();
-      _arena.terminateBattle();
-      _arena.disconnectAllClients();
-      if (_map != null) {
-         _map.setZoomToFit();
-         CombatMap combatMap = _map.getCombatMap();
+      arena.removeAllCombatants();
+      arena.terminateBattle();
+      arena.disconnectAllClients();
+      if (map != null) {
+         map.setZoomToFit();
+         CombatMap combatMap = map.getCombatMap();
          combatMap.removeAllCombatants();
          // reload the map, so a new battle can begin
          setMap(combatMap.getName());
-         int selectedTabIndex = _tabFolder.getSelectionIndex();
-         TabItem selectedTab = _tabFolder.getItem(selectedTabIndex);
-         if (selectedTab != _triggersTabItem) {
+         int selectedTabIndex = tabFolder.getSelectionIndex();
+         TabItem selectedTab = tabFolder.getItem(selectedTabIndex);
+         if (selectedTab != triggersTabItem) {
             combatMap.setSelectedTrigger(null);
          }
          else {
-            combatMap.setSelectedTrigger(_triggersInterface.getCurrentlySelectedTrigger());
+            combatMap.setSelectedTrigger(triggersInterface.getCurrentlySelectedTrigger());
          }
-         _map.redraw();
+         map.redraw();
       }
-      for (MessageDialog dialog : MessageDialog._activeMessages) {
+      for (MessageDialog dialog : MessageDialog.ACTIVE_MESSAGES) {
          // TODO: close this dialog
-         if (!dialog._shell.isDisposed()) {
-            dialog._shell.close();
+         if (!dialog.shell.isDisposed()) {
+            dialog.shell.close();
          }
       }
-      MessageDialog._activeMessages.clear();
-      MessageDialog._topMessage = null;
-      for (RequestUserInput input : Arena._activeRequestUserInputs) {
-         input._shell.close();
+      MessageDialog.ACTIVE_MESSAGES.clear();
+      MessageDialog.topMessage = null;
+      for (RequestUserInput input : Arena.activeRequestUserInputs) {
+         input.shell.close();
       }
-      Arena._activeRequestUserInputs.clear();
+      Arena.activeRequestUserInputs.clear();
    }
 
    @Override
@@ -1084,29 +1093,26 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    }
 
    public void resetMessageBuffer() {
-      if (_messages != null) {
+      if (messages != null) {
          if (!getShell().isDisposed()) {
             Display display = getShell().getDisplay();
             if (!display.isDisposed()) {
                display.asyncExec(() -> {
-                  if ((_messages != null) && (!_messages.isDisposed())) {
-                     _messages.setText("<body></body>");
+                  if ((messages != null) && (!messages.isDisposed())) {
+                     messages.setText("<body></body>");
                   }
-                  if ((_fullMessages != null) && (!_fullMessages.isDisposed())) {
-                     _fullMessages.setText("<body></body>");
+                  if ((fullMessages != null) && (!fullMessages.isDisposed())) {
+                     fullMessages.setText("<body></body>");
                   }
-                  synchronized (_pendingMessage) {
-                     _lock_pendingMessage.check();
-                     _pendingMessage.setLength(0);
+                  synchronized (pendingMessage) {
+                     lock_pendingMessage.check();
+                     pendingMessage.setLength(0);
                   }
                });
             }
          }
       }
    }
-   final         Semaphore     _lock_pendingMessage = new Semaphore("CombatServer_pendingMessage",
-                                                                    CombatSemaphore.CLASS_COMBATSERVER_pendingMessage);
-   private final StringBuilder _pendingMessage      = new StringBuilder();
 //   List<String> audit = new ArrayList<>();
    public void appendMessage(String message)
    {
@@ -1126,10 +1132,10 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
 
       // we can't modify any UI element from another thread,
       // so we must use the Display.asyncExec() method:
-      synchronized (_pendingMessage) {
-         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(_lock_pendingMessage)) {
-            boolean alreadyWaiting = (_pendingMessage.length() > 0);
-            _pendingMessage.append(fullMsg);
+      synchronized (pendingMessage) {
+         try (SemaphoreAutoTracker sat = new SemaphoreAutoTracker(lock_pendingMessage)) {
+            boolean alreadyWaiting = (pendingMessage.length() > 0);
+            pendingMessage.append(fullMsg);
             if (alreadyWaiting) {
 //               audit.set(audit.size()-1, "pending:" + audit.get(audit.size()-1));
                return;
@@ -1141,10 +1147,10 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
          if (!display.isDisposed()) {
             display.asyncExec(() -> {
                String msg;
-               synchronized (_pendingMessage) {
-                  _lock_pendingMessage.check();
-                  msg = _pendingMessage.toString();
-                  _pendingMessage.setLength(0);
+               synchronized (pendingMessage) {
+                  lock_pendingMessage.check();
+                  msg = pendingMessage.toString();
+                  pendingMessage.setLength(0);
                }
                // remove all CR-LF because they terminate the javascript execution for the insert
                msg = msg.replace("\n", "");
@@ -1154,20 +1160,20 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
                sb.append("document.body.insertAdjacentHTML('beforeEnd', '");
                sb.append(msg);
                sb.append("');window.scrollTo(0,document.body.scrollHeight);"); // scroll to the bottom of the window
-               if ((_messages != null) && (!_messages.isDisposed())) {
-                  _messages.execute(sb.toString());
-                  _messages.redraw();
+               if ((messages != null) && (!messages.isDisposed())) {
+                  messages.execute(sb.toString());
+                  messages.redraw();
                }
-               if ((_fullMessages != null) && (!_fullMessages.isDisposed())) {
-                  _fullMessages.execute(sb.toString());
-                  _fullMessages.redraw();
+               if ((fullMessages != null) && (!fullMessages.isDisposed())) {
+                  fullMessages.execute(sb.toString());
+                  fullMessages.redraw();
                }
            });
          }
       }
    }
 
-   public Arena getArena() { return _arena;  }
+   public Arena getArena() { return arena;  }
 
    public void updateMap(final Arena arena) {
       // we can't modify any UI element from another thread,
@@ -1176,23 +1182,23 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
          Display display = getShell().getDisplay();
          if (!display.isDisposed()) {
             display.asyncExec(() -> {
-               if (_map != null) {
-                  if (_map.updateMap(arena.getCombatMap(), -1/*selfID*/, (byte)-1/*selfTeam*/, null/*availableLocs*/, -1/*targetID*/)) {
-                     _map.setZoomToFit();
+               if (map != null) {
+                  if (map.updateMap(arena.getCombatMap(), -1/*selfID*/, (byte)-1/*selfTeam*/, null/*availableLocs*/, -1/*targetID*/)) {
+                     map.setZoomToFit();
                   }
-                  int selectedTabIndex = _tabFolder.getSelectionIndex();
-                  TabItem selectedTab = _tabFolder.getItem(selectedTabIndex);
-                  CombatMap combatMap = _map.getCombatMap();
+                  int selectedTabIndex = tabFolder.getSelectionIndex();
+                  TabItem selectedTab = tabFolder.getItem(selectedTabIndex);
+                  CombatMap combatMap = map.getCombatMap();
                   if (combatMap != null) {
-                     if (selectedTab != _triggersTabItem) {
+                     if (selectedTab != triggersTabItem) {
                         combatMap.setSelectedTrigger(null);
                      }
                      else {
-                        combatMap.setSelectedTrigger(_triggersInterface.getCurrentlySelectedTrigger());
+                        combatMap.setSelectedTrigger(triggersInterface.getCurrentlySelectedTrigger());
                      }
                   }
                }
-               _mapInterface.refreshSaveButton();
+               mapInterface.refreshSaveButton();
             });
          }
       }
@@ -1202,29 +1208,29 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    public void onMouseDown(ArenaLocation loc, Event event, double angleFromCenter, double normalizedDistFromCenter)
    {
       List<ArenaCoordinates> locationsToRedraw = new ArrayList<>();
-      int selectedTabIndex = _tabFolder.getSelectionIndex();
-      TabItem selectedTab = _tabFolder.getItem(selectedTabIndex);
+      int selectedTabIndex = tabFolder.getSelectionIndex();
+      TabItem selectedTab = tabFolder.getItem(selectedTabIndex);
       boolean redraw = false;
-      if (selectedTab == _terrainTabItem) {
-         _terrainInterface.onMouseDown(loc, event, angleFromCenter, normalizedDistFromCenter, _map, locationsToRedraw);
+      if (selectedTab == terrainTabItem) {
+         terrainInterface.onMouseDown(loc, event, angleFromCenter, normalizedDistFromCenter, map, locationsToRedraw);
          redraw = true;
       }
-      else if (selectedTab == _triggersTabItem) {
-         _triggersInterface.onMouseDown(loc, event, angleFromCenter, normalizedDistFromCenter, _map, locationsToRedraw);
+      else if (selectedTab == triggersTabItem) {
+         triggersInterface.onMouseDown(loc, event, angleFromCenter, normalizedDistFromCenter, map, locationsToRedraw);
          redraw = true;
       }
-      if (redraw && (_map != null) && (_map instanceof MapWidget2D)) {
+      if (redraw && (map != null) && (map instanceof MapWidget2D)) {
          if (locationsToRedraw.isEmpty()) {
-            _map.redraw();
+            map.redraw();
          }
          else {
-            MapWidget2D map = (MapWidget2D) _map;
+            MapWidget2D map = (MapWidget2D) this.map;
             map.redraw(locationsToRedraw);
          }
       }
 
       // On every mouse click, the map may become modified
-      _mapInterface.refreshSaveButton();
+      mapInterface.refreshSaveButton();
    }
    @Override
    public void onMouseMove(ArenaLocation loc, Event event, double angleFromCenter, double normalizedDistFromCenter) {
@@ -1235,77 +1241,75 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
 
          List<ArenaCoordinates> locationsToRedraw = new ArrayList<>();
 
-         int selectedTabIndex = _tabFolder.getSelectionIndex();
-         TabItem selectedTab = _tabFolder.getItem(selectedTabIndex);
+         int selectedTabIndex = tabFolder.getSelectionIndex();
+         TabItem selectedTab = tabFolder.getItem(selectedTabIndex);
          boolean redraw = false;
-         if (selectedTab == _terrainTabItem) {
-            _terrainInterface.onMouseUp(loc, event, angleFromCenter, normalizedDistFromCenter, _map, locationsToRedraw);
+         if (selectedTab == terrainTabItem) {
+            terrainInterface.onMouseUp(loc, event, angleFromCenter, normalizedDistFromCenter, map, locationsToRedraw);
             redraw = true;
          }
-         else if (selectedTab == _triggersTabItem) {
-            _triggersInterface.onMouseUp(loc, event, angleFromCenter, normalizedDistFromCenter, _map.getCombatMap(),
-                                         locationsToRedraw);
+         else if (selectedTab == triggersTabItem) {
+            triggersInterface.onMouseUp(loc, event, angleFromCenter, normalizedDistFromCenter, map.getCombatMap(),
+                                        locationsToRedraw);
             redraw = true;
          }
-         else if (selectedTab == _combatantsTabItem) {
-            if ((_currentTeam > -1) && (_currentCombatant != -1)) {
-               ArenaLocation oldLoc = _arena.getCombatMap().getStartingLocation(_currentTeam, _currentCombatant);
+         else if (selectedTab == combatantsTabItem) {
+            if ((currentTeam > -1) && (currentCombatant != -1)) {
+               ArenaLocation oldLoc = arena.getCombatMap().getStartingLocation(currentTeam, currentCombatant);
                if (oldLoc != null) {
                   locationsToRedraw.add(oldLoc);
                }
-               _arena.getCombatMap().setStartingLocation(_currentTeam, _currentCombatant, loc);
-               _combatantsAI[_currentTeam][_currentCombatant].setEnabled(true);
-               if (_INACTIVE_AI_NAME.equals(_combatantsAI[_currentTeam][_currentCombatant].getText())) {
-                  _combatantsAI[_currentTeam][_currentCombatant].setText(_REMOTE_AI_NAME);
+               arena.getCombatMap().setStartingLocation(currentTeam, currentCombatant, loc);
+               combatantsAI[currentTeam][currentCombatant].setEnabled(true);
+               if (INACTIVE_AI_NAME.equals(combatantsAI[currentTeam][currentCombatant].getText())) {
+                  combatantsAI[currentTeam][currentCombatant].setText(REMOTE_AI_NAME);
                }
-               else if (!_REMOTE_AI_NAME.equals(_combatantsAI[_currentTeam][_currentCombatant].getText())) {
-                  _combatantsName[_currentTeam][_currentCombatant].setEnabled(true);
+               else if (!REMOTE_AI_NAME.equals(combatantsAI[currentTeam][currentCombatant].getText())) {
+                  combatantsName[currentTeam][currentCombatant].setEnabled(true);
                }
                redraw = true;
                locationsToRedraw.add(loc);
             }
          }
-         if (redraw && (_map != null) && (_map instanceof MapWidget2D)) {
+         if (redraw && (map != null) && (map instanceof MapWidget2D)) {
             if (locationsToRedraw.isEmpty()) {
-               _map.redraw();
+               map.redraw();
             }
             else {
-               MapWidget2D map = (MapWidget2D) _map;
+               MapWidget2D map = (MapWidget2D) this.map;
                map.redraw(locationsToRedraw);
             }
          }
 
          // On every mouse click, the map may become modified
-         _mapInterface.refreshSaveButton();
+         mapInterface.refreshSaveButton();
 //      }
    }
 
    @Override
    public void onMouseDrag(ArenaLocation loc, Event event, double angleFromCenter, double normalizedDistFromCenter) {
-      int selectedTabIndex = _tabFolder.getSelectionIndex();
-      TabItem selectedTab = _tabFolder.getItem(selectedTabIndex);
-      if (selectedTab == _terrainTabItem) {
-         _terrainInterface.onMouseDrag(loc, event, angleFromCenter, normalizedDistFromCenter, _map);
+      int selectedTabIndex = tabFolder.getSelectionIndex();
+      TabItem selectedTab = tabFolder.getItem(selectedTabIndex);
+      if (selectedTab == terrainTabItem) {
+         terrainInterface.onMouseDrag(loc, event, angleFromCenter, normalizedDistFromCenter, map);
       }
       else {
          onMouseUp(loc, event, angleFromCenter, normalizedDistFromCenter);
       }
    }
 
-
-   public static boolean _inModify = false;
    @Override
    public void modifyText(ModifyEvent e) {
-      if (!_inModify) {
-         _inModify = true;
+      if (!inModify) {
+         inModify = true;
          try {
-            for (byte team=0 ; (team<_combatantsButtons.length) ; team++) {
-               for (byte cur=0 ; (cur<_combatantsButtons[team].length) ; cur++) {
-                  if (e.widget == _combatantsAI[team][cur]) {
+            for (byte team = 0; (team < combatantsButtons.length) ; team++) {
+               for (byte cur = 0; (cur < combatantsButtons[team].length) ; cur++) {
+                  if (e.widget == combatantsAI[team][cur]) {
                       changeAI(team, cur);
                       return;
                   }
-                  if (e.widget == _combatantsName[team][cur]) {
+                  if (e.widget == combatantsName[team][cur]) {
                      changeName(team, cur, false/*checkForRandom*/);
                      return;
                   }
@@ -1313,7 +1317,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
             }
          }
          finally {
-            _inModify = false;
+            inModify = false;
          }
       }
    }
@@ -1322,8 +1326,8 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
          Display display = getShell().getDisplay();
          if (!display.isDisposed()) {
             display.asyncExec(() -> {
-               if (_map != null) {
-                  _map.redraw();
+               if (map != null) {
+                  map.redraw();
                }
             });
          }
@@ -1334,12 +1338,12 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
          Display display = getShell().getDisplay();
          if (!display.isDisposed()) {
             display.asyncExec(() -> {
-               if (_map != null) {
-                  if (_map instanceof MapWidget2D) {
-                     ((MapWidget2D)_map).redraw(locationsToRedraw);
+               if (map != null) {
+                  if (map instanceof MapWidget2D) {
+                     ((MapWidget2D) map).redraw(locationsToRedraw);
                   }
-                  else if (_map instanceof MapWidget3D) {
-                     _map.redraw();
+                  else if (map instanceof MapWidget3D) {
+                     map.redraw();
                   }
                }
             });
@@ -1352,31 +1356,27 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       if (!getShell().isDisposed()) {
          Display display = getShell().getDisplay();
          if (!display.isDisposed()) {
-            display.asyncExec(() -> _charInfoBlock.updateCombatants(combatants));
+            display.asyncExec(() -> charInfoBlock.updateCombatants(combatants));
          }
       }
    }
 
-
-   public static int    _pseudoRandomNumberSeed = 123;
-   public static int    _pseudoRandomNumberUseCount = 0;
-   public static Random _pseudoRandom = null;
    public static double random() {
 //      if (!_isServer)
 //         Rules.debugBreak();
 
-      if (_pseudoRandom == null) {
-         _pseudoRandom = new Random(_pseudoRandomNumberSeed);
+      if (pseudoRandom == null) {
+         pseudoRandom = new Random(pseudoRandomNumberSeed);
          for (int i=0 ; i <50 ; i++) {
-            _pseudoRandom.nextDouble();
+            pseudoRandom.nextDouble();
          }
 
-         _pseudoRandomNumberUseCount = 0;
+         pseudoRandomNumberUseCount = 0;
          CharacterGenerator.NAMES_LIST_MALE.clear();
          CharacterGenerator.NAMES_LIST_FEMALE.clear();
       }
-      _pseudoRandomNumberUseCount++;
-      return _pseudoRandom.nextDouble();
+      pseudoRandomNumberUseCount++;
+      return pseudoRandom.nextDouble();
    }
 
    public void onNewBattle() {
@@ -1385,11 +1385,11 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
          if (!display.isDisposed()) {
             final Object synchObject = 0;
             display.asyncExec(() -> {
-               if (_pseudoRandomBlock.isUsingPseudoRandomNumber()) {
-                  _pseudoRandomBlock.setSeedText(_pseudoRandomNumberSeed);
+               if (pseudoRandomBlock.isUsingPseudoRandomNumber()) {
+                  pseudoRandomBlock.setSeedText(pseudoRandomNumberSeed);
                }
                else {
-                  if (!_arena._characterGenerated) {
+                  if (!arena.characterGenerated) {
                      generateNewPseudoRandomNumberSeed();
                   }
                }
@@ -1411,8 +1411,8 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
             }
          }
       }
-      synchronized (_pausePlayControl) {
-         _lock_pausePlayControl.check();
+      synchronized (pausePlayControl) {
+         lock_pausePlayControl.check();
       }
    }
    public static final int MAX_PSEUDO_RANDOM_VALUE = 1000;
@@ -1420,33 +1420,33 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       setPseudoRandomNumberSeed((int) (System.currentTimeMillis() / 100));
    }
    public boolean isUsingPseudoRandomNumbers() {
-      return _pseudoRandomBlock.isUsingPseudoRandomNumber();
+      return pseudoRandomBlock.isUsingPseudoRandomNumber();
    }
    public static void setPseudoRandomNumberSeed(int newValue)
    {
       int clippedValue = (newValue % MAX_PSEUDO_RANDOM_VALUE);
       // For every new battle, always create a new Random object, so if you run the same seed twice,
       // it doesn't just continue the same sequences.
-      _pseudoRandom = null;
-      if (_pseudoRandomNumberSeed == clippedValue) {
+      pseudoRandom = null;
+      if (pseudoRandomNumberSeed == clippedValue) {
          return;
       }
-      _pseudoRandomNumberSeed = clippedValue;
-      if (!_inModify) {
+      pseudoRandomNumberSeed = clippedValue;
+      if (!inModify) {
          if (_this != null) {
-            _this._pseudoRandomBlock.setSeedText(_pseudoRandomNumberSeed);
+            _this.pseudoRandomBlock.setSeedText(pseudoRandomNumberSeed);
          }
       }
    }
    public static int getPseudoRandomNumberSeed() {
-      return _pseudoRandomNumberSeed;
+      return pseudoRandomNumberSeed;
    }
    public static int getPseudoRandomNumberUseCount() {
-      return _pseudoRandomNumberUseCount;
+      return pseudoRandomNumberUseCount;
    }
 
    public static void resetPseudoRandomNumberGenerator() {
-      _pseudoRandom = null;
+      pseudoRandom = null;
       CharacterGenerator.NAMES_LIST_MALE.clear();
       CharacterGenerator.NAMES_LIST_FEMALE.clear();
    }
@@ -1461,27 +1461,25 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       return VERSION_NUMBER;
    }
 
-   public void setShell(Shell _shell) {
-      this._shell = _shell;
-      this._shell.addControlListener(this);
-      this._shell.addShellListener(this);
+   public void setShell(Shell shell) {
+      this.shell = shell;
+      this.shell.addControlListener(this);
+      this.shell.addShellListener(this);
    }
 
    public Shell getShell() {
-      return _shell;
+      return shell;
    }
    @Override
    public void keyPressed(KeyEvent arg0) {
    }
    @Override
    public void keyReleased(KeyEvent arg0) {
-      _map.keyReleased(arg0);
+      map.keyReleased(arg0);
    }
-   public static final List<MapWidget3D> _widgets = new ArrayList<>();
 
-   public static boolean _uses3dMap = false;
    public static void registerMapWidget3D(MapWidget3D mapWidget3D) {
-      _widgets.add(mapWidget3D);
+      widgets.add(mapWidget3D);
    }
    @Override
    public void controlMoved(ControlEvent arg0) {
@@ -1509,9 +1507,9 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    }
 
    public void setMapSize(short x, short y) {
-      if (!_changingMap) {
-         _arena.setSize(x, y);
-         updateMap(_arena);
+      if (!changingMap) {
+         arena.setSize(x, y);
+         updateMap(arena);
          redrawMap();
       }
    }

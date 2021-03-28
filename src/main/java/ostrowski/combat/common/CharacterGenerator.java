@@ -46,8 +46,8 @@ public class CharacterGenerator implements Enums
 
    // make a reference to the Rules object before we get into the static initializer, because that
    // makes a reference to the PriestSpells, which need the Rules object to already have been loaded.
-   static final Attribute at = Attribute.Strength;// force load of this enum
-   static final String _dummy = Rules.diagCompName;
+   static final Attribute at    = Attribute.Strength;// force load of this enum
+   static final String    dummy = Rules.diagCompName;
 
    static public Character generateRandomCharacter(String fullSource, Arena arena, boolean printCharacter) {
       List<String> tokens = convertSourceIntoTokens(fullSource);
@@ -165,7 +165,7 @@ public class CharacterGenerator implements Enums
       List<Gender> genders = Race.getGendersForRace(raceName);
       for (Gender g : genders) {
          for (String token : tokens) {
-            if (token.equalsIgnoreCase(g._name)) {
+            if (token.equalsIgnoreCase(g.name)) {
                gender = g;
                tokens.remove(token);
                break;
@@ -272,7 +272,7 @@ public class CharacterGenerator implements Enums
                      if (name.equalsIgnoreCase("team")) {
                         for (byte teamID = 0; teamID < TEAM_NAMES.length; teamID++) {
                            if (value.equalsIgnoreCase(TEAM_NAMES[teamID])) {
-                              character._teamID = teamID;
+                              character.teamID = teamID;
                               break;
                            }
                         }
@@ -303,7 +303,7 @@ public class CharacterGenerator implements Enums
                                  byte level = Byte.parseByte(value);
                                  mageSpell.setFamiliarity(MageSpell.FAM_KNOWN);
                                  character.setSpellLevel(mageSpell.getName(), mageSpell.getLevel());
-                                 Class<? extends MageSpell>[] requiredSpells = mageSpell._prerequisiteSpells;
+                                 Class<? extends MageSpell>[] requiredSpells = mageSpell.prerequisiteSpells;
                                  for (Class<? extends MageSpell> preReq : requiredSpells) {
                                     try {
                                        MageSpell preReqSpell = preReq.getDeclaredConstructor().newInstance();
@@ -317,7 +317,7 @@ public class CharacterGenerator implements Enums
                                        e.printStackTrace();
                                     }
                                  }
-                                 for (MageCollege college : mageSpell._prerequisiteColleges) {
+                                 for (MageCollege college : mageSpell.prerequisiteColleges) {
                                     if (level > character.getCollegeLevel(college.getName())) {
                                        character.setCollegeLevel(college.getName(), level);
                                     }
@@ -451,14 +451,14 @@ public class CharacterGenerator implements Enums
 
       Skill weaponSkill = new Skill(primaryWeapon.getAttackStyle(0).getSkillType(), (byte)0);
       byte shieldLevel = 0;
-      boolean usingAsOneHanded = (primaryWeapon.getAttackStyle(0)._handsRequired == 1);
+      boolean usingAsOneHanded = (primaryWeapon.getAttackStyle(0).handsRequired == 1);
       if (usingAsOneHanded) {
          // Bastard swords and Katanas should only be used one-handed if we have a STR greater than the fast STR for 1-handed
          WeaponStyleAttack oneHandedSwing = null;
          WeaponStyleAttack twoHandedSwing = null;
          for (WeaponStyleAttack style : primaryWeapon.getAttackStyles()) {
             if (style.getAttackType() == AttackType.SWING) {
-               if (style._handsRequired == 1) {
+               if (style.handsRequired == 1) {
                   oneHandedSwing = style;
                }
                else {
@@ -893,12 +893,12 @@ public class CharacterGenerator implements Enums
 
          while ((weightAvailable > 1) && (allowableExpenditure > 250) && (desiredPotions.size() > 0)) {
             Potion potion = desiredPotions.remove(0);
-            if ((potion._weight > weightAvailable) || (potion._cost > allowableExpenditure)) {
+            if ((potion.weight > weightAvailable) || (potion.cost > allowableExpenditure)) {
                continue;
             }
             character.addEquipment(potion);
-            weightAvailable -= potion._weight;
-            allowableExpenditure -= potion._cost;
+            weightAvailable -= potion.weight;
+            allowableExpenditure -= potion.cost;
          }
       }
 

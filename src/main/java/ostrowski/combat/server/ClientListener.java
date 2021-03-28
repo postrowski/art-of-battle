@@ -11,11 +11,11 @@ import ostrowski.combat.common.Rules;
 
 public class ClientListener extends Thread
 {
-   ServerSocket _serverSocket;
-   final CombatServer _server;
-   boolean      _keepRunning          = true;
+   ServerSocket serverSocket;
+   final CombatServer server;
+   boolean keepRunning = true;
    public ClientListener(CombatServer server) {
-      _server = server;
+      this.server = server;
    }
 
    @Override
@@ -24,15 +24,15 @@ public class ClientListener extends Thread
       Thread.currentThread().setName("ClientListener");
       ClientProxy clientThread;
       try {
-         _serverSocket = new ServerSocket(Configuration.serverPort());
+         serverSocket = new ServerSocket(Configuration.serverPort());
       } catch (IOException e1) {
          e1.printStackTrace();
          return;
       }
-      while (_keepRunning) {
+      while (keepRunning) {
          try {
-            clientThread = new ClientProxy(_server.getArena());
-            clientThread.setSocket(_serverSocket.accept());
+            clientThread = new ClientProxy(server.getArena());
+            clientThread.setSocket(serverSocket.accept());
             Rules.diag("socket connection accepted.");
             clientThread.start();
          } catch (IOException e) {
@@ -41,10 +41,10 @@ public class ClientListener extends Thread
    }
    public void closePort()
    {
-      _keepRunning = false;
+      keepRunning = false;
       try {
-         if (_serverSocket != null) {
-            _serverSocket.close();
+         if (serverSocket != null) {
+            serverSocket.close();
          }
       } catch (IOException e) {
       }

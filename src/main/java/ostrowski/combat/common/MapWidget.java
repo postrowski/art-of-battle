@@ -26,14 +26,34 @@ import java.util.*;
 
 public abstract class MapWidget extends Helper implements SelectionListener, IMapWidget, KeyListener
 {
-   static private final HashMap<Long, int[]> wallPolygons = new HashMap<>();
+   private          Button                                    centerOnSelfButton;
+   protected        CombatMap                                 combatMap;
+   protected final  List<IMapListener>                        listeners;
+   protected        int                                       selfID;
+   protected        byte                                      selfTeam;
+   protected        ArenaLocation                             selfLoc               = null;
+   protected        int                                       targetID;
+   protected        RequestMovement                           movementRequest       = null;
+   protected        RequestLocation                           locationRequest       = null;
+   protected        Set<ArenaLocation>                        selectableHexes       = null;
+   protected        boolean                                   isDragable            = true;
+   protected        List<Orientation>                         mouseOverOrientations = new ArrayList<>();
+   protected        Character                                 mouseOverCharacter    = null;
+   protected        ArenaLocation                             mouseOverLocation     = null;
+   protected final  Map<ArenaCoordinates, List<ArenaTrigger>> eventsMap             = new HashMap<>();
+   protected        Map<ArenaCoordinates, ArenaCoordinates>   routeMap              = null;
+   protected        List<ArenaCoordinates>                    path                  = null;
+   protected static List<ArenaLocation>                       line                  = new ArrayList<>();
+   protected static RGB                                       lineColor             = null;
+   protected        IMapWidget.MapMode       mapMode       = MapMode.DRAG;
+   static private final HashMap<Long, int[]> WALL_POLYGONS = new HashMap<>();
    static public int[] getPolygonForTwoWalls(TerrainWall wallA, TerrainWall wallB) {
-      return wallPolygons.get(wallA.with(wallB));
+      return WALL_POLYGONS.get(wallA.with(wallB));
    }
 
    static private void addWallPolygon(TerrainWall wallA, TerrainWall wallB, int[] polygon) {
       long key = wallA.with(wallB);
-      if (wallPolygons.containsKey(key)) {
+      if (WALL_POLYGONS.containsKey(key)) {
          DebugBreak.debugBreak("duplicate Polygons defined for a single wall pair: " + wallA + ", " + wallB);
       }
 
@@ -58,7 +78,7 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
             }
          }
       }
-      wallPolygons.put(key, polygon);
+      WALL_POLYGONS.put(key, polygon);
    }
    static {
       // For each of the six vertices, connect the appropriate other lines into polygons.
@@ -102,33 +122,10 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
       return null;
    }
 
-   private         Button                                    _centerOnSelfButton;
-   protected       CombatMap                                 _combatMap;
-   protected final List<IMapListener>                        _listeners;
-   protected       int                                       _selfID;
-   protected       byte                                      _selfTeam;
-   protected       ArenaLocation                             _selfLoc               = null;
-   protected       int                                       _targetID;
-   protected       RequestMovement                           _movementRequest       = null;
-   protected       RequestLocation                           _locationRequest       = null;
-   protected       Set<ArenaLocation>                        _selectableHexes       = null;
-   protected       boolean                                   _isDragable            = true;
-   protected       List<Orientation>                         _mouseOverOrientations = new ArrayList<>();
-   protected       Character                                 _mouseOverCharacter    = null;
-   protected       ArenaLocation                             _mouseOverLocation     = null;
-   protected final Map<ArenaCoordinates, List<ArenaTrigger>> _eventsMap             = new HashMap<>();
-
-   protected        Map<ArenaCoordinates, ArenaCoordinates> _routeMap  = null;
-   protected        List<ArenaCoordinates>                  _path      = null;
-   protected static List<ArenaLocation>                     _line      = new ArrayList<>();
-   protected static RGB                                     _lineColor = null;
-
-   protected IMapWidget.MapMode _mapMode = MapMode.DRAG;
-
    protected MapWidget() {
-      _listeners = new ArrayList<>();
+      listeners = new ArrayList<>();
 
-      if (CombatServer._isServer) {
+      if (CombatServer.isServer) {
          CombatServer._this.getShell().addKeyListener(this);
       }
    }
@@ -136,8 +133,8 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
    @Override
    public void addControlGroup(Composite parent)
    {
-      _centerOnSelfButton = createButton(parent, "Center view on self", 1/*hSpan*/, null/*fontData*/, this);
-      _centerOnSelfButton.setEnabled(false);
+      centerOnSelfButton = createButton(parent, "Center view on self", 1/*hSpan*/, null/*fontData*/, this);
+      centerOnSelfButton.setEnabled(false);
    }
 
    @Override
@@ -146,7 +143,7 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
 
    @Override
    public void widgetSelected(SelectionEvent e) {
-      if (e.widget == _centerOnSelfButton) {
+      if (e.widget == centerOnSelfButton) {
          centerOnSelf();
       }
    }
@@ -155,66 +152,66 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
    protected abstract boolean centerOnSelf();
 
    protected void updateFindSelfButton() {
-      if (_centerOnSelfButton == null) {
+      if (centerOnSelfButton == null) {
          return;
       }
-      if (_centerOnSelfButton.isDisposed()) {
+      if (centerOnSelfButton.isDisposed()) {
          return;
       }
       Character self = null;
-      if ((_selfID != -1) && (_selfLoc != null)) {
-         self = this._combatMap.getCombatantByUniqueID(_selfID);
+      if ((selfID != -1) && (selfLoc != null)) {
+         self = this.combatMap.getCombatantByUniqueID(selfID);
       }
       if (self != null) {
-         _centerOnSelfButton.setEnabled(true);
-         _centerOnSelfButton.setText("Center view on " + self.getName());
+         centerOnSelfButton.setEnabled(true);
+         centerOnSelfButton.setText("Center view on " + self.getName());
       }
       else {
-         _centerOnSelfButton.setEnabled(false);
-         _centerOnSelfButton.setText("Center view on ---");
+         centerOnSelfButton.setEnabled(false);
+         centerOnSelfButton.setText("Center view on ---");
       }
-      _centerOnSelfButton.redraw();
+      centerOnSelfButton.redraw();
    }
 
    @Override
    public CombatMap getCombatMap() {
-      return _combatMap;
+      return combatMap;
    }
 
    @Override
    public int getSelfId() {
-      return _selfID;
+      return selfID;
    }
 
    @Override
    public void updateTargetID(int targetID) {
-      _targetID = targetID;
+      this.targetID = targetID;
    }
 
    @Override
    public void updateArenaLocation(ArenaLocation arenaLoc)
    {
-      ArenaLocation curLoc = _combatMap.getLocation(arenaLoc._x, arenaLoc._y);
+      ArenaLocation curLoc = combatMap.getLocation(arenaLoc.x, arenaLoc.y);
       if (curLoc != null) {
-         // preserve the knownBy self information, since the _visibleTo field doesn't get serialized
+         // preserve the knownBy self information, since the visibleTo field doesn't get serialized
          ArenaLocation oldData = curLoc.clone();
          curLoc.copyData(arenaLoc);
-         curLoc.setKnownBy(_selfID, oldData.isKnownBy(_selfID));
-         curLoc.setVisible(oldData.getVisible(_selfID), _combatMap, null, _selfID, false);
+         curLoc.setKnownBy(selfID, oldData.isKnownBy(selfID));
+         curLoc.setVisible(oldData.getVisible(selfID), combatMap, null, selfID, false);
       }
       else {
-         _combatMap.addLocation(arenaLoc);
+         combatMap.addLocation(arenaLoc);
       }
    }
 
    @Override
    public void updateMapVisibility(MapVisibility mapVisibilty)
    {
-      for (short col = 0; col < _combatMap.getSizeX(); col++) {
-         for (short row = (short) (col % 2); row < _combatMap.getSizeY(); row += 2) {
+      for (short col = 0; col < combatMap.getSizeX(); col++) {
+         for (short row = (short) (col % 2); row < combatMap.getSizeY(); row += 2) {
             boolean isVisible = mapVisibilty.isVisible(col, row);
-            ArenaLocation viewLoc = _combatMap.getLocation(col, row);
-            viewLoc.setVisible(isVisible, _combatMap, _selfLoc, _selfID, true/*basedOnFacing*/);
+            ArenaLocation viewLoc = combatMap.getLocation(col, row);
+            viewLoc.setVisible(isVisible, combatMap, selfLoc, selfID, true/*basedOnFacing*/);
          }
       }
    }
@@ -223,59 +220,59 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
    @Override
    public void recomputeVisibility(Character self, Diagnostics diag) {
       if (self == null) {
-         if (_combatMap.isHideViewFromLocalPlayers() && CombatServer._this.getArena().doLocalPlayersExist()) {
+         if (combatMap.isHideViewFromLocalPlayers() && CombatServer._this.getArena().doLocalPlayersExist()) {
             // If we are hiding the view from local players, don't
             // clear this information out, because it's better to see
             // stale information than a blank screen:
             return;
          }
-         _selfTeam = -1;
-         _selfID   = -1;
-         _targetID = -1;
-         _selfLoc  = null;
+         selfTeam = -1;
+         selfID = -1;
+         targetID = -1;
+         selfLoc = null;
       }
       else {
          ArenaCoordinates selfCoord = self.getHeadCoordinates();
-         ArenaLocation selfLoc = _combatMap.getLocation(selfCoord._x, selfCoord._y);
+         ArenaLocation selfLoc = combatMap.getLocation(selfCoord.x, selfCoord.y);
          if (selfLoc == null) // the map may have changed (made smaller) while we were on a spot that is no longer there
          {
-            _selfTeam = -1;
-            _selfID   = -1;
-            _targetID = -1;
-            _selfLoc  = null;
+            selfTeam = -1;
+            selfID = -1;
+            targetID = -1;
+            this.selfLoc = null;
          }
          else {
-            if ((_selfTeam == self._teamID) &&
-                (_selfID   == self._uniqueID) &&
-                (_targetID == self._targetID) &&
-                (_selfLoc.sameCoordinates(selfLoc))) {
+            if ((selfTeam == self.teamID) &&
+                (selfID == self.uniqueID) &&
+                (targetID == self.targetID) &&
+                (this.selfLoc.sameCoordinates(selfLoc))) {
                // nothing has changed.
                return;
             }
-            _selfTeam = self._teamID;
-            _selfID   = self._uniqueID;
-            _targetID = self._targetID;
-            _selfLoc  = selfLoc.clone();
+            selfTeam = self.teamID;
+            selfID = self.uniqueID;
+            targetID = self.targetID;
+            this.selfLoc = selfLoc.clone();
          }
       }
       updateFindSelfButton();
       recomputeVisibilityOfSelf(self);
    }
    public void recomputeVisibilityOfSelf(Character self) {
-      _combatMap.clearVisibility();
-      _combatMap.recomputeKnownLocations(self, true/*basedOnFacing*/, true/*setVisibility*/, null/*locsToRedraw*/);
+      combatMap.clearVisibility();
+      combatMap.recomputeKnownLocations(self, true/*basedOnFacing*/, true/*setVisibility*/, null/*locsToRedraw*/);
    }
 
    @Override
    public void requestMovement(RequestMovement locationMovement) {
       setSelectableHexes(locationMovement.getFutureCoordinates());
-      _movementRequest  = locationMovement;
-      _mouseOverCharacter = getCombatMap().getCombatantByUniqueID(locationMovement.getActorID());
+      movementRequest = locationMovement;
+      mouseOverCharacter = getCombatMap().getCombatantByUniqueID(locationMovement.getActorID());
    }
 
    @Override
    public void requestLocation(RequestLocation locationMovement) {
-      _locationRequest  = locationMovement;
+      locationRequest = locationMovement;
       setSelectableHexes(locationMovement.getSelectableCoordinates());
       // setup a cursor of a the spell effect
    }
@@ -283,10 +280,10 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
    @Override
    public void setSelectableHexes(List<ArenaCoordinates> selectableHexes)
    {
-      _combatMap.setAllHexesSelectable(false);
-      _selectableHexes = new HashSet<>();
-      _selectableHexes.addAll(_combatMap.getLocations(selectableHexes));
-      for (ArenaLocation selectableHex : _selectableHexes) {
+      combatMap.setAllHexesSelectable(false);
+      this.selectableHexes = new HashSet<>();
+      this.selectableHexes.addAll(combatMap.getLocations(selectableHexes));
+      for (ArenaLocation selectableHex : this.selectableHexes) {
          selectableHex.setSelectable(true);
       }
       redraw();
@@ -295,17 +292,17 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
    @Override
    public void endHexSelection()
    {
-      if ((_selectableHexes             != null) ||
-          (_movementRequest             != null) ||
-          (_locationRequest             != null) ||
-          (_mouseOverCharacter          != null)
+      if ((selectableHexes != null) ||
+          (movementRequest != null) ||
+          (locationRequest != null) ||
+          (mouseOverCharacter != null)
           ) {
 
-         _combatMap.setAllHexesSelectable(true);
-         _selectableHexes             = null;
-         _movementRequest             = null;
-         _locationRequest             = null;
-         _mouseOverCharacter          = null;
+         combatMap.setAllHexesSelectable(true);
+         selectableHexes = null;
+         movementRequest = null;
+         locationRequest = null;
+         mouseOverCharacter = null;
          redraw();
       }
    }
@@ -314,10 +311,10 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
    public void setRouteMap(Map<Orientation, Orientation> newMap,
                            List<Orientation> path, boolean allowRedraw)
    {
-      _routeMap = null;
-      _path = null;
+      routeMap = null;
+      this.path = null;
       if (newMap != null) {
-         _routeMap = new HashMap<>();
+         routeMap = new HashMap<>();
          Set<Orientation> keys = newMap.keySet();
          for (Orientation key : keys) {
             Orientation value = newMap.get(key);
@@ -327,16 +324,16 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
                if ((valueCoord != null) && (keyCoord != null)) {
                   // We don't care about facing changes
                   if (!keyCoord.sameCoordinates(valueCoord)) {
-                     _routeMap.put(keyCoord, valueCoord);
+                     routeMap.put(keyCoord, valueCoord);
                   }
                }
             }
          }
       }
       if (path != null) {
-         _path = new ArrayList<>();
+         this.path = new ArrayList<>();
          for (Orientation orient : path) {
-            _path.add(orient.getHeadCoordinates());
+            this.path.add(orient.getHeadCoordinates());
          }
       }
 
@@ -393,7 +390,7 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
             }
          }
       }
-      ArenaTrigger trigger = _combatMap.getSelectedTrigger();
+      ArenaTrigger trigger = combatMap.getSelectedTrigger();
       if (trigger != null) {
          if (trigger.isTriggerAtLocation(loc, null/*mover*/)) {
             typesAndLabels.add(TYPE_trigger);
@@ -414,20 +411,20 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
    @Override
    public void addListener(IMapListener listener)
    {
-      if (!_listeners.contains(listener)) {
-         _listeners.add(listener);
+      if (!listeners.contains(listener)) {
+         listeners.add(listener);
       }
    }
 
    @Override
    public void updateCombatant(Character character, boolean redraw)
    {
-      if (_combatMap == null) {
+      if (combatMap == null) {
          return;
       }
-      _combatMap.updateCombatant(character, true/*checkTriggers*/);
-      if (character._uniqueID == _selfID) {
-         _selfLoc = _combatMap.getHeadLocation(character).clone();
+      combatMap.updateCombatant(character, true/*checkTriggers*/);
+      if (character.uniqueID == selfID) {
+         selfLoc = combatMap.getHeadLocation(character).clone();
          recomputeVisibilityOfSelf(character);
          //recomputeVisibilityByBruteForce(character);
       }
@@ -440,45 +437,45 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
    public boolean updateMap(CombatMap map, int selfID, byte selfTeam,
                             List<ArenaLocation> availableLocs, int targetID)
    {
-      _selfID   = selfID;
-      _selfTeam = selfTeam;
-      _targetID = targetID;
-      boolean mapSizeChanged = (_combatMap == null) || (_combatMap.getSizeX() != map.getSizeX()) || (_combatMap.getSizeY() != map.getSizeY());
-      _combatMap = map;
+      this.selfID = selfID;
+      this.selfTeam = selfTeam;
+      this.targetID = targetID;
+      boolean mapSizeChanged = (combatMap == null) || (combatMap.getSizeX() != map.getSizeX()) || (combatMap.getSizeY() != map.getSizeY());
+      combatMap = map;
       if (mapSizeChanged) {
          setZoomToFit();
       }
       // clear the mouseOverLocation so if the previous position where the mouse was over
       // no longer exists, we don't throw an ArryIndexOutOfBoundsException looking for the ArenaLocation
-      _mouseOverLocation = null;
+      mouseOverLocation = null;
       short leftmostVisibleColumn = getLeftmostVisibleColumn();
-      short rightmostVisibleColumn = _combatMap.getSizeX();
+      short rightmostVisibleColumn = combatMap.getSizeX();
       short topmostVisibleRow = getTopmostVisibleRow();
-      short bottommostVisibleColumn = _combatMap.getSizeY();
+      short bottommostVisibleColumn = combatMap.getSizeY();
       if (selfID != -1) {
-         for (short col = leftmostVisibleColumn; (col < rightmostVisibleColumn) && (_selfLoc == null); col++) {
-            for (short row = topmostVisibleRow; (row < bottommostVisibleColumn) && (_selfLoc == null); row++) {
+         for (short col = leftmostVisibleColumn; (col < rightmostVisibleColumn) && (selfLoc == null); col++) {
+            for (short row = topmostVisibleRow; (row < bottommostVisibleColumn) && (selfLoc == null); row++) {
                if ((row % 2) != (col % 2)) {
                   continue;
                }
-               List<Character> characters = _combatMap.getLocation(col, row).getCharacters();
+               List<Character> characters = combatMap.getLocation(col, row).getCharacters();
                for (Character character : characters) {
-                  if (character._uniqueID == selfID) {
-                     _selfLoc = _combatMap.getLocation(col, row).clone();
+                  if (character.uniqueID == selfID) {
+                     selfLoc = combatMap.getLocation(col, row).clone();
                      break;
                   }
                }
             }
          }
-         if (_selfLoc != null) {
+         if (selfLoc != null) {
             for (short col = leftmostVisibleColumn; col < rightmostVisibleColumn; col++) {
                for (short row = topmostVisibleRow; row < bottommostVisibleColumn; row++) {
                   if ((row % 2) != (col % 2)) {
                      continue;
                   }
-                  ArenaLocation viewLoc = _combatMap.getLocation(col, row);
-                  if (!map.hasLineOfSight(_selfLoc, viewLoc, false/*blockedByAnyStandingCharacter*/)) {
-                     viewLoc.setVisible(false, _combatMap, _selfLoc, _selfID, true/*basedOnFacing*/);
+                  ArenaLocation viewLoc = combatMap.getLocation(col, row);
+                  if (!map.hasLineOfSight(selfLoc, viewLoc, false/*blockedByAnyStandingCharacter*/)) {
+                     viewLoc.setVisible(false, combatMap, selfLoc, this.selfID, true/*basedOnFacing*/);
                   }
                }
             }
@@ -490,7 +487,7 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
                if ((row % 2) != (col % 2)) {
                   continue;
                }
-               ArenaLocation viewLoc = _combatMap.getLocation(col, row);
+               ArenaLocation viewLoc = combatMap.getLocation(col, row);
                ArenaLocation viewerLoc = null;
                boolean visible = false;
                for (ArenaLocation availableLoc : availableLocs) {
@@ -500,7 +497,7 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
                      break;
                   }
                }
-               viewLoc.setVisible(visible, _combatMap, viewerLoc, _selfID, true/*basedOnFacing*/);
+               viewLoc.setVisible(visible, combatMap, viewerLoc, this.selfID, true/*basedOnFacing*/);
             }
          }
       }
@@ -519,28 +516,28 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
    }
 
 //   public void recomputeVisibilityByBruteForce(Character character) {
-//       for (short col = 0; col < _combatMap.getSizeX(); col++) {
-//          for (short row = (short) (col % 2); row < _combatMap.getSizeY(); row += 2) {
-//             ArenaLocation loc = _combatMap.getLocation(col, row);
-//             loc.setVisible(_combatMap, _selfLoc, character._uniqueID);
+//       for (short col = 0; col < combatMap.getSizeX(); col++) {
+//          for (short row = (short) (col % 2); row < combatMap.getSizeY(); row += 2) {
+//             ArenaLocation loc = combatMap.getLocation(col, row);
+//             loc.setVisible(combatMap, selfLoc, character.uniqueID);
 //          }
 //       }
 //   }
 
    @Override
    public void setHideViewFromLocalPlayers(boolean hideViewFromLocalPlayers) {
-      _combatMap.setHideViewFromLocalPlayers(hideViewFromLocalPlayers);
+      combatMap.setHideViewFromLocalPlayers(hideViewFromLocalPlayers);
       redraw();
    }
    @Override
    public void setKnownByAllPlayers(boolean knownByAllPlayers) {
-      _combatMap.setKnownByAllPlayers(knownByAllPlayers);
+      combatMap.setKnownByAllPlayers(knownByAllPlayers);
       redraw();
    }
 
    @Override
    public void setFocusForCharacter(Character actingCharacter, SyncRequest request) {
-      if (actingCharacter._uniqueID == _selfID) {
+      if (actingCharacter.uniqueID == selfID) {
          if (centerOnSelf()) {
             redraw();
          }
@@ -561,24 +558,24 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
    @Override
    public void setLine(ArenaCoordinates startCoord, ArenaCoordinates endCoord, RGB lineColor) {
       if ((startCoord == null) || (endCoord == null)) {
-         _line.clear();
+         line.clear();
       }
       else {
-         _line = _combatMap.getLOSPath(startCoord, endCoord, false/*trimPath*/);
-         ArenaLocation endLocation = _combatMap.getLocation(endCoord);
-         if (!_line.contains(endLocation)) {
-            _line.add(endLocation);
+         line = combatMap.getLOSPath(startCoord, endCoord, false/*trimPath*/);
+         ArenaLocation endLocation = combatMap.getLocation(endCoord);
+         if (!line.contains(endLocation)) {
+            line.add(endLocation);
          }
       }
-      _lineColor = lineColor;
+      MapWidget.lineColor = lineColor;
    }
    @Override
    public List<ArenaLocation> getLine() {
-      return _line;
+      return line;
    }
    @Override
    public List<ArenaLocation> getWallLine() {
-      return _line;
+      return line;
    }
 
    @Override
@@ -586,11 +583,11 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
    }
 
    @Override
-   public void allowPan(boolean allow) { _isDragable = allow; }
+   public void allowPan(boolean allow) { isDragable = allow; }
    @Override
    public void allowDrag(boolean allow) { }
    @Override
-   public void setMode(MapMode mode) { _mapMode = mode;}
+   public void setMode(MapMode mode) { mapMode = mode;}
 
 
    // KeyListener implementation:
@@ -598,11 +595,11 @@ public abstract class MapWidget extends Helper implements SelectionListener, IMa
    public void keyPressed(KeyEvent arg0) {}
    @Override
    public void keyReleased(KeyEvent arg0) {
-      if (_movementRequest != null) {
-         _movementRequest.moveByKeystroke(arg0, _combatMap);
-         if (_movementRequest.isAnswered()) {
-            if (CombatServer._isServer) {
-               CombatServer._this.getArena().completeMove(_movementRequest);
+      if (movementRequest != null) {
+         movementRequest.moveByKeystroke(arg0, combatMap);
+         if (movementRequest.isAnswered()) {
+            if (CombatServer.isServer) {
+               CombatServer._this.getArena().completeMove(movementRequest);
             }
          }
       }

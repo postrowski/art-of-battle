@@ -18,19 +18,19 @@ import ostrowski.ui.Helper;
 
 public class MessagesBlock extends Helper implements SelectionListener
 {
-   final   CharacterDisplay _display;
-   private Browser          _messagesIn;
-   private StringBuilder    _messageBuffer;
-   private Text             _messagesOut;
-   private Button           _sendMessageButton = null;
+   final   CharacterDisplay display;
+   private Browser          messagesIn;
+   private StringBuilder    messageBuffer;
+   private Text             messagesOut;
+   private Button           sendMessageButton = null;
    public MessagesBlock(CharacterDisplay display)
    {
-      _display = display;
+      this.display = display;
       resetMessageBuffer();
    }
 
    public void resetMessageBuffer() {
-      _messageBuffer = new StringBuilder("<body onload='window.scrollTo(0,500000);'>");
+      messageBuffer = new StringBuilder("<body onload='window.scrollTo(0,500000);'>");
    }
 
    public void buildBlock(Composite parent)
@@ -39,31 +39,31 @@ public class MessagesBlock extends Helper implements SelectionListener
       GridData data = new GridData(GridData.FILL_BOTH);
       data.horizontalSpan = 3;
       messagesGroup.setLayoutData(data);
-      _messagesIn = new Browser(messagesGroup, SWT.NONE);
-      _controlList.add(_messagesIn);
+      messagesIn = new Browser(messagesGroup, SWT.NONE);
+      controlList.add(messagesIn);
 
       data = new GridData(GridData.FILL_BOTH | SWT.BORDER);
       data.grabExcessVerticalSpace = true;
       data.horizontalSpan = 2;
-      _messagesIn.setLayoutData(data);
+      messagesIn.setLayoutData(data);
       //_messagesIn.setBackground(new Color(parent.getDisplay(), 255, 255, 255));
 
-      _messagesOut = createText(messagesGroup, "", true, 1);
+      messagesOut = createText(messagesGroup, "", true, 1);
       data = new GridData(GridData.FILL_HORIZONTAL);
       data.minimumHeight = 20;
-      _messagesOut.setLayoutData(data);
-      _sendMessageButton = createButton(messagesGroup, "Send Message", 1, null, this);
+      messagesOut.setLayoutData(data);
+      sendMessageButton = createButton(messagesGroup, "Send Message", 1, null, this);
       data = new GridData();
       data.minimumHeight = 20;
-      _sendMessageButton.setLayoutData(data);
-      _messagesIn.setText("<br>");
+      sendMessageButton.setLayoutData(data);
+      messagesIn.setText("<br>");
    }
 
    @Override
    public void widgetSelected(SelectionEvent e) {
       // handle the 'send message' button
-      if (e.widget == _sendMessageButton) {
-         _display.sendMessageText(clearText());
+      if (e.widget == sendMessageButton) {
+         display.sendMessageText(clearText());
       }
    }
 
@@ -73,8 +73,8 @@ public class MessagesBlock extends Helper implements SelectionListener
 
    public String clearText()
    {
-      String text = _messagesOut.getText();
-      _messagesOut.setText("");
+      String text = messagesOut.getText();
+      messagesOut.setText("");
       return text;
    }
 
@@ -88,15 +88,15 @@ public class MessagesBlock extends Helper implements SelectionListener
       fullMsg = fullMsg.replace("\n", "<br/>");
       // escape any single quote character, since we are putting this inside a single quote
       fullMsg = fullMsg.replace("'", "\\'");
-      _messageBuffer.append(fullMsg);
-      if (!_messagesIn.isDisposed()) {
-         _messagesIn.execute("document.body.insertAdjacentHTML('beforeEnd', '"+fullMsg+"');window.scrollTo(0,document.body.scrollHeight);");
-//         _messagesIn.setText(_messageBuffer.toString() + "</body>");
+      messageBuffer.append(fullMsg);
+      if (!messagesIn.isDisposed()) {
+         messagesIn.execute("document.body.insertAdjacentHTML('beforeEnd', '" + fullMsg + "');window.scrollTo(0,document.body.scrollHeight);");
+//         messagesIn.setText(messageBuffer.toString() + "</body>");
          try {
             Thread.sleep(10);
          } catch (InterruptedException e) {
          }
-         _messagesIn.redraw();
+         messagesIn.redraw();
       }
    }
 

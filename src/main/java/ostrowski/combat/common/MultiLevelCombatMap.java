@@ -9,7 +9,7 @@ import ostrowski.protocol.SerializableObject;
 
 public class MultiLevelCombatMap extends SerializableObject implements Cloneable {
 
-   List<CombatMap> _levels = new ArrayList<>();
+   List<CombatMap> levels = new ArrayList<>();
 
    @Override
    public void serializeToStream(DataOutputStream out) {

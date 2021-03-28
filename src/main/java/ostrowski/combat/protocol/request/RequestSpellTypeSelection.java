@@ -13,8 +13,8 @@ import java.util.List;
 
 public class RequestSpellTypeSelection extends SyncRequest
 {
-   public static final String                SPELL_TYPE_MAGE        = "Mage spells";
-   public              RequestSpellSelection _spellSelectionRequest = null;
+   public static final String                SPELL_TYPE_MAGE       = "Mage spells";
+   public              RequestSpellSelection spellSelectionRequest = null;
 
    public RequestSpellTypeSelection() {}
    public RequestSpellTypeSelection(boolean mage, List<String> priestAffinities, Character caster)
@@ -47,14 +47,14 @@ public class RequestSpellTypeSelection extends SyncRequest
    @Override
    public void init() {
       super.init();
-      _spellSelectionRequest = null;
+      spellSelectionRequest = null;
    }
 
    public SyncRequest getNextQuestion(Character actor, List<Character> combatants, Arena arena) {
-      if (_spellSelectionRequest == null) {
-         _spellSelectionRequest = actor.getSpellSelectionRequest(getAnswer());
+      if (spellSelectionRequest == null) {
+         spellSelectionRequest = actor.getSpellSelectionRequest(getAnswer());
       }
-      return _spellSelectionRequest;
+      return spellSelectionRequest;
    }
 
    @Override
@@ -62,7 +62,7 @@ public class RequestSpellTypeSelection extends SyncRequest
       if (optionID == 0) {
          return "mM";
       }
-      for (ostrowski.protocol.IRequestOption option : _options) {
+      for (ostrowski.protocol.IRequestOption option : options) {
          if (option.getIntValue() == optionID) {
             String name = option.getName();
             StringBuilder sb = new StringBuilder();

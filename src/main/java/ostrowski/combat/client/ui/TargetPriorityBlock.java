@@ -15,48 +15,48 @@ import ostrowski.ui.Helper;
 
 public class TargetPriorityBlock extends Helper implements IUIBlock
 {
-   public final TargetPrioritiesWidget _priorityWidget;
+   public final TargetPrioritiesWidget priorityWidget;
 
    public TargetPriorityBlock(CharacterDisplay display) {
-      _priorityWidget = new TargetPrioritiesWidget(null, display);
+      priorityWidget = new TargetPrioritiesWidget(null, display);
    }
 
    @Override
    public void buildBlock(Composite parent) {
-      _priorityWidget.buildBlock(parent);
+      priorityWidget.buildBlock(parent);
    }
 
    @Override
    public void updateDisplayFromCharacter(Character character) {
-      _priorityWidget.setSelf(character);
+      priorityWidget.setSelf(character);
    }
    @Override
    public void refreshDisplay(Character character) {
-      _priorityWidget.setSelf(character);
+      priorityWidget.setSelf(character);
    }
    @Override
    public void updateCharacterFromDisplay(Character character) {
-      _priorityWidget.setSelf(character);
+      priorityWidget.setSelf(character);
    }
    public void updateCombatants(List<Character> combatants) {
-      _priorityWidget.updateCombatants(combatants);
+      priorityWidget.updateCombatants(combatants);
    }
    public void updateCombatant(Character character) {
-      _priorityWidget.updateCombatant(character);
+      priorityWidget.updateCombatant(character);
    }
    public void updateServerWithTargets() {
-      _priorityWidget.updateServerWithTargets();
+      priorityWidget.updateServerWithTargets();
    }
 
    public void setTeam(byte teamId) {
-      _priorityWidget.setTeam(teamId);
+      priorityWidget.setTeam(teamId);
    }
 
    public List<Character> getOrderedEnemies() {
-      return _priorityWidget.getOrderedEnemies();
+      return priorityWidget.getOrderedEnemies();
    }
    public boolean ignoreEnemy(Character enemy) {
-      return _priorityWidget.ignoreEnemy(enemy);
+      return priorityWidget.ignoreEnemy(enemy);
    }
 
 }

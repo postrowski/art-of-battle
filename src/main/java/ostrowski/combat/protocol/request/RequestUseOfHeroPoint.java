@@ -13,8 +13,8 @@ public class RequestUseOfHeroPoint extends SyncRequest
    public RequestUseOfHeroPoint() {
    }
    public RequestUseOfHeroPoint(Wound wound, int heroPointsLeft) {
-      _message = "You are about to suffer the following wound:\n" + wound.describeWound() +
-                 "\nYou have " + heroPointsLeft + " Hero Point left. Would you like to use a Hero Point to avoid this wound?";
+      message = "You are about to suffer the following wound:\n" + wound.describeWound() +
+                "\nYou have " + heroPointsLeft + " Hero Point left. Would you like to use a Hero Point to avoid this wound?";
       addOption(new RequestActionOption("Use Hero Point.", RequestActionType.OPT_USE_HERO_POINT, LimbType.BODY, true));
       addOption(new RequestActionOption("Do not use Hero Point, take wound.", RequestActionType.OPT_DONT_USE_HERO_POINT, LimbType.BODY, true));
    }
@@ -31,10 +31,10 @@ public class RequestUseOfHeroPoint extends SyncRequest
    }
 
    public boolean isAnswerUseHeroPoint() {
-      if (_answer == null) {
+      if (answer == null) {
          return false;
       }
-      return (_answer.getIntValue() % RequestActionOption.LIMB_MULTIPLIER) == RequestActionType.OPT_USE_HERO_POINT.ordinal();
+      return (answer.getIntValue() % RequestActionOption.LIMB_MULTIPLIER) == RequestActionType.OPT_USE_HERO_POINT.ordinal();
    }
 
    public void setAnswerUseHeroPoint() {

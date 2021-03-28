@@ -1,8 +1,6 @@
 package ostrowski.combat.protocol.request;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -103,7 +101,7 @@ public class RequestSingleTargetSelection extends SyncRequest implements Enums
          }
       }
       messageBuffer.append(".");
-      _message = messageBuffer.toString();
+      message = messageBuffer.toString();
       List<Character> combatants = arena.getCombatants();
       List<Character> targets =  new ArrayList<>();
       boolean targetEnemies = (castingSpell == null) || !castingSpell.isBeneficial();
@@ -139,7 +137,7 @@ public class RequestSingleTargetSelection extends SyncRequest implements Enums
             }
             boolean enabled = true;
             StringBuilder description = new StringBuilder();
-            if (target._uniqueID == requestor._uniqueID) {
+            if (target.uniqueID == requestor.uniqueID) {
                description.append("Self");
             }
             else {
@@ -194,9 +192,9 @@ public class RequestSingleTargetSelection extends SyncRequest implements Enums
                   }
                }
             }
-            RequestOption opt = new RequestOption(description.toString(), target._uniqueID, enabled);
+            RequestOption opt = new RequestOption(description.toString(), target.uniqueID, enabled);
             addOption(opt);
-            if (requestor._targetID == target._uniqueID) {
+            if (requestor.targetID == target.uniqueID) {
                setDefaultOption(opt);
             }
          }

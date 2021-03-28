@@ -33,7 +33,7 @@ public class SpellFireball extends MageSpell implements ICastInBattle
          StringBuilder sb = new StringBuilder();
          sb.append(getCasterName()).append(" creates a fireball (level ").append(getPower());
          sb.append("), which will do 5 + 5 * ").append(getPower());
-         int size = (_caster == null) ? 0 : _caster.getRace().getBuildModifier();
+         int size = (caster == null) ? 0 : caster.getRace().getBuildModifier();
          if (size > 0) {
             sb.append(" +").append(size).append(" (racial size adjument)");
          }
@@ -59,8 +59,8 @@ public class SpellFireball extends MageSpell implements ICastInBattle
    public void applyEffects(Arena arena) {
       Hand hand = (Hand) getCaster().getLimb(LimbType.HAND_RIGHT);
       int damage = 5 + (getPower() * 5); // + getTarget().getRace().getBonusToBeHit();
-      if (_caster != null) {
-         damage += _caster.getRace().getBuildModifier();
+      if (caster != null) {
+         damage += caster.getRace().getBuildModifier();
       }
       String name;
       int power = getPower();
@@ -86,7 +86,7 @@ public class SpellFireball extends MageSpell implements ICastInBattle
                      " in order to hold the created fireball.";
          arena.sendMessageTextToAllClients(sb, false/*popUp*/);
          Thing thingDropped = hand.dropThing();
-         getCaster().getLimbLocation(hand._limbType, arena.getCombatMap()).addThing(thingDropped);
+         getCaster().getLimbLocation(hand.limbType, arena.getCombatMap()).addThing(thingDropped);
          hand.setHeldThing(fireball, getCaster());
       }
    }

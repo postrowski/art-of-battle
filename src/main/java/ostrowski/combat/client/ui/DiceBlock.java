@@ -21,14 +21,14 @@ import java.util.HashMap;
 
 public class DiceBlock extends Helper implements IUIBlock
 {
-   private final HashMap<Attribute, Text[]> _dice             = new HashMap<>();
-   private       Text                       _painReductioDice = null;
-   private       Text                       _maxPainWounds    = null;
+   private final HashMap<Attribute, Text[]> dice             = new HashMap<>();
+   private       Text                       painReductioDice = null;
+   private       Text                       maxPainWounds    = null;
 
    public DiceBlock(CharacterWidget display)
    {
       for (Attribute att : Attribute.values()) {
-         _dice.put(att, new Text[4]);
+         dice.put(att, new Text[4]);
       }
    }
 
@@ -41,9 +41,9 @@ public class DiceBlock extends Helper implements IUIBlock
          Group group = createGroup(parent, "Pain recovery", 2/*columns*/, false/*sameSize*/, 2/*hSpacing*/, 2/*vSpacing*/);
          group.setTabList(new Control[] {});
          createLabel(group, "Pain reduction dice:", SWT.CENTER, 1, new FontData("Arial", 7, SWT.BOLD));
-         _painReductioDice = createText(group, " ", false, 1);
+         painReductioDice = createText(group, " ", false, 1);
          createLabel(group, "Max Pain / Wounds:", SWT.CENTER, 1, new FontData("Arial", 7, SWT.BOLD));
-         _maxPainWounds = createText(group, " ", false, 1);
+         maxPainWounds = createText(group, " ", false, 1);
       }
    }
 
@@ -59,14 +59,14 @@ public class DiceBlock extends Helper implements IUIBlock
 
       for (int actions=1 ; actions<=3 ; actions++) {
          createLabel(group, "" + actions, SWT.CENTER, 1, new FontData("Arial", 7, SWT.BOLD));
-         _dice.get(Attribute.Dexterity)[actions] = createText(group, " ", false, 2);
-         _dice.get(Attribute.Intelligence)[actions]  = createText(group, " ", false, 2);
-         _dice.get(Attribute.Social)[actions] = createText(group, " ", false, 2);
-         _dice.get(Attribute.Toughness)[actions] = createText(group, " ", false, 2);
+         dice.get(Attribute.Dexterity)[actions] = createText(group, " ", false, 2);
+         dice.get(Attribute.Intelligence)[actions]  = createText(group, " ", false, 2);
+         dice.get(Attribute.Social)[actions] = createText(group, " ", false, 2);
+         dice.get(Attribute.Toughness)[actions] = createText(group, " ", false, 2);
       }
 
       createLabel(group, "Max Pain / Wounds:", SWT.CENTER, 5, new FontData("Arial", 7, SWT.BOLD));
-      _maxPainWounds = createText(group, " ", false, 4);
+      maxPainWounds = createText(group, " ", false, 4);
    }
 
    @Override
@@ -84,17 +84,17 @@ public class DiceBlock extends Helper implements IUIBlock
             // If we don't display the attribute, this array will be null, so do nothing.
             // Also, if the configuration was not set to complex dice when we started this application,
             // this array will also be empty.
-            if (_dice.get(att)[actions] != null) {
-               _dice.get(att)[actions].setText(Rules.getDice(attributeLevel, actions, att/*attribute*/, RollType.ATTACK_TO_HIT).toString().replaceAll(" ", ""));
+            if (dice.get(att)[actions] != null) {
+               dice.get(att)[actions].setText(Rules.getDice(attributeLevel, actions, att/*attribute*/, RollType.ATTACK_TO_HIT).toString().replaceAll(" ", ""));
             }
          }
       }
       byte toughness = character.getAttributeLevel(Attribute.Toughness);
-      if (_painReductioDice != null) {
-         _painReductioDice.setText(Rules.getDice(toughness, (byte)1, Attribute.Toughness/*attribute*/, RollType.PAIN_RECOVERY).toString().replaceAll(" ", ""));
+      if (painReductioDice != null) {
+         painReductioDice.setText(Rules.getDice(toughness, (byte)1, Attribute.Toughness/*attribute*/, RollType.PAIN_RECOVERY).toString().replaceAll(" ", ""));
       }
-      if (_maxPainWounds != null) {
-         _maxPainWounds.setText("" + Rules.getUnconsciousWoundLevel(toughness));
+      if (maxPainWounds != null) {
+         maxPainWounds.setText("" + Rules.getUnconsciousWoundLevel(toughness));
       }
    }
 
