@@ -5,10 +5,10 @@
     <Hand Name="right hand">Quarterstaff</Hand>
     <Hand Name="left hand"/>
   </Equipment>
-  <Skills>
-    <Skill Level="6" Name="Quarterstaff"/>
-    <Skill Level="4" Name="Brawling"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="6" proficient="Quarterstaff" familiar=""></Profession>
+    <Profession Name="Martial Arts" Level="4" proficient="Boxing" familiar=""></Profession>
+  </Professions>
   <Advantages>
     <Advantage Level="5" Name="Wealth"/>
     <Advantage Level="3" Name="Divine Power"/>

@@ -9,12 +9,10 @@
     <Belt>Throwing Star</Belt>
     <Belt>Throwing Star</Belt>
   </Equipment>
-  <Skills>
-    <Skill Level="5" Name="Karate"/>
-    <Skill Level="4" Name="Throwing"/>
-    <Skill Level="6" Name="Aikido"/>
-    <Skill Level="5" Name="Nun chucks"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Martial Arts" Level="6" proficient="Karate, Aikido, Nun chucks" familiar=""></Profession>
+    <Profession Name="Common" Level="4" proficient="Throwing" familiar=""></Profession>
+  </Professions>
   <Advantages>
     <Advantage LevelName="$500" Name="Wealth"/>
     <Advantage LevelName="Gambling (Major)" Name="Addiction"/>

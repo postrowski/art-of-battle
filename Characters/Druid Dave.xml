@@ -6,11 +6,9 @@
     <Hand Name="left hand"/>
     <Belt>Knife</Belt>
   </Equipment>
-  <Skills>
-    <Skill Level="6" Name="Quarterstaff"/>
-    <Skill Level="3" Name="Brawling"/>
-    <Skill Level="2" Name="Knife"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="6" proficient="Quarterstaff" familiar="Brawling, Knife"></Profession>
+  </Professions>
   <Advantages>
     <Advantage Level="2" Name="Wealth"/>
     <Advantage Level="3" Name="Divine Power"/>

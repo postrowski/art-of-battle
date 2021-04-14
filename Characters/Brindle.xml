@@ -6,8 +6,8 @@
     <Hand Name="left hand"/>
     <Belt>Rapier</Belt>
   </Equipment>
-  <Skills>
-    <Skill Level="6" Name="Staff Sling"/>
-    <Skill Level="5" Name="Fencing"/>
-    <Skill Level="2" Name="Brawling"/>
-  </Skills></Character>
+  <Professions>
+    <Profession Name="Fighter" Level="5" proficient="Fencing" familiar="Brawling"></Profession>
+    <Profession Name="Shooting" Level="6" proficient="Sling" familiar=""></Profession>
+  </Professions>
+</Character>

@@ -2,7 +2,8 @@
 <Character Name="wolf-medium" Race="Wolf">
   <Attributes DEX="2" HT="1" IQ="-3" NIM="2" SOC="0" STR="0" TOU="0"/>
   <Equipment Armor="No Armor">
-   </Equipment>
-  <Skills>
-    <Skill Level="5" Name="Brawling"/>
-  </Skills></Character>
+  </Equipment>
+  <Professions>
+    <Profession Name="Common" Level="5" proficient="Brawling" familiar=""></Profession>
+  </Professions>
+</Character>

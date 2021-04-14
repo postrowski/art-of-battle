@@ -6,11 +6,10 @@
     <Hand Name="left hand"/>
     <Belt>Shortsword</Belt>
   </Equipment>
-  <Skills>
-    <Skill Level="7" Name="Bow"/>
-    <Skill Level="4" Name="Sword"/>
-    <Skill Level="2" Name="Brawling"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="4" proficient="Sword" familiar="Brawling"></Profession>
+    <Profession Name="Shooting" Level="7" proficient="Bow" familiar=""></Profession>
+  </Professions>
   <Advantages>
     <Advantage Level="4" Name="Wealth"/>
   </Advantages>

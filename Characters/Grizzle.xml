@@ -6,11 +6,9 @@
     <Hand Name="left hand">Large Shield</Hand>
     <Belt>Potion:Increase Nimbleness</Belt>
   </Equipment>
-  <Skills>
-    <Skill Level="6" Name="Flail"/>
-    <Skill Level="6" Name="Shield"/>
-    <Skill Level="2" Name="Knife"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="6" proficient="Flail, Shield" familiar="Knife"></Profession>
+  </Professions>
   <Advantages>
     <Advantage Level="5" Name="Wealth"/>
     <Advantage Level="0" Name="Compulsive Liar"/>

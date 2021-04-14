@@ -6,10 +6,9 @@
     <Hand Name="left hand">Large Shield</Hand>
     <Belt>Potion:Minor Healing</Belt>
   </Equipment>
-  <Skills>
-    <Skill Level="6" Name="Sword"/>
-    <Skill Level="5" Name="Shield"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="6" proficient="Sword, Shield" familiar=""></Profession>
+  </Professions>
   <Advantages>
     <Advantage Level="4" Name="Wealth"/>
     <Advantage Level="0" Name="Megalomaniac"/>

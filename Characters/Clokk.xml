@@ -8,10 +8,9 @@
     <Hand Name="2nd left hand">Large Shield</Hand>
     <Belt>Potion:Major Healing</Belt>
   </Equipment>
-  <Skills>
-    <Skill Level="7" Name="Sword"/>
-    <Skill Level="5" Name="Shield"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="7" proficient="Sword" familiar="Shield"></Profession>
+  </Professions>
   <Advantages>
     <Advantage Level="5" Name="Wealth"/>
     <Advantage Level="0" Name="Bad Temper"/>

@@ -4,39 +4,31 @@
     <Hand Name="right hand">Quarterstaff</Hand>
     <Hand Name="left hand"/>
   </Equipment>
-  <Skills>
-    <Skill Level="6" Name="Quarterstaff"/>
-    <Skill Level="4" Name="Brawling"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="6" proficient="Quarterstaff" familiar="Brawling"></Profession>
+    <Profession Name="Spellcasting" Level="6" proficient="Conjuration, Energy, Fire, Water, Evocation, Protection" familiar=""></Profession>
+  </Professions>
   <Spells>
-    <Spell Level="1" Name="Ice Daggers"/>
-    <Spell Level="1" Name="Water Jet"/>
-    <Spell Level="1" Name="Flame Jet"/>
-    <Spell Level="1" Name="Shocking Grasp"/>
-    <Spell Level="1" Name="Slow"/>
-    <Spell Level="1" Name="Speed"/>
-    <Spell Level="1" Name="Armor"/>
-    <Spell Level="1" Name="Flaming Weapon"/>
-    <Spell Level="1" Name="Create Force"/>
-    <Spell Level="1" Name="Throw Spell"/>
-    <Spell Level="1" Name="Create Water"/>
-    <Spell Level="1" Name="Control Temperature"/>
-    <Spell Level="1" Name="Control Charge"/>
-    <Spell Level="1" Name="Create Electricity"/>
-    <Spell Level="1" Name="Affect Area"/>
-    <Spell Level="1" Name="Control Time"/>
-    <Spell Level="1" Name="Harden"/>
-    <Spell Level="1" Name="Create Fire"/>
-    <Spell Level="1" Name="Control Fire"/>
+    <Spell Familiarity="known" Name="Ice Daggers"/>
+    <Spell Familiarity="known" Name="Water Jet"/>
+    <Spell Familiarity="known" Name="Flame Jet"/>
+    <Spell Familiarity="known" Name="Shocking Grasp"/>
+    <Spell Familiarity="known" Name="Slow"/>
+    <Spell Familiarity="known" Name="Speed"/>
+    <Spell Familiarity="known" Name="Armor"/>
+    <Spell Familiarity="known" Name="Flaming Weapon"/>
+    <Spell Familiarity="known" Name="Create Force"/>
+    <Spell Familiarity="known" Name="Throw Spell"/>
+    <Spell Familiarity="known" Name="Create Water"/>
+    <Spell Familiarity="known" Name="Control Temperature"/>
+    <Spell Familiarity="known" Name="Control Charge"/>
+    <Spell Familiarity="known" Name="Create Electricity"/>
+    <Spell Familiarity="known" Name="Affect Area"/>
+    <Spell Familiarity="known" Name="Control Time"/>
+    <Spell Familiarity="known" Name="Harden"/>
+    <Spell Familiarity="known" Name="Create Fire"/>
+    <Spell Familiarity="known" Name="Control Fire"/>
   </Spells>
-  <Colleges>
-    <College Level="3" Name="Conjuration"/>
-    <College Level="3" Name="Energy"/>
-    <College Level="3" Name="Fire"/>
-    <College Level="3" Name="Water"/>
-    <College Level="3" Name="Evocation"/>
-    <College Level="3" Name="Protection"/>
-  </Colleges>
   <Advantages>
     <Advantage LevelName="$500" Name="Wealth"/>
     <Advantage LevelName="+4" Name="Magical Aptitude"/>

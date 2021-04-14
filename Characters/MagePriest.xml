@@ -5,19 +5,16 @@
     <Hand Name="right hand">Quarterstaff</Hand>
     <Hand Name="left hand"/>
   </Equipment>
-  <Skills>
-    <Skill Level="4" Name="Quarterstaff"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="4" proficient="Quarterstaff" familiar=""></Profession>
+    <Profession Name="Spellcasting" Level="3" proficient="Conjuration, Fire" familiar=""></Profession>
+  </Professions>
   <Spells>
-    <Spell Level="1" Name="Flame Jet"/>
-    <Spell Level="1" Name="Throw Spell"/>
-    <Spell Level="1" Name="Control Temperature"/>
-    <Spell Level="1" Name="Create Fire"/>
+    <Spell Familiarity="known" Name="Flame Jet"/>
+    <Spell Familiarity="known" Name="Throw Spell"/>
+    <Spell Familiarity="known" Name="Control Temperature"/>
+    <Spell Familiarity="known" Name="Create Fire"/>
   </Spells>
-  <Colleges>
-    <College Level="3" Name="Conjuration"/>
-    <College Level="3" Name="Fire"/>
-  </Colleges>
   <Advantages>
     <Advantage Level="3" Name="Magical Aptitude"/>
     <Advantage Level="1" Name="Wealth"/>

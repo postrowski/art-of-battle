@@ -7,11 +7,11 @@
     <Belt>Katana</Belt>
     <Belt>Potion:Increase Strength</Belt>
   </Equipment>
-  <Skills>
-    <Skill Level="6" Name="Bow"/>
-    <Skill Level="4" Name="2-Handed Sword"/>
-    <Skill Level="1" Name="Karate"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="4" proficient="2-Handed Sword" familiar=""></Profession>
+    <Profession Name="Martial Arts" Level="1" proficient="Karate" familiar=""></Profession>
+    <Profession Name="Shooting" Level="6" proficient="Bow" familiar=""></Profession>
+  </Professions>
   <Advantages>
     <Advantage Level="5" Name="Wealth"/>
     <Advantage Level="0" Name="Bad Temper"/>

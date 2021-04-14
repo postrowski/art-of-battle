@@ -6,11 +6,11 @@
     <Belt>Rapier</Belt>
     <Belt>Potion:Major Healing</Belt>
   </Equipment>
-  <Skills>
-    <Skill Level="4" Name="Fencing"/>
-    <Skill Level="7" Name="Bow"/>
-    <Skill Level="1" Name="Boxing"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="4" proficient="Fencing" familiar=""></Profession>
+    <Profession Name="Martial Arts" Level="1" proficient="Boxing" familiar=""></Profession>
+    <Profession Name="Shooting" Level="7" proficient="Bow" familiar=""></Profession>
+  </Professions>
   <Advantages>
     <Advantage LevelName="$2,000" Name="Wealth"/>
     <Advantage LevelName="1" Name="Hero points"/>

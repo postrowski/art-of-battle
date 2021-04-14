@@ -2,35 +2,25 @@
   <Attributes DEX="5" HT="1" IQ="5" NIM="6" SOC="5" STR="1" TOU="5"/>
   <Equipment Armor="Thick Scales">
   </Equipment>
-  <Skills>
-    <Skill Level="10" Name="Brawling"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Common" Level="10" proficient="Brawling" familiar=""></Profession>
+    <Profession Name="Spellcasting" Level="9" proficient="Energy, Protection, Illusion, Evocation, Enchantment, Divination, Conjuration, Earth, Air" familiar=""></Profession>
+  </Professions>
   <Spells>
-    <Spell Level="2" Name="Push"/>
-    <Spell Level="2" Name="Create Force"/>
-    <Spell Level="2" Name="Block Attack"/>
-    <Spell Level="2" Name="Block Spell"/>
-    <Spell Level="2" Name="Block Thought"/>
-    <Spell Level="2" Name="Create Darkness"/>
-    <Spell Level="2" Name="Immobilize"/>
-    <Spell Level="2" Name="Weaken"/>
-    <Spell Level="2" Name="Suggestion"/>
-    <Spell Level="2" Name="Reverse Missile"/>
-    <Spell Level="2" Name="Detect Object"/>
-    <Spell Level="2" Name="Control Light"/>
-    <Spell Level="2" Name="Control Mind"/>
+    <Spell Familiarity="memorized" Name="Push"/>
+    <Spell Familiarity="memorized" Name="Create Force"/>
+    <Spell Familiarity="memorized" Name="Block Attack"/>
+    <Spell Familiarity="memorized" Name="Block Spell"/>
+    <Spell Familiarity="memorized" Name="Block Thought"/>
+    <Spell Familiarity="memorized" Name="Create Darkness"/>
+    <Spell Familiarity="memorized" Name="Immobilize"/>
+    <Spell Familiarity="memorized" Name="Weaken"/>
+    <Spell Familiarity="memorized" Name="Suggestion"/>
+    <Spell Familiarity="memorized" Name="Reverse Missile"/>
+    <Spell Familiarity="memorized" Name="Detect Object"/>
+    <Spell Familiarity="memorized" Name="Control Light"/>
+    <Spell Familiarity="memorized" Name="Control Mind"/>
   </Spells>
-  <Colleges>
-    <College Level="5" Name="Energy"/>
-    <College Level="5" Name="Protection"/>
-    <College Level="5" Name="Illusion"/>
-    <College Level="5" Name="Evocation"/>
-    <College Level="5" Name="Enchantment"/>
-    <College Level="4" Name="Divination"/>
-    <College Level="4" Name="Conjuration"/>
-    <College Level="4" Name="Earth"/>
-    <College Level="3" Name="Air"/>
-  </Colleges>
   <Advantages>
     <Advantage LevelName="$0" Name="Wealth"/>
   </Advantages>

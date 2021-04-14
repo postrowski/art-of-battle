@@ -6,12 +6,9 @@
     <Hand Name="left hand">Tower Shield</Hand>
     <Belt>Knife</Belt>
   </Equipment>
-  <Skills>
-    <Skill Level="6" Name="Sword"/>
-    <Skill Level="6" Name="Shield"/>
-    <Skill Level="1" Name="Brawling"/>
-    <Skill Level="1" Name="Knife"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="6" proficient="Sword, Shield" familiar="Brawling, Knife"></Profession>
+  </Professions>
   <Advantages>
     <Advantage Level="5" Name="Wealth"/>
     <Advantage Level="0" Name="Berserker"/>

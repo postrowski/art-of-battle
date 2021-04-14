@@ -5,11 +5,11 @@
     <Hand Name="left hand"/>
     <Belt>Quarterstaff</Belt>
   </Equipment>
-  <Skills>
-    <Skill Level="6" Name="Quarterstaff"/>
-    <Skill Level="5" Name="Aikido"/>
-    <Skill Level="1" Name="Throwing"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="6" proficient="Quarterstaff" familiar=""></Profession>
+    <Profession Name="Martial Arts" Level="5" proficient="Aikido" familiar=""></Profession>
+    <Profession Name="Common" Level="1" proficient="Throwing" familiar=""></Profession>
+  </Professions>
   <Advantages>
     <Advantage LevelName="$500" Name="Wealth"/>
     <Advantage LevelName="4" Name="Divine Power"/>

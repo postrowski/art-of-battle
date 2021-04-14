@@ -5,6 +5,7 @@
     <Hand Name="right hand"/>
     <Hand Name="left hand"/>
   </Equipment>
-  <Skills>
-    <Skill Level="6" Name="Brawling"/>
-  </Skills></Character>
+  <Professions>
+    <Profession Name="Common" Level="6" proficient="Brawling" familiar=""></Profession>
+  </Professions>
+</Character>

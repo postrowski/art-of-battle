@@ -6,10 +6,9 @@
     <Hand Name="left hand">Medium Shield</Hand>
     <Belt>Unarmed Combat</Belt>
   </Equipment>
-  <Skills>
-    <Skill Level="6" Name="Axe/Mace"/>
-    <Skill Level="6" Name="Shield"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="6" proficient="Axe/Mace, Shield" familiar=""></Profession>
+  </Professions>
   <Advantages>
     <Advantage Level="4" Name="Wealth"/>
   </Advantages>

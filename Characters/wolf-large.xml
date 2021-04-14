@@ -2,4 +2,8 @@
 <Character Name="wolf-large" Race="Wolf">
   <Attributes DEX="2" HT="2" IQ="-3" NIM="1" SOC="0" STR="2" TOU="1"/>
   <Equipment Armor="No Armor">
-</Equipment></Character>
+  </Equipment>
+  <Professions>
+    <Profession Name="Common" Level="6" proficient="Brawling" familiar=""></Profession>
+  </Professions>
+</Character>

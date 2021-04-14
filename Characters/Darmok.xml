@@ -8,11 +8,9 @@
     <Belt>Potion:Increase Strength</Belt>
     <Belt>Potion:Major Healing</Belt>
   </Equipment>
-  <Skills>
-    <Skill Level="4" Name="Brawling"/>
-    <Skill Level="4" Name="Knife"/>
-    <Skill Level="7" Name="Flail"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="7" proficient="Flail" familiar="Knife, Brawling"></Profession>
+  </Professions>
   <Advantages>
     <Advantage Level="7" Name="Wealth"/>
     <Advantage Level="2" Name="Quirks"/>

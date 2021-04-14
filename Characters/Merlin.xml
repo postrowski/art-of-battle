@@ -4,47 +4,36 @@
     <Hand Name="right hand">Quarterstaff</Hand>
     <Hand Name="left hand"/>
   </Equipment>
-  <Skills>
-    <Skill Level="6" Name="Quarterstaff"/>
-    <Skill Level="2" Name="Brawling"/>
-    <Skill Level="4" Name="Shield"/>
-    <Skill Level="4" Name="Throwing"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="6" proficient="Quarterstaff" familiar="Brawling, Shield"></Profession>
+    <Profession Name="Common" Level="4" proficient="Throwing" familiar=""></Profession>
+    <Profession Name="Spellcasting" Level="6" proficient="Protection, Energy, Earth, Conjuration" familiar="Enchantment, Divination, Air, Evocation"></Profession>
+  </Professions>
   <Spells>
-    <Spell Level="2" Name="Block Spell"/>
-    <Spell Level="2" Name="Block Attack"/>
-    <Spell Level="1" Name="Magic Shield"/>
-    <Spell Level="2" Name="Lightning"/>
-    <Spell Level="2" Name="Magic Missile"/>
-    <Spell Level="2" Name="Shocking Grasp"/>
-    <Spell Level="1" Name="Speed"/>
-    <Spell Level="1" Name="Control Mind"/>
-    <Spell Level="1" Name="Flight"/>
-    <Spell Level="1" Name="Levitate"/>
-    <Spell Level="2" Name="Create Force"/>
-    <Spell Level="2" Name="Create Electricity"/>
-    <Spell Level="2" Name="Control Charge"/>
-    <Spell Level="1" Name="Block Thought"/>
-    <Spell Level="2" Name="Throw Spell"/>
-    <Spell Level="1" Name="Suggestion"/>
-    <Spell Level="2" Name="Create Earth"/>
-    <Spell Level="1" Name="Push"/>
-    <Spell Level="2" Name="Affect Area"/>
-    <Spell Level="1" Name="Control Time"/>
-    <Spell Level="1" Name="Spider Web"/>
-    <Spell Level="2" Name="Glue"/>
-    <Spell Level="1" Name="Create Rope"/>
+    <Spell Familiarity="memorized" Name="Block Spell"/>
+    <Spell Familiarity="memorized" Name="Block Attack"/>
+    <Spell Familiarity="known" Name="Magic Shield"/>
+    <Spell Familiarity="memorized" Name="Lightning"/>
+    <Spell Familiarity="memorized" Name="Magic Missile"/>
+    <Spell Familiarity="memorized" Name="Shocking Grasp"/>
+    <Spell Familiarity="known" Name="Speed"/>
+    <Spell Familiarity="known" Name="Control Mind"/>
+    <Spell Familiarity="known" Name="Flight"/>
+    <Spell Familiarity="known" Name="Levitate"/>
+    <Spell Familiarity="memorized" Name="Create Force"/>
+    <Spell Familiarity="memorized" Name="Create Electricity"/>
+    <Spell Familiarity="memorized" Name="Control Charge"/>
+    <Spell Familiarity="known" Name="Block Thought"/>
+    <Spell Familiarity="memorized" Name="Throw Spell"/>
+    <Spell Familiarity="known" Name="Suggestion"/>
+    <Spell Familiarity="memorized" Name="Create Earth"/>
+    <Spell Familiarity="known" Name="Push"/>
+    <Spell Familiarity="memorized" Name="Affect Area"/>
+    <Spell Familiarity="known" Name="Control Time"/>
+    <Spell Familiarity="known" Name="Spider Web"/>
+    <Spell Familiarity="memorized" Name="Glue"/>
+    <Spell Familiarity="known" Name="Create Rope"/>
   </Spells>
-  <Colleges>
-    <College Level="6" Name="Protection"/>
-    <College Level="3" Name="Enchantment"/>
-    <College Level="6" Name="Energy"/>
-    <College Level="6" Name="Earth"/>
-    <College Level="3" Name="Divination"/>
-    <College Level="3" Name="Air"/>
-    <College Level="5" Name="Conjuration"/>
-    <College Level="3" Name="Evocation"/>
-  </Colleges>
   <Advantages>
     <Advantage LevelName="+5" Name="Magical Aptitude"/>
     <Advantage LevelName="" Name="Honest"/>

@@ -7,38 +7,30 @@
     <Belt>Potion:Complete Healing</Belt>
     <Belt>Potion:Speed</Belt>
   </Equipment>
-  <Skills>
-    <Skill Level="6" Name="Karate"/>
-    <Skill Level="5" Name="Bow"/>
-    <Skill Level="9" Name="Axe/Mace"/>
-    <Skill Level="9" Name="Shield"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="9" proficient="Axe/Mace, Shield" familiar="Knife"></Profession>
+    <Profession Name="Martial Arts" Level="6" proficient="Karate" familiar=""></Profession>
+    <Profession Name="Shooting" Level="5" proficient="Bow" familiar=""></Profession>
+    <Profession Name="Spellcasting" Level="3" proficient="Energy, Fire, Earth, Conjuration" familiar="Evocation, Air"></Profession>
+  </Professions>
   <Spells>
-    <Spell Level="1" Name="Flaming Weapon"/>
-    <Spell Level="2" Name="Flame Jet"/>
-    <Spell Level="1" Name="Fireball"/>
-    <Spell Level="1" Name="Flaming Missile Weapon"/>
-    <Spell Level="1" Name="Flight"/>
-    <Spell Level="1" Name="Spider Web"/>
-    <Spell Level="1" Name="Create Earth"/>
-    <Spell Level="2" Name="Control Temperature"/>
-    <Spell Level="1" Name="Control Fire"/>
-    <Spell Level="1" Name="Flaming Weapon"/>
-    <Spell Level="2" Name="Create Fire"/>
-    <Spell Level="1" Name="Levitate"/>
-    <Spell Level="1" Name="Create Force"/>
-    <Spell Level="2" Name="Throw Spell"/>
-    <Spell Level="1" Name="Create Rope"/>
-    <Spell Level="1" Name="Glue"/>
+    <Spell Familiarity="known" Name="Flaming Weapon"/>
+    <Spell Familiarity="memorized" Name="Flame Jet"/>
+    <Spell Familiarity="known" Name="Fireball"/>
+    <Spell Familiarity="known" Name="Flaming Missile Weapon"/>
+    <Spell Familiarity="known" Name="Flight"/>
+    <Spell Familiarity="known" Name="Spider Web"/>
+    <Spell Familiarity="known" Name="Create Earth"/>
+    <Spell Familiarity="memorized" Name="Control Temperature"/>
+    <Spell Familiarity="known" Name="Control Fire"/>
+    <Spell Familiarity="known" Name="Flaming Weapon"/>
+    <Spell Familiarity="memorized" Name="Create Fire"/>
+    <Spell Familiarity="known" Name="Levitate"/>
+    <Spell Familiarity="known" Name="Create Force"/>
+    <Spell Familiarity="memorized" Name="Throw Spell"/>
+    <Spell Familiarity="known" Name="Create Rope"/>
+    <Spell Familiarity="known" Name="Glue"/>
   </Spells>
-  <Colleges>
-    <College Level="3" Name="Energy"/>
-    <College Level="3" Name="Fire"/>
-    <College Level="1" Name="Evocation"/>
-    <College Level="3" Name="Earth"/>
-    <College Level="3" Name="Conjuration"/>
-    <College Level="1" Name="Air"/>
-  </Colleges>
   <Advantages>
     <Advantage LevelName="+3" Name="Magical Aptitude"/>
     <Advantage LevelName="$5,000" Name="Wealth"/>

@@ -9,14 +9,12 @@
     <Belt>Potion:Complete Healing</Belt>
     <Belt>Potion:Speed</Belt>
   </Equipment>
-  <Skills>
-    <Skill Level="10" Name="2-Handed Sword"/>
-    <Skill Level="6" Name="Karate"/>
-    <Skill Level="8" Name="Aikido"/>
-    <Skill Level="3" Name="Bow"/>
-    <Skill Level="2" Name="Riding"/>
-    <Skill Level="1" Name="Knife"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="10" proficient="2-Handed Sword" familiar="Sword, Shield, Knife"></Profession>
+    <Profession Name="Martial Arts" Level="8" proficient="Aikido" familiar="Karate"></Profession>
+    <Profession Name="Shooting" Level="3" proficient="Bow" familiar=""></Profession>
+    <Profession Name="Common" Level="2" proficient="Riding, Throwing" familiar=""></Profession>
+  </Professions>
   <Advantages>
     <Advantage Level="8" Name="Wealth"/>
     <Advantage Level="0" Name="Honest"/>

@@ -7,14 +7,11 @@
     <Belt>Lance</Belt>
     <Belt>Potion:Increase Dexterity</Belt>
   </Equipment>
-  <Skills>
-    <Skill Level="6" Name="Shield"/>
-    <Skill Level="6" Name="Sword"/>
-    <Skill Level="3" Name="Knife"/>
-    <Skill Level="3" Name="Brawling"/>
-    <Skill Level="5" Name="Jousting"/>
-    <Skill Level="5" Name="Riding"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="6" proficient="Sword, Shield, Quarterstaff" familiar="Brawling, Knife"></Profession>
+    <Profession Name="Common" Level="2" proficient="Throwing" familiar=""></Profession>
+    <Profession Name="Knight" Level="5" proficient="Jousting, Riding" familiar=""></Profession>
+  </Professions>
   <Advantages>
     <Advantage Level="7" Name="Wealth"/>
     <Advantage Level="0" Name="Honest"/>

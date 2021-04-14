@@ -5,10 +5,10 @@
     <Hand Name="right hand">Rapier</Hand>
     <Hand Name="left hand">Tower Shield</Hand>
   </Equipment>
-  <Skills>
-    <Skill Level="6" Name="Fencing"/>
-    <Skill Level="5" Name="Shield"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="6" proficient="Fencing, Shield" familiar=""></Profession>
+    <Profession Name="Knight" Level="2" proficient="Jousting, Riding" familiar=""></Profession>
+  </Professions>
   <Advantages>
     <Advantage Level="6" Name="Wealth"/>
     <Advantage Level="4" Name="Divine Aff. - Hades"/>

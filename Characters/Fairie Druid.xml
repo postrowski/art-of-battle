@@ -5,11 +5,10 @@
     <Hand Name="right hand">Spear</Hand>
     <Hand Name="left hand">Medium Shield</Hand>
   </Equipment>
-  <Skills>
-    <Skill Level="4" Name="Spear"/>
-    <Skill Level="3" Name="Shield"/>
-    <Skill Level="3" Name="Throwing"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="4" proficient="Spear, Shield" familiar=""></Profession>
+    <Profession Name="Common" Level="3" proficient="Throwing" familiar=""></Profession>
+  </Professions>
   <Advantages>
     <Advantage Level="1" Name="Wealth"/>
     <Advantage Level="6" Name="Divine Aff. - Druid"/>

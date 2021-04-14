@@ -5,10 +5,9 @@
     <Hand Name="right hand">Pick-Axe</Hand>
     <Hand Name="left hand">Medium Shield</Hand>
   </Equipment>
-  <Skills>
-    <Skill Level="6" Name="Axe/Mace"/>
-    <Skill Level="5" Name="Shield"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="6" proficient="Axe/Mace, Shield" familiar=""></Profession>
+  </Professions>
   <Advantages>
     <Advantage Level="0" Name="Honest"/>
     <Advantage Level="0" Name="Berserker"/>

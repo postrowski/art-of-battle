@@ -6,10 +6,9 @@
     <Hand Name="left hand"/>
     <Belt>Potion:Major Healing</Belt>
   </Equipment>
-  <Skills>
-    <Skill Level="8" Name="2-Handed Sword"/>
-    <Skill Level="3" Name="Brawling"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="8" proficient="2-Handed Sword" familiar="Brawling"></Profession>
+  </Professions>
   <Advantages>
     <Advantage Level="6" Name="Wealth"/>
     <Advantage Level="0" Name="Bad Temper"/>

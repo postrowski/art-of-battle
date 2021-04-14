@@ -8,24 +8,19 @@
     <Belt>Javelin</Belt>
     <Belt>Javelin</Belt>
   </Equipment>
-  <Skills>
-    <Skill Level="3" Name="Throwing"/>
-    <Skill Level="4" Name="Spear"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="4" proficient="Spear" familiar=""></Profession>
+    <Profession Name="Common" Level="3" proficient="Throwing" familiar=""></Profession>
+    <Profession Name="Spellcasting" Level="4" proficient="Energy, Protection" familiar="Conjuration, Evocation"></Profession>
+  </Professions>
   <Spells>
-    <Spell Level="1" Name="Slow"/>
-    <Spell Level="1" Name="Speed"/>
-    <Spell Level="1" Name="Affect Area"/>
-    <Spell Level="1" Name="Control Time"/>
-    <Spell Level="1" Name="Armor"/>
-    <Spell Level="1" Name="Harden"/>
+    <Spell Familiarity="known" Name="Slow"/>
+    <Spell Familiarity="known" Name="Speed"/>
+    <Spell Familiarity="known" Name="Affect Area"/>
+    <Spell Familiarity="known" Name="Control Time"/>
+    <Spell Familiarity="known" Name="Armor"/>
+    <Spell Familiarity="known" Name="Harden"/>
   </Spells>
-  <Colleges>
-    <College Level="3" Name="Energy"/>
-    <College Level="3" Name="Protection"/>
-    <College Level="3" Name="Conjuration"/>
-    <College Level="3" Name="Evocation"/>
-  </Colleges>
   <Advantages>
     <Advantage Level="2" Name="Wealth"/>
     <Advantage Level="0" Name="Phobia"/>

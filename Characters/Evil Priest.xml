@@ -5,11 +5,9 @@
     <Hand Name="right hand">Sabre</Hand>
     <Hand Name="left hand">Large Shield</Hand>
   </Equipment>
-  <Skills>
-    <Skill Level="8" Name="Fencing"/>
-    <Skill Level="6" Name="Shield"/>
-    <Skill Level="2" Name="Brawling"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="8" proficient="Fencing, Shield" familiar="Brawling"></Profession>
+  </Professions>
   <Advantages>
     <Advantage Level="5" Name="Wealth"/>
     <Advantage Level="4" Name="Divine Power"/>

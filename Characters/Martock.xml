@@ -6,13 +6,10 @@
     <Hand Name="left hand">Large Shield</Hand>
     <Belt>Axe</Belt>
   </Equipment>
-  <Skills>
-    <Skill Level="6" Name="Axe/Mace"/>
-    <Skill Level="4" Name="Throwing"/>
-    <Skill Level="5" Name="Shield"/>
-    <Skill Level="2" Name="Brawling"/>
-    <Skill Level="1" Name="Knife"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="6" proficient="Axe/Mace, Shield" familiar="Brawling, Knife"></Profession>
+    <Profession Name="Common" Level="4" proficient="Throwing" familiar=""></Profession>
+  </Professions>
   <Advantages>
     <Advantage Level="7" Name="Wealth"/>
     <Advantage Level="0" Name="Berserker"/>

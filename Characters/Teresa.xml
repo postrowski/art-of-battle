@@ -6,12 +6,11 @@
     <Belt>Spear</Belt>
     <Belt>Small Shield</Belt>
   </Equipment>
-  <Skills>
-    <Skill Level="5" Name="Spear"/>
-    <Skill Level="5" Name="Bow"/>
-    <Skill Level="4" Name="Shield"/>
-    <Skill Level="2" Name="Throwing"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="5" proficient="Spear, Shield" familiar=""></Profession>
+    <Profession Name="Shooting" Level="5" proficient="Bow" familiar=""></Profession>
+    <Profession Name="Common" Level="2" proficient="Throwing" familiar=""></Profession>
+  </Professions>
   <Advantages>
     <Advantage LevelName="$5,000" Name="Wealth"/>
     <Advantage LevelName="3" Name="Divine Power"/>

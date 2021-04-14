@@ -5,21 +5,18 @@
     <Hand Name="right hand">Bow, Longbow</Hand>
     <Hand Name="left hand"/>
   </Equipment>
-  <Skills>
-    <Skill Level="5" Name="Bow"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Shooting" Level="5" proficient="Bow" familiar=""></Profession>
+    <Profession Name="Spellcasting" Level="2" proficient="Fire" familiar="Conjuration"></Profession>
+  </Professions>
   <Spells>
-    <Spell Level="1" Name="Flaming Weapon"/>
-    <Spell Level="2" Name="Control Temperature"/>
-    <Spell Level="1" Name="Control Fire"/>
-    <Spell Level="2" Name="Create Fire"/>
-    <Spell Level="2" Name="Flame Jet"/>
-    <Spell Level="2" Name="Throw Spell"/>
+    <Spell Familiarity="known" Name="Flaming Weapon"/>
+    <Spell Familiarity="memorized" Name="Control Temperature"/>
+    <Spell Familiarity="known" Name="Control Fire"/>
+    <Spell Familiarity="memorized" Name="Create Fire"/>
+    <Spell Familiarity="memorized" Name="Flame Jet"/>
+    <Spell Familiarity="memorized" Name="Throw Spell"/>
   </Spells>
-  <Colleges>
-    <College Level="2" Name="Fire"/>
-    <College Level="2" Name="Conjuration"/>
-  </Colleges>
   <Advantages>
     <Advantage Level="2" Name="Wealth"/>
     <Advantage Level="0" Name="Phobia"/>

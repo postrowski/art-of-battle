@@ -5,11 +5,9 @@
     <Hand Name="right hand">Longsword, Fine</Hand>
     <Hand Name="left hand">Medium Shield</Hand>
   </Equipment>
-  <Skills>
-    <Skill Level="8" Name="Sword"/>
-    <Skill Level="6" Name="Shield"/>
-    <Skill Level="0" Name="Brawling"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="8" proficient="Sword, Shield" familiar="Brawling, Knife"></Profession>
+  </Professions>
   <Advantages>
     <Advantage Level="9" Name="Wealth"/>
     <Advantage Level="1" Name="Hero points"/>

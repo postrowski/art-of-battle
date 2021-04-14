@@ -6,12 +6,11 @@
     <Hand Name="left hand"/>
     <Belt>Knife</Belt>
   </Equipment>
-  <Skills>
-    <Skill Level="5" Name="2-Handed Sword"/>
-    <Skill Level="3" Name="Boxing"/>
-    <Skill Level="2" Name="Knife"/>
-    <Skill Level="1" Name="Throwing"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="5" proficient="2-Handed Sword" familiar="Knife"></Profession>
+    <Profession Name="Martial Arts" Level="3" proficient="Boxing" familiar=""></Profession>
+    <Profession Name="Common" Level="1" proficient="Throwing" familiar=""></Profession>
+  </Professions>
   <Advantages>
     <Advantage Level="4" Name="Wealth"/>
     <Advantage Level="0" Name="Compulsive Liar"/>

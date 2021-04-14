@@ -6,10 +6,9 @@
     <Hand Name="left hand">Large Shield</Hand>
     <Belt>Unarmed Combat</Belt>
   </Equipment>
-  <Skills>
-    <Skill Level="5" Name="Sword"/>
-    <Skill Level="5" Name="Shield"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="5" proficient="Sword, Shield" familiar=""></Profession>
+  </Professions>
   <Advantages>
     <Advantage Level="7" Name="Wealth"/>
     <Advantage Level="0" Name="Berserker"/>

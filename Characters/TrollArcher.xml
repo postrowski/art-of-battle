@@ -7,12 +7,10 @@
     <Belt>Flail</Belt>
     <Belt>Knife</Belt>
   </Equipment>
-  <Skills>
-    <Skill Level="6" Name="Bow"/>
-    <Skill Level="5" Name="Flail"/>
-    <Skill Level="1" Name="Brawling"/>
-    <Skill Level="1" Name="Knife"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="5" proficient="Flail" familiar="Brawling, Knife"></Profession>
+    <Profession Name="Shooting" Level="6" proficient="Bow" familiar=""></Profession>
+  </Professions>
   <Advantages>
     <Advantage Level="6" Name="Wealth"/>
   </Advantages>

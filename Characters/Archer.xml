@@ -6,29 +6,22 @@
     <Hand Name="left hand"/>
     <Belt>Bastard Sword</Belt>
   </Equipment>
-  <Skills>
-    <Skill Level="7" Name="Bow"/>
-    <Skill Level="6" Name="2-Handed Sword"/>
-    <Skill Level="3" Name="Brawling"/>
-    <Skill Level="2" Name="Knife"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="6" proficient="2-Handed Sword" familiar="Brawling, Knife"></Profession>
+    <Profession Name="Shooting" Level="7" proficient="Bow" familiar=""></Profession>
+    <Profession Name="Spellcasting" Level="4" proficient="Conjuration" familiar="Fire, Air, Energy"></Profession>
+  </Professions>
   <Spells>
-    <Spell Level="1" Name="Flaming Missile Weapon"/>
-    <Spell Level="1" Name="Create Fire"/>
-    <Spell Level="1" Name="Control Fire"/>
-    <Spell Level="1" Name="Throw Spell"/>
-    <Spell Level="1" Name="Control Temperature"/>
-    <Spell Level="1" Name="Create Force"/>
-    <Spell Level="1" Name="Control Charge"/>
-    <Spell Level="1" Name="Create Electricity"/>
-    <Spell Level="1" Name="Flaming Weapon"/>
+    <Spell Familiarity="known" Name="Flaming Missile Weapon"/>
+    <Spell Familiarity="known" Name="Create Fire"/>
+    <Spell Familiarity="known" Name="Control Fire"/>
+    <Spell Familiarity="known" Name="Throw Spell"/>
+    <Spell Familiarity="known" Name="Control Temperature"/>
+    <Spell Familiarity="known" Name="Create Force"/>
+    <Spell Familiarity="known" Name="Control Charge"/>
+    <Spell Familiarity="known" Name="Create Electricity"/>
+    <Spell Familiarity="known" Name="Flaming Weapon"/>
   </Spells>
-  <Colleges>
-    <College Level="1" Name="Conjuration"/>
-    <College Level="1" Name="Fire"/>
-    <College Level="1" Name="Air"/>
-    <College Level="1" Name="Energy"/>
-  </Colleges>
   <Advantages>
     <Advantage Level="1" Name="Hero points"/>
     <Advantage Level="3" Name="Wealth"/>

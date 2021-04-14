@@ -5,12 +5,11 @@
     <Hand Name="right hand">Club</Hand>
     <Hand Name="left hand">Small Shield</Hand>
   </Equipment>
-  <Skills>
-    <Skill Level="10" Name="Axe/Mace"/>
-    <Skill Level="9" Name="Shield"/>
-    <Skill Level="4" Name="Wrestling"/>
-    <Skill Level="1" Name="Riding"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="10" proficient="Axe/Mace, Shield" familiar="Sword, Knife"></Profession>
+    <Profession Name="Martial Arts" Level="4" proficient="Wrestling" familiar=""></Profession>
+    <Profession Name="Common" Level="2" proficient="Riding" familiar=""></Profession>
+  </Professions>
   <Advantages>
     <Advantage Level="5" Name="Wealth"/>
     <Advantage Level="0" Name="Bad Temper"/>

@@ -7,10 +7,9 @@
     <Belt>Knife</Belt>
     <Belt>Potion:Minor Healing</Belt>
   </Equipment>
-  <Skills>
-    <Skill Level="6" Name="2-Handed Axe/Mace"/>
-    <Skill Level="3" Name="Knife"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="6" proficient="2-Handed Axe/Mace" familiar="Knife"></Profession>
+  </Professions>
   <Advantages>
     <Advantage Level="0" Name="Berserker"/>
     <Advantage Level="3" Name="Wealth"/>

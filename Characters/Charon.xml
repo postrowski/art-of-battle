@@ -5,27 +5,20 @@
     <Hand Name="left hand"/>
     <Belt>Quarterstaff</Belt>
   </Equipment>
-  <Skills>
-    <Skill Level="8" Name="Quarterstaff"/>
-    <Skill Level="3" Name="Brawling"/>
-    <Skill Level="8" Name="Bow"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="8" proficient="Quarterstaff" familiar="Brawling"></Profession>
+    <Profession Name="Shooting" Level="8" proficient="Bow" familiar=""></Profession>
+    <Profession Name="Spellcasting" Level="5" proficient="Energy, Protection" familiar="Earth, Evocation, Divination"></Profession>
+  </Professions>
   <Spells>
-    <Spell Level="2" Name="Reverse Missile"/>
-    <Spell Level="2" Name="Detect Object"/>
-    <Spell Level="1" Name="Magic Shield"/>
-    <Spell Level="1" Name="Missile Shield"/>
-    <Spell Level="1" Name="Create Earth"/>
-    <Spell Level="2" Name="Push"/>
-    <Spell Level="2" Name="Create Force"/>
+    <Spell Familiarity="memorized" Name="Reverse Missile"/>
+    <Spell Familiarity="memorized" Name="Detect Object"/>
+    <Spell Familiarity="known" Name="Magic Shield"/>
+    <Spell Familiarity="known" Name="Missile Shield"/>
+    <Spell Familiarity="known" Name="Create Earth"/>
+    <Spell Familiarity="memorized" Name="Push"/>
+    <Spell Familiarity="memorized" Name="Create Force"/>
   </Spells>
-  <Colleges>
-    <College Level="2" Name="Earth"/>
-    <College Level="3" Name="Protection"/>
-    <College Level="3" Name="Energy"/>
-    <College Level="3" Name="Evocation"/>
-    <College Level="3" Name="Divination"/>
-  </Colleges>
   <Advantages>
     <Advantage LevelName="$2,000" Name="Wealth"/>
     <Advantage LevelName="" Name="Compulsive Liar"/>

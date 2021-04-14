@@ -5,11 +5,9 @@
     <Hand Name="right hand">Morning Star</Hand>
     <Hand Name="left hand">Small Shield</Hand>
   </Equipment>
-  <Skills>
-    <Skill Level="4" Name="Flail"/>
-    <Skill Level="3" Name="Shield"/>
-    <Skill Level="2" Name="Brawling"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="4" proficient="Flail, Shield" familiar="Brawling"></Profession>
+  </Professions>
   <Advantages>
     <Advantage Level="5" Name="Wealth"/>
     <Advantage Level="0" Name="Berserker"/>

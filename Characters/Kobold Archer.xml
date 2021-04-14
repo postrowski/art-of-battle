@@ -7,11 +7,10 @@
     <Belt>Axe</Belt>
     <Belt>Knife</Belt>
   </Equipment>
-  <Skills>
-    <Skill Level="5" Name="Bow"/>
-    <Skill Level="5" Name="Axe/Mace"/>
-    <Skill Level="2" Name="Knife"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="5" proficient="Axe/Mace" familiar="Knife"></Profession>
+    <Profession Name="Shooting" Level="5" proficient="Bow" familiar=""></Profession>
+  </Professions>
   <Advantages>
     <Advantage Level="5" Name="Wealth"/>
   </Advantages>

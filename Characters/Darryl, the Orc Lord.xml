@@ -7,11 +7,9 @@
     <Belt>Knife</Belt>
     <Belt>Potion:Healing</Belt>
   </Equipment>
-  <Skills>
-    <Skill Level="9" Name="Sword"/>
-    <Skill Level="1" Name="Brawling"/>
-    <Skill Level="3" Name="Knife"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="4" proficient="Sword" familiar="Brawling, Knife"></Profession>
+  </Professions>
   <Advantages>
     <Advantage LevelName="$100000" Name="Wealth"/>
     <Advantage LevelName="" Name="Ambidextrous"/>

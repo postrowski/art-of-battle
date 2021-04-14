@@ -7,11 +7,9 @@
     <Belt>Potion:Healing</Belt>
     <Belt>Potion:Minor Healing</Belt>
   </Equipment>
-  <Skills>
-    <Skill Level="5" Name="Shield"/>
-    <Skill Level="2" Name="Brawling"/>
-    <Skill Level="6" Name="Sword"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="6" proficient="Sword, Shield" familiar="Brawling"></Profession>
+  </Professions>
   <Advantages>
     <Advantage LevelName="$10,000" Name="Wealth"/>
   </Advantages>

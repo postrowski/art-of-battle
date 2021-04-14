@@ -7,11 +7,10 @@
     <Belt>Potion:Minor Healing</Belt>
     <Belt>Knife</Belt>
   </Equipment>
-  <Skills>
-    <Skill Level="7" Name="2-Handed Axe/Mace"/>
-    <Skill Level="6" Name="Brawling"/>
-    <Skill Level="3" Name="Knife"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="7" proficient="2-Handed Axe/Mace, Brawling" familiar="Knife"></Profession>
+    <Profession Name="Common" Level="2" proficient="Throwing" familiar=""></Profession>
+  </Professions>
   <Advantages>
     <Advantage Level="5" Name="Wealth"/>
     <Advantage Level="1" Name="Hero points"/>

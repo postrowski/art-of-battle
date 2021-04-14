@@ -7,12 +7,9 @@
     <Belt>Potion:Major Healing</Belt>
     <Belt>Potion:Major Healing</Belt>
   </Equipment>
-  <Skills>
-    <Skill Level="5" Name="Axe/Mace"/>
-    <Skill Level="2" Name="Knife"/>
-    <Skill Level="5" Name="Shield"/>
-    <Skill Level="3" Name="Brawling"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="5" proficient="Axe/Mace, Shield" familiar="Knife, Brawling"></Profession>
+  </Professions>
   <Advantages>
     <Advantage LevelName="$2,000" Name="Wealth"/>
     <Advantage LevelName="1" Name="Hero points"/>

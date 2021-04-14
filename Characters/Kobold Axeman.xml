@@ -6,11 +6,9 @@
     <Hand Name="left hand">Large Shield</Hand>
     <Belt>Knife</Belt>
   </Equipment>
-  <Skills>
-    <Skill Level="6" Name="Axe/Mace"/>
-    <Skill Level="5" Name="Shield"/>
-    <Skill Level="1" Name="Knife"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="6" proficient="Axe/Mace, Shield" familiar="Knife"></Profession>
+  </Professions>
   <Advantages>
     <Advantage Level="6" Name="Wealth"/>
   </Advantages>

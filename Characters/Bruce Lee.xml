@@ -4,12 +4,10 @@
     <Hand Name="right hand"/>
     <Hand Name="left hand"/>
   </Equipment>
-  <Skills>
-    <Skill Level="3" Name="Quarterstaff"/>
-    <Skill Level="10" Name="Karate"/>
-    <Skill Level="8" Name="Aikido"/>
-    <Skill Level="2" Name="Nun chucks"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Martial Arts" Level="10" proficient="Karate, Aikido" familiar="Nun chucks, Quarterstaff"></Profession>
+    <Profession Name="Common" Level="2" proficient="Throwing" familiar=""></Profession>
+  </Professions>
   <Advantages>
     <Advantage LevelName="$500" Name="Wealth"/>
     <Advantage LevelName="1" Name="Hero points"/>

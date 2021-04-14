@@ -5,10 +5,9 @@
     <Hand Name="right hand"/>
     <Hand Name="left hand"/>
   </Equipment>
-  <Skills>
-    <Skill Level="6" Name="Aikido"/>
-    <Skill Level="5" Name="Boxing"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Martial Arts" Level="6" proficient="Aikido, Boxing" familiar=""></Profession>
+  </Professions>
   <Advantages>
     <Advantage Level="2" Name="Wealth"/>
     <Advantage Level="0" Name="Honest"/>

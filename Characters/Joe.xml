@@ -5,12 +5,11 @@
     <Hand Name="right hand">Rapier</Hand>
     <Hand Name="left hand">Medium Shield</Hand>
   </Equipment>
-  <Skills>
-    <Skill Level="6" Name="Fencing"/>
-    <Skill Level="5" Name="Shield"/>
-    <Skill Level="3" Name="Aikido"/>
-    <Skill Level="1" Name="Throwing"/>
-  </Skills>
+  <Professions>
+    <Profession Name="Fighter" Level="6" proficient="Fencing, Shield" familiar="Knife"></Profession>
+    <Profession Name="Martial Arts" Level="3" proficient="Aikido" familiar=""></Profession>
+    <Profession Name="Common" Level="2" proficient="Throwing" familiar=""></Profession>
+  </Professions>
   <Advantages>
     <Advantage Level="4" Name="Wealth"/>
   </Advantages>
