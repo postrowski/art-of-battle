@@ -1,14 +1,13 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="Apprentice" Race="Elf">
-  <Attributes DEX="3" HT="-1" IQ="5" NIM="3" SOC="0" STR="-1" TOU="-2"/>
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Apprentice" Race="Elf">
+  <Attributes DEX="4" HT="-1" IQ="4" NIM="3" SOC="0" STR="-1" TOU="-2"/>
   <Equipment Armor="Leather">
     <Hand Name="right hand">Quarterstaff</Hand>
     <Hand Name="left hand"/>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="4" proficient="Quarterstaff" familiar="Brawling"></Profession>
-    <Profession Name="Common" Level="4" proficient="Throwing" familiar=""></Profession>
-    <Profession Name="Spellcasting" Level="4" proficient="Conjuration, Evocation, Fire" familiar=""></Profession>
+    <Profession Level="4" Name="Spellcasting" familiar="" proficient="Conjuration,Fire"/>
+    <Profession Level="4" Name="Fighter" familiar="Brawling" proficient="Quarterstaff"/>
+    <Profession Level="3" Name="Common" familiar="" proficient="Throwing"/>
   </Professions>
   <Spells>
     <Spell Familiarity="memorized" Name="Fireball"/>
@@ -21,9 +20,10 @@
     <Spell Familiarity="memorized" Name="Throw Spell"/>
   </Spells>
   <Advantages>
-    <Advantage Level="2" Name="Magical Aptitude"/>
-    <Advantage Level="1" Name="Wealth"/>
-    <Advantage Level="0" Name="Bad Temper"/>
-    <Advantage Level="2" Name="Appearance"/>
+    <Advantage LevelName="+3" Name="Magical Aptitude"/>
+    <Advantage LevelName="$200" Name="Wealth"/>
+    <Advantage LevelName="" Name="Bad Temper"/>
+    <Advantage LevelName="Unattractive" Name="Appearance"/>
+    <Advantage LevelName="x1" Name="Quirks"/>
   </Advantages>
 </Character>

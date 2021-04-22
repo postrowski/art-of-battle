@@ -1,13 +1,12 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="Pixie Archer1" Race="Fairy">
-  <Attributes DEX="5" HT="-2" IQ="3" NIM="2" SOC="2" STR="1" TOU="-2"/>
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Pixie Archer1" Race="Fairy">
+  <Attributes DEX="4" HT="-2" IQ="2" NIM="2" SOC="2" STR="1" TOU="-2"/>
   <Equipment Armor="Banded Mail">
     <Hand Name="right hand">Bow, Longbow</Hand>
     <Hand Name="left hand"/>
   </Equipment>
   <Professions>
-    <Profession Name="Shooting" Level="5" proficient="Bow" familiar=""></Profession>
-    <Profession Name="Spellcasting" Level="4" proficient="Fire" familiar="Energy, Water, Conjuration"></Profession>
+    <Profession Level="5" Name="Shooting" familiar="" proficient="Bow"/>
+    <Profession Level="4" Name="Spellcasting" familiar="Water,Fire,Conjuration" proficient="Energy"/>
   </Professions>
   <Spells>
     <Spell Familiarity="known" Name="Ice Daggers"/>
@@ -18,7 +17,8 @@
     <Spell Familiarity="known" Name="Water Jet"/>
   </Spells>
   <Advantages>
-    <Advantage Level="3" Name="Wealth"/>
-    <Advantage Level="0" Name="Phobia"/>
+    <Advantage LevelName="$1,000" Name="Wealth"/>
+    <Advantage LevelName="Minor" Name="Phobia"/>
+    <Advantage LevelName="x5" Name="Quirks"/>
   </Advantages>
 </Character>

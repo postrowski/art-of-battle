@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Malihk" Race="Human">
-  <Attributes DEX="0" HT="-2" IQ="4" NIM="5" SOC="-2" STR="0" TOU="-1"/>
+  <Attributes DEX="0" HT="-2" IQ="4" NIM="4" SOC="-2" STR="1" TOU="-1"/>
   <Equipment Armor="Cloth">
     <Hand Name="right hand">Quarterstaff</Hand>
     <Hand Name="left hand"/>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="6" proficient="Quarterstaff" familiar="Shield"></Profession>
-    <Profession Name="Martial Art" level="2" proficient="Aikido" familiar=""></Profession>
-    <Profession Name="Spellcasting" Level="5" proficient="Conjuration, Earth, Energy, Protection, Divination" familiar=""></Profession>
+    <Profession Level="6" Name="Fighter" familiar="Shield" proficient="Quarterstaff"/>
+    <Profession Level="5" Name="Spellcasting" familiar="" proficient="Conjuration,Earth,Energy,Protection,Divination"/>
   </Professions>
   <Spells>
     <Spell Familiarity="memorized" Name="Magic Missile"/>
     <Spell Familiarity="memorized" Name="Create Earth"/>
     <Spell Familiarity="memorized" Name="Create Force"/>
     <Spell Familiarity="memorized" Name="Throw Spell"/>
-    <Spell Familiarity="known" Name="Missile Shield"/>
-    <Spell Familiarity="known" Name="Push"/>
-    <Spell Familiarity="known" Name="Detect Object"/>
-    <Spell Familiarity="known" Name="Magic Shield"/>
+    <Spell Familiarity="memorized" Name="Missile Shield"/>
+    <Spell Familiarity="memorized" Name="Push"/>
+    <Spell Familiarity="memorized" Name="Detect Object"/>
+    <Spell Familiarity="memorized" Name="Magic Shield"/>
     <Spell Familiarity="memorized" Name="Block Attack"/>
   </Spells>
   <Advantages>
     <Advantage LevelName="$200" Name="Wealth"/>
     <Advantage LevelName="" Name="Honest"/>
     <Advantage LevelName="+4" Name="Magical Aptitude"/>
-    <Advantage LevelName="x4" Name="Quirks"/>
+    <Advantage LevelName="x5" Name="Quirks"/>
+    <Advantage LevelName="Gambling (Minor)" Name="Addiction"/>
   </Advantages>
 </Character>

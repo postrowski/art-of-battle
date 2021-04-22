@@ -5,11 +5,12 @@
     <Hand Name="left hand"/>
   </Equipment>
   <Professions>
-    <Profession Name="Martial Arts" Level="10" proficient="Karate, Aikido" familiar="Nun chucks, Quarterstaff"></Profession>
-    <Profession Name="Common" Level="2" proficient="Throwing" familiar=""></Profession>
+    <Profession Level="10" Name="Martial Arts" familiar="Nun chucks" proficient="Karate,Aikido"/>
+    <Profession Level="2" Name="Common" familiar="" proficient="Throwing"/>
   </Professions>
   <Advantages>
     <Advantage LevelName="$500" Name="Wealth"/>
     <Advantage LevelName="1" Name="Hero points"/>
+    <Advantage LevelName="Fair Fighter" Name="Code of Conduct"/>
   </Advantages>
 </Character>

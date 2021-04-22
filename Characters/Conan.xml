@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="Conan" Race="Human">
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Conan" Race="Human">
   <Attributes DEX="4" HT="5" IQ="-1" NIM="3" SOC="-2" STR="9" TOU="4"/>
   <Equipment Armor="Light Plate">
     <Hand Name="right hand">Two-Handed Sword</Hand>
@@ -7,12 +6,14 @@
     <Belt>Potion:Major Healing</Belt>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="8" proficient="2-Handed Sword" familiar="Brawling"></Profession>
+    <Profession Level="7" Name="Fighter" familiar="Brawling" proficient="2-Handed Sword"/>
   </Professions>
   <Advantages>
-    <Advantage Level="6" Name="Wealth"/>
-    <Advantage Level="0" Name="Bad Temper"/>
-    <Advantage Level="2" Name="Magic Resistance"/>
-    <Advantage Level="2" Name="Hero points"/>
+    <Advantage LevelName="$5,000" Name="Wealth"/>
+    <Advantage LevelName="" Name="Bad Temper"/>
+    <Advantage LevelName="+3" Name="Magic Resistance"/>
+    <Advantage LevelName="2" Name="Hero points"/>
+    <Advantage LevelName="Part-time" Name="Sense of Duty"/>
+    <Advantage LevelName="x2" Name="Quirks"/>
   </Advantages>
 </Character>

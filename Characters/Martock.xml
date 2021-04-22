@@ -1,18 +1,18 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="Martock" Race="Orc">
-  <Attributes DEX="3" HT="2" IQ="-3" NIM="2" SOC="-2" STR="6" TOU="1"/>
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Martock" Race="Orc">
+  <Attributes DEX="3" HT="2" IQ="-3" NIM="2" SOC="-3" STR="6" TOU="1"/>
   <Equipment Armor="Light Plate">
     <Hand Name="right hand">Throwing Axe</Hand>
     <Hand Name="left hand">Large Shield</Hand>
     <Belt>Axe</Belt>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="6" proficient="Axe/Mace, Shield" familiar="Brawling, Knife"></Profession>
-    <Profession Name="Common" Level="4" proficient="Throwing" familiar=""></Profession>
+    <Profession Level="6" Name="Fighter" familiar="Brawling" proficient="Axe/Mace,Shield"/>
+    <Profession Level="3" Name="Common" familiar="" proficient="Throwing"/>
   </Professions>
   <Advantages>
-    <Advantage Level="7" Name="Wealth"/>
-    <Advantage Level="0" Name="Berserker"/>
-    <Advantage Level="0" Name="Compulsive Liar"/>
+    <Advantage LevelName="$10,000" Name="Wealth"/>
+    <Advantage LevelName="" Name="Berserker"/>
+    <Advantage LevelName="" Name="Compulsive Liar"/>
+    <Advantage LevelName="x3" Name="Quirks"/>
   </Advantages>
 </Character>

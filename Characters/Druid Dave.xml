@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="Druid Dave" Race="Human">
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Druid Dave" Race="Human">
   <Attributes DEX="2" HT="0" IQ="0" NIM="2" SOC="2" STR="1" TOU="1"/>
   <Equipment Armor="Leather">
     <Hand Name="right hand">Quarterstaff</Hand>
@@ -7,12 +6,12 @@
     <Belt>Knife</Belt>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="6" proficient="Quarterstaff" familiar="Brawling, Knife"></Profession>
+    <Profession Level="5" Name="Fighter" familiar="Brawling" proficient="Quarterstaff"/>
   </Professions>
   <Advantages>
-    <Advantage Level="2" Name="Wealth"/>
-    <Advantage Level="3" Name="Divine Power"/>
-    <Advantage Level="4" Name="Divine Aff. - Druid"/>
-    <Advantage Level="0" Name="Intolerant"/>
+    <Advantage LevelName="$500" Name="Wealth"/>
+    <Advantage LevelName="4" Name="Divine Power"/>
+    <Advantage LevelName="5" Name="Divine Aff. - Druid"/>
+    <Advantage LevelName="" Name="Intolerant"/>
   </Advantages>
 </Character>

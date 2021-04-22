@@ -1,6 +1,5 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="Minotaur" Race="Minotaur">
-  <Attributes DEX="5" HT="4" IQ="-3" NIM="6" SOC="-4" STR="5" TOU="2"/>
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Minotaur" Race="Minotaur">
+  <Attributes DEX="5" HT="4" IQ="-3" NIM="6" SOC="-4" STR="5" TOU="3"/>
   <Equipment Armor="Heavy Leather">
     <Hand Name="right hand">Great Axe</Hand>
     <Hand Name="left hand"/>
@@ -8,11 +7,13 @@
     <Belt>Knife</Belt>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="7" proficient="2-Handed Axe/Mace, Brawling" familiar="Knife"></Profession>
-    <Profession Name="Common" Level="2" proficient="Throwing" familiar=""></Profession>
+    <Profession Level="6" Name="Fighter" familiar="Knife" proficient="Brawling,2-Handed Axe/Mace"/>
+    <Profession Level="3" Name="Common" familiar="" proficient="Throwing"/>
   </Professions>
   <Advantages>
-    <Advantage Level="5" Name="Wealth"/>
-    <Advantage Level="1" Name="Hero points"/>
+    <Advantage LevelName="$3,000" Name="Wealth"/>
+    <Advantage LevelName="1" Name="Hero points"/>
+    <Advantage LevelName="x1" Name="Quirks"/>
+    <Advantage LevelName="" Name="Sadistic"/>
   </Advantages>
 </Character>

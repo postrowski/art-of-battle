@@ -1,18 +1,18 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="SwordMaster" Race="Human">
-  <Attributes DEX="6" HT="1" IQ="-1" NIM="5" SOC="0" STR="7" TOU="1"/>
-  <Equipment Armor="Scale Mail">
-    <Hand Name="right hand">Shortsword</Hand>
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="SwordMaster" Race="Human">
+  <Attributes DEX="6" HT="1" IQ="-1" NIM="5" SOC="-1" STR="6" TOU="2"/>
+  <Equipment Armor="Dwarven Scale">
+    <Hand Name="right hand">Shortsword, Fine</Hand>
     <Hand Name="left hand">Large Shield</Hand>
     <Belt>Potion:Healing</Belt>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="10" proficient="Sword, Shield" familiar="Knife"></Profession>
+    <Profession Level="10" Name="Fighter" familiar="Knife" proficient="Sword,Shield"/>
   </Professions>
   <Advantages>
-    <Advantage Level="4" Name="Wealth"/>
-    <Advantage Level="0" Name="Honest"/>
-    <Advantage Level="0" Name="Bad Temper"/>
-    <Advantage Level="1" Name="Hero points"/>
+    <Advantage LevelName="$30,000" Name="Wealth"/>
+    <Advantage LevelName="" Name="Honest"/>
+    <Advantage LevelName="" Name="Bad Temper"/>
+    <Advantage LevelName="1" Name="Hero points"/>
+    <Advantage LevelName="x3" Name="Quirks"/>
   </Advantages>
 </Character>

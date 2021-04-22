@@ -1,27 +1,28 @@
-<?xml version="1.0"?>
-<Character Gender="Female" Name="MagePriest" Race="Elf">
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Female" Name="MagePriest" Race="Elf">
   <Attributes DEX="1" HT="-2" IQ="4" NIM="2" SOC="5" STR="-5" TOU="-3"/>
   <Equipment Armor="Chain Mail">
     <Hand Name="right hand">Quarterstaff</Hand>
     <Hand Name="left hand"/>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="4" proficient="Quarterstaff" familiar=""></Profession>
-    <Profession Name="Spellcasting" Level="3" proficient="Conjuration, Fire" familiar=""></Profession>
+    <Profession Level="4" Name="Fighter" familiar="" proficient="Quarterstaff"/>
+    <Profession Level="2" Name="Common" familiar="" proficient="Throwing"/>
+    <Profession Level="2" Name="Thief" familiar="" proficient="Stealth"/>
+    <Profession Level="3" Name="Spellcasting" familiar="" proficient="Conjuration,Fire"/>
   </Professions>
   <Spells>
-    <Spell Familiarity="known" Name="Flame Jet"/>
-    <Spell Familiarity="known" Name="Throw Spell"/>
-    <Spell Familiarity="known" Name="Control Temperature"/>
-    <Spell Familiarity="known" Name="Create Fire"/>
+    <Spell Familiarity="memorized" Name="Flame Jet"/>
+    <Spell Familiarity="memorized" Name="Throw Spell"/>
+    <Spell Familiarity="memorized" Name="Control Temperature"/>
+    <Spell Familiarity="memorized" Name="Create Fire"/>
   </Spells>
   <Advantages>
-    <Advantage Level="3" Name="Magical Aptitude"/>
-    <Advantage Level="1" Name="Wealth"/>
-    <Advantage Level="4" Name="Divine Aff. - Aphrodite"/>
-    <Advantage Level="2" Name="Divine Power"/>
-    <Advantage Level="0" Name="Compulsive Liar"/>
-    <Advantage Level="0" Name="Delusional"/>
-    <Advantage Level="0" Name="Phobia"/>
+    <Advantage LevelName="$200" Name="Wealth"/>
+    <Advantage LevelName="5" Name="Divine Aff. - Aphrodite"/>
+    <Advantage LevelName="3" Name="Divine Power"/>
+    <Advantage LevelName="" Name="Compulsive Liar"/>
+    <Advantage LevelName="" Name="Delusional"/>
+    <Advantage LevelName="Minor" Name="Phobia"/>
+    <Advantage LevelName="x1" Name="Quirks"/>
   </Advantages>
 </Character>

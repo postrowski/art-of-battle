@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="Grizzle" Race="Dwarf">
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Grizzle" Race="Dwarf">
   <Attributes DEX="3" HT="2" IQ="-2" NIM="2" SOC="0" STR="4" TOU="2"/>
   <Equipment Armor="Scale Mail">
     <Hand Name="right hand">Morning Star</Hand>
@@ -7,10 +6,11 @@
     <Belt>Potion:Increase Nimbleness</Belt>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="6" proficient="Flail, Shield" familiar="Knife"></Profession>
+    <Profession Level="6" Name="Fighter" familiar="Knife" proficient="Flail,Shield"/>
   </Professions>
   <Advantages>
-    <Advantage Level="5" Name="Wealth"/>
-    <Advantage Level="0" Name="Compulsive Liar"/>
+    <Advantage LevelName="$3,000" Name="Wealth"/>
+    <Advantage LevelName="" Name="Compulsive Liar"/>
+    <Advantage LevelName="x5" Name="Quirks"/>
   </Advantages>
 </Character>

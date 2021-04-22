@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="300 fighter" Race="Dwarf">
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="300 fighter" Race="Dwarf">
   <Attributes DEX="3" HT="2" IQ="-1" NIM="2" SOC="-1" STR="5" TOU="3"/>
   <Equipment Armor="Banded Mail">
     <Hand Name="right hand">Broadsword</Hand>
@@ -8,12 +7,14 @@
     <Belt>Potion:Increase Strength</Belt>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="8" proficient="Sword, Shield" familiar="Brawling"></Profession>
-    <Profession Name="Shooting" Level="2" proficient="Bow" familiar=""></Profession>
+    <Profession Level="7" Name="Fighter" familiar="Brawling" proficient="Shield,Sword"/>
+    <Profession Level="3" Name="Common" familiar="" proficient="Throwing"/>
+    <Profession Level="3" Name="Shooting" familiar="" proficient="Bow"/>
   </Professions>
   <Advantages>
-    <Advantage Level="1" Name="Hero points"/>
-    <Advantage Level="0" Name="Delusional"/>
-    <Advantage Level="6" Name="Wealth"/>
+    <Advantage LevelName="1" Name="Hero points"/>
+    <Advantage LevelName="" Name="Delusional"/>
+    <Advantage LevelName="$5,000" Name="Wealth"/>
+    <Advantage LevelName="x3" Name="Quirks"/>
   </Advantages>
 </Character>

@@ -1,6 +1,5 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="Samurai" Race="Human">
-  <Attributes DEX="6" HT="2" IQ="0" NIM="4" SOC="1" STR="4" TOU="4"/>
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Samurai" Race="Human">
+  <Attributes DEX="6" HT="0" IQ="0" NIM="4" SOC="1" STR="4" TOU="3"/>
   <Equipment Armor="Samurai">
     <Hand Name="right hand">Bow, Longbow</Hand>
     <Hand Name="left hand"/>
@@ -10,17 +9,18 @@
     <Belt>Potion:Speed</Belt>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="10" proficient="2-Handed Sword" familiar="Sword, Shield, Knife"></Profession>
-    <Profession Name="Martial Arts" Level="8" proficient="Aikido" familiar="Karate"></Profession>
-    <Profession Name="Shooting" Level="3" proficient="Bow" familiar=""></Profession>
-    <Profession Name="Common" Level="2" proficient="Riding, Throwing" familiar=""></Profession>
+    <Profession Level="9" Name="Fighter" familiar="Sword" proficient="2-Handed Sword"/>
+    <Profession Level="2" Name="Common" familiar="" proficient="Riding,Throwing"/>
+    <Profession Level="7" Name="Martial Arts" familiar="" proficient="Aikido,Karate"/>
+    <Profession Level="3" Name="Shooting" familiar="" proficient="Bow"/>
   </Professions>
   <Advantages>
-    <Advantage Level="8" Name="Wealth"/>
-    <Advantage Level="0" Name="Honest"/>
-    <Advantage Level="1" Name="Hero points"/>
-    <Advantage Level="0" Name="Phobia"/>
-    <Advantage Level="0" Name="Code of Conduct"/>
-    <Advantage Level="1" Name="Sense of Duty"/>
+    <Advantage LevelName="$30,000" Name="Wealth"/>
+    <Advantage LevelName="" Name="Honest"/>
+    <Advantage LevelName="1" Name="Hero points"/>
+    <Advantage LevelName="Minor" Name="Phobia"/>
+    <Advantage LevelName="Severe" Name="Code of Conduct"/>
+    <Advantage LevelName="Full-time" Name="Sense of Duty"/>
+    <Advantage LevelName="x3" Name="Quirks"/>
   </Advantages>
 </Character>

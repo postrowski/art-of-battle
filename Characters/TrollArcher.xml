@@ -1,17 +1,15 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="TrollArcher" Race="Troll">
-  <Attributes DEX="3" HT="3" IQ="-3" NIM="0" SOC="-4" STR="3" TOU="2"/>
-  <Equipment Armor="Chain Mail">
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="TrollArcher" Race="Troll">
+  <Attributes DEX="3" HT="3" IQ="-3" NIM="0" SOC="-5" STR="3" TOU="2"/>
+  <Equipment Armor="Cloth Armor">
     <Hand Name="right hand">Bow, Shortbow</Hand>
     <Hand Name="left hand"/>
     <Belt>Flail</Belt>
-    <Belt>Knife</Belt>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="5" proficient="Flail" familiar="Brawling, Knife"></Profession>
-    <Profession Name="Shooting" Level="6" proficient="Bow" familiar=""></Profession>
+    <Profession Level="4" Name="Fighter" familiar="" proficient="Flail,Brawling"/>
+    <Profession Level="5" Name="Shooting" familiar="" proficient="Bow"/>
   </Professions>
   <Advantages>
-    <Advantage Level="6" Name="Wealth"/>
+    <Advantage LevelName="$3,000" Name="Wealth"/>
   </Advantages>
 </Character>

@@ -5,8 +5,8 @@
     <Hand Name="left hand"/>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="6" proficient="Quarterstaff" familiar="Knife"></Profession>
-    <Profession Name="Spellcasting" Level="5" proficient="Divination, Enchantment, Energy, Necromancy, Protection" familiar=""></Profession>
+    <Profession Level="6" Name="Fighter" familiar="" proficient="Knife,Quarterstaff"/>
+    <Profession Level="5" Name="Spellcasting" familiar="Necromancy,Enchantment,Energy,Protection,Divination" proficient=""/>
   </Professions>
   <Spells>
     <Spell Familiarity="memorized" Name="Control Mind"/>
@@ -22,10 +22,9 @@
     <Spell Familiarity="known" Name="Strength"/>
   </Spells>
   <Advantages>
-    <Advantage LevelName="+3" Name="Magical Aptitude"/>
     <Advantage LevelName="$200" Name="Wealth"/>
     <Advantage LevelName="" Name="Delusional"/>
     <Advantage LevelName="" Name="Sadistic"/>
-    <Advantage LevelName="x5" Name="Quirks"/>
+    <Advantage LevelName="x4" Name="Quirks"/>
   </Advantages>
 </Character>

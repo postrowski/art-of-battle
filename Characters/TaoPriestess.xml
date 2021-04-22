@@ -6,9 +6,8 @@
     <Belt>Quarterstaff</Belt>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="6" proficient="Quarterstaff" familiar=""></Profession>
-    <Profession Name="Martial Arts" Level="5" proficient="Aikido" familiar=""></Profession>
-    <Profession Name="Common" Level="1" proficient="Throwing" familiar=""></Profession>
+    <Profession Level="2" Name="Common" familiar="Swimming" proficient="Throwing"/>
+    <Profession Level="5" Name="Martial Arts" familiar="" proficient="Quarterstaff,Aikido"/>
   </Professions>
   <Advantages>
     <Advantage LevelName="$500" Name="Wealth"/>
@@ -16,5 +15,6 @@
     <Advantage LevelName="5" Name="Divine Aff. - Tao"/>
     <Advantage LevelName="" Name="Honest"/>
     <Advantage LevelName="Near sighted" Name="Vision"/>
+    <Advantage LevelName="x3" Name="Quirks"/>
   </Advantages>
 </Character>

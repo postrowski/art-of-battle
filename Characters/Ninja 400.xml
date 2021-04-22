@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Ninja 400" Race="Human">
-  <Attributes DEX="5" HT="3" IQ="1" NIM="6" SOC="0" STR="4" TOU="2"/>
+  <Attributes DEX="4" HT="3" IQ="0" NIM="6" SOC="0" STR="5" TOU="2"/>
   <Equipment Armor="Cloth Armor">
     <Hand Name="right hand">Throwing Star</Hand>
     <Hand Name="left hand"/>
@@ -9,12 +9,14 @@
     <Belt>Throwing Star</Belt>
   </Equipment>
   <Professions>
-    <Profession Name="Martial Arts" Level="8" proficient="Aikido, Karate, Nun chucks" familiar=""></Profession>
-    <Profession Name="Common" Level="6" proficient="Throwing" familiar=""></Profession>
+    <Profession Level="4" Name="Common" familiar="" proficient="Throwing"/>
+    <Profession Level="4" Name="Thief" familiar="" proficient="Stealth"/>
+    <Profession Level="8" Name="Martial Arts" familiar="" proficient="Aikido,Karate,Nun chucks"/>
   </Professions>
   <Advantages>
-    <Advantage Level="2" Name="Wealth"/>
-    <Advantage Level="1" Name="Sense of Duty"/>
-    <Advantage Level="4" Name="Quirks"/>
+    <Advantage LevelName="$500" Name="Wealth"/>
+    <Advantage LevelName="Full-time" Name="Sense of Duty"/>
+    <Advantage LevelName="x5" Name="Quirks"/>
+    <Advantage LevelName="" Name="Sadistic"/>
   </Advantages>
 </Character>

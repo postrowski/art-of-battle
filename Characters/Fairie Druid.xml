@@ -1,18 +1,18 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="Fairie Druid" Race="Fairy">
-  <Attributes DEX="2" HT="-2" IQ="1" NIM="5" SOC="5" STR="-1" TOU="-2"/>
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Fairie Druid" Race="Fairy">
+  <Attributes DEX="2" HT="-2" IQ="0" NIM="5" SOC="5" STR="-1" TOU="-2"/>
   <Equipment Armor="Leather">
     <Hand Name="right hand">Spear</Hand>
     <Hand Name="left hand">Medium Shield</Hand>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="4" proficient="Spear, Shield" familiar=""></Profession>
-    <Profession Name="Common" Level="3" proficient="Throwing" familiar=""></Profession>
+    <Profession Level="3" Name="Common" familiar="" proficient="Throwing"/>
+    <Profession Level="4" Name="Fighter" familiar="" proficient="Spear,Shield"/>
   </Professions>
   <Advantages>
-    <Advantage Level="1" Name="Wealth"/>
-    <Advantage Level="6" Name="Divine Aff. - Druid"/>
-    <Advantage Level="4" Name="Divine Power"/>
-    <Advantage Level="2" Name="Phobia"/>
+    <Advantage LevelName="$200" Name="Wealth"/>
+    <Advantage LevelName="7" Name="Divine Aff. - Druid"/>
+    <Advantage LevelName="5" Name="Divine Power"/>
+    <Advantage LevelName="Major" Name="Phobia"/>
+    <Advantage LevelName="x3" Name="Quirks"/>
   </Advantages>
 </Character>

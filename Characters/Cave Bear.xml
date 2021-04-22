@@ -1,11 +1,9 @@
-<?xml version="1.0"?>
-<Character Name="Cave Bear" Race="Cave-Bear">
-  <Attributes DEX="2" HT="0" IQ="-4" NIM="1" SOC="0" STR="1" TOU="2"/>
-  <Equipment Armor="No Armor">
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Cave Bear" Race="Cave-Bear">
+  <Attributes DEX="3" HT="0" IQ="-6" NIM="4" SOC="-5" STR="2" TOU="2"/>
+  <Equipment Armor="Thick Fur">
     <Hand Name="right hand"/>
     <Hand Name="left hand"/>
   </Equipment>
   <Professions>
-    <Profession Name="Common" Level="6" proficient="Brawling" familiar=""></Profession>
-  </Professions>
-</Character>
+    <Profession Level="7" Name="Common" familiar="" proficient="Brawling"/>
+  </Professions></Character>

@@ -1,6 +1,5 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="Kobold Archer" Race="Kobold">
-  <Attributes DEX="3" HT="2" IQ="-3" NIM="0" SOC="-3" STR="1" TOU="-1"/>
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Kobold Archer" Race="Kobold">
+  <Attributes DEX="3" HT="1" IQ="-3" NIM="0" SOC="-3" STR="1" TOU="-1"/>
   <Equipment Armor="Leather">
     <Hand Name="right hand">Bow, Shortbow</Hand>
     <Hand Name="left hand"/>
@@ -8,10 +7,10 @@
     <Belt>Knife</Belt>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="5" proficient="Axe/Mace" familiar="Knife"></Profession>
-    <Profession Name="Shooting" Level="5" proficient="Bow" familiar=""></Profession>
+    <Profession Level="5" Name="Shooting" familiar="" proficient="Bow"/>
+    <Profession Level="4" Name="Fighter" familiar="Knife" proficient="Axe/Mace"/>
   </Professions>
   <Advantages>
-    <Advantage Level="5" Name="Wealth"/>
+    <Advantage LevelName="$3,000" Name="Wealth"/>
   </Advantages>
 </Character>

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Charon" Race="Elf">
-  <Attributes DEX="6" HT="-1" IQ="4" NIM="4" SOC="1" STR="5" TOU="2"/>
+  <Attributes DEX="5" HT="-1" IQ="3" NIM="5" SOC="1" STR="4" TOU="2"/>
   <Equipment Armor="Elven Chain">
     <Hand Name="right hand">Bow, Longbow</Hand>
     <Hand Name="left hand"/>
     <Belt>Quarterstaff</Belt>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="8" proficient="Quarterstaff" familiar="Brawling"></Profession>
-    <Profession Name="Shooting" Level="8" proficient="Bow" familiar=""></Profession>
-    <Profession Name="Spellcasting" Level="5" proficient="Energy, Protection" familiar="Earth, Evocation, Divination"></Profession>
+    <Profession Level="5" Name="Spellcasting" familiar="Earth,Evocation,Divination" proficient="Energy,Protection"/>
+    <Profession Level="7" Name="Shooting" familiar="" proficient="Bow"/>
+    <Profession Level="6" Name="Fighter" familiar="Brawling" proficient="Quarterstaff"/>
   </Professions>
   <Spells>
     <Spell Familiarity="memorized" Name="Reverse Missile"/>
@@ -23,6 +23,5 @@
     <Advantage LevelName="$2,000" Name="Wealth"/>
     <Advantage LevelName="" Name="Compulsive Liar"/>
     <Advantage LevelName="1" Name="Hero points"/>
-    <Advantage LevelName="x2" Name="Quirks"/>
   </Advantages>
 </Character>

@@ -1,6 +1,5 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="Ahnook" Race="Half-Elf">
-  <Attributes DEX="5" HT="0" IQ="1" NIM="4" SOC="1" STR="3" TOU="-1"/>
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Ahnook" Race="Half-Elf">
+  <Attributes DEX="4" HT="0" IQ="1" NIM="4" SOC="1" STR="3" TOU="-1"/>
   <Equipment Armor="Heavy Leather">
     <Hand Name="right hand">Bow, Longbow</Hand>
     <Hand Name="left hand"/>
@@ -8,12 +7,12 @@
     <Belt>Potion:Increase Strength</Belt>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="4" proficient="2-Handed Sword" familiar=""></Profession>
-    <Profession Name="Martial Arts" Level="1" proficient="Karate" familiar=""></Profession>
-    <Profession Name="Shooting" Level="6" proficient="Bow" familiar=""></Profession>
+    <Profession Level="4" Name="Fighter" familiar="" proficient="2-Handed Sword"/>
+    <Profession Level="2" Name="Martial Arts" familiar="" proficient="Karate"/>
+    <Profession Level="5" Name="Shooting" familiar="" proficient="Bow"/>
   </Professions>
   <Advantages>
-    <Advantage Level="5" Name="Wealth"/>
-    <Advantage Level="0" Name="Bad Temper"/>
+    <Advantage LevelName="$3,000" Name="Wealth"/>
+    <Advantage LevelName="" Name="Bad Temper"/>
   </Advantages>
 </Character>

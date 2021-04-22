@@ -1,20 +1,21 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Character Gender="Male" Name="Darryl, the Orc Lord" Race="Orc">
-  <Attributes DEX="4" HT="2" IQ="-3" NIM="2" SOC="-3" STR="7" TOU="2"/>
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Darryl, the Orc Lord" Race="Orc">
+  <Attributes DEX="2" HT="2" IQ="-3" NIM="2" SOC="-3" STR="6" TOU="1"/>
   <Equipment Armor="Dwarven Scale">
-    <Hand Name="right hand">Shortsword</Hand>
-    <Hand Name="left hand">Shortsword</Hand>
-    <Belt>Knife</Belt>
-    <Belt>Potion:Healing</Belt>
+    <Hand Name="right hand">Shortsword, Fine</Hand>
+    <Hand Name="left hand">Shortsword, Fine</Hand>
+    <Belt>Potion:Increase Dexterity</Belt>
+    <Belt>Potion:Complete Healing</Belt>
+    <Belt>Potion:Speed</Belt>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="4" proficient="Sword" familiar="Brawling, Knife"></Profession>
+    <Profession Level="6" Name="Fighter" familiar="Brawling" proficient="Sword"/>
   </Professions>
   <Advantages>
-    <Advantage LevelName="$100000" Name="Wealth"/>
+    <Advantage LevelName="$100,000" Name="Wealth"/>
     <Advantage LevelName="" Name="Ambidextrous"/>
     <Advantage LevelName="" Name="Greedy"/>
     <Advantage LevelName="Fair Fighter" Name="Code of Conduct"/>
     <Advantage LevelName="Viscount" Name="Rank: Social (m)"/>
+    <Advantage LevelName="x3" Name="Quirks"/>
   </Advantages>
 </Character>

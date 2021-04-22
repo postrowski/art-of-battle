@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Merlin" Race="Human">
-  <Attributes DEX="4" HT="-1" IQ="6" NIM="4" SOC="0" STR="0" TOU="1"/>
+  <Attributes DEX="3" HT="-1" IQ="6" NIM="4" SOC="0" STR="0" TOU="0"/>
   <Equipment Armor="Leather">
     <Hand Name="right hand">Quarterstaff</Hand>
     <Hand Name="left hand"/>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="6" proficient="Quarterstaff" familiar="Brawling, Shield"></Profession>
-    <Profession Name="Common" Level="4" proficient="Throwing" familiar=""></Profession>
-    <Profession Name="Spellcasting" Level="6" proficient="Protection, Energy, Earth, Conjuration" familiar="Enchantment, Divination, Air, Evocation"></Profession>
+    <Profession Level="6" Name="Fighter" familiar="Brawling" proficient="Quarterstaff"/>
+    <Profession Level="4" Name="Common" familiar="" proficient="Throwing"/>
+    <Profession Level="8" Name="Spellcasting" familiar="Enchantment,Air,Divination,Evocation" proficient="Conjuration,Earth,Energy,Protection"/>
   </Professions>
   <Spells>
     <Spell Familiarity="memorized" Name="Block Spell"/>
@@ -39,6 +39,7 @@
     <Advantage LevelName="" Name="Honest"/>
     <Advantage LevelName="1" Name="Hero points"/>
     <Advantage LevelName="$500" Name="Wealth"/>
-    <Advantage LevelName="x1" Name="Quirks"/>
+    <Advantage LevelName="x4" Name="Quirks"/>
+    <Advantage LevelName="Part-time" Name="Sense of Duty"/>
   </Advantages>
 </Character>

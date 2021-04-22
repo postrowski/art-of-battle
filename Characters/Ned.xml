@@ -1,14 +1,15 @@
-<?xml version="1.0"?>
-<Character Name="Ned" Race="Human">
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Ned" Race="Human">
   <Attributes DEX="2" HT="2" IQ="0" NIM="4" SOC="0" STR="3" TOU="0"/>
   <Equipment Armor="No Armor">
     <Hand Name="right hand"/>
     <Hand Name="left hand"/>
   </Equipment>
   <Professions>
-    <Profession Name="Martial Arts" Level="8" proficient="Karate, Aikido" familiar=""></Profession>
+    <Profession Level="2" Name="Common" familiar="Riding" proficient="Swimming"/>
+    <Profession Level="7" Name="Martial Arts" familiar="" proficient="Aikido,Karate"/>
   </Professions>
   <Advantages>
-    <Advantage Level="0" Name="Wealth"/>
+    <Advantage LevelName="$0" Name="Wealth"/>
+    <Advantage LevelName="x4" Name="Quirks"/>
   </Advantages>
 </Character>

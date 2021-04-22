@@ -1,17 +1,18 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="PriestOfThor" Race="Human">
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="PriestOfThor" Race="Human">
   <Attributes DEX="2" HT="-1" IQ="-1" NIM="0" SOC="3" STR="2" TOU="1"/>
   <Equipment Armor="Plate Mail">
     <Hand Name="right hand">Mace</Hand>
-    <Hand Name="left hand"/>
+    <Hand Name="left hand">Large Shield</Hand>
+    <Belt>Potion:Major Healing</Belt>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="5" proficient="Axe/Mace, Shield" familiar="Brawling"></Profession>
+    <Profession Level="5" Name="Fighter" familiar="" proficient="Axe/Mace,Shield"/>
   </Professions>
   <Advantages>
-    <Advantage Level="6" Name="Wealth"/>
-    <Advantage Level="2" Name="Divine Power"/>
-    <Advantage Level="4" Name="Divine Aff. - Thor"/>
-    <Advantage Level="0" Name="Honest"/>
+    <Advantage LevelName="$5,000" Name="Wealth"/>
+    <Advantage LevelName="3" Name="Divine Power"/>
+    <Advantage LevelName="5" Name="Divine Aff. - Thor"/>
+    <Advantage LevelName="" Name="Honest"/>
+    <Advantage LevelName="x4" Name="Quirks"/>
   </Advantages>
 </Character>

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="300 Mage" Race="Elf">
-  <Attributes DEX="3" HT="-1" IQ="4" NIM="3" SOC="1" STR="2" TOU="-1"/>
+  <Attributes DEX="2" HT="-1" IQ="5" NIM="3" SOC="1" STR="2" TOU="-1"/>
   <Equipment Armor="Heavy Leather">
     <Hand Name="right hand">Quarterstaff</Hand>
     <Hand Name="left hand"/>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="6" proficient="Quarterstaff" familiar="Brawling"></Profession>
-    <Profession Name="Common" Level="3" proficient="Throwing" familiar=""></Profession>
-    <Profession Name="Spellcasting" Level="4" proficient="Conjuration, Energy, Evocation, Protection, Fire, Water" familiar=""></Profession>
+    <Profession Level="4" Name="Fighter" familiar="Brawling" proficient="Quarterstaff"/>
+    <Profession Level="3" Name="Common" familiar="" proficient="Throwing"/>
+    <Profession Level="5" Name="Spellcasting" familiar="Energy,Evocation,Fire,Protection" proficient="Conjuration"/>
   </Professions>
   <Spells>
     <Spell Familiarity="memorized" Name="Lightning"/>
@@ -20,15 +20,13 @@
     <Spell Familiarity="known" Name="Speed"/>
     <Spell Familiarity="known" Name="Affect Area"/>
     <Spell Familiarity="known" Name="Control Time"/>
-    <Spell Familiarity="known" Name="Ice Daggers"/>
-    <Spell Familiarity="known" Name="Create Water"/>
     <Spell Familiarity="known" Name="Control Temperature"/>
-    <Spell Familiarity="known" Name="Water Jet"/>
   </Spells>
   <Advantages>
-    <Advantage LevelName="+5" Name="Magical Aptitude"/>
+    <Advantage LevelName="+4" Name="Magical Aptitude"/>
     <Advantage LevelName="$200" Name="Wealth"/>
     <Advantage LevelName="1" Name="Hero points"/>
     <Advantage LevelName="Major" Name="Phobia"/>
+    <Advantage LevelName="x3" Name="Quirks"/>
   </Advantages>
 </Character>

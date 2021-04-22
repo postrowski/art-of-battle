@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Artimus" Race="Elf">
-  <Attributes DEX="5" HT="3" IQ="4" NIM="7" SOC="5" STR="8" TOU="3"/>
+  <Attributes DEX="5" HT="3" IQ="4" NIM="7" SOC="5" STR="8" TOU="2"/>
   <Equipment Armor="Light Plate">
     <Hand Name="right hand">Mace</Hand>
     <Hand Name="left hand">Large Shield</Hand>
@@ -8,10 +8,11 @@
     <Belt>Potion:Speed</Belt>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="9" proficient="Axe/Mace, Shield" familiar="Knife"></Profession>
-    <Profession Name="Martial Arts" Level="6" proficient="Karate" familiar=""></Profession>
-    <Profession Name="Shooting" Level="5" proficient="Bow" familiar=""></Profession>
-    <Profession Name="Spellcasting" Level="3" proficient="Energy, Fire, Earth, Conjuration" familiar="Evocation, Air"></Profession>
+    <Profession Level="8" Name="Fighter" familiar="Brawling" proficient="Axe/Mace,Shield"/>
+    <Profession Level="3" Name="Common" familiar="" proficient="Throwing"/>
+    <Profession Level="4" Name="Shooting" familiar="" proficient=""/>
+    <Profession Level="6" Name="Martial Arts" familiar="" proficient="Karate"/>
+    <Profession Level="6" Name="Spellcasting" familiar="Energy,Conjuration,Evocation,Fire,Air" proficient="Earth"/>
   </Professions>
   <Spells>
     <Spell Familiarity="known" Name="Flaming Weapon"/>
@@ -38,5 +39,7 @@
     <Advantage LevelName="5" Name="Divine Power"/>
     <Advantage LevelName="2" Name="Hero points"/>
     <Advantage LevelName="Full-time" Name="Sense of Duty"/>
+    <Advantage LevelName="x3" Name="Quirks"/>
+    <Advantage LevelName="Honest" Name="Code of Conduct"/>
   </Advantages>
 </Character>

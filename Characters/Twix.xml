@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="Twix" Race="Fairy">
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Twix" Race="Fairy">
   <Attributes DEX="3" HT="-2" IQ="2" NIM="4" SOC="1" STR="1" TOU="-2"/>
   <Equipment Armor="Cloth">
     <Hand Name="right hand">Spear</Hand>
@@ -7,9 +6,9 @@
     <Belt>Large Shield</Belt>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="4" proficient="Spear, Shield" familiar=""></Profession>
-    <Profession Name="Common" Level="2" proficient="Throwing" familiar=""></Profession>
-    <Profession Name="Spellcasting" Level="3" proficient="Fire, Conjuration" familiar=""></Profession>
+    <Profession Level="4" Name="Fighter" familiar="" proficient="Spear,Shield"/>
+    <Profession Level="2" Name="Common" familiar="" proficient="Throwing"/>
+    <Profession Level="3" Name="Spellcasting" familiar="" proficient="Fire,Conjuration"/>
   </Professions>
   <Spells>
     <Spell Familiarity="known" Name="Fireball"/>
@@ -22,9 +21,10 @@
     <Spell Familiarity="known" Name="Flaming Weapon"/>
   </Spells>
   <Advantages>
-    <Advantage Level="1" Name="Wealth"/>
-    <Advantage Level="3" Name="Magical Aptitude"/>
-    <Advantage Level="0" Name="Greedy"/>
-    <Advantage Level="0" Name="Compulsive Liar"/>
+    <Advantage LevelName="+4" Name="Magical Aptitude"/>
+    <Advantage LevelName="$200" Name="Wealth"/>
+    <Advantage LevelName="" Name="Greedy"/>
+    <Advantage LevelName="" Name="Compulsive Liar"/>
+    <Advantage LevelName="x1" Name="Quirks"/>
   </Advantages>
 </Character>

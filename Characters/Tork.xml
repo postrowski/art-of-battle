@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="Tork" Race="Half-Elf">
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Tork" Race="Half-Elf">
   <Attributes DEX="2" HT="0" IQ="3" NIM="2" SOC="1" STR="1" TOU="-1"/>
   <Equipment Armor="Leather">
     <Hand Name="right hand">Quarterstaff</Hand>
@@ -7,9 +6,9 @@
     <Belt>Knife</Belt>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="4" proficient="Quarterstaff" familiar="Knife"></Profession>
-    <Profession Name="Common" Level="2" proficient="Throwing" familiar=""></Profession>
-    <Profession Name="Spellcasting" Level="4" proficient="Conjuration" familiar="Earth, Energy"></Profession>
+    <Profession Level="4" Name="Fighter" familiar="" proficient="Quarterstaff,Knife"/>
+    <Profession Level="3" Name="Common" familiar="" proficient="Throwing"/>
+    <Profession Level="3" Name="Spellcasting" familiar="" proficient="Conjuration,Earth,Energy"/>
   </Professions>
   <Spells>
     <Spell Familiarity="memorized" Name="Magic Missile"/>
@@ -24,8 +23,9 @@
     <Spell Familiarity="memorized" Name="Create Rope"/>
   </Spells>
   <Advantages>
-    <Advantage Level="2" Name="Wealth"/>
-    <Advantage Level="3" Name="Magical Aptitude"/>
-    <Advantage Level="2" Name="Phobia"/>
+    <Advantage LevelName="$500" Name="Wealth"/>
+    <Advantage LevelName="+4" Name="Magical Aptitude"/>
+    <Advantage LevelName="Major" Name="Phobia"/>
+    <Advantage LevelName="x5" Name="Quirks"/>
   </Advantages>
 </Character>

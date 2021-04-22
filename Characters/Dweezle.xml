@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="Dweezle" Race="Dwarf">
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Dweezle" Race="Dwarf">
   <Attributes DEX="3" HT="2" IQ="-2" NIM="2" SOC="-2" STR="5" TOU="2"/>
   <Equipment Armor="Scale Mail">
     <Hand Name="right hand">Broadsword</Hand>
@@ -7,10 +6,12 @@
     <Belt>Knife</Belt>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="6" proficient="Sword, Shield" familiar="Brawling, Knife"></Profession>
+    <Profession Level="6" Name="Fighter" familiar="Brawling" proficient="Sword,Shield"/>
   </Professions>
   <Advantages>
-    <Advantage Level="5" Name="Wealth"/>
-    <Advantage Level="0" Name="Berserker"/>
+    <Advantage LevelName="$3,000" Name="Wealth"/>
+    <Advantage LevelName="" Name="Berserker"/>
+    <Advantage LevelName="Minor scars" Name="Disfigured Face"/>
+    <Advantage LevelName="x1" Name="Quirks"/>
   </Advantages>
 </Character>

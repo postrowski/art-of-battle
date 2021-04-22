@@ -1,16 +1,17 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="Major Demon" Race="Demon, Major">
-  <Attributes DEX="5" HT="2" IQ="4" NIM="6" SOC="5" STR="7" TOU="4"/>
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Major Demon" Race="Demon, Major">
+  <Attributes DEX="7" HT="3" IQ="5" NIM="6" SOC="6" STR="7" TOU="6"/>
   <Equipment Armor="Thick Scales">
     <Hand Name="right hand">Flail</Hand>
     <Hand Name="left hand"/>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="10" proficient="Flail, Brawling" familiar="Sword, Shield, Knife"></Profession>
-    <Profession Name="Shooting" Level="5" proficient="Bow" familiar=""></Profession>
-    <Profession Name="Common" Level="4" proficient="Throwing" familiar=""></Profession>
+    <Profession Level="9" Name="Fighter" familiar="Sword,Shield,2-Handed Axe/Mace,Polearm" proficient="Brawling,Flail,2-Handed Sword"/>
+    <Profession Level="4" Name="Common" familiar="" proficient="Throwing"/>
+    <Profession Level="6" Name="Shooting" familiar="Crossbow" proficient="Bow"/>
   </Professions>
   <Advantages>
-    <Advantage Level="1" Name="Wealth"/>
+    <Advantage LevelName="10" Name="Divine Aff. - Demonic"/>
+    <Advantage LevelName="$200" Name="Wealth"/>
+    <Advantage LevelName="Minor scars" Name="Disfigured Face"/>
   </Advantages>
 </Character>

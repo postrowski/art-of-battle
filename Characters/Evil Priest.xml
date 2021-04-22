@@ -1,17 +1,17 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="Evil Priest" Race="Human">
-  <Attributes DEX="2" HT="1" IQ="0" NIM="2" SOC="4" STR="3" TOU="2"/>
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Evil Priest" Race="Human">
+  <Attributes DEX="1" HT="0" IQ="0" NIM="2" SOC="4" STR="3" TOU="2"/>
   <Equipment Armor="Scale Mail">
     <Hand Name="right hand">Sabre</Hand>
     <Hand Name="left hand">Large Shield</Hand>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="8" proficient="Fencing, Shield" familiar="Brawling"></Profession>
+    <Profession Level="8" Name="Fighter" familiar="Brawling" proficient="Fencing,Shield"/>
   </Professions>
   <Advantages>
-    <Advantage Level="5" Name="Wealth"/>
-    <Advantage Level="4" Name="Divine Power"/>
-    <Advantage Level="6" Name="Divine Aff. - Hades"/>
-    <Advantage Level="0" Name="Megalomaniac"/>
+    <Advantage LevelName="$3,000" Name="Wealth"/>
+    <Advantage LevelName="5" Name="Divine Power"/>
+    <Advantage LevelName="7" Name="Divine Aff. - Hades"/>
+    <Advantage LevelName="" Name="Megalomaniac"/>
+    <Advantage LevelName="x4" Name="Quirks"/>
   </Advantages>
 </Character>

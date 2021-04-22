@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="HighPriest of Thor" Race="Human">
-  <Attributes DEX="3" HT="0" IQ="0" NIM="2" SOC="5" STR="6" TOU="3"/>
+  <Attributes DEX="2" HT="0" IQ="0" NIM="2" SOC="5" STR="6" TOU="2"/>
   <Equipment Armor="Plate Mail">
     <Hand Name="right hand">Maul</Hand>
     <Hand Name="left hand"/>
+    <Belt>Potion:Major Healing</Belt>
+    <Belt>Potion:Minor Healing</Belt>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="8" proficient="2-Handed Axe/Mace" familiar="Brawling, Knife"></Profession>
-    <Profession Name="Common" Level="2" proficient="Riding" familiar="swimming"></Profession>
+    <Profession Level="8" Name="Fighter" familiar="Brawling" proficient="2-Handed Axe/Mace"/>
+    <Profession Level="2" Name="Common" familiar="Swimming" proficient="Riding"/>
   </Professions>
   <Advantages>
     <Advantage LevelName="$5,000" Name="Wealth"/>
@@ -15,5 +17,7 @@
     <Advantage LevelName="1" Name="Hero points"/>
     <Advantage LevelName="" Name="Honest"/>
     <Advantage LevelName="Full-time" Name="Sense of Duty"/>
+    <Advantage LevelName="" Name="Megalomaniac"/>
+    <Advantage LevelName="x3" Name="Quirks"/>
   </Advantages>
 </Character>

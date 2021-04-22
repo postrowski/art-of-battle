@@ -1,15 +1,17 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="Morrak" Race="Orc">
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Morrak" Race="Orc">
   <Attributes DEX="4" HT="2" IQ="-3" NIM="2" SOC="-2" STR="4" TOU="2"/>
   <Equipment Armor="Banded Mail">
     <Hand Name="right hand">Pick-Axe</Hand>
     <Hand Name="left hand">Medium Shield</Hand>
+    <Belt>Potion:Increase Strength</Belt>
+    <Belt>Potion:Major Healing</Belt>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="6" proficient="Axe/Mace, Shield" familiar="Brawling, Knife"></Profession>
+    <Profession Level="6" Name="Fighter" familiar="Brawling" proficient="Axe/Mace,Shield"/>
   </Professions>
   <Advantages>
-    <Advantage Level="7" Name="Wealth"/>
-    <Advantage Level="0" Name="Compulsive Liar"/>
+    <Advantage LevelName="$10,000" Name="Wealth"/>
+    <Advantage LevelName="" Name="Compulsive Liar"/>
+    <Advantage LevelName="x4" Name="Quirks"/>
   </Advantages>
 </Character>

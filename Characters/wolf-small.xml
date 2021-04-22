@@ -1,9 +1,7 @@
-<?xml version="1.0"?>
-<Character Name="wolf-small" Race="Wolf">
-  <Attributes DEX="3" HT="-1" IQ="-3" NIM="2" SOC="0" STR="-1" TOU="0"/>
-  <Equipment Armor="No Armor">
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="wolf-small" Race="Wolf">
+  <Attributes DEX="3" HT="0" IQ="-4" NIM="2" SOC="0" STR="-1" TOU="0"/>
+  <Equipment Armor="Fur">
   </Equipment>
   <Professions>
-    <Profession Name="Common" Level="4" proficient="Brawling" familiar=""></Profession>
-  </Professions>
-</Character>
+    <Profession Level="4" Name="Common" familiar="" proficient="Brawling"/>
+  </Professions></Character>

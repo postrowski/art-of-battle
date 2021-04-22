@@ -1,16 +1,16 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="Hendrax" Race="Centaur">
-  <Attributes DEX="3" HT="-2" IQ="-2" NIM="0" SOC="0" STR="2" TOU="0"/>
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Hendrax" Race="Centaur">
+  <Attributes DEX="3" HT="-1" IQ="-2" NIM="2" SOC="1" STR="2" TOU="0"/>
   <Equipment Armor="Banded Mail">
     <Hand Name="right hand">Pick-Axe</Hand>
     <Hand Name="left hand">Medium Shield</Hand>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="6" proficient="Axe/Mace, Shield" familiar=""></Profession>
+    <Profession Level="6" Name="Fighter" familiar="" proficient="Axe/Mace,Shield"/>
   </Professions>
   <Advantages>
-    <Advantage Level="0" Name="Honest"/>
-    <Advantage Level="0" Name="Berserker"/>
-    <Advantage Level="5" Name="Wealth"/>
+    <Advantage LevelName="" Name="Honest"/>
+    <Advantage LevelName="" Name="Berserker"/>
+    <Advantage LevelName="$3,000" Name="Wealth"/>
+    <Advantage LevelName="x1" Name="Quirks"/>
   </Advantages>
 </Character>

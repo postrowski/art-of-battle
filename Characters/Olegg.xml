@@ -1,17 +1,16 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="Olegg" Race="Ogre">
-  <Attributes DEX="2" HT="3" IQ="-3" NIM="-2" SOC="-3" STR="7" TOU="0"/>
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Olegg" Race="Ogre">
+  <Attributes DEX="2" HT="2" IQ="-3" NIM="-2" SOC="-4" STR="7" TOU="0"/>
   <Equipment Armor="Heavy Leather">
     <Hand Name="right hand">Club</Hand>
     <Hand Name="left hand">Medium Shield</Hand>
     <Belt>Unarmed Combat</Belt>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="6" proficient="Axe/Mace, Shield" familiar="Brawling"></Profession>
+    <Profession Level="6" Name="Fighter" familiar="Brawling" proficient="Axe/Mace,Shield"/>
   </Professions>
   <Advantages>
-    <Advantage Level="4" Name="Wealth"/>
-    <Advantage Level="2" Name="Disfigured Face"/>
-    <Advantage Level="2" Name="Quirks"/>
+    <Advantage LevelName="$2,000" Name="Wealth"/>
+    <Advantage LevelName="Scars" Name="Disfigured Face"/>
+    <Advantage LevelName="x1" Name="Quirks"/>
   </Advantages>
 </Character>

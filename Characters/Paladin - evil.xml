@@ -1,20 +1,21 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="Paladin - evil" Race="Human">
-  <Attributes DEX="2" HT="-1" IQ="-1" NIM="0" SOC="3" STR="1" TOU="1"/>
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Paladin - evil" Race="Human">
+  <Attributes DEX="2" HT="-1" IQ="-2" NIM="0" SOC="3" STR="1" TOU="1"/>
   <Equipment Armor="Light Plate">
     <Hand Name="right hand">Rapier</Hand>
     <Hand Name="left hand">Tower Shield</Hand>
+    <Belt>Potion:Major Healing</Belt>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="6" proficient="Fencing, Shield" familiar=""></Profession>
-    <Profession Name="Knight" Level="2" proficient="Jousting, Riding" familiar=""></Profession>
+    <Profession Level="5" Name="Fighter" familiar="" proficient="Fencing,Shield"/>
+    <Profession Level="2" Name="Knight" familiar="" proficient="Jousting,Riding"/>
   </Professions>
   <Advantages>
-    <Advantage Level="6" Name="Wealth"/>
-    <Advantage Level="4" Name="Divine Aff. - Hades"/>
-    <Advantage Level="3" Name="Divine Power"/>
-    <Advantage Level="0" Name="Megalomaniac"/>
-    <Advantage Level="0" Name="Delusional"/>
-    <Advantage Level="0" Name="Bad Temper"/>
+    <Advantage LevelName="$5,000" Name="Wealth"/>
+    <Advantage LevelName="5" Name="Divine Aff. - Hades"/>
+    <Advantage LevelName="4" Name="Divine Power"/>
+    <Advantage LevelName="" Name="Megalomaniac"/>
+    <Advantage LevelName="" Name="Delusional"/>
+    <Advantage LevelName="" Name="Bad Temper"/>
+    <Advantage LevelName="x3" Name="Quirks"/>
   </Advantages>
 </Character>

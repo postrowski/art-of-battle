@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Dragon Huge" Race="Dragon, Huge">
-  <Attributes DEX="5" HT="1" IQ="5" NIM="6" SOC="5" STR="1" TOU="5"/>
+  <Attributes DEX="5" HT="1" IQ="5" NIM="4" SOC="4" STR="1" TOU="5"/>
   <Equipment Armor="Thick Scales">
   </Equipment>
   <Professions>
-    <Profession Name="Common" Level="10" proficient="Brawling" familiar=""></Profession>
-    <Profession Name="Spellcasting" Level="9" proficient="Energy, Protection, Illusion, Evocation, Enchantment, Divination, Conjuration, Earth, Air" familiar=""></Profession>
+    <Profession Level="8" Name="Common" familiar="" proficient="Brawling"/>
+    <Profession Level="9" Name="Spellcasting" familiar="" proficient="Air,Conjuration,Divination,Earth,Enchantment,Energy,Evocation,Illusion,Protection"/>
   </Professions>
   <Spells>
     <Spell Familiarity="memorized" Name="Push"/>
@@ -22,6 +22,8 @@
     <Spell Familiarity="memorized" Name="Control Mind"/>
   </Spells>
   <Advantages>
-    <Advantage LevelName="$0" Name="Wealth"/>
+    <Advantage LevelName="" Name="Greedy"/>
+    <Advantage LevelName="" Name="Megalomaniac"/>
+    <Advantage LevelName="" Name="Sadistic"/>
   </Advantages>
 </Character>

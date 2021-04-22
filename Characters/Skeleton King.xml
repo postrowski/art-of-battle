@@ -1,17 +1,17 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="Skeleton King" Race="Skeleton">
-  <Attributes DEX="4" HT="-2" IQ="-5" NIM="5" SOC="-4" STR="2" TOU="0"/>
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Skeleton King" Race="Skeleton">
+  <Attributes DEX="5" HT="-2" IQ="-5" NIM="6" SOC="-4" STR="2" TOU="-2"/>
   <Equipment Armor="Dwarven Mithril">
     <Hand Name="right hand">Longsword, Fine</Hand>
     <Hand Name="left hand">Medium Shield</Hand>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="8" proficient="Sword, Shield" familiar="Brawling, Knife"></Profession>
+    <Profession Level="8" Name="Fighter" familiar="" proficient="Sword,Brawling,Shield"/>
   </Professions>
   <Advantages>
-    <Advantage Level="9" Name="Wealth"/>
-    <Advantage Level="1" Name="Hero points"/>
-    <Advantage Level="2" Name="Vision"/>
-    <Advantage Level="0" Name="Intolerant"/>
+    <Advantage LevelName="$100,000" Name="Wealth"/>
+    <Advantage LevelName="1" Name="Hero points"/>
+    <Advantage LevelName="Near sighted" Name="Vision"/>
+    <Advantage LevelName="" Name="Intolerant"/>
+    <Advantage LevelName="x1" Name="Quirks"/>
   </Advantages>
 </Character>

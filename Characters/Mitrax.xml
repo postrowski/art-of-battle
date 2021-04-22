@@ -1,14 +1,14 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="Mitrax" Race="Orc">
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Mitrax" Race="Orc">
   <Attributes DEX="3" HT="4" IQ="-3" NIM="2" SOC="-2" STR="4" TOU="1"/>
   <Equipment Armor="Light Plate">
     <Hand Name="right hand">War Hammer</Hand>
     <Hand Name="left hand"/>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="7" proficient="2-Handed Axe/Mace" familiar="Knife"></Profession>
+    <Profession Level="6" Name="Fighter" familiar="Knife" proficient="2-Handed Axe/Mace"/>
   </Professions>
   <Advantages>
-    <Advantage Level="7" Name="Wealth"/>
+    <Advantage LevelName="$10,000" Name="Wealth"/>
+    <Advantage LevelName="x1" Name="Quirks"/>
   </Advantages>
 </Character>

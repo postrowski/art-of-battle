@@ -1,16 +1,18 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="Kyoto" Race="Human">
-  <Attributes DEX="2" HT="0" IQ="0" NIM="4" SOC="0" STR="2" TOU="1"/>
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Kyoto" Race="Human">
+  <Attributes DEX="2" HT="1" IQ="0" NIM="4" SOC="-1" STR="2" TOU="2"/>
   <Equipment Armor="Heavy Leather">
     <Hand Name="right hand"/>
     <Hand Name="left hand"/>
   </Equipment>
   <Professions>
-    <Profession Name="Martial Arts" Level="6" proficient="Aikido, Boxing" familiar=""></Profession>
+    <Profession Level="3" Name="Thief" familiar="" proficient="Stealth"/>
+    <Profession Level="3" Name="Common" familiar="Riding" proficient="Throwing"/>
+    <Profession Level="6" Name="Martial Arts" familiar="" proficient="Aikido,Boxing"/>
   </Professions>
   <Advantages>
-    <Advantage Level="2" Name="Wealth"/>
-    <Advantage Level="0" Name="Honest"/>
-    <Advantage Level="1" Name="Magic Resistance"/>
+    <Advantage LevelName="$500" Name="Wealth"/>
+    <Advantage LevelName="" Name="Honest"/>
+    <Advantage LevelName="+2" Name="Magic Resistance"/>
+    <Advantage LevelName="x1" Name="Quirks"/>
   </Advantages>
 </Character>

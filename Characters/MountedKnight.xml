@@ -1,6 +1,5 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="MountedKnight" Race="Human">
-  <Attributes DEX="4" HT="1" IQ="-2" NIM="1" SOC="1" STR="3" TOU="4"/>
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="MountedKnight" Race="Human">
+  <Attributes DEX="4" HT="2" IQ="-2" NIM="1" SOC="1" STR="3" TOU="4"/>
   <Equipment Armor="Plate Mail">
     <Hand Name="right hand">Longsword</Hand>
     <Hand Name="left hand">Tower Shield</Hand>
@@ -8,12 +7,15 @@
     <Belt>Potion:Increase Dexterity</Belt>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="6" proficient="Sword, Shield, Quarterstaff" familiar="Brawling, Knife"></Profession>
-    <Profession Name="Common" Level="2" proficient="Throwing" familiar=""></Profession>
-    <Profession Name="Knight" Level="5" proficient="Jousting, Riding" familiar=""></Profession>
+    <Profession Level="6" Name="Fighter" familiar="" proficient="Brawling,Sword,Shield"/>
+    <Profession Level="2" Name="Common" familiar="" proficient="Throwing"/>
+    <Profession Level="5" Name="Knight" familiar="" proficient="Jousting,Riding"/>
   </Professions>
   <Advantages>
-    <Advantage Level="7" Name="Wealth"/>
-    <Advantage Level="0" Name="Honest"/>
+    <Advantage LevelName="$10,000" Name="Wealth"/>
+    <Advantage LevelName="" Name="Honest"/>
+    <Advantage LevelName="x1" Name="Quirks"/>
+    <Advantage LevelName="" Name="Knighthood"/>
+    <Advantage LevelName="Part-time" Name="Sense of Duty"/>
   </Advantages>
 </Character>

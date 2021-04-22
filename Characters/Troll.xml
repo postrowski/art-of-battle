@@ -1,16 +1,16 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="Troll" Race="Troll">
-  <Attributes DEX="3" HT="7" IQ="-2" NIM="0" SOC="-5" STR="5" TOU="2"/>
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Troll" Race="Troll">
+  <Attributes DEX="2" HT="6" IQ="-2" NIM="0" SOC="-5" STR="5" TOU="2"/>
   <Equipment Armor="Leather">
     <Hand Name="right hand">Morning Star</Hand>
     <Hand Name="left hand">Small Shield</Hand>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="4" proficient="Flail, Shield" familiar="Brawling"></Profession>
+    <Profession Level="5" Name="Fighter" familiar="Brawling" proficient="Flail,Shield"/>
   </Professions>
   <Advantages>
-    <Advantage Level="5" Name="Wealth"/>
-    <Advantage Level="0" Name="Berserker"/>
-    <Advantage Level="0" Name="Delusional"/>
+    <Advantage LevelName="$3,000" Name="Wealth"/>
+    <Advantage LevelName="" Name="Berserker"/>
+    <Advantage LevelName="" Name="Delusional"/>
+    <Advantage LevelName="x1" Name="Quirks"/>
   </Advantages>
 </Character>

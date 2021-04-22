@@ -7,12 +7,13 @@
     <Belt>Potion:Major Healing</Belt>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="4" proficient="Fencing" familiar=""></Profession>
-    <Profession Name="Martial Arts" Level="1" proficient="Boxing" familiar=""></Profession>
-    <Profession Name="Shooting" Level="7" proficient="Bow" familiar=""></Profession>
+    <Profession Level="4" Name="Fighter" familiar="" proficient="Fencing"/>
+    <Profession Level="5" Name="Shooting" familiar="" proficient="Bow"/>
+    <Profession Level="2" Name="Martial Arts" familiar="" proficient="Boxing"/>
   </Professions>
   <Advantages>
     <Advantage LevelName="$2,000" Name="Wealth"/>
     <Advantage LevelName="1" Name="Hero points"/>
+    <Advantage LevelName="x1" Name="Quirks"/>
   </Advantages>
 </Character>

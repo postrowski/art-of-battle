@@ -1,14 +1,13 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="OgreMagi" Race="Ogre">
-  <Attributes DEX="2" HT="0" IQ="1" NIM="0" SOC="-3" STR="2" TOU="0"/>
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="OgreMagi" Race="Ogre">
+  <Attributes DEX="2" HT="0" IQ="1" NIM="0" SOC="-3" STR="1" TOU="0"/>
   <Equipment Armor="Cloth">
     <Hand Name="right hand">Club</Hand>
     <Hand Name="left hand"/>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="6" proficient="Axe/Mace, Shield" familiar="Brawling"></Profession>
-    <Profession Name="Common" Level="5" proficient="Throwing" familiar=""></Profession>
-    <Profession Name="Spellcasting" Level="4" proficient="Fire" familiar="Energy, Water, Conjuration"></Profession>
+    <Profession Level="6" Name="Fighter" familiar="Brawling" proficient="Axe/Mace,Shield"/>
+    <Profession Level="4" Name="Common" familiar="" proficient="Throwing"/>
+    <Profession Level="4" Name="Spellcasting" familiar="Energy,Conjuration,Water" proficient="Fire"/>
   </Professions>
   <Spells>
     <Spell Familiarity="known" Name="Fireball"/>
@@ -25,9 +24,10 @@
     <Spell Familiarity="known" Name="Flaming Missile Weapon"/>
   </Spells>
   <Advantages>
-    <Advantage Level="3" Name="Magical Aptitude"/>
-    <Advantage Level="0" Name="Compulsive Liar"/>
-    <Advantage Level="0" Name="Bad Temper"/>
-    <Advantage Level="2" Name="Wealth"/>
+    <Advantage LevelName="+4" Name="Magical Aptitude"/>
+    <Advantage LevelName="" Name="Compulsive Liar"/>
+    <Advantage LevelName="" Name="Bad Temper"/>
+    <Advantage LevelName="$500" Name="Wealth"/>
+    <Advantage LevelName="x5" Name="Quirks"/>
   </Advantages>
 </Character>

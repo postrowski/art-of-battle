@@ -1,6 +1,5 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="Pixie Spearman" Race="Fairy">
-  <Attributes DEX="5" HT="-2" IQ="2" NIM="3" SOC="2" STR="2" TOU="-4"/>
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Pixie Spearman" Race="Fairy">
+  <Attributes DEX="4" HT="-2" IQ="2" NIM="3" SOC="2" STR="2" TOU="-4"/>
   <Equipment Armor="Heavy Leather">
     <Hand Name="right hand">Javelin</Hand>
     <Hand Name="left hand">Large Shield</Hand>
@@ -9,9 +8,9 @@
     <Belt>Javelin</Belt>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="4" proficient="Spear" familiar=""></Profession>
-    <Profession Name="Common" Level="3" proficient="Throwing" familiar=""></Profession>
-    <Profession Name="Spellcasting" Level="4" proficient="Energy, Protection" familiar="Conjuration, Evocation"></Profession>
+    <Profession Level="4" Name="Fighter" familiar="" proficient="Spear"/>
+    <Profession Level="3" Name="Common" familiar="" proficient="Throwing"/>
+    <Profession Level="4" Name="Spellcasting" familiar="Conjuration,Evocation" proficient="Energy,Protection"/>
   </Professions>
   <Spells>
     <Spell Familiarity="known" Name="Slow"/>
@@ -22,7 +21,8 @@
     <Spell Familiarity="known" Name="Harden"/>
   </Spells>
   <Advantages>
-    <Advantage Level="2" Name="Wealth"/>
-    <Advantage Level="0" Name="Phobia"/>
+    <Advantage LevelName="$500" Name="Wealth"/>
+    <Advantage LevelName="Minor" Name="Phobia"/>
+    <Advantage LevelName="x5" Name="Quirks"/>
   </Advantages>
 </Character>

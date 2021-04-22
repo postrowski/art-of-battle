@@ -1,15 +1,15 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="Archer" Race="Elf">
-  <Attributes DEX="7" HT="4" IQ="2" NIM="6" SOC="0" STR="4" TOU="3"/>
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Archer" Race="Elf">
+  <Attributes DEX="6" HT="3" IQ="3" NIM="5" SOC="0" STR="4" TOU="2"/>
   <Equipment Armor="Heavy Leather">
     <Hand Name="right hand">Bow, Longbow</Hand>
     <Hand Name="left hand"/>
     <Belt>Bastard Sword</Belt>
+    <Belt>Potion:Major Healing</Belt>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="6" proficient="2-Handed Sword" familiar="Brawling, Knife"></Profession>
-    <Profession Name="Shooting" Level="7" proficient="Bow" familiar=""></Profession>
-    <Profession Name="Spellcasting" Level="4" proficient="Conjuration" familiar="Fire, Air, Energy"></Profession>
+    <Profession Level="5" Name="Fighter" familiar="Brawling" proficient="2-Handed Sword"/>
+    <Profession Level="7" Name="Shooting" familiar="" proficient="Bow"/>
+    <Profession Level="3" Name="Spellcasting" familiar="" proficient="Conjuration,Fire,Energy"/>
   </Professions>
   <Spells>
     <Spell Familiarity="known" Name="Flaming Missile Weapon"/>
@@ -23,7 +23,8 @@
     <Spell Familiarity="known" Name="Flaming Weapon"/>
   </Spells>
   <Advantages>
-    <Advantage Level="1" Name="Hero points"/>
-    <Advantage Level="3" Name="Wealth"/>
+    <Advantage LevelName="1" Name="Hero points"/>
+    <Advantage LevelName="$1,000" Name="Wealth"/>
+    <Advantage LevelName="x4" Name="Quirks"/>
   </Advantages>
 </Character>

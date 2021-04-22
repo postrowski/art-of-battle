@@ -7,14 +7,15 @@
     <Belt>Small Shield</Belt>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="5" proficient="Spear, Shield" familiar=""></Profession>
-    <Profession Name="Shooting" Level="5" proficient="Bow" familiar=""></Profession>
-    <Profession Name="Common" Level="2" proficient="Throwing" familiar=""></Profession>
+    <Profession Level="4" Name="Fighter" familiar="" proficient="Spear,Shield"/>
+    <Profession Level="3" Name="Common" familiar="" proficient="Throwing"/>
+    <Profession Level="4" Name="Shooting" familiar="" proficient="Bow"/>
   </Professions>
   <Advantages>
     <Advantage LevelName="$5,000" Name="Wealth"/>
     <Advantage LevelName="3" Name="Divine Power"/>
     <Advantage LevelName="5" Name="Divine Aff. - Aphrodite"/>
     <Advantage LevelName="Part-time" Name="Sense of Duty"/>
+    <Advantage LevelName="x4" Name="Quirks"/>
   </Advantages>
 </Character>

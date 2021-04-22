@@ -1,14 +1,14 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="MixedMartialArtist200" Race="Human">
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="MixedMartialArtist200" Race="Human">
   <Attributes DEX="2" HT="-1" IQ="-2" NIM="6" SOC="-1" STR="4" TOU="1"/>
   <Equipment Armor="Chain Mail">
     <Hand Name="right hand"/>
     <Hand Name="left hand"/>
   </Equipment>
   <Professions>
-    <Profession Name="Martial Arts" Level="6" proficient="Karate, Wrestling" familiar=""></Profession>
+    <Profession Level="6" Name="Martial Arts" familiar="" proficient="Karate,Wrestling"/>
   </Professions>
   <Advantages>
-    <Advantage Level="3" Name="Wealth"/>
+    <Advantage LevelName="$1,000" Name="Wealth"/>
+    <Advantage LevelName="Moderate" Name="Phobia"/>
   </Advantages>
 </Character>

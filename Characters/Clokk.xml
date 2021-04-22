@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<Character Gender="Male" Name="Clokk" Race="InsectMan">
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Clokk" Race="InsectMan">
   <Attributes DEX="4" HT="0" IQ="-4" NIM="1" SOC="0" STR="2" TOU="2"/>
   <Equipment Armor="Leather">
     <Hand Name="right hand">Shortsword</Hand>
@@ -9,12 +8,12 @@
     <Belt>Potion:Major Healing</Belt>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="7" proficient="Sword" familiar="Shield"></Profession>
+    <Profession Level="6" Name="Fighter" familiar="" proficient="Shield,Sword"/>
   </Professions>
   <Advantages>
-    <Advantage Level="5" Name="Wealth"/>
-    <Advantage Level="0" Name="Bad Temper"/>
-    <Advantage Level="2" Name="Sense of Duty"/>
-    <Advantage Level="0" Name="Ambidextrous"/>
+    <Advantage LevelName="$3,000" Name="Wealth"/>
+    <Advantage LevelName="" Name="Bad Temper"/>
+    <Advantage LevelName="Part-time" Name="Sense of Duty"/>
+    <Advantage LevelName="" Name="Ambidextrous"/>
   </Advantages>
 </Character>

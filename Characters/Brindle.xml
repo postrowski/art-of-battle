@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<Character Name="Brindle" Race="Hobbit">
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Brindle" Race="Hobbit">
   <Attributes DEX="3" HT="2" IQ="0" NIM="0" SOC="0" STR="1" TOU="-2"/>
   <Equipment Armor="Leather">
     <Hand Name="right hand">Staff Sling</Hand>
@@ -7,7 +6,11 @@
     <Belt>Rapier</Belt>
   </Equipment>
   <Professions>
-    <Profession Name="Fighter" Level="5" proficient="Fencing" familiar="Brawling"></Profession>
-    <Profession Name="Shooting" Level="6" proficient="Sling" familiar=""></Profession>
+    <Profession Level="5" Name="Shooting" familiar="" proficient="Sling"/>
+    <Profession Level="5" Name="Fighter" familiar="Brawling" proficient="Fencing"/>
   </Professions>
+  <Advantages>
+    <Advantage LevelName="$1,000" Name="Wealth"/>
+    <Advantage LevelName="x1" Name="Quirks"/>
+  </Advantages>
 </Character>
