@@ -8,6 +8,7 @@ import ostrowski.combat.common.Character;
 import ostrowski.combat.common.CombatMap;
 import ostrowski.combat.common.DiceSet;
 import ostrowski.combat.common.enums.DamageType;
+import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.spells.IAreaSpell;
 import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.wounds.Wound;
@@ -31,7 +32,7 @@ public class SpellWallOfFire extends ExpiringMageSpell implements IAreaSpell, IC
             (short)(5)/*bonusTimeInTurnsPerPower*/,
             new Class[] {SpellCreateFire.class, SpellControlFire.class,
                                SpellControlTemperature.class, SpellThrowSpell.class},
-                               new MageCollege[] {MageCollege.CONJURATION, MageCollege.FIRE});
+                               new SkillType[] {SkillType.Spellcasting_Conjuration, SkillType.Spellcasting_Fire});
    }
 
    @Override

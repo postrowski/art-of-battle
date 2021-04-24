@@ -5,6 +5,7 @@
 package ostrowski.combat.common.spells.mage;
 
 import ostrowski.combat.common.Character;
+import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.spells.IAreaSpell;
 import ostrowski.combat.server.Arena;
 import ostrowski.combat.server.ArenaLocation;
@@ -14,8 +15,8 @@ public abstract class AreaMageSpell extends MageSpell implements IAreaSpell
    private ArenaLocation targetLocation = null;
 
    @SuppressWarnings("rawtypes")
-   public AreaMageSpell(String name, Class[] prerequisiteSpells, MageCollege[] colleges) {
-      super(name, prerequisiteSpells, colleges);
+   public AreaMageSpell(String name, Class[] prerequisiteSpells, SkillType[] skillTypes) {
+      super(name, prerequisiteSpells, skillTypes);
    }
 
    @Override

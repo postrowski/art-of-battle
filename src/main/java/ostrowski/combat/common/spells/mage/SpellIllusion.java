@@ -6,6 +6,7 @@ package ostrowski.combat.common.spells.mage;
 
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.enums.Attribute;
+import ostrowski.combat.common.enums.SkillType;
 
 public class SpellIllusion extends ResistedMageSpell
 {
@@ -13,7 +14,7 @@ public class SpellIllusion extends ResistedMageSpell
    public SpellIllusion() {
       super(NAME, Attribute.Intelligence, (byte) 2/*resistedActions*/, true/*expires*/,
             new Class[] {SpellCreateSound.class, SpellCreateLight.class},
-            new MageCollege[] {MageCollege.ILLUSION});
+            new SkillType[] {SkillType.Spellcasting_Illusion});
    }
 
    @Override

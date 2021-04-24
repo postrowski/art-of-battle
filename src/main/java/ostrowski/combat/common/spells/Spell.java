@@ -42,13 +42,12 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
    protected String    name;
    // These attributes are serialized, because they may differ from one 'fire' spell to another 'fire' spell:
    protected byte      power                     = 0;
-   protected byte      level                     = 0;
    protected Character caster                    = null;
    protected Character target                    = null;
    public    int       casterID                  = -1;
    public    int       targetID                  = -1;
    private   boolean   maintainedThisTurn        = true;
-   private   boolean   isInateSpell              = false;
+   private   boolean   isInnateSpell             = false;
    private   byte      incantationRoundsRequired = 0;
    private   byte      defenseTN;
    private   int       castRoll;
@@ -77,14 +76,6 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
       this.power = power;
    }
 
-   public byte getLevel() {
-      return level;
-   }
-
-   public void setLevel(byte level) {
-      this.level = level;
-   }
-
    public Wound channelEnergy(byte additionalPower) {
       maintainedThisTurn = true;
       power += additionalPower;
@@ -110,12 +101,12 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
       maintainedThisTurn = false;
    }
 
-   public void setIsInate(boolean isInate) {
-      isInateSpell = isInate;
+   public void setIsInnate(boolean isInnate) {
+      isInnateSpell = isInnate;
    }
 
-   public boolean isInate() {
-      return isInateSpell;
+   public boolean isInnate() {
+      return isInnateSpell;
    }
 
    public boolean isMaintainedThisTurn() {
@@ -422,11 +413,10 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
 // No need to serialize the name, the serialization key uniquely defined this spell
 //         writeToStream(name, out);
          writeToStream(power, out);
-         writeToStream(level, out);
          // resistedAtt, prerequisiteSpellNames & attributeMod don't need to be serialized,
          // because they are constant for a given spell (defined by its name).
          writeToStream(maintainedThisTurn, out);
-         writeToStream(isInateSpell, out);
+         writeToStream(isInnateSpell, out);
          writeToStream(incantationRoundsRequired, out);
          writeToStream(defenseTN, out);
          writeToStream(castRoll, out);
@@ -448,11 +438,10 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
 //         Spell spell = MageSpells.getSpell(name).clone();
 //         this.copyDataFrom(spell);
          power = readByte(in);
-         level = readByte(in);
          // resistedAtt, prerequisiteSpellNames & attributeMod don't need to be serialized,
          // because they are constant for a given spell (defined by its name).
          maintainedThisTurn = readBoolean(in);
-         isInateSpell = readBoolean(in);
+         isInnateSpell = readBoolean(in);
          incantationRoundsRequired = readByte(in);
          defenseTN = readByte(in);
          castRoll = readInt(in);
@@ -469,10 +458,9 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
       caster = source.caster;
       name = source.name;
       power = source.power;
-      level = source.level;
       target = source.target;
       maintainedThisTurn = source.maintainedThisTurn;
-      isInateSpell = source.isInateSpell;
+      isInnateSpell = source.isInnateSpell;
       incantationRoundsRequired = source.incantationRoundsRequired;
       defenseTN = source.defenseTN;
       castRoll = source.castRoll;
@@ -500,7 +488,6 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
       StringBuilder sb = new StringBuilder();
       sb.append(getName()).append(" spell");
       sb.append(", power=").append(getPower());
-      sb.append(", level=").append(getLevel());
       sb.append(", caster=").append(getCasterName());
       if (target != null) {
          sb.append(", target=").append(getTargetName());
@@ -522,7 +509,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
    }
 
    public Attribute getCastingAttribute() {
-      if (isInate()) {
+      if (isInnate()) {
          return Attribute.Dexterity;
       }
       return Attribute.Intelligence;
@@ -553,7 +540,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
       byte rangeAdjustedCastingTN = getRangeAdjustedCastingTN(attack, distanceInHexes, range, castingTN, rangeTNAdjustment, battle,
                                                               sbCastingDescription);
       sbCastingDescription.append("</table>");
-      if ((rangeAdjustedCastingTN != 0) || !isInate()) {
+      if ((rangeAdjustedCastingTN != 0) || !isInnate()) {
          sbDescription.append(sbCastingDescription);
       }
 
@@ -899,7 +886,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
          }
          sbDescription.append("<tr><td>").append(result).append("</td>");
          sbDescription.append("<td><b>Final cast roll</b></td></tr>");
-         if (!this.isInate()) {
+         if (!this.isInnate()) {
             if (!(this instanceof PriestSpell)) {
                sbDescription.append("<tr><td><b>").append(castingTN).append("</b></td>");
                sbDescription.append("<td>Spell Casting TN</td></tr>");
@@ -919,7 +906,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
          }
       }
       excessSuccess = (byte) (result - castingTN);
-      boolean success = (isInate() || (this instanceof PriestSpell) || (excessSuccess >= 0)) && !castRolledAllOnes;
+      boolean success = (isInnate() || (this instanceof PriestSpell) || (excessSuccess >= 0)) && !castRolledAllOnes;
       boolean effective = false;
       if (success) {
          // This instanceof check is replaced by isDefendable, with a check of validity in the
@@ -1069,7 +1056,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
          mainElement.setAttribute("targetID", String.valueOf(target.uniqueID));
       }
       mainElement.setAttribute("maintainedThisTurn", String.valueOf(maintainedThisTurn));
-      mainElement.setAttribute("isInateSpell", String.valueOf(isInateSpell));
+      mainElement.setAttribute("isInateSpell", String.valueOf(isInnateSpell));
       mainElement.setAttribute("incantationRoundsRequired", String.valueOf(incantationRoundsRequired));
       mainElement.setAttribute("defenseTN", String.valueOf(defenseTN));
       mainElement.setAttribute("castRoll", String.valueOf(castRoll));
@@ -1093,7 +1080,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
       }
       power = Byte.parseByte(namedNodeMap.getNamedItem("power").getNodeValue());
       maintainedThisTurn = Boolean.parseBoolean(namedNodeMap.getNamedItem("maintainedThisTurn").getNodeValue());
-      isInateSpell = Boolean.parseBoolean(namedNodeMap.getNamedItem("isInateSpell").getNodeValue());
+      isInnateSpell = Boolean.parseBoolean(namedNodeMap.getNamedItem("isInateSpell").getNodeValue());
       incantationRoundsRequired = Byte.parseByte(namedNodeMap.getNamedItem("incantationRoundsRequired").getNodeValue());
       defenseTN = Byte.parseByte(namedNodeMap.getNamedItem("defenseTN").getNodeValue());
       castRoll = Byte.parseByte(namedNodeMap.getNamedItem("castRoll").getNodeValue());

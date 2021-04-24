@@ -13,6 +13,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
+import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.spells.IExpiringSpell;
 import ostrowski.combat.server.Arena;
 
@@ -26,8 +27,8 @@ public abstract class ExpiringMageSpell extends MageSpell implements IExpiringSp
    }
    @SuppressWarnings("rawtypes")
    public ExpiringMageSpell(String name, short baseExpirationTimeInTurns, short bonusTimeInTurnsPerPower,
-                        Class[] prerequisiteSpells, MageCollege[] colleges) {
-      super(name, prerequisiteSpells, colleges);
+                        Class[] prerequisiteSpells, SkillType[] skillTypes) {
+      super(name, prerequisiteSpells, skillTypes);
       this.baseExpirationTimeInTurns = baseExpirationTimeInTurns;
       this.bonusTimeInTurnsPerPower = bonusTimeInTurnsPerPower;
    }

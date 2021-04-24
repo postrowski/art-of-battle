@@ -7,6 +7,7 @@ import ostrowski.DebugBreak;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.IHolder;
 import ostrowski.combat.common.Rules;
+import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.IRangedSpell;
 import ostrowski.combat.protocol.request.RequestAction;
@@ -20,7 +21,7 @@ public class SpellSpiderWeb extends MageSpell implements IHolder, IRangedSpell, 
 
    public SpellSpiderWeb() {
       super(NAME, new Class[] { SpellCreateEarth.class, SpellCreateRope.class, SpellCreateForce.class, SpellGlue.class, SpellThrowSpell.class},
-            new MageCollege[] { MageCollege.CONJURATION, MageCollege.EARTH, MageCollege.ENERGY});
+            new SkillType[] {SkillType.Spellcasting_Conjuration, SkillType.Spellcasting_Earth, SkillType.Spellcasting_Energy});
    }
 
    @Override

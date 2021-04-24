@@ -184,12 +184,12 @@ public class Race implements Cloneable, Enums
                if (spell == null) {
                   DebugBreak.debugBreak();
                }
+               ((PriestSpell)spell).setLevel(level);
             }
             if (spell != null) {
                spell = spell.clone();
                spell.setPower(level);
-               spell.setLevel(level);
-               spell.setIsInate(true);
+               spell.setIsInnate(true);
                inateSpells.add(spell);
             }
          }

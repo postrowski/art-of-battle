@@ -5,6 +5,7 @@
 package ostrowski.combat.common.spells.mage;
 
 import ostrowski.combat.common.Character;
+import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.html.Table;
 import ostrowski.combat.common.html.TableHeader;
 import ostrowski.combat.common.html.TableRow;
@@ -17,7 +18,7 @@ public class SpellSpeed extends ExpiringMageSpell implements ICastInBattle
    public SpellSpeed() {
       super(NAME, (short)10/*baseExpirationTimeInTurns*/, (short)2/*bonusTimeInTurnsPerPower*/,
             new Class[] {SpellAffectArea.class, SpellControlTime.class},
-            new MageCollege[] {MageCollege.CONJURATION, MageCollege.ENERGY, MageCollege.EVOCATION, MageCollege.PROTECTION});
+            new SkillType[] {SkillType.Spellcasting_Conjuration, SkillType.Spellcasting_Energy, SkillType.Spellcasting_Evocation, SkillType.Spellcasting_Protection});
    }
 
    @Override

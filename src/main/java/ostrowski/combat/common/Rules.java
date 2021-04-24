@@ -1,13 +1,9 @@
 package ostrowski.combat.common;
 
 import ostrowski.DebugBreak;
-import ostrowski.combat.common.enums.Attribute;
-import ostrowski.combat.common.enums.DefenseOption;
-import ostrowski.combat.common.enums.Enums;
-import ostrowski.combat.common.enums.Position;
+import ostrowski.combat.common.enums.*;
 import ostrowski.combat.common.html.*;
 import ostrowski.combat.common.orientations.*;
-import ostrowski.combat.common.spells.mage.MageCollege;
 import ostrowski.combat.common.things.*;
 import ostrowski.combat.common.wounds.Wound;
 import ostrowski.combat.protocol.*;
@@ -23,13 +19,12 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Paul
- *
  */
-public class Rules extends DebugBreak implements Enums
-{
+public class Rules extends DebugBreak implements Enums {
    static {
       SerializableFactory.registerClass("Advant", Advantage.class);
       SerializableFactory.registerClass("AreCoo", ArenaCoordinates.class);
@@ -195,7 +190,7 @@ public class Rules extends DebugBreak implements Enums
       SerializableFactory.registerClass("Condit", Condition.class);
       SerializableFactory.registerClass("DieSet", DiceSet.class);
       SerializableFactory.registerClass("EntAre", EnterArena.class);
-      SerializableFactory.registerClass("MageCo", MageCollege.class);
+      SerializableFactory.registerClass("Profes", Profession.class);
       SerializableFactory.registerClass("MapVis", MapVisibility.class);
       SerializableFactory.registerClass("MesTxt", MessageText.class);
       SerializableFactory.registerClass("MLCMap", MultiLevelCombatMap.class);
@@ -274,8 +269,7 @@ public class Rules extends DebugBreak implements Enums
 
       File file = new File("combat.log");
       long fileLength = file.exists() ? file.length() : 0;
-      try (RandomAccessFile raf = new RandomAccessFile(file, "rw"))
-      {
+      try (RandomAccessFile raf = new RandomAccessFile(file, "rw")) {
          // If the the file exists, delete it or set our file length equal to its length.
          raf.seek(fileLength);
          raf.writeBytes(sb.toString());
@@ -294,15 +288,10 @@ public class Rules extends DebugBreak implements Enums
       }
    }
 
-   static public byte getMaxSpellLevel()   {  return 10;   }
-
-   static public byte getMaxCollegeLevel() {  return 10;   }
-
-   static public byte getMaxSkillLevel()   {  return 10;   }
-
-   static public byte getMaxAttribute()    {  return 10;   }
-
-   static public byte getMinAttribute()    {  return -10;  }
+   static public byte getMaxSpellLevel() {      return 10;   }
+   static public byte getMaxSkillLevel() {      return 10;   }
+   static public byte getMaxAttribute()  {      return 10;   }
+   static public byte getMinAttribute()  {      return -10;  }
 
    static public int getAttCost(byte attLevel) {
       switch (attLevel) {
@@ -335,32 +324,30 @@ public class Rules extends DebugBreak implements Enums
       throw new IllegalArgumentException();
    }
 
-   static public int getSpellCost(byte spellLevel) {
-      switch (spellLevel) {
-         case 0:    return 0;
-         case 1:    return 1;
-         case 2:    return 3;
+   static public int getProfessionCost(Profession profession) {
+      int cost = getProfessionCost(profession.getLevel());
+      int proficientSkillCount = profession.getProficientSkills().size();
+      // one skill is know at proficient for free
+      if (proficientSkillCount > 1) {
+         cost += SkillRank.PROFICIENT.getCost() * (proficientSkillCount - 1);
       }
-      return getSkillCost(spellLevel);
+      cost += SkillRank.FAMILIAR.getCost() * profession.getFamiliarSkills().size();
+      return cost;
    }
 
-   static public int getCollegeCost(byte collegeLevel) {
-      return getSkillCost(collegeLevel);
-   }
-
-   static public int getSkillCost(byte skillLevel) {
-      switch (skillLevel) {
-         case 0:    return 0;
-         case 1:    return 1;
-         case 2:    return 3;
-         case 3:    return 7;
-         case 4:    return 13;
-         case 5:    return 20;
-         case 6:    return 30;
-         case 7:    return 45;
-         case 8:    return 65;
-         case 9:    return 90;
-         case 10:   return 120;
+   static public int getProfessionCost(byte professionLevel) {
+      switch (professionLevel) {
+         case 0:   return 0; //  0; //  0;
+         case 1:   return 2; //  2; //  1;
+         case 2:   return 5; //  5; //  3;
+         case 3:   return 10; // 10; //  7;
+         case 4:   return 20; // 17; // 13;
+         case 5:   return 35; // 25; // 20;
+         case 6:   return 55; // 40; // 30;
+         case 7:   return 80; // 60; // 45;
+         case 8:   return 110; // 85; // 65;
+         case 9:   return 145; //115; // 90;
+         case 10:  return 185; //150; //120;
       }
       DebugBreak.debugBreak();
       throw new IllegalArgumentException();
@@ -392,8 +379,7 @@ public class Rules extends DebugBreak implements Enums
                 (rollType == RollType.ATTACK_TO_HIT) ||
                 !Configuration.useD6ForAttributeRolls()) {
                dBell = 1;
-            }
-            else {
+            } else {
                d6 = 1;
             }
             return new DiceSet(d1, 0, d6, 0, d10, 0, 0, dBell, 1.0);
@@ -487,8 +473,9 @@ public class Rules extends DebugBreak implements Enums
       if (skillExcess <= 0) {
          return 0;
       }
-      return (byte) (((byte)(skillExcess / 10)) * 5); // round down (truncate)
+      return (byte) (((byte) (skillExcess / 10)) * 5); // round down (truncate)
    }
+
    public static byte getHoldLevelForSkillExcess(byte skillExcess) {
       if (skillExcess <= 0) {
          return 0;
@@ -505,11 +492,11 @@ public class Rules extends DebugBreak implements Enums
    }
 
    public static byte getCollapsePainLevel(byte toughnessLevel) {
-      return (byte) (10 + (toughnessLevel/2));
+      return (byte) (10 + (toughnessLevel / 2));
    }
 
    public static byte getUnconsciousWoundLevel(byte toughnessLevel) {
-      return (byte) (10 + (toughnessLevel/2));
+      return (byte) (10 + (toughnessLevel / 2));
    }
 
    public static short getMaxMageSpellPoint(short magicalAptitude) {
@@ -661,7 +648,7 @@ public class Rules extends DebugBreak implements Enums
          }
       }
       for (int i = 0; i <= 5; i++) {
-         header2.addTD(new TableHeader(""+i));
+         header2.addTD(new TableHeader("" + i));
       }
 
       int htmlRow = 0;
@@ -670,8 +657,7 @@ public class Rules extends DebugBreak implements Enums
          row.addTD(new TableHeader(attLevel));
          if (attLevel <= getMaxAttribute()) {
             row.addTD(new TableData(getAttCost(attLevel)));
-         }
-         else {
+         } else {
             row.addTD(new TableData("---"));
          }
          if (Configuration.useExtendedDice) {
@@ -695,8 +681,7 @@ public class Rules extends DebugBreak implements Enums
             if (maxWeight == Math.floor(maxWeight)) {
                // print as an integer, if it's a whole number.
                row.addTD(new TableData((int) maxWeight));
-            }
-            else {
+            } else {
                row.addTD(new TableData(maxWeight));
             }
          }
@@ -732,16 +717,14 @@ public class Rules extends DebugBreak implements Enums
          TableRow row = new TableRow(htmlRow++);
          if (attrLevel == 0) {
             row.addTD(new TableHeader(attrLevel));
-         }
-         else {
+         } else {
             row.addTD(new TableData(attrLevel));
          }
          for (int rangeBase : range) {
             double adjustedRange = getRangeAdjusterForAdjustedStr(attrLevel) * rangeBase;
             if (attrLevel == 0) {
                row.addTD(new TableHeader(Math.round(adjustedRange)));
-            }
-            else {
+            } else {
                row.addTD(new TableData(Math.round(adjustedRange)));
             }
          }
@@ -754,16 +737,16 @@ public class Rules extends DebugBreak implements Enums
       StringBuilder sb = new StringBuilder();
       sb.append(HtmlBuilder.getCSSHeader());
       sb.append("<body>");
-      sb.append("<H3>Skill cost:</H3>");
+      sb.append("<H3>Profession cost:</H3>");
       Table table = new Table();
       TableRow tr = new TableRow(-1);
-      tr.addHeader("Skill level");
+      tr.addHeader("Profession level");
       tr.addHeader("Cost");
       table.addRow(tr);
       for (byte i = 0; i <= getMaxSkillLevel(); i++) {
          tr = new TableRow(i);
          tr.addHeader(i);
-         tr.addTD(getSkillCost(i));
+         tr.addTD(getProfessionCost(i));
          table.addRow(tr);
       }
       sb.append(table);
@@ -857,19 +840,17 @@ public class Rules extends DebugBreak implements Enums
          sb.append(HtmlBuilder.buildRow(htmlRow++));
          sb.append("<th>");
          int min = ave - 2;
-         int max = ave +3;
+         int max = ave + 3;
          if (ave > 0) {
             sb.append("+");
-         }
-         else {
+         } else {
             min = ave - 3;
          }
          sb.append(min);
          sb.append(" to ");
          if (ave >= 0) {
             sb.append("+");
-         }
-         else {
+         } else {
             max = ave + 2;
          }
          sb.append(max);
@@ -975,15 +956,13 @@ public class Rules extends DebugBreak implements Enums
          if (hand == LimbType.HAND_LEFT) {
             return 3;
          }
-      }
-      else if (armCount == 4) {
+      } else if (armCount == 4) {
          switch (hand) {
             case HAND_LEFT:
             case HAND_RIGHT_2: return 2;
             case HAND_LEFT_2:  return 3;
          }
-      }
-      else if (armCount == 6) {
+      } else if (armCount == 6) {
          switch (hand) {
             case HAND_LEFT:
             case HAND_RIGHT_2: return 1;
@@ -1003,16 +982,14 @@ public class Rules extends DebugBreak implements Enums
       int adjuster = 0;
       if (defBase == DefenseOption.DEF_DODGE) {
          adjuster = position.adjustmentToDefenseDodge;
-      }
-      else if (defBase == DefenseOption.DEF_RETREAT) {
+      } else if (defBase == DefenseOption.DEF_RETREAT) {
          adjuster = position.adjustmentToDefenseRetreat;
-      }
-      else if ((defBase == DefenseOption.DEF_LEFT) ||
-               (defBase == DefenseOption.DEF_LEFT_2)||
-               (defBase == DefenseOption.DEF_LEFT_3) ||
-               (defBase == DefenseOption.DEF_RIGHT) ||
-               (defBase == DefenseOption.DEF_RIGHT_2) ||
-               (defBase == DefenseOption.DEF_RIGHT_3)) {
+      } else if ((defBase == DefenseOption.DEF_LEFT) ||
+                 (defBase == DefenseOption.DEF_LEFT_2) ||
+                 (defBase == DefenseOption.DEF_LEFT_3) ||
+                 (defBase == DefenseOption.DEF_RIGHT) ||
+                 (defBase == DefenseOption.DEF_RIGHT_2) ||
+                 (defBase == DefenseOption.DEF_RIGHT_3)) {
          adjuster = position.adjustmentToDefenseParry;
          // magic defenses are unaffected by your position/
       }
@@ -1093,24 +1070,33 @@ public class Rules extends DebugBreak implements Enums
       return (byte) (Math.min(skillLevel, attributeLevel) + skillLevel);
       //return (byte) (skillLevel + attributeLevel);
    }
-   public static byte getAdjustedCollegeLevel(MageCollege college, Character character) {
-      return getAdjustedSkillLevel(college.getLevel(), character.getAttributeLevel(Attribute.Intelligence));
-   }
 
-   public static byte getAdjustedSkillLevel(Skill skill, Character character) {
+   public static byte getAdjustedSkillLevel(ProfessionType professionType, SkillType skill, Character character) {
+      if (!professionType.skillList.contains(skill)) {
+         throw new IllegalArgumentException("skill " + skill + " is not a member of profession " + professionType);
+      }
+      Optional<Profession> profession = character.getProfessionsList().stream().filter(o -> o.getType() == professionType).findFirst();
+      if (!profession.isPresent()) {
+         return 0;
+      }
       byte adjustedLevel;
+      if (profession.get().getProficientSkills().contains(skill)) {
+         adjustedLevel = profession.get().getLevel();
+      } else if (profession.get().getFamiliarSkills().contains(skill)) {
+         adjustedLevel = (byte) (profession.get().getLevel() - 2);
+      } else {
+         adjustedLevel = (byte) (profession.get().getLevel() - 4);
+      }
+
       Attribute attribute = skill.getAttributeBase();
       if (attribute != null) {
-         adjustedLevel = getAdjustedSkillLevel(skill.getLevel(), character.getAttributeLevel(attribute));
+         adjustedLevel = getAdjustedSkillLevel(adjustedLevel, character.getAttributeLevel(attribute));
       }
-      else {
-         adjustedLevel = skill.getLevel();
-      }
-      if (skill.isAdjustedForSize()) {
+      if (skill.isAdjustedForSize) {
          byte bonusToHit = (character == null) ? 0 : character.getRace().getBonusToHit();
          adjustedLevel += bonusToHit;
       }
-      if (skill.isAdjustedForEncumbrance()) {
+      if (skill.isAdjustedForEncumbrance) {
          if (character != null) {
             adjustedLevel -= Rules.getEncumbranceLevel(character);
          }

@@ -5,6 +5,7 @@
 package ostrowski.combat.common.spells.mage;
 
 import ostrowski.combat.common.Character;
+import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.Spell;
 
@@ -13,7 +14,7 @@ public class SpellLevitate extends ExpiringMageSpell implements ICastInBattle
    public static final String NAME = "Levitate";
    public SpellLevitate() {
       super(NAME, (short)10, (short)10, new Class[] {SpellCreateForce.class},
-            new MageCollege[] {MageCollege.AIR, MageCollege.ENERGY});
+            new SkillType[] {SkillType.Spellcasting_Air, SkillType.Spellcasting_Energy});
    }
 
    @Override

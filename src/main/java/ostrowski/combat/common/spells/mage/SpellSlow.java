@@ -6,6 +6,7 @@ package ostrowski.combat.common.spells.mage;
 
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.enums.Attribute;
+import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.html.Table;
 import ostrowski.combat.common.html.TableHeader;
 import ostrowski.combat.common.html.TableRow;
@@ -18,7 +19,7 @@ public class SpellSlow extends ResistedMageSpell implements ICastInBattle
    public SpellSlow() {
       super(NAME, Attribute.Health, (byte) 2/*resistedActions*/, true/*expires*/,
             new Class[] {SpellAffectArea.class, SpellControlTime.class},
-            new MageCollege[] {MageCollege.CONJURATION, MageCollege.ENERGY, MageCollege.EVOCATION, MageCollege.PROTECTION});
+            new SkillType[] {SkillType.Spellcasting_Conjuration, SkillType.Spellcasting_Energy, SkillType.Spellcasting_Evocation, SkillType.Spellcasting_Protection});
    }
 
    @Override

@@ -6,6 +6,7 @@ package ostrowski.combat.common.spells.mage;
 
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.enums.Attribute;
+import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.server.Arena;
 
@@ -15,7 +16,7 @@ public class SpellWeaken extends ResistedMageSpell implements ICastInBattle
    public SpellWeaken() {
       super(NAME, Attribute.Intelligence, (byte) 1/*resistedActions*/, true/*expires*/,
             new Class[] {SpellSuggestion.class},
-            new MageCollege[] {MageCollege.ENERGY, MageCollege.ENCHANTMENT});
+            new SkillType[] {SkillType.Spellcasting_Energy, SkillType.Spellcasting_Enchantment});
    }
 
    @Override

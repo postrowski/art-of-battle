@@ -8,6 +8,5 @@ public interface IInstantaneousSpell
    boolean canDefendAgainstRangedAttacks();
    boolean canDefendAgainstSpells();
    String getName();
-   byte getLevel();
    byte getActiveDefensiveTN(byte actions, Character caster);
 }

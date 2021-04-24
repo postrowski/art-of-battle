@@ -179,7 +179,6 @@ public class CharacterGeneratorTest implements Enums {
             advantages.append(":").append(adv.getLevelName());
          }
       }
-      byte dex = character.getAttributeLevel(Attribute.Dexterity);
       WeaponDesc weaponDescPrime = null;
       WeaponDesc weaponDescAlt = null;
       @SuppressWarnings("unused")
@@ -264,90 +263,57 @@ public class CharacterGeneratorTest implements Enums {
          equipment.append(thing.getName());
       }
 
-      List<Skill> skillsList = character.getSkillsList();
-      int totalSkillCount = skillsList.size();
-      // Sort the skills by highest skill level.
-      skillsList.sort((o1, o2) -> Byte.compare(o2.getLevel(), o1.getLevel()));
+      List<Profession> professionsList = character.getProfessionsList();
+      int totalProfsCount = professionsList.size();
+      // Sort the professions by highest level.
+      professionsList.sort((o1, o2) -> Byte.compare(o2.getLevel(), o1.getLevel()));
 
-      Skill primaryWeaponSkill   = (weaponPrime == null) ? null : character.getBestSkill(weaponPrime);
-      Skill secondaryWeaponSkill =   (weaponAlt == null) ? null : character.getBestSkill(weaponAlt);
-      Skill shieldSkill = character.getSkill(SkillType.Shield);
-      List<Skill> unarmedSkillsList = new ArrayList<>();
-
-      List<Skill> skillsListWeapons = new ArrayList<>();
-      List<Skill> skillsListShieldAndUnarmedSkills = new ArrayList<>();
-      if (primaryWeaponSkill != null) {
-         skillsList.remove(primaryWeaponSkill);
-         skillsListWeapons.add(primaryWeaponSkill);
-      }
-      if (secondaryWeaponSkill != null) {
-         // If primarySkill == secondaryWeaponSkill, then it will already be removed from skillsList, so remove will return false;
-         if (skillsList.remove(secondaryWeaponSkill)) {
-            skillsListWeapons.add(secondaryWeaponSkill);
-         }
-      }
-      if (shieldSkill != null) {
-         skillsList.remove(shieldSkill);
-         skillsListShieldAndUnarmedSkills.add(shieldSkill);
-      }
-      for (Skill skill : skillsList) {
-         if (skill.getType().isUnarmed()) {
-            unarmedSkillsList.add(skill);
-         }
-      }
-      if (secondaryWeaponSkill == null) {
-         if (unarmedSkillsList.size() == 1) {
-            Skill unarmedSkill = unarmedSkillsList.remove(0);
-            skillsListWeapons.add(unarmedSkill);
-            skillsList.remove(unarmedSkill);
-         }
-      }
-      for (Skill skill : unarmedSkillsList) {
-         skillsList.remove(skill);
-         skillsListShieldAndUnarmedSkills.add(skill);
-      }
-
-      List<List<Skill>> sortedSkillsByLine = new ArrayList<>();
-      sortedSkillsByLine.add(skillsListWeapons);
-      if (!skillsListShieldAndUnarmedSkills.isEmpty()) {
-         sortedSkillsByLine.add(skillsListShieldAndUnarmedSkills);
-      }
-      if (!skillsList.isEmpty()) {
-         sortedSkillsByLine.add(skillsList);
-      }
       StringBuilder skills = new StringBuilder();
 
       String previousLine = "";
-      for (List<Skill> skillsLine : sortedSkillsByLine) {
+      for (Profession profession : professionsList) {
          if (skills.length() > 0) {
             skills.append("<br/>");
          }
          boolean firstOnLine = true;
-         for (Skill skill : skillsLine) {
-            String thisSkillDesc = skill.getName() + ": " + skill.getLevel();
-            thisSkillDesc = thisSkillDesc.replace("2-Handed ", "2-Hand ");
-            byte skillLevel = character.getSkillLevel(skill.getType(), null, true/*sizeAdjust*/, true/*adjustForEncumbrance*/, false/*adjustForHolds*/);
-            skillLevel += dex;
-            if (skillLevel != skill.getLevel()) {
-               thisSkillDesc += "[" + skillLevel + "]";
-            }
 
-            if (!firstOnLine) {
-               boolean forceSplit = ((totalSkillCount + ((advantages.length() > 0) ? 1 : 0)) < 4);
-               if ((previousLine.length() + skill.getName().length()) > 24) {
-                  forceSplit = true;
-               }
-               if (forceSplit) {
-                  skills.append("<br/>");
-               }
-               else {
-                  skills.append(", ");
-               }
+         skills.append(profession.getType().getName()).append(":").append(profession.getLevel()).append("{");
+         ArrayList<SkillType> proficientSkills = new ArrayList<>(profession.getProficientSkills());
+         ArrayList<SkillType> familiarSkills = new ArrayList<>(profession.getFamiliarSkills());
+         for (List<SkillType> skillTypeList : new ArrayList[]{proficientSkills, familiarSkills}) {
+            if (skillTypeList.isEmpty()) {
+               continue;
             }
-            firstOnLine = false;
-            skills.append(thisSkillDesc);
-            previousLine = thisSkillDesc;
+            if (skillTypeList == proficientSkills) {
+               skills.append("pro:");
+            }else {
+               skills.append(", fam:");
+            }
+            for (SkillType skill : skillTypeList) {
+               String thisSkillDesc = skill.getName();
+               thisSkillDesc = thisSkillDesc.replace("2-Handed ", "2-Hand ");
+               byte skillLevel = character.getAdjustedSkillLevel(skill, null, true/*sizeAdjust*/, true/*adjustForEncumbrance*/, false/*adjustForHolds*/);
+               if (skillLevel != profession.getLevel(skill)) {
+                  thisSkillDesc += "[" + skillLevel + "]";
+               }
+
+               if (!firstOnLine) {
+                  boolean forceSplit = ((totalProfsCount + ((advantages.length() > 0) ? 1 : 0)) < 4);
+                  if ((previousLine.length() + skill.getName().length()) > 24) {
+                     forceSplit = true;
+                  }
+                  if (forceSplit) {
+                     skills.append("<br/>");
+                  } else {
+                     skills.append(", ");
+                  }
+               }
+               firstOnLine = false;
+               skills.append(thisSkillDesc);
+               previousLine = thisSkillDesc;
+            }
          }
+         skills.append("}");
       }
       Armor armor = character.getArmor();
       String strStr = String.valueOf(character.getAttributeLevel(Attribute.Strength));
@@ -507,7 +473,7 @@ public class CharacterGeneratorTest implements Enums {
          rows[0].addTD(new TableData(String.valueOf(character.getBuild(DamageType.CUT))).setRowSpan(rowsToUse));
          rows[0].addTD(new TableData(String.valueOf(character.getBuild(DamageType.IMP))).setRowSpan(rowsToUse));
          if (weaponDescPrime.weapon.isUnarmedStyle()) {
-            Skill primeSkill = character.getBestSkill(weaponDescPrime.weapon);
+            SkillType primeSkill = character.getBestSkillType(weaponDescPrime.weapon);
             rows[0].addTD(new TableData(primeSkill.getName()).setBold());
          } else {
             rows[0].addTD(new TableData(weaponDescPrime.weapon.getName()).setBold());
@@ -528,7 +494,7 @@ public class CharacterGeneratorTest implements Enums {
          if ((weaponDescAlt != null) && (!weaponDescAlt.weapon.getName().equals(weaponDescPrime.weapon.getName()))) {
             altWeaponAvailable = true;
             if (weaponDescAlt.weapon.isUnarmedStyle()) {
-               Skill altSkill = character.getBestSkill(weaponDescAlt.weapon);
+               SkillType altSkill = character.getBestSkillType(weaponDescAlt.weapon);
                if (altSkill == null) {
                   altWeaponAvailable = false;
                }
@@ -577,7 +543,7 @@ public class CharacterGeneratorTest implements Enums {
 
    static class WeaponStyleDesc {
       private final WeaponStyleAttack style;
-      private final Skill skill;
+      private final SkillType skillType;
       public byte baseSkill;
       public       byte    adjustedSkill = (byte)0;
       public final byte    actionsRequired;
@@ -594,26 +560,27 @@ public class CharacterGeneratorTest implements Enums {
             this.actionsRequired = style.getSpeed(character.getAttributeLevel(Attribute.Strength));
          }
          this.damageStr       = style.getDamageString(character.getPhysicalDamageBase());
-         this.skill           = character.getSkill(style.getSkillType());
-         if (this.skill != null) {
-            this.adjustedSkill = character.getSkillLevel(this.skill.getType(), limbType,
+         this.skillType       = style.getSkillType();
+         this.baseSkill       = character.getSkillLevel(style.getSkillType(), LimbType.HAND_RIGHT, false, false, false);
+         if (this.baseSkill > 0 ) {
+            this.adjustedSkill = character.getSkillLevel(this.skillType, limbType,
                                                          true/*sizeAdjust*/, true/*adjustForEncumbrance*/, false/*adjustForHolds*/);
             this.adjustedSkill += character.getAttributeLevel(Attribute.Dexterity);
             this.adjustedSkill -= this.style.getSkillPenalty();
-            byte baseSkillLevel = character.getSkillLevel(this.skill.getType(), limbType, false, true, false);
+            byte baseSkillLevel = character.getSkillLevel(this.skillType, limbType, false, true, false);
             this.isShowable = (baseSkillLevel > this.style.getSkillPenalty());
          }
       }
 
       public String getAlteredName(WeaponDesc weaponDesc) {
          String alteredName = this.styleName;
-         boolean diffSkill = weaponDesc.singleSkillType != skill.getType();
+         boolean diffSkill = weaponDesc.singleSkillType != skillType;
          if (weaponDesc.weapon.getName().equals(Weapon.NAME_BastardSword) ||
              weaponDesc.weapon.getName().equals(Weapon.NAME_BastardSword_Fine)) {
             diffSkill = false;
          }
          if (diffSkill) {
-            alteredName += " (" + skill.getType().name;
+            alteredName += " (" + skillType.name;
          }
          if (weaponDesc.adjustedSkill != adjustedSkill) {
             alteredName += " [" + adjustedSkill + "]";
@@ -641,9 +608,8 @@ public class CharacterGeneratorTest implements Enums {
             }
          }
          description.append(this.styleName).append(", ");
-         this.baseSkill = this.skill.getLevel();
          if (isOnlySkill) {
-            description.append(" skill ").append(this.skill.getName()).append(": ").append(this.baseSkill);
+            description.append(" skill ").append(this.skillType.getName()).append(": ").append(this.baseSkill);
          }
          if (((singleSkillBaseLevel != null) ? singleSkillBaseLevel : this.baseSkill) != this.adjustedSkill) {
             description.append(" (adj. ").append(this.adjustedSkill).append(")");
@@ -672,8 +638,8 @@ public class CharacterGeneratorTest implements Enums {
       public String describeWeapon() {
          // See if there is a single skill that governs all the possible attack styles:
          for (WeaponStyleAttack style : this.weapon.attackStyles) {
-            Skill skill = this.character.getSkill(style.getSkillType());
-            if ((skill == null) || (skill.getLevel() <1 )) {
+            byte skillLevel = this.character.getSkillLevel(style.getSkillType(), LimbType.HAND_RIGHT, false, true, true);
+            if (skillLevel < 1 ) {
                continue;
             }
 
@@ -697,8 +663,7 @@ public class CharacterGeneratorTest implements Enums {
             description.append(this.weapon.getName()).append(": ");
          }
          if (this.singleSkillType != null) {
-            Skill skill = this.character.getSkill(this.singleSkillType);
-            this.singleSkillBaseLevel = skill.getLevel();
+            this.singleSkillBaseLevel = this.character.getSkillLevel(this.singleSkillType, LimbType.HAND_RIGHT, false, true, true);
             byte skillLevel = this.character.getSkillLevel(this.singleSkillType, this.limbType, true/*sizeAdjust*/, true/*adjustForEncumbrance*/, false/*adjustForHolds*/);
             skillLevel += this.character.getAttributeLevel(Attribute.Dexterity);
             if (this.weapon.isReal()) {
@@ -706,7 +671,7 @@ public class CharacterGeneratorTest implements Enums {
             }
             this.baseSkill = this.singleSkillBaseLevel;
             this.adjustedSkill = skillLevel;
-            description.append(skill.getName()).append(": ").append(this.singleSkillBaseLevel);
+            description.append(this.singleSkillType.getName()).append(": ").append(this.singleSkillBaseLevel);
             if (this.singleSkillBaseLevel != skillLevel) {
                description.append(" (adj. ").append(skillLevel).append(")");
             }
@@ -793,7 +758,7 @@ public class CharacterGeneratorTest implements Enums {
          Race race = Race.getRace(raceName, Gender.MALE);
          for (int pointAdj = -50; pointAdj < 300; pointAdj += (Math.random() * 100)) {
             int maxPoints = race.getCost() + pointAdj;
-            seed = (int) ((CombatServer.random() + CombatServer.random() + CombatServer.random()) * 10000000);
+            seed = (int) ((CombatServer.random() + CombatServer.random() + CombatServer.random()) * 10_000_000);
             String key = seed + " generated " + maxPoints + " point " + raceName;
             CombatServer.setPseudoRandomNumberSeed(seed);
             Character character = CharacterGenerator.generateRandomCharacter("? " + maxPoints + " "
@@ -804,10 +769,17 @@ public class CharacterGeneratorTest implements Enums {
                        character.getRace().getName().equals(raceName));
             if (race.isAnimal()) {
                assertTrue(key + " animal has equipment", character.getWeightCarried() == 0);
-               assertTrue(key + " animal has multiple or 0 skills: " + character.getSkillsList(),
-                          (character.getSkillsList().size() == 1));
-               assertTrue(key + " animal has non-brawling skill: " + character.getSkillsList(),
-                          (character.getSkillsList().get(0).getType() == SkillType.Brawling));
+               assertTrue(key + " animal has multiple or 0 professions: " + character.getProfessionsList(),
+                          (character.getProfessionsList().size() == 1));
+               Profession profession = character.getProfessionsList().get(0);
+               assertTrue(key + " animal has non-common profession: " + character.getProfessionsList(),
+                          (profession.getType() == ProfessionType.Common));
+               assertTrue(key + " animal has multiple or 0 common proficient skills: " + profession.getProficientSkills(),
+                          (profession.getProficientSkills().size() == 1));
+               assertTrue(key + " animal has familiar skills: " + profession.getFamiliarSkills(),
+                          (profession.getFamiliarSkills().isEmpty()));
+               assertTrue(key + " animal has non-brawling skill: " + profession.getProficientSkills(),
+                          (profession.getProficientSkills().get(0) == SkillType.Brawling));
             }
             seed++;
          }
@@ -834,10 +806,10 @@ public class CharacterGeneratorTest implements Enums {
       Shield shield = Shield.getShield(shieldName, character.getRace());
       Weapon weapon = Weapons.getWeapon(weaponName, character.getRace());
       if (weapon != null) {
-         character.setSkillLevel(weapon.getAttackStyle(0).getSkillType(), weaponSkillLevel);
+         character.setSkillLevel(ProfessionType.Fighter, weapon.getAttackStyle(0).getSkillType(), weaponSkillLevel);
       }
       if (shield != null) {
-         character.setSkillLevel(shield.getDefenseSkillTypes().get(0), shieldSkillLevel);
+         character.setSkillLevel(ProfessionType.Fighter, shield.getDefenseSkillTypes().get(0), shieldSkillLevel);
       }
       assertTrue("Wrong strength", character.getAttributeLevel(Attribute.Strength) == str);
       assertTrue("Wrong nimbleness", character.getAttributeLevel(Attribute.Nimbleness) == nim);

@@ -9,6 +9,7 @@ import ostrowski.combat.common.DiceSet;
 import ostrowski.combat.common.Rules;
 import ostrowski.combat.common.enums.DamageType;
 import ostrowski.combat.common.enums.DieType;
+import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.spells.IMissileSpell;
 import ostrowski.combat.common.things.MissileWeapon;
@@ -24,9 +25,9 @@ public abstract class MissileMageSpell extends MageSpell implements IMissileSpel
    final short      missileRangeBase;
 
    @SuppressWarnings("rawtypes")
-   public MissileMageSpell(String name, Class[] prerequisiteSpells, MageCollege[] colleges,
+   public MissileMageSpell(String name, Class[] prerequisiteSpells, SkillType[] skillTypes,
                            byte damageBase, byte damagePerPower, DieType damageDieType, DamageType damageType, short missileRangeBase) {
-      super(name, prerequisiteSpells, colleges);
+      super(name, prerequisiteSpells, skillTypes);
       this.damageBase = damageBase;
       this.damagePerPower = damagePerPower;
       this.damageDieType = damageDieType;

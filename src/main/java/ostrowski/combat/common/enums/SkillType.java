@@ -53,7 +53,21 @@ public enum SkillType {
    Sailing           ("Sailing",           false, false, Attribute.Intelligence, ArmsUsed.Both, false),
    Survival          ("Survival",          false, false, Attribute.Intelligence, ArmsUsed.Both, false),
    Tactics           ("Tactics",           false, false, Attribute.Intelligence, ArmsUsed.None, false),
-   Tracking          ("Tracking",          false, false, Attribute.Intelligence, ArmsUsed.None, false);
+   Tracking          ("Tracking",          false, false, Attribute.Intelligence, ArmsUsed.None, false),
+
+   // Spellcasting Skills:
+   Spellcasting_Fire        ("Fire",        false, false, Attribute.Intelligence, ArmsUsed.None, false),
+   Spellcasting_Water       ("Water",       false, false, Attribute.Intelligence, ArmsUsed.None, false),
+   Spellcasting_Earth       ("Earth",       false, false, Attribute.Intelligence, ArmsUsed.None, false),
+   Spellcasting_Air         ("Air",         false, false, Attribute.Intelligence, ArmsUsed.None, false),
+   Spellcasting_Energy      ("Energy",      false, false, Attribute.Intelligence, ArmsUsed.None, false),
+   Spellcasting_Evocation   ("Evocation",   false, false, Attribute.Intelligence, ArmsUsed.None, false),
+   Spellcasting_Conjuration ("Conjuration", false, false, Attribute.Intelligence, ArmsUsed.None, false),
+   Spellcasting_Illusion    ("Illusion",    false, false, Attribute.Intelligence, ArmsUsed.None, false),
+   Spellcasting_Divination  ("Divination",  false, false, Attribute.Intelligence, ArmsUsed.None, false),
+   Spellcasting_Necromancy  ("Necromancy",  false, false, Attribute.Intelligence, ArmsUsed.None, false),
+   Spellcasting_Protection  ("Protection",  false, false, Attribute.Intelligence, ArmsUsed.None, false),
+   Spellcasting_Enchantment ("Enchantment", false, false, Attribute.Intelligence, ArmsUsed.None, false);
 
    public               String                     name;
    public               Attribute                  attributeBase;

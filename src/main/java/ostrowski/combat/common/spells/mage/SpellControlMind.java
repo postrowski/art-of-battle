@@ -6,6 +6,7 @@ package ostrowski.combat.common.spells.mage;
 
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.enums.Attribute;
+import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.html.Table;
 import ostrowski.combat.common.html.TableData;
 import ostrowski.combat.common.html.TableRow;
@@ -30,7 +31,7 @@ public class SpellControlMind extends ResistedMageSpell
    public SpellControlMind() {
       super(NAME, Attribute.Intelligence, (byte) 3/*resistedActions*/, true/*expires*/,
             new Class[] {SpellBlockThought.class, SpellSuggestion.class},
-            new MageCollege[] {MageCollege.DIVINATION, MageCollege.ENCHANTMENT});
+            new SkillType[] {SkillType.Spellcasting_Divination, SkillType.Spellcasting_Enchantment});
    }
 
    @Override

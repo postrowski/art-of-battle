@@ -5,12 +5,13 @@
 package ostrowski.combat.common.spells.mage;
 
 import ostrowski.combat.common.Character;
+import ostrowski.combat.common.enums.SkillType;
 
 public class SpellControlTime extends AreaMageSpell
 {
    public static final String NAME = "Control Time";
    public SpellControlTime() {
-      super(NAME, new Class[] {SpellAffectArea.class}, new MageCollege[] {MageCollege.EVOCATION, MageCollege.ENERGY});
+      super(NAME, new Class[] {SpellAffectArea.class}, new SkillType[] {SkillType.Spellcasting_Evocation, SkillType.Spellcasting_Energy});
    }
 
    @Override

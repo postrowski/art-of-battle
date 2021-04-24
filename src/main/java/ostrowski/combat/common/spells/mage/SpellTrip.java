@@ -7,6 +7,7 @@ package ostrowski.combat.common.spells.mage;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.enums.Attribute;
 import ostrowski.combat.common.enums.DamageType;
+import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.wounds.Wound;
 import ostrowski.combat.server.Arena;
 
@@ -16,7 +17,7 @@ public class SpellTrip extends ResistedMageSpell
    public SpellTrip() {
       super(NAME, Attribute.Intelligence, (byte) 1/*resistedActions*/, false/*expires*/,
             new Class[] {SpellCreateForce.class},
-            new MageCollege[] {MageCollege.ENERGY});
+            new SkillType[] {SkillType.Spellcasting_Energy});
    }
 
    @Override

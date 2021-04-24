@@ -8,6 +8,7 @@ import ostrowski.combat.common.Character;
 import ostrowski.combat.common.DiceSet;
 import ostrowski.combat.common.SpecialDamage;
 import ostrowski.combat.common.enums.DamageType;
+import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.things.Weapon;
 import ostrowski.combat.common.wounds.Wound;
@@ -19,7 +20,7 @@ public class SpellShockingGrasp extends ExpiringMageSpell implements ICastInBatt
    public SpellShockingGrasp() {
       super(NAME, (short)10/*baseExpirationTimeInTurns*/, (short)5/*bonusTimeInTurnsPerPower*/,
             new Class[] {SpellControlCharge.class, SpellCreateElectricity.class},
-            new MageCollege[] {MageCollege.ENERGY});
+            new SkillType[] {SkillType.Spellcasting_Energy});
    }
 
    @Override

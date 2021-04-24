@@ -8,6 +8,7 @@ import ostrowski.combat.common.Character;
 import ostrowski.combat.common.SpecialDamage;
 import ostrowski.combat.common.enums.DamageType;
 import ostrowski.combat.common.enums.DieType;
+import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.things.Hand;
 import ostrowski.combat.common.things.LimbType;
@@ -24,7 +25,7 @@ public class SpellFireball extends MageSpell implements ICastInBattle
    public SpellFireball() {
       super(NAME, new Class[] {SpellCreateFire.class, SpellControlFire.class,
                                SpellControlTemperature.class, SpellThrowSpell.class},
-                               new MageCollege[] {MageCollege.CONJURATION, MageCollege.FIRE});
+                               new SkillType[] {SkillType.Spellcasting_Conjuration, SkillType.Spellcasting_Fire});
    }
 
    @Override

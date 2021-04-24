@@ -5,6 +5,7 @@
 package ostrowski.combat.common.spells.mage;
 
 import ostrowski.combat.common.Character;
+import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.html.Table;
 import ostrowski.combat.common.html.TableRow;
 import ostrowski.combat.common.spells.ICastInBattle;
@@ -15,7 +16,7 @@ public class SpellFlight extends ExpiringMageSpell implements ICastInBattle
    public static final String NAME = "Flight";
    public SpellFlight() {
       super(NAME, (short)10, (short)10, new Class[] {SpellCreateForce.class, SpellLevitate.class},
-            new MageCollege[] {MageCollege.AIR, MageCollege.EVOCATION, MageCollege.ENERGY});
+            new SkillType[] {SkillType.Spellcasting_Air, SkillType.Spellcasting_Evocation, SkillType.Spellcasting_Energy});
    }
 
    @Override

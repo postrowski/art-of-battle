@@ -710,7 +710,7 @@ public class RequestAction extends SyncRequest implements Enums
             if (spell instanceof PriestMissileSpell) {
                rollModifier += attacker.getAttributeLevel(Attribute.Dexterity) + ((PriestSpell) spell).getAffinity();
             }
-            rollModifier += spell.getLevel();
+            rollModifier += attacker.getSpellLevel(spell.getName());
          }
          if (includeWoundsAndPain) {
             rollModifier -= attacker.getWoundsAndPainPenalty();

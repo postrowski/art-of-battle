@@ -4,6 +4,7 @@
  */
 package ostrowski.combat.common.spells.mage;
 
+import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.html.Table;
 import ostrowski.combat.common.html.TableHeader;
 import ostrowski.combat.common.html.TableRow;
@@ -13,7 +14,7 @@ public class SpellCreateRope extends MageSpell
 {
    public static final String NAME = "Create Rope";
    public SpellCreateRope() {
-      super(NAME, new Class[] {SpellCreateEarth.class}, new MageCollege[] {MageCollege.CONJURATION, MageCollege.EARTH});
+      super(NAME, new Class[] {SpellCreateEarth.class}, new SkillType[] {SkillType.Spellcasting_Conjuration, SkillType.Spellcasting_Earth});
    }
 
    @Override

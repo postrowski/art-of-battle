@@ -5,13 +5,14 @@
 package ostrowski.combat.common.spells.mage;
 
 import ostrowski.combat.common.Character;
+import ostrowski.combat.common.enums.SkillType;
 
 public class SpellFreezeArea extends MageSpell
 {
    public static final String NAME = "Freeze";
    public SpellFreezeArea() {
       super(NAME, new Class[] {SpellAffectArea.class, SpellControlTemperature.class},
-            new MageCollege[] {MageCollege.EVOCATION, MageCollege.FIRE});
+            new SkillType[] {SkillType.Spellcasting_Evocation, SkillType.Spellcasting_Fire});
    }
 
    @Override

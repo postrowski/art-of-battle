@@ -4,14 +4,14 @@
  */
 package ostrowski.combat.common.spells.mage;
 
+import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.spells.IInstantaneousSpell;
 
 public abstract class InstantaneousMageSpell extends MageSpell implements IInstantaneousSpell
 {
    @SuppressWarnings("rawtypes")
-   protected InstantaneousMageSpell(String name, Class[] prerequisiteSpells, MageCollege[] colleges)
-   {
-      super(name, prerequisiteSpells, colleges);
+   protected InstantaneousMageSpell(String name, Class[] prerequisiteSpells, SkillType[] skillTypes) {
+      super(name, prerequisiteSpells, skillTypes);
    }
    @Override
    public byte getIncantationTime() {

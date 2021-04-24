@@ -9,6 +9,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.SpecialDamage;
+import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.html.Table;
 import ostrowski.combat.common.html.TableRow;
 import ostrowski.combat.common.spells.ICastInBattle;
@@ -31,12 +32,12 @@ public class SpellFlamingWeapon extends ExpiringMageSpell implements ICastInBatt
    public SpellFlamingWeapon() {
       super(NAME, (short) 10/*baseExpirationTimeInTurns*/, (short) 5/*bonusTimeInTurnsPerPower*/,
             new Class[] { SpellControlFire.class, SpellControlTemperature.class, SpellCreateFire.class},
-            new MageCollege[] { MageCollege.CONJURATION, MageCollege.FIRE});
+            new SkillType[] {SkillType.Spellcasting_Conjuration, SkillType.Spellcasting_Fire});
    }
 
    protected SpellFlamingWeapon(Class<? extends MageSpell>[] requiredClasses) {
       super(SpellFlamingMissileWeapon.NAME, (short) 10/*baseExpirationTimeInTurns*/, (short) 5/*bonusTimeInTurnsPerPower*/, requiredClasses,
-            new MageCollege[] { MageCollege.CONJURATION, MageCollege.FIRE});
+            new SkillType[] { SkillType.Spellcasting_Conjuration, SkillType.Spellcasting_Fire});
       forMissileWeapons = true;
    }
 

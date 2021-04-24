@@ -6,7 +6,6 @@ import ostrowski.combat.common.enums.AttackType;
 import ostrowski.combat.common.enums.Attribute;
 import ostrowski.combat.common.enums.Enums;
 import ostrowski.combat.common.enums.SkillType;
-import ostrowski.combat.common.spells.mage.MageCollege;
 import ostrowski.combat.common.spells.mage.MageSpell;
 import ostrowski.combat.common.spells.mage.MageSpells;
 import ostrowski.combat.common.things.*;
@@ -14,7 +13,6 @@ import ostrowski.combat.common.weaponStyles.WeaponStyleAttack;
 import ostrowski.combat.server.Arena;
 import ostrowski.combat.server.CombatServer;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -108,11 +106,11 @@ public class CharacterGenerator implements Enums
       DISSALLOWED_SKILLS_FOR_RACE.put(Race.NAME_Kobold,   Arrays.asList(SkillType.Aikido, SkillType.Karate));
       DISSALLOWED_SKILLS_FOR_RACE.put(Race.NAME_Fairy,    Arrays.asList(SkillType.Aikido, SkillType.Karate));
       DISSALLOWED_SKILLS_FOR_RACE.put(Race.NAME_Goblin,   Arrays.asList(SkillType.Aikido, SkillType.Karate));
-      DISSALLOWED_SKILLS_FOR_RACE.put(Race.NAME_Fawn,     Collections.singletonList(SkillType.Aikido));
+      DISSALLOWED_SKILLS_FOR_RACE.put(Race.NAME_Fawn,     Arrays.asList(SkillType.Aikido));
       DISSALLOWED_SKILLS_FOR_RACE.put(Race.NAME_Ellyon,   Arrays.asList(SkillType.Aikido, SkillType.Karate));
-      DISSALLOWED_SKILLS_FOR_RACE.put(Race.NAME_Orc,      Collections.singletonList(SkillType.Aikido));
+      DISSALLOWED_SKILLS_FOR_RACE.put(Race.NAME_Orc,      Arrays.asList(SkillType.Aikido));
       DISSALLOWED_SKILLS_FOR_RACE.put(Race.NAME_Gargoyle, Arrays.asList(SkillType.Aikido, SkillType.Karate));
-      DISSALLOWED_SKILLS_FOR_RACE.put(Race.NAME_InsectMan,Collections.singletonList(SkillType.Aikido));
+      DISSALLOWED_SKILLS_FOR_RACE.put(Race.NAME_InsectMan,Arrays.asList(SkillType.Aikido));
       DISSALLOWED_SKILLS_FOR_RACE.put(Race.NAME_Centaur,  Arrays.asList(SkillType.Aikido, SkillType.Karate));
       DISSALLOWED_SKILLS_FOR_RACE.put(Race.NAME_HalfOgre, Arrays.asList(SkillType.Aikido, SkillType.Karate));
       DISSALLOWED_SKILLS_FOR_RACE.put(Race.NAME_Ogre,     Arrays.asList(SkillType.Aikido, SkillType.Karate, SkillType.Boxing));
@@ -208,6 +206,7 @@ public class CharacterGenerator implements Enums
       int maxExpenditure = -1;
       HashMap<String, Integer> requiredAttributes = new HashMap<>();
       HashMap<SkillType, Byte> requiredSkills = new HashMap<>();
+      HashMap<ProfessionType, Byte> requiredProfs = new HashMap<>();
       String requiredName = null;
 
       while (tokens.size() > 0) {
@@ -298,35 +297,42 @@ public class CharacterGenerator implements Enums
                               requiredSkills.put(skillType, level);
                            }
                            else {
-                              MageSpell mageSpell = MageSpells.getSpell(name);
-                              if (mageSpell != null) {
-                                 byte level = Byte.parseByte(value);
-                                 mageSpell.setFamiliarity(MageSpell.FAM_KNOWN);
-                                 character.setSpellLevel(mageSpell.getName(), mageSpell.getLevel());
-                                 Class<? extends MageSpell>[] requiredSpells = mageSpell.prerequisiteSpells;
-                                 for (Class<? extends MageSpell> preReq : requiredSpells) {
-                                    try {
-                                       MageSpell preReqSpell = preReq.getDeclaredConstructor().newInstance();
-                                       character.setSpellLevel(preReqSpell.getName(), mageSpell.getLevel());
-                                    } catch (InstantiationException |
-                                            IllegalAccessException |
-                                            IllegalArgumentException |
-                                            InvocationTargetException |
-                                            NoSuchMethodException |
-                                            SecurityException e) {
-                                       e.printStackTrace();
+                              ProfessionType professionType = ProfessionType.getByName(name);
+                              if (professionType != null) {
+                                 Byte level = Byte.parseByte(value);
+                                 requiredProfs.put(professionType, level);
+                              } else {
+                                 MageSpell mageSpell = MageSpells.getSpell(name);
+                                 if (mageSpell != null) {
+                                    byte level = Byte.parseByte(value);
+                                    character.setSpellLevel(mageSpell.getName(), level, MageSpell.Familiarity.KNOWN);
+                                    Class<? extends MageSpell>[] requiredSpells = mageSpell.prerequisiteSpells;
+                                    for (Class<? extends MageSpell> preReq : requiredSpells) {
+                                       character.setSpellLevel(preReq.getName(), level, MageSpell.Familiarity.KNOWN);
                                     }
-                                 }
-                                 for (MageCollege college : mageSpell.prerequisiteColleges) {
-                                    if (level > character.getCollegeLevel(college.getName())) {
-                                       character.setCollegeLevel(college.getName(), level);
+                                    List<Profession> profs = character.getProfessionsList();
+                                    Profession spellcastingProf = null;
+                                    for (Profession prof : profs) {
+                                       if (prof.getType() == ProfessionType.Spellcasting) {
+                                          spellcastingProf = prof;
+                                       }
                                     }
+                                    if (spellcastingProf == null) {
+                                       spellcastingProf = new Profession(ProfessionType.Spellcasting, level);
+                                       profs.add(spellcastingProf);
+                                    }
+                                    else {
+                                       spellcastingProf.setLevel(level);
+                                    }
+                                    List<SkillType> profSkills = spellcastingProf.getProficientSkills();
+                                    profSkills.addAll(Arrays.asList(mageSpell.prerequisiteSkillTypes));
+                                    spellcastingProf.setProficientSkills(profSkills);
+                                    character.setProfessionsList(profs);
+                                 } else {
+                                    // What else could this be? It has a colon (':') in it
+                                    // It could be a key ("key:red door")
+                                    character.addEquipment(Thing.getThing(token, character.getRace()));
                                  }
-                              }
-                              else {
-                                 // What else could this be? It has a colon (':') in it
-                                 // It could be a key ("key:red door")
-                                 character.addEquipment(Thing.getThing(token, character.getRace()));
                               }
                            }
                         }
@@ -409,7 +415,14 @@ public class CharacterGenerator implements Enums
       }
       // set all the required skill levels:
       for (SkillType skillType : requiredSkills.keySet()) {
-         character.setSkillLevel(skillType, requiredSkills.get(skillType));
+         for (ProfessionType profType : ProfessionType.values()) {
+            if (profType.skillList.contains(skillType)) {
+               character.setSkillLevel(profType, skillType, requiredSkills.get(skillType));
+            }
+         }
+      }
+      for (Entry<ProfessionType, Byte> entry : requiredProfs.entrySet()) {
+         character.setProfessionLevel(entry.getKey(), entry.getValue());
       }
       pointsLeft = points - character.getPointTotal();
 
@@ -499,7 +512,17 @@ public class CharacterGenerator implements Enums
          weaponLevel = reqSkillLevel;
       }
       weaponSkill.setLevel(weaponLevel);
-      character.setSkillLevel(weaponSkill.getType(), weaponLevel);
+      ProfessionType primaryProfessionType = ProfessionType.Fighter;
+      for (ProfessionType pt : Arrays.asList(new ProfessionType[] {ProfessionType.Fighter,
+                                                                   ProfessionType.MartialArtist,
+                                                                   ProfessionType.Shooting})) {
+         if (pt.skillList.contains(weaponSkill.getType())) {
+            primaryProfessionType = pt;
+            break;
+         }
+      }
+      character.setSkillLevel(primaryProfessionType, weaponSkill.getType(), weaponLevel);
+
       pointsLeft = points - character.getPointTotal();
 
       if ((usingAsOneHanded || fourHands) && !noEquip) {
@@ -508,7 +531,7 @@ public class CharacterGenerator implements Enums
          if (reqShieldLevel != null) {
             shieldLevel = reqShieldLevel;
          }
-         character.setSkillLevel(SkillType.Shield, shieldLevel);
+         character.setSkillLevel(ProfessionType.Fighter, SkillType.Shield, shieldLevel);
          pointsLeft = points - character.getPointTotal();
       }
       // If we are using a two-handed weapon, and it has a 1-handed skill, we should learn that too:
@@ -521,12 +544,21 @@ public class CharacterGenerator implements Enums
                Byte requiredSecondaryLevel = requiredSkills.get(attackStyleSkillType);
                if (requiredSecondaryLevel != null) {
                   desiredSecondaryLevel = requiredSecondaryLevel;
-               }
-               else {
+               } else {
                   // Don't let the secondary weapon level be higher than the primary weapon level.
                   desiredSecondaryLevel = (byte) Math.min(desiredSecondaryLevel, weaponLevel);
                }
-               character.setSkillLevel(attackStyleSkillType, desiredSecondaryLevel);
+               ProfessionType secondaryProfession = ProfessionType.Fighter;
+               for (ProfessionType pt : Arrays.asList(new ProfessionType[]{primaryProfessionType,
+                                                                           ProfessionType.Fighter,
+                                                                           ProfessionType.MartialArtist,
+                                                                           ProfessionType.Shooting})) {
+                  if (pt.skillList.contains(attackStyleSkillType)) {
+                     secondaryProfession = pt;
+                     break;
+                  }
+               }
+               character.setSkillLevel(secondaryProfession, attackStyleSkillType, desiredSecondaryLevel);
                pointsLeft = points - character.getPointTotal();
             }
          }
@@ -576,20 +608,20 @@ public class CharacterGenerator implements Enums
             }
             else {
                double rnd = CombatServer.random();
-               if (rnd < .10) {
-                  unarmedCombatType = SkillType.Aikido; // 10%
+               if (rnd < .5) {
+                  unarmedCombatType = SkillType.Aikido; // 5%
                }
-               else if (rnd < .25) {
-                  unarmedCombatType = SkillType.Karate; // 15%
+               else if (rnd < .15) {
+                  unarmedCombatType = SkillType.Karate; // 10%
                }
-               else if (rnd < .45) {
+               else if (rnd < .35) {
                   unarmedCombatType = SkillType.Boxing; // 20%
                }
-               else if (rnd < .70) {
+               else if (rnd < .60) {
                   unarmedCombatType = SkillType.Wrestling;// 25%
                }
                else {
-                  unarmedCombatType = SkillType.Brawling; // 30%
+                  unarmedCombatType = SkillType.Brawling; // 40%
                }
             }
             List<SkillType> dissallowedSkillsForRace = DISSALLOWED_SKILLS_FOR_RACE.get(character.getRace().getName());
@@ -601,11 +633,31 @@ public class CharacterGenerator implements Enums
             }
          }
          if ((unarmedCombatType != null) && (desiredBrawlingLevel > 0)) {
+            SkillRank desiredRank = SkillRank.FAMILIAR;
+            double excessPoints = pointsLeft - SkillRank.PROFICIENT.getCost();
+            if (excessPoints > CombatServer.random() * 20) {
+               desiredRank = SkillRank.PROFICIENT;
+            }
+
             Byte reqUnarmedCombatLevel = requiredSkills.get(unarmedCombatType);
             if (reqUnarmedCombatLevel != null) {
                desiredBrawlingLevel = reqUnarmedCombatLevel;
+               desiredRank = SkillRank.PROFICIENT;
             }
-            character.setSkillLevel(unarmedCombatType, desiredBrawlingLevel);
+            if (primaryProfessionType.skillList.contains(unarmedCombatType)) {
+               Profession primaryProfession = character.getProfession(primaryProfessionType);
+               primaryProfession.setRank(unarmedCombatType, desiredRank);
+            }
+            else {
+               for (ProfessionType pt : Arrays.asList(new ProfessionType[] {primaryProfessionType,
+                                                                            ProfessionType.Fighter,
+                                                                            ProfessionType.MartialArtist})) {
+                  if (pt.skillList.contains(unarmedCombatType)) {
+                     character.setSkillLevel(pt, unarmedCombatType, desiredBrawlingLevel);
+                     break;
+                  }
+               }
+            }
             pointsLeft = points - character.getPointTotal();
          }
       }
@@ -620,8 +672,8 @@ public class CharacterGenerator implements Enums
             character.addEquipment(Weapons.getWeapon(primaryWeapon.getName(), character.getRace()));
          }
          if (throwWeapon) {
-            byte desiredThrowLevel = getSkillLevel(points / 5, pointsLeft / 5);
-            character.setSkillLevel(SkillType.Throwing, desiredThrowLevel);
+            byte desiredThrowLevel = getSkillLevel(points / 6, pointsLeft / 6);
+            character.setSkillLevel(ProfessionType.Common, SkillType.Throwing, desiredThrowLevel);
          }
       }
 
@@ -709,8 +761,8 @@ public class CharacterGenerator implements Enums
          }
          // if we are using a weapon (like karate or boxing) that is adversely affected by encumbrance,
          // keep our encumbrance below 2.
-         Skill primarySkill = character.getBestSkill(primaryWeapon);
-         if (primarySkill.isAdjustedForEncumbrance()) {
+         SkillType primarySkill = character.getBestSkillType(primaryWeapon);
+         if (primarySkill.isAdjustedForEncumbrance) {
             if (desiredEncLevel > 1) {
                desiredEncLevel = 1;
             }
@@ -736,28 +788,36 @@ public class CharacterGenerator implements Enums
          Weapon knife = Weapons.getWeapon(Weapon.NAME_Knife, character.getRace());
          if (!hasKnife) {
             if (weightAvailable > knife.getAdjustedWeight()) {
-               if ((unarmedCombatType == null) || (pointsLeft > 6)) {
+               if ((unarmedCombatType == null) || (pointsLeft >= SkillRank.FAMILIAR.getCost())) {
                   weightCarried += knife.getWeight();
                   weightAvailable = maxWeightCarried - weightCarried;
                   character.addEquipment(knife);
-                  byte desiredKnifeLevel = getSkillLevel(points / 5, pointsLeft / 5);
-                  // Don't let the knife level be higher than the primary weapon level.
-                  desiredKnifeLevel = (byte) Math.min(desiredKnifeLevel, weaponLevel);
-                  Byte reqKnifeLevel = requiredSkills.get(knife.getAttackStyle(0).getSkillType());
-                  if (reqKnifeLevel != null) {
-                     desiredKnifeLevel = reqKnifeLevel;
+                  SkillRank desiredRank = SkillRank.FAMILIAR;
+                  double excessPoints = pointsLeft - SkillRank.PROFICIENT.getCost();
+                  if (excessPoints > CombatServer.random() * 20) {
+                     desiredRank = SkillRank.PROFICIENT;
                   }
-                  character.setSkillLevel(knife.getAttackStyle(0).getSkillType(), desiredKnifeLevel);
+                  ProfessionType knifeProfessionType = ProfessionType.Fighter;
+                  SkillType knifeSkill = knife.getAttackStyle(0).getSkillType();
+                  for (ProfessionType pt : Arrays.asList(new ProfessionType[] {primaryProfessionType,
+                                                                               ProfessionType.Fighter,
+                                                                               ProfessionType.MartialArtist})) {
+                     if (pt.skillList.contains(knifeSkill)) {
+                        knifeProfessionType = pt;
+                        break;
+                     }
+                  }
+                  Profession knifeProfession = character.getProfession(knifeProfessionType);
+                  knifeProfession.setRank(knifeSkill, desiredRank);
 
                   if (!throwWeapon) {
                      double throwSkillChance = Math.max(0d, Math.min(95d, points / 3d));
                      throwWeapon = (throwSkillChance > (CombatServer.random() * 100));
                      if (throwWeapon) {
-                        byte desiredThrowLevel = getSkillLevel(points / 5, pointsLeft / 5);
-                        character.setSkillLevel(SkillType.Throwing, desiredThrowLevel);
+                        byte desiredThrowLevel = getSkillLevel(points / 6, pointsLeft / 6);
+                        character.setSkillLevel(ProfessionType.Common, SkillType.Throwing, desiredThrowLevel);
                      }
                   }
-
                }
             }
          }
@@ -773,7 +833,7 @@ public class CharacterGenerator implements Enums
          }
          if (throwableWeapon == null) {
             // Consider a knife, if they know how to use it
-            if (character.getSkill(SkillType.Knife) != null) {
+            if (character.getSkillLevel(SkillType.Knife, LimbType.HAND_RIGHT, false, true, true) > 0) {
                Weapon knife = Weapons.getWeapon(Weapon.NAME_Knife, character.getRace());
                if (weightAvailable > knife.getAdjustedWeight()) {
                   throwableWeapon = knife;
@@ -925,65 +985,81 @@ public class CharacterGenerator implements Enums
    }
 
    private static void checkSkillLevels(Character character, Weapon primaryWeapon, int maxCharPoints) {
-      Skill primarySkill = character.getBestSkill(primaryWeapon);
-      Skill shieldSkill  = character.getSkill(SkillType.Shield);
-      List<Skill> skills = character.getSkillsList();
-      for (Skill skill : skills) {
-         boolean isPrimary = (primarySkill != null) && (skill.getName().equals(primarySkill.getName()));
-         if (skill.isAdjustedForEncumbrance()) {
-            byte encLevel = Rules.getEncumbranceLevel(character);
-
-            String skillName = skill.getType().getName();
-            int minSkillPenalty = 0;
-            // Wrestling can't attack without a -2 penalty,
-            // and Karate needs a penalty of -2 to kick, so to make it worth more than boxing, use 2
-            if (skillName.equals(SkillType.Wrestling.getName()) ||
-                skillName.equals(SkillType.Karate.getName())) {
-               minSkillPenalty = 2;
-            }
-            byte requiredLevel  = (byte) (encLevel + minSkillPenalty + 1);
-
-            if (requiredLevel > skill.getLevel()) {
-               // Can we increase the skill level to make this work?
-               int curCost = Rules.getSkillCost(skill.getLevel());
-               int reqCost = Rules.getSkillCost(requiredLevel);
-               // If this is our primary skill, we absolutely MUST increase its level to make it work.
-               if (isPrimary || ((reqCost - curCost) < (maxCharPoints - character.getPointTotal()))) {
-                  skill.setLevel(requiredLevel);
-                  // recurse to look for more
-                  checkSkillLevels(character, primaryWeapon, maxCharPoints);
-                  return;
+      SkillType primarySkill = character.getBestSkillType(primaryWeapon);
+      Profession primaryProfession = null;
+      List<Profession> professions = character.getProfessionsList();
+      for (Profession profession : professions) {
+         ArrayList<SkillType> proficientSkills = new ArrayList<>(profession.getProficientSkills());
+         ArrayList<SkillType> familiarSkills = new ArrayList<>(profession.getFamiliarSkills());
+         boolean isPrimaryProfession = (primarySkill != null) && (proficientSkills.contains(primarySkill));
+         for (List<SkillType> skillList : new ArrayList[]{proficientSkills, familiarSkills}) {
+            for (SkillType skill : skillList) {
+               boolean isPrimarySkill = isPrimaryProfession && (skill == primarySkill);
+               if (isPrimarySkill) {
+                  primaryProfession = profession;
                }
-               // Get rid of this skill, we can't afford to have it
-               character.setSkillLevel(skill.getType(), (byte)0);
-               // recurse to look for more
-               checkSkillLevels(character, primaryWeapon, maxCharPoints);
-               return;
-            }
-         }
-         // Make sure no skill is higher than the primary skill
-         if (!isPrimary && (primarySkill != null)) {
-            if (skill.getLevel() > primarySkill.getLevel()) {
-               skill.setLevel((byte) (skill.getLevel() - 1));
-               primarySkill.setLevel((byte) (primarySkill.getLevel() + 1));
-               // recurse to look for more
-               checkSkillLevels(character, primaryWeapon, maxCharPoints);
-               return;
-            }
-         }
-         // Make sure no skill other than the primary is higher than the shield
-         if ((shieldSkill != null) && (shieldSkill.getLevel() > 0)) {
-            if (!skill.getName().equals(shieldSkill.getName())) {
-               if ((primarySkill != null) && !skill.getName().equals(primarySkill.getName())) {
-                  if (skill.getLevel() > shieldSkill.getLevel()) {
-                     skill.setLevel((byte) (skill.getLevel() - 1));
-                     shieldSkill.setLevel((byte) (shieldSkill.getLevel() + 1));
+               if (skill.isAdjustedForEncumbrance) {
+                  byte encLevel = Rules.getEncumbranceLevel(character);
+
+                  String skillName = skill.getName();
+                  int minSkillPenalty = 0;
+                  // Wrestling can't attack without a -2 penalty,
+                  // and Karate needs a penalty of -2 to kick, so to make it worth more than boxing, use 2
+                  if (skillName.equals(SkillType.Wrestling.getName()) ||
+                      skillName.equals(SkillType.Karate.getName())) {
+                     minSkillPenalty = 2;
+                  }
+
+                  byte requiredLevel = (byte) (encLevel + minSkillPenalty + 1);
+
+                  if (requiredLevel > profession.getLevel(skill)) {
+
+                     // Can we increase the profession level to make this work?
+                     int curCost = Rules.getProfessionCost(profession.getLevel());
+                     int reqCost = Rules.getProfessionCost(requiredLevel);
+                     // If this is our primary profession, we absolutely MUST increase its level to make it work.
+                     if (isPrimarySkill || ((reqCost - curCost) < (maxCharPoints - character.getPointTotal()))) {
+                        if ((requiredLevel + 2) > profession.getLevel(skill) && skillList == familiarSkills) {
+                           // move this skill from familiar to proficient
+                           familiarSkills.remove(skill);
+                           proficientSkills.add(skill);
+                           profession.setProficientSkills(proficientSkills);
+                           profession.setFamiliarSkills(familiarSkills);
+                           character.setProfessionsList(professions);
+                           // recurse to look for more
+                           checkSkillLevels(character, primaryWeapon, maxCharPoints);
+                           return;
+                        }
+                        profession.setLevel(requiredLevel);
+                        character.setProfessionsList(professions);
+                        // recurse to look for more
+                        checkSkillLevels(character, primaryWeapon, maxCharPoints);
+                        return;
+                     }
+                     // Get rid of this skill, we can't afford to increase it to the effective level
+                     skillList.remove(skill);
+                     profession.setProficientSkills(proficientSkills);
+                     profession.setFamiliarSkills(familiarSkills);
+                     character.setProfessionsList(professions);
                      // recurse to look for more
                      checkSkillLevels(character, primaryWeapon, maxCharPoints);
                      return;
                   }
                }
             }
+         }
+         // Make sure no profession is higher than the primary profession
+      }
+
+      for (Profession profession : professions) {
+         // Make sure no profession is higher than the primary prof
+         if ((primaryProfession != null) && (profession.getLevel() > primaryProfession.getLevel())) {
+            profession.setLevel((byte) (profession.getLevel() - 1));
+            primaryProfession.setLevel((byte) (primaryProfession.getLevel() + 1));
+            character.setProfessionsList(professions);
+            // recurse to look for more
+            checkSkillLevels(character, primaryWeapon, maxCharPoints);
+            return;
          }
       }
    }
@@ -1227,13 +1303,13 @@ public class CharacterGenerator implements Enums
 
    private static boolean increaseCharacterSkillPoints(Character character, int pointsLeft, HashMap<SkillType, Byte> requiredSkills) {
       // Look for the largest skill level increase that does not exceed the pointsLeft.
-      TreeSet<Skill> skills = sortSkillsByLevel(character.getSkillsList(), false/*ascending*/);
-      for (Skill skill : skills) {
-         if (requiredSkills.get(skill.getType()) == null) {
-            byte level = skill.getLevel();
+      TreeSet<Profession> professions = sortProfessionsByLevel(character.getProfessionsList(), false/*ascending*/);
+      for (Profession profession : professions) {
+         if (requiredSkills.get(profession.getType()) == null) {
+            byte level = profession.getLevel();
             if (level < Rules.getMaxSkillLevel()) {
-               if ((Rules.getSkillCost((byte) (level + 1)) - Rules.getSkillCost(level)) <= pointsLeft) {
-                  skill.setLevel((byte) (level + 1));
+               if ((Rules.getProfessionCost((byte) (level + 1)) - Rules.getProfessionCost(level)) <= pointsLeft) {
+                  profession.setLevel((byte) (level + 1));
                   return true;
                }
             }
@@ -1244,15 +1320,15 @@ public class CharacterGenerator implements Enums
 
    private static boolean reduceCharacterSkillPoints(Character character, int pointsLeft, HashMap<SkillType, Byte> requiredSkills) {
       // Look for the smallest skill level decrease that will satisfy the pointsLeft.
-      TreeSet<Skill> skills = sortSkillsByLevel(character.getSkillsList(), true/*ascending*/);
-      Skill lastSkillWeCanModify = null;
-      for (Skill skill : skills) {
-         if (requiredSkills.get(skill.getType()) == null) {
-            byte level = skill.getLevel();
+      TreeSet<Profession> professions = sortProfessionsByLevel(character.getProfessionsList(), true/*ascending*/);
+      Profession lastSkillWeCanModify = null;
+      for (Profession profession : professions) {
+         if (requiredSkills.get(profession.getType()) == null) {
+            byte level = profession.getLevel();
             if (level > 0) {
-               lastSkillWeCanModify = skill;
-               if ((Rules.getSkillCost((byte) (level - 1)) - Rules.getSkillCost(level)) <= pointsLeft) {
-                  skill.setLevel((byte) (level - 1));
+               lastSkillWeCanModify = profession;
+               if ((Rules.getProfessionCost((byte) (level - 1)) - Rules.getProfessionCost(level)) <= pointsLeft) {
+                  profession.setLevel((byte) (level - 1));
                   return true;
                }
             }
@@ -1278,6 +1354,20 @@ public class CharacterGenerator implements Enums
       });
       skills.addAll(skillsList);
       return skills;
+   }
+
+   public static TreeSet<Profession> sortProfessionsByLevel(List<Profession> professionList, final boolean ascending) {
+      TreeSet<Profession> professions = new TreeSet<>((o1, o2) -> {
+         if (o1.getLevel() == o2.getLevel()) {
+            return 0;
+         }
+         if (o1.getLevel() < o2.getLevel()) {
+            return ascending ? -1 : 1;
+         }
+         return ascending ? 1 : -1;
+      });
+      professions.addAll(professionList);
+      return professions;
    }
 
    private static Attribute increaseCharacterPoints(Character character, int pointsLeft, byte startIndex, byte attIndex, HashMap<String, Integer> requiredAttributes) {
@@ -1370,33 +1460,24 @@ public class CharacterGenerator implements Enums
 
    private static byte getAttributeLevel(int points, int pointsLeft) {
       int avePoint = (points + (2 * pointsLeft)) / 3;
-      int attrMaxPoints = (int) (avePoint * .4);
-      if (points > 50) {
-         attrMaxPoints = (int) (avePoint * .5);
-      }
-      if (points > 100) {
-         attrMaxPoints = (int) (avePoint * .6);
-      }
-      if (points > 150) {
-         attrMaxPoints = (int) (avePoint * .6);
-      }
-      if (points > 200) {
-         attrMaxPoints = (int) (avePoint * .6);
-      }
-      if (points > 300) {
-         attrMaxPoints = (int) (avePoint * .4);
-      }
-      if (points > 400) {
-         attrMaxPoints = (int) (avePoint * .35);
-      }
-      if (points > 500) {
-         attrMaxPoints = (int) (avePoint * .3);
-      }
+      int attrMaxPoints;
       if (points > 750) {
          attrMaxPoints = (int) (avePoint * .2);
+      } else if (points > 500) {
+         attrMaxPoints = (int) (avePoint * .3);
+      } else if (points > 400) {
+         attrMaxPoints = (int) (avePoint * .35);
+      } else if (points > 300) {
+         attrMaxPoints = (int) (avePoint * .4);
+      } else if (points > 100) {
+         attrMaxPoints = (int) (avePoint * .6);
+      } else if (points > 50) {
+         attrMaxPoints = (int) (avePoint * .5);
+      } else {
+         attrMaxPoints = (int) (avePoint * .4);
       }
-      attrMaxPoints = Math.min(attrMaxPoints, 200);
-      int attrPoints = (int) ((CombatServer.random() * attrMaxPoints) + (CombatServer.random() * attrMaxPoints)) / 2;
+      //attrMaxPoints = Math.min(attrMaxPoints, Rules.getAttCost(Rules.getMaxAttribute()));
+      int attrPoints = (int) (attrMaxPoints * ((CombatServer.random() + CombatServer.random()) / 2.0));
 
       attrPoints = Math.min(attrPoints, pointsLeft + 10);
       for (byte attLevel = Rules.getMaxAttribute(); attLevel > Rules.getMinAttribute(); attLevel--) {
@@ -1409,29 +1490,22 @@ public class CharacterGenerator implements Enums
 
    private static byte getSkillLevel(int totalPoints, int pointsLeft) {
       byte skillLevel = 2;
-      if (pointsLeft > 0) {
-         skillLevel = 3;
-      }
-      if (pointsLeft > 40) {
-         skillLevel = 4;
-      }
-      if (pointsLeft > 100) {
-         skillLevel = 5;
-      }
-      if (pointsLeft > 150) {
-         skillLevel = 6;
-      }
-      if (pointsLeft > 200) {
-         skillLevel = 7;
-      }
-      if (pointsLeft > 300) {
-         skillLevel = 8;
-      }
-      if (pointsLeft > 400) {
-         skillLevel = 9;
-      }
       if (pointsLeft > 500) {
          skillLevel = 10;
+      } else if (pointsLeft > 400) {
+         skillLevel = 9;
+      } else if (pointsLeft > 300) {
+         skillLevel = 8;
+      } else if (pointsLeft > 200) {
+         skillLevel = 7;
+      } else if (pointsLeft > 150) {
+         skillLevel = 6;
+      } else if (pointsLeft > 100) {
+         skillLevel = 5;
+      } else if (pointsLeft > 40) {
+         skillLevel = 4;
+      } else if (pointsLeft > 0) {
+         skillLevel = 3;
       }
 
       if (totalPoints >= 250) {
@@ -1444,7 +1518,7 @@ public class CharacterGenerator implements Enums
          }
       }
       double rnd = CombatServer.random();
-      if ((rnd < .2) && (pointsLeft > 40)) {
+      if ((rnd < .2) && (skillLevel > 3)) {
          skillLevel--;
       }
       if (rnd > .7) {

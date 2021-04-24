@@ -5,12 +5,13 @@
 package ostrowski.combat.common.spells.mage;
 
 import ostrowski.combat.common.Character;
+import ostrowski.combat.common.enums.SkillType;
 
 public class SpellCreateSound extends MageSpell
 {
    public static final String NAME = "Create Sound";
    public SpellCreateSound() {
-      super(NAME, new Class[] {}, new MageCollege[] {MageCollege.ILLUSION});
+      super(NAME, new Class[] {}, new SkillType[] {SkillType.Spellcasting_Illusion});
    }
 
    @Override

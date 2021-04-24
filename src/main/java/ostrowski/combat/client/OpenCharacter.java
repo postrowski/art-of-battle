@@ -1,6 +1,9 @@
 package ostrowski.combat.client;
 
+import java.text.DecimalFormat;
 import java.util.List;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -21,10 +24,8 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-import ostrowski.combat.common.Advantage;
+import ostrowski.combat.common.*;
 import ostrowski.combat.common.Character;
-import ostrowski.combat.common.CharacterFile;
-import ostrowski.combat.common.Skill;
 import ostrowski.combat.common.enums.Attribute;
 import ostrowski.combat.common.things.Armor;
 import ostrowski.combat.common.things.Limb;
@@ -218,7 +219,7 @@ public class OpenCharacter extends Dialog implements MouseListener
       table.setBounds(new org.eclipse.swt.graphics.Rectangle(47, 67, 190, 70));
 
       String[] columnNames = new String[] { "Name", "Cost", "Race", "Gender", "Str (adj)", "Ht (adj)", "Tou", "IQ", "Nim", "Dex", "Soc",
-                                            "Skills", "Right hand", "Left hand", "Armor", "Wealth", "M.A.", "Priest", "Advantages"};
+                                            "Skills", "Right hand", "Left hand", "Armor", "Wealth", "Unspent Cash", "Enc", "Available weight", "M.A.", "Priest", "Advantages"};
       for (String columnName : columnNames) {
          TableColumn tableColumn = new TableColumn(table, SWT.NONE);
          tableColumn.setWidth(100);
@@ -247,7 +248,6 @@ public class OpenCharacter extends Dialog implements MouseListener
       Advantage MA = null;
       Advantage priest = null;
       String deity = null;
-      StringBuilder skills = new StringBuilder();
       StringBuilder advantages = new StringBuilder();
       for (Advantage adv : character.getAdvantagesList()) {
          if (adv.getName().equals(Advantage.MAGICAL_APTITUDE)) {
@@ -271,25 +271,15 @@ public class OpenCharacter extends Dialog implements MouseListener
             advantages.append(":").append(adv.getLevelName());
          }
       }
-      List<Skill> skillsList = character.getSkillsList();
-      for (int i = 0; i < skillsList.size(); i++) {
-         Skill skillI = skillsList.get(i);
-         for (int j = i + 1; j < skillsList.size(); j++) {
-            Skill skillJ = skillsList.get(j);
-            if (skillI.getLevel() < skillJ.getLevel()) {
-               skillsList.remove(j);
-               skillsList.add(i, skillJ);
-               i--;
-               break;
-            }
-         }
-      }
-      for (Skill skill : skillsList) {
-         if (skills.length() > 0) {
-            skills.append(", ");
-         }
-         skills.append(skill.getName()).append(":").append(skill.getLevel());
-      }
+      List<Profession> professionsList = character.getProfessionsList();
+      TreeSet<Profession> sortedProfessions = CharacterGenerator.sortProfessionsByLevel(professionsList, false);
+      StringBuilder skills = new StringBuilder();
+      skills.append(sortedProfessions.stream()
+                                     .map(o -> o.getType().getName() + ":" + o.getLevel() +
+                                               ", pro:(" + o.getProficientSkillsAsString() +
+                                               (o.getFamiliarSkills().isEmpty() ? ")" : "), fam:(" + o.getFamiliarSkillsAsString() + ")")
+                                             )
+                                     .collect(Collectors.joining(", ")));
       // StringBuilder equipment = new StringBuilder();
       // for (Limb limb : character.getLimbs()) {
       //    Thing thing = limb.getHeldThing();
@@ -316,6 +306,29 @@ public class OpenCharacter extends Dialog implements MouseListener
          strStr += " (" + character.getAdjustedStrength() + ")";
          htStr += " (" + character.getBuildBase() + ")";
       }
+      String startingCash = "$";
+      String remainingCash = "$";
+      if (wealth != null) {
+         String wealthLevelName = wealth.getLevelName().replace("$", "").replace(",", "");
+         float startingWealth = Float.parseFloat(wealthLevelName);
+         startingWealth *= character.getRace().getWealthMultiplier();
+         DecimalFormat formatter = new DecimalFormat("#,###");
+         startingCash += formatter.format(startingWealth);
+         remainingCash += formatter.format(startingWealth - character.getTotalCost());
+      }
+      String encumranceLevel = "";
+      String avaiableWeight = "";
+      double carriedLbs = character.getWeightCarried();
+      byte strength = character.getAdjustedStrength();
+      byte nimbleness = character.getAttributeLevel(Attribute.Nimbleness);
+      for (byte enc = 0; enc<5  ; enc++) {
+         double maxLbs = Rules.getMaxWeightForEncLevel(strength, nimbleness, enc);
+         if (maxLbs >= carriedLbs) {
+            encumranceLevel = String.valueOf(enc);
+            avaiableWeight = String.valueOf(Math.round((maxLbs - carriedLbs) * 100)/100.0);
+            break;
+         }
+      }
       return new String[] {character.getName(),
                            String.valueOf(character.getPointTotal()),
                            character.getRace().getName(),
@@ -331,7 +344,10 @@ public class OpenCharacter extends Dialog implements MouseListener
                            (rightHandThing == null) ? "" : rightHandThing.getName(),
                            (leftHandThing == null) ? "" : leftHandThing.getName(),
                            (armor == null) ? Armor.NAME_NoArmor : armor.getName(),
-                           (wealth == null) ? "$" : String.valueOf(wealth.getLevelName()),
+                           startingCash,
+                           remainingCash,
+                           encumranceLevel,
+                           avaiableWeight,
                            (MA == null) ? "" : String.valueOf(MA.getLevel()),
                            (deity == null) ? "" : (deity + ":" + priest.getLevelName()),
                            advantages.toString()};

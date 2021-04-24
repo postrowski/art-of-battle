@@ -5,12 +5,13 @@
 package ostrowski.combat.common.spells.mage;
 
 import ostrowski.combat.common.Character;
+import ostrowski.combat.common.enums.SkillType;
 
 public class SpellCreateEarth extends MageSpell
 {
    public static final String NAME = "Create Earth";
    public SpellCreateEarth() {
-      super(NAME, new Class[] {}, new MageCollege[] {MageCollege.EARTH});
+      super(NAME, new Class[] {}, new SkillType[] {SkillType.Spellcasting_Earth});
    }
 
    @Override

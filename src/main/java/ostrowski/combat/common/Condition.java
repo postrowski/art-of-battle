@@ -431,7 +431,7 @@ public class Condition extends SerializableObject implements Enums {
          }
       }
       if (action.isCompletePriestSpell()) {
-         if (!currentSpell.isInate()) {
+         if (!currentSpell.isInnate()) {
             priestSpellPointsAvailable -= currentSpell.getSpellPoints();
             if (priestSpellPointsAvailable < 0) {
                DebugBreak.debugBreak();

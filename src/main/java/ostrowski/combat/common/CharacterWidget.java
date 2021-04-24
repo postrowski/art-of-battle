@@ -2,6 +2,7 @@ package ostrowski.combat.common;
 
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.TypedEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -224,7 +225,7 @@ public class CharacterWidget implements Enums, ModifyListener {
    public void modifyText(ModifyEvent e) {
       modifyText(e, null);
    }
-   public void modifyText(ModifyEvent e, IUIBlock sourceBlock) {
+   public void modifyText(TypedEvent e, IUIBlock sourceBlock) {
       if (!inModify) {
          inModify = true;
          if (sourceBlock != null) {

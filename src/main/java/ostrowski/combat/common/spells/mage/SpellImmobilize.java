@@ -6,6 +6,7 @@ package ostrowski.combat.common.spells.mage;
 
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.enums.Attribute;
+import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.spells.ICastInBattle;
 
 public class SpellImmobilize extends ResistedMageSpell implements ICastInBattle
@@ -14,7 +15,7 @@ public class SpellImmobilize extends ResistedMageSpell implements ICastInBattle
    public SpellImmobilize() {
       super(NAME, Attribute.Health, (byte) 3/*resistedActions*/, true/*expires*/,
             new Class[] {SpellSuggestion.class, SpellWeaken.class},
-            new MageCollege[] {MageCollege.EVOCATION, MageCollege.ENERGY, MageCollege.ENCHANTMENT});
+            new SkillType[] {SkillType.Spellcasting_Evocation, SkillType.Spellcasting_Energy, SkillType.Spellcasting_Enchantment});
    }
 
    @Override

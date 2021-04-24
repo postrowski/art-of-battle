@@ -7,6 +7,7 @@ package ostrowski.combat.common.spells.mage;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.enums.Attribute;
 import ostrowski.combat.common.enums.DamageType;
+import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.common.wounds.Wound;
 import ostrowski.combat.server.Arena;
@@ -20,7 +21,7 @@ public class SpellCausePain extends ResistedMageSpell implements ICastInBattle
    public static final String NAME = "Cause Pain";
    public SpellCausePain() {
       super(NAME, Attribute.Intelligence, (byte) 1/*resistedActions*/, false/*expires*/,
-            new Class[] {SpellSuggestion.class}, new MageCollege[] {MageCollege.ENCHANTMENT, MageCollege.NECROMANCY});
+            new Class[] {SpellSuggestion.class}, new SkillType[] {SkillType.Spellcasting_Enchantment, SkillType.Spellcasting_Necromancy});
    }
 
    @Override

@@ -110,6 +110,7 @@ public class MainBlock extends Helper implements ModifyListener, SelectionListen
          }
          charFile.putCharacter(widget.character);
          charFile.writeNameToCharMapToFile(name.getText());
+         updateSaveButton();
       }
       else if (e.widget == openButton) {
          OpenCharacter charDialog = new OpenCharacter(e.display.getShells()[0], charFile, 0);

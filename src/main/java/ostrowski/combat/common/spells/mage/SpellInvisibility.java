@@ -5,14 +5,15 @@
 package ostrowski.combat.common.spells.mage;
 
 import ostrowski.combat.common.Character;
+import ostrowski.combat.common.enums.SkillType;
 
 public class SpellInvisibility extends ExpiringMageSpell
 {
-   public static final String NAME = "Illusion";
+   public static final String NAME = "Invisibility";
    public SpellInvisibility() {
       super(NAME, (short)10, (short)5,
             new Class[] {SpellControlLight.class, SpellBlur.class},
-            new MageCollege[] {MageCollege.ILLUSION, MageCollege.PROTECTION});
+            new SkillType[] {SkillType.Spellcasting_Illusion, SkillType.Spellcasting_Protection});
    }
 
    @Override

@@ -825,6 +825,7 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
           (weaponName.equals(Weapon.NAME_Rapier)) ||
           (weaponName.equals(Weapon.NAME_Sabre)) ||
           (weaponName.equals(Weapon.NAME_Shortsword)) ||
+          (weaponName.equals(Weapon.NAME_Shortsword_Fine)) ||
           (weaponName.equals(Weapon.NAME_Spear)) ||
           (weaponName.equals(Weapon.NAME_ThrowingAxe)) ||
           (weaponName.equals(Weapon.NAME_TwoHandedSword)) ||
@@ -1047,8 +1048,8 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
       {
          human.setPosition(HumanBody.Position.Standing);
          if (rightHandHeldThing != null) {
-            Skill skill = chr.getBestSkill((Weapon) rightHandHeldThing);
-            if (skill.getType() == SkillType.Bow) {
+            SkillType skillType = chr.getBestSkillType((Weapon) rightHandHeldThing);
+            if (skillType == SkillType.Bow) {
                switch (rightHand.getPreparedState()) {
                   case 3: human.setKeyFrame("ready bow_unready"); break; // bow unready
                   case 2: human.setKeyFrame("ready bow_unready"); break; // arrow ready
@@ -1057,13 +1058,13 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
                }
                //human.setKeyFrame("ready greataxe");
             }
-            if (skill.getType() == SkillType.TwoHanded_AxeMace) {
+            if (skillType == SkillType.TwoHanded_AxeMace) {
                human.setKeyFrame("ready greataxe");
             }
-            else if ((skill.getType() == SkillType.TwoHanded_Sword) || (skill.getType() == SkillType.Quarterstaff)) {
+            else if ((skillType == SkillType.TwoHanded_Sword) || (skillType == SkillType.Quarterstaff)) {
                human.setKeyFrame("ready twohanded");
             }
-//            else if (skill.getType() == SkillType.Bow) {
+//            else if (skillType == SkillType.Bow) {
 //               switch (rightHand.getPreparedState()) {
 //                  case 0: human.setKeyFrame("ready bow drawn"); break;// bow drawn
 //                  case 1: human.setKeyFrame("ready bow notched"); break;// arrow notched
@@ -1072,14 +1073,14 @@ public class MapWidget3D extends MapWidget implements ISelectionWatcher, IMonito
 //               }
 //               human.setKeyFrame("ready bow");
 //            }
-//            else if (skill.getType() == SkillType.Fencing) {
+//            else if (skillType == SkillType.Fencing) {
 //               human.setKeyFrame("ready fencing");
 //            }
-//            else if (skill.getType() == SkillType.Knife) {
+//            else if (skillType == SkillType.Knife) {
 //               human.setKeyFrame("ready knife");
 //            }
-//            else if ((skill.getType() == SkillType.Polearm) ||
-//                     (skill.getType() == SkillType.Spear)) {
+//            else if ((skillType == SkillType.Polearm) ||
+//                     (skillType == SkillType.Spear)) {
 //               human.setKeyFrame("ready spear");
 //            }
          }

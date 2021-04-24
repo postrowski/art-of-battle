@@ -5,12 +5,13 @@
 package ostrowski.combat.common.spells.mage;
 
 import ostrowski.combat.common.Character;
+import ostrowski.combat.common.enums.SkillType;
 
 public class SpellCreateFire extends MageSpell
 {
    public static final String NAME = "Create Fire";
    public SpellCreateFire() {
-      super(NAME, new Class[] {SpellControlTemperature.class}, new MageCollege[] {MageCollege.CONJURATION, MageCollege.FIRE});
+      super(NAME, new Class[] {SpellControlTemperature.class}, new SkillType[] {SkillType.Spellcasting_Conjuration, SkillType.Spellcasting_Fire});
    }
 
    @Override

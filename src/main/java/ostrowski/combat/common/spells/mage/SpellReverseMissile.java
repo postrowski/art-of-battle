@@ -5,6 +5,7 @@
 package ostrowski.combat.common.spells.mage;
 
 import ostrowski.combat.common.Character;
+import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.html.Table;
 import ostrowski.combat.common.html.TableData;
 import ostrowski.combat.common.html.TableRow;
@@ -14,7 +15,7 @@ public class SpellReverseMissile extends InstantaneousMageSpell
    public static final String NAME = "Reverse Missile";
    public SpellReverseMissile() {
       super(NAME, new Class[] {SpellCreateForce.class, SpellDetectObject.class, SpellPush.class},
-            new MageCollege[] {MageCollege.EVOCATION, MageCollege.ENERGY, MageCollege.DIVINATION, MageCollege.PROTECTION});
+            new SkillType[] {SkillType.Spellcasting_Evocation, SkillType.Spellcasting_Energy, SkillType.Spellcasting_Divination, SkillType.Spellcasting_Protection});
    }
 
    @Override

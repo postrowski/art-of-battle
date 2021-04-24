@@ -6,6 +6,7 @@ package ostrowski.combat.common.spells.mage;
 
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.enums.Attribute;
+import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.server.Arena;
 
@@ -17,7 +18,7 @@ public class SpellArmor extends ExpiringMageSpell implements ICastInBattle
    public static final String NAME = "Armor";
    public SpellArmor() {
       super(NAME, (short)10/*baseExpirationTimeInTurns*/, (short)5/*bonusTimeInTurnsPerPower*/,
-            new Class[] {SpellHarden.class}, new MageCollege[] {MageCollege.PROTECTION});
+            new Class[] {SpellHarden.class}, new SkillType[] {SkillType.Spellcasting_Protection});
    }
 
    @Override

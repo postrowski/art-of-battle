@@ -5,12 +5,13 @@
 package ostrowski.combat.common.spells.mage;
 
 import ostrowski.combat.common.Character;
+import ostrowski.combat.common.enums.SkillType;
 
 public class SpellBlockSpell extends InstantaneousMageSpell
 {
    public static final String NAME = "Block Spell";
    public SpellBlockSpell() {
-      super(NAME, new Class[] {SpellCreateForce.class}, new MageCollege[] {MageCollege.ENERGY, MageCollege.PROTECTION});
+      super(NAME, new Class[] {SpellCreateForce.class}, new SkillType[] {SkillType.Spellcasting_Energy, SkillType.Spellcasting_Protection});
    }
 
    @Override

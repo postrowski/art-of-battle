@@ -4,11 +4,13 @@
  */
 package ostrowski.combat.common.spells.mage;
 
+import ostrowski.combat.common.enums.SkillType;
+
 public class SpellMendObjects extends MageSpell
 {
    public static final String NAME = "Mend Objects";
    public SpellMendObjects() {
-      super(NAME, new Class[] {SpellCreateForce.class}, new MageCollege[] {MageCollege.ENERGY, MageCollege.EARTH});
+      super(NAME, new Class[] {SpellCreateForce.class}, new SkillType[] {SkillType.Spellcasting_Energy, SkillType.Spellcasting_Earth});
    }
 
    @Override

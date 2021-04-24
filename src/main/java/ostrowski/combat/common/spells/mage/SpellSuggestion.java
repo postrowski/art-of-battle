@@ -5,13 +5,14 @@
 package ostrowski.combat.common.spells.mage;
 
 import ostrowski.combat.common.Character;
+import ostrowski.combat.common.enums.SkillType;
 
 public class SpellSuggestion extends MageSpell
 {
    public static final String NAME = "Suggestion";
    public SpellSuggestion() {
       super(NAME, new Class[] {},
-            new MageCollege[] {MageCollege.ENCHANTMENT});
+            new SkillType[] {SkillType.Spellcasting_Enchantment});
    }
 
    @Override

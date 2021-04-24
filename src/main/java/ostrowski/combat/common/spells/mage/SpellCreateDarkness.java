@@ -5,12 +5,13 @@
 package ostrowski.combat.common.spells.mage;
 
 import ostrowski.combat.common.Character;
+import ostrowski.combat.common.enums.SkillType;
 
 public class SpellCreateDarkness extends MageSpell
 {
    public static final String NAME = "Create Darkness";
    public SpellCreateDarkness() {
-      super(NAME, new Class[] {SpellAffectArea.class}, new MageCollege[] {MageCollege.ILLUSION, MageCollege.EVOCATION});
+      super(NAME, new Class[] {SpellAffectArea.class}, new SkillType[] {SkillType.Spellcasting_Illusion, SkillType.Spellcasting_Evocation});
    }
 
    @Override

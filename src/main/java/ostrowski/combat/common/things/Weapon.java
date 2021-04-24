@@ -237,6 +237,7 @@ public class Weapon extends Thing {
    public static final String NAME_Longsword          = "Longsword";
    public static final String NAME_Longsword_Fine     = "Longsword, Fine";
    public static final String NAME_Broadsword         = "Broadsword";
+   public static final String NAME_Broadsword_Fine    = "Broadsword, Fine";
    public static final String NAME_Mace               = "Mace";
    public static final String NAME_Nunchucks          = "Nun chucks";
    public static final String NAME_Maul               = "Maul";
@@ -246,6 +247,7 @@ public class Weapon extends Thing {
    public static final String NAME_Rapier             = "Rapier";
    public static final String NAME_Sabre              = "Sabre";
    public static final String NAME_Shortsword         = "Shortsword";
+   public static final String NAME_Shortsword_Fine    = "Shortsword, Fine";
    public static final String NAME_Spear              = "Spear";
    public static final String NAME_ThrowingStar       = "Throwing Star";
    public static final String NAME_ThreePartStaff     = "Three Part Staff";
@@ -362,8 +364,8 @@ public class Weapon extends Thing {
          if (attackStyle.getMaxRange() > maxRange) {
             if (!onlyChargeTypes || attackStyle.canCharge(wielder.isMounted(), wielder.getLegCount() > 3)) {
                if (allowRanged || !attackStyle.isRanged()) {
-                  Skill styleSkill = wielder.getSkill(attackStyle.getSkillType());
-                  if ((styleSkill != null) && (styleSkill.getLevel() >= attackStyle.getMinSkill())) {
+                  byte styleSkill = wielder.getSkillLevel(attackStyle.getSkillType(), LimbType.HAND_RIGHT, false, true, true);
+                  if (styleSkill >= attackStyle.getMinSkill()) {
                      maxRange = attackStyle.getMaxRange();
                   }
                }
@@ -374,8 +376,8 @@ public class Weapon extends Thing {
          if (grapplingStyle.getMaxRange() > maxRange) {
             if (!onlyChargeTypes || grapplingStyle.canCharge(wielder.isMounted(), wielder.getLegCount() > 3)) {
                if (allowRanged || !grapplingStyle.isRanged()) {
-                  Skill styleSkill = wielder.getSkill(grapplingStyle.getSkillType());
-                  if ((styleSkill != null) && (styleSkill.getLevel() >= grapplingStyle.getMinSkill())) {
+                  byte styleSkill = wielder.getSkillLevel(grapplingStyle.getSkillType(), LimbType.HAND_RIGHT, false, true, true);
+                  if (styleSkill >= grapplingStyle.getMinSkill()) {
                      maxRange = grapplingStyle.getMaxRange();
                   }
                }
@@ -405,8 +407,8 @@ public class Weapon extends Thing {
                         continue;
                      }
                   }
-                  Skill styleSkill = wielder.getSkill(attackStyle.getSkillType());
-                  if ((styleSkill != null) && (styleSkill.getLevel() >= attackStyle.getMinSkill())) {
+                  byte styleSkill = wielder.getSkillLevel(attackStyle.getSkillType(), LimbType.HAND_RIGHT, false, true, true);
+                  if (styleSkill >= attackStyle.getMinSkill()) {
                      minRange = attackStyle.getMinRange();
                   }
                }
@@ -417,8 +419,8 @@ public class Weapon extends Thing {
          if (grapplingStyle.getMinRange() < minRange) {
             if (allowRanged || !grapplingStyle.isRanged()) {
                if (!onlyChargeTypes || grapplingStyle.canCharge(wielder.isMounted(), wielder.getLegCount() > 3)) {
-                  Skill styleSkill = wielder.getSkill(grapplingStyle.getSkillType());
-                  if ((styleSkill != null) && (styleSkill.getLevel() >= grapplingStyle.getMinSkill())) {
+                  byte styleSkill = wielder.getSkillLevel(grapplingStyle.getSkillType(), LimbType.HAND_RIGHT, false, true, true);
+                  if (styleSkill >= grapplingStyle.getMinSkill()) {
                      minRange = grapplingStyle.getMinRange();
                   }
                }
@@ -520,8 +522,10 @@ public class Weapon extends Thing {
       if (name.equals(NAME_Longsword))      {drawSword(obj, size * 0.8, size * 1.0);                return;}
       if (name.equals(NAME_Longsword_Fine)) {drawSword(obj, size * 0.8, size * 1.0);                return;}
       if (name.equals(NAME_Broadsword))     {drawSword(obj, size * 0.8, size * 1.2);                return;}
+      if (name.equals(NAME_Broadsword_Fine)){drawSword(obj, size * 0.8, size * 1.2);                return;}
       if (name.equals(NAME_Rapier))         {drawSword(obj, size * 0.7, size * 0.25);               return;}
       if (name.equals(NAME_Shortsword))     {drawSword(obj, size * 0.7, size * 1.0);                return;}
+      if (name.equals(NAME_Shortsword_Fine)){drawSword(obj, size * 0.7, size * 1.0);                return;}
       if (name.equals(NAME_BlowGun))        {drawClub(obj, size * 0.7, size * 0.5, false);         return;}
       if (name.equals(NAME_Club))           {drawClub(obj, size * 0.7, size * 1.0, false);         return;}
       if (name.equals(NAME_Mace))           {drawClub(obj, size * 0.7, size * 1.0, true);          return;}

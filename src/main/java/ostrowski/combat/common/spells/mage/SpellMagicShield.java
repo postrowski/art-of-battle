@@ -5,6 +5,7 @@
 package ostrowski.combat.common.spells.mage;
 
 import ostrowski.combat.common.Character;
+import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.html.Table;
 import ostrowski.combat.common.html.TableData;
 import ostrowski.combat.common.html.TableRow;
@@ -21,7 +22,7 @@ public class SpellMagicShield extends ExpiringMageSpell implements ICastInBattle
    public SpellMagicShield() {
       super(NAME, (short)10/*baseExpirationTimeInTurns*/, (short)5/*bonusTimeInTurnsPerPower*/,
             new Class[] {SpellCreateEarth.class, SpellCreateForce.class, SpellPush.class},
-            new MageCollege[] {MageCollege.EARTH, MageCollege.ENERGY, MageCollege.PROTECTION});
+            new SkillType[] {SkillType.Spellcasting_Earth, SkillType.Spellcasting_Energy, SkillType.Spellcasting_Protection});
    }
 
 

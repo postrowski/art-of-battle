@@ -1111,7 +1111,7 @@ public class AI implements Enums
          if (!currentSpell.requiresTargetToCast() || (target != null) || (currentSpell instanceof IAreaSpell)) {
             if (currentSpell instanceof MageSpell) {
                byte desiredPower = desiredPowerForSpell(currentSpell);
-               if (!currentSpell.isInate() && (currentSpell.getPower() < desiredPower)) {
+               if (!currentSpell.isInnate() && (currentSpell.getPower() < desiredPower)) {
                   traceSb.append(", <desiredPower of ").append(desiredPower);
                   priorities.add(new RequestActionOption("", RequestActionType.OPT_CHANNEL_ENERGY_1, LimbType.BODY, true));
                }
@@ -1182,7 +1182,7 @@ public class AI implements Enums
                      // Always cast spells with 3 actions
                      priorities.add(new RequestActionOption("", RequestActionType.OPT_COMPLETE_SPELL_3, LimbType.BODY, true));
                      // except innate spells can be cast at 2 actions, if we don't have 3:
-                     if (currentSpell.isInate()) {
+                     if (currentSpell.isInnate()) {
                         traceSb.append(", cast2");
                         priorities.add(new RequestActionOption("", RequestActionType.OPT_COMPLETE_SPELL_2, LimbType.BODY, true));
                      }
@@ -1232,9 +1232,9 @@ public class AI implements Enums
                   }
                }
                // If we still have enough power to cast this spell, don't lose it by attacking:
-               if (self.getCondition().getPriestSpellPointsAvailable() >= currentSpell.getLevel()) {
-                  if (!currentSpell.isInate()) {
-                     // never attack when we have a non-inate priest spell ready:
+               if (self.getCondition().getPriestSpellPointsAvailable() >= priestSpell.getLevel()) {
+                  if (!currentSpell.isInnate()) {
+                     // never attack when we have a non-innate priest spell ready:
                      attackActions = 0;
                   }
                }
@@ -1497,7 +1497,8 @@ public class AI implements Enums
       // before we go into final defense mode, or go on gaurd, if we have a spell that needs to be maintained, maintain it
       if (currentSpell != null) {
          if ((currentSpell instanceof MageSpell) ||
-              (self.getCondition().getPriestSpellPointsAvailable() < currentSpell.getLevel())) {
+             ((currentSpell instanceof PriestSpell) &&
+              (self.getCondition().getPriestSpellPointsAvailable() < ((PriestSpell)currentSpell).getLevel()))) {
             priorities.add(new RequestActionOption("", RequestActionType.OPT_MAINTAIN_SPELL, LimbType.BODY, true));
          }
       }
@@ -1720,7 +1721,14 @@ public class AI implements Enums
       }
       byte highestTN = (byte) Math.max(castingTN, defenseTN);
       if (castingDice != null) {
-         castingDice = castingDice.addBonus(spell.getLevel());
+         byte castingLevel = 0;
+         if (spell instanceof MageSpell) {
+            castingLevel = self.getProfessionLevel(ProfessionType.Spellcasting);
+         }
+         else if (spell instanceof PriestSpell) {
+            castingLevel = self.getAffinity(((PriestSpell) spell).getDeity());
+         }
+         castingDice = castingDice.addBonus(castingLevel);
          return castingDice.getOddsForTN(highestTN);
       }
       return 0;
@@ -1991,40 +1999,42 @@ public class AI implements Enums
       }
 
       Weapon myWeapon = getMyWeapon();
-      List<Skill> skills = self.getSkillsList();
+      List<SkillType> skills = new ArrayList<>();
+      Optional<Profession> fighterProf = self.getProfessionsList().stream().filter(o -> o.getType() == ProfessionType.Fighter).findAny();
+      if (fighterProf.isPresent()) {
+         skills.addAll(fighterProf.get().getProficientSkills());
+         skills.addAll(fighterProf.get().getFamiliarSkills());
+      }
       List<SkillType> skillTypesToUse = new ArrayList<>();
       byte currentSkillLevel = 0;
       if (myWeapon != null) {
          currentSkillLevel = self.getBestSkillLevel(myWeapon);
       }
       boolean shieldNeeded = false;
-      for (Skill skill : skills) {
-         if (skill.getLevel() > 0) {
-            SkillType skillType = skill.getType();
-            if ((skillType == SkillType.BlowGun) || (skillType == SkillType.Bow) || (skillType == SkillType.Crossbow)
-                || (skillType == SkillType.Sling) || (skillType == SkillType.Throwing)
-                || (skillType == SkillType.Aikido) || (skillType == SkillType.Boxing) || (skillType == SkillType.Brawling)
-                || (skillType == SkillType.Wrestling) || (skillType == SkillType.Karate)) {
-               continue;
-            }
-            if (skillType == SkillType.Shield) {
-               if (armCount > 1) {
-                  if (leftHand.getHeldThing() == null) {
-                     Thing righthandThing = rightHand.getHeldThing();
-                     if ((!(righthandThing instanceof Weapon)) || !((Weapon) righthandThing).isOnlyTwoHanded()) {
-                        skillTypesToUse.add(skillType);
-                        shieldNeeded = true;
-                     }
+      for (SkillType skillType : skills) {
+         if ((skillType == SkillType.BlowGun) || (skillType == SkillType.Bow) || (skillType == SkillType.Crossbow)
+             || (skillType == SkillType.Sling) || (skillType == SkillType.Throwing)
+             || (skillType == SkillType.Aikido) || (skillType == SkillType.Boxing) || (skillType == SkillType.Brawling)
+             || (skillType == SkillType.Wrestling) || (skillType == SkillType.Karate)) {
+            continue;
+         }
+         if (skillType == SkillType.Shield) {
+            if (armCount > 1) {
+               if (leftHand.getHeldThing() == null) {
+                  Thing righthandThing = rightHand.getHeldThing();
+                  if ((!(righthandThing instanceof Weapon)) || !((Weapon) righthandThing).isOnlyTwoHanded()) {
+                     skillTypesToUse.add(skillType);
+                     shieldNeeded = true;
                   }
                }
             }
-            else {
-               // ignore skills that require two hands, when we don't have both
-               if ((armCount >= 2) || (skill.getArmUseCount() != Skill.ArmsUsed.Both)) {
-                  int skillDiff = skill.getLevel() - currentSkillLevel;
-                  if (skillDiff > 2) {
-                     skillTypesToUse.add(skillType);
-                  }
+         }
+         else {
+            // ignore skills that require two hands, when we don't have both
+            if ((armCount >= 2) || (skillType.armUseCount != Skill.ArmsUsed.Both)) {
+               int skillDiff = fighterProf.get().getLevel(skillType) - currentSkillLevel;
+               if (skillDiff > 2) {
+                  skillTypesToUse.add(skillType);
                }
             }
          }
@@ -3122,8 +3132,8 @@ public class AI implements Enums
          if (bestDefSpell instanceof PriestSpell) {
             magicTN = self.getAffinity(((PriestSpell) bestDefSpell).getDeity());
          }
-         else {
-            magicTN = bestDefSpell.getLevel();
+         else if (bestDefSpell instanceof MageSpell) {
+            magicTN = self.getProfessionLevel(ProfessionType.Spellcasting);
          }
       }
 
@@ -4256,8 +4266,8 @@ public class AI implements Enums
                         // we are holding something already
                         continue;
                      }
-                     Skill shieldSkill = self.getSkill(SkillType.Shield);
-                     if ((shieldSkill == null) || (shieldSkill.getLevel() < 2)) {
+                     byte shieldSkill = self.getSkillLevel(SkillType.Shield, LimbType.HAND_RIGHT, false, true, true);
+                     if (shieldSkill < 2) {
                         // we don't know how to use a shield
                         continue;
                      }

@@ -3,13 +3,12 @@
  */
 package ostrowski.combat.common.spells.mage;
 
-import ostrowski.DebugBreak;
+import ostrowski.combat.common.*;
 import ostrowski.combat.common.Character;
-import ostrowski.combat.common.DiceSet;
-import ostrowski.combat.common.Rules;
 import ostrowski.combat.common.enums.Attribute;
 import ostrowski.combat.common.enums.DamageType;
 import ostrowski.combat.common.enums.Enums;
+import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.html.*;
 import ostrowski.combat.common.spells.IRangedSpell;
 import ostrowski.combat.common.spells.IResistedSpell;
@@ -21,28 +20,62 @@ import ostrowski.combat.server.Arena;
 import ostrowski.combat.server.Battle;
 import ostrowski.combat.server.Configuration;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class MageSpell extends Spell implements Enums
 {
-   public final static String FAM_UNFAMILIAR        = "unfamiliar";
-   public final static String FAM_KNOWN             = "known";
-   public final static String FAM_MEMORIZED         = "memorized";
+   public enum Familiarity {
+      UNFAMILIAR("unfamiliar", 0, 5),
+      KNOWN("known", 1, 3),
+      MEMORIZED("memorized", 3, 1);
+
+      private String name;
+      private byte cost;
+      private byte incantationTime;
+      Familiarity(String name, int cost, int incantationTime) {
+         this.name = name;
+         this.cost = (byte) cost;
+         this.incantationTime = (byte) incantationTime;
+      }
+
+      public String getName() {
+         return this.name;
+      }
+      public byte getCost() {
+         return this.cost;
+      }
+      public byte getIncantationTime() {
+         return this.incantationTime;
+      }
+      public static Familiarity getFamiliarityByName(String name) {
+         for (Familiarity fam : values()) {
+            if (fam.name.equalsIgnoreCase(name)) {
+               return fam;
+            }
+         }
+         return null;
+      }
+   };
 
    public       Class<MageSpell>[]       prerequisiteSpells;
-   public final MageCollege[]            prerequisiteColleges;
+   public final SkillType[]              prerequisiteSkillTypes;
    protected    HashMap<Attribute, Byte> attributeMod = new HashMap<>();
+   private      Familiarity              familiarity = Familiarity.UNFAMILIAR;
 
    public MageSpell() {
       this("", null, null);
    }
 
    @SuppressWarnings({ "unchecked", "rawtypes"})
-   protected MageSpell(String name, Class[] prerequisiteSpellClasses, MageCollege[] colleges) {
+   protected MageSpell(String name, Class[] prerequisiteSpellClasses, SkillType[] skillTypes) {
       super(name);
       prerequisiteSpells = prerequisiteSpellClasses;
-      prerequisiteColleges = colleges;
+      prerequisiteSkillTypes = skillTypes;
    }
 
    @Override
@@ -55,44 +88,20 @@ public abstract class MageSpell extends Spell implements Enums
       return null;
    }
 
-   public void setFamiliarity(String familiarity) {
-      level = 0;
-//      if (FAM_UNFAMILIAR.equals(familiarity)) {
-//         level = 0;
-//      }
-      if (FAM_KNOWN.equals(familiarity)) {
-         level = 1;
-      }
-      else if (FAM_MEMORIZED.equals(familiarity)) {
-         level = 2;
-      }
+   public void setFamiliarity(Familiarity familiarity) {
+      this.familiarity = familiarity;
+   }
+   public void setFamiliarity(String familiarityName) {
+      setFamiliarity(Familiarity.getFamiliarityByName(familiarityName));
    }
 
-   public String getFamiliarity() {
-      switch (level) {
-         case 0:
-            return FAM_UNFAMILIAR;
-         case 1:
-            return FAM_KNOWN;
-         case 2:
-            return FAM_MEMORIZED;
-      }
-      return FAM_UNFAMILIAR;
+   public Familiarity getFamiliarity() {
+      return this.familiarity;
    }
 
    @Override
    public byte getIncantationTime() {
-      if (level == 0) {// unknown
-         return (byte) 5;
-      }
-      if (level == 1) {// known
-         return (byte) 3;
-      }
-      if (level == 2) {// memorized
-         return 1;
-      }
-      DebugBreak.debugBreak();
-      return 100;
+      return this.familiarity.getIncantationTime();
    }
 
    //   static public byte getIncantationTime(byte level)
@@ -178,42 +187,45 @@ public abstract class MageSpell extends Spell implements Enums
 //   }
 
    public byte getEffectiveSkill(Character character, boolean includeKnowledgePenalty) {
-      byte minSkill = -1;
-      // check for the required Colleges
-      if (prerequisiteColleges == null) {
+      // check for the required skills
+      if (prerequisiteSkillTypes == null) {
          return 0;
       }
-      for (MageCollege college : prerequisiteColleges) {
-         byte collegeLevel = character.getCollegeLevel(college.getName());
-         if ((minSkill == -1) || (collegeLevel < minSkill)) {
-            minSkill = collegeLevel;
+      byte minSkill = -1;
+      Profession spellcasting = character.getProfession(ProfessionType.Spellcasting);
+      if (spellcasting != null) {
+         for (SkillType skillType : prerequisiteSkillTypes) {
+            byte skillLevel = spellcasting.getLevel(skillType);
+            if ((minSkill == -1) || (skillLevel < minSkill)) {
+               minSkill = skillLevel;
+            }
          }
-      }
-      // adjust for knowledge of spell
-      if (includeKnowledgePenalty) {
-         minSkill -= getKnowledgePenalty(character);
+         // adjust for knowledge of spell
+         if (includeKnowledgePenalty) {
+            minSkill -= getKnowledgePenalty(character);
+         }
       }
       return minSkill;
    }
 
    public byte getKnowledgePenalty(Character character) {
-      byte penalty = 0;
-      // If this spell is known (level >0), then all prerequisite spells must also already be known.
-      if (level == 0) {
-         // Spell is not known (level 0 means 'familiar'), so penalty is 4.
-         penalty = 4;
-         // check for other required spells that may also not be known
-         for (Class<MageSpell> prereqSpellClass : prerequisiteSpells) {
-            try {
-               MageSpell prereqSpell = prereqSpellClass.getDeclaredConstructor().newInstance();
-               byte knownSpellLevel = character.getSpellLevel(prereqSpell.getName());
-               if (knownSpellLevel == 0) {
-                  // For every unknown prerequisite spell, assess another 2 point penalty
-                  penalty += 2;
-               }
-            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-               e.printStackTrace();
+      if (this.familiarity != Familiarity.UNFAMILIAR) {
+         // If this spell is known (level >0), then all prerequisite spells must also already be known.
+         return 0;
+      }
+      // Spell is not known (level 0 means 'familiar'), so penalty is 4.
+      byte penalty = 4;
+      // check for other required spells that may also not be known
+      for (Class<MageSpell> prereqSpellClass : prerequisiteSpells) {
+         try {
+            MageSpell prereqSpell = prereqSpellClass.getDeclaredConstructor().newInstance();
+            byte knownSpellLevel = character.getSpellLevel(prereqSpell.getName());
+            if (knownSpellLevel == 0) {
+               // For every unknown prerequisite spell, assess another 2 point penalty
+               penalty += 2;
             }
+         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+            e.printStackTrace();
          }
       }
       return penalty;
@@ -221,7 +233,7 @@ public abstract class MageSpell extends Spell implements Enums
 
    @Override
    public byte getTN(Character caster) {
-      if (isInate()) {
+      if (isInnate()) {
          return 0;
       }
 
@@ -255,7 +267,7 @@ public abstract class MageSpell extends Spell implements Enums
    }
 
    public byte getBurnLevel() {
-      if (isInate()) {
+      if (isInnate()) {
          return 0;
       }
       return (byte) Math.max(0, (getPower() - getCaster().getMagicalAptitude()));
@@ -345,8 +357,8 @@ public abstract class MageSpell extends Spell implements Enums
    @Override
    protected void describeGrimioreDescription(StringBuilder descriptionBuffer) {
       super.describeGrimioreDescription(descriptionBuffer);
-      descriptionBuffer.append("<br/><b>Colleges:</b>");
-      descriptionBuffer.append(getCollegesNames());
+      descriptionBuffer.append("<br/><b>Skills:</b>");
+      descriptionBuffer.append(getSkillTypeNames());
       descriptionBuffer.append("<br/><b>Prerequisites:</b>");
       //String prereqs = getPrerequisiteNames();
       String prereqs = getImmediatePrerequisiteNames();
@@ -365,19 +377,10 @@ public abstract class MageSpell extends Spell implements Enums
       }
    }
 
-   private String getCollegesNames() {
-      StringBuilder sb = new StringBuilder();
-      if (prerequisiteColleges != null) {
-         boolean showComma = false;
-         for (MageCollege college : prerequisiteColleges) {
-            if (showComma) {
-               sb.append(", ");
-            }
-            sb.append(college.getName());
-            showComma = true;
-         }
-      }
-      return sb.toString();
+   private String getSkillTypeNames() {
+      return Arrays.stream(prerequisiteSkillTypes)
+                   .map(o->o.getName())
+                   .collect(Collectors.joining(", "));
    }
 
 //   private String getPrerequisiteNames() {
@@ -531,4 +534,26 @@ public abstract class MageSpell extends Spell implements Enums
    public byte getSpellPoints() {
       return getPower();
    }
+
+   @Override
+   public void serializeToStream(DataOutputStream out)
+   {
+      super.serializeToStream(out);
+      try {
+         writeToStream(familiarity.getName(), out);
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
+   }
+   @Override
+   public void serializeFromStream(DataInputStream in)
+   {
+      super.serializeFromStream(in);
+      try {
+         familiarity = Familiarity.getFamiliarityByName(readString(in));
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
+   }
+
 }

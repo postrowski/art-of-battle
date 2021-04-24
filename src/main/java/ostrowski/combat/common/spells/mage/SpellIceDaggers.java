@@ -6,6 +6,7 @@ package ostrowski.combat.common.spells.mage;
 
 import ostrowski.combat.common.enums.DamageType;
 import ostrowski.combat.common.enums.DieType;
+import ostrowski.combat.common.enums.SkillType;
 
 public class SpellIceDaggers extends MissileMageSpell
 {
@@ -13,7 +14,7 @@ public class SpellIceDaggers extends MissileMageSpell
    public SpellIceDaggers() {
       super(NAME, new Class[] {SpellControlTemperature.class, SpellCreateForce.class,
                                SpellCreateWater.class, SpellThrowSpell.class, SpellWaterJet.class},
-            new MageCollege[] {MageCollege.CONJURATION, MageCollege.ENERGY, MageCollege.FIRE, MageCollege.WATER},
+            new SkillType[] {SkillType.Spellcasting_Conjuration, SkillType.Spellcasting_Energy, SkillType.Spellcasting_Fire, SkillType.Spellcasting_Water},
             (byte)0/*baseDamage*/, (byte)4/*damagePerPower*/,
             DieType.D8, DamageType.IMP, (short)25/*rangeBase*/);
    }

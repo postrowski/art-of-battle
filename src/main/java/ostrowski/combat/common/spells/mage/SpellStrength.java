@@ -6,6 +6,7 @@ package ostrowski.combat.common.spells.mage;
 
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.enums.Attribute;
+import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.spells.ICastInBattle;
 import ostrowski.combat.server.Arena;
 
@@ -14,7 +15,7 @@ public class SpellStrength extends MageSpell implements ICastInBattle
    public static final String NAME = "Strength";
    public SpellStrength() {
       super(NAME, new Class[] {SpellHarden.class},
-            new MageCollege[] {MageCollege.ENERGY, MageCollege.PROTECTION});
+            new SkillType[] {SkillType.Spellcasting_Energy, SkillType.Spellcasting_Protection});
    }
 
    @Override

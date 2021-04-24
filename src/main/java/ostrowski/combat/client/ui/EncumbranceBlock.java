@@ -118,8 +118,7 @@ public class EncumbranceBlock extends Helper implements IUIBlock
    {
       String lbsStr = "";
       if (character != null) {
-         double lbs = character.getWeightCarried();
-         lbsStr = String.valueOf(lbs);
+         lbsStr = String.valueOf(character.getWeightCarried());
       }
       totalLbs.setText(lbsStr);
 

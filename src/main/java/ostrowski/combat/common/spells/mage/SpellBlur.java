@@ -6,6 +6,7 @@ package ostrowski.combat.common.spells.mage;
 
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.enums.DamageType;
+import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.spells.ICastInBattle;
 
 /**
@@ -17,7 +18,7 @@ public class SpellBlur extends ExpiringMageSpell implements ICastInBattle
    public static final String NAME = "Blur";
    public SpellBlur() {
       super(NAME, (short)10/*baseExpirationTimeInTurns*/, (short)5 /*bonusTimeInTurnsPerPower*/,
-            new Class[] {SpellControlLight.class}, new MageCollege[] {MageCollege.ILLUSION, MageCollege.PROTECTION});
+            new Class[] {SpellControlLight.class}, new SkillType[] {SkillType.Spellcasting_Illusion, SkillType.Spellcasting_Protection});
    }
 
    @Override

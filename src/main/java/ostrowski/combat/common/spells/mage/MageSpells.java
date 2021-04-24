@@ -2,6 +2,7 @@ package ostrowski.combat.common.spells.mage;
 
 import ostrowski.DebugBreak;
 import ostrowski.combat.common.Rules;
+import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.spells.Spell;
 
 import java.lang.reflect.InvocationTargetException;
@@ -74,7 +75,7 @@ public class MageSpells {
    static {
       // This static initializer is used to verify various things about spells, including:
       //   1) defendableSpell are missileSpells and the SpiderWebSpell
-      //   2) Each spell that requires another spell, also requires the colleges used by the other spell(s)
+      //   2) Each spell that requires another spell, also requires the skills used by the other spell(s)
       //   3) Each spell that requires another spell, also requires the spells required by the first spell
       StringBuilder problems = new StringBuilder();
       for (MageSpell spell : spellsList) {
@@ -83,28 +84,28 @@ public class MageSpells {
             problems.append(spell.getName()).append(".isDefendable != (Missile || SpiderWeb)");
          }
 
-         StringBuilder misssingCollegeProblems = new StringBuilder();
+         StringBuilder misssingSkillTypeProblems = new StringBuilder();
          StringBuilder misssingSpellProblems = new StringBuilder();
          for (Class<MageSpell> prerequisiteSpellClass : spell.prerequisiteSpells) {
             try {
                MageSpell prerequisiteSpell = prerequisiteSpellClass.getDeclaredConstructor().newInstance();
-               //  1) Each spell that requires another spell, also requires the colleges used by the other spell(s)
-               for (MageCollege prerequisiteSpellsColleges : prerequisiteSpell.prerequisiteColleges) {
-                  boolean collegeFound = false;
-                  for (MageCollege myColleges : spell.prerequisiteColleges) {
-                     if (myColleges.getName().equals(prerequisiteSpellsColleges.getName())) {
-                        collegeFound = true;
+               //  1) Each spell that requires another spell, also requires the skillTypes used by the other spell(s)
+               for (SkillType prerequisiteSpellsSkillTypes : prerequisiteSpell.prerequisiteSkillTypes) {
+                  boolean skillTypeFound = false;
+                  for (SkillType skillType : spell.prerequisiteSkillTypes) {
+                     if (skillType.getName().equals(prerequisiteSpellsSkillTypes.getName())) {
+                        skillTypeFound = true;
                         break;
                      }
                   }
-                  if (!collegeFound) {
-                     if (misssingCollegeProblems.length() == 0) {
-                        misssingCollegeProblems.append("spell ").append(spell.getName()).append(" requires these Colleges: ");
+                  if (!skillTypeFound) {
+                     if (misssingSkillTypeProblems.length() == 0) {
+                        misssingSkillTypeProblems.append("spell ").append(spell.getName()).append(" requires these SkillTypes: ");
                      }
                      else {
-                        misssingCollegeProblems.append(", ");
+                        misssingSkillTypeProblems.append(", ");
                      }
-                     misssingCollegeProblems.append(prerequisiteSpellsColleges.getName());
+                     misssingSkillTypeProblems.append(prerequisiteSpellsSkillTypes.getName());
                   }
                }
             } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
@@ -138,8 +139,8 @@ public class MageSpells {
                e.printStackTrace();
             }
          }
-         if (misssingCollegeProblems.length() != 0) {
-            problems.append(misssingCollegeProblems).append("\n");
+         if (misssingSkillTypeProblems.length() != 0) {
+            problems.append(misssingSkillTypeProblems).append("\n");
          }
          if (misssingSpellProblems.length() != 0) {
             problems.append(misssingSpellProblems).append("\n");

@@ -5,13 +5,14 @@
 package ostrowski.combat.common.spells.mage;
 
 import ostrowski.combat.common.Character;
+import ostrowski.combat.common.enums.SkillType;
 
 public class SpellWind extends MageSpell
 {
    public static final String NAME = "Wind";
    public SpellWind() {
       super(NAME, new Class[] {SpellCreateAir.class, SpellThrowSpell.class},
-            new MageCollege[] {MageCollege.AIR, MageCollege.CONJURATION});
+            new SkillType[] {SkillType.Spellcasting_Air, SkillType.Spellcasting_Conjuration});
    }
 
    @Override

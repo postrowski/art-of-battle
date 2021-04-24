@@ -42,6 +42,7 @@ public abstract class PriestSpell extends Spell
    protected byte                         effectivePower;
    private Class< ? extends IPriestGroup> group;
    private String                         deity = null;
+   protected byte                         level = 0;
 
    public PriestSpell() {
    }
@@ -465,6 +466,15 @@ public abstract class PriestSpell extends Spell
       return (byte) Math.min((distanceInHexes - 1), 127);
    }
 
+   public byte getLevel() {
+      return level;
+   }
+
+   public void setLevel(byte level) {
+      this.level = level;
+   }
+
+
    @Override
    public byte getCastingLevel() {
       return caster.getAffinity(deity);
@@ -484,6 +494,7 @@ public abstract class PriestSpell extends Spell
          writeToStream(affinityLevel, out);
          writeToStream(group.getName(), out);
          writeToStream(deity, out);
+         writeToStream(level, out);
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -496,6 +507,7 @@ public abstract class PriestSpell extends Spell
          affinityLevel = readByte(in);
          String groupClassName = readString(in);
          deity = readString(in);
+         level = readByte(in);
          for (Class< ? extends IPriestGroup> element : GROUPS) {
             if (groupClassName.equalsIgnoreCase(element.getName())) {
                group = element;
@@ -514,6 +526,7 @@ public abstract class PriestSpell extends Spell
          affinityLevel = ((PriestSpell) source).affinityLevel;
          group = ((PriestSpell) source).group;
          deity = ((PriestSpell) source).deity;
+         level = ((PriestSpell) source).level;
       }
    }
 

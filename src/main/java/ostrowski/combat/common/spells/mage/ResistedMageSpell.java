@@ -8,6 +8,7 @@ import ostrowski.combat.common.Character;
 import ostrowski.combat.common.DiceSet;
 import ostrowski.combat.common.Rules;
 import ostrowski.combat.common.enums.Attribute;
+import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.spells.IResistedSpell;
 import ostrowski.combat.server.Configuration;
 
@@ -18,10 +19,10 @@ public abstract class ResistedMageSpell extends ExpiringMageSpell implements IRe
 
    @SuppressWarnings("rawtypes")
    protected ResistedMageSpell(String name, Attribute resistedAtt, byte resistedActions, boolean expires,
-                           Class[] prerequisiteSpells, MageCollege[] colleges) {
+                           Class[] prerequisiteSpells, SkillType[] skillTypes) {
       super(name, (short)(expires ? 10 : 0)/*baseExpirationTimeInTurns*/,
                   (short)(expires ? 2 : 0)/*bonusTimeInTurnsPerPower*/,
-                  prerequisiteSpells, colleges);
+                  prerequisiteSpells, skillTypes);
       this.resistedAtt = resistedAtt;
       this.resistedActions = resistedActions;
    }

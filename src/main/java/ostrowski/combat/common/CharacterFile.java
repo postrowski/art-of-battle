@@ -128,7 +128,7 @@ public class CharacterFile
             charactersMatchingName.remove(1);
          }
          else {
-            charactersMatchingName.remove(1);
+            charactersMatchingName.remove(0);
          }
       }
       // Only one left, return a clone of it.
