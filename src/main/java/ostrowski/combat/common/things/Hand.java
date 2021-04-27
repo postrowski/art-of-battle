@@ -400,8 +400,9 @@ public class Hand extends Limb {
                WeaponStyleParry parrySkill = parrySkills[i];
                if (parrySkill.canDefendAgainstDamageType(damageType, attackIsGrapple, distance)) {
                   SkillType styleType = parrySkill.getSkillType();
-                  byte skillLevel = defender.getSkillLevel(styleType, limbType, false, true, true);
-                  if (skillLevel >= parrySkill.getMinSkill()) {
+                  SkillRank skillRank = defender.getSkillRank(styleType);
+                  if (skillRank.getCost() >= parrySkill.getMinRank().getCost()) {
+                     byte skillLevel = defender.getSkillLevel(styleType, limbType, false, true, true);
                      byte skillEffectiveLevel = (byte) (skillLevel * parrySkill.getEffectiveness());
                      if ((bestIndex == -1) || (skillEffectiveLevel > bestLevel)) {
                         bestLevel = skillEffectiveLevel;
@@ -454,8 +455,8 @@ public class Hand extends Limb {
          for (WeaponStyleCounterAttack parrySkill : punch.counterattackStyles) {
             if (parrySkill.getName().toLowerCase().contains("grab") == grab) {
                SkillType styleType = parrySkill.getSkillType();
-               byte skill = defender.getSkillLevel(styleType, limbType, false, true, true);
-               if (skill >= parrySkill.getMinSkill()) {
+               SkillRank skillRank = defender.getSkillRank(styleType);
+               if (skillRank.getCost() >= parrySkill.getMinRank().getCost()) {
                   return true;
                }
             }

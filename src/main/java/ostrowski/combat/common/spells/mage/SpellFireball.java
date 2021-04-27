@@ -5,6 +5,7 @@
 package ostrowski.combat.common.spells.mage;
 
 import ostrowski.combat.common.Character;
+import ostrowski.combat.common.SkillRank;
 import ostrowski.combat.common.SpecialDamage;
 import ostrowski.combat.common.enums.DamageType;
 import ostrowski.combat.common.enums.DieType;
@@ -74,7 +75,7 @@ public class SpellFireball extends MageSpell implements ICastInBattle
          default:
             name = "Level-" + power + " Fireball spell";
       }
-      WeaponStyleAttack style = new WeaponStyleAttackThrown(0/*minSkill*/, 0/*penalty*/, damage, DieType.D6, DamageType.FIRE, 12/*rangeBase*/,  1/*hands*/);
+      WeaponStyleAttack style = new WeaponStyleAttackThrown(SkillRank.UNKNOWN/*minSkill*/, 0/*penalty*/, damage, DieType.D6, DamageType.FIRE, 12/*rangeBase*/, 1/*hands*/);
       // Give it a non-zero cost, so it will quality as being real
       Weapon fireball = new Weapon(-power/*size*/, getCaster().getRace(), 0/*lbs*/, 1/*$*/, name, new WeaponStyle[] {style});
       SpecialDamage specDam = new SpecialDamage(SpecialDamage.MOD_EXPLODING | SpecialDamage.MOD_FLAMING);

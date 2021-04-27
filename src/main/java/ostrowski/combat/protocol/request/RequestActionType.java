@@ -119,6 +119,12 @@ public enum RequestActionType {
    OPT_COUNTER_ATTACK_THROW_1         (1, 1, ""),
    OPT_COUNTER_ATTACK_THROW_2         (2, 2, ""),
    OPT_COUNTER_ATTACK_THROW_3         (3, 3, ""),
+   OPT_COUNTER_ATTACK_CLOSE_AND_GRAB_1  (1, 1, ""),
+   OPT_COUNTER_ATTACK_CLOSE_AND_GRAB_2  (2, 2, ""),
+   OPT_COUNTER_ATTACK_CLOSE_AND_GRAB_3  (3, 3, ""),
+   OPT_COUNTER_ATTACK_CLOSE_AND_THROW_1 (1, 1, ""),
+   OPT_COUNTER_ATTACK_CLOSE_AND_THROW_2 (2, 2, ""),
+   OPT_COUNTER_ATTACK_CLOSE_AND_THROW_3 (3, 3, ""),
    OPT_BREAK_FREE_1                   (0, 1, "b"),
    OPT_BREAK_FREE_2                   (0, 2, "B"),
    OPT_BREAK_FREE_3                   (0, 3, "<ctrl>b"),
@@ -358,6 +364,9 @@ public enum RequestActionType {
                                        (this == OPT_CLOSE_AND_GRAPPLE_1) ||
                                        (this == OPT_CLOSE_AND_GRAPPLE_2) ||
                                        (this == OPT_CLOSE_AND_GRAPPLE_3) ||
+                                       (this == OPT_COUNTER_ATTACK_CLOSE_AND_GRAB_1) ||
+                                       (this == OPT_COUNTER_ATTACK_CLOSE_AND_GRAB_2) ||
+                                       (this == OPT_COUNTER_ATTACK_CLOSE_AND_GRAB_3) ||
                                        isCharge(); }
    public boolean isEvasiveMove()      { return (this == OPT_MOVE_EVASIVE); }
    public boolean isReadyWeapon()      { return ((this == OPT_READY_1 ) ||
@@ -435,12 +444,18 @@ public enum RequestActionType {
    public boolean isCounterAttackThrow() {
       return ((this == OPT_COUNTER_ATTACK_THROW_1) ||
               (this == OPT_COUNTER_ATTACK_THROW_2) ||
-              (this == OPT_COUNTER_ATTACK_THROW_3));
+              (this == OPT_COUNTER_ATTACK_THROW_3) ||
+              (this == OPT_COUNTER_ATTACK_CLOSE_AND_THROW_1) ||
+              (this == OPT_COUNTER_ATTACK_CLOSE_AND_THROW_2) ||
+              (this == OPT_COUNTER_ATTACK_CLOSE_AND_THROW_3));
    }
    public boolean isCounterAttackGrab() {
       return ((this == OPT_COUNTER_ATTACK_GRAB_1) ||
               (this == OPT_COUNTER_ATTACK_GRAB_2) ||
-              (this == OPT_COUNTER_ATTACK_GRAB_3));
+              (this == OPT_COUNTER_ATTACK_GRAB_3) ||
+              (this == OPT_COUNTER_ATTACK_CLOSE_AND_GRAB_1) ||
+              (this == OPT_COUNTER_ATTACK_CLOSE_AND_GRAB_2) ||
+              (this == OPT_COUNTER_ATTACK_CLOSE_AND_GRAB_3));
    }
    public byte getAttackActions(boolean considerSpellAsAttack)
    {

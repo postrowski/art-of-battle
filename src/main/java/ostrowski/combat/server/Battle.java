@@ -454,7 +454,7 @@ public class Battle extends Thread implements Enums {
                break;
             }
             if (!found) {
-               DebugBreak.debugBreak();
+               DebugBreak.debugBreak("couldn't find a hold to break out of");
             }
          }
          Character target = arena.getCharacter(targetID);
@@ -608,7 +608,11 @@ public class Battle extends Thread implements Enums {
       if (actionSuccessful) {
          if (action.isGrappleAttack() || action.isDualGrappleAttack()) {
             if (defense.isRetreat()) {
-               arena.moveCharacter(target, originalOrientation);
+               // If the attacker already moved into the space where the defender was, don't restore
+               // the attacker to his/her original position (prevent 2 characters on one spot)
+               if (!actor.getHeadCoordinates().sameCoordinates(originalOrientation.getHeadCoordinates())) {
+                  arena.moveCharacter(target, originalOrientation);
+               }
             }
             if (Arena.getMinDistance(actor, target) > 1) {
                // if the actor is still not next to the target, move the actor forward:
@@ -633,25 +637,42 @@ public class Battle extends Thread implements Enums {
                                      Collection<ArenaCoordinates> targetsLocationsToRedraw) throws BattleTerminatedException {
       int actionsUsed = RequestDefense.getDefenseCounterActions(defense.getAnswerID());
 
-
       RequestAction counterAttack = new RequestAction(counterAttacker.uniqueID, counterAttackTarget.uniqueID);
       LimbType limbType = LimbType.HAND_RIGHT;
       DefenseOptions defOpts = defense.getDefenseOptions();
-      if (defOpts.isCounterAttackGrab()) {
-         // This is a grab
-         counterAttack.addOption(new RequestActionOption("Counter attack grab (1-action)", RequestActionType.OPT_COUNTER_ATTACK_GRAB_1, limbType, (actionsUsed == 1)/*enabled*/));
-         counterAttack.addOption(new RequestActionOption("Counter attack grab (2-action)", RequestActionType.OPT_COUNTER_ATTACK_GRAB_2, limbType, (actionsUsed == 2)/*enabled*/));
-         counterAttack.addOption(new RequestActionOption("Counter attack grab (3-action)", RequestActionType.OPT_COUNTER_ATTACK_GRAB_3, limbType, (actionsUsed == 3)/*enabled*/));
-         counterAttack.setAnswerByOptionIndex(actionsUsed - 1);
-      } else if (defOpts.isCounterAttackThrow()) {
-         // This is a throw
-         counterAttack.addOption(new RequestActionOption("Counter attack throw (1-action)", RequestActionType.OPT_COUNTER_ATTACK_THROW_1, limbType, (actionsUsed == 1)/*enabled*/));
-         counterAttack.addOption(new RequestActionOption("Counter attack throw (2-action)", RequestActionType.OPT_COUNTER_ATTACK_THROW_2, limbType, (actionsUsed == 2)/*enabled*/));
-         counterAttack.addOption(new RequestActionOption("Counter attack throw (3-action)", RequestActionType.OPT_COUNTER_ATTACK_THROW_3, limbType, (actionsUsed == 3)/*enabled*/));
-         counterAttack.setAnswerByOptionIndex(actionsUsed - 1);
-         targetsLocationsToRedraw.addAll(counterAttackTarget.getCoordinates());
+      short minDistanceInHexes = Arena.getMinDistance(counterAttacker, counterAttackTarget);
+      if (minDistanceInHexes == 1) {
+         if (defOpts.isCounterAttackGrab()) {
+            // This is a grab
+            counterAttack.addOption(new RequestActionOption("Counter attack grab (1-action)", RequestActionType.OPT_COUNTER_ATTACK_GRAB_1, limbType, (actionsUsed == 1)/*enabled*/));
+            counterAttack.addOption(new RequestActionOption("Counter attack grab (2-action)", RequestActionType.OPT_COUNTER_ATTACK_GRAB_2, limbType, (actionsUsed == 2)/*enabled*/));
+            counterAttack.addOption(new RequestActionOption("Counter attack grab (3-action)", RequestActionType.OPT_COUNTER_ATTACK_GRAB_3, limbType, (actionsUsed == 3)/*enabled*/));
+            counterAttack.setAnswerByOptionIndex(actionsUsed - 1);
+         } else if (defOpts.isCounterAttackThrow()) {
+            // This is a throw
+            counterAttack.addOption(new RequestActionOption("Counter attack throw (1-action)", RequestActionType.OPT_COUNTER_ATTACK_THROW_1, limbType, (actionsUsed == 1)/*enabled*/));
+            counterAttack.addOption(new RequestActionOption("Counter attack throw (2-action)", RequestActionType.OPT_COUNTER_ATTACK_THROW_2, limbType, (actionsUsed == 2)/*enabled*/));
+            counterAttack.addOption(new RequestActionOption("Counter attack throw (3-action)", RequestActionType.OPT_COUNTER_ATTACK_THROW_3, limbType, (actionsUsed == 3)/*enabled*/));
+            counterAttack.setAnswerByOptionIndex(actionsUsed - 1);
+            targetsLocationsToRedraw.addAll(counterAttackTarget.getCoordinates());
+         }
       }
-
+      else if (minDistanceInHexes == 2) {
+         if (defOpts.isCounterAttackGrab()) {
+            // This is a step & grab
+            counterAttack.addOption(new RequestActionOption("Counter attack step & grab (1-action)", RequestActionType.OPT_COUNTER_ATTACK_CLOSE_AND_GRAB_1, limbType, (actionsUsed == 1)/*enabled*/));
+            counterAttack.addOption(new RequestActionOption("Counter attack step & grab (2-action)", RequestActionType.OPT_COUNTER_ATTACK_CLOSE_AND_GRAB_2, limbType, (actionsUsed == 2)/*enabled*/));
+            counterAttack.addOption(new RequestActionOption("Counter attack step & grab (3-action)", RequestActionType.OPT_COUNTER_ATTACK_CLOSE_AND_GRAB_3, limbType, (actionsUsed == 3)/*enabled*/));
+            counterAttack.setAnswerByOptionIndex(actionsUsed - 1);
+         } else if (defOpts.isCounterAttackThrow()) {
+            // This is a step & throw
+            counterAttack.addOption(new RequestActionOption("Counter attack step & throw (1-action)", RequestActionType.OPT_COUNTER_ATTACK_CLOSE_AND_THROW_1, limbType, (actionsUsed == 1)/*enabled*/));
+            counterAttack.addOption(new RequestActionOption("Counter attack step & throw (2-action)", RequestActionType.OPT_COUNTER_ATTACK_CLOSE_AND_THROW_2, limbType, (actionsUsed == 2)/*enabled*/));
+            counterAttack.addOption(new RequestActionOption("Counter attack step & throw (3-action)", RequestActionType.OPT_COUNTER_ATTACK_CLOSE_AND_THROW_3, limbType, (actionsUsed == 3)/*enabled*/));
+            counterAttack.setAnswerByOptionIndex(actionsUsed - 1);
+            targetsLocationsToRedraw.addAll(counterAttackTarget.getCoordinates());
+         }
+      }
       RequestDefense counterDefense = counterAttackTarget.getDefenseRequest(0, counterAttacker, counterAttack, arena, true/*forCounterAttack*/);
       sendRequestToCombatant(counterAttackTarget, counterDefense);
 
@@ -876,6 +897,8 @@ public class Battle extends Thread implements Enums {
       sb.append(attacker.getName());
       if (grappleAttack) {
          if (attack.isAdvance()) {
+            Limb attackFromLimb = attacker.getLimb(attack.getLimb());
+            arena.moveToFrom(attacker, defender, null/*retreatFromLoc*/, attackFromLimb);
             sb.append(" advances to grab ");
          } else {
             sb.append(" grabs ");
@@ -1680,7 +1703,8 @@ public class Battle extends Thread implements Enums {
                                || (obj == actReq.spellTypeSelectionRequest)
                                || ((actReq.spellTypeSelectionRequest != null) && (obj == actReq.spellTypeSelectionRequest.spellSelectionRequest))
                                || (obj == actReq.targetSelection)) {
-                              if ((obj == actReq.movementRequest) || (actReq.isAttack() && actReq.isAdvance() && (obj != actReq.styleRequest))) {
+                              if ((obj == actReq.movementRequest) ||
+                                  (actReq.isAttack() && actReq.isAdvance() && (obj != actReq.styleRequest))) {
                                  if (obj == actReq.movementRequest) {
                                     RequestMovement moveReq = actReq.movementRequest;
 

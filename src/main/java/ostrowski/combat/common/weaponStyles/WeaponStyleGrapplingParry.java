@@ -4,15 +4,16 @@
  */
 package ostrowski.combat.common.weaponStyles;
 
+import ostrowski.combat.common.SkillRank;
 import ostrowski.combat.common.enums.DamageType;
 import ostrowski.combat.common.enums.SkillType;
 
 
 public class WeaponStyleGrapplingParry extends WeaponStyleParry
 {
-   public WeaponStyleGrapplingParry(SkillType skillType, int minSkill, int skillPenalty, String name, int speedBase, int slowStr, int fastStr, double effectiveness, int handsRequired)
+   public WeaponStyleGrapplingParry(SkillType skillType, SkillRank minRank, int skillPenalty, String name, int speedBase, int slowStr, int fastStr, double effectiveness, int handsRequired)
    {
-      super(skillType, minSkill, skillPenalty, name, speedBase, slowStr, fastStr, effectiveness, handsRequired);
+      super(skillType, minRank, skillPenalty, name, speedBase, slowStr, fastStr, effectiveness, handsRequired);
    }
    @Override
    public boolean canDefendAgainstDamageType(DamageType damType, boolean isGrapple, short distance) {
@@ -21,7 +22,7 @@ public class WeaponStyleGrapplingParry extends WeaponStyleParry
 
    @Override
    public WeaponStyleGrapplingParry clone() {
-      WeaponStyleGrapplingParry style =  new WeaponStyleGrapplingParry(skillType, minSkill, skillPenalty, name, speedBase, slowStr,
+      WeaponStyleGrapplingParry style =  new WeaponStyleGrapplingParry(skillType, minRank, skillPenalty, name, speedBase, slowStr,
                                                                        fastStr, getEffectiveness(), handsRequired);
       style.copyDataFrom(this);
       return style;

@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Bruce Lee" Race="Human">
-  <Attributes DEX="6" HT="0" IQ="0" NIM="6" SOC="0" STR="5" TOU="3"/>
-  <Equipment Armor="Leather">
-    <Hand Name="right hand"/>
+  <Attributes DEX="5" HT="1" IQ="0" NIM="6" SOC="0" STR="5" TOU="2"/>
+  <Equipment Armor="Cloth Armor">
+    <Hand Name="right hand">Nun chucks</Hand>
     <Hand Name="left hand"/>
+    <Belt>Potion:Speed</Belt>
+    <Belt>Potion:Increase Strength</Belt>
   </Equipment>
   <Professions>
-    <Profession Level="10" Name="Martial Arts" familiar="Nun chucks" proficient="Karate,Aikido"/>
     <Profession Level="2" Name="Common" familiar="" proficient="Throwing"/>
+    <Profession Level="10" Name="Martial Arts" familiar="" proficient="Aikido,Karate,Nun chucks"/>
   </Professions>
   <Advantages>
-    <Advantage LevelName="$500" Name="Wealth"/>
+    <Advantage LevelName="$5,000" Name="Wealth"/>
     <Advantage LevelName="1" Name="Hero points"/>
     <Advantage LevelName="Fair Fighter" Name="Code of Conduct"/>
   </Advantages>

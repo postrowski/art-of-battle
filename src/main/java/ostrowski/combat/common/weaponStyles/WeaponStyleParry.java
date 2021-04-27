@@ -4,6 +4,7 @@
  */
 package ostrowski.combat.common.weaponStyles;
 
+import ostrowski.combat.common.SkillRank;
 import ostrowski.combat.common.enums.DamageType;
 import ostrowski.combat.common.enums.SkillType;
 
@@ -11,9 +12,9 @@ import ostrowski.combat.common.enums.SkillType;
 public class WeaponStyleParry extends WeaponStyle
 {
    double effectiveness;
-   public WeaponStyleParry(SkillType skillType, int minSkill, int skillPenalty, String name, int speedBase, int slowStr, int fastStr, double effectiveness, int handsRequired)
+   public WeaponStyleParry(SkillType skillType, SkillRank minRank, int skillPenalty, String name, int speedBase, int slowStr, int fastStr, double effectiveness, int handsRequired)
    {
-      super(skillType, minSkill, skillPenalty, name, speedBase, slowStr, fastStr, handsRequired);
+      super(skillType, minRank, skillPenalty, name, speedBase, slowStr, fastStr, handsRequired);
       this.effectiveness = effectiveness;
    }
    public double getEffectiveness() { return effectiveness; }
@@ -41,7 +42,7 @@ public class WeaponStyleParry extends WeaponStyle
 
    @Override
    public WeaponStyleParry clone() {
-      WeaponStyleParry style =  new WeaponStyleParry(skillType, minSkill, skillPenalty, name, speedBase, slowStr,
+      WeaponStyleParry style =  new WeaponStyleParry(skillType, minRank, skillPenalty, name, speedBase, slowStr,
                                                      fastStr, effectiveness, handsRequired);
       style.copyDataFrom(this);
       return style;

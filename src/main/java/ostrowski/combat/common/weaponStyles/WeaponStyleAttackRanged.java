@@ -6,6 +6,7 @@ package ostrowski.combat.common.weaponStyles;
 
 import ostrowski.combat.common.DiceSet;
 import ostrowski.combat.common.Rules;
+import ostrowski.combat.common.SkillRank;
 import ostrowski.combat.common.enums.AttackType;
 import ostrowski.combat.common.enums.DamageType;
 import ostrowski.combat.common.enums.SkillType;
@@ -15,11 +16,11 @@ public abstract class WeaponStyleAttackRanged extends WeaponStyleAttack
 {
    public short    rangeBase;
    public String[] preparationSteps;
-   public WeaponStyleAttackRanged(SkillType skillType, int minSkill, int skillPenalty, String name,
+   public WeaponStyleAttackRanged(SkillType skillType, SkillRank minRank, int skillPenalty, String name,
                                   int damageMod, DiceSet varianceDice, DamageType damageType, AttackType attackType,
                                   int parryPenalty, int rangeBase, int handsRequired, String[] preparationSteps)
    {
-      super(skillType, minSkill, skillPenalty, name, 0/*speedBase*/, -99/*slowStr*/, 99/*fastStr*/, damageMod,
+      super(skillType, minRank, skillPenalty, name, 0/*speedBase*/, -99/*slowStr*/, 99/*fastStr*/, damageMod,
             varianceDice, damageType, attackType, Charge.Never/*chargeType*/, parryPenalty, 2/*minRange*/, rangeBase*4/*maxRange*/, handsRequired);
       this.rangeBase = (short) rangeBase;
       this.preparationSteps = preparationSteps;

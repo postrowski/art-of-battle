@@ -1,9 +1,9 @@
 package ostrowski.combat.common;
 
 public enum SkillRank {
-   PROFICIENT("Proficient", 10),
+   UNKNOWN("Unknown", 0),
    FAMILIAR("Familiar", 4),
-   UNKNOWN("Unknown", 0);
+   PROFICIENT("Proficient", 10);
 
    String name;
    byte   cost;

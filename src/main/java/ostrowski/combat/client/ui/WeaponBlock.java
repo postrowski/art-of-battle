@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.*;
 import ostrowski.DebugBreak;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.CharacterWidget;
+import ostrowski.combat.common.SkillRank;
 import ostrowski.combat.common.enums.Attribute;
 import ostrowski.combat.common.things.*;
 import ostrowski.combat.common.weaponStyles.WeaponStyleAttack;
@@ -441,11 +442,10 @@ public class WeaponBlock extends Helper implements ModifyListener, IUIBlock, Sel
                         continue;
                      }
                      attackStyles.add(element);
-                     int minSkill = element.getMinSkill();
-                     byte charSkill = character.getSkillLevel(element, false/*adjustForPain*/,
-                                                              limb.limbType/*useHand*/, false/*sizeAdjust*/,
-                                                              false/*AdjustForEnumbrance*/, false/*adjustForHolds*/);
-                     if ((minSkill == 0) || (minSkill <= charSkill)) {
+                     SkillRank minRank = element.getMinRank();
+                     SkillRank skillRank = character.getSkillRank(element.skillType);
+
+                     if ((minRank == SkillRank.UNKNOWN) || (minRank.getCost() <= skillRank.getCost())) {
                         String styleName = element.getName();
                         String skillName = element.getSkillType().getName();
                         this.styleName[0][itemsPerStyle].setText(styleName);

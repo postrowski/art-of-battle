@@ -788,15 +788,11 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       for (int i = 0; i < weapon.attackStyles.length; i++) {
          WeaponStyleAttack attackMode = weapon.getAttackStyle(i);
          SkillType skillType = attackMode.getSkillType();
-         Optional<Profession> a = professionsList.values()
-                                                 .stream()
-                                                 .filter(p -> p.getType().skillList.contains(skillType))
-                                                 .max((o1, o2) -> Byte.compare(o1.getLevel(skillType),
-                                                                               o2.getLevel(skillType)));
-         if (a.isEmpty()) {
+         Profession prof = getProfession(skillType);
+         if (prof == null) {
             continue;
          }
-         byte skillLevel = a.get().getLevel(skillType);
+         byte skillLevel = prof.getLevel(skillType);
          if ((bestSkill == null) || (bestSkillLevel < skillLevel)) {
             bestSkill = skillType;
             bestSkillLevel = skillLevel;
@@ -817,7 +813,29 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       }
       return best;
    }
+   public SkillRank getBestSkillRank(Weapon weapon) {
+      SkillRank best = SkillRank.UNKNOWN;
+      for (int i = 0; i < weapon.attackStyles.length; i++) {
+         SkillRank testSkill = getSkillRank(weapon.getAttackStyle(i).skillType);
+         if (best.getCost() < testSkill.getCost()) {
+            best = testSkill;
+         }
+      }
+      return best;
+   }
 
+   public SkillRank getSkillRank(SkillType skillType) {
+      Profession prof = getProfession(skillType);
+      if (prof != null) {
+         if (prof.getFamiliarSkills().contains(skillType)) {
+            return SkillRank.FAMILIAR;
+         }
+         if (prof.getProficientSkills().contains(skillType)) {
+            return SkillRank.PROFICIENT;
+         }
+      }
+      return SkillRank.UNKNOWN;
+   }
    public byte getSkillLevel(WeaponStyle attackMode, boolean adjustForPain, LimbType useHand,
                              boolean sizeAdjust, boolean adjustForEncumbrance, boolean adjustForHolds) {
       byte skillLevel = getSkillLevel(attackMode.getSkillType(), useHand, sizeAdjust, adjustForEncumbrance, adjustForHolds);
@@ -842,16 +860,24 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       return skillLevel;
    }
 
-   public byte getSkillLevel(SkillType skillType, LimbType useLimb, boolean sizeAdjust, boolean adjustForEncumbrance, boolean adjustForHolds) {
+   private Profession getProfession(SkillType skillType) {
       Optional<Profession> a = professionsList.values()
                                               .stream()
                                               .filter(p -> p.getType().skillList.contains(skillType))
                                               .max((o1, o2) -> Byte.compare(o1.getLevel(skillType),
                                                                             o2.getLevel(skillType)));
-      if (a.isEmpty()) {
+      if (a.isPresent()) {
+         return a.get();
+      }
+      return null;
+   }
+
+   public byte getSkillLevel(SkillType skillType, LimbType useLimb, boolean sizeAdjust, boolean adjustForEncumbrance, boolean adjustForHolds) {
+      Profession prof = getProfession(skillType);
+      if (prof == null) {
          return 0;
       }
-      byte skillLevel = a.get().getLevel(skillType);
+      byte skillLevel = prof.getLevel(skillType);
       if (useLimb != null) {
          skillLevel -= getHandPenalties(useLimb, skillType);
       }
@@ -873,15 +899,11 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    }
 
    public byte getAdjustedSkillLevel(SkillType skillType, LimbType useLimb, boolean sizeAdjust, boolean adjustForEncumbrance, boolean adjustForHolds) {
-      Optional<Profession> a = professionsList.values()
-                                              .stream()
-                                              .filter(p -> p.getType().skillList.contains(skillType))
-                                              .max((o1, o2) -> Byte.compare(o1.getLevel(skillType),
-                                                                            o2.getLevel(skillType)));
-      if (a.isEmpty()) {
+      Profession prof = getProfession(skillType);
+      if (prof == null) {
          return 0;
       }
-      byte baseSkillLevel = a.get().getLevel(skillType);
+      byte baseSkillLevel = prof.getLevel(skillType);
       byte skillLevel = Rules.getAdjustedSkillLevel(baseSkillLevel, getAttributeLevel(skillType.getAttributeBase()));
       if (useLimb != null) {
          skillLevel -= getHandPenalties(useLimb, skillType);
@@ -916,7 +938,8 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    }
 
    public void setProfessionLevel(ProfessionType professionType, byte profLevel) {
-      professionsList.computeIfAbsent(professionType, o -> new Profession(professionType, profLevel));
+      professionsList.computeIfAbsent(professionType, o -> new Profession(professionType, profLevel))
+                     .setLevel(profLevel);
    }
 
    public byte getProfessionLevel(ProfessionType professionType) {
@@ -2282,10 +2305,10 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
             }
          }
          for (WeaponStyleAttack style : thing.getAttackStyles()) {
-            int minSkill = style.getMinSkill();
-            if (minSkill > 0) {
-               byte skill = getSkillLevel(style.getSkillType(), limb.limbType, false, true, true);
-               if (skill < minSkill) {
+            SkillRank minRank = style.getMinRank();
+            if (minRank != SkillRank.UNKNOWN) {
+               SkillRank skillRank = getSkillRank(style.getSkillType());
+               if (skillRank.getCost() < minRank.getCost()) {
                   continue;
                }
             }
@@ -2371,18 +2394,45 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                if (hand != null) {
                   Weapon unarmedWeapon = hand.getWeapon(this);
                   if (unarmedWeapon != null) {
-                     for (WeaponStyleAttack attackStyle : unarmedWeapon.attackStyles) {
-                        if (attackStyle.skillType == SkillType.Aikido) {
+                     Profession martialArts = professionsList.get(ProfessionType.MartialArtist);
+                     if (martialArts != null) {
+                        if (martialArts.getProficientSkills().contains(SkillType.Aikido)) {
                            martialArtsSkill = SkillType.Aikido;
-                           break;
                         }
-                        if (attackStyle.skillType == SkillType.Karate) {
+                        else if (martialArts.getProficientSkills().contains(SkillType.Karate)) {
                            martialArtsSkill = SkillType.Karate;
-                           break;
                         }
-                        if (attackStyle.skillType == SkillType.Brawling) {
+                        else if (martialArts.getFamiliarSkills().contains(SkillType.Aikido)) {
+                           martialArtsSkill = SkillType.Aikido;
+                        }
+                        else if (martialArts.getFamiliarSkills().contains(SkillType.Karate)) {
+                           martialArtsSkill = SkillType.Karate;
+                        }
+                        else if (martialArts.getProficientSkills().contains(SkillType.Brawling)) {
                            martialArtsSkill = SkillType.Brawling;
-                           break;
+                        }
+                        else if (martialArts.getFamiliarSkills().contains(SkillType.Brawling)) {
+                           martialArtsSkill = SkillType.Brawling;
+                        }
+                     }
+                     if (martialArtsSkill == null) {
+                        Profession fighter = professionsList.get(ProfessionType.Fighter);
+                        if (fighter != null) {
+                           if (fighter.getProficientSkills().contains(SkillType.Brawling)) {
+                              martialArtsSkill = SkillType.Brawling;
+                           } else if (fighter.getFamiliarSkills().contains(SkillType.Brawling)) {
+                              martialArtsSkill = SkillType.Brawling;
+                           }
+                        }
+                     }
+                     if (martialArtsSkill == null) {
+                        Profession common = professionsList.get(ProfessionType.Common);
+                        if (common != null) {
+                           if (common.getProficientSkills().contains(SkillType.Brawling)) {
+                              martialArtsSkill = SkillType.Brawling;
+                           } else if (common.getFamiliarSkills().contains(SkillType.Brawling)) {
+                              martialArtsSkill = SkillType.Brawling;
+                           }
                         }
                      }
                   }
@@ -2892,6 +2942,36 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       return req;
    }
 
+   class AttackOption {
+      Integer styleIndex;
+      String  desc;
+      Boolean    styleAllowed;
+      AttackType attackType;
+      DiceSet    attackDice;
+      byte       styleDamage;
+      DamageType damageType;
+      byte       adjustedSkillLevel;
+      byte       speed;
+      SkillRank  rank;
+      SkillType  skillType;
+
+      public AttackOption(Integer styleIndex, String desc, Boolean styleAllowed, AttackType attackType,
+                          DiceSet attackDice, byte styleDamage, DamageType damageType, byte adjustedSkillLevel,
+                          byte speed, SkillRank rank, SkillType skillType) {
+         this.styleIndex = styleIndex;
+         this.desc = desc;
+         this.styleAllowed = styleAllowed;
+         this.attackType = attackType;
+         this.attackDice = attackDice;
+         this.styleDamage = styleDamage;
+         this.damageType = damageType;
+         this.adjustedSkillLevel = adjustedSkillLevel;
+         this.speed = speed;
+         this.rank = rank;
+         this.skillType = skillType;
+      }
+   }
+
    public RequestAttackStyle getRequestAttackStyle(RequestAction parentAction, Arena arena) {
       RequestAttackStyle req = null;
       boolean has4legs = getLegCount() > 3;
@@ -2934,19 +3014,20 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
             boolean canUseTwohanded = false;
             // if no shield, always try to use weapon in a 2-handed style
             Limb otherLimb = limbs.get(parentAction.getLimb().getPairedType());
-            if ((otherLimb != null) && (otherLimb.limbType != parentAction.getLimb())) {
-               if ((otherLimb instanceof Hand) && otherLimb.isEmpty() && (!otherLimb.isCrippled())) {
-                  for (int i = 0; i < styles.length; i++) {
-                     // If the target is out of range, don't bother checking for handedness
-                     short minRange = styles[i].getMinRange();
-                     short maxRange = styles[i].getMaxRange();
-                     boolean inRange = (maxDistanceToTarget >= minRange) && ((minDistanceToTarget - advanceRange) <= maxRange);
-                     if (inRange) {
-                        if (isGrapple) {
-                           canUseTwohanded = true;
-                        } else if (weap.isTwoHanded(i)) {
-                           canUseTwohanded = true;
-                        }
+            if ((otherLimb instanceof Hand) &&
+                (otherLimb.limbType != parentAction.getLimb()) &&
+                otherLimb.isEmpty() &&
+                (!otherLimb.isCrippled())) {
+               for (int i = 0; i < styles.length; i++) {
+                  // If the target is out of range, don't bother checking for handedness
+                  short minRange = styles[i].getMinRange();
+                  short maxRange = styles[i].getMaxRange();
+                  boolean inRange = (maxDistanceToTarget >= minRange) && ((minDistanceToTarget - advanceRange) <= maxRange);
+                  if (inRange) {
+                     if (isGrapple) {
+                        canUseTwohanded = true;
+                     } else if (weap.isTwoHanded(i)) {
+                        canUseTwohanded = true;
                      }
                   }
                }
@@ -2969,13 +3050,12 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                   curSpeed = styleSpeed;
                }
             }
-            int availableCount = 0;
-            int availableIndex = -1;
             int defaultIndex = -1;
             byte bestExpectedDamage = -127;
-            for (int i = 0; i < styles.length; i++) {
-               short minRange = styles[i].getMinRange();
-               short maxRange = styles[i].getMaxRange();
+            List<AttackOption> options = new ArrayList<>();
+            for (int styleIndex = 0; styleIndex < styles.length; styleIndex++) {
+               short minRange = styles[styleIndex].getMinRange();
+               short maxRange = styles[styleIndex].getMaxRange();
 
                if (isCharge) {
                   // If this is a charge, or an advance-and-attack,
@@ -2992,64 +3072,114 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                // If the target is out of range, don't bother checking for handedness
                if (inRange) {
                   // For bastard swords, allow single-handed attacks, even if we could use both hands.
-                  //                  if (canUseTwohanded && (styles[i].getHandsRequired() == 1)) {
+                  //                  if (canUseTwohanded && (styles[styleIndex].getHandsRequired() == 1)) {
                   //                     handsOK = false;
                   //                  }
-                  if (!canUseTwohanded && (styles[i].getHandsRequired() == 2)) {
+                  if (!canUseTwohanded && (styles[styleIndex].getHandsRequired() == 2)) {
                      handsOK = false;
                   }
                }
-               SkillType skillType = styles[i].getSkillType();
+               SkillType skillType = styles[styleIndex].getSkillType();
                byte skillLevel = getSkillLevel(skillType, null/*handUse*/, false/*sizeAdjust*/, true/*adjustForEncumbrance*/, true/*adjustForHolds*/);
-               if (styles[i].getMinSkill() <= skillLevel) {
-                  if (!isCharge || styles[i].canCharge(isMounted(), has4legs)) {
-                     sb.setLength(0);
-                     sb.append(" (");
-                     sb.append(styles[i].getName());
-                     sb.append(": ");
-                     if (!isGrapple && !isCounterAttack) {
-                        sb.append(styles[i].getDamageString(getPhysicalDamageBase())).append(", ");
-                     }
-                     sb.append("skill '").append(skillType);
-                     sb.append("' level = ").append(skillLevel - styles[i].getSkillPenalty());
-                     byte styleSpeed = -1;
-                     if (!singleSpeed) {
-                        styleSpeed = styles[i].getSpeed(strength);
-                        sb.append(", speed = ").append(styleSpeed);
-                     }
-                     sb.append(")");
+               SkillRank skillRank = getSkillRank(skillType);
+               if ((styles[styleIndex].getMinRank().getCost() <= skillRank.getCost()) &&
+                   (!isCharge || styles[styleIndex].canCharge(isMounted(), has4legs))) {
+                  sb.setLength(0);
+                  sb.append(" (");
+                  sb.append(styles[styleIndex].getName());
+                  sb.append(": ");
+                  if (!isGrapple && !isCounterAttack) {
+                     sb.append(styles[styleIndex].getDamageString(getPhysicalDamageBase())).append(", ");
+                  }
+                  sb.append("skill '").append(skillType);
+                  sb.append("' level = ").append(skillLevel - styles[styleIndex].getSkillPenalty());
+                  byte styleSpeed = -1;
+                  if (!singleSpeed) {
+                     styleSpeed = styles[styleIndex].getSpeed(strength);
+                     sb.append(", speed = ").append(styleSpeed);
+                  }
+                  sb.append(")");
 
-                     byte attackActions = (byte) Math.min(parentAction.getAttackActions(false/*considerSpellAsAttack*/), styles[i].getMaxAttackActions());
-                     int aimActions = getAimDuration(target.uniqueID);
-                     if (aimActions > 0) {
-                        attackActions += (byte) (Math.min(aimActions - 1, styles[i].getMaxAimBonus()));
-                     }
-                     boolean styleAllowed = true;
-                     if (styles[i].isRanged()) {
-                        if ((getAimDuration(target.uniqueID) <= 0) || parentAction.isAdvance()) {
-                           styleAllowed = false;
-                        }
-                     }
-                     if (!inRange || !handsOK) {
+                  byte attackActions = (byte) Math.min(parentAction.getAttackActions(false/*considerSpellAsAttack*/), styles[styleIndex].getMaxAttackActions());
+                  int aimActions = getAimDuration(target.uniqueID);
+                  if (aimActions > 0) {
+                     attackActions += (byte) (Math.min(aimActions - 1, styles[styleIndex].getMaxAimBonus()));
+                  }
+                  boolean styleAllowed = true;
+                  if (styles[styleIndex].isRanged()) {
+                     if ((getAimDuration(target.uniqueID) <= 0) || parentAction.isAdvance()) {
                         styleAllowed = false;
                      }
-                     if (styleAllowed) {
-                        availableCount++;
-                        availableIndex = i;
-                        if (singleSpeed || (lowestSpeed == styleSpeed)) {
-                           byte expectedDamageForStyle = styles[i].getDamage(getAdjustedStrength());
-                           expectedDamageForStyle -= target.getBuild(styles[i].getDamageType());
-                           expectedDamageForStyle += (skillLevel / 2);
-                           if ((defaultIndex == -1) || (expectedDamageForStyle > bestExpectedDamage)) {
-                              defaultIndex = i;
-                              bestExpectedDamage = expectedDamageForStyle;
-                           }
+                  }
+                  if (!inRange || !handsOK) {
+                     styleAllowed = false;
+                  }
+                  byte styleDamage = styles[styleIndex].getDamage(getAdjustedStrength());
+                  if (styleAllowed) {
+                     if (singleSpeed || (lowestSpeed == styleSpeed)) {
+                        byte expectedDamageForStyle = styleDamage;
+                        expectedDamageForStyle -= target.getBuild(styles[styleIndex].getDamageType());
+                        expectedDamageForStyle += (skillLevel / 2);
+                        if ((defaultIndex == -1) || (expectedDamageForStyle > bestExpectedDamage)) {
+                           defaultIndex = styleIndex;
+                           bestExpectedDamage = expectedDamageForStyle;
                         }
                      }
-                     DiceSet attackDice = Rules.getDice(getAttributeLevel(Attribute.Dexterity), attackActions, Attribute.Dexterity/*attribute*/, RollType.ATTACK_TO_HIT);
-                     req.addAttackOption(i, sb.toString(), styleAllowed, styles[i].getAttackType(), attackDice, styles[i].getDamageType());
+                  }
+                  DiceSet attackDice = Rules.getDice(getAttributeLevel(Attribute.Dexterity), attackActions, Attribute.Dexterity/*attribute*/, RollType.ATTACK_TO_HIT);
+                  options.add(new AttackOption(styleIndex, sb.toString(), styleAllowed, styles[styleIndex].getAttackType(),
+                                               attackDice, styleDamage, styles[styleIndex].getDamageType(),
+                                               (byte)(skillLevel - styles[styleIndex].getSkillPenalty()), styleSpeed,
+                                               skillRank, skillType));
+               }
+            }
+
+            // Remove less effective attacks
+            for (int i=0 ; i<options.size() ; i++) {
+               AttackOption aoi = options.get(i);
+               for (int j=i+1 ; j<options.size() ; j++) {
+                  AttackOption aoj = options.get(j);
+                  // never exclude different types of damage (cut vs. imp)
+                  if (aoi.damageType != aoj.damageType) {
+                     continue;
+                  }
+                  // If the skillTypes are the same, and the levels are the same, never exclude them (aikido throw vs aikido grab)
+                  if (aoi.adjustedSkillLevel == aoj.adjustedSkillLevel &&
+                      aoi.skillType == aoj.skillType) {
+                     continue;
+                  }
+
+                  if (aoi.attackDice.getExpectedRoll() >= aoj.attackDice.getExpectedRoll() &&
+                      aoi.styleDamage >= aoj.styleDamage &&
+                      aoi.adjustedSkillLevel >= aoj.adjustedSkillLevel &&
+                      aoi.rank.getCost() >= aoj.rank.getCost() &&
+                      aoi.speed <= aoj.speed
+                      ) {
+                     // aoi is superior or equal in every way to aoj, so we can remove aoj
+                     options.remove(j--);
+                     continue;
+                  }
+                  if (aoi.attackDice.getExpectedRoll() <= aoj.attackDice.getExpectedRoll() &&
+                      aoi.styleDamage <= aoj.styleDamage &&
+                      aoi.adjustedSkillLevel <= aoj.adjustedSkillLevel &&
+                      aoi.rank.getCost() <= aoj.rank.getCost() &&
+                      aoi.speed >= aoj.speed
+                     ) {
+                     // aoj is superior or equal in every way to aoi, so we can remove aoi
+                     options.remove(i);
+                     i--;
+                     break;
                   }
                }
+            }
+            int availableCount = 0;
+            int availableIndex = -1;
+            for (AttackOption opt : options) {
+               if (opt.styleAllowed) {
+                  availableCount++;
+                  availableIndex = opt.styleIndex;
+               }
+               req.addAttackOption(opt.styleIndex, opt.desc, opt.styleAllowed, opt.attackType, opt.attackDice, opt.damageType);
             }
             if (defaultIndex != -1) {
                req.setDefaultOption(defaultIndex);

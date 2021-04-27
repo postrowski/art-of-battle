@@ -481,6 +481,12 @@ public class RequestAction extends SyncRequest implements Enums
          case OPT_COUNTER_ATTACK_THROW_1  :
          case OPT_COUNTER_ATTACK_THROW_2  :
          case OPT_COUNTER_ATTACK_THROW_3  : return actor.getName() + " counter-attacks (throw, "+getActionsUsed()+"-actions).";
+         case OPT_COUNTER_ATTACK_CLOSE_AND_GRAB_1   :
+         case OPT_COUNTER_ATTACK_CLOSE_AND_GRAB_2   :
+         case OPT_COUNTER_ATTACK_CLOSE_AND_GRAB_3   : return actor.getName() + " closes and counter-attacks (grab, "+getActionsUsed()+"-actions).";
+         case OPT_COUNTER_ATTACK_CLOSE_AND_THROW_1  :
+         case OPT_COUNTER_ATTACK_CLOSE_AND_THROW_2  :
+         case OPT_COUNTER_ATTACK_CLOSE_AND_THROW_3  : return actor.getName() + " closes and counter-attacks (throw, "+getActionsUsed()+"-actions).";
          case OPT_ATTACK_GRAPPLE_1        :
          case OPT_ATTACK_GRAPPLE_2        :
          case OPT_ATTACK_GRAPPLE_3        : return actor.getName() + " grapples ("+getActionsUsed()+"-actions).";

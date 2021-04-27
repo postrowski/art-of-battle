@@ -793,6 +793,45 @@ public class AI implements Enums
                   }
                }
             }
+            else if (attackActions > 1) {
+               // weaponSpeed = 0 or 1 here
+               // as our skill goes up, don't attack with multi actions, multiple quick attacks are better
+               if (skillLevel > (5 + 5*CombatServer.random())) {
+                  attackActions--;
+               }
+            }
+            if ((weaponSpeed == 0) && (attackActions > 1)) {
+               // consider going down to by a second action
+               if ((attackActions >1) && (skillLevel > (5 + 5*CombatServer.random()))) {
+                  attackActions--;
+               }
+            }
+            // Consider how many opponents I'm facing. when multiple opponents, prefer to throw instead of grab.
+            Character finalTarget = target;
+            long visibleEnemiesNearby = CombatServer._this.getArena()
+                                                          .getCombatants()
+                                                          .stream()
+                                                          .filter(c -> c.isEnemy(self))
+                                                          .filter(c -> c.isStanding())
+                                                          .filter(c -> c != finalTarget)
+                                                          .filter(c -> c.getCondition().getActionsAvailableThisRound(false) > 0)
+                                                          .filter(c -> c.getCondition().getActionsAvailableThisRound(false) > 1 || ArenaCoordinates.getDistance(c.getHeadCoordinates(), self.getHeadCoordinates()) < 3)
+                                                          .filter(c -> c.getCondition().getActionsAvailableThisRound(false) > 2 || ArenaCoordinates.getDistance(c.getHeadCoordinates(), self.getHeadCoordinates()) < 6)
+                                                          .filter(c -> c.getCondition().getWoundsAndPainPenalty() < 8)
+                                                          .filter(c -> CombatServer._this.getArena().hasLineOfSight(c, self) || aiType == AI_Type.GOD)
+                                                          .count();
+            if ((weaponSpeed == 1) && (attackActions > 1) && (visibleEnemiesNearby > 1)) {
+               if ((visibleEnemiesNearby > 3) ||
+                   ((visibleEnemiesNearby == 2) && (CombatServer.random() > .33)) ||
+                   ((visibleEnemiesNearby == 1) && (CombatServer.random() > .67))) {
+                  attackActions--;
+               }
+            }
+            if ((weaponSpeed == 0) && (attackActions > 1) && (visibleEnemiesNearby > 1)) {
+               if ((visibleEnemiesNearby > 2) || (CombatServer.random() > .5)) {
+                  attackActions--;
+               }
+            }
          }
          traceSb.append(",");
       }
@@ -1810,16 +1849,21 @@ public class AI implements Enums
             if (!limb.isCrippled()) {
                Weapon weap = limb.getWeapon(self);
                if (weap != null) {
-                  int minSkillToAttack = weap.getMinSkillToAttack();
+                  SkillRank minSkillRankToAttack = weap.getMinSkillRankToAttack();
                   byte weaponSkillLevel = self.getBestSkillLevel(weap);
-                  if (minSkillToAttack > 0) {
-                     if (weaponSkillLevel < minSkillToAttack) {
+                  if (minSkillRankToAttack != SkillRank.UNKNOWN) {
+                     SkillRank weaponSkillRank = self.getBestSkillRank(weap);
+                     if (weaponSkillRank.getCost() < minSkillRankToAttack.getCost()) {
                         continue;
                      }
                   }
                   int weaponScore = weaponSkillLevel + weap.getWeaponMaxDamage(this.self);
                   if (weap.isMissileWeapon() || weap.isThrowable()) {
                      weaponScore += 5;
+                  }
+                  if (limb.limbType.isLeg()) {
+                     // max damage for a leg assumes a spin kick, which is at a -2 to hit, so downgrade that value a little
+                     weaponScore--;
                   }
 
                   if ((bestWeapon == null) || (weaponScore > bestWeaponScore)) {
@@ -3043,7 +3087,40 @@ public class AI implements Enums
       }
       Rules.diag(sb.toString());
       List<Integer> priorities = new ArrayList<>();
-      priorities.add(bestOptionPerAction.get(bestDefAction).getIntValue());
+      DefenseOptions bestDefenseOptions = bestOptionPerAction.get(bestDefAction);
+      byte actionsAvailableThisRound = self.getCondition().getActionsAvailableThisRound(true);
+      int extraActionsThisRound = actionsAvailableThisRound - bestDefAction;
+      if (extraActionsThisRound > 0) {
+         // Consider how many opponents I'm facing. when multiple opponents, prefer to throw instead of grab.
+         long visibleEnemiesNearby = CombatServer._this.getArena()
+                                                       .getCombatants()
+                                                       .stream()
+                                                       .filter(c -> c.isEnemy(self))
+                                                       .filter(c -> c.isStanding())
+                                                       .filter(c -> CombatServer._this.getArena().hasLineOfSight(c, self) || aiType == AI_Type.GOD)
+                                                       .filter(c -> c.getCondition().getWoundsAndPainPenalty() < 8)
+                                                       .filter(c -> ArenaCoordinates.getDistance(c.getHeadCoordinates(), self.getHeadCoordinates()) < 10)
+                                                       .count();
+         boolean grabAttacker = (CombatServer.random() > .5);
+         if (visibleEnemiesNearby >= 2) {
+            grabAttacker = false;
+            extraActionsThisRound = 1; // don't spend too much defense against one opponent when many exist
+         }
+         // we have more actions available that we need for this defense. consider a throw or grab, if available
+         DefenseOptions bestDefenseOptionsWithCounter = new DefenseOptions();
+         bestDefenseOptions.list.forEach(o-> bestDefenseOptionsWithCounter.add(o));
+         DefenseOption defCounter = (grabAttacker) ? DefenseOption.DEF_COUNTER_GRAB_1 : DefenseOption.DEF_COUNTER_THROW_1;
+         bestDefenseOptionsWithCounter.add(defCounter);
+         priorities.add(bestDefenseOptionsWithCounter.getIntValue());
+         if (extraActionsThisRound > 1) {
+            DefenseOptions bestDefenseOptionsWithCounter2 = new DefenseOptions();
+            bestDefenseOptions.list.forEach(o-> bestDefenseOptionsWithCounter2.add(o));
+            DefenseOption defCounter2 = (grabAttacker) ? DefenseOption.DEF_COUNTER_GRAB_2 : DefenseOption.DEF_COUNTER_THROW_2;
+            bestDefenseOptionsWithCounter2.add(defCounter2);
+            priorities.add(bestDefenseOptionsWithCounter2.getIntValue());
+         }
+      }
+      priorities.add(bestDefenseOptions.getIntValue());
       return selectAnswer(defense, priorities);
    }
 

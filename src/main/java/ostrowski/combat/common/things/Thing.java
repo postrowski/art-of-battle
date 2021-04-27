@@ -6,11 +6,9 @@ package ostrowski.combat.common.things;
 
 import org.eclipse.swt.graphics.RGB;
 import ostrowski.DebugBreak;
+import ostrowski.combat.common.*;
 import ostrowski.combat.common.Character;
-import ostrowski.combat.common.DrawnObject;
-import ostrowski.combat.common.Race;
 import ostrowski.combat.common.Race.Gender;
-import ostrowski.combat.common.Rules;
 import ostrowski.combat.common.enums.DamageType;
 import ostrowski.combat.common.enums.DieType;
 import ostrowski.combat.common.enums.Enums;
@@ -141,7 +139,7 @@ public abstract class Thing extends SerializableObject implements Cloneable, Enu
             power = Integer.parseInt(thingName.substring("Level-".length(), "Level-".length()+1));
          }
          int damage = 5 + (power * 5);
-         WeaponStyleAttack style = new WeaponStyleAttackThrown(0/*minSkill*/, 0/*penalty*/, damage, DieType.D6, DamageType.FIRE, 12/*rangeBase*/,  1/*hands*/);
+         WeaponStyleAttack style = new WeaponStyleAttackThrown(SkillRank.UNKNOWN/*minSkill*/, 0/*penalty*/, damage, DieType.D6, DamageType.FIRE, 12/*rangeBase*/, 1/*hands*/);
          // Give it a non-zero cost, so it will not quality as not being real
          return new Weapon(-power/*size*/, racialBase, 0/*lbs*/, 1/*$*/, thingName, new WeaponStyle[] {style});
       }

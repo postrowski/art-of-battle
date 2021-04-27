@@ -6,6 +6,7 @@ package ostrowski.combat.common.things;
 
 import ostrowski.combat.common.DiceSet;
 import ostrowski.combat.common.Race;
+import ostrowski.combat.common.SkillRank;
 import ostrowski.combat.common.enums.DamageType;
 import ostrowski.combat.common.enums.DieType;
 import ostrowski.combat.common.enums.SkillType;
@@ -17,20 +18,20 @@ public class MissileWeapon extends Weapon
 {
    public MissileWeapon() {}
    public MissileWeapon(int size, Race racialBase, double weight, int cost, String name,
-                        SkillType skillType, int minSkill, int skillPenalty, int damageMod,
+                        SkillType skillType, SkillRank minRank, int skillPenalty, int damageMod,
                         DieType varianceDie, DamageType damageType, int rangeBase,
                         int handsRequired, String[] preparationSteps)
    {
-      this(size, racialBase, weight, cost, name, skillType, minSkill, skillPenalty, damageMod,
+      this(size, racialBase, weight, cost, name, skillType, minRank, skillPenalty, damageMod,
            DiceSet.getSingleDie(varianceDie), damageType, rangeBase, handsRequired, preparationSteps);
    }
    public MissileWeapon(int size, Race racialBase, double weight, int cost, String name,
-                        SkillType skillType, int minSkill, int skillPenalty, int damageMod,
+                        SkillType skillType, SkillRank minRank, int skillPenalty, int damageMod,
                         DiceSet varianceDice, DamageType damageType, int rangeBase,
                         int handsRequired, String[] preparationSteps)
    {
       super(size, racialBase, weight, cost, name,
-            new WeaponStyle[] {new WeaponStyleAttackMissile(skillType, minSkill, skillPenalty,
+            new WeaponStyle[] {new WeaponStyleAttackMissile(skillType, minRank, skillPenalty,
                                                             damageMod, varianceDice, damageType,
                                                             rangeBase, handsRequired, preparationSteps)});
    }

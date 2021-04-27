@@ -5,6 +5,7 @@
 package ostrowski.combat.common.weaponStyles;
 
 import ostrowski.combat.common.DiceSet;
+import ostrowski.combat.common.SkillRank;
 import ostrowski.combat.common.enums.AttackType;
 import ostrowski.combat.common.enums.DamageType;
 import ostrowski.combat.common.enums.DieType;
@@ -14,17 +15,17 @@ import ostrowski.combat.common.enums.SkillType;
 public class WeaponStyleAttackThrown extends WeaponStyleAttackRanged
 {
    private static final String[] PREPARATION_STEPS = new String[] {"Raise <weaponName> to throw"};
-   public WeaponStyleAttackThrown(int minSkill, int skillPenalty,
+   public WeaponStyleAttackThrown(SkillRank minRank, int skillPenalty,
                                   int damageMod, DieType varianceDie, DamageType damageType,
                                   int rangeBase, int handsRequired)
    {
-      this(minSkill, skillPenalty, damageMod, DiceSet.getSingleDie(varianceDie), damageType, rangeBase, handsRequired);
+      this(minRank, skillPenalty, damageMod, DiceSet.getSingleDie(varianceDie), damageType, rangeBase, handsRequired);
    }
-   public WeaponStyleAttackThrown(int minSkill, int skillPenalty,
+   public WeaponStyleAttackThrown(SkillRank minRank, int skillPenalty,
                                   int damageMod, DiceSet varianceDice, DamageType damageType,
                                   int rangeBase, int handsRequired)
    {
-      super(SkillType.Throwing, minSkill, skillPenalty, "Thrown"/*name*/,
+      super(SkillType.Throwing, minRank, skillPenalty, "Thrown"/*name*/,
             damageMod, varianceDice, damageType, AttackType.THROW, 0/*parryPenalty*/,
             rangeBase, handsRequired, PREPARATION_STEPS);
    }
@@ -32,7 +33,7 @@ public class WeaponStyleAttackThrown extends WeaponStyleAttackRanged
    @Override
    public WeaponStyleAttackThrown clone()
    {
-      WeaponStyleAttackThrown style =  new WeaponStyleAttackThrown(minSkill, skillPenalty,
+      WeaponStyleAttackThrown style =  new WeaponStyleAttackThrown(minRank, skillPenalty,
                                                                    damageMod, varianceDice, damageType,
                                                                    rangeBase, handsRequired);
       style.copyDataFrom(this);

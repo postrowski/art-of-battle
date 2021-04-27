@@ -3,6 +3,7 @@ package ostrowski.combat.common.spells.priest;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.DiceSet;
 import ostrowski.combat.common.Rules;
+import ostrowski.combat.common.SkillRank;
 import ostrowski.combat.common.enums.Attribute;
 import ostrowski.combat.common.enums.DamageType;
 import ostrowski.combat.common.enums.DieType;
@@ -113,10 +114,10 @@ public abstract class PriestMissileSpell extends PriestSpell implements IMissile
    public MissileWeapon getMissileWeapon() {
       // damType, rngBase, hands,      preparation steps (last to first)
       return new MissileWeapon(getMissileWeaponSize(), getCaster().getRace(),
-                               0/*lbs*/,  0/*cost*/,
+                               0/*lbs*/, 0/*cost*/,
                                missileWeaponName,
                                null/*skill type*/, // TODO: how to convey the spell's skill level for use in the attack?
-                               0 /*minimum skill level*/,
+                               SkillRank.UNKNOWN /*minimum skill rank*/,
                                getMissileWeaponSkillPenalty(),
                                getSpellDamageBase() + getCaster().getRace().getBuildModifier(),
                                getDamageDice()/*variance*/,

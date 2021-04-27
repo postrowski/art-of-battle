@@ -197,16 +197,16 @@ public class Weapon extends Thing {
       return bestDef;
    }
 
-   public byte getMinSkillToAttack() {
-      byte minSkill = 127;
+   public SkillRank getMinSkillRankToAttack() {
+      SkillRank minSkill = SkillRank.PROFICIENT;
       for (WeaponStyleAttack attack : attackStyles) {
-         if (attack.getMinSkill() < minSkill) {
-            minSkill = attack.getMinSkill();
+         if (attack.getMinRank().getCost() < minSkill.getCost()) {
+            minSkill = attack.getMinRank();
          }
       }
       for (WeaponStyleAttackGrapple grapple : grapplingStyles) {
-         if (grapple.getMinSkill() < minSkill) {
-            minSkill = grapple.getMinSkill();
+         if (grapple.getMinRank().getCost() < minSkill.getCost()) {
+            minSkill = grapple.getMinRank();
          }
       }
       return minSkill;
@@ -282,7 +282,7 @@ public class Weapon extends Thing {
             first = false;
             sb.append("{ name: '").append(style.getName());
             sb.append("', skill: '").append(style.getSkillType().getName());
-            sb.append("', minSkill: ").append(style.getMinSkill());
+            sb.append("', minRank: ").append(style.getMinRank());
             sb.append(", skillPenalty: ").append(style.getSkillPenalty());
             sb.append(", speedBase: ").append(style.getSpeedBase());
             sb.append(", slowStr: ").append(style.getSlowStr());
@@ -364,8 +364,8 @@ public class Weapon extends Thing {
          if (attackStyle.getMaxRange() > maxRange) {
             if (!onlyChargeTypes || attackStyle.canCharge(wielder.isMounted(), wielder.getLegCount() > 3)) {
                if (allowRanged || !attackStyle.isRanged()) {
-                  byte styleSkill = wielder.getSkillLevel(attackStyle.getSkillType(), LimbType.HAND_RIGHT, false, true, true);
-                  if (styleSkill >= attackStyle.getMinSkill()) {
+                  SkillRank wielderSkillRank = wielder.getSkillRank(attackStyle.getSkillType());
+                  if (wielderSkillRank.getCost() >= attackStyle.getMinRank().getCost()) {
                      maxRange = attackStyle.getMaxRange();
                   }
                }
@@ -376,8 +376,8 @@ public class Weapon extends Thing {
          if (grapplingStyle.getMaxRange() > maxRange) {
             if (!onlyChargeTypes || grapplingStyle.canCharge(wielder.isMounted(), wielder.getLegCount() > 3)) {
                if (allowRanged || !grapplingStyle.isRanged()) {
-                  byte styleSkill = wielder.getSkillLevel(grapplingStyle.getSkillType(), LimbType.HAND_RIGHT, false, true, true);
-                  if (styleSkill >= grapplingStyle.getMinSkill()) {
+                  SkillRank wielderSkillRank = wielder.getSkillRank(grapplingStyle.getSkillType());
+                  if (wielderSkillRank.getCost() >= grapplingStyle.getMinRank().getCost()) {
                      maxRange = grapplingStyle.getMaxRange();
                   }
                }
@@ -407,8 +407,8 @@ public class Weapon extends Thing {
                         continue;
                      }
                   }
-                  byte styleSkill = wielder.getSkillLevel(attackStyle.getSkillType(), LimbType.HAND_RIGHT, false, true, true);
-                  if (styleSkill >= attackStyle.getMinSkill()) {
+                  SkillRank wielderSkillRank = wielder.getSkillRank(attackStyle.getSkillType());
+                  if (wielderSkillRank.getCost() >= attackStyle.getMinRank().getCost()) {
                      minRange = attackStyle.getMinRange();
                   }
                }
@@ -419,8 +419,8 @@ public class Weapon extends Thing {
          if (grapplingStyle.getMinRange() < minRange) {
             if (allowRanged || !grapplingStyle.isRanged()) {
                if (!onlyChargeTypes || grapplingStyle.canCharge(wielder.isMounted(), wielder.getLegCount() > 3)) {
-                  byte styleSkill = wielder.getSkillLevel(grapplingStyle.getSkillType(), LimbType.HAND_RIGHT, false, true, true);
-                  if (styleSkill >= grapplingStyle.getMinSkill()) {
+                  SkillRank wielderSkillRank = wielder.getSkillRank(grapplingStyle.getSkillType());
+                  if (wielderSkillRank.getCost() >= grapplingStyle.getMinRank().getCost()) {
                      minRange = grapplingStyle.getMinRange();
                   }
                }
@@ -770,8 +770,7 @@ public class Weapon extends Thing {
 
       int armCount = -1;
       for (WeaponStyleAttackGrapple grapple : grapplingStyles) {
-         if (self.getSkillLevel(grapple.getSkillType(), null, false/*sizeAdjust*/,
-                                true/*adjustForEncumbrance*/, true/*adjustForHolds*/) >= grapple.getMinSkill()) {
+         if (self.getSkillRank(grapple.getSkillType()).getCost() >= grapple.getMinRank().getCost()) {
             if (armCount == -1) {
                armCount = self.getUncrippledArmCount(true/*reduceCountForTwoHandedWeaponsHeld*/);
             }
@@ -814,11 +813,11 @@ class WeaponBase extends Weapon implements SizelessWeapon
 class MissileWeaponBase extends MissileWeapon implements SizelessWeapon
 {
    public MissileWeaponBase(int size, double weight, int cost, String name,
-                            SkillType skillType, int minSkill, int skillPenalty, int damageMod,
+                            SkillType skillType, SkillRank minRank, int skillPenalty, int damageMod,
                             DieType varianceDie, DamageType damageType, int rangeBase,
                             int handsRequired, String[] preparationSteps)
    {
-      super(size, null/*racialBase*/, weight, cost, name, skillType, minSkill, skillPenalty, damageMod,
+      super(size, null/*racialBase*/, weight, cost, name, skillType, minRank, skillPenalty, damageMod,
             varianceDie, damageType, rangeBase, handsRequired, preparationSteps);
    }
 

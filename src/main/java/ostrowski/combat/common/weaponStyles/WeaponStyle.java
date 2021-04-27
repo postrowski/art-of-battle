@@ -4,6 +4,7 @@
  */
 package ostrowski.combat.common.weaponStyles;
 
+import ostrowski.combat.common.SkillRank;
 import ostrowski.combat.common.enums.Enums;
 import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.things.Weapon;
@@ -12,16 +13,16 @@ public abstract class WeaponStyle implements Enums//, Serializable
 {
    public SkillType skillType;
    public String    name;
-   public byte      minSkill;
+   public SkillRank minRank;
    public byte      skillPenalty;
    public byte      speedBase;
    public byte      slowStr;
    public byte      fastStr;
    public byte      handsRequired;
    public Weapon    weapon;
-   public WeaponStyle (SkillType skillType, int minSkill, int skillPenalty, String name, int speedBase, int slowStr, int fastStr, int handsRequired) {
+   public WeaponStyle(SkillType skillType, SkillRank minRank, int skillPenalty, String name, int speedBase, int slowStr, int fastStr, int handsRequired) {
       this.skillType = skillType;
-      this.minSkill = (byte) minSkill;
+      this.minRank = minRank;
       this.skillPenalty = (byte) skillPenalty;
       this.name = name;
       this.speedBase = (byte) speedBase;
@@ -53,7 +54,7 @@ public abstract class WeaponStyle implements Enums//, Serializable
    }
    public SkillType getSkillType(){ return skillType;    }
    public String getName()        { return name;         }
-   public byte getMinSkill()      { return minSkill;     }
+   public SkillRank getMinRank()  { return minRank;      }
    public byte getSkillPenalty()  { return skillPenalty; }
    public byte getSpeedBase()     { return speedBase;    }
    public byte getSlowStr()       { return slowStr;      }
@@ -66,7 +67,7 @@ public abstract class WeaponStyle implements Enums//, Serializable
    public void copyDataFrom(WeaponStyle source) {
       skillType = source.skillType;
       name = source.name;
-      minSkill = source.minSkill;
+      minRank = source.minRank;
       skillPenalty = source.skillPenalty;
       speedBase = source.speedBase;
       slowStr = source.slowStr;
@@ -98,7 +99,7 @@ public abstract class WeaponStyle implements Enums//, Serializable
       if (!name.equals(otherStyle.name)) {
          return false;
       }
-      if (minSkill != otherStyle.minSkill) {
+      if (minRank != otherStyle.minRank) {
          return false;
       }
       if (skillPenalty != otherStyle.skillPenalty) {

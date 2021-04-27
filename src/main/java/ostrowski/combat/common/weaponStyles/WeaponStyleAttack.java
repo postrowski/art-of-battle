@@ -4,10 +4,8 @@
  */
 package ostrowski.combat.common.weaponStyles;
 
+import ostrowski.combat.common.*;
 import ostrowski.combat.common.Character;
-import ostrowski.combat.common.DiceSet;
-import ostrowski.combat.common.Race;
-import ostrowski.combat.common.Rules;
 import ostrowski.combat.common.enums.AttackType;
 import ostrowski.combat.common.enums.DamageType;
 import ostrowski.combat.common.enums.SkillType;
@@ -32,12 +30,12 @@ public abstract class WeaponStyleAttack extends WeaponStyle
    protected short      minRange;
    protected short      maxRange;
 
-   public WeaponStyleAttack(SkillType skillType, int minSkill, int skillPenalty, String name,
+   public WeaponStyleAttack(SkillType skillType, SkillRank minRank, int skillPenalty, String name,
                             int speedBase, int slowStr, int fastStr, int damageMod,
                             DiceSet varianceDice, DamageType damageType, AttackType attackType,
                             Charge chargeType, int parryPenalty, int minRange, int maxRange, int handsRequired)
    {
-      super(skillType, minSkill, skillPenalty, name, speedBase, slowStr, fastStr, handsRequired);
+      super(skillType, minRank, skillPenalty, name, speedBase, slowStr, fastStr, handsRequired);
       this.damageMod = (byte) damageMod;
       this.varianceDice = varianceDice;
       this.damageType = damageType;
@@ -131,8 +129,7 @@ public abstract class WeaponStyleAttack extends WeaponStyle
       return 0;
    }
    public boolean canAttack(Character character, Weapon weap, Limb useFromLimb) {
-      if (getMinSkill() > character.getSkillLevel(getSkillType(), null/*useLimb*/,
-                                                  false/*sizeAdjust*/, false/*adjustForEncumbrance*/, true/*adjustForHolds*/)) {
+      if (getMinRank().getCost() > character.getSkillRank(getSkillType()).getCost()) {
          return false;
       }
       if (weap.isReal()) {
