@@ -3339,8 +3339,6 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                                                                              boolean includePosition,
                                                                              boolean computePdOnly,
                                                                              short distance) {
-      byte attributeNim = getAttributeLevel(Attribute.Nimbleness);
-      byte retreat = Rules.getRetreatLevel(attributeNim);
       HashMap<RANGE, HashMap<DefenseOption, Byte>> defBase = new HashMap<>();
       for (RANGE range : RANGE.values()) {
          defBase.put(range, new HashMap<>());
@@ -3453,8 +3451,10 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
             }
          }
       }
+      byte attributeNim = getAttributeLevel(Attribute.Nimbleness);
       for (RANGE range : RANGE.values()) {
          byte dodge = Rules.getDodgeLevel(attributeNim);
+         byte retreat = Rules.getRetreatLevel(attributeNim);
          byte rangeAdjustmentToPD = Rules.getRangeDefenseAdjustmentToPD(range);
          byte rangeAdjustmentPerAction = Rules.getRangeDefenseAdjustmentPerAction(range);
          boolean canDodge = true;

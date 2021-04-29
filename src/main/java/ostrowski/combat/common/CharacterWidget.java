@@ -32,7 +32,7 @@ public class CharacterWidget implements Enums, ModifyListener {
    private final AttributesBlock  attributesBlock    = new AttributesBlock(this);
    private final DefenseBlock     defenseBlock       = new DefenseBlock(this);
    private final DiceBlock        diceBlock          = new DiceBlock(this);
-   private final SkillsBlock      skillsBlock        = new SkillsBlock(this);
+   private final ProfessionsBlock professionsBlock   = new ProfessionsBlock(this);
    private final MainBlock        topBlock;
    private final WeaponBlock      weaponBlock        = new WeaponBlock(this);
    private final EncumbranceBlock encumbranceBlock   = new EncumbranceBlock(this);
@@ -90,8 +90,8 @@ public class CharacterWidget implements Enums, ModifyListener {
       if (diceBlock != null) {
          uiBlocks.add(diceBlock);
       }
-      if (skillsBlock != null) {
-         uiBlocks.add(skillsBlock);
+      if (professionsBlock != null) {
+         uiBlocks.add(professionsBlock);
       }
       if (weaponBlock != null) {
          uiBlocks.add(weaponBlock);
@@ -142,8 +142,8 @@ public class CharacterWidget implements Enums, ModifyListener {
          weaponBlock.buildBlock(topBlock);
       }
 
-      if (skillsBlock != null) {
-         skillsBlock.buildBlock(middleBlock);
+      if (professionsBlock != null) {
+         professionsBlock.buildBlock(middleBlock);
       }
       if (spellsBlock != null) {
          spellsBlock.buildBlock(middleBlock);
@@ -210,8 +210,8 @@ public class CharacterWidget implements Enums, ModifyListener {
          attributesBlock.enableControls(enabledFlag);
       }
                                     topBlock.enableControls(enabledFlag);
-      if (skillsBlock != null) {
-         skillsBlock.enableControls(enabledFlag);
+      if (professionsBlock != null) {
+         professionsBlock.enableControls(enabledFlag);
       }
       if (weaponBlock != null) {
          weaponBlock.enableControls(enabledFlag);

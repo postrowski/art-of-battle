@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Joe" Race="Human">
-  <Attributes DEX="2" HT="0" IQ="-1" NIM="0" SOC="0" STR="1" TOU="0"/>
+  <Attributes DEX="2" HT="0" IQ="-1" NIM="0" SOC="1" STR="1" TOU="0"/>
   <Equipment Armor="Heavy Leather">
     <Hand Name="right hand">Rapier</Hand>
     <Hand Name="left hand">Medium Shield</Hand>
   </Equipment>
   <Professions>
+    <Profession Level="2" Name="Detective" familiar="" proficient="Investigation,Lying"/>
+    <Profession Level="5" Name="Fighter" familiar="Brawling" proficient="Fencing,Shield"/>
     <Profession Level="2" Name="Common" familiar="" proficient="Throwing"/>
-    <Profession Level="2" Name="Martial Arts" familiar="" proficient="Aikido"/>
-    <Profession Level="6" Name="Fighter" familiar="Knife" proficient="Fencing,Shield"/>
   </Professions>
   <Advantages>
     <Advantage LevelName="$2,000" Name="Wealth"/>
