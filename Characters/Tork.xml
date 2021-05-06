@@ -6,9 +6,10 @@
     <Belt>Knife</Belt>
   </Equipment>
   <Professions>
-    <Profession Level="4" Name="Fighter" familiar="" proficient="Quarterstaff,Knife"/>
     <Profession Level="3" Name="Common" familiar="" proficient="Throwing"/>
     <Profession Level="3" Name="Spellcasting" familiar="" proficient="Conjuration,Earth,Energy"/>
+    <Profession Level="2" Name="Entertainer" familiar="" proficient="Singing"/>
+    <Profession Level="4" Name="Fighter" familiar="Knife" proficient="Quarterstaff"/>
   </Professions>
   <Spells>
     <Spell Familiarity="memorized" Name="Magic Missile"/>
@@ -26,6 +27,6 @@
     <Advantage LevelName="$500" Name="Wealth"/>
     <Advantage LevelName="+4" Name="Magical Aptitude"/>
     <Advantage LevelName="Major" Name="Phobia"/>
-    <Advantage LevelName="x5" Name="Quirks"/>
+    <Advantage LevelName="x4" Name="Quirks"/>
   </Advantages>
 </Character>

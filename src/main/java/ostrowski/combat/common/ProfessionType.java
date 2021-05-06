@@ -83,6 +83,7 @@ public enum ProfessionType {
            SkillType.CommonKnowledge,
            SkillType.Cooking,
            SkillType.Language2,
+           SkillType.Observation,
            SkillType.Riding,
            SkillType.Swimming,
            SkillType.Throwing

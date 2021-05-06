@@ -3,14 +3,15 @@
   <Equipment Armor="Heavy Leather">
     <Hand Name="right hand">Club</Hand>
     <Hand Name="left hand">Medium Shield</Hand>
-    <Belt>Unarmed Combat</Belt>
   </Equipment>
   <Professions>
+    <Profession Level="3" Name="Athlete" familiar="" proficient="Throwing"/>
     <Profession Level="6" Name="Fighter" familiar="Brawling" proficient="Axe/Mace,Shield"/>
   </Professions>
   <Advantages>
     <Advantage LevelName="$2,000" Name="Wealth"/>
     <Advantage LevelName="Scars" Name="Disfigured Face"/>
     <Advantage LevelName="x1" Name="Quirks"/>
+    <Advantage LevelName="" Name="Compulsive Liar"/>
   </Advantages>
 </Character>

@@ -31,16 +31,18 @@ public enum SkillType {
    Throwing          ("Throwing",          true, false, Attribute.Dexterity, ArmsUsed.One,  false),
    Wrestling         ("Wrestling",         true,  true, Attribute.Dexterity, ArmsUsed.Both, true),
    // Non-combat physical skills:
-   Acrobatics        ("Acrobatics",       false,  true, Attribute.Nimbleness, ArmsUsed.Both, false),
    Backstab          ("Backstab",         false,  true, Attribute.Dexterity,  ArmsUsed.Both, false),
    Climbing          ("Climbing",         false,  true, Attribute.Dexterity,  ArmsUsed.Both, false),
    LockPicking       ("Lock Picking",     false,  true, Attribute.Dexterity,  ArmsUsed.Both, false),
    PickPocket        ("Pick Pocket",      false,  true, Attribute.Dexterity,  ArmsUsed.One, false),
    Riding            ("Riding",           false, false, Attribute.Dexterity,  ArmsUsed.Both, false),
-   Running           ("Running",          false,  true, Attribute.Health,     ArmsUsed.None, false),
    Sport             ("Sport",            false, false, Attribute.Dexterity,  ArmsUsed.None, false),
    Stealth           ("Stealth",          false,  true, Attribute.Dexterity,  ArmsUsed.None, false),
    Swimming          ("Swimming",         false,  true, Attribute.Dexterity,  ArmsUsed.Both, false),
+   // Nimbleness-based skills:
+   Acrobatics        ("Acrobatics",       false,  true, Attribute.Nimbleness, ArmsUsed.Both, false),
+   // Health-based skills:
+   Running           ("Running",          false,  true, Attribute.Health,     ArmsUsed.None, false),
    // Mental Skills:
    AnimalHusbandry   ("Animal Husbandry",  false, false, Attribute.Intelligence, ArmsUsed.None, false),
    AnimalKnowledge   ("Animal Knowledge",  false, false, Attribute.Intelligence, ArmsUsed.None, false),
@@ -67,7 +69,8 @@ public enum SkillType {
    LeatherWorking    ("Leather Working",   false, false, Attribute.Intelligence, ArmsUsed.Both, false),
    Masonry           ("Masonry",           false, false, Attribute.Intelligence, ArmsUsed.Both, false),
    Meteorology       ("Meteorology",       false, false, Attribute.Intelligence, ArmsUsed.None, false),
-   Painting          ("Painting",          false, false, Attribute.Intelligence, ArmsUsed.One, false),
+   Observation       ("Observation",       false, false, Attribute.Intelligence, ArmsUsed.None, false),
+   Painting          ("Painting",          false, false, Attribute.Intelligence, ArmsUsed.One,  false),
    PlantKnowledge    ("Plant Knowledge",   false, false, Attribute.Intelligence, ArmsUsed.None, false),
    Poisons           ("Poisons",           false, false, Attribute.Intelligence, ArmsUsed.None, false),
    Repair            ("Repair",            false, false, Attribute.Intelligence, ArmsUsed.Both, false),
@@ -95,8 +98,8 @@ public enum SkillType {
    Violin            ("Violin",            false, false, Attribute.Social, ArmsUsed.Both, false),
 
    // Spellcasting Skills:
-   Ancient_Language         ("Ancient_Language",false, false, Attribute.Intelligence, ArmsUsed.None, false),
-   Arcane_History           ("Arcane_History",  false, false, Attribute.Intelligence, ArmsUsed.None, false),
+   Ancient_Language         ("Ancient Language",false, false, Attribute.Intelligence, ArmsUsed.None, false),
+   Arcane_History           ("Arcane History",  false, false, Attribute.Intelligence, ArmsUsed.None, false),
    Spellcasting_Fire        ("Fire",            false, false, Attribute.Intelligence, ArmsUsed.None, false),
    Spellcasting_Water       ("Water",           false, false, Attribute.Intelligence, ArmsUsed.None, false),
    Spellcasting_Earth       ("Earth",           false, false, Attribute.Intelligence, ArmsUsed.None, false),

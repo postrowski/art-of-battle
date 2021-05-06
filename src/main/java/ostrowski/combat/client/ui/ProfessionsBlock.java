@@ -116,7 +116,7 @@ public class ProfessionsBlock extends Helper implements Enums, ModifyListener, I
             if (e.widget == skillType[i]) {
                if (skillType[i].getText().equals(NO_SKILL_SELECTED)){
                   if (professionType[i].getText().equals(NO_PROF_SELECTED)) {
-                     professionLevelRank[i].clearSelection();
+                     professionLevelRank[i].removeAll();
                      professionLevelRank[i].setEnabled(false);
                   }
                }
@@ -159,7 +159,7 @@ public class ProfessionsBlock extends Helper implements Enums, ModifyListener, I
       if (professionType[rowIndex].getText().equals(NO_PROF_SELECTED)) {
          skillType[rowIndex].setText(NO_SKILL_SELECTED);
          skillType[rowIndex].setEnabled(false);
-         professionLevelRank[rowIndex].clearSelection();
+         professionLevelRank[rowIndex].removeAll();
          professionLevelRank[rowIndex].setEnabled(false);
          return;
       }
@@ -445,7 +445,7 @@ public class ProfessionsBlock extends Helper implements Enums, ModifyListener, I
       for (int i = 0; i < SKILL_COUNT; i++) {
          boolean isFirstProf = (null == existingProfessions.put(professionType[i].getText(), new ArrayList<>()));
          if (professionType[i].getText().equals(NO_PROF_SELECTED)) {
-            professionLevelRank[i].clearSelection();
+            professionLevelRank[i].removeAll();
             professionLevelRank[i].setEnabled(false);
             skillType[i].setText(NO_SKILL_SELECTED);
             skillType[i].setEnabled(false);
@@ -459,6 +459,12 @@ public class ProfessionsBlock extends Helper implements Enums, ModifyListener, I
 
    private boolean removeSkillRow(int rowIndex) {
       boolean nextItemAvailable = (rowIndex+1) < SKILL_COUNT;
+      professionLevelRank[rowIndex].removeAll();
+      if (nextItemAvailable) {
+         for (String item : professionType[rowIndex + 1].getItems()) {
+            professionLevelRank[rowIndex].add(item);
+         }
+      }
       professionType[rowIndex].select(nextItemAvailable ? professionType[rowIndex + 1].getSelectionIndex() : 0);
       professionType[rowIndex].setEnabled(!nextItemAvailable || professionType[rowIndex + 1].getEnabled());
       Map<String, ArrayList<Integer>> existingProfessions = new HashMap<>();

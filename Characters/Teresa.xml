@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?><Character Gender="Female" Name="Teresa" Race="Human">
   <Attributes DEX="0" HT="-1" IQ="0" NIM="2" SOC="5" STR="-1" TOU="-1"/>
   <Equipment Armor="Elven Chain">
-    <Hand Name="right hand">Bow, Shortbow</Hand>
-    <Hand Name="left hand"/>
-    <Belt>Spear</Belt>
-    <Belt>Small Shield</Belt>
+    <Hand Name="right hand">Spear</Hand>
+    <Hand Name="left hand">Small Shield</Hand>
+    <Belt>Bow, Shortbow</Belt>
   </Equipment>
   <Professions>
-    <Profession Level="4" Name="Fighter" familiar="" proficient="Spear,Shield"/>
     <Profession Level="3" Name="Common" familiar="" proficient="Throwing"/>
     <Profession Level="4" Name="Shooting" familiar="" proficient="Bow"/>
+    <Profession Level="4" Name="Fighter" familiar="" proficient="Spear,Shield"/>
   </Professions>
   <Advantages>
     <Advantage LevelName="$5,000" Name="Wealth"/>

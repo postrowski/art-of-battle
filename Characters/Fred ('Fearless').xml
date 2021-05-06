@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Fred ('Fearless')" Race="Human">
+  <Attributes DEX="4" HT="2" IQ="-2" NIM="1" SOC="1" STR="3" TOU="4"/>
+  <Equipment Armor="Plate Mail">
+    <Hand Name="right hand">Longsword</Hand>
+    <Hand Name="left hand">Tower Shield</Hand>
+    <Belt>Lance</Belt>
+    <Belt>Potion:Increase Dexterity</Belt>
+    <Belt>Potion:Complete Healing</Belt>
+  </Equipment>
+  <Professions>
+    <Profession Level="1" Name="Common" familiar="" proficient="Throwing"/>
+    <Profession Level="5" Name="Knight" familiar="" proficient="Jousting,Riding"/>
+    <Profession Level="6" Name="Fighter" familiar="Brawling" proficient="Sword,Shield"/>
+  </Professions>
+  <Advantages>
+    <Advantage LevelName="$30,000" Name="Wealth"/>
+    <Advantage LevelName="1" Name="Hero points"/>
+    <Advantage LevelName="" Name="Knighthood"/>
+    <Advantage LevelName="Full-time" Name="Sense of Duty"/>
+    <Advantage LevelName="Chivalrous" Name="Code of Conduct"/>
+    <Advantage LevelName="" Name="Honest"/>
+    <Advantage LevelName="x4" Name="Quirks"/>
+  </Advantages>
+</Character>

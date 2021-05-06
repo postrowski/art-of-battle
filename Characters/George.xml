@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="George" Race="Human">
-  <Attributes DEX="3" HT="0" IQ="-1" NIM="2" SOC="-1" STR="3" TOU="0"/>
+  <Attributes DEX="3" HT="0" IQ="-2" NIM="2" SOC="-1" STR="3" TOU="0"/>
   <Equipment Armor="Leather">
     <Hand Name="right hand">Two-Handed Sword</Hand>
     <Hand Name="left hand"/>
     <Belt>Knife</Belt>
   </Equipment>
   <Professions>
-    <Profession Level="2" Name="Common" familiar="" proficient="Throwing"/>
-    <Profession Level="4" Name="Fighter" familiar="Knife,Brawling" proficient="2-Handed Sword"/>
+    <Profession Level="3" Name="Common" familiar="Common Knowledge" proficient="Area Knowledge"/>
+    <Profession Level="4" Name="Fighter" familiar="Brawling,Knife" proficient="2-Handed Sword"/>
   </Professions>
   <Advantages>
     <Advantage LevelName="$2,000" Name="Wealth"/>
     <Advantage LevelName="" Name="Compulsive Liar"/>
-    <Advantage LevelName="x2" Name="Quirks"/>
+    <Advantage LevelName="x5" Name="Quirks"/>
   </Advantages>
 </Character>

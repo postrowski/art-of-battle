@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><Character Gender="Male" Name="Darmok" Race="Orc">
-  <Attributes DEX="4" HT="3" IQ="-3" NIM="0" SOC="-3" STR="5" TOU="3"/>
+  <Attributes DEX="4" HT="3" IQ="-4" NIM="0" SOC="-3" STR="5" TOU="3"/>
   <Equipment Armor="Banded Mail">
     <Hand Name="right hand">Flail</Hand>
     <Hand Name="left hand"/>
@@ -8,12 +8,13 @@
     <Belt>Potion:Major Healing</Belt>
   </Equipment>
   <Professions>
-    <Profession Level="6" Name="Fighter" familiar="Knife" proficient="Flail"/>
-    <Profession Level="1" Name="Common" familiar="" proficient="Throwing"/>
+    <Profession Level="6" Name="Fighter" familiar="Knife,Brawling" proficient="Flail"/>
+    <Profession Level="2" Name="Thief" familiar="" proficient="Stealth,Climbing"/>
   </Professions>
   <Advantages>
     <Advantage LevelName="$10,000" Name="Wealth"/>
-    <Advantage LevelName="x3" Name="Quirks"/>
+    <Advantage LevelName="x2" Name="Quirks"/>
+    <Advantage LevelName="Major" Name="Phobia"/>
     <Advantage LevelName="" Name="Greedy"/>
   </Advantages>
 </Character>

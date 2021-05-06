@@ -3,10 +3,12 @@
   <Equipment Armor="Cloth Armor">
     <Hand Name="right hand">Quarterstaff</Hand>
     <Hand Name="left hand"/>
+    <Belt>Knife</Belt>
   </Equipment>
   <Professions>
-    <Profession Level="6" Name="Fighter" familiar="" proficient="Knife,Quarterstaff"/>
-    <Profession Level="5" Name="Spellcasting" familiar="Necromancy,Enchantment,Energy,Protection,Divination" proficient=""/>
+    <Profession Level="2" Name="Doctor" familiar="Poisons" proficient="First Aid"/>
+    <Profession Level="5" Name="Spellcasting" familiar="Enchantment,Divination,Necromancy,Protection" proficient="Energy"/>
+    <Profession Level="5" Name="Fighter" familiar="Knife" proficient="Quarterstaff"/>
   </Professions>
   <Spells>
     <Spell Familiarity="memorized" Name="Control Mind"/>
@@ -22,9 +24,10 @@
     <Spell Familiarity="known" Name="Strength"/>
   </Spells>
   <Advantages>
+    <Advantage LevelName="+3" Name="Magical Aptitude"/>
     <Advantage LevelName="$200" Name="Wealth"/>
     <Advantage LevelName="" Name="Delusional"/>
     <Advantage LevelName="" Name="Sadistic"/>
-    <Advantage LevelName="x4" Name="Quirks"/>
+    <Advantage LevelName="x3" Name="Quirks"/>
   </Advantages>
 </Character>
