@@ -9,7 +9,7 @@ import ostrowski.combat.common.html.HtmlBuilder;
 import ostrowski.combat.common.html.Table;
 import ostrowski.combat.common.html.TableData;
 import ostrowski.combat.common.html.TableRow;
-import ostrowski.combat.common.spells.priest.PriestSpell;
+import ostrowski.combat.common.spells.priest.Deity;
 import ostrowski.protocol.SerializableObject;
 
 import java.io.DataInputStream;
@@ -136,16 +136,16 @@ public class Advantage extends SerializableObject implements Cloneable, Enums
                                 new int[] {         -5,            -10,          -15,       -20,      -20,     -15,       -10,      -5}, new String[] {}, new String[] {}, "A Code of Conduct restricts how the character may act. Common examples: \"Never attack an unarmed foe\" (minor), \"Never attack first\" (average), \"Donate 50% of all money earned to charity\" (major), \"Pacifist\" (severe)."));
       advList.add(new Advantage(COMPULSIVE_LIAR, false, new String[] {}, new int[]{-10}, new String[] {}, new String[] {HONEST, MUTE}, "A compulsive liar will make up stories constantly, just to be amusing. Other people that know the character is a compulsive liar will treat this person at a -1 in social situation, and will be very doubtful of anything they say."));
       advList.add(new Advantage(DELUSIONAL         , false, new String[] {}, new int[]{-10}, new String[] {}, new String[] {}, "A delusional character suffers from significant delusions. They tend to believe in conspiracy theories, and are often more gullible than other characters. The delusions they suffer are completely real to them, and they will act accordingly, up to the point of mistrusting even close long-term friends."));
-      for (String deity : PriestSpell.DEITIES) {
-         String[] exclusions = new String[PriestSpell.DEITIES.size()];
+      for (Deity deity : Deity.values()) {
+         String[] exclusions = new String[Deity.values().length];
          int i=0;
-         for (String otherDeity : PriestSpell.DEITIES) {
+         for (Deity otherDeity : Deity.values()) {
             //noinspection StringEquality
             if (otherDeity != deity) {
-               exclusions[i++] = DIVINE_AFFINITY_ + otherDeity;
+               exclusions[i++] = DIVINE_AFFINITY_ + otherDeity.getName();
             }
          }
-         advList.add(new Advantage(DIVINE_AFFINITY_ + deity, true,
+         advList.add(new Advantage(DIVINE_AFFINITY_ + deity.getName(), true,
                                    new String[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"},
                                    new int[] { 10,  20,  30,  40,  50,  60,  70,  80,  90,  100}, new String[] {}, exclusions, "Divine affinity grants a character a personal relationship with a single specified God or Deity. This relationship allows the bearer to cast priest spells in the name of the God or Deity, provided they also have the Divine Power advantage. Note: Divine Affinity may vary per religion. For example, Divine Affinity to most demons only cost 5 points per level. For more details, see the earlier section on priest magic."));
       }

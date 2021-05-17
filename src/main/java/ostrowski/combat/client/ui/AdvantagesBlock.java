@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.*;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.*;
 import ostrowski.combat.common.enums.Enums;
+import ostrowski.combat.common.spells.priest.Deity;
 import ostrowski.ui.Helper;
 
 import java.util.ArrayList;
@@ -114,12 +115,19 @@ public class AdvantagesBlock extends Helper implements Enums, IUIBlock, ModifyLi
                if (adv.hasLevels()) {
                   String levelStr = advLevel[i].getText();
                   adv.setLevelByName(levelStr);
+                  if (adv.getName().startsWith(Advantage.DIVINE_AFFINITY_)) {
+                     String deityName = adv.getName().substring(Advantage.DIVINE_AFFINITY_.length());
+                     Deity deity = Deity.getByName(deityName);
+                     if (deity != null) {
+                        deity.validateCharacter(character);
+                     }
+                  }
                }
                boolean isRacial = false;
                for (Advantage racialAdv : racialAdvantages) {
                   if (racialAdv.getName().equals(advName)) {
                      // If this racial advantage has levels, and the user has
-                     // specifed a level that is not the racial default, then
+                     // specified a level that is not the racial default, then
                      // we need to add it to the list of advantages for the character.
                      isRacial = !racialAdv.hasLevels() || (racialAdv.getLevel() == adv.getLevel());
                   }
@@ -269,6 +277,17 @@ public class AdvantagesBlock extends Helper implements Enums, IUIBlock, ModifyLi
          advLevel[i].add("---");
          advLevel[i].setText("---");
       }
+
+      for (Advantage adv : character.getAdvantagesList()) {
+         if (adv.getName().startsWith(Advantage.DIVINE_AFFINITY_)) {
+            String deityName = adv.getName().substring(Advantage.DIVINE_AFFINITY_.length());
+            Deity deity = Deity.getByName(deityName);
+            if (deity != null) {
+               deity.validateCharacter(character);
+            }
+         }
+      }
+
       CharacterWidget.inModify = old;
    }
 

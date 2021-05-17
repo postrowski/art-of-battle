@@ -5,6 +5,7 @@
 package ostrowski.combat.protocol.request;
 
 import ostrowski.combat.common.Character;
+import ostrowski.combat.common.spells.priest.Deity;
 import ostrowski.combat.server.Arena;
 import ostrowski.protocol.RequestOption;
 import ostrowski.protocol.SyncRequest;
@@ -17,7 +18,7 @@ public class RequestSpellTypeSelection extends SyncRequest
    public              RequestSpellSelection spellSelectionRequest = null;
 
    public RequestSpellTypeSelection() {}
-   public RequestSpellTypeSelection(boolean mage, List<String> priestAffinities, Character caster)
+   public RequestSpellTypeSelection(boolean mage, List<Deity> priestAffinities, Character caster)
    {
       StringBuilder message = new StringBuilder();
       message.append(caster.getName()).append(", select which type of spell you would like to cast.");
@@ -40,7 +41,7 @@ public class RequestSpellTypeSelection extends SyncRequest
          addOption(new RequestOption(SPELL_TYPE_MAGE, 0, mage/*enabled*/));
       }
       for (int index=0 ; index<priestAffinities.size() ; index++) {
-         addOption(new RequestOption(priestAffinities.get(index), index+1, true/*enabled*/));
+         addOption(new RequestOption(priestAffinities.get(index).getName(), index+1, true/*enabled*/));
       }
    }
 

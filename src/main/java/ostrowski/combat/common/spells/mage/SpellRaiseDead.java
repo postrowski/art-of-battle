@@ -14,8 +14,8 @@ public class SpellRaiseDead extends MageSpell
 {
    public static final String NAME = "Raise Dead";
    public SpellRaiseDead() {
-      super(NAME, new Class[] {SpellControlMind.class, SpellResistPain.class},
-                  new SkillType[] {SkillType.Spellcasting_Necromancy});
+      super(NAME, new Class[] {SpellControlMind.class, SpellResistPain.class, SpellBlockThought.class, SpellSuggestion.class},
+                  new SkillType[] {SkillType.Spellcasting_Necromancy, SkillType.Spellcasting_Divination, SkillType.Spellcasting_Enchantment});
    }
 
    @Override

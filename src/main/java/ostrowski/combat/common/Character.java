@@ -16,7 +16,9 @@ import ostrowski.combat.common.spells.IInstantaneousSpell;
 import ostrowski.combat.common.spells.IRangedSpell;
 import ostrowski.combat.common.spells.Spell;
 import ostrowski.combat.common.spells.mage.*;
+import ostrowski.combat.common.spells.priest.Deity;
 import ostrowski.combat.common.spells.priest.PriestSpell;
+import ostrowski.combat.common.spells.priest.SpellGroup;
 import ostrowski.combat.common.spells.priest.SpellSummonBeing;
 import ostrowski.combat.common.spells.priest.elemental.SpellSwim;
 import ostrowski.combat.common.spells.priest.evil.SpellParalyze;
@@ -934,6 +936,12 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          newProfSkills.addAll(proficientSkills);
          newProfSkills.add(skillType);
          prof.setProficientSkills(newProfSkills);
+      }
+      List<SkillType> familiarSkills = prof.getFamiliarSkills();
+      if (familiarSkills.contains(skillType)) {
+         List<SkillType> familiarSkillsWithout = new ArrayList<>(familiarSkills);
+         familiarSkillsWithout.remove(skillType);
+         prof.setFamiliarSkills(familiarSkillsWithout);
       }
    }
 
@@ -3511,12 +3519,12 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
 
    public List<PriestSpell> getPriestSpells() {
       List<PriestSpell> spells = new ArrayList<>();
-      List<String> deities = getPriestDeities();
-      for (String deity : deities) {
+      List<Deity> deities = getPriestDeities();
+      for (Deity deity : deities) {
          int deityAffinity = getAffinity(deity);
          if (deityAffinity > 0) {
-            List<String> spellGroups = PriestSpell.getSpellGroups(deity);
-            for (String group : spellGroups) {
+            List<SpellGroup> spellGroups = PriestSpell.getSpellGroups(deity);
+            for (SpellGroup group : spellGroups) {
                List<PriestSpell> sroupSpells = PriestSpell.getSpellsInGroup(group);
                for (PriestSpell spell : sroupSpells) {
                   if (deityAffinity >= spell.getAffinity()) {
@@ -3550,10 +3558,10 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       return spells;
    }
 
-   public List<String> getPriestDeities() {
-      List<String> deities = new ArrayList<>();
-      for (String deity : PriestSpell.DEITIES) {
-         if (hasAdvantage(Advantage.DIVINE_AFFINITY_ + deity)) {
+   public List<Deity> getPriestDeities() {
+      List<Deity> deities = new ArrayList<>();
+      for (Deity deity : Deity.values()) {
+         if (hasAdvantage(Advantage.DIVINE_AFFINITY_ + deity.getName())) {
             deities.add(deity);
          }
       }
@@ -4841,7 +4849,8 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          if (RequestSpellTypeSelection.SPELL_TYPE_MAGE.equals(action.spellTypeSelectionRequest.getAnswer())) {
             currentSpell = knownMageSpellsList.get(spellIndex).clone();
          } else {
-            String deity = action.spellTypeSelectionRequest.getAnswer();
+            String deityName = action.spellTypeSelectionRequest.getAnswer();
+            Deity deity = Deity.getByName(deityName);
             List<PriestSpell> spells = PriestSpell.getSpellsForDeity(deity, getAffinity(deity), true/*addNullBetweenGroups*/);
             currentSpell = spells.get(spellIndex).clone();
          }
@@ -4926,8 +4935,8 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       //}
    }
 
-   public byte getAffinity(String deity) {
-      Advantage adv = getAdvantage(Advantage.DIVINE_AFFINITY_ + deity);
+   public byte getAffinity(Deity deity) {
+      Advantage adv = getAdvantage(Advantage.DIVINE_AFFINITY_ + deity.getName());
       if (adv != null) {
          return (byte) (adv.getLevel() + 1);
       }
@@ -4967,7 +4976,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       if (condition == null) {
          return;
       }
-      List<String> deities = getPriestDeities();
+      List<Deity> deities = getPriestDeities();
       Advantage ma = getAdvantage(Advantage.MAGICAL_APTITUDE);
       byte affinity = 0;
       byte divinePower = 0;
@@ -5637,7 +5646,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
 
    public RequestSpellTypeSelection getSpellTypeSelectionRequest() {
       boolean mage = ((knownMageSpellsList != null) && (knownMageSpellsList.size() > 0));
-      List<String> priestAffinities = getPriestDeities();
+      List<Deity> priestAffinities = getPriestDeities();
       return new RequestSpellTypeSelection(mage, priestAffinities, this);
    }
 
@@ -5645,7 +5654,8 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       if (RequestSpellTypeSelection.SPELL_TYPE_MAGE.equals(spellType)) {
          return new RequestSpellSelection(knownMageSpellsList, this);
       }
-      return new RequestSpellSelection(PriestSpell.getSpellsForDeity(spellType, getAffinity(spellType),
+      Deity deity = Deity.getByName(spellType);
+      return new RequestSpellSelection(PriestSpell.getSpellsForDeity(deity, getAffinity(deity),
                                                                      true/*addNullBetweenGroups*/), this);
    }
 

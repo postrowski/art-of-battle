@@ -13,12 +13,13 @@ import org.eclipse.swt.widgets.*;
 import ostrowski.combat.common.*;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.enums.Enums;
-import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.spells.IRangedSpell;
 import ostrowski.combat.common.spells.mage.MageSpell;
 import ostrowski.combat.common.spells.mage.MageSpells;
+import ostrowski.combat.common.spells.priest.Deity;
 import ostrowski.combat.common.spells.priest.PriestSpell;
 import ostrowski.combat.common.spells.priest.ResistedPriestSpell;
+import ostrowski.combat.common.spells.priest.SpellGroup;
 import ostrowski.ui.Helper;
 
 import java.lang.reflect.InvocationTargetException;
@@ -198,6 +199,9 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
             MageSpell spell = MageSpells.getSpell(spellName);
             if (spell != null) {
                spell.setFamiliarity(spellFamiliarity[i].getText());
+               if (spell.getFamiliarity() == null) {
+                  spell.setFamiliarity(MageSpell.Familiarity.KNOWN);
+               }
 //               spell.setLevel(getValidSpellRange((byte) spellLevel[i].getSelection()));
                newSpells.add(spell);
                newSpellClasses.add((Class<MageSpell>) spell.getClass());
@@ -219,7 +223,9 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
          for (Class<MageSpell> spellClassToAdd : spellClassesToBeAdded) {
             checkSpells = true;
             try {
-               newSpells.add(spellClassToAdd.getDeclaredConstructor().newInstance());
+               MageSpell newSpell = spellClassToAdd.getDeclaredConstructor().newInstance();
+               newSpell.setFamiliarity(MageSpell.Familiarity.KNOWN);
+               newSpells.add(newSpell);
                newSpellClasses.add(spellClassToAdd);
             } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
                e.printStackTrace();
@@ -370,20 +376,20 @@ public class SpellsBlock extends Helper implements IUIBlock, ModifyListener
       }
 
       // TODO: optimize the priest spells the same way we cache the mage spell data
-      List<String> priestDeities = (character != null) ? character.getPriestDeities() : new ArrayList<>();
+      List<Deity> priestDeities = (character != null) ? character.getPriestDeities() : new ArrayList<>();
       int pageIndex = 0;
-      for (String deity : priestDeities) {
-         List<String> deityGroups = PriestSpell.getSpellGroups(deity);
-         Advantage advantage = character.getAdvantage(Advantage.DIVINE_AFFINITY_+ deity);
+      for (Deity deity : priestDeities) {
+         List<SpellGroup> deityGroups = PriestSpell.getSpellGroups(deity);
+         Advantage advantage = character.getAdvantage(Advantage.DIVINE_AFFINITY_+ deity.getName());
          int affinityLevel = advantage.getLevel() + 1;
-         for (String group : deityGroups) {
+         for (SpellGroup group : deityGroups) {
 
             showPriestPage = true;
 
             if (pageIndex >= priestPage.length) {
                break;
             }
-            priestPage[pageIndex].setText(group);
+            priestPage[pageIndex].setText(group.getName());
             int spellIndex = 0;
             for (PriestSpell spell : PriestSpell.getSpellsInGroup(group)) {
                spell.setDeity(deity);

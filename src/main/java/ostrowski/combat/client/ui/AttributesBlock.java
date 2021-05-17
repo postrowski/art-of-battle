@@ -79,6 +79,7 @@ public class AttributesBlock extends Helper implements ModifyListener, IUIBlock,
       // refreshDisplay is used to update fields that dont have ModifyListeners:
       for (Attribute att : Attribute.values()) {
          attEdit.get(att).setEnabled(character != null);
+         attEdit.get(att).setText(String.valueOf(character.getAttributeLevel(att)));
          int cost = (character == null) ? 0 : character.getAttCostAtCurLevel(att);
          attCost.get(att).setText("(" + cost + ")");
       }

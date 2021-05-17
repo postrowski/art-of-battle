@@ -402,7 +402,7 @@ public class AI implements Enums
          }
          else if (spell instanceof PriestSpell) {
             PriestSpell priestSpell = (PriestSpell) spell;
-            key = priestSpell.getDeity();
+            key = priestSpell.getDeity().getName();
          }
          if (key != null) {
             String[] options = req.getOptions();

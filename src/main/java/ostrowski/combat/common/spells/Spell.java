@@ -15,6 +15,7 @@ import ostrowski.combat.common.html.TableData;
 import ostrowski.combat.common.html.TableRow;
 import ostrowski.combat.common.spells.mage.MageSpell;
 import ostrowski.combat.common.spells.mage.MageSpells;
+import ostrowski.combat.common.spells.priest.Deity;
 import ostrowski.combat.common.spells.priest.PriestMissileSpell;
 import ostrowski.combat.common.spells.priest.PriestSpell;
 import ostrowski.combat.common.spells.priest.ResistedPriestSpell;
@@ -1109,7 +1110,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
             String affinityLevel = namedNodeMap.getNamedItem("affinityLevel").getNodeValue();
             if (affinityLevel != null) {
                byte aff = Byte.parseByte(affinityLevel);
-               List<PriestSpell> priestSpells = PriestSpell.getSpellsForDeity(deity, aff, false);
+               List<PriestSpell> priestSpells = PriestSpell.getSpellsForDeity(Deity.getByName(deity), aff, false);
                for (PriestSpell prSpell : priestSpells) {
                   if (prSpell.getName().equals(name) && (prSpell.getAffinity() == aff)) {
                      spell = prSpell;

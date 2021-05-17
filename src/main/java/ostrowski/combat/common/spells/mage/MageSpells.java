@@ -56,6 +56,7 @@ public class MageSpells {
       spellsList.add(new SpellMendObjects());
       spellsList.add(new SpellMissileShield());
       spellsList.add(new SpellPush());
+      spellsList.add(new SpellRaiseDead());
       spellsList.add(new SpellResistPain());
       spellsList.add(new SpellReverseMissile());
       spellsList.add(new SpellShockingGrasp());

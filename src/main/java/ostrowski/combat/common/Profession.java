@@ -38,7 +38,7 @@ public class Profession extends SerializableObject {
    }
 
    public void setLevel(byte level) {
-      this.level = level;
+      this.level = (byte) Math.min(10, Math.max(level, (this.proficientSkills.size() + this.familiarSkills.size())));
    }
 
    public void setRank(SkillType skillType, SkillRank rank) {
@@ -77,6 +77,7 @@ public class Profession extends SerializableObject {
       }
       this.familiarSkills.clear();
       this.familiarSkills.addAll(familiarSkills);
+      this.level = (byte) Math.min(10, Math.max(this.level, (this.proficientSkills.size() + this.familiarSkills.size())));
    }
    public String getFamiliarSkillsAsString() {
       return familiarSkills.stream().map(o->o.getName()).collect(Collectors.joining(","));
@@ -104,6 +105,7 @@ public class Profession extends SerializableObject {
       }
       this.proficientSkills.clear();
       this.proficientSkills.addAll(proficientSkills);
+      this.level = (byte) Math.min(10, Math.max(this.level, (this.proficientSkills.size() + this.familiarSkills.size())));
    }
    public String getProficientSkillsAsString() {
       return proficientSkills.stream().map(o->o.getName()).collect(Collectors.joining(","));

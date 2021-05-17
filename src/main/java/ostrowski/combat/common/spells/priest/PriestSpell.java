@@ -5,10 +5,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import ostrowski.DebugBreak;
-import ostrowski.combat.common.Advantage;
+import ostrowski.combat.common.*;
 import ostrowski.combat.common.Character;
-import ostrowski.combat.common.DiceSet;
-import ostrowski.combat.common.Rules;
 import ostrowski.combat.common.enums.Attribute;
 import ostrowski.combat.common.html.*;
 import ostrowski.combat.common.spells.IRangedSpell;
@@ -31,18 +29,15 @@ import ostrowski.combat.server.Configuration;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 public abstract class PriestSpell extends Spell
 {
    private byte                           affinityLevel;
    protected byte                         effectivePower;
-   private Class< ? extends IPriestGroup> group;
-   private String                         deity = null;
-   protected byte                         level = 0;
+   private   Class< ? extends IPriestGroup> group;
+   private   Deity                          deity = null;
+   protected byte                           level = 0;
 
    public PriestSpell() {
    }
@@ -78,7 +73,7 @@ public abstract class PriestSpell extends Spell
    }
 
    static public PriestSpell getSpell(String name) {
-      for (String deity : PriestSpell.DEITIES) {
+      for (Deity deity : Deity.values()) {
          List<PriestSpell> deitySpells = PriestSpell.getSpellsForDeity(deity, 10, false/*addNullBetweenGroups*/);
          for (PriestSpell priestSpell : deitySpells) {
             if (priestSpell.getName().equalsIgnoreCase(name)) {
@@ -91,7 +86,6 @@ public abstract class PriestSpell extends Spell
 
    @SuppressWarnings("unchecked")
    public static String generateHtmlTablePriestSpells() {
-      List<PriestSpell>[] spellsInGroup = new ArrayList[GROUP_NAMES.size()];
       StringBuilder sb = new StringBuilder();
       sb.append(HtmlBuilder.getHTMLHeader());
       sb.append("<body>");
@@ -124,19 +118,19 @@ public abstract class PriestSpell extends Spell
       table = new Table();
       TableRow headerRow = new TableRow(-1, "Deity");
       table.addRow(headerRow);
-      for (int col = 0; col < GROUP_NAMES.size(); col++) {
-         headerRow.addHeader(GROUP_NAMES.get(col));
-         spellsInGroup[col] = getSpellsInGroup(GROUP_NAMES.get(col));
+      int col = 0;
+      for (SpellGroup spellGroup : SpellGroup.values()) {
+         headerRow.addHeader(spellGroup.getName());
       }
 
-      for (int row = 0; row < DEITIES.size(); row++) {
-         TableRow tableRow = new TableRow(row);
+      int row=0;
+      for (Deity deity : Deity.values()) {
+         TableRow tableRow = new TableRow(row++);
 
-         String deity = DEITIES.get(row);
-         tableRow.addHeader(deity);
-         List<String> groupsForDeity = getSpellGroups(deity);
-         for (String groupName : GROUP_NAMES) {
-            if (groupsForDeity.contains(groupName)) {
+         tableRow.addHeader(deity.getName());
+         List<SpellGroup> groupsForDeity = getSpellGroups(deity);
+         for (SpellGroup spellGroup : SpellGroup.values()) {
+            if (groupsForDeity.contains(spellGroup)) {
                tableRow.addTD("Yes");
             } else {
                tableRow.addTD("&nbsp;");
@@ -151,15 +145,16 @@ public abstract class PriestSpell extends Spell
       table = new Table();
       headerRow = new TableRow(-1, "Affinity");
       table.addRow(headerRow);
-      for (String groupName : GROUP_NAMES) {
-         headerRow.addHeader(groupName);
+      for (SpellGroup spellGroup : SpellGroup.values()) {
+         headerRow.addHeader(spellGroup.getName());
       }
       for (int affinity = 1; affinity <= 10; affinity++) {
          TableRow tableRow = new TableRow(affinity-1);
          tableRow.addHeader(new TableHeader(""+affinity).setAttribute("valign", "center"));
-         for (int col = 0; col < GROUP_NAMES.size(); col++) {
+
+         for (SpellGroup spellGroup : SpellGroup.values()) {
             StringBuilder content = new StringBuilder();
-            for (PriestSpell spell : spellsInGroup[col]) {
+            for (PriestSpell spell : getSpellsInGroup(spellGroup)) {
                if (spell.getAffinity() == affinity) {
                   String trimmedName = spell.getName().replaceAll(" ", "");
                   content.append("<a href='#").append(trimmedName).append("'>");
@@ -185,7 +180,7 @@ public abstract class PriestSpell extends Spell
 
    protected static String getSpellGrimioreForHTML() {
       SortedSet<PriestSpell> spells = new TreeSet<>();
-      for (String groupName : GROUP_NAMES) {
+      for (SpellGroup groupName : SpellGroup.values()) {
          List<PriestSpell> groupSpells = getSpellsInGroup(groupName);
          spells.addAll(groupSpells);
       }
@@ -204,43 +199,6 @@ public abstract class PriestSpell extends Spell
                                                                        PriestDemonicSpell.class,
                                                                        };
 
-   static private final String             THOR              = "Thor";
-   static private final String             APHRODITE         = "Aphrodite";
-   static private final String             DRUID             = "Druid";
-   static private final String             HADES             = "Hades";
-   static private final String             TAO               = "Tao";
-   static private final String      DEMONIC = "Demonic";
-   static public final List<String> DEITIES = new ArrayList<>();
-   static {
-      DEITIES.add(THOR);
-      DEITIES.add(APHRODITE);
-      DEITIES.add(DRUID);
-      DEITIES.add(HADES);
-      DEITIES.add(TAO);
-      DEITIES.add(DEMONIC);
-   }
-
-   static public final String              GROUP_DEFENSIVE   = "Defensive";
-   static public final String              GROUP_HEALING     = "Healing";
-   static public final String              GROUP_INFORMATION = "Information";
-   static public final String              GROUP_NATURE      = "Nature";
-   static public final String              GROUP_ELEMENTAL   = "Elemental";
-   static public final String              GROUP_EVIL        = "Evil";
-   static public final String              GROUP_GOOD        = "Good";
-   static public final String              GROUP_OFFENSIVE   = "Offensive";
-   static public final String              GROUP_DEMON       = "Demon";
-   static public final List<String>   GROUP_NAMES       = new ArrayList<>();
-   static {
-      GROUP_NAMES.add(GROUP_DEFENSIVE);
-      GROUP_NAMES.add(GROUP_HEALING);
-      GROUP_NAMES.add(GROUP_INFORMATION);
-      GROUP_NAMES.add(GROUP_NATURE);
-      GROUP_NAMES.add(GROUP_ELEMENTAL);
-      GROUP_NAMES.add(GROUP_EVIL);
-      GROUP_NAMES.add(GROUP_GOOD);
-      GROUP_NAMES.add(GROUP_OFFENSIVE);
-      GROUP_NAMES.add(GROUP_DEMON);
-   }
    static {
       StringBuilder problems = new StringBuilder();
       List<PriestSpell> allSpells = getSpellsInGroup(null);
@@ -255,72 +213,42 @@ public abstract class PriestSpell extends Spell
       }
    }
 
-   static public List<String> getSpellGroups(String deity) {
-      List<String> spells = new ArrayList<>();
-      if (deity.equalsIgnoreCase(THOR)) {
-         spells.add(GROUP_DEFENSIVE);
-         spells.add(GROUP_HEALING);
-         spells.add(GROUP_GOOD);
-         spells.add(GROUP_OFFENSIVE);
+   static public List<SpellGroup> getSpellGroups(Deity deity) {
+      List<SpellGroup> spells = new ArrayList<>();
+      for (SpellGroup spellGroup : deity.getSpellGroups()) {
+         spells.add(spellGroup);
       }
-      else if (deity.equalsIgnoreCase(APHRODITE)) {
-         spells.add(GROUP_DEFENSIVE);
-         spells.add(GROUP_INFORMATION);
-         spells.add(GROUP_HEALING);
-         spells.add(GROUP_GOOD);
-      }
-      else if (deity.equalsIgnoreCase(DRUID)) {
-         spells.add(GROUP_NATURE);
-         spells.add(GROUP_ELEMENTAL);
-         spells.add(GROUP_HEALING);
-      }
-      else if (deity.equalsIgnoreCase(HADES)) {
-         spells.add(GROUP_DEFENSIVE);
-         spells.add(GROUP_EVIL);
-         spells.add(GROUP_INFORMATION);
-         spells.add(GROUP_OFFENSIVE);
-      }
-      else if (deity.equalsIgnoreCase(TAO)) {
-         spells.add(GROUP_EVIL);
-         spells.add(GROUP_GOOD);
-         spells.add(GROUP_HEALING);
-         spells.add(GROUP_NATURE);
-      }
-      else if (deity.equalsIgnoreCase(DEMONIC)) {
-         spells.add(GROUP_EVIL);
-         spells.add(GROUP_DEMON);
-      }
-      spells.add(deity);
+      //spells.add(deity.getName());
       return spells;
    }
 
-   static public List<PriestSpell> getSpellsInGroup(String group) {
+   static public List<PriestSpell> getSpellsInGroup(SpellGroup group) {
       List<PriestSpell> spells = new ArrayList<>();
-      if ((group == null) || (group.equals(GROUP_OFFENSIVE))) {
+      if ((group == null) || (group == SpellGroup.OFFENSIVE)) {
          spells.addAll(PriestOffensiveSpell.spells);
       }
-      if ((group == null) || (group.equals(GROUP_DEFENSIVE))) {
+      if ((group == null) || (group == SpellGroup.DEFENSIVE)) {
          spells.addAll(PriestDefensiveSpell.spells);
       }
-      if ((group == null) || (group.equals(GROUP_HEALING))) {
+      if ((group == null) || (group == SpellGroup.HEALING)) {
          spells.addAll(PriestHealingSpell.spells);
       }
-      if ((group == null) || (group.equals(GROUP_GOOD))) {
+      if ((group == null) || (group == SpellGroup.GOOD)) {
          spells.addAll(PriestGoodSpell.spells);
       }
-      if ((group == null) || (group.equals(GROUP_EVIL))) {
+      if ((group == null) || (group == SpellGroup.EVIL)) {
          spells.addAll(PriestEvilSpell.spells);
       }
-      if ((group == null) || (group.equals(GROUP_INFORMATION))) {
+      if ((group == null) || (group == SpellGroup.INFORMATION)) {
          spells.addAll(PriestInformationSpell.spells);
       }
-      if ((group == null) || (group.equals(GROUP_NATURE))) {
+      if ((group == null) || (group == SpellGroup.NATURE)) {
          spells.addAll(PriestNatureSpell.spells);
       }
-      if ((group == null) || (group.equals(GROUP_ELEMENTAL))) {
+      if ((group == null) || (group == SpellGroup.ELEMENTAL)) {
          spells.addAll(PriestElementalSpell.spells);
       }
-      if ((group == null) || (group.equals(GROUP_DEMON))) {
+      if ((group == null) || (group == SpellGroup.DEMON)) {
          spells.addAll(PriestDemonicSpell.spells);
       }
       // add the deity-specific spells
@@ -339,10 +267,10 @@ public abstract class PriestSpell extends Spell
       return spells;
    }
 
-   static public List<PriestSpell> getSpellsForDeity(String deity, int maximumAffinity, boolean addNullBetweenGroups) {
+   static public List<PriestSpell> getSpellsForDeity(Deity deity, int maximumAffinity, boolean addNullBetweenGroups) {
       List<PriestSpell> spells = new ArrayList<>();
-      List<String> groups = getSpellGroups(deity);
-      for (String group : groups) {
+      List<SpellGroup> groups = getSpellGroups(deity);
+      for (SpellGroup group : groups) {
          List<PriestSpell> groupSpells = getSpellsInGroup(group);
          for (PriestSpell spell : groupSpells) {
             if ((maximumAffinity == 0) || (spell.getAffinity() <= maximumAffinity)) {
@@ -493,7 +421,7 @@ public abstract class PriestSpell extends Spell
       try {
          writeToStream(affinityLevel, out);
          writeToStream(group.getName(), out);
-         writeToStream(deity, out);
+         writeToStream(deity.getName(), out);
          writeToStream(level, out);
       } catch (IOException e) {
          e.printStackTrace();
@@ -506,7 +434,7 @@ public abstract class PriestSpell extends Spell
       try {
          affinityLevel = readByte(in);
          String groupClassName = readString(in);
-         deity = readString(in);
+         deity = Deity.getByName(readString(in));
          level = readByte(in);
          for (Class< ? extends IPriestGroup> element : GROUPS) {
             if (groupClassName.equalsIgnoreCase(element.getName())) {
@@ -530,11 +458,11 @@ public abstract class PriestSpell extends Spell
       }
    }
 
-   public void setDeity(String deity) {
+   public void setDeity(Deity deity) {
       this.deity = deity;
    }
 
-   public String getDeity() {
+   public Deity getDeity() {
       return deity;
    }
 
@@ -653,7 +581,7 @@ public abstract class PriestSpell extends Spell
       }
       node = namedNodeMap.getNamedItem("deity");
       if (node != null) {
-         deity = node.getNodeValue();
+         deity = Deity.getByName(node.getNodeValue());
       }
    }
 
