@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><Character Gender="Female" Name="TaoPriestess" Race="Half-Elf">
-  <Attributes DEX="2" HT="-1" IQ="0" NIM="2" SOC="4" STR="0" TOU="-1"/>
+  <Attributes DEX="1" HT="-1" IQ="0" NIM="2" SOC="3" STR="0" TOU="-1"/>
   <Equipment Armor="Leather">
     <Hand Name="right hand"/>
     <Hand Name="left hand"/>
@@ -7,7 +7,7 @@
   </Equipment>
   <Professions>
     <Profession Level="2" Name="Common" familiar="Swimming" proficient="Throwing"/>
-    <Profession Level="5" Name="Martial Arts" familiar="" proficient="Quarterstaff,Aikido"/>
+    <Profession Level="5" Name="Martial Arts" familiar="" proficient="Aikido,Boxing,Karate,Quarterstaff"/>
   </Professions>
   <Advantages>
     <Advantage LevelName="$500" Name="Wealth"/>

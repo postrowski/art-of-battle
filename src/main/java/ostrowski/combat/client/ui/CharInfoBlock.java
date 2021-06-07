@@ -493,7 +493,7 @@ public class CharInfoBlock extends Helper implements IUIBlock, ModifyListener
          sb.append("\n  ").append(target.getWeapon().getName()).append(": ").append(getReadyTime(rightHand));
       }
       if (leftHand != null) {
-         sb.append("\n  Sheild: ").append(leftHand.getHeldThingName());
+         sb.append("\n  Shield: ").append(leftHand.getHeldThingName());
       }
       sb.append("\n  Armor:  ").append(target.getArmor().getName());
 

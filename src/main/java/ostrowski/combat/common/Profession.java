@@ -17,9 +17,17 @@ public class Profession extends SerializableObject {
    public Profession() {
       // used for serialization
    }
-   public Profession(ProfessionType type, byte level) {
+   public Profession(ProfessionType type, SkillType proficientSkillType, byte level) {
       this.type = type;
       this.level = level;
+      if (proficientSkillType != null) {
+         this.proficientSkills.add(proficientSkillType);
+      }
+   }
+   public Profession(ProfessionType type, List<SkillType> proficientSkillTypes, byte level) {
+      this.type = type;
+      this.level = level;
+      setProficientSkills(proficientSkillTypes);
    }
 
    public Profession(Profession other) {
@@ -46,6 +54,10 @@ public class Profession extends SerializableObject {
          throw new IllegalArgumentException("Skill type " + skillType.getName() + " is not in profession" + type.getName());
       }
       proficientSkills.remove(skillType);
+      if (proficientSkills.isEmpty()) {
+         // Dont let them downgrade the only proficient skill to Familiar
+         rank = SkillRank.PROFICIENT;
+      }
       familiarSkills.remove(skillType);
       if (rank == SkillRank.FAMILIAR) {
          familiarSkills.add(skillType);
@@ -76,7 +88,8 @@ public class Profession extends SerializableObject {
                                             ") is not in profession " + type.getName());
       }
       this.familiarSkills.clear();
-      this.familiarSkills.addAll(familiarSkills);
+      // prevent duplicates
+      this.familiarSkills.addAll(new HashSet<>(familiarSkills));
       this.level = (byte) Math.min(10, Math.max(this.level, (this.proficientSkills.size() + this.familiarSkills.size())));
    }
    public String getFamiliarSkillsAsString() {
@@ -91,12 +104,16 @@ public class Profession extends SerializableObject {
                                  .filter(Objects::nonNull)
                                  .collect(Collectors.toList()));
       }
+      this.level = (byte) Math.min(10, Math.max(this.level, (this.proficientSkills.size() + this.familiarSkills.size())));
    }
 
    public List<SkillType> getProficientSkills() {
       return Collections.unmodifiableList(new ArrayList<>(proficientSkills));
    }
    public void setProficientSkills(List<SkillType> proficientSkills) {
+      if (proficientSkills.isEmpty()) {
+         throw new IllegalArgumentException("cant have 0 proficient skills");
+      }
       if (!type.skillList.containsAll(proficientSkills)) {
          throw new IllegalArgumentException("a SkillType in (" + proficientSkills.stream()
                                                                                  .map(o -> o.getName())
@@ -104,21 +121,22 @@ public class Profession extends SerializableObject {
                                             ") is not in profession " + type.getName());
       }
       this.proficientSkills.clear();
-      this.proficientSkills.addAll(proficientSkills);
+      // prevent duplicates
+      this.proficientSkills.addAll(new HashSet<>(proficientSkills));
       this.level = (byte) Math.min(10, Math.max(this.level, (this.proficientSkills.size() + this.familiarSkills.size())));
    }
    public String getProficientSkillsAsString() {
       return proficientSkills.stream().map(o->o.getName()).collect(Collectors.joining(","));
    }
    public void setProficientSkills(String proficientSkillsAsCommaDelimitedString) {
-      this.proficientSkills.clear();
-      if (proficientSkillsAsCommaDelimitedString != null) {
-         setProficientSkills(Arrays.asList(proficientSkillsAsCommaDelimitedString.split(", *"))
-                                   .stream()
-                                   .map(o -> SkillType.getSkillTypeByName(o))
-                                   .filter(Objects::nonNull)
-                                   .collect(Collectors.toList()));
+      if (proficientSkillsAsCommaDelimitedString == null) {
+         throw new IllegalArgumentException("Cant have an empty proficient skill set");
       }
+      setProficientSkills(Arrays.asList(proficientSkillsAsCommaDelimitedString.split(", *"))
+                                .stream()
+                                .map(o -> SkillType.getSkillTypeByName(o))
+                                .filter(Objects::nonNull)
+                                .collect(Collectors.toList()));
    }
 
    @Override

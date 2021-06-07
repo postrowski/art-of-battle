@@ -31,7 +31,7 @@ public enum Deity {
       byte affinityLevel = (byte) (divAff.getLevel() + 1);
       Profession martialArts = chr.getProfession(ProfessionType.MartialArtist);
       if ((martialArts == null) || (martialArts.getLevel() < affinityLevel)) {
-         chr.setProfessionLevel(ProfessionType.MartialArtist, affinityLevel);
+         chr.setProfessionLevel(ProfessionType.MartialArtist, SkillType.Aikido, affinityLevel);
          martialArts = chr.getProfession(ProfessionType.MartialArtist);
       }
 
@@ -76,9 +76,12 @@ public enum Deity {
          return false;
       }
       Profession fighter = chr.getProfession(ProfessionType.Fighter);
-      if ((fighter == null) || (fighter.getLevel() < affinityLevel)) {
-         chr.setProfessionLevel(ProfessionType.Fighter, affinityLevel);
+      if (fighter == null) {
+         chr.setProfessionLevel(ProfessionType.Fighter, SkillType.AxeMace, affinityLevel);
          fighter = chr.getProfession(ProfessionType.Fighter);
+      }
+      if (fighter.getLevel() < affinityLevel) {
+         fighter.setLevel(affinityLevel);
       }
       setSkillRankToProficient(fighter, Arrays.asList(SkillType.AxeMace,
                                                       SkillType.TwoHanded_AxeMace,

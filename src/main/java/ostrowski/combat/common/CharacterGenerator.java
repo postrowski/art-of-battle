@@ -318,7 +318,9 @@ public class CharacterGenerator implements Enums
                                        }
                                     }
                                     if (spellcastingProf == null) {
-                                       spellcastingProf = new Profession(ProfessionType.Spellcasting, level);
+                                       spellcastingProf = new Profession(ProfessionType.Spellcasting,
+                                                                         Arrays.asList(mageSpell.prerequisiteSkillTypes),
+                                                                         level);
                                        profs.add(spellcastingProf);
                                     }
                                     else {
@@ -422,7 +424,7 @@ public class CharacterGenerator implements Enums
          }
       }
       for (Entry<ProfessionType, Byte> entry : requiredProfs.entrySet()) {
-         character.setProfessionLevel(entry.getKey(), entry.getValue());
+         character.setProfessionLevel(entry.getKey(), null, entry.getValue());
       }
       pointsLeft = points - character.getPointTotal();
 
@@ -919,6 +921,11 @@ public class CharacterGenerator implements Enums
          checkSkillLevels(character, primaryWeapon, points);
          pointsLeft = points - character.getPointTotal();
       }
+      for (Profession prof : character.getProfessionsList()) {
+         if (prof.getProficientSkills().isEmpty()) {
+            DebugBreak.debugBreak("Empty proficient set in profession list. " + prof.getType().getName());
+         }
+      }
 
       character.computeWealth();
       pointsLeft = points - character.getPointTotal();
@@ -1038,6 +1045,17 @@ public class CharacterGenerator implements Enums
                      }
                      // Get rid of this skill, we can't afford to increase it to the effective level
                      skillList.remove(skill);
+                     if (proficientSkills.isEmpty()) {
+                        if (familiarSkills.isEmpty()) {
+                           professions.remove(profession);
+                           character.setProfessionsList(professions);
+                           // recurse to look for more
+                           checkSkillLevels(character, primaryWeapon, maxCharPoints);
+                           return;
+                        }
+                        // Move something from our familiar list into the proficient list.
+                        proficientSkills.add(familiarSkills.remove(0));
+                     }
                      profession.setProficientSkills(proficientSkills);
                      profession.setFamiliarSkills(familiarSkills);
                      character.setProfessionsList(professions);
@@ -1309,7 +1327,7 @@ public class CharacterGenerator implements Enums
             byte level = profession.getLevel();
             if (level < Rules.getMaxSkillLevel()) {
                if ((Rules.getProfessionCost((byte) (level + 1)) - Rules.getProfessionCost(level)) <= pointsLeft) {
-                  profession.setLevel((byte) (level + 1));
+                  character.setProfessionLevel(profession.getType(), profession.getProficientSkills().get(0), (byte)(level+1));
                   return true;
                }
             }

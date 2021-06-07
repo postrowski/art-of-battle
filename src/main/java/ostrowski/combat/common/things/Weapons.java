@@ -165,7 +165,7 @@ public class Weapons {
               new MissileWeaponBase(4, 7, 200, Weapon.NAME_Crossbow,      SkillType.Crossbow,   SkillRank.UNKNOWN,  0,  10, DieType.D12, DamageType.IMP,   40,  2, new String[] {"Raise crossbow", "Notch bolt", "Ready bolt", "Cock crossbow", "Cock crossbow"}),
               new MissileWeaponBase(6, 9, 300, Weapon.NAME_CrossbowHeavy, SkillType.Crossbow,   SkillRank.UNKNOWN,  0,  12, DieType.D12, DamageType.IMP,   50,  2, new String[] {"Raise crossbow", "Notch bolt", "Ready bolt", "Cock crossbow", "Cock crossbow", "Cock crossbow"}),
               new MissileWeaponBase(2, 6, 150, Weapon.NAME_CrossbowLight, SkillType.Crossbow,   SkillRank.UNKNOWN,  0,   8, DieType.D12, DamageType.IMP,   30,  2, new String[] {"Raise crossbow", "Notch bolt", "Ready bolt", "Cock crossbow"}),
-              new MissileWeaponBase(0, 1,   5, Weapon.NAME_Sling,         SkillType.Sling,      SkillRank.FAMILIAR, 0,   0,  DieType.D4, DamageType.BLUNT, 12,  1, new String[] {"Spin sling", "Load stone in sling", "Ready stone"}),
+              new MissileWeaponBase(0, 1,   5, Weapon.NAME_Sling,         SkillType.Sling,      SkillRank.FAMILIAR, 0,   3,  DieType.D4, DamageType.BLUNT, 12,  1, new String[] {"Spin sling", "Load stone in sling", "Ready stone"}),
               new MissileWeaponBase(1, 3, 100, Weapon.NAME_StaffSling,    SkillType.Sling,      SkillRank.FAMILIAR, 0,   7,  DieType.D6, DamageType.BLUNT, 20,  2, new String[] {"Spin sling", "Load stone in staff sling", "Ready stone"}),
               };
       // sort this array, so they can be listed in alphabetical order
@@ -279,7 +279,7 @@ public class Weapons {
             }
             data[row][col++] = attack.getName();
             data[row][col++] = String.valueOf(attack.getHandsRequired());
-            data[row][col++] = String.valueOf(attack.getMinRank());
+            data[row][col++] = attack.getMinRank() == SkillRank.UNKNOWN ? "-" : String.valueOf(attack.getMinRank().getName());
             data[row][col++] = String.valueOf(attack.getSpeedBase());
             int fastStr = attack.getFastStr();
             int slowStr = attack.getSlowStr();
@@ -302,7 +302,7 @@ public class Weapons {
             data[row][col++] = parry.getSkillType().getName();
             data[row][col++] = parry.getName();
             data[row][col++] = String.valueOf(parry.getHandsRequired());
-            data[row][col++] = String.valueOf(parry.getMinRank());
+            data[row][col++] = parry.getMinRank() == SkillRank.UNKNOWN ? "-" : String.valueOf(parry.getMinRank().getName());
             data[row][col++] = String.valueOf(parry.getSpeedBase());
             int fastStr = parry.getFastStr();
             int slowStr = parry.getSlowStr();
@@ -411,7 +411,12 @@ public class Weapons {
                   }
                   sb.append("</td>");
                   sb.append("<td>").append(String.valueOf(rangedAttack.getHandsRequired())).append("</td>");
-                  sb.append("<td>").append(String.valueOf(rangedAttack.getMinRank())).append("</td>");
+                  if (attack.getMinRank() == SkillRank.UNKNOWN) {
+                     sb.append("<td>-</td>");
+                  }
+                  else {
+                     sb.append("<td>").append(attack.getMinRank().getName()).append("</td>");
+                  }
                   sb.append("<td class='alignLeft'>").append(rangedAttack.getPreparationStepsAsHTML("")).append("</td>");
                   sb.append("<td>").append(String.valueOf(rangedAttack.getDamageMod())).append("</td>");
                   sb.append("<td>").append(rangedAttack.getVarianceDie()).append("</td>");

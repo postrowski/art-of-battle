@@ -36,7 +36,7 @@ public class SpellIceStorm extends PriestSpell
       sb.append(" Characters will be attacked with a d10± plus the Divine Affinity of the caster.");
       sb.append(" As with any other attack, if the character's TN adjusted for their size, armor, and defensive actions, is not greater than the attack roll, results in damage to the character.");
       sb.append(" Bonus damage of 1 point for every two full points over the TN rolled on the attack roll applies as normal.");
-      sb.append(" Icicles that are not dodged or blocked result in 1d10 impaling damage per point of spell power, plus any bonus damage.");
+      sb.append(" Icicles that are not dodged or blocked result in 1d8 impaling damage per point of spell power, plus any bonus damage.");
       sb.append(" The casting priest may choose to stop the storm at any time earlier than the normal expiration time, if he/she chooses.");
       Table table = new Table();
       table.addRow(new TableRow(-1, "Effective power", "Storm duration", "Damage"));
@@ -52,6 +52,6 @@ public class SpellIceStorm extends PriestSpell
       return (int) Math.pow(2, (power-1));
    }
    public static DiceSet getDamageForPower(int power) {
-      return new DiceSet(power+"d10");
+      return new DiceSet(power+"d8");
    }
 }

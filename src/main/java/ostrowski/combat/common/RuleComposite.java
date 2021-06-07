@@ -34,7 +34,8 @@ public class RuleComposite extends Composite
    private static final int BROWSER_SPELLS_MAGE     = 7;
    private static final int BROWSER_SPELLS_PRIEST   = 8;
    private static final int BROWSER_MISC            = 9;
-   private static final int BROWSER_TAB_COUNT       = 10;
+   private static final int BROWSER_CANNON_FODDER   = 10;
+   private static final int BROWSER_TAB_COUNT       = 11;
 
    private final Browser[]                    rulesBrowser       = new Browser[BROWSER_TAB_COUNT];
    private final HashMap<DamageType, Browser> rulesWoundsBrowser = new HashMap<>();
@@ -71,6 +72,7 @@ public class RuleComposite extends Composite
             case BROWSER_WEAPONS:       item.setText("Weapons");         break;
             case BROWSER_WOUNDS:        item.setText("Wounds");          break;
             case BROWSER_MISC:          item.setText("Misc.");           break;
+            case BROWSER_CANNON_FODDER: item.setText("Cannon Fodder");   break;
          }
          // create a control
          Composite subComposite = Helper.createComposite(tabFolderRules, 1, GridData.FILL_BOTH);
@@ -149,5 +151,6 @@ public class RuleComposite extends Composite
      }
      rulesWoundsBrowser.get(DamageType.GENERAL).setText(WoundCharts.generateCombinedHtmlTable());
      rulesBrowser[BROWSER_MISC].setText(Rules.generateMiscHtmlTable());
+     rulesBrowser[BROWSER_CANNON_FODDER].setText(Rules.generateCannonFodder());
   }
 }

@@ -412,11 +412,10 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
 
       Profession spellCastingProf = professionsList.get(ProfessionType.Spellcasting);
       if (spellCastingProf == null) {
-         spellCastingProf = new Profession(ProfessionType.Spellcasting, (byte) expectedSkillTypes.size());
-         // Set one of the skill as the primary skill. doesnt matter which
+         // Set one of the skill as the primary skill. It doesn't matter which.
          SkillType primarySkill = expectedSkillTypes.iterator().next();
+         spellCastingProf = new Profession(ProfessionType.Spellcasting, primarySkill, (byte) expectedSkillTypes.size());
          expectedSkillTypes.remove(primarySkill);
-         spellCastingProf.setProficientSkills(Collections.singletonList(primarySkill));
          professionsList.put(ProfessionType.Spellcasting, spellCastingProf);
       }
       if (spellCastingProf.getLevel() < expectedSkillTypes.size()) {
@@ -928,7 +927,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    }
 
    public void setSkillLevel(ProfessionType professionType, SkillType skillType, byte skillLevel) {
-      Profession prof = professionsList.computeIfAbsent(professionType, o -> new Profession(professionType, skillLevel));
+      Profession prof = professionsList.computeIfAbsent(professionType, o -> new Profession(professionType, skillType, skillLevel));
       prof.setLevel(skillLevel);
       List<SkillType> proficientSkills = prof.getProficientSkills();
       if (!proficientSkills.contains(skillType)) {
@@ -945,8 +944,8 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       }
    }
 
-   public void setProfessionLevel(ProfessionType professionType, byte profLevel) {
-      professionsList.computeIfAbsent(professionType, o -> new Profession(professionType, profLevel))
+   public void setProfessionLevel(ProfessionType professionType, SkillType defaultProfSkillType, byte profLevel) {
+      professionsList.computeIfAbsent(professionType, o -> new Profession(professionType, defaultProfSkillType, profLevel))
                      .setLevel(profLevel);
    }
 
@@ -1011,10 +1010,11 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
          knownMageSpellsList.add(spellFound);
       }
       spellFound.setFamiliarity(familiarity);
-      Profession spellcasting = professionsList.computeIfAbsent(ProfessionType.Spellcasting, o-> new Profession(ProfessionType.Spellcasting, spellLevel));
-      for (SkillType skillType : spellFound.prerequisiteSkillTypes) {
-         spellcasting.setRank(skillType, SkillRank.PROFICIENT);
-      }
+      MageSpell finalSpellFound = spellFound;
+      Profession spellcasting = professionsList.computeIfAbsent(ProfessionType.Spellcasting,
+                                                                o-> new Profession(ProfessionType.Spellcasting,
+                                                                                   Arrays.asList(finalSpellFound.prerequisiteSkillTypes),
+                                                                                   spellLevel));
    }
 
    public byte getBuildBase() {
@@ -4091,15 +4091,17 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                      familiarSkills.add(skillType);
                   }
                }
-               Profession profession = new Profession(professionType, Byte.parseByte(level));
-               profession.setProficientSkills(proficientSkills);
-               profession.setProficientSkills(familiarSkills);
+               Profession profession = new Profession(professionType, proficientSkills, Byte.parseByte(level));
+               profession.setFamiliarSkills(familiarSkills);
                professionsList.put(professionType, profession);
             } else {
                MageSpell spell = MageSpells.getSpell(name);
                if (spell != null) {
                   byte castingLevel = 4;
-                  Profession spellcasting = professionsList.computeIfAbsent(ProfessionType.Spellcasting, o -> new Profession(ProfessionType.Spellcasting, castingLevel));
+                  Profession spellcasting = professionsList.computeIfAbsent(ProfessionType.Spellcasting,
+                                                                            o -> new Profession(ProfessionType.Spellcasting,
+                                                                                                spell.prerequisiteSkillTypes[0],
+                                                                                                castingLevel));
                   setSpellLevel(name, spellcasting.getLevel(), MageSpell.Familiarity.getFamiliarityByName(level));
                }
             }
@@ -4380,8 +4382,12 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                   if (professionType != null) {
                      String proficientSkillsStr = attr.getNamedItem("proficient").getNodeValue();
                      String familiarSkillsStr = attr.getNamedItem("familiar").getNodeValue();
-                     Profession profession = new Profession(professionType, level);
-                     profession.setProficientSkills(proficientSkillsStr);
+                     List<SkillType> proficientSkills = Arrays.asList(proficientSkillsStr.split(","))
+                                                              .stream()
+                                                              .map(o -> SkillType.getSkillTypeByName(o))
+                                                              .filter(Objects::nonNull)
+                                                              .collect(Collectors.toList());
+                     Profession profession = new Profession(professionType, proficientSkills, level);
                      profession.setFamiliarSkills(familiarSkillsStr);
                      professionsList.put(professionType, profession);
                   }

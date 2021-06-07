@@ -100,7 +100,7 @@ public class SpellCreateZombie extends PriestSpell implements ICastInBattle
          byte maxSkill = (byte) (getEffectivePower() * 2);
          for (Profession profession : target.getProfessionsList()) {
             if (profession.getLevel() > maxSkill) {
-               target.setProfessionLevel(profession.getType(), maxSkill);
+               target.setProfessionLevel(profession.getType(), null, maxSkill);
             }
          }
 

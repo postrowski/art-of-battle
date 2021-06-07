@@ -7,7 +7,6 @@
   </Equipment>
   <Professions>
     <Profession Level="6" Name="Fighter" familiar="" proficient="Sword,Shield"/>
-    <Profession Level="0" Name="Spellcasting" familiar="" proficient=""/>
   </Professions>
   <Advantages>
     <Advantage LevelName="$5,000" Name="Wealth"/>

@@ -19,9 +19,9 @@ public class ProfessionsBlock extends Helper implements Enums, ModifyListener, I
    final         CharacterWidget display;
    static final  int             SKILL_COUNT         = 12;
    private final Combo[]         professionType      = new Combo[SKILL_COUNT];
-   private final Combo[]         professionLevelRank = new Combo[SKILL_COUNT];
-   private final Combo[]         skillType           = new Combo[SKILL_COUNT];
-   private final Text[]          skillLevelAdj       = new Text[SKILL_COUNT];
+   private final Combo[] professionLevelRank = new Combo[SKILL_COUNT];
+   private final Combo[] skillTypeCombo      = new Combo[SKILL_COUNT];
+   private final Text[]  skillLevelAdj       = new Text[SKILL_COUNT];
    private final Text[]          skillCost           = new Text[SKILL_COUNT];
    private       Text            racialSize          = null;
    private static final String   NO_PROF_SELECTED    = "--";
@@ -64,8 +64,8 @@ public class ProfessionsBlock extends Helper implements Enums, ModifyListener, I
       for (int i = 0; i < SKILL_COUNT; i++) {
          professionType[i] = createCombo(skillGroup, SWT.READ_ONLY, 1, professionNames);
          professionType[i].select(0);
-         skillType[i] = createCombo(skillGroup, SWT.READ_ONLY, 1, skillNames);
-         skillType[i].select(0);
+         skillTypeCombo[i] = createCombo(skillGroup, SWT.READ_ONLY, 1, skillNames);
+         skillTypeCombo[i].select(0);
          professionLevelRank[i] = createCombo(skillGroup, SWT.READ_ONLY, 1, null);
          professionLevelRank[i].setEnabled(false);
          skillLevelAdj[i] = createText(skillGroup, "[0]", false/*editable*/, 1);
@@ -73,7 +73,7 @@ public class ProfessionsBlock extends Helper implements Enums, ModifyListener, I
          // register watchers on all the editable elements we've created
          professionType[i].addSelectionListener(this);
          professionLevelRank[i].addSelectionListener(this);
-         skillType[i].addSelectionListener(this);
+         skillTypeCombo[i].addSelectionListener(this);
       }
 
       // setup a tab ordering on the editable controls, row by row:
@@ -81,7 +81,7 @@ public class ProfessionsBlock extends Helper implements Enums, ModifyListener, I
       int index = 0;
       for (int i = 0; i < SKILL_COUNT; i++) {
          tabList[index++] = professionType[i];
-         tabList[index++] = skillType[i];
+         tabList[index++] = skillTypeCombo[i];
          tabList[index++] = professionLevelRank[i];
       }
       skillGroup.setTabList(tabList);
@@ -107,14 +107,14 @@ public class ProfessionsBlock extends Helper implements Enums, ModifyListener, I
          Map<String, ArrayList<Integer>> existingProfessions = new HashMap<>();
          for (int i = 0; i < SKILL_COUNT; i++) {
             if (e.widget == professionType[i]) {
-               onSetProfession(existingProfessions, i, skillType[i].getText());
+               onSetProfession(existingProfessions, i, skillTypeCombo[i].getText());
             }
             existingProfessions.computeIfAbsent(professionType[i].getText(), o -> new ArrayList<>()).add(i);
          }
 
          for (int i = 0; i < SKILL_COUNT; i++) {
-            if (e.widget == skillType[i]) {
-               if (skillType[i].getText().equals(NO_SKILL_SELECTED)){
+            if (e.widget == skillTypeCombo[i]) {
+               if (skillTypeCombo[i].getText().equals(NO_SKILL_SELECTED)){
                   if (professionType[i].getText().equals(NO_PROF_SELECTED)) {
                      professionLevelRank[i].removeAll();
                      professionLevelRank[i].setEnabled(false);
@@ -157,8 +157,8 @@ public class ProfessionsBlock extends Helper implements Enums, ModifyListener, I
 
    private void onSetProfession(Map<String, ArrayList<Integer>> existingProfessions, int rowIndex, String preferredSkillName) {
       if (professionType[rowIndex].getText().equals(NO_PROF_SELECTED)) {
-         skillType[rowIndex].setText(NO_SKILL_SELECTED);
-         skillType[rowIndex].setEnabled(false);
+         skillTypeCombo[rowIndex].setText(NO_SKILL_SELECTED);
+         skillTypeCombo[rowIndex].setEnabled(false);
          professionLevelRank[rowIndex].removeAll();
          professionLevelRank[rowIndex].setEnabled(false);
          return;
@@ -189,21 +189,21 @@ public class ProfessionsBlock extends Helper implements Enums, ModifyListener, I
          }
          professionLevelRank[rowIndex].setEnabled(true);
       }
-      skillType[rowIndex].setEnabled(true);
+      skillTypeCombo[rowIndex].setEnabled(true);
       for (ProfessionType type : ProfessionType.values()) {
          if (professionType[rowIndex].getText().equals(type.getName())) {
-            skillType[rowIndex].removeAll();
-            skillType[rowIndex].add(NO_SKILL_SELECTED);
+            skillTypeCombo[rowIndex].removeAll();
+            skillTypeCombo[rowIndex].add(NO_SKILL_SELECTED);
             boolean skillFound = false;
             for (SkillType skType : type.skillList) {
-               skillType[rowIndex].add(skType.getName());
+               skillTypeCombo[rowIndex].add(skType.getName());
                if (skType.name().equals(preferredSkillName)) {
-                  skillType[rowIndex].select(skillType[rowIndex].getItemCount() - 1);
+                  skillTypeCombo[rowIndex].select(skillTypeCombo[rowIndex].getItemCount() - 1);
                   skillFound = true;
                }
             }
             if (!skillFound) {
-               skillType[rowIndex].select(0);
+               skillTypeCombo[rowIndex].select(0);
             }
             break;
          }
@@ -245,14 +245,16 @@ public class ProfessionsBlock extends Helper implements Enums, ModifyListener, I
                   profLevel += 2;
                }
                byte finalProfLevel = profLevel;
-               Profession charProfession = charProfs.computeIfAbsent(profType, o -> new Profession(profType, finalProfLevel));
-               charProfession.setLevel(profLevel);
-               String skillName = skillType[i].getText();
+               SkillType skillType = null;
+               String skillName = skillTypeCombo[i].getText();
                if (!skillName.equals(NO_SKILL_SELECTED)) {
-                  SkillType skillType = SkillType.getSkillTypeByName(skillName);
-                  if (skillType != null && skillRank != null && skillRank != SkillRank.UNKNOWN) {
-                     charProfession.setRank(skillType, skillRank);
-                  }
+                  skillType = SkillType.getSkillTypeByName(skillName);
+               }
+               SkillType finalSkillType = skillType;
+               Profession charProfession = charProfs.computeIfAbsent(profType, o -> new Profession(profType, finalSkillType, finalProfLevel));
+               charProfession.setLevel(profLevel);
+               if (skillType != null && skillRank != null && skillRank != SkillRank.UNKNOWN) {
+                  charProfession.setRank(skillType, skillRank);
                }
             }
          }
@@ -340,13 +342,13 @@ public class ProfessionsBlock extends Helper implements Enums, ModifyListener, I
          boolean isFirstProf = existingProfRows.size() == 1;
          ProfessionDisplay professionFound = null;
          ProfessionType profType = ProfessionType.getByName(professionType[i].getText());
-         SkillType skillType = SkillType.getSkillTypeByName(this.skillType[i].getText());
+         SkillType skillType = SkillType.getSkillTypeByName(this.skillTypeCombo[i].getText());
          for (ProfessionDisplay charProf : charProfs) {
             if (charProf.profType == profType &&
-                ((charProf.skillType == skillType) || this.skillType[i].getText().equals(NO_SKILL_SELECTED))) {
+                ((charProf.skillType == skillType) || this.skillTypeCombo[i].getText().equals(NO_SKILL_SELECTED))) {
                //professionType[i] already matches
                onSetProfession(existingProfessions, i, charProf.skillType.getName());
-               this.skillType[i].setText(charProf.skillType.getName());
+               this.skillTypeCombo[i].setText(charProf.skillType.getName());
                if (isFirstProf) {
                   charProf.rank = SkillRank.PROFICIENT;
                   professionLevelRank[i].select(charProf.level - 1);
@@ -368,7 +370,7 @@ public class ProfessionsBlock extends Helper implements Enums, ModifyListener, I
                else {
                   skillCost[i].setText("(" + charProf.rank.getCost() + ")");
                }
-               this.skillType[i].setEnabled(true);
+               this.skillTypeCombo[i].setEnabled(true);
                professionLevelRank[i].setEnabled(true);
                professionFound = charProf;
                nextInsertIndex++;
@@ -392,10 +394,10 @@ public class ProfessionsBlock extends Helper implements Enums, ModifyListener, I
             }
             skillCost[i].setText("(" + cost + ")");
 
-            if (this.skillType[i].getText().equals(NO_SKILL_SELECTED) && isFirstProf) {
+            if (this.skillTypeCombo[i].getText().equals(NO_SKILL_SELECTED) && isFirstProf) {
                skillLevelAdj[i].setText("[0]");
             }
-            else if (this.skillType[i].getText().equals(NO_SKILL_SELECTED)) {
+            else if (this.skillTypeCombo[i].getText().equals(NO_SKILL_SELECTED)) {
                skillLevelAdj[i].setText("?");
             }
             else {
@@ -413,7 +415,7 @@ public class ProfessionsBlock extends Helper implements Enums, ModifyListener, I
          boolean isFirstProf = existingProfRows.size() == 1;
          professionType[nextInsertIndex].setText(charProf.profType.getName());
          onSetProfession(existingProfessions, nextInsertIndex, charProf.skillType.getName());
-         skillType[nextInsertIndex].setText(charProf.skillType.getName());
+         skillTypeCombo[nextInsertIndex].setText(charProf.skillType.getName());
          if (isFirstProf) {
             professionLevelRank[nextInsertIndex].select(charProf.level - 1);
          }
@@ -447,10 +449,10 @@ public class ProfessionsBlock extends Helper implements Enums, ModifyListener, I
          if (professionType[i].getText().equals(NO_PROF_SELECTED)) {
             professionLevelRank[i].removeAll();
             professionLevelRank[i].setEnabled(false);
-            skillType[i].setText(NO_SKILL_SELECTED);
-            skillType[i].setEnabled(false);
+            skillTypeCombo[i].setText(NO_SKILL_SELECTED);
+            skillTypeCombo[i].setEnabled(false);
          }
-         if (skillType[i].getText().equals(NO_SKILL_SELECTED) && !isFirstProf) {
+         if (skillTypeCombo[i].getText().equals(NO_SKILL_SELECTED) && !isFirstProf) {
             skillLevelAdj[i].setText("[0]");
             skillCost[i].setText("(0)");
          }
@@ -471,12 +473,12 @@ public class ProfessionsBlock extends Helper implements Enums, ModifyListener, I
       for (int row=0 ; row<rowIndex ; row++) {
          existingProfessions.computeIfAbsent(professionType[row].getText(), o -> new ArrayList<>()).add(row);
       }
-      onSetProfession(existingProfessions, rowIndex, nextItemAvailable ? skillType[rowIndex + 1].getText() : "");
+      onSetProfession(existingProfessions, rowIndex, nextItemAvailable ? skillTypeCombo[rowIndex + 1].getText() : "");
       professionLevelRank[rowIndex].select(nextItemAvailable ? professionLevelRank[rowIndex + 1].getSelectionIndex() : 0);
       skillLevelAdj[rowIndex].setText(nextItemAvailable ? skillLevelAdj[rowIndex + 1].getText() : "[0]");
       skillCost[rowIndex].setText(nextItemAvailable ? skillCost[rowIndex + 1].getText() : "(0)");
-      skillType[rowIndex].select(nextItemAvailable ? skillType[rowIndex + 1].getSelectionIndex() : 0);
-      skillType[rowIndex].setEnabled(!nextItemAvailable || skillType[rowIndex + 1].getEnabled());
+      skillTypeCombo[rowIndex].select(nextItemAvailable ? skillTypeCombo[rowIndex + 1].getSelectionIndex() : 0);
+      skillTypeCombo[rowIndex].setEnabled(!nextItemAvailable || skillTypeCombo[rowIndex + 1].getEnabled());
       professionLevelRank[rowIndex].setEnabled(!nextItemAvailable || professionLevelRank[rowIndex + 1].getEnabled());
       if (nextItemAvailable) {
          removeSkillRow(rowIndex+1);

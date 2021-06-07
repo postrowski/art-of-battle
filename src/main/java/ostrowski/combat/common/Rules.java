@@ -889,7 +889,6 @@ public class Rules extends DebugBreak implements Enums {
    }
 
    public static String generateMiscHtmlTable() {
-
       return HtmlBuilder.getHTMLHeader() +
              "<body>" +
              "<table class='Hidden'>" +
@@ -907,6 +906,34 @@ public class Rules extends DebugBreak implements Enums {
              "<h4>Weapon Size Adjustments:</h4>" +
              generateSizeAdjustmentTable() +
              "</td></tr>" +
+             "</table>" +
+             "</body>";
+   }
+   static List<Character> fodderCharacters = new ArrayList<>();
+   public static String generateCannonFodder() {
+      if (fodderCharacters.isEmpty()) {
+         for (int points = 50; points <= 500; points += 2) {
+            Character chr = CharacterGenerator.generateRandomCharacter(points, Race.NAME_Dwarf, "", false, false);
+            fodderCharacters.add(chr);
+         }
+      }
+
+      StringBuilder sb = new StringBuilder();
+      TableRow header = null;
+      int row = 0;
+      for (Character chr : fodderCharacters) {
+         CannonFodder fodder = new CannonFodder(chr);
+         if (header == null)  {
+            header = fodder.getHeaderRowHTML();
+         }
+         sb.append(fodder.getRowHTML(row++));
+      }
+
+      return HtmlBuilder.getHTMLHeader() +
+             "<body>" +
+             "<table>" +
+             header.toString() +
+             sb.toString() +
              "</table>" +
              "</body>";
    }
