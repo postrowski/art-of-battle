@@ -6,7 +6,7 @@
     <Belt>Quarterstaff</Belt>
   </Equipment>
   <Professions>
-    <Profession Level="2" Name="Common" familiar="Swimming" proficient="Throwing"/>
+    <Profession Level="2" Name="Athlete" familiar="Swimming" proficient="Throwing"/>
     <Profession Level="5" Name="Martial Arts" familiar="" proficient="Aikido,Boxing,Karate,Quarterstaff"/>
   </Professions>
   <Advantages>
@@ -14,7 +14,7 @@
     <Advantage LevelName="4" Name="Divine Power"/>
     <Advantage LevelName="5" Name="Divine Aff. - Tao"/>
     <Advantage LevelName="" Name="Honest"/>
-    <Advantage LevelName="Near sighted" Name="Vision"/>
+    <Advantage LevelName="Near Sighted" Name="Vision"/>
     <Advantage LevelName="x3" Name="Quirks"/>
   </Advantages>
 </Character>

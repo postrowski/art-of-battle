@@ -7,7 +7,7 @@
   </Equipment>
   <Professions>
     <Profession Level="4" Name="Fighter" familiar="Brawling" proficient="Sword"/>
-    <Profession Level="2" Name="Common" familiar="" proficient="Throwing"/>
+    <Profession Level="2" Name="Athlete" familiar="" proficient="Throwing"/>
     <Profession Level="6" Name="Shooting" familiar="" proficient="Bow"/>
   </Professions>
   <Advantages>

@@ -21,12 +21,6 @@ public enum ProfessionType {
            SkillType.TwoHanded_AxeMace,
            SkillType.TwoHanded_Sword
    }),
-   Shooting("Shooting", new SkillType[]{
-           SkillType.BlowGun,
-           SkillType.Bow,
-           SkillType.Crossbow,
-           SkillType.Sling
-   }),
    MartialArtist("Martial Arts", new SkillType[]{
            SkillType.Aikido,
            SkillType.Boxing,
@@ -37,6 +31,22 @@ public enum ProfessionType {
            SkillType.Spear,
            SkillType.Sword,
            SkillType.Wrestling
+   }),
+   Shooting("Shooting", new SkillType[]{
+           SkillType.BlowGun,
+           SkillType.Bow,
+           SkillType.Crossbow,
+           SkillType.Sling
+   }),
+   Athlete("Athlete", new SkillType[]{
+           SkillType.Acrobatics,
+           SkillType.Brawling,
+           SkillType.Climbing,
+           SkillType.Riding,
+           SkillType.Running,
+           SkillType.Sport,
+           SkillType.Swimming,
+           SkillType.Throwing
    }),
    Knight("Knight", new SkillType[]{
            SkillType.Riding,
@@ -79,23 +89,10 @@ public enum ProfessionType {
            }),
    Common("Common", new SkillType[]{
            SkillType.AreaKnowledge,
-           SkillType.Brawling,
            SkillType.CommonKnowledge,
            SkillType.Cooking,
            SkillType.Language2,
-           SkillType.Observation,
-           SkillType.Riding,
-           SkillType.Swimming,
-           SkillType.Throwing
-   }),
-   Athlete("Athlete", new SkillType[]{
-           SkillType.Acrobatics,
-           SkillType.Climbing,
-           SkillType.Sport,
-           SkillType.Riding,
-           SkillType.Running,
-           SkillType.Swimming,
-           SkillType.Throwing
+           SkillType.Observation
    }),
    Linguist("Linguist", new SkillType[]{
            SkillType.Language2,
@@ -151,12 +148,12 @@ public enum ProfessionType {
    }),
    Survivalist("Survivalist", new SkillType[]{
            SkillType.AreaKnowledge,
-           SkillType.Tracking,
-           SkillType.Trapping,
+           SkillType.AnimalKnowledge,
+           SkillType.PlantKnowledge,
            SkillType.Meteorology,
            SkillType.Stealth,
-           SkillType.PlantKnowledge,
-           SkillType.AnimalKnowledge
+           SkillType.Tracking,
+           SkillType.Trapping
    }),
    Farmer("Farmer", new SkillType[]{
            SkillType.PlantKnowledge,

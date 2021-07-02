@@ -5,7 +5,7 @@
     <Hand Name="left hand"/>
   </Equipment>
   <Professions>
-    <Profession Level="2" Name="Common" familiar="Riding" proficient="Swimming"/>
+    <Profession Level="2" Name="Athlete" familiar="Riding" proficient="Swimming"/>
     <Profession Level="7" Name="Martial Arts" familiar="" proficient="Aikido,Karate"/>
   </Professions>
   <Advantages>

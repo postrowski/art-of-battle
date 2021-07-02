@@ -74,6 +74,11 @@ public class HtmlBuilder
       sb.append(".def_Cut     { max-width: 15px; background-color: burlywood}\n");
       sb.append(".def_Impale  { max-width: 15px; background-color: bisque}\n");
       sb.append(".weapon {}\n");
+      sb.append(".weapon_name { font-weight: bold; }\n");
+      sb.append("tr.row0 td.weapon_name { background-color:#E8E8E8; }\n");
+      sb.append("tr.row1 td.weapon_name { background-color:#D8D8D8; }\n");
+      sb.append("tr.row2 td.weapon_name { background-color:#E8E8E8; }\n");
+      sb.append("tr.row3 td.weapon_name { background-color:#D8D8D8; }\n");
       sb.append(".tightTable td, .tightTable th {\n");
       sb.append("    padding: 0px;\n");
       sb.append("}\n");

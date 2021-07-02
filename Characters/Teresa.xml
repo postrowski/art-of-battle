@@ -6,7 +6,7 @@
     <Belt>Bow, Shortbow</Belt>
   </Equipment>
   <Professions>
-    <Profession Level="3" Name="Common" familiar="" proficient="Throwing"/>
+    <Profession Level="3" Name="Athlete" familiar="" proficient="Throwing"/>
     <Profession Level="4" Name="Shooting" familiar="" proficient="Bow"/>
     <Profession Level="4" Name="Fighter" familiar="" proficient="Spear,Shield"/>
   </Professions>

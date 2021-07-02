@@ -10,7 +10,7 @@
   </Equipment>
   <Professions>
     <Profession Level="9" Name="Fighter" familiar="Sword" proficient="2-Handed Sword"/>
-    <Profession Level="2" Name="Common" familiar="" proficient="Riding,Throwing"/>
+    <Profession Level="2" Name="Athlete" familiar="" proficient="Riding,Throwing"/>
     <Profession Level="7" Name="Martial Arts" familiar="" proficient="Aikido,Karate"/>
     <Profession Level="3" Name="Shooting" familiar="" proficient="Bow"/>
   </Professions>

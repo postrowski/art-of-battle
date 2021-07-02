@@ -16,10 +16,7 @@ import ostrowski.protocol.SerializableFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author Paul
@@ -909,32 +906,94 @@ public class Rules extends DebugBreak implements Enums {
              "</table>" +
              "</body>";
    }
-   static List<Character> fodderCharacters = new ArrayList<>();
+   static Map<String, List<Character>> fodderCharacters = new HashMap<>();
    public static String generateCannonFodder() {
+      Object[] races = new Object[] {
+              Race.NAME_Kobold,    -75, 15,  50, 10,
+              Race.NAME_Hobbit,    -50, 50, 100, 10,
+              Race.NAME_Goblin,    -35, 60, 120, 10,
+              Race.NAME_Human,       0, 75, 200, 20,
+              Race.NAME_Gnome,      30, 90, 250, 10,
+              Race.NAME_Dwarf,      60,100, 300, 15,
+              Race.NAME_HalfOrc,    10, 80, 200, 10,
+              Race.NAME_Orc,        20, 90, 250, 15,
+              Race.NAME_HalfElf,    30, 100, 250, 10,
+              Race.NAME_Elf,       100, 125, 300, 15,
+              Race.NAME_LizardMan, 120, 150, 250, 10,
+              Race.NAME_InsectMan, 150, 175, 250, 10,
+              Race.NAME_HalfOgre,   60, 100, 300, 8,
+              Race.NAME_Ogre,      230, 300, 500, 7,
+              Race.NAME_Minotaur,  160, 200, 400, 20,
+              Race.NAME_Troll,     400, 400, 600, 5,
+              Race.NAME_Giant,     625, 700, 900, 5,
+              Race.NAME_Skeleton,   90, 100, 150, 10,
+              Race.NAME_Wolf,       50,  50, 150, 10
+      };
       if (fodderCharacters.isEmpty()) {
-         for (int points = 50; points <= 500; points += 2) {
-            Character chr = CharacterGenerator.generateRandomCharacter(points, Race.NAME_Dwarf, "", false, false);
-            fodderCharacters.add(chr);
+         for (int i=0 ; i<races.length ; i+=5) {
+            String raceName  = (String)races[i];
+            //Integer raceCost = (Integer)races[i+1];
+            Integer minCost  = (Integer)races[i+2];
+            Integer maxCost  = (Integer)races[i+3];
+            Integer count    = (Integer)races[i+4];
+            double incrementation = (maxCost - minCost) / (2.0f*count);
+            ArrayList<Character> raceList = new ArrayList();
+            for (float points = minCost; points <= maxCost; points += incrementation) {
+               incrementation = incrementation * 1.1;
+               Character chr = CharacterGenerator.generateRandomCharacter(Math.round(points), raceName, "", false, false);
+               raceList.add(chr);
+            }
+            raceList.sort(Comparator.comparingInt(Character::getPointTotal));
+            fodderCharacters.put(raceName, raceList);
          }
       }
 
       StringBuilder sb = new StringBuilder();
-      TableRow header = null;
-      int row = 0;
-      for (Character chr : fodderCharacters) {
-         CannonFodder fodder = new CannonFodder(chr);
-         if (header == null)  {
-            header = fodder.getHeaderRowHTML();
+      for (int i=0 ; i<races.length ; i+=5) {
+         String raceName  = (String)races[i];
+         Race race = Race.getRace(raceName, Race.Gender.MALE);
+         boolean showHeader = true;
+         int row = 0;
+         sb.append("<br/><table>");
+         sb.append("<tr><td colspan='50'><H3>");
+         sb.append(race.getPluralName()).append("</H3>");
+         if (race.getBonusToBeHit() != 0 || (!race.getAdvantagesList().isEmpty())) {
+            sb.append(" All ").append(race.getPluralName()).append(" have the following attributes: ");
+            if (race.getBonusToBeHit() != 0) {
+               sb.append("<b>Size adj to hit or be hit</b>:").append(race.getBonusToBeHit());
+            }
+            if (!race.getAdvantagesList().isEmpty()) {
+               if (race.getBonusToBeHit() != 0) {
+                  sb.append(", ");
+               }
+               sb.append("<b>Advantages:</b> ");
+               boolean first = true;
+               for (Advantage adv : race.getAdvantagesList()) {
+                  if (!first) {
+                     sb.append(", ");
+                  }
+                  first = false;
+                  sb.append(adv.getName());
+                  if (adv.hasLevels()) {
+                     sb.append(":").append(adv.getLevelName());
+                  }
+               }
+            }
          }
-         sb.append(fodder.getRowHTML(row++));
+         sb.append("</td></tr>");
+         for (Character chr : fodderCharacters.get(raceName)) {
+            CannonFodder fodder = new CannonFodder(chr);
+            if (showHeader)  {
+               sb.append(fodder.getHeaderRowHTML());
+               showHeader = false;
+            }
+            sb.append(fodder.getRowHTML(row++));
+         }
+         sb.append("</table>");
       }
-
       return HtmlBuilder.getHTMLHeader() +
              "<body>" +
-             "<table>" +
-             header.toString() +
              sb.toString() +
-             "</table>" +
              "</body>";
    }
 

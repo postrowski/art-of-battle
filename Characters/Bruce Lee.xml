@@ -7,7 +7,7 @@
     <Belt>Potion:Increase Strength</Belt>
   </Equipment>
   <Professions>
-    <Profession Level="2" Name="Common" familiar="" proficient="Throwing"/>
+    <Profession Level="2" Name="Athlete" familiar="" proficient="Throwing"/>
     <Profession Level="10" Name="Martial Arts" familiar="" proficient="Aikido,Karate,Nun chucks"/>
   </Professions>
   <Advantages>

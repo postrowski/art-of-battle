@@ -49,7 +49,7 @@ public abstract class WeaponStyleAttack extends WeaponStyle
       return varianceDice;
    }
    public String getDamageString(byte damBase) {
-      return "" + (damageMod + damBase) + " + " + getVarianceDie() + " " + damageType.shortname;
+      return (damageMod + damBase) + " + " + getVarianceDie() + " " + damageType.shortname;
    }
    public byte getDamage(byte damBase) {
       return (byte) (damageMod + damBase);

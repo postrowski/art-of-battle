@@ -3,7 +3,7 @@
   <Equipment Armor="Thick Scales">
   </Equipment>
   <Professions>
-    <Profession Level="8" Name="Common" familiar="" proficient="Brawling"/>
+    <Profession Level="8" Name="Athlete" familiar="" proficient="Brawling"/>
     <Profession Level="9" Name="Spellcasting" familiar="" proficient="Air,Conjuration,Divination,Earth,Enchantment,Energy,Evocation,Illusion,Protection"/>
   </Professions>
   <Spells>

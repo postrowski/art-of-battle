@@ -5,5 +5,5 @@
     <Hand Name="left hand"/>
   </Equipment>
   <Professions>
-    <Profession Level="7" Name="Common" familiar="" proficient="Brawling"/>
+    <Profession Level="7" Name="Athlete" familiar="" proficient="Brawling"/>
   </Professions></Character>

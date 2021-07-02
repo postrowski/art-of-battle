@@ -1,5 +1,6 @@
 package ostrowski.combat.common;
 
+import org.eclipse.swt.custom.CCombo;
 import ostrowski.DebugBreak;
 import ostrowski.combat.common.Race.Gender;
 import ostrowski.combat.common.enums.AttackType;
@@ -122,6 +123,19 @@ public class CharacterGenerator implements Enums
       DISSALLOWED_SKILLS_FOR_RACE.put(Race.NAME_Zombie,   Arrays.asList(SkillType.Aikido, SkillType.Karate, SkillType.Boxing));
    }
 
+   static final List<String> DUAL_WIELDABLE_WEAPON_NAMES = new ArrayList<>() {{
+      add(Weapon.NAME_Axe);
+      add(Weapon.NAME_Club);
+      add(Weapon.NAME_Dagger);
+      add(Weapon.NAME_Knife);
+      add(Weapon.NAME_Shortsword);
+      //add(Weapon.NAME_Broadsword);
+      //add(Weapon.NAME_Longsword);
+      //add(Weapon.NAME_PickAxe);
+      //add(Weapon.NAME_Rapier);
+      //add(Weapon.NAME_Sabre);
+   }};
+
    static public Character generateRandomCharacter(int points, String raceName, List<String> tokens,
                                                    boolean genNewPseudoRndNumber, Arena arena, boolean printCharacter) {
       int pointsLeft = points;
@@ -185,9 +199,9 @@ public class CharacterGenerator implements Enums
       if (gender == null) {
          // if not specified, default to 'Male'
          gender = Gender.MALE;
-         // 7% percent of the time, randomly assign the gender, excluding Male.
+         // 6% percent of the time, randomly assign the gender, excluding Male.
          double rnd = CombatServer.random();
-         if (rnd > .93) {
+         if (rnd > .94) {
             // exclude MALE from the remaining set to choose from
             genders.remove(gender);
             if (genders.size() > 0) {
@@ -295,6 +309,32 @@ public class CharacterGenerator implements Enums
                            if (skillType != null) {
                               Byte level = Byte.parseByte(value);
                               requiredSkills.put(skillType, level);
+                              ProfessionType[] profs = new ProfessionType[] {
+                                      ProfessionType.Fighter,
+                                      ProfessionType.Shooting,
+                                      ProfessionType.MartialArtist,
+                                      ProfessionType.Athlete,
+                                      ProfessionType.Common,
+                                      ProfessionType.Spellcasting,
+                                      ProfessionType.Thief,
+                                      ProfessionType.Survivalist,
+                                      ProfessionType.Knight,
+                                      ProfessionType.Assassin,
+                                      ProfessionType.AnimalHandler,
+                                      ProfessionType.Farmer,
+                                      ProfessionType.Linguist,
+                                      ProfessionType.Tradesman,
+                                      ProfessionType.Merchant,
+                                      ProfessionType.Entertainer,
+                                      ProfessionType.Doctor,
+                                      ProfessionType.Detective
+                                      };
+                              for (ProfessionType profType : profs) {
+                                 if (profType.skillList.contains(skillType)) {
+                                    requiredProfs.put(profType, level);
+                                    break;
+                                 }
+                              }
                            }
                            else {
                               ProfessionType professionType = ProfessionType.getByName(name);
@@ -440,18 +480,30 @@ public class CharacterGenerator implements Enums
          }
       }
 
+      boolean isDualWieldable = DUAL_WIELDABLE_WEAPON_NAMES.contains(primaryWeapon.getName());
+      boolean dualWield = false;
+      if (isDualWieldable && (requiredShield == null)) {
+              if (points > 100) dualWield = (CombatServer.random() < .025);
+         else if (points > 200) dualWield = (CombatServer.random() < .050);
+      }
+
       Hand rightHand = (Hand) character.getLimb(LimbType.HAND_RIGHT);
       if (rightHand != null) {
          if (character.isAnimal()) {
             primaryWeapon = rightHand.getWeapon(character);
          }
          else {
-            if (!primaryWeapon.getName().equals(Weapon.NAME_KarateKick)) {
+            if ((primaryWeapon != null) && !primaryWeapon.getName().equals(Weapon.NAME_KarateKick)) {
                if (weaponSheathed) {
                   character.addEquipment(primaryWeapon);
                }
                else {
                   rightHand.setHeldThing(primaryWeapon, character);
+                  if (dualWield) {
+                     Hand leftHand = (Hand) character.getLimb(LimbType.HAND_LEFT);
+                     leftHand.setHeldThing(primaryWeapon.clone(), character);
+                     character.addAdvantage(Advantage.getAdvantage(Advantage.AMBIDEXTROUS));
+                  }
                }
             }
          }
@@ -465,7 +517,6 @@ public class CharacterGenerator implements Enums
       }
 
       Skill weaponSkill = new Skill(primaryWeapon.getAttackStyle(0).getSkillType(), (byte)0);
-      byte shieldLevel = 0;
       boolean usingAsOneHanded = (primaryWeapon.getAttackStyle(0).handsRequired == 1);
       if (usingAsOneHanded) {
          // Bastard swords and Katanas should only be used one-handed if we have a STR greater than the fast STR for 1-handed
@@ -489,7 +540,9 @@ public class CharacterGenerator implements Enums
             if (str >= oneHandedSwing.getFastStr()) {
                usingAsOneHanded = true;
             }
-            else usingAsOneHanded = (str < twoHandedSwing.getFastStr()) && (str > oneHandedSwing.getSlowStr());
+            else {
+               usingAsOneHanded = (str < twoHandedSwing.getFastStr()) && (str > oneHandedSwing.getSlowStr());
+            }
             if (!usingAsOneHanded) {
                weaponSkill = new Skill(twoHandedSwing.getSkillType(), (byte)0);
             }
@@ -515,19 +568,23 @@ public class CharacterGenerator implements Enums
       }
       weaponSkill.setLevel(weaponLevel);
       ProfessionType primaryProfessionType = ProfessionType.Fighter;
-      for (ProfessionType pt : Arrays.asList(new ProfessionType[] {ProfessionType.Fighter,
-                                                                   ProfessionType.MartialArtist,
-                                                                   ProfessionType.Shooting})) {
+      for (ProfessionType pt : Arrays.asList(ProfessionType.Fighter,
+                                             ProfessionType.MartialArtist,
+                                             ProfessionType.Shooting)) {
          if (pt.skillList.contains(weaponSkill.getType())) {
             primaryProfessionType = pt;
             break;
          }
       }
+      if (requiredProfs.containsKey(primaryProfessionType)) {
+         weaponLevel = requiredProfs.get(primaryProfessionType);
+      }
       character.setSkillLevel(primaryProfessionType, weaponSkill.getType(), weaponLevel);
 
       pointsLeft = points - character.getPointTotal();
 
-      if ((usingAsOneHanded || fourHands) && !noEquip) {
+      byte shieldLevel = 0;
+      if ((usingAsOneHanded || fourHands) && !noEquip && !dualWield) {
          shieldLevel = getSkillLevel(points, pointsLeft);
          Byte reqShieldLevel = requiredSkills.get(SkillType.Shield);
          if (reqShieldLevel != null) {
@@ -551,10 +608,10 @@ public class CharacterGenerator implements Enums
                   desiredSecondaryLevel = (byte) Math.min(desiredSecondaryLevel, weaponLevel);
                }
                ProfessionType secondaryProfession = ProfessionType.Fighter;
-               for (ProfessionType pt : Arrays.asList(new ProfessionType[]{primaryProfessionType,
-                                                                           ProfessionType.Fighter,
-                                                                           ProfessionType.MartialArtist,
-                                                                           ProfessionType.Shooting})) {
+               for (ProfessionType pt : new ProfessionType[]{primaryProfessionType,
+                                                             ProfessionType.Fighter,
+                                                             ProfessionType.MartialArtist,
+                                                             ProfessionType.Shooting}) {
                   if (pt.skillList.contains(attackStyleSkillType)) {
                      secondaryProfession = pt;
                      break;
@@ -591,6 +648,9 @@ public class CharacterGenerator implements Enums
          unarmedCombatType = SkillType.Brawling;
       }
       double unarmedCombatChance = Math.max(0d, Math.min(95d, points));
+      if (character.getRace().hasProperty(Race.PROPERTIES_HORNS)) {
+         unarmedCombatChance = 100d;
+      }
       if (primaryWeapon.isUnarmedStyle()) {
          unarmedCombatChance = unarmedCombatChance/5;
       }
@@ -600,17 +660,17 @@ public class CharacterGenerator implements Enums
 
             // It's possible that we chose Karate (or another offensive combat style) as our primary weapon.
             // If so, get a secondary unarmed combat skill, since this character is an unarmed combat practitioner.
-            if (weaponSkill.getName().equals(SkillType.Karate.getName())) {
+            if (weaponSkill.getType() == SkillType.Karate) {
                unarmedCombatType = SkillType.Aikido;
                forced = true;
             }
-            else if (weaponSkill.getName().equals(SkillType.Boxing.getName())) {
+            else if (weaponSkill.getType() == SkillType.Boxing) {
                unarmedCombatType = SkillType.Wrestling;
                forced = true;
             }
             else {
                double rnd = CombatServer.random();
-               if (rnd < .5) {
+               if (rnd < .05) {
                   unarmedCombatType = SkillType.Aikido; // 5%
                }
                else if (rnd < .15) {
@@ -651,9 +711,9 @@ public class CharacterGenerator implements Enums
                primaryProfession.setRank(unarmedCombatType, desiredRank);
             }
             else {
-               for (ProfessionType pt : Arrays.asList(new ProfessionType[] {primaryProfessionType,
-                                                                            ProfessionType.Fighter,
-                                                                            ProfessionType.MartialArtist})) {
+               for (ProfessionType pt : new ProfessionType[] {primaryProfessionType,
+                                                              ProfessionType.Fighter,
+                                                              ProfessionType.MartialArtist}) {
                   if (pt.skillList.contains(unarmedCombatType)) {
                      character.setSkillLevel(pt, unarmedCombatType, desiredBrawlingLevel);
                      break;
@@ -675,7 +735,7 @@ public class CharacterGenerator implements Enums
          }
          if (throwWeapon) {
             byte desiredThrowLevel = getSkillLevel(points / 6, pointsLeft / 6);
-            character.setSkillLevel(ProfessionType.Common, SkillType.Throwing, desiredThrowLevel);
+            character.setSkillLevel(ProfessionType.Athlete, SkillType.Throwing, desiredThrowLevel);
          }
       }
 
@@ -801,15 +861,21 @@ public class CharacterGenerator implements Enums
                   }
                   ProfessionType knifeProfessionType = ProfessionType.Fighter;
                   SkillType knifeSkill = knife.getAttackStyle(0).getSkillType();
-                  for (ProfessionType pt : Arrays.asList(new ProfessionType[] {primaryProfessionType,
-                                                                               ProfessionType.Fighter,
-                                                                               ProfessionType.MartialArtist})) {
+                  for (ProfessionType pt : new ProfessionType[] {primaryProfessionType,
+                                                                 ProfessionType.Fighter,
+                                                                 ProfessionType.MartialArtist}) {
                      if (pt.skillList.contains(knifeSkill)) {
                         knifeProfessionType = pt;
                         break;
                      }
                   }
                   Profession knifeProfession = character.getProfession(knifeProfessionType);
+                  if (knifeProfession == null) {
+                     List<Profession> profs = character.getProfessionsList();
+                     byte desiredLevel = getSkillLevel(points, pointsLeft);
+                     profs.add(new Profession(knifeProfessionType, knifeSkill, desiredLevel));
+                     character.setProfessionsList(profs);
+                  }
                   knifeProfession.setRank(knifeSkill, desiredRank);
 
                   if (!throwWeapon) {
@@ -817,7 +883,7 @@ public class CharacterGenerator implements Enums
                      throwWeapon = (throwSkillChance > (CombatServer.random() * 100));
                      if (throwWeapon) {
                         byte desiredThrowLevel = getSkillLevel(points / 6, pointsLeft / 6);
-                        character.setSkillLevel(ProfessionType.Common, SkillType.Throwing, desiredThrowLevel);
+                        character.setSkillLevel(ProfessionType.Athlete, SkillType.Throwing, desiredThrowLevel);
                      }
                   }
                }
@@ -854,7 +920,7 @@ public class CharacterGenerator implements Enums
       pointsLeft = points - character.getPointTotal();
 
       while (pointsLeft != 0) {
-         Attribute attChanged = null;
+         Object attChanged = null;
          if (pointsLeft < 0) {
             double rnd = CombatServer.random();
             String[] order;
@@ -886,8 +952,8 @@ public class CharacterGenerator implements Enums
                   attChanged = reduceCharacterAttributes(character, true, requiredAttributes);
                   reduced = (attChanged != null);
                }
-               if (element.equals("adv") && !character.isAnimal()) {
-                  reduced = reduceCharacterAdvantages(character);
+               if (element.equals("adv") && !character.isAnimal() && !character.hasAdvantage(Advantage.UNDEAD)) {
+                  reduced = (reduceCharacterAdvantages(character) != null);
                }
                if (element.equals("skl")) {
                   reduced = reduceCharacterSkillPoints(character, pointsLeft, requiredSkills);
@@ -929,7 +995,8 @@ public class CharacterGenerator implements Enums
 
       character.computeWealth();
       pointsLeft = points - character.getPointTotal();
-      // if we have any weight and money left over, buy some potions:
+      // if we have any weight and money left over, buy some potions - unless we are undead:
+      if (character.getRace().getAdvantage(Advantage.UNDEAD) != null)
       {
          adjStrength = character.getAdjustedStrength();
          nimbleness = character.getAttributeLevel(Attribute.Nimbleness);
@@ -941,7 +1008,8 @@ public class CharacterGenerator implements Enums
 
          // allow the character to go up a max of 3 levels
          String baseWealth = wealth.getLevelName();
-         int racialWealthValue = Integer.parseInt(baseWealth.substring(1).replaceAll(",", ""));// remove the '$' and all commas
+         // remove the '$' and all commas as we parse this money string:
+         int racialWealthValue = Integer.parseInt(baseWealth.substring(1).replaceAll(",", ""));
          maxExpenditure = Math.round(racialWealthValue * wealthMultiplier);
 
          weightAvailable = maxWeightCarried - weightCarried;
@@ -1025,7 +1093,11 @@ public class CharacterGenerator implements Enums
                      int curCost = Rules.getProfessionCost(profession.getLevel());
                      int reqCost = Rules.getProfessionCost(requiredLevel);
                      // If this is our primary profession, we absolutely MUST increase its level to make it work.
-                     if (isPrimarySkill || ((reqCost - curCost) < (maxCharPoints - character.getPointTotal()))) {
+                     boolean mustIncrease = isPrimarySkill ||
+                                            ((reqCost - curCost) < (maxCharPoints - character.getPointTotal())) ||
+                                            (skill == SkillType.Brawling && character.getRace().hasProperty(Race.PROPERTIES_HORNS));
+
+                     if (mustIncrease) {
                         if ((requiredLevel + 2) > profession.getLevel(skill) && skillList == familiarSkills) {
                            // move this skill from familiar to proficient
                            familiarSkills.remove(skill);
@@ -1323,7 +1395,11 @@ public class CharacterGenerator implements Enums
       // Look for the largest skill level increase that does not exceed the pointsLeft.
       TreeSet<Profession> professions = sortProfessionsByLevel(character.getProfessionsList(), false/*ascending*/);
       for (Profession profession : professions) {
-         if (requiredSkills.get(profession.getType()) == null) {
+         // check if any the skills in this profession are also in the required skills list.
+         // if they are, don't adjust the profession level
+         List<SkillType> allSkills = new ArrayList<>(profession.getFamiliarSkills());
+         allSkills.addAll(profession.getProficientSkills());
+         if (allSkills.stream().noneMatch(requiredSkills::containsKey)) {
             byte level = profession.getLevel();
             if (level < Rules.getMaxSkillLevel()) {
                if ((Rules.getProfessionCost((byte) (level + 1)) - Rules.getProfessionCost(level)) <= pointsLeft) {
@@ -1341,7 +1417,11 @@ public class CharacterGenerator implements Enums
       TreeSet<Profession> professions = sortProfessionsByLevel(character.getProfessionsList(), true/*ascending*/);
       Profession lastSkillWeCanModify = null;
       for (Profession profession : professions) {
-         if (requiredSkills.get(profession.getType()) == null) {
+         // check if any the skills in this profession are also in the required skills list.
+         // if they are, don't adjust the profession level
+         List<SkillType> allSkills = new ArrayList<>(profession.getFamiliarSkills());
+         allSkills.addAll(profession.getProficientSkills());
+         if (allSkills.stream().noneMatch(requiredSkills::containsKey)) {
             byte level = profession.getLevel();
             if (level > 0) {
                lastSkillWeCanModify = profession;
@@ -1360,36 +1440,36 @@ public class CharacterGenerator implements Enums
       return false;
    }
 
-   private static TreeSet<Skill> sortSkillsByLevel(List<Skill> skillsList, final boolean ascending) {
-      TreeSet<Skill> skills = new TreeSet<>((o1, o2) -> {
-         if (o1.getLevel() == o2.getLevel()) {
-            return 0;
-         }
-         if (o1.getLevel() < o2.getLevel()) {
-            return ascending ? -1 : 1;
-         }
-         return ascending ? 1 : -1;
-      });
-      skills.addAll(skillsList);
-      return skills;
-   }
-
    public static TreeSet<Profession> sortProfessionsByLevel(List<Profession> professionList, final boolean ascending) {
-      TreeSet<Profession> professions = new TreeSet<>((o1, o2) -> {
-         if (o1.getLevel() == o2.getLevel()) {
-            return 0;
-         }
-         if (o1.getLevel() < o2.getLevel()) {
-            return ascending ? -1 : 1;
-         }
-         return ascending ? 1 : -1;
-      });
+      TreeSet<Profession> professions = new TreeSet<>((o1, o2) -> (ascending ? 1 : -1) * Byte.compare(o1.getLevel(), o2.getLevel()));
       professions.addAll(professionList);
       return professions;
    }
 
-   private static Attribute increaseCharacterPoints(Character character, int pointsLeft, byte startIndex, byte attIndex, HashMap<String, Integer> requiredAttributes) {
-      Attribute[] atts = new Attribute[] { Attribute.Intelligence, Attribute.Social, Attribute.Toughness, Attribute.Health, Attribute.Nimbleness, Attribute.Dexterity};
+   private static Object increaseCharacterPoints(Character character, int pointsLeft, byte startIndex,
+                                                    byte attIndex, HashMap<String, Integer> requiredAttributes) {
+      Attribute[] atts = new Attribute[] { Attribute.Intelligence,
+                                           Attribute.Social,
+                                           Attribute.Toughness,
+                                           Attribute.Health,
+                                           Attribute.Nimbleness,
+                                           Attribute.Dexterity,
+                                           null // this means we should add an advantage instead
+                                    // don't include Strength here, because that's determined separately by weapon type
+                                          };
+      if (character.getWeapon() == null || !character.getWeapon().isReal() || character.isAnimal()) {
+         // Allow the bump on the Strength attribute if we are not basing their strength on a weapon
+         atts = new Attribute[]{Attribute.Strength,
+                                Attribute.Intelligence,
+                                Attribute.Social,
+                                Attribute.Toughness,
+                                Attribute.Health,
+                                Attribute.Nimbleness,
+                                Attribute.Dexterity,
+                                null // this means we should add an advantage instead
+                                // don't include Strength here, because that's determined separately by weapon type
+         };
+      }
       if (attIndex == -1) {
          attIndex = (byte) (CombatServer.random() * atts.length);
          startIndex = attIndex;
@@ -1402,8 +1482,17 @@ public class CharacterGenerator implements Enums
             return null;
          }
       }
-      // don't mess with pre-defined attributes:
-      if (requiredAttributes.get(atts[attIndex].shortName) == null) {
+      if (atts[attIndex] == null) {
+         // only add advantages 20% of the time we hit that null;
+         if (CombatServer.random() > .8 && !character.isAnimal() && !character.hasAdvantage(Advantage.UNDEAD)) {
+            Advantage adv = increaseCharacterAdvantages(character);
+            if (adv != null) {
+               return adv;
+            }
+         }
+      }
+      else if (!requiredAttributes.containsKey(atts[attIndex].shortName)) {
+         // don't mess with pre-defined attributes:
          byte racialAttrLevel = character.getRace().getAttributeMods(atts[attIndex]);
          byte attrLevel = character.getAttributeLevel(atts[attIndex]);
          int curCost = Rules.getAttCost((byte) (attrLevel - racialAttrLevel));
@@ -1420,22 +1509,34 @@ public class CharacterGenerator implements Enums
       return increaseCharacterPoints(character, pointsLeft, startIndex, ++attIndex, requiredAttributes);
    }
 
-   static final Attribute[] REDUCE_ATTRIBUTES = new Attribute[] {Attribute.Intelligence, Attribute.Social, Attribute.Toughness, Attribute.Health, Attribute.Nimbleness, Attribute.Intelligence, Attribute.Social, Attribute.Toughness, Attribute.Intelligence, Attribute.Social};
+   static final Attribute[] REDUCE_ATTRIBUTES = new Attribute[] {Attribute.Intelligence,
+                                                                 Attribute.Social,
+                                                                 Attribute.Toughness,
+                                                                 Attribute.Health,
+                                                                 Attribute.Nimbleness,
+                                                                 Attribute.Intelligence,
+                                                                 Attribute.Social,
+                                                                 Attribute.Toughness,
+                                                                 Attribute.Intelligence,
+                                                                 Attribute.Social};
 
    private static Attribute reduceCharacterAttributes(Character character, boolean allowDexAndStr, HashMap<String, Integer> requiredAttributes) {
       if (allowDexAndStr) {
-         return reduceCharacterAttributes(character, new Attribute[] { Attribute.Dexterity, Attribute.Strength}, requiredAttributes);
+         return reduceCharacterAttributes(character, new Attribute[] { Attribute.Dexterity, Attribute.Strength},
+                                          requiredAttributes);
       }
       return reduceCharacterAttributes(character, REDUCE_ATTRIBUTES, requiredAttributes);
    }
 
-   private static Attribute reduceCharacterAttributes(Character character, Attribute[] reducibleAttributes, HashMap<String, Integer> requiredAttributes) {
+   private static Attribute reduceCharacterAttributes(Character character, Attribute[] reducibleAttributes,
+                                                      HashMap<String, Integer> requiredAttributes) {
       byte redAttIndex = (byte) (CombatServer.random() * reducibleAttributes.length);
       return reduceCharacterAttributes(character, redAttIndex, redAttIndex, reducibleAttributes, requiredAttributes);
    }
 
-   private static Attribute reduceCharacterAttributes(Character character, byte startIndex, byte redAttIndex, Attribute[] reducibleAttributes,
-                                                 HashMap<String, Integer> requiredAttributes) {
+   private static Attribute reduceCharacterAttributes(Character character, byte startIndex, byte redAttIndex,
+                                                      Attribute[] reducibleAttributes,
+                                                      HashMap<String, Integer> requiredAttributes) {
       Attribute attr = reducibleAttributes[redAttIndex];
       // don't mess with pre-defined attributes:
       if (requiredAttributes.get(attr.shortName) == null) {
@@ -1454,26 +1555,109 @@ public class CharacterGenerator implements Enums
       return reduceCharacterAttributes(character, startIndex, redAttIndex, reducibleAttributes, requiredAttributes);
    }
 
-   static final String[] REDUCE_ADVANTAGES = new String[] {Advantage.BAD_TEMPER, Advantage.COMPULSIVE_LIAR, Advantage.GREEDY, Advantage.HONEST, Advantage.BAD_TEMPER, Advantage.COMPULSIVE_LIAR, Advantage.GREEDY, Advantage.HONEST, Advantage.LECHEROUS, Advantage.SADISTIC, Advantage.BERSERKER, Advantage.MUTE};
+   static final Advantage[] DISADVANTAGES = new Advantage[] {
+           Advantage.getAdvantage(Advantage.ALERTNESS + ":Unaware"),
+           Advantage.getAdvantage(Advantage.APPEARANCE + ":Unattractive"),
+           Advantage.getAdvantage(Advantage.APPEARANCE + ":Ugly"),
+           Advantage.getAdvantage(Advantage.BAD_TEMPER),
+           Advantage.getAdvantage(Advantage.BAD_TEMPER),
+           Advantage.getAdvantage(Advantage.BAD_TEMPER),
+           Advantage.getAdvantage(Advantage.BERSERKER),
+           Advantage.getAdvantage(Advantage.BERSERKER),
+           Advantage.getAdvantage(Advantage.CODE_OF_CONDUCT + ":Fair Fighter"),
+           Advantage.getAdvantage(Advantage.CODE_OF_CONDUCT + ":Fair Fighter"),
+           Advantage.getAdvantage(Advantage.CODE_OF_CONDUCT + ":Chivalrous"),
+           Advantage.getAdvantage(Advantage.CODE_OF_CONDUCT + ":Bushido"),
+           Advantage.getAdvantage(Advantage.COMPULSIVE_LIAR),
+           Advantage.getAdvantage(Advantage.COMPULSIVE_LIAR),
+           Advantage.getAdvantage(Advantage.DISFIGURED_FACE + ":Minor scars"),
+           Advantage.getAdvantage(Advantage.DISFIGURED_FACE + ":Minor scars"),
+           Advantage.getAdvantage(Advantage.DISFIGURED_FACE + ":Scars"),
+           Advantage.getAdvantage(Advantage.DISFIGURED_FACE + ":Severe scars"),
+           Advantage.getAdvantage(Advantage.GREEDY),
+           Advantage.getAdvantage(Advantage.GREEDY),
+           Advantage.getAdvantage(Advantage.HEARING + ":Poor Hearing"),
+           Advantage.getAdvantage(Advantage.HONEST),
+           Advantage.getAdvantage(Advantage.HONEST),
+           Advantage.getAdvantage(Advantage.HONEST),
+           Advantage.getAdvantage(Advantage.LECHEROUS),
+           Advantage.getAdvantage(Advantage.MUTE),
+           Advantage.getAdvantage(Advantage.PHOBIA + ":Moderate"),
+           Advantage.getAdvantage(Advantage.RANK_SOCIAL_FEMALE + ":Serf"),
+           Advantage.getAdvantage(Advantage.RANK_SOCIAL_FEMALE + ":Peasant"),
+           Advantage.getAdvantage(Advantage.RANK_SOCIAL_MALE + ":Serf"),
+           Advantage.getAdvantage(Advantage.RANK_SOCIAL_MALE + ":Peasant"),
+           Advantage.getAdvantage(Advantage.SADISTIC),
+           Advantage.getAdvantage(Advantage.VISION + ":Poor Sight")
+   };
+   static final Advantage[] ADVANTAGES    = new Advantage [] {
+           Advantage.getAdvantage(Advantage.AMBIDEXTROUS),
+           Advantage.getAdvantage(Advantage.ALERTNESS + ":Alert"),
+           Advantage.getAdvantage(Advantage.ALERTNESS + ":Alert"),
+           Advantage.getAdvantage(Advantage.ALERTNESS + ":Very Alert"),
+           Advantage.getAdvantage(Advantage.APPEARANCE + ":Attractive"),
+           Advantage.getAdvantage(Advantage.HEARING + ":Acute Hearing"),
+           Advantage.getAdvantage(Advantage.KNIGHTHOOD),
+           Advantage.getAdvantage(Advantage.MAGIC_RESISTANCE + ":+1"),
+           Advantage.getAdvantage(Advantage.MAGIC_RESISTANCE + ":+1"),
+           Advantage.getAdvantage(Advantage.MAGIC_RESISTANCE + ":+2"),
+           Advantage.getAdvantage(Advantage.MAGIC_RESISTANCE + ":+2"),
+           Advantage.getAdvantage(Advantage.MAGIC_RESISTANCE + ":+3"),
+           Advantage.getAdvantage(Advantage.RANK_MILITARY_ENLISTED + ":Sergeant"),
+           Advantage.getAdvantage(Advantage.RANK_MILITARY_ENLISTED + ":Sergeant"),
+           Advantage.getAdvantage(Advantage.RANK_MILITARY_ENLISTED + ":High Sergeant"),
+           Advantage.getAdvantage(Advantage.RANK_MILITARY_OFFICER + ":Lieutenant"),
+           Advantage.getAdvantage(Advantage.RANK_MILITARY_OFFICER + ":Captain"),
+           Advantage.getAdvantage(Advantage.RANK_SOCIAL_FEMALE + ":Baronness"),
+           Advantage.getAdvantage(Advantage.RANK_SOCIAL_FEMALE + ":Viscountess"),
+           Advantage.getAdvantage(Advantage.RANK_SOCIAL_MALE + ":Baron"),
+           Advantage.getAdvantage(Advantage.RANK_SOCIAL_MALE + ":Viscount"),
+           Advantage.getAdvantage(Advantage.VISION + ":Acute Vision"),
+           };
 
-   private static boolean reduceCharacterAdvantages(Character character) {
-      byte redAdvIndex = (byte) (CombatServer.random() * REDUCE_ADVANTAGES.length);
-      return reduceCharacterAdvantages(character, redAdvIndex, redAdvIndex);
+   private static Advantage reduceCharacterAdvantages(Character character) {
+      byte redAdvIndex = (byte) (CombatServer.random() * DISADVANTAGES.length);
+      return applyOneAdvantageFromArray(character, redAdvIndex, redAdvIndex, DISADVANTAGES, false);
+   }
+   private static Advantage increaseCharacterAdvantages(Character character) {
+      byte redAdvIndex = (byte) (CombatServer.random() * ADVANTAGES.length);
+      return applyOneAdvantageFromArray(character, redAdvIndex, redAdvIndex, ADVANTAGES, true);
    }
 
-   private static boolean reduceCharacterAdvantages(Character character, byte startIndex, byte redAdvIndex) {
-      String disadvantage = REDUCE_ADVANTAGES[redAdvIndex];
-      Advantage adv = Advantage.getAdvantage(disadvantage);
-      if (character.addAdvantage(adv)) {
-         return true;
+   private static Advantage applyOneAdvantageFromArray(Character character, byte startIndex, byte redAdvIndex,
+                                                     Advantage[] advantage, boolean mustAddPoints) {
+      Advantage adv = advantage[redAdvIndex];
+      Advantage existingAdv = character.getAdvantage(adv.name);
+      boolean canAdd = true;
+      if (existingAdv != null) {
+         // If we already have the base advantage, make sure adding this advantage doesn't
+         // replace an existing advantage that causes our points to move in the wrong direction.
+         int existingAdvCost = existingAdv.getCost(character.getRace());
+         int newAdvCost = adv.getCost(character.getRace());
+         if (mustAddPoints) {
+            canAdd = newAdvCost > existingAdvCost;
+         } else {
+            canAdd = newAdvCost < existingAdvCost;
+         }
       }
-      if (++redAdvIndex >= REDUCE_ADVANTAGES.length) {
+      // Women can't be in the military, and can't be knighted in these times:
+      if (canAdd && character.getRace().getGender() == Gender.FEMALE) {
+         if (adv.getName().equals(Advantage.RANK_MILITARY_ENLISTED) ||
+             adv.getName().equals(Advantage.RANK_MILITARY_OFFICER) ||
+             adv.getName().equals(Advantage.KNIGHTHOOD)) {
+            canAdd = false;
+         }
+      }
+      if (canAdd && character.addAdvantage(adv)) {
+         return adv;
+      }
+      if (++redAdvIndex >= advantage.length) {
          redAdvIndex = 0;
       }
       if (redAdvIndex == startIndex) {
-         return false;
+         return null;
       }
-      return reduceCharacterAdvantages(character, startIndex, redAdvIndex);
+      return applyOneAdvantageFromArray(character, startIndex, redAdvIndex, advantage, mustAddPoints);
    }
 
    private static byte getAttributeLevel(int points, int pointsLeft) {

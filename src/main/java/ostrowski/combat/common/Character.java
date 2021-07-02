@@ -784,8 +784,12 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    }
 
    public SkillType getBestSkillType(Weapon weapon) {
-      SkillType bestSkill = null;
-      byte bestSkillLevel = -1;
+      SkillType bestRangedSkill = null;
+      SkillType bestMeleeSkill = null;
+      byte bestRangedSkillLevel = -1;
+      byte bestMeleeSkillLevel = -1;
+      byte bestMeleeSkillAttackSpeed = -1;
+      byte bestMeleeSkillAttackDamage = -1;
       for (int i = 0; i < weapon.attackStyles.length; i++) {
          WeaponStyleAttack attackMode = weapon.getAttackStyle(i);
          SkillType skillType = attackMode.getSkillType();
@@ -794,12 +798,42 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
             continue;
          }
          byte skillLevel = prof.getLevel(skillType);
-         if ((bestSkill == null) || (bestSkillLevel < skillLevel)) {
-            bestSkill = skillType;
-            bestSkillLevel = skillLevel;
+         if (attackMode.isRanged()) {
+            if ((bestRangedSkill == null) || (bestRangedSkillLevel < skillLevel)) {
+               bestRangedSkill = skillType;
+               bestRangedSkillLevel = skillLevel;
+            }
+         }
+         else {
+            byte speed = attackMode.getSpeed(getAttributeLevel(Attribute.Strength));
+            byte damage = attackMode.getDamage((byte) 0);
+
+            boolean useSkill = (bestMeleeSkill == null) || (bestMeleeSkillLevel < skillLevel);
+            if (!useSkill && (bestMeleeSkillLevel == skillLevel)) {
+               if ((bestMeleeSkillAttackSpeed >= speed) && (bestMeleeSkillAttackDamage < damage)) {
+                  // new skill is same speed or faster, and does more damage
+                  useSkill = true;
+               }
+               else if (bestMeleeSkillAttackSpeed > speed) {
+                  // new skill is faster, but does less damage
+                  if (bestMeleeSkillAttackDamage - damage < 5) {
+                     // new skill is faster but doesn't do too much less damage
+                     useSkill = true;
+                  }
+               }
+            }
+            if (useSkill) {
+               bestMeleeSkill = skillType;
+               bestMeleeSkillLevel = skillLevel;
+               bestMeleeSkillAttackSpeed = speed;
+               bestMeleeSkillAttackDamage = damage;
+            }
          }
       }
-      return bestSkill;
+      if (bestMeleeSkill != null) {
+         return bestMeleeSkill;
+      }
+      return bestRangedSkill;
    }
 
    public byte getBestSkillLevel(Weapon weapon) {
@@ -865,8 +899,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       Optional<Profession> a = professionsList.values()
                                               .stream()
                                               .filter(p -> p.getType().skillList.contains(skillType))
-                                              .max((o1, o2) -> Byte.compare(o1.getLevel(skillType),
-                                                                            o2.getLevel(skillType)));
+                                              .max(Comparator.comparingInt(o -> o.getLevel(skillType)));
       if (a.isPresent()) {
          return a.get();
       }
@@ -1011,14 +1044,59 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       }
       spellFound.setFamiliarity(familiarity);
       MageSpell finalSpellFound = spellFound;
-      Profession spellcasting = professionsList.computeIfAbsent(ProfessionType.Spellcasting,
-                                                                o-> new Profession(ProfessionType.Spellcasting,
-                                                                                   Arrays.asList(finalSpellFound.prerequisiteSkillTypes),
-                                                                                   spellLevel));
+      professionsList.computeIfAbsent(ProfessionType.Spellcasting,
+                                      o-> new Profession(ProfessionType.Spellcasting,
+                                                         Arrays.asList(finalSpellFound.prerequisiteSkillTypes),
+                                                         spellLevel));
    }
 
    public byte getBuildBase() {
       return buildBase;
+   }
+
+   public byte getAlertness(boolean visionBased, boolean hearingBased) {
+      byte iq = getAttributeLevel(Attribute.Intelligence);
+      Advantage alertness = getAdvantage(Advantage.ALERTNESS);
+      if (alertness != null) {
+         switch (alertness.getLevelName()) {
+            case "Oblivious":            iq -=4; break;
+            case "Unaware":              iq -=2; break;
+            //case "Normal":               iq +=0; break;
+            case "Alert":                iq +=2; break;
+            case "Very Alert":           iq +=4; break;
+            case "Exceptionally Alert":  iq +=6; break;
+         }
+      }
+      if (visionBased) {
+         Advantage vision = getAdvantage(Advantage.VISION);
+         if (vision != null) {
+            switch (vision.getLevelName()) {
+               case "Blind":           iq -=50; break;
+               case "Poor Sight":      iq -=5; break;
+               case "Near Sighted":    iq -=5; break;
+               case "Far Sighted":     iq -=5; break;
+               //case "Normal":          iq +=0; break;
+               case "Acute Vision":    iq +=5; break;
+            }
+         }
+         if ((armor != null) && (armor.isReal())) {
+            if (armor.getName().contains("Plate")) {
+               iq -= 2;
+            }
+         }
+      }
+      if (hearingBased) {
+         Advantage hearing = getAdvantage(Advantage.HEARING);
+         if (hearing != null) {
+            switch (hearing.getLevelName()) {
+               case "Deaf":          iq -=50; break;
+               case "Poor Hearing":  iq -=5; break;
+               //case "Normal":        iq +=0; break;
+               case "Acute Hearing": iq +=5; break;
+            }
+         }
+      }
+      return iq;
    }
 
    public byte getBuild(DamageType damType) {
@@ -5271,16 +5349,11 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    }
 
    public List<Hand> getArms() {
-      List<Hand> arms = new ArrayList<>();
-      for (LimbType limbType : LimbType.values()) {
-         if (limbType.isHand()) {
-            Hand limb = (Hand) limbs.get(limbType);
-            if (limb != null) {
-               arms.add(limb);
-            }
-         }
-      }
-      return arms;
+      return limbs.values()
+                  .stream()
+                  .filter(l -> l.limbType.isHand())
+                  .map(o -> (Hand) o)
+                  .collect(Collectors.toList());
    }
 
    public void updateWeapons() {
@@ -5357,19 +5430,14 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    }
 
    public short getWeaponMaxRange(boolean allowRanged, boolean onlyChargeTypes) {
-      short maxRange = 0;
-      for (Limb limb : limbs.values()) {
-         Weapon weap = limb.getWeapon(this);
-         if (weap != null) {
-            // Is this weapon ready to attack?
-            if (limb.getActionsNeededToReady() == 0) {
-               short handRange = weap.getWeaponMaxRange(allowRanged, onlyChargeTypes, this);
-               if (handRange > maxRange) {
-                  maxRange = handRange;
-               }
-            }
-         }
-      }
+      Optional<Short> mxRange = limbs.values()
+                                    .stream()
+                                    .filter(l -> l.getActionsNeededToReady() == 0)
+                                    .map(l -> l.getWeapon(this))
+                                    .filter(Objects::nonNull)
+                                    .map(w -> w.getWeaponMaxRange(allowRanged, onlyChargeTypes, this))
+                                    .max(Short::compareTo);
+      short maxRange = (mxRange.isPresent() ? mxRange.get() : 0);
 
       if (allowRanged) {
          if (currentSpell != null) {
@@ -5378,11 +5446,11 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                maxRange = spellRange;
             }
          } else {
-            for (MageSpell spell : knownMageSpellsList) {
-               short spellRange = spell.getMaxRange(this);
-               if (spellRange > maxRange) {
-                  maxRange = spellRange;
-               }
+            mxRange = knownMageSpellsList.stream()
+                                         .map(s -> s.getMaxRange(this))
+                                         .max(Short::compareTo);
+            if (mxRange.isPresent() && mxRange.get() > maxRange) {
+               maxRange = mxRange.get();
             }
          }
       }
@@ -5390,15 +5458,10 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    }
 
    public int getUnseveredArmCount() {
-      int count = 0;
-      for (Limb limb : limbs.values()) {
-         if (limb instanceof Hand) {
-            if (!limb.isSevered()) {
-               count++;
-            }
-         }
-      }
-      return count;
+      return (int) limbs.values()
+                        .stream()
+                        .filter(l -> l instanceof Hand && !l.isSevered())
+                        .count();
    }
 
    public int getUncrippledArmCount(boolean reduceCountForTwoHandedWeaponsHeld) {

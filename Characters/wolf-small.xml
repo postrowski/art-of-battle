@@ -3,5 +3,5 @@
   <Equipment Armor="Fur">
   </Equipment>
   <Professions>
-    <Profession Level="4" Name="Common" familiar="" proficient="Brawling"/>
+    <Profession Level="4" Name="Athlete" familiar="" proficient="Brawling"/>
   </Professions></Character>

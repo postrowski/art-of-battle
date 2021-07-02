@@ -8,7 +8,7 @@
   <Professions>
     <Profession Name="Fighter" Level="10" proficient="Axe/Mace, Shield" familiar="Sword, Knife"></Profession>
     <Profession Name="Martial Arts" Level="4" proficient="Wrestling" familiar=""></Profession>
-    <Profession Name="Common" Level="2" proficient="Riding" familiar=""></Profession>
+    <Profession Name="Athlete" Level="2" proficient="Riding" familiar=""></Profession>
   </Professions>
   <Advantages>
     <Advantage Level="5" Name="Wealth"/>

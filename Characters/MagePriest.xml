@@ -6,7 +6,7 @@
   </Equipment>
   <Professions>
     <Profession Level="4" Name="Fighter" familiar="" proficient="Quarterstaff"/>
-    <Profession Level="2" Name="Common" familiar="" proficient="Throwing"/>
+    <Profession Level="2" Name="Athlete" familiar="" proficient="Throwing"/>
     <Profession Level="2" Name="Thief" familiar="" proficient="Stealth"/>
     <Profession Level="3" Name="Spellcasting" familiar="" proficient="Conjuration,Fire"/>
   </Professions>

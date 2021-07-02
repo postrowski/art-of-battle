@@ -9,7 +9,7 @@
     <Belt>Throwing Star</Belt>
   </Equipment>
   <Professions>
-    <Profession Level="3" Name="Common" familiar="" proficient="Throwing"/>
+    <Profession Level="3" Name="Athlete" familiar="" proficient="Throwing"/>
     <Profession Level="3" Name="Thief" familiar="" proficient="Stealth"/>
     <Profession Level="6" Name="Martial Arts" familiar="" proficient="Aikido,Karate,Nun chucks"/>
   </Professions>

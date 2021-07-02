@@ -7,7 +7,7 @@
   </Equipment>
   <Professions>
     <Profession Level="6" Name="Fighter" familiar="Brawling" proficient="Axe/Mace,Shield"/>
-    <Profession Level="3" Name="Common" familiar="" proficient="Throwing"/>
+    <Profession Level="3" Name="Athlete" familiar="" proficient="Throwing"/>
   </Professions>
   <Advantages>
     <Advantage LevelName="$10,000" Name="Wealth"/>

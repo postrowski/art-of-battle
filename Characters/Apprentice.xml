@@ -7,7 +7,7 @@
   <Professions>
     <Profession Level="4" Name="Spellcasting" familiar="" proficient="Conjuration,Fire"/>
     <Profession Level="4" Name="Fighter" familiar="Brawling" proficient="Quarterstaff"/>
-    <Profession Level="3" Name="Common" familiar="" proficient="Throwing"/>
+    <Profession Level="3" Name="Athlete" familiar="" proficient="Throwing"/>
   </Professions>
   <Spells>
     <Spell Familiarity="memorized" Name="Fireball"/>

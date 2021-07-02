@@ -9,7 +9,7 @@
   </Equipment>
   <Professions>
     <Profession Level="4" Name="Fighter" familiar="" proficient="Spear"/>
-    <Profession Level="3" Name="Common" familiar="" proficient="Throwing"/>
+    <Profession Level="3" Name="Athlete" familiar="" proficient="Throwing"/>
     <Profession Level="4" Name="Spellcasting" familiar="Conjuration,Evocation" proficient="Energy,Protection"/>
   </Professions>
   <Spells>

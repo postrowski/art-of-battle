@@ -1450,7 +1450,7 @@ public class AI implements Enums
          Weapon targetsWeapon = target.getWeapon();
          targetHasMissileWeapon = (targetsWeapon != null) && (targetsWeapon.isMissileWeapon());
       }
-      if ((myWeapon != null) && myWeaponIsMissile && !targetHasMissileWeapon) {
+      if (myWeaponIsMissile && !targetHasMissileWeapon) {
          // We have a missile weapon, and the target does not. Let them come to us
          // TODO: should we go looking for the enemy?
          // if we are stationary, stay. Let all others go scouting
@@ -1458,6 +1458,20 @@ public class AI implements Enums
          {
             traceSb.append(", letClose");
             allowAdvance = false;
+         }
+      }
+      Profession martialArts = self.getProfession(ProfessionType.MartialArtist);
+      if (martialArts != null && curMinDist > 2) {
+         if (martialArts.getLevel(SkillType.Aikido) > 4) {
+            // consider waiting for the target to approach so we can aikido throw him
+            // could the enemy advance and attack us?
+            if (target.getActionsAvailable(false) > 2) {
+               short targetMoveRate = target.getMovementRate();
+               if (curMinDist < targetMoveRate + 2) {
+                  allowAdvance = false;
+                  traceSb.append(", aikidoDefenseCloseEnough");
+               }
+            }
          }
       }
       if (allowAdvance) {

@@ -7,7 +7,7 @@
   <Professions>
     <Profession Level="2" Name="Detective" familiar="" proficient="Investigation,Lying"/>
     <Profession Level="5" Name="Fighter" familiar="Brawling" proficient="Fencing,Shield"/>
-    <Profession Level="2" Name="Common" familiar="" proficient="Throwing"/>
+    <Profession Level="2" Name="Athlete" familiar="" proficient="Throwing"/>
   </Professions>
   <Advantages>
     <Advantage LevelName="$2,000" Name="Wealth"/>

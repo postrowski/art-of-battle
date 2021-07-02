@@ -8,7 +8,7 @@
     <Belt>Potion:Complete Healing</Belt>
   </Equipment>
   <Professions>
-    <Profession Level="1" Name="Common" familiar="" proficient="Throwing"/>
+    <Profession Level="1" Name="Athlete" familiar="" proficient="Throwing"/>
     <Profession Level="5" Name="Knight" familiar="" proficient="Jousting,Riding"/>
     <Profession Level="6" Name="Fighter" familiar="Brawling" proficient="Sword,Shield"/>
   </Professions>

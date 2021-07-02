@@ -6,7 +6,7 @@
     <Belt>Spear</Belt>
   </Equipment>
   <Professions>
-    <Profession Level="4" Name="Common" familiar="" proficient="Throwing"/>
+    <Profession Level="4" Name="Athlete" familiar="" proficient="Throwing"/>
     <Profession Level="4" Name="Fighter" familiar="Brawling" proficient="Spear"/>
   </Professions>
   <Advantages>

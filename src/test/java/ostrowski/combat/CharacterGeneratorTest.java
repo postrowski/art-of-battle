@@ -1,5 +1,6 @@
 package ostrowski.combat;
 
+import org.junit.Assert;
 import org.junit.Test;
 import ostrowski.DebugBreak;
 import ostrowski.combat.common.Character;
@@ -71,6 +72,17 @@ public class CharacterGeneratorTest implements Enums {
       String charStr = "40 rnd:794 Kobold missile";
       Character character = CharacterGenerator.generateRandomCharacter(charStr, null, false);
       System.out.println(convertCharacterToRow(character, false, 8));
+      for (int rnd = 100 ; rnd < 1000 ; rnd++){
+         charStr = rnd + " rnd:" + rnd + " Minotaur";
+         character = CharacterGenerator.generateRandomCharacter(charStr, null, false);
+         byte level = character.getSkillLevel(SkillType.Brawling, LimbType.HAND_RIGHT, false, false, false);
+         if (level <= 1) {
+            level = character.getSkillLevel(SkillType.Karate, LimbType.HAND_RIGHT, false, false, false);
+            if (level <= 1) {
+               Assert.assertTrue("Minotaurs must have brawling", false);
+            }
+         }
+      }
    }
    @Test
    public void createRandomCharacters() {
@@ -722,7 +734,9 @@ public class CharacterGeneratorTest implements Enums {
       int maxPoints = 550;
       int wealth = 0;
       CombatServer.setPseudoRandomNumberSeed(seed);
-      Character character = CharacterGenerator.generateRandomCharacter("? "+ raceName +" "+maxPoints+" Wealth:$"+wealth+" \"name:Troll Prisoner\" sword:10 karate:0 brawling:0 aikido:0", null/*arena*/, false/*printCharacter*/);
+      String chrSourceStr = "? " + raceName + " " + maxPoints + " Wealth:$" + wealth +
+                            " \"name:Troll Prisoner\" sword:10";
+      Character character = CharacterGenerator.generateRandomCharacter(chrSourceStr, null/*arena*/, false/*printCharacter*/);
       assertTrue("name incorrect", (character.getName().equals("Troll Prisoner")));
       assertTrue("skills incorrect", (character.getSkillLevel(SkillType.Sword, LimbType.HAND_RIGHT, false/*sizeAdjust*/, true/*adjustForEncumbrance*/, true/*adjustForHolds*/) == 10));
       assertTrue("size adjustment incorrect", (character.getSkillLevel(SkillType.Sword, LimbType.HAND_RIGHT, true/*sizeAdjust*/, true/*adjustForEncumbrance*/, true/*adjustForHolds*/) == 8));

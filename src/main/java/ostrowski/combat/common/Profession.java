@@ -21,8 +21,12 @@ public class Profession extends SerializableObject {
       this.type = type;
       this.level = level;
       if (proficientSkillType != null) {
+         if (!type.skillList.contains(proficientSkillType)) {
+            throw new IllegalArgumentException("Skill type " + proficientSkillType.getName() + " is not in profession" + type.getName());
+         }
          this.proficientSkills.add(proficientSkillType);
       }
+      setMinLevel();
    }
    public Profession(ProfessionType type, List<SkillType> proficientSkillTypes, byte level) {
       this.type = type;
@@ -35,6 +39,7 @@ public class Profession extends SerializableObject {
       this.level = other.level;
       this.familiarSkills = new ArrayList<>(other.familiarSkills);
       this.proficientSkills = new ArrayList<>(other.proficientSkills);
+      setMinLevel();
    }
 
    public ProfessionType getType() {
@@ -46,7 +51,8 @@ public class Profession extends SerializableObject {
    }
 
    public void setLevel(byte level) {
-      this.level = (byte) Math.min(10, Math.max(level, (this.proficientSkills.size() + this.familiarSkills.size())));
+      this.level = level;
+      setMinLevel();
    }
 
    public void setRank(SkillType skillType, SkillRank rank) {
@@ -65,6 +71,7 @@ public class Profession extends SerializableObject {
       else if (rank == SkillRank.PROFICIENT) {
          proficientSkills.add(skillType);
       }
+      setMinLevel();
    }
 
    public byte getLevel(SkillType skillType) {
@@ -78,37 +85,40 @@ public class Profession extends SerializableObject {
    }
 
    public List<SkillType> getFamiliarSkills() {
-      return Collections.unmodifiableList(new ArrayList<>(familiarSkills));
+      return List.copyOf(familiarSkills);
    }
    public void setFamiliarSkills(List<SkillType> familiarSkills) {
       if (!type.skillList.containsAll(familiarSkills)) {
          throw new IllegalArgumentException("a SkillType in (" + familiarSkills.stream()
-                                                                               .map(o -> o.getName())
+                                                                               .map(SkillType::getName)
                                                                                .collect(Collectors.joining(",")) +
                                             ") is not in profession " + type.getName());
       }
       this.familiarSkills.clear();
       // prevent duplicates
       this.familiarSkills.addAll(new HashSet<>(familiarSkills));
+      setMinLevel();
+   }
+
+   private void setMinLevel() {
       this.level = (byte) Math.min(10, Math.max(this.level, (this.proficientSkills.size() + this.familiarSkills.size())));
    }
+
    public String getFamiliarSkillsAsString() {
-      return familiarSkills.stream().map(o->o.getName()).collect(Collectors.joining(","));
+      return familiarSkills.stream().map(SkillType::getName).collect(Collectors.joining(","));
    }
    public void setFamiliarSkills(String familiarSkillsAsCommaDelimitedString) {
       this.familiarSkills.clear();
       if (familiarSkillsAsCommaDelimitedString != null) {
-         setFamiliarSkills(Arrays.asList(familiarSkillsAsCommaDelimitedString.split(","))
-                                 .stream()
-                                 .map(o -> SkillType.getSkillTypeByName(o))
+         setFamiliarSkills(Arrays.stream(familiarSkillsAsCommaDelimitedString.split(","))
+                                 .map(SkillType::getSkillTypeByName)
                                  .filter(Objects::nonNull)
                                  .collect(Collectors.toList()));
       }
-      this.level = (byte) Math.min(10, Math.max(this.level, (this.proficientSkills.size() + this.familiarSkills.size())));
    }
 
    public List<SkillType> getProficientSkills() {
-      return Collections.unmodifiableList(new ArrayList<>(proficientSkills));
+      return List.copyOf(proficientSkills);
    }
    public void setProficientSkills(List<SkillType> proficientSkills) {
       if (proficientSkills.isEmpty()) {
@@ -116,25 +126,24 @@ public class Profession extends SerializableObject {
       }
       if (!type.skillList.containsAll(proficientSkills)) {
          throw new IllegalArgumentException("a SkillType in (" + proficientSkills.stream()
-                                                                                 .map(o -> o.getName())
+                                                                                 .map(SkillType::getName)
                                                                                  .collect(Collectors.joining(",")) +
                                             ") is not in profession " + type.getName());
       }
       this.proficientSkills.clear();
       // prevent duplicates
       this.proficientSkills.addAll(new HashSet<>(proficientSkills));
-      this.level = (byte) Math.min(10, Math.max(this.level, (this.proficientSkills.size() + this.familiarSkills.size())));
+      setMinLevel();
    }
    public String getProficientSkillsAsString() {
-      return proficientSkills.stream().map(o->o.getName()).collect(Collectors.joining(","));
+      return proficientSkills.stream().map(SkillType::getName).collect(Collectors.joining(","));
    }
    public void setProficientSkills(String proficientSkillsAsCommaDelimitedString) {
       if (proficientSkillsAsCommaDelimitedString == null) {
          throw new IllegalArgumentException("Cant have an empty proficient skill set");
       }
-      setProficientSkills(Arrays.asList(proficientSkillsAsCommaDelimitedString.split(", *"))
-                                .stream()
-                                .map(o -> SkillType.getSkillTypeByName(o))
+      setProficientSkills(Arrays.stream(proficientSkillsAsCommaDelimitedString.split(", *"))
+                                .map(SkillType::getSkillTypeByName)
                                 .filter(Objects::nonNull)
                                 .collect(Collectors.toList()));
    }
@@ -162,6 +171,7 @@ public class Profession extends SerializableObject {
       } catch (IOException e) {
          e.printStackTrace();
       }
+      setMinLevel();
    }
 
    @Override

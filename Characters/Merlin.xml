@@ -6,7 +6,7 @@
   </Equipment>
   <Professions>
     <Profession Level="6" Name="Fighter" familiar="Brawling" proficient="Quarterstaff"/>
-    <Profession Level="4" Name="Common" familiar="" proficient="Throwing"/>
+    <Profession Level="4" Name="Athlete" familiar="" proficient="Throwing"/>
     <Profession Level="8" Name="Spellcasting" familiar="Enchantment,Air,Divination,Evocation" proficient="Conjuration,Earth,Energy,Protection"/>
   </Professions>
   <Spells>
