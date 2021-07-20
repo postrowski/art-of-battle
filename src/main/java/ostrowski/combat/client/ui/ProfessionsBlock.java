@@ -6,6 +6,7 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.*;
+import ostrowski.DebugBreak;
 import ostrowski.combat.common.*;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.enums.Enums;
@@ -169,6 +170,9 @@ public class ProfessionsBlock extends Helper implements Enums, ModifyListener, I
          Combo firstProfessionCombo = professionLevelRank[existingProfs.get(0)];
          String professionLevelTextSelection = firstProfessionCombo.getText();
          String professionLevelText = professionLevelTextSelection.split(" ")[0];
+         if (professionLevelText.isEmpty()) {
+            DebugBreak.debugBreak("empty profession level");
+         }
          recomputeLevelRank(professionLevelRank[rowIndex], Integer.parseInt(professionLevelText), SkillRank.FAMILIAR);
       } else {
          // This is the first entry of this profession type

@@ -940,7 +940,10 @@ public class Rules extends DebugBreak implements Enums {
             ArrayList<Character> raceList = new ArrayList();
             for (float points = minCost; points <= maxCost; points += incrementation) {
                incrementation = incrementation * 1.1;
-               Character chr = CharacterGenerator.generateRandomCharacter(Math.round(points), raceName, "", false, false);
+               String fullDescription = + Math.round(points) + " " +raceName;
+               //fullDescription += " Karate:" + (2 + Math.round(points / 70));
+               Character chr = CharacterGenerator.generateRandomCharacter(fullDescription, null, false);
+               //chr = CharacterGenerator.generateRandomCharacter(Math.round(points), raceName, "", false, false);
                raceList.add(chr);
             }
             raceList.sort(Comparator.comparingInt(Character::getPointTotal));

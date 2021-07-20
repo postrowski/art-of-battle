@@ -19,13 +19,18 @@ public class Weapons {
    static {
       specialWeaponsList = new SizelessWeapon[] {
               //           size,lbs,  $, name                                              2                       (SkillType,       min,pen.,   StyleName,spd,Str-,Str+, dam,       Die,        damageType,       attackType,         charge type,  pry-,ranges hands)
-              new WeaponBase(-1,0,   0, Weapon.NAME_HornGore,       new WeaponStyle[] {new WeaponStyleAttackMelee(SkillType.Brawling, SkillRank.UNKNOWN, 0, "Horn Gore", 0, -99, 99, 3, DieType.D6, DamageType.IMP, AttackType.THRUST, WeaponStyleAttack.Charge.Anytime, 0, 1, 1, 0),
-                                                                                                      new WeaponStyleAttackMelee(SkillType.Karate,   SkillRank.UNKNOWN, 0, "Horn Gore", 0, -99, 99, 3, DieType.D6, DamageType.IMP, AttackType.THRUST, WeaponStyleAttack.Charge.Anytime, 0, 1, 1, 0)}),
-              new WeaponBase(-1,0,   0, Weapon.NAME_Fangs,          new WeaponStyle[] {new WeaponStyleAttackMelee(SkillType.Brawling, SkillRank.UNKNOWN, 0, "Bite", 0, -99, 99, 3, DieType.D6, DamageType.CUT, AttackType.THRUST, WeaponStyleAttack.Charge.With4Legs, 0, 0, 1, 0)}),
-              new WeaponBase(-1,0,   0, Weapon.NAME_SturgeBeak,     new WeaponStyle[] {new WeaponStyleAttackMelee(SkillType.Brawling, SkillRank.UNKNOWN, 0, "Beak", 0, -99, 99, 6, DieType.D8, DamageType.IMP, AttackType.THRUST, WeaponStyleAttack.Charge.WhenMounted, 0, 0, 1, 0)}),
-              new WeaponBase(-1,0,   0, Weapon.NAME_Tusks,          new WeaponStyle[] {new WeaponStyleAttackMelee(SkillType.Brawling, SkillRank.UNKNOWN, 0, "Tusk slash", 0, -99, 99, 4, DieType.D4, DamageType.CUT, AttackType.THRUST, WeaponStyleAttack.Charge.With4Legs, 0, 1, 1, 0)}),
-              new WeaponBase(-1,0,   0, Weapon.NAME_Claws,          new WeaponStyle[] {new WeaponStyleAttackMelee(SkillType.Brawling, SkillRank.UNKNOWN, 0, "Claw", 0, -99, 99, 4, DieType.D6, DamageType.CUT, AttackType.THRUST, WeaponStyleAttack.Charge.Never, 0, 0, 1, 1)}),
-              new WeaponBase(-1,0,   0, Weapon.NAME_TailStrike,     new WeaponStyle[] {new WeaponStyleAttackMelee(SkillType.Brawling, SkillRank.UNKNOWN, 0, "Tail strike", 1, -99, 99, 2, DieType.D6, DamageType.BLUNT, AttackType.SWING, WeaponStyleAttack.Charge.Never, 0, -2, 1, 0)}),
+              new WeaponBase(-1,0,   0, Weapon.NAME_HornGore,       new WeaponStyle[] {new WeaponStyleAttackMelee(SkillType.Brawling, SkillRank.UNKNOWN,  0, "Horn Gore",   0, -99, 99, 3, DieType.D6, DamageType.IMP, AttackType.THRUST, WeaponStyleAttack.Charge.Anytime,    0, 1, 1, 0),
+                                                                                                      new WeaponStyleAttackMelee(SkillType.Karate,   SkillRank.FAMILIAR, 0, "Horn Gore",   0, -99, 99, 3, DieType.D6, DamageType.IMP, AttackType.THRUST, WeaponStyleAttack.Charge.Anytime,    0, 1, 1, 0)}),
+              new WeaponBase(-1,0,   0, Weapon.NAME_Fangs,          new WeaponStyle[] {new WeaponStyleAttackMelee(SkillType.Brawling, SkillRank.UNKNOWN,  0, "Bite",        0, -99, 99, 3, DieType.D6, DamageType.CUT, AttackType.THRUST, WeaponStyleAttack.Charge.With4Legs,  0, 0, 1, 0),
+                                                                                                      new WeaponStyleAttackMelee(SkillType.Wrestling,SkillRank.FAMILIAR, 0, "Bite",        0, -99, 99, 3, DieType.D6, DamageType.CUT, AttackType.THRUST, WeaponStyleAttack.Charge.With4Legs,  0, 0, 1, 0),
+                                                                                                      new WeaponStyleAttackMelee(SkillType.Karate,   SkillRank.FAMILIAR, 0, "Bite",        0, -99, 99, 3, DieType.D6, DamageType.CUT, AttackType.THRUST, WeaponStyleAttack.Charge.With4Legs,  0, 0, 1, 0)}),
+              new WeaponBase(-1,0,   0, Weapon.NAME_SturgeBeak,     new WeaponStyle[] {new WeaponStyleAttackMelee(SkillType.Brawling, SkillRank.UNKNOWN,  0, "Beak",        0, -99, 99, 6, DieType.D8, DamageType.IMP, AttackType.THRUST, WeaponStyleAttack.Charge.WhenMounted,0, 0, 1, 0)}),
+              new WeaponBase(-1,0,   0, Weapon.NAME_Tusks,          new WeaponStyle[] {new WeaponStyleAttackMelee(SkillType.Brawling, SkillRank.UNKNOWN,  0, "Tusk slash",  0, -99, 99, 4, DieType.D4, DamageType.CUT, AttackType.THRUST, WeaponStyleAttack.Charge.With4Legs,  0, 1, 1, 0)}),
+              new WeaponBase(-1,0,   0, Weapon.NAME_Claws,          new WeaponStyle[] {new WeaponStyleAttackMelee(SkillType.Brawling, SkillRank.UNKNOWN,  0, "Claw",        0, -99, 99, 4, DieType.D6, DamageType.CUT, AttackType.THRUST, WeaponStyleAttack.Charge.Never,      0, 0, 1, 1),
+                                                                                                      new WeaponStyleAttackMelee(SkillType.Boxing,   SkillRank.FAMILIAR, 0, "Claw",        0, -99, 99, 4, DieType.D6, DamageType.CUT, AttackType.THRUST, WeaponStyleAttack.Charge.Never,      0, 0, 1, 1),
+                                                                                                      new WeaponStyleAttackMelee(SkillType.Wrestling,SkillRank.FAMILIAR, 0, "Claw",        0, -99, 99, 4, DieType.D6, DamageType.CUT, AttackType.THRUST, WeaponStyleAttack.Charge.Never,      0, 0, 1, 1),
+                                                                                                      new WeaponStyleAttackMelee(SkillType.Karate,   SkillRank.FAMILIAR, 0, "Claw",        0, -99, 99, 4, DieType.D6, DamageType.CUT, AttackType.THRUST, WeaponStyleAttack.Charge.Never,      0, 0, 1, 1)}),
+              new WeaponBase(-1,0,   0, Weapon.NAME_TailStrike,     new WeaponStyle[] {new WeaponStyleAttackMelee(SkillType.Brawling, SkillRank.UNKNOWN,  0, "Tail strike", 1, -99, 99, 2, DieType.D6, DamageType.BLUNT,AttackType.SWING, WeaponStyleAttack.Charge.Never,      0,-2, 1, 0)}),
               };
 
       weaponsList = new SizelessWeapon[] {
@@ -267,35 +272,36 @@ public class Weapons {
          int rowCount = weap.getAttackStyles().length + weap.getParryStyles().length;
          String[][] data = new String[rowCount][16];
          int row = 0;
+         int attackStyleCount = 0;
          for (WeaponStyleAttack attack : weap.getAttackStyles()) {
-            //          // thrown weapon attacks are shown in a separate table
-//          if (!attack.isThrown()) {
-            int col=0;
-            data[row][col++] = weap.getName();
-            if (attack.getSkillPenalty() == 0) {
-               data[row][col++] = attack.getSkillType().getName();
+            // ranged weapon attacks are shown in separate tables
+            if (!attack.isRanged()) {
+               attackStyleCount++;
+               int col = 0;
+               data[row][col++] = weap.getName();
+               if (attack.getSkillPenalty() == 0) {
+                  data[row][col++] = attack.getSkillType().getName();
+               } else {
+                  data[row][col++] = attack.getSkillType().getName() + " - " + attack.getSkillPenalty();
+               }
+               data[row][col++] = attack.getName();
+               data[row][col++] = String.valueOf(attack.getHandsRequired());
+               data[row][col++] = attack.getMinRank() == SkillRank.UNKNOWN ? "-" : String.valueOf(attack.getMinRank().getName());
+               data[row][col++] = String.valueOf(attack.getSpeedBase());
+               int fastStr = attack.getFastStr();
+               int slowStr = attack.getSlowStr();
+               data[row][col++] = (fastStr == 99) ? "--" : String.valueOf(fastStr);
+               data[row][col++] = (slowStr == -99) ? "--" : String.valueOf(slowStr);
+               data[row][col++] = String.valueOf(attack.getDamageMod());
+               data[row][col++] = attack.getVarianceDie().toString();
+               data[row][col++] = attack.getDamageType().shortname;
+               data[row][col++] = String.valueOf(attack.getParryPenalty());
+               data[row][col++] = String.valueOf(attack.getMinRange());
+               data[row][col++] = String.valueOf(attack.getMaxRange());
+               data[row][col++] = String.valueOf(weap.getCost());
+               data[row][col++] = String.valueOf(weap.getWeight());
+               row++;
             }
-            else {
-               data[row][col++] = attack.getSkillType().getName() + " - " + attack.getSkillPenalty();
-            }
-            data[row][col++] = attack.getName();
-            data[row][col++] = String.valueOf(attack.getHandsRequired());
-            data[row][col++] = attack.getMinRank() == SkillRank.UNKNOWN ? "-" : String.valueOf(attack.getMinRank().getName());
-            data[row][col++] = String.valueOf(attack.getSpeedBase());
-            int fastStr = attack.getFastStr();
-            int slowStr = attack.getSlowStr();
-            data[row][col++] = (fastStr == 99) ? "--" : String.valueOf(fastStr);
-            data[row][col++] = (slowStr == -99) ? "--" : String.valueOf(slowStr);
-            data[row][col++] = String.valueOf(attack.getDamageMod());
-            data[row][col++] = attack.getVarianceDie().toString();
-            data[row][col++] = attack.getDamageType().shortname;
-            data[row][col++] = String.valueOf(attack.getParryPenalty());
-            data[row][col++] = String.valueOf(attack.getMinRange());
-            data[row][col++] = String.valueOf(attack.getMaxRange());
-            data[row][col++] = String.valueOf(weap.getCost());
-            data[row][col++] = String.valueOf(weap.getWeight());
-            row++;
-//          }
          }
          for (WeaponStyleParry parry : weap.getParryStyles()) {
             int col=0;
@@ -325,7 +331,7 @@ public class Weapons {
             for (int c=0 ; c<16 ; c++) {
                int colSpan = 1;
                int rowSpan = 1;
-               if ((r>=weap.getAttackStyles().length) && (c== 8)){
+               if ((r>=attackStyleCount) && (c== 8)){
                   colSpan = 6;
                }
                if ((r>0) && ((data[r-1][c] != null) && (data[r-1][c].equals(data[r][c])) && (c!=2))) {
@@ -369,7 +375,7 @@ public class Weapons {
                      sb.append("</td>");
                   }
                }
-               if ((r>=weap.getAttackStyles().length) && (c== 8)){
+               if ((r>=attackStyleCount) && (c == 8)) {
                   c+=6;
                }
             }

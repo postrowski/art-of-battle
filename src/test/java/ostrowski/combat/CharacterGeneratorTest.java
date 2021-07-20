@@ -75,13 +75,15 @@ public class CharacterGeneratorTest implements Enums {
       for (int rnd = 100 ; rnd < 1000 ; rnd++){
          charStr = rnd + " rnd:" + rnd + " Minotaur";
          character = CharacterGenerator.generateRandomCharacter(charStr, null, false);
-         byte level = character.getSkillLevel(SkillType.Brawling, LimbType.HAND_RIGHT, false, false, false);
-         if (level <= 1) {
-            level = character.getSkillLevel(SkillType.Karate, LimbType.HAND_RIGHT, false, false, false);
-            if (level <= 1) {
-               Assert.assertTrue("Minotaurs must have brawling", false);
-            }
+         byte brawlingLevel = character.getSkillLevel(SkillType.Brawling, LimbType.HAND_RIGHT, false, false, false);
+         byte karateLevel = character.getSkillLevel(SkillType.Karate, LimbType.HAND_RIGHT, false, false, false);
+         if ((brawlingLevel <= 1) && (karateLevel <= 1)) {
+            Assert.assertTrue("Minotaurs must have brawling", false);
          }
+         if ((brawlingLevel > 1) && (karateLevel > 1)) {
+            Assert.assertTrue("Minotaurs may not have brawling and karate", false);
+         }
+
       }
    }
    @Test

@@ -1067,6 +1067,9 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
             case "Exceptionally Alert":  iq +=6; break;
          }
       }
+      if (getRace().isAnimal()) {
+         iq += 6;
+      }
       if (visionBased) {
          Advantage vision = getAdvantage(Advantage.VISION);
          if (vision != null) {

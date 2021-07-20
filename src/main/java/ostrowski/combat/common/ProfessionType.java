@@ -30,6 +30,7 @@ public enum ProfessionType {
            SkillType.Quarterstaff,
            SkillType.Spear,
            SkillType.Sword,
+           SkillType.TwoHanded_Sword,
            SkillType.Wrestling
    }),
    Shooting("Shooting", new SkillType[]{

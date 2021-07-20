@@ -306,9 +306,10 @@ public class CannonFodder {
          bestSecondaryWeaponSkillLevel = chr.getAdjustedSkillLevel(bestSecondaryWeaponSkillType, LimbType.HAND_RIGHT, true, true, false);
       }
       List<SkillType> unarmedSkills = Arrays.asList(SkillType.Karate, SkillType.Boxing, SkillType.Brawling, SkillType.Wrestling);
-      Weapon weaponHeadButt = Weapons.getWeapon(Weapon.NAME_HeadButt, chr.getRace());
-      Weapon weaponKarate   = Weapons.getWeapon(Weapon.NAME_KarateKick, chr.getRace());
-      Weapon weaponPunch    = Weapons.getWeapon(Weapon.NAME_Punch, chr.getRace());
+      Race race = chr.getRace();
+      Weapon weaponHeadButt = Weapons.getWeapon(Weapon.NAME_HeadButt, race);
+      Weapon weaponKarate   = Weapons.getWeapon(Weapon.NAME_KarateKick, race);
+      Weapon weaponPunch    = Weapons.getWeapon(Weapon.NAME_Punch, race);
       Weapon unarmedWeapon = null;
       if (chr.getLimb(LimbType.HAND_RIGHT) != null) {
          for (SkillType skill : unarmedSkills) {
@@ -366,13 +367,13 @@ public class CannonFodder {
                                           return adv.toString();
                                        })
                                        .collect(Collectors.toList());
-      if (chr.getRace().getGender() != Race.Gender.MALE) {
-         advantageNames.add(chr.getRace().getGender().name);
+      if (race.getGender() != Race.Gender.MALE) {
+         advantageNames.add(race.getGender().name);
       }
       value += "<B>" + String.join(", ", advantageNames) + "</B>";
       cols.add(new FodderColumn("Armor" + BR + "Shield" + BR + "Weapon(s)", value).setClass("equipment"));
       HashMap<Enums.RANGE, HashMap<DefenseOption, Byte>> defenses;
-      defenses = chr.getDefenseOptionsBase(DamageType.CUT,false, false, false,false, (short) 1);
+      defenses = chr.getDefenseOptionsBase(DamageType.BLUNT,false, false, false,false, (short) 1);
       HashMap<DefenseOption, Byte> defs = defenses.get(Enums.RANGE.OUT_OF_RANGE);
 
       cols.add(new FodderColumn("PD", defs.get(DefenseOption.DEF_PD)).setSideways().setClass("def_pd"));
@@ -389,35 +390,45 @@ public class CannonFodder {
          secondaryWeapon = null;
       }
       Map<String, String> naturalAttack = new HashMap<>() {{
+         put(Race.PROPERTIES_STURGEBREAK, Weapon.NAME_SturgeBeak);
          put(Race.PROPERTIES_FANGS, Weapon.NAME_Fangs);
+         put(Race.PROPERTIES_TUSKS, Weapon.NAME_Tusks);
          put(Race.PROPERTIES_CLAWS, Weapon.NAME_Claws);
          put(Race.PROPERTIES_HORNS, Weapon.NAME_HornGore);
+         put(Race.PROPERTIES_TAIL, Weapon.NAME_TailStrike);
       }};
       if (primaryWeapon == null) {
          for (String prop : naturalAttack.keySet()) {
-            if (chr.getRace().hasProperty(prop)) {
-               primaryWeapon = Weapons.getWeapon(naturalAttack.remove(prop), chr.getRace());
+            if (race.hasProperty(prop)) {
+               primaryWeapon = Weapons.getWeapon(naturalAttack.remove(prop), race);
                break;
             }
          }
       }
       if (secondaryWeapon == null) {
          for (String prop : naturalAttack.keySet()) {
-            if (chr.getRace().hasProperty(prop)) {
-               secondaryWeapon = Weapons.getWeapon(naturalAttack.remove(prop), chr.getRace());
+            if (race.hasProperty(prop)) {
+               secondaryWeapon = Weapons.getWeapon(naturalAttack.remove(prop), race);
                break;
             }
          }
       }
+      SkillType skillUsed = null;
       for (Weapon weapon : new Weapon[]{primaryWeapon, secondaryWeapon}) {
          String weaponName = (weapon != null) ? weapon.getName() : "";
-         if (weapon == weaponPunch) {
-            weaponName = "Boxing";
-         } else if (weapon == weaponHeadButt) {
-            weaponName = "Brawling";
-         } else if (weapon == weaponKarate) {
-            weaponName = "Karate";
+         SkillType bestSkill = null;
+         if (weapon != null) {
+            bestSkill = chr.getBestSkillType(weapon);
+            if (!weapon.isReal()) {
+               weaponName = bestSkill.getName();
+            }
          }
+         if (skillUsed == bestSkill) {
+            // print blank sections, rather than skipping
+            weaponName = "";
+            weapon = null;
+         }
+         skillUsed = bestSkill;
 
          if (weapon == primaryWeapon && primaryWeaponCount > 1) {
             weaponName += "&nbsp;x"+primaryWeaponCount;
@@ -428,25 +439,46 @@ public class CannonFodder {
          else if (weapon == secondaryWeapon && secondaryWeaponCount > 1) {
             weaponName += " x"+secondaryWeaponCount;
          }
-         SkillType bestSkill = null;
-         if (weapon != null) {
-            bestSkill = chr.getBestSkillType(weapon);
-         }
          FodderColumn weaponColumnA = new FodderColumn("Style name", weaponName).setFirstRowClass("weapon_name");
          FodderColumn weaponColumnB = new FodderColumn("actions", (weapon != null) ? "spd" : "");
          FodderColumn weaponColumnC = new FodderColumn("damage", (weapon != null) ? "damage" : "");
          if (weapon != null) {
-            if (weapon == weaponHeadButt && chr.getRace().hasProperty(Race.PROPERTIES_HORNS)) {
-               Weapon weaponHornGore = Weapons.getWeapon(Weapon.NAME_HornGore, chr.getRace());
-               bestSkill = chr.getBestSkillType(weaponHornGore);
-               addWeaponStyles(chr, weaponHornGore, weaponColumnA, weaponColumnB, weaponColumnC, bestSkill);
-               addWeaponStyles(chr, weaponPunch, weaponColumnA, weaponColumnB, weaponColumnC, bestSkill);
+            if (bestSkill == SkillType.Brawling || bestSkill == SkillType.Karate) {
+               for (Map.Entry<String, String> attack : naturalAttack.entrySet()) {
+                  if (race.hasProperty(attack.getKey())) {
+                     Weapon naturalWeapon = Weapons.getWeapon(attack.getValue(), race);
+                     SkillType skill = chr.getBestSkillType(naturalWeapon);
+                     addWeaponStyles(chr, naturalWeapon, weaponColumnA, weaponColumnB, weaponColumnC, skill);
+                  }
+               }
+               // Brawling can head butt, unless we've already added it as a natural attack
+               if (bestSkill == SkillType.Brawling && !race.hasProperty(Race.PROPERTIES_HORNS) && !race.hasProperty(Race.PROPERTIES_FANGS)) {
+                  addWeaponStyles(chr, weaponHeadButt, weaponColumnA, weaponColumnB, weaponColumnC, bestSkill);
+               }
+               // Brawling and karate can punch, unless we've already added a claws attack:
+               if (!race.hasProperty(Race.PROPERTIES_CLAWS) && !race.hasProperty(Race.PROPERTIES_0_ARMS)) {
+                  // This becomes Punch and Elbow Strike
+                  addWeaponStyles(chr, weaponPunch, weaponColumnA, weaponColumnB, weaponColumnC, bestSkill);
+               }
+               else if (race.hasProperty(Race.PROPERTIES_CLAWS) && bestSkill == SkillType.Karate) {
+                  Weapon claws = Weapons.getWeapon(Weapon.NAME_Claws, race);
+                  addWeaponStyles(chr, claws, weaponColumnA, weaponColumnB, weaponColumnC, bestSkill);
+               }
+
+               if (race.hasProperty(Race.PROPERTIES_HORNS) && bestSkill == SkillType.Karate) {
+                  Weapon hornGore = Weapons.getWeapon(Weapon.NAME_HornGore, race);
+                  addWeaponStyles(chr, hornGore, weaponColumnA, weaponColumnB, weaponColumnC, bestSkill);
+               }
+               if (bestSkill == SkillType.Karate) {
+                  // This becomes Spin Kick and Kick
+                  addWeaponStyles(chr, weaponKarate, weaponColumnA, weaponColumnB, weaponColumnC, bestSkill);
+               }
+               if (weapon.getName().equals(Weapon.NAME_Fangs)) {
+                  addWeaponStyles(chr, weapon, weaponColumnA, weaponColumnB, weaponColumnC, bestSkill);
+               }
             }
             else {
                addWeaponStyles(chr, weapon, weaponColumnA, weaponColumnB, weaponColumnC, bestSkill);
-               if ((weapon == weaponHeadButt) || (weapon == weaponKarate)) {
-                  addWeaponStyles(chr, weaponPunch, weaponColumnA, weaponColumnB, weaponColumnC, bestSkill);
-               }
             }
          }
          children = new ArrayList<>();
@@ -510,6 +542,9 @@ public class CannonFodder {
             }
          }
          if (!minRankMet) {
+            continue;
+         }
+         if (style.getName().equals("Elbow strike")) {
             continue;
          }
          byte penalty = style.getSkillPenalty();
