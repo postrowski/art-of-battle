@@ -21,9 +21,9 @@
     <row id="18">1:1:9:11:0:0:0:11:1:2:2:1:1:1:1:1:1:1:1:1:1:8:8:</row>
     <row id="19">1:9:1:0:0:0:0:1:2:2:2:1:1:1:1:1:1:1:1:1:8:9:</row>
     <row id="20">1:9:9:11:0:0:0:11:1:2:2:1:1:1:1:1:1:1:1:1:1:9:9:</row>
-    <row id="21">1:10:9:11:11:0:11:8:2:2:2:1:1:1:1:1:1:1:1:1:8:10:</row>
+    <row id="21">1:10:9:11:11:11:11:8:2:2:2:1:1:1:1:1:1:1:1:1:8:10:</row>
     <row id="22">1:9:9:1:11:11:11:9:8:2:2:1:11:11:11:11:11:11:11:1:1:9:9:</row>
-    <row id="23">1:9:8:1:1:11:8:9:2:2:2:11:11:11:11:11:11:11:1:1:8:9:</row>
+    <row id="23">1:9:8:1:11:11:8:9:2:2:2:11:11:11:11:11:11:11:1:1:8:9:</row>
     <row id="24">1:8:8:1:1:1:1:8:8:2:2:1:0:0:0:0:11:0:11:1:1:8:8:</row>
     <row id="25">1:1:1:1:1:1:1:8:2:2:2:11:0:0:0:0:0:0:1:1:1:8:</row>
     <row id="26">8:1:1:1:1:1:1:1:1:2:2:2:0:0:0:0:11:0:0:1:1:1:1:</row>
@@ -63,8 +63,8 @@
   <teams count="4" maxCombatantsPerTeam="15">
     <team id="0">
       <combatant AI="Local" charName="Knight" id="0" startX="17" startY="51"/>
-      <combatant AI="Local" charName="PriestOfThor" id="1" startX="19" startY="51"/>
-      <combatant AI="Local" charName="Malihk" id="2" startX="21" startY="51"/>
+      <combatant AI="Local" charName="? 225" id="1" startX="19" startY="51"/>
+      <combatant AI="Local" charName="? 250" id="2" startX="21" startY="51"/>
       <combatant AI="Off" charName=" " id="3"/>
       <combatant AI="Off" charName=" " id="4"/>
       <combatant AI="Off" charName=" " id="5"/>
@@ -79,9 +79,9 @@
       <combatant AI="Off" charName=" " id="14"/>
     </team>
     <team id="1">
-      <combatant AI="Norm" charName="Minotaur" id="0" startX="18" startY="2"/>
-      <combatant AI="Norm" charName="Morrak" id="1" startX="20" startY="2"/>
-      <combatant AI="Norm" charName="Martock" id="2" startX="22" startY="2"/>
+      <combatant AI="Norm" charName="? 200 Aikido:5 Karate:5" id="0" startX="18" startY="2"/>
+      <combatant AI="Norm" charName="? 225 Aikido:6 Karate:5" id="1" startX="20" startY="2"/>
+      <combatant AI="Norm" charName="? 250 Aikido:6 Karate:6" id="2" startX="22" startY="2"/>
       <combatant AI="Off" charName=" " id="3"/>
       <combatant AI="Off" charName=" " id="4"/>
       <combatant AI="Off" charName=" " id="5"/>

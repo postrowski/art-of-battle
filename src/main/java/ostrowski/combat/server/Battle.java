@@ -860,7 +860,7 @@ public class Battle extends Thread implements Enums {
 
    private boolean resolveAttack(Character attacker, RequestAction attack, Character defender, RequestDefense defense,
                                  Map<Character, List<Wound>> wounds) throws BattleTerminatedException {
-      int attackStyle = attack.styleRequest.getAnswerIndex();
+      int attackStyle = attack.styleRequest.getAnswerID();
       boolean grappleAttack = attack.isGrappleAttack() || attack.isCounterAttackGrab();
       Weapon attackingWeapon = attacker.getLimb(attack.getLimb()).getWeapon(attacker);
       WeaponStyleAttack attackMode;
@@ -1121,7 +1121,7 @@ public class Battle extends Thread implements Enums {
             // Throw the opponent.
             DiceSet throwDistDice = new DiceSet(1, 1, 0, 0, 0, 0, 0, 0, 1.0);
             rollMessage = attacker.getName() + ", roll to see how far you've thrown " + defender.getName();
-            int throwDist = throwDistDice.roll(true/*allowExplodes*/, attacker, RollType.ATTACK_TO_HIT, rollMessage);
+            int throwDist = throwDistDice.roll(false/*allowExplodes*/, attacker, RollType.ATTACK_TO_HIT, rollMessage);
             sb.append(defender.getName()).append(" is thrown ").append(throwDistDice).append(" hexes, rolling ").append(throwDistDice.getLastDieRoll());
             CombatMap map = arena.getCombatMap();
             while (throwDist-- > 0) {

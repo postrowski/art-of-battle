@@ -896,14 +896,11 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    }
 
    private Profession getProfession(SkillType skillType) {
-      Optional<Profession> a = professionsList.values()
-                                              .stream()
-                                              .filter(p -> p.getType().skillList.contains(skillType))
-                                              .max(Comparator.comparingInt(o -> o.getLevel(skillType)));
-      if (a.isPresent()) {
-         return a.get();
-      }
-      return null;
+      return professionsList.values()
+                            .stream()
+                            .filter(p -> p.getType().skillList.contains(skillType))
+                            .max(Comparator.comparingInt(o -> o.getLevel(skillType)))
+                            .orElse(null);
    }
 
    public byte getSkillLevel(SkillType skillType, LimbType useLimb, boolean sizeAdjust, boolean adjustForEncumbrance, boolean adjustForHolds) {

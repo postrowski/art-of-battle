@@ -2937,6 +2937,8 @@ public class AI implements Enums
       Map<Integer, Integer> bestAdjustedTNPerAction = new HashMap<>();
       Map<Integer, Integer> bestActualTNPerAction = new HashMap<>();
       Map<Integer, DefenseOptions> bestOptionPerAction = new HashMap<>();
+      boolean canGrab = false;
+      boolean canThrow = false;
       for (int i = 0; i < options.length; i++) {
          if (enabled[i]) {
             int index = options[i].indexOf("(TN=");
@@ -2953,6 +2955,16 @@ public class AI implements Enums
                }
                if (defOptions[i].contains(DefenseOption.DEF_RETREAT)) {
                   adjTnVal -= penaltyRetreat;
+               }
+               if (defOptions[i].contains(DefenseOption.DEF_COUNTER_GRAB_1) ||
+                   defOptions[i].contains(DefenseOption.DEF_COUNTER_GRAB_2) ||
+                   defOptions[i].contains(DefenseOption.DEF_COUNTER_GRAB_3)) {
+                  canGrab = true;
+               }
+               if (defOptions[i].contains(DefenseOption.DEF_COUNTER_THROW_1) ||
+                   defOptions[i].contains(DefenseOption.DEF_COUNTER_THROW_2) ||
+                   defOptions[i].contains(DefenseOption.DEF_COUNTER_THROW_3)) {
+                  canThrow = true;
                }
                adjTnVal -= penaltySpell * defOptions[i].getDefenseMagicPointsUsed();
                Integer bestAdjustedTN = bestAdjustedTNPerAction.get(action);
@@ -3012,6 +3024,11 @@ public class AI implements Enums
          carefulThreshold = .70;
       }
 
+      if (canThrow || canGrab) {
+         // If we can throw or grab the opponent, chose more defense actions less often
+         safeRateIncreaseNeeded *= 2.0;
+      }
+
       //      if (aiType != AI_Type.DEFENSIVE) {
       //         safeRateIncreaseNeeded = Math.round(safeRateIncreaseNeeded * 150) / 100.0;
       //         safeThreshold = Math.round(100 - ((1 - safeThreshold) * 150)) / 100.0;
@@ -3061,7 +3078,7 @@ public class AI implements Enums
             sb.append(defActions).append("\t").append(tnHigh).append("(").append(tnHigh + extraSkillRequired).append(")\t").append(oddsDefSuccessHigh).append("\t").append(
                                                                                                                                                                         expectDamageAtHigherOdds);
             sb.append("\n");
-            sb.append(defActions - 1).append("\t").append(tnLower).append("(").append(tnLower + extraSkillRequired).append(")\t").append(oddsDefSuccessLower).append(
+            sb.append(defActions - 1).append("\t").append(tnLower).append("(").append(tnLower + extraSkillRequired).append(")\t").append(oddsDefSuccessLower).append("\t").append(
                                                                                                                                                                   expectDamageAtLowerOdds);
             sb.append("\n");
 
@@ -3074,10 +3091,10 @@ public class AI implements Enums
                rateIncreaseNeeded = carefulRateIncreaseNeeded;
             }
             // As our chance of successfully defending gets smaller, consider less restrictions
-            if (oddsDefSuccessLower < 25) {
+            if (oddsDefSuccessLower < 0.25) {
                rateIncreaseNeeded /= 2;
             }
-            if (oddsDefSuccessLower < 10) {
+            if (oddsDefSuccessLower < 0.10) {
                // If we are going to get hit, at least try to reduce the skilled-bonus damage we'll take:
                if ((tnHigh - tnLower) > 1) {
                   rateIncreaseNeeded = -1.0;
