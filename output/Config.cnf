@@ -1,0 +1,11 @@
+spellTnAffectedByMa = true
+useSimpleDamage = false
+useSimpleDice = false
+useExtendedDice = false
+useBellCurveDice = true
+useComplexTOUDice = true
+useD6ForAttributeRolls = true
+use3DMap = false
+showChit = false
+rollDice = false
+serverPort = 1777
