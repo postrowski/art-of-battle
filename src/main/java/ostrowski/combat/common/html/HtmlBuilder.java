@@ -1,5 +1,11 @@
 package ostrowski.combat.common.html;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.stream.Stream;
+
 public class HtmlBuilder
 {
    public static final int MAX_HTML_ROWS = 4;
@@ -7,121 +13,14 @@ public class HtmlBuilder
       StringBuilder sb = new StringBuilder();
       sb.append("<head>\n");
       sb.append("<style>\n");
-      sb.append("a:link {color:#000000;}    /* unvisited link */\n");
-      sb.append("a:visited {color:#000000;} /* visited link */\n");
-      sb.append("a:hover {color:#0000FF;}   /* mouse over link */\n");
-      sb.append("a:active {color:#000000;}  /* selected link */\n");
-      sb.append("a { text-decoration:none }\n");
-      sb.append("hr {color:sienna;}\n");
-      sb.append("p {margin-left:20px;}\n");
-      sb.append("table, th, td {\n");
-      sb.append(" border-spacing: 0px;\n");
-      sb.append(" border-style: outset;\n");
-      sb.append(" border-collapse: collapse;\n");
-      sb.append(" border-color: #808080;\n");
-      sb.append("}\n");
-      sb.append("table {\n");
-      sb.append(" border-width: 2px;\n");
-      sb.append("}\n");
-      sb.append("th, td {\n");
-      sb.append(" text-align: center;\n");
-      sb.append(" border-width: 1px;\n");
-      sb.append(" padding: 0px 2px;\n");
-      sb.append("}\n");
-      sb.append("th.alignLeft, td.alignLeft {\n");
-      sb.append(" text-align: left;\n");
-      sb.append("}\n");
-      sb.append("tr.header-row {\n");
-      sb.append(" background-color:#B8CCE4;\n");
-      sb.append("}\n");
-      sb.append("table.Hidden {\n");
-      sb.append(" border-color: #FFFFFF;\n");
-      sb.append(" border-width: 0px;\n");
-      sb.append("}\n");
-      sb.append("th.points {height: 200px}\n");
-      sb.append(".points {max-width: 30px;}\n");
-      sb.append(".race_gender {}\n");
-      sb.append(".attr_STR { max-width: 15px; background-color: cornflowerblue;}\n");
-      sb.append(".attr_HT  { max-width: 15px; background-color: lightskyblue;}\n");
-      sb.append(".attr_TOU { max-width: 15px; background-color: cornflowerblue;}\n");
-      sb.append(".attr_IQ  { max-width: 15px; background-color: lightskyblue;}\n");
-      sb.append(".attr_NIM { max-width: 15px; background-color: cornflowerblue;}\n");
-      sb.append(".attr_DEX { max-width: 15px; background-color: lightskyblue;}\n");
-      sb.append(".attr_SOC { max-width: 15px; background-color: cornflowerblue;}\n");
-      sb.append(".actions  { max-width: 15px; background-color: aliceblue;}\n");
-      sb.append(".encumbrance {max-width: 15px;}\n");
-      sb.append(".movement {max-width: 15px;}\n");
-      sb.append(".pain_recovery {}\n");
-      sb.append(".profession1 {}\n");
-      sb.append(".profession2 {}\n");
-      sb.append(".profession3 {}\n");
-      sb.append(".professions {}\n");
-      sb.append(".equipment {}\n");
-      sb.append(".def_pd {}\n");
-      sb.append(".def_Retreat {}\n");
-      sb.append(".def_Dodge {}\n");
-      sb.append(".def_Block {}\n");
-      sb.append(".def_Parry {}\n");
-      sb.append(".def_Blunt {}\n");
-      sb.append(".def_Cut {}\n");
-      sb.append(".def_Impale {}\n");
-      sb.append(".def_pd      { max-width: 20px; background-color: yellowgreen}\n");
-      sb.append(".def_Retreat { max-width: 15px; background-color: lightgray}\n");
-      sb.append(".def_Dodge   { max-width: 15px; background-color: darkgrey}\n");
-      sb.append(".def_Block   { max-width: 15px; background-color: lightgray}\n");
-      sb.append(".def_Parry   { max-width: 15px; background-color: darkgrey}\n");
-      sb.append(".def_Blunt   { max-width: 15px; background-color: bisque}\n");
-      sb.append(".def_Cut     { max-width: 15px; background-color: burlywood}\n");
-      sb.append(".def_Impale  { max-width: 15px; background-color: bisque}\n");
-      sb.append(".weapon {}\n");
-      sb.append(".weapon_name { font-weight: bold; }\n");
-      sb.append("tr.row0 td.weapon_name { background-color:#E8E8E8; }\n");
-      sb.append("tr.row1 td.weapon_name { background-color:#D8D8D8; }\n");
-      sb.append("tr.row2 td.weapon_name { background-color:#E8E8E8; }\n");
-      sb.append("tr.row3 td.weapon_name { background-color:#D8D8D8; }\n");
-      sb.append(".tightTable td, .tightTable th {\n");
-      sb.append("    padding: 0px;\n");
-      sb.append("}\n");
-      sb.append(".vertical-text {\n");
-      sb.append("    writing-mode: vertical-lr;\n");
-      sb.append("    -ms-writing-mode: tb-rl;\n");
-      sb.append("    transform: rotate(180deg);\n");
-      sb.append("    font-size: smaller;\n");
-      sb.append("}");
-      sb.append("tr.row0");
-      for (int i = 2; i < MAX_HTML_ROWS; i++) {
-         sb.append(", tr.row").append(i++);
+      try (InputStream inputStream = HtmlBuilder.class.getResourceAsStream("/CannonFodder.css");
+           InputStreamReader isr = new InputStreamReader(inputStream);
+           BufferedReader br = new BufferedReader(isr);
+           Stream<String> lines = br.lines()) {
+         lines.forEach(sb::append);
+      } catch (IOException e) {
+         throw new RuntimeException(e);
       }
-      sb.append("{ background-color:#FFFFFF;}\n");
-      sb.append("tr.row1");
-      for (int i = 3; i < MAX_HTML_ROWS; i++) {
-         sb.append(", tr.row").append(i++);
-      }
-      sb.append("{ background-color:#F0F0F0;}\n");
-      sb.append("table.doubleRow tr.row0, table.doubleRow tr.row1");
-      for (int i=4 ; i<MAX_HTML_ROWS; i+=2) {
-         sb.append(", table.doubleRow tr.row").append(i++);
-         sb.append(", table.doubleRow tr.row").append(i++);
-      }
-      sb.append("{ background-color:#FFFFFF;}\n");
-      sb.append("table.doubleRow tr.row2, table.doubleRow tr.row3");
-      for (int i=6; i<MAX_HTML_ROWS; i+=2) {
-         sb.append(", table.doubleRow tr.row").append(i++);
-         sb.append(", table.doubleRow tr.row").append(i++);
-      }
-      sb.append("{ background-color:#F0F0F0;}\n");
-      sb.append("\n");
-      sb.append("tr.header-row th {\n");
-      sb.append("  border-width: 1px 1px 3px 1px;\n");
-      sb.append("}\n");
-      sb.append("table.Hidden table td {");
-      sb.append("  border-width:1px;");
-      sb.append("}");
-      sb.append("table.Hidden table.Hidden td {");
-      sb.append("  border-width:0px;");
-      sb.append("}");
-
-      sb.append("\n");
       sb.append("</style>\n");
       sb.append("</head>\n");
       return sb.toString();
@@ -185,6 +84,19 @@ public class HtmlBuilder
          sb.append(onLoadString);
          sb.append("\n}\n");
          sb.append("</script>\n");
+         sb.append("<head>\n");
+         sb.append("<style>\n");
+         try (InputStream inputStream = HtmlBuilder.class.getResourceAsStream("/CannonFodder.css");
+              InputStreamReader isr = new InputStreamReader(inputStream);
+              BufferedReader br = new BufferedReader(isr);
+              Stream<String> lines = br.lines()) {
+            lines.forEach(sb::append);
+         } catch (IOException e) {
+            throw new RuntimeException(e);
+         }
+         sb.append("</style>\n");
+         sb.append("</head>\n");
+         sb.append("New page!\n");
       }
       sb.append(getCSSHeader());
       return sb.toString();

@@ -957,25 +957,32 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    }
 
    public void setSkillLevel(ProfessionType professionType, SkillType skillType, byte skillLevel) {
-      Profession prof = professionsList.computeIfAbsent(professionType, o -> new Profession(professionType, skillType, skillLevel));
-      prof.setLevel(skillLevel);
+      Profession prof = professionsList.computeIfAbsent(professionType,
+                                                        o -> new Profession(professionType, skillType, skillLevel));
       List<SkillType> proficientSkills = prof.getProficientSkills();
-      if (!proficientSkills.contains(skillType)) {
-         List<SkillType> newProfSkills = new ArrayList<>();
-         newProfSkills.addAll(proficientSkills);
-         newProfSkills.add(skillType);
-         prof.setProficientSkills(newProfSkills);
-      }
       List<SkillType> familiarSkills = prof.getFamiliarSkills();
-      if (familiarSkills.contains(skillType)) {
-         List<SkillType> familiarSkillsWithout = new ArrayList<>(familiarSkills);
-         familiarSkillsWithout.remove(skillType);
-         prof.setFamiliarSkills(familiarSkillsWithout);
+      List<SkillType> newProficientSkills = new ArrayList<>(proficientSkills);
+      List<SkillType> newFamiliarSkills = new ArrayList<>(familiarSkills);
+      if ((prof.getLevel() > skillLevel + 2) && (prof.getProficientSkills().size() > 1)) {
+         // This can be a familiar Skill within the existing profession
+         if (!familiarSkills.contains(skillType)) {
+            newFamiliarSkills.add(skillType);
+         }
+         newProficientSkills.remove(skillType);
+      } else {
+         prof.setLevel(skillLevel);
+         if (!proficientSkills.contains(skillType)) {
+            newProficientSkills.add(skillType);
+         }
+         newFamiliarSkills.remove(skillType);
       }
+      prof.setFamiliarSkills(newFamiliarSkills);
+      prof.setProficientSkills(newProficientSkills);
    }
 
    public void setProfessionLevel(ProfessionType professionType, SkillType defaultProfSkillType, byte profLevel) {
-      professionsList.computeIfAbsent(professionType, o -> new Profession(professionType, defaultProfSkillType, profLevel))
+      professionsList.computeIfAbsent(professionType,
+                                      o -> new Profession(professionType, defaultProfSkillType, profLevel))
                      .setLevel(profLevel);
    }
 
@@ -1511,7 +1518,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                   } else {
                      sb.append("\nYour ").append(currentSpell.getName()).append(" spell");
                   }
-                  sb.append(" has a base range of ").append(rangeBase);
+                  sb.append(" has a range base of ").append(rangeBase);
                   if (adjustedRangeBase != rangeBase) {
                      sb.append(" (").append(rangeAdjustingAttributeName).append(" and size adjusted to ").append(adjustedRangeBase).append(")");
                   }
@@ -2609,7 +2616,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       }
       if (isBerserking()) {
          // Berserking characters can only dodge as a defense.
-         availActions.remove(DefenseOption.DEF_DODGE);
+         availActions = availActions.logicAndWithSet(new DefenseOptions(DefenseOption.DEF_DODGE));
       }
       StringBuilder sb = new StringBuilder();
       sb.append(getName()).append(", you have ").append(condition.getActionsAvailable(true/*usedForDefenseOnly*/)).append(" actions remaining");
@@ -3028,7 +3035,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       return req;
    }
 
-   class AttackOption {
+   static class AttackOption {
       Integer styleIndex;
       String  desc;
       Boolean    styleAllowed;
@@ -3215,7 +3222,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
                   DiceSet attackDice = Rules.getDice(getAttributeLevel(Attribute.Dexterity), attackActions, Attribute.Dexterity/*attribute*/, RollType.ATTACK_TO_HIT);
                   options.add(new AttackOption(styleIndex, sb.toString(), styleAllowed, styles[styleIndex].getAttackType(),
                                                attackDice, styleDamage, styles[styleIndex].getDamageType(),
-                                               (byte)(skillLevel - styles[styleIndex].getSkillPenalty()), styleSpeed,
+                                               (byte) (skillLevel - styles[styleIndex].getSkillPenalty()), styleSpeed,
                                                skillRank, skillType));
                }
             }
@@ -4038,17 +4045,20 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
               .append(SEPARATOR_TIRTIARY)
               .append(profession.getProficientSkills()
                                 .stream()
-                                .map(o->o.getName())
+                                .map(SkillType::getName)
                                 .collect(Collectors.joining(",")))
               .append(SEPARATOR_TIRTIARY)
               .append(profession.getFamiliarSkills()
                                 .stream()
-                                .map(o->o.getName())
+                                .map(SkillType::getName)
                                 .collect(Collectors.joining(",")))
               .append(SEPARATOR_SECONDARY);
          }
          for (MageSpell spell : knownMageSpellsList) {
-            sb.append(spell.getName()).append('=').append(spell.getFamiliarity().getName()).append(SEPARATOR_SECONDARY);
+            sb.append(spell.getName())
+              .append('=')
+              .append(spell.getFamiliarity().getName())
+              .append(SEPARATOR_SECONDARY);
          }
       }
       sb.append(SEPARATOR_MAIN);
@@ -4399,182 +4409,200 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
       for (int index = 0; index < children.getLength(); index++) {
          Node child = children.item(index);
          NamedNodeMap attributes = child.getAttributes();
-         if (child.getNodeName().equals("Attributes")) {
-            for (Attribute att : Attribute.values()) {
-               Node value = attributes.getNamedItem(att.shortName);
-               if (value == null) {
-                  this.attributes.put(att, race.getAttributeMods(att));
-               } else {
-                  this.attributes.put(att, Byte.valueOf(value.getNodeValue()));
+         switch (child.getNodeName()) {
+            case "Attributes":
+               for (Attribute att : Attribute.values()) {
+                  Node value = attributes.getNamedItem(att.shortName);
+                  if (value == null) {
+                     this.attributes.put(att, race.getAttributeMods(att));
+                  } else {
+                     this.attributes.put(att, Byte.valueOf(value.getNodeValue()));
+                  }
                }
+               break;
+            case "Equipment": {
+               armor = Armor.getArmor(attributes.getNamedItem("Armor").getNodeValue(), getRace());
+               NodeList grandChildren = child.getChildNodes();
+               for (int i = 0; i < grandChildren.getLength(); i++) {
+                  Node grandChild = grandChildren.item(i);
+                  if (grandChild.getNodeName().equals("Hand")) {
+                     NamedNodeMap attr = grandChild.getAttributes();
+                     String name = attr.getNamedItem("Name").getNodeValue();
+                     for (Hand hand : getArms()) {
+                        if (hand.getName().equals(name)) {
+                           hand.setHeldThing(Thing.getThing(grandChild.getTextContent(), getRace()), this);
+                        }
+                     }
+                  }
+                  if (grandChild.getNodeName().equals("Belt")) {
+                     addEquipment(Thing.getThing(grandChild.getTextContent(), true/*allowTool*/, getRace()));
+                  }
+               }
+               break;
             }
-         } else if (child.getNodeName().equals("Equipment")) {
-            armor = Armor.getArmor(attributes.getNamedItem("Armor").getNodeValue(), getRace());
-            NodeList grandChildren = child.getChildNodes();
-            for (int i = 0; i < grandChildren.getLength(); i++) {
-               Node grandChild = grandChildren.item(i);
-               if (grandChild.getNodeName().equals("Hand")) {
+            case "Professions":
+            case "Spells":
+            case "Advantages": {
+               // These elements all have children below, that have a similar structure: <??? level="?" Name="?"/>
+               NodeList grandChildren = child.getChildNodes();
+               for (int i = 0; i < grandChildren.getLength(); i++) {
+                  Node grandChild = grandChildren.item(i);
                   NamedNodeMap attr = grandChild.getAttributes();
-                  String name = attr.getNamedItem("Name").getNodeValue();
-                  for (Hand hand : getArms()) {
-                     if (hand.getName().equals(name)) {
-                        hand.setHeldThing(Thing.getThing(grandChild.getTextContent(), getRace()), this);
-                     }
+                  if (attr == null) {
+                     continue;
                   }
-               }
-               if (grandChild.getNodeName().equals("Belt")) {
-                  addEquipment(Thing.getThing(grandChild.getTextContent(), true/*allowTool*/, getRace()));
-               }
-            }
-         } else if ((child.getNodeName().equals("Professions")) ||
-                    (child.getNodeName().equals("Spells")) ||
-                    (child.getNodeName().equals("Advantages"))) {
-            // These elements all have children below, that have a similar structure: <??? level="?" Name="?"/>
-            NodeList grandChildren = child.getChildNodes();
-            for (int i = 0; i < grandChildren.getLength(); i++) {
-               Node grandChild = grandChildren.item(i);
-               NamedNodeMap attr = grandChild.getAttributes();
-               if (attr == null) {
-                  continue;
-               }
-               Node nameNode = attr.getNamedItem("Name");
-               if (nameNode == null) {
-                  nameNode = attr.getNamedItem("name");
-               }
+                  Node nameNode = attr.getNamedItem("Name");
+                  if (nameNode == null) {
+                     nameNode = attr.getNamedItem("name");
+                  }
 
-               String name = nameNode.getNodeValue();
-               Node levelNode = attr.getNamedItem("Level");
-               if (levelNode == null) {
-                  levelNode = attr.getNamedItem("level");
-               }
-               byte level = 0;
-               if ((levelNode != null) && (levelNode.getNodeValue() != null) && (!levelNode.getNodeValue().isEmpty())) {
-                  level = Byte.parseByte(levelNode.getNodeValue());
-               }
+                  String name = nameNode.getNodeValue();
+                  Node levelNode = attr.getNamedItem("Level");
+                  if (levelNode == null) {
+                     levelNode = attr.getNamedItem("level");
+                  }
+                  byte level = 0;
+                  if ((levelNode != null) && (levelNode.getNodeValue() != null) && (!levelNode.getNodeValue().isEmpty())) {
+                     level = Byte.parseByte(levelNode.getNodeValue());
+                  }
 
-               Node levelNameNode = attr.getNamedItem("LevelName");
-               String levelName = ((levelNameNode != null) ? levelNameNode.getNodeValue() : "");
+                  Node levelNameNode = attr.getNamedItem("LevelName");
+                  String levelName = ((levelNameNode != null) ? levelNameNode.getNodeValue() : "");
 
-               if (grandChild.getNodeName().equals("Profession")) {
-                  ProfessionType professionType = ProfessionType.getByName(name);
-                  if (professionType != null) {
-                     String proficientSkillsStr = attr.getNamedItem("proficient").getNodeValue();
-                     String familiarSkillsStr = attr.getNamedItem("familiar").getNodeValue();
-                     List<SkillType> proficientSkills = Arrays.asList(proficientSkillsStr.split(","))
-                                                              .stream()
-                                                              .map(o -> SkillType.getSkillTypeByName(o))
-                                                              .filter(Objects::nonNull)
-                                                              .collect(Collectors.toList());
-                     Profession profession = new Profession(professionType, proficientSkills, level);
-                     profession.setFamiliarSkills(familiarSkillsStr);
-                     professionsList.put(professionType, profession);
-                  }
-               } else if (grandChild.getNodeName().equals("Spell")) {
-                  MageSpell spell = MageSpells.getSpell(name);
-                  String familiarityStr = attr.getNamedItem("Familiarity").getNodeValue();
-                  MageSpell.Familiarity familiarity = null;
-                  if (familiarityStr != null) {
-                     familiarity = MageSpell.Familiarity.getFamiliarityByName(familiarityStr);
-                  }
-                  if (spell != null) {
-                     if (familiarity != null) {
-                        spell.setFamiliarity(familiarity);
-                     }
-                     knownMageSpellsList.add(spell);
-                  }
-               } else if (grandChild.getNodeName().equals("Advantage")) {
-                  Advantage adv = Advantage.getAdvantage(name);
-                  if (adv != null) {
-                     if (levelName != null && !levelName.isEmpty()) {
-                        adv.setLevelByName(levelName);
-                     } else {
-                        if (adv.getName().equals(Advantage.CODE_OF_CONDUCT)) {
-                           // code of conduct had 4 elements added to the front of the list of levels
-                           // at the same time as the 'levelName' attribute was added.
-                           // so if we don't have a 'levelName', then the level's have changed:
-                           adv.setLevel((byte) (level + 4));
-                        } else {
-                           adv.setLevel(level);
+                  switch (grandChild.getNodeName()) {
+                     case "Profession":
+                        ProfessionType professionType = ProfessionType.getByName(name);
+                        if (professionType != null) {
+                           String proficientSkillsStr = attr.getNamedItem("proficient").getNodeValue();
+                           String familiarSkillsStr = attr.getNamedItem("familiar").getNodeValue();
+                           List<SkillType> proficientSkills = Arrays.asList(proficientSkillsStr.split(","))
+                                                                    .stream()
+                                                                    .map(SkillType::getSkillTypeByName)
+                                                                    .filter(Objects::nonNull)
+                                                                    .collect(Collectors.toList());
+                           Profession profession = new Profession(professionType, proficientSkills, level);
+                           profession.setFamiliarSkills(familiarSkillsStr);
+                           professionsList.put(professionType, profession);
                         }
-                     }
-                     advList.add(adv);
+                        break;
+                     case "Spell":
+                        MageSpell spell = MageSpells.getSpell(name);
+                        String familiarityStr = attr.getNamedItem("Familiarity").getNodeValue();
+                        MageSpell.Familiarity familiarity = null;
+                        if (familiarityStr != null) {
+                           familiarity = MageSpell.Familiarity.getFamiliarityByName(familiarityStr);
+                        }
+                        if (spell != null) {
+                           if (familiarity != null) {
+                              spell.setFamiliarity(familiarity);
+                           }
+                           knownMageSpellsList.add(spell);
+                        }
+                        break;
+                     case "Advantage":
+                        Advantage adv = Advantage.getAdvantage(name);
+                        if (adv != null) {
+                           if (levelName != null && !levelName.isEmpty()) {
+                              adv.setLevelByName(levelName);
+                           } else {
+                              if (adv.getName().equals(Advantage.CODE_OF_CONDUCT)) {
+                                 // code of conduct had 4 elements added to the front of the list of levels
+                                 // at the same time as the 'levelName' attribute was added.
+                                 // so if we don't have a 'levelName', then the level's have changed:
+                                 adv.setLevel((byte) (level + 4));
+                              } else {
+                                 adv.setLevel(level);
+                              }
+                           }
+                           advList.add(adv);
+                        }
+                        break;
                   }
                }
+               break;
             }
-         } else if (child.getNodeName().equals("Condition")) {
-            condition.serializeFromXmlObject(child);
-            // If we have a severed limb, set it's limb to null.
-            for (Wound wound : getWoundsList()) {
-               if (wound.isSeveredArm() || wound.isSeveredLeg() || wound.isSeveredWing()) {
-                  limbs.remove(wound.getLimb());
-               }
-            }
-         } else if (child.getNodeName().equals("activeData")) {
-            NamedNodeMap attr = child.getAttributes();
-            if (attr != null) {
-               teamID = Byte.parseByte(attr.getNamedItem("teamID").getNodeValue());
-               targetID = Byte.parseByte(attr.getNamedItem("targetID").getNodeValue());
-               aimDuration = Byte.parseByte(attr.getNamedItem("aimDuration").getNodeValue());
-               headCount = Integer.parseInt(attr.getNamedItem("headCount").getNodeValue());
-               eyeCount = Integer.parseInt(attr.getNamedItem("eyeCount").getNodeValue());
-               legCount = Integer.parseInt(attr.getNamedItem("legCount").getNodeValue());
-               wingCount = Integer.parseInt(attr.getNamedItem("wingCount").getNodeValue());
-               isBerserking = Boolean.parseBoolean(attr.getNamedItem("isBerserking").getNodeValue());
-               Node node = attr.getNamedItem("hasInitiativeAndActionsEverBeenInitialized");
-               if (node != null) {
-                  hasInitiativeAndActionsEverBeenInitialized = Boolean.parseBoolean(node.getNodeValue());
-               }
-               Node isAiNode = attr.getNamedItem("isAIPlayer");
-               if (isAiNode != null) {
-                  if (Boolean.parseBoolean(isAiNode.getNodeValue())) {
-                     aiType = AI_Type.NORM;
+            case "Condition":
+               condition.serializeFromXmlObject(child);
+               // If we have a severed limb, set it's limb to null.
+               for (Wound wound : getWoundsList()) {
+                  if (wound.isSeveredArm() || wound.isSeveredLeg() || wound.isSeveredWing()) {
+                     limbs.remove(wound.getLimb());
                   }
                }
-               Node AiTypeNode = attr.getNamedItem("aiType");
-               if (AiTypeNode != null) {
-                  aiType = AI_Type.getByString(AiTypeNode.getNodeValue());
-               }
-            }
-         } else if (child.getNodeName().equals("limbs")) {
-            NodeList grandChildren = child.getChildNodes();
-            for (int i = 0; i < grandChildren.getLength(); i++) {
-               Node grandChild = grandChildren.item(i);
-               NamedNodeMap attr = grandChild.getAttributes();
+               break;
+            case "activeData":
+               NamedNodeMap attr = child.getAttributes();
                if (attr != null) {
-                  if (grandChild.getNodeName().equals("Limb")) {
-                     LimbType limbType = LimbType.getByValue(Byte.parseByte(attr.getNamedItem("id").getNodeValue()));
-                     if (attr.getNamedItem("severed") != null) {
-                        limbs.remove(limbType);
-                     } else {
-                        Limb limb = getLimb(limbType);
-                        if (limb == null) {
-                           limb = race.createLimb(limbType);
-                           limbs.put(limbType, limb);
+                  teamID = Byte.parseByte(attr.getNamedItem("teamID").getNodeValue());
+                  targetID = Byte.parseByte(attr.getNamedItem("targetID").getNodeValue());
+                  aimDuration = Byte.parseByte(attr.getNamedItem("aimDuration").getNodeValue());
+                  headCount = Integer.parseInt(attr.getNamedItem("headCount").getNodeValue());
+                  eyeCount = Integer.parseInt(attr.getNamedItem("eyeCount").getNodeValue());
+                  legCount = Integer.parseInt(attr.getNamedItem("legCount").getNodeValue());
+                  wingCount = Integer.parseInt(attr.getNamedItem("wingCount").getNodeValue());
+                  isBerserking = Boolean.parseBoolean(attr.getNamedItem("isBerserking").getNodeValue());
+                  Node node = attr.getNamedItem("hasInitiativeAndActionsEverBeenInitialized");
+                  if (node != null) {
+                     hasInitiativeAndActionsEverBeenInitialized = Boolean.parseBoolean(node.getNodeValue());
+                  }
+                  Node isAiNode = attr.getNamedItem("isAIPlayer");
+                  if (isAiNode != null) {
+                     if (Boolean.parseBoolean(isAiNode.getNodeValue())) {
+                        aiType = AI_Type.NORM;
+                     }
+                  }
+                  Node AiTypeNode = attr.getNamedItem("aiType");
+                  if (AiTypeNode != null) {
+                     aiType = AI_Type.getByString(AiTypeNode.getNodeValue());
+                  }
+               }
+               break;
+            case "limbs": {
+               NodeList grandChildren = child.getChildNodes();
+               for (int i = 0; i < grandChildren.getLength(); i++) {
+                  Node grandChild = grandChildren.item(i);
+                  NamedNodeMap grandChildAttr = grandChild.getAttributes();
+                  if (grandChildAttr != null) {
+                     if (grandChild.getNodeName().equals("Limb")) {
+                        LimbType limbType = LimbType.getByValue(Byte.parseByte(grandChildAttr.getNamedItem("id").getNodeValue()));
+                        if (grandChildAttr.getNamedItem("severed") != null) {
+                           limbs.remove(limbType);
+                        } else {
+                           Limb limb = getLimb(limbType);
+                           if (limb == null) {
+                              limb = race.createLimb(limbType);
+                              limbs.put(limbType, limb);
+                           }
+                           limb.serializeFromXmlObject(grandChild);
                         }
-                        limb.serializeFromXmlObject(grandChild);
                      }
                   }
                }
+               break;
             }
-         } else if (child.getNodeName().equals("activeSpells")) {
-            activeSpellsList.clear();
-            NodeList grandChildren = child.getChildNodes();
-            for (int i = 0; i < grandChildren.getLength(); i++) {
-               Node grandChild = grandChildren.item(i);
-               Spell spell = Spell.serializeFromXmlObject(grandChild);
-               if (spell != null) {
-                  activeSpellsList.add(spell);
+            case "activeSpells": {
+               activeSpellsList.clear();
+               NodeList grandChildren = child.getChildNodes();
+               for (int i = 0; i < grandChildren.getLength(); i++) {
+                  Node grandChild = grandChildren.item(i);
+                  Spell spell = Spell.serializeFromXmlObject(grandChild);
+                  if (spell != null) {
+                     activeSpellsList.add(spell);
+                  }
                }
+               break;
             }
-         } else if (child.getNodeName().equals("currentSpell")) {
-            NodeList grandChildren = child.getChildNodes();
-            for (int i = 0; i < grandChildren.getLength(); i++) {
-               Node grandChild = grandChildren.item(i);
-               Spell spell = Spell.serializeFromXmlObject(grandChild);
-               if (spell != null) {
-                  currentSpell = spell;
-                  currentSpell.setCaster(this);
+            case "currentSpell": {
+               NodeList grandChildren = child.getChildNodes();
+               for (int i = 0; i < grandChildren.getLength(); i++) {
+                  Node grandChild = grandChildren.item(i);
+                  Spell spell = Spell.serializeFromXmlObject(grandChild);
+                  if (spell != null) {
+                     currentSpell = spell;
+                     currentSpell.setCaster(this);
+                  }
                }
+               break;
             }
          }
       }

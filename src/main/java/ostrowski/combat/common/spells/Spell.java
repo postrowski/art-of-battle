@@ -194,7 +194,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
          }
       }
       if (this instanceof IRangedSpell) {
-         descriptionBuffer.append("<br/><b>Base range:</b> ").append(getAdjustedRangeBase()).append(".");
+         descriptionBuffer.append("<br/><b>Range Base:</b> ").append(getAdjustedRangeBase()).append(".");
       }
       if (this instanceof IExpiringSpell) {
          IExpiringSpell expSpell = (IExpiringSpell) this;
@@ -700,7 +700,7 @@ public abstract class Spell extends SerializableObject implements Enums, Cloneab
       }
       if (this instanceof IRangedSpell) {
          sbDescription.append("The ").append(getName()).append(" spell");
-         sbDescription.append(" has an adjusted base range of ").append(getAdjustedRangeBase());
+         sbDescription.append(" has an adjusted range base of ").append(getAdjustedRangeBase());
          sbDescription.append(", and the target is ").append(distanceInHexes).append(" hexes away, making this ");
          sbDescription.append(getRange(distanceInHexes).getName()).append(" range.<br/>");
       }

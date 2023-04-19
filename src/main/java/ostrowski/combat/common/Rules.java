@@ -608,7 +608,7 @@ public class Rules extends DebugBreak implements Enums {
       sb.append(attrTable);
       sb.append("<H3>Common Ranges adjusted for attibute levels:</H3>");
       sb.append(rangeTable);
-      sb.append("For levels above 20: subtract 15, and double the range (i.e. ASTR=26 for a base range of 20 yields twice that of an ASTR or 11.");
+      sb.append("For levels above 20: subtract 15, and double the range (i.e. ASTR=26 for a range base of 20 yields twice that of an ASTR or 11.");
       sb.append("<br/>A range of 20 adjusted for a ASTR of 11 is 33, so an ASTR of 26 would have an attribute adjust range of 66.) ");
       sb.append("<br/>For levels below -10: add 15, and halve the range.");
       sb.append("</body>");
@@ -701,7 +701,7 @@ public class Rules extends DebugBreak implements Enums {
       table.addRow(header1);
       header1.addTD(new TableHeader("Attribute level <br/> (ASTR or <br/>IQ/SOC&nbsp;+&nbsp;size&nbsp;adj.)").setRowSpan(2));
       int[] range = {8, 10, 12, 14, 16, 18, 20, 24, 28, 30, 32, 36, 40, 48, 50, 56, 60, 64, 72, 80, 100, 120, 160, 200, 240};
-      header1.addTD(new TableHeader("Base range").setColSpan(range.length));
+      header1.addTD(new TableHeader("Range Base").setColSpan(range.length));
 
       TableRow header2 = new TableRow(-1);
       table.addRow(header2);
@@ -937,7 +937,7 @@ public class Rules extends DebugBreak implements Enums {
             Integer maxCost  = (Integer)races[i+3];
             Integer count    = (Integer)races[i+4];
             double incrementation = (maxCost - minCost) / (2.0f*count);
-            ArrayList<Character> raceList = new ArrayList();
+            ArrayList<Character> raceList = new ArrayList<>();
             for (float points = minCost; points <= maxCost; points += incrementation) {
                incrementation = incrementation * 1.1;
                String fullDescription = + Math.round(points) + " " +raceName;
@@ -987,10 +987,12 @@ public class Rules extends DebugBreak implements Enums {
          for (Character chr : fodderCharacters.get(raceName)) {
             CannonFodder fodder = new CannonFodder(chr);
             if (showHeader)  {
-               sb.append(fodder.getHeaderRowHTML());
+               //sb.append(fodder.getHeaderRowHTML());
+               sb.append(CannonFodder.HtmlCharWriter.convertCharacterToRow(chr, true, 6));
                showHeader = false;
             }
-            sb.append(fodder.getRowHTML(row++));
+            //sb.append(fodder.getRowHTML(row++));
+            sb.append(CannonFodder.HtmlCharWriter.convertCharacterToRow(chr, false, 8));
          }
          sb.append("</table>");
       }
@@ -1165,7 +1167,7 @@ public class Rules extends DebugBreak implements Enums {
          throw new IllegalArgumentException("skill " + skill + " is not a member of profession " + professionType);
       }
       Optional<Profession> profession = character.getProfessionsList().stream().filter(o -> o.getType() == professionType).findFirst();
-      if (!profession.isPresent()) {
+      if (profession.isEmpty()) {
          return 0;
       }
       byte adjustedLevel;
@@ -1182,13 +1184,11 @@ public class Rules extends DebugBreak implements Enums {
          adjustedLevel = getAdjustedSkillLevel(adjustedLevel, character.getAttributeLevel(attribute));
       }
       if (skill.isAdjustedForSize) {
-         byte bonusToHit = (character == null) ? 0 : character.getRace().getBonusToHit();
+         byte bonusToHit = character.getRace().getBonusToHit();
          adjustedLevel += bonusToHit;
       }
       if (skill.isAdjustedForEncumbrance) {
-         if (character != null) {
-            adjustedLevel -= Rules.getEncumbranceLevel(character);
-         }
+         adjustedLevel -= Rules.getEncumbranceLevel(character);
       }
       return adjustedLevel;
    }

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><Arena Name="Bridge3" backgroundImageAlpha="130" backgroundImagePath="C:\Users\paul_\workspace\xcmbt\arenas\bg_bridge.jpg" height="28" hideViewFromLocalPlayers="true" level="0" width="20">
+<?xml version="1.0" encoding="UTF-8"?><Arena Name="Bridge3" backgroundImageAlpha="220" backgroundImagePath="\bg_bridge.jpg" height="28" hideViewFromLocalPlayers="true" knownByAllPlayers="false" level="0" width="20">
   <rows>
     <row id="0">8:8:4:5:5:6:5:8:8:1:</row>
     <row id="1">8:8:4:5:6:5:4:8:1:8:</row>

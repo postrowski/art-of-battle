@@ -368,7 +368,7 @@ public class CharInfoBlock extends Helper implements IUIBlock, ModifyListener
          if (weapon != null) {
             SkillType bestSkill = target.getBestSkillType(weapon);
             if (bestSkill != null) {
-               byte skillLevel = target.getSkillLevel(bestSkill, LimbType.HAND_RIGHT, false, true, true);
+               byte skillLevel = target.getSkillLevel(bestSkill, hand.limbType, false, true, true);
                return bestSkill.getName() + ':' + skillLevel;
             }
          }

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?><Arena Name="tinyTest" backgroundImagePath="C:\Users\paul_\workspace\xcmbt\arenas\bg_bridge.jpg" height="6" hideViewFromLocalPlayers="true" level="0" width="3">
+  <rows>
+    <row id="0">0:0:</row>
+    <row id="1">0:</row>
+    <row id="2">0:0:</row>
+    <row id="3">0:</row>
+    <row id="4">0:0:</row>
+    <row id="5">0:</row>
+  </rows>
+  
+  <teams count="4" maxCombatantsPerTeam="15">
+    <team id="0">
+      <combatant AI="Local" charName="? 500 Human" id="0" startX="2" startY="4"/>
+      <combatant AI="Off" charName="" id="1"/>
+      <combatant AI="Off" charName="" id="2"/>
+      <combatant AI="Off" charName="" id="3"/>
+      <combatant AI="Off" charName="" id="4"/>
+      <combatant AI="Off" charName="" id="5"/>
+      <combatant AI="Off" charName="" id="6"/>
+      <combatant AI="Off" charName="" id="7"/>
+      <combatant AI="Off" charName="" id="8"/>
+      <combatant AI="Off" charName="" id="9"/>
+      <combatant AI="Off" charName="" id="10"/>
+      <combatant AI="Off" charName="" id="11"/>
+      <combatant AI="Off" charName="" id="12"/>
+      <combatant AI="Off" charName="" id="13"/>
+      <combatant AI="Off" charName="" id="14"/>
+    </team>
+    <team id="1">
+      <combatant AI="Local" charName="? 500 Elf" id="0" startX="0" startY="0"/>
+      <combatant AI="Off" charName="" id="1"/>
+      <combatant AI="Off" charName="" id="2"/>
+      <combatant AI="Off" charName="" id="3"/>
+      <combatant AI="Off" charName="" id="4"/>
+      <combatant AI="Off" charName="" id="5"/>
+      <combatant AI="Off" charName="" id="6"/>
+      <combatant AI="Off" charName="" id="7"/>
+      <combatant AI="Off" charName="" id="8"/>
+      <combatant AI="Off" charName="" id="9"/>
+      <combatant AI="Off" charName="" id="10"/>
+      <combatant AI="Off" charName="" id="11"/>
+      <combatant AI="Off" charName="" id="12"/>
+      <combatant AI="Off" charName="" id="13"/>
+      <combatant AI="Off" charName="" id="14"/>
+    </team>
+    <team id="2">
+      <combatant AI="Off" charName="" id="0"/>
+      <combatant AI="Off" charName="" id="1"/>
+      <combatant AI="Off" charName="" id="2"/>
+      <combatant AI="Off" charName="" id="3"/>
+      <combatant AI="Off" charName="" id="4"/>
+      <combatant AI="Off" charName="" id="5"/>
+      <combatant AI="Off" charName="" id="6"/>
+      <combatant AI="Off" charName="" id="7"/>
+      <combatant AI="Off" charName="" id="8"/>
+      <combatant AI="Off" charName="" id="9"/>
+      <combatant AI="Off" charName="" id="10"/>
+      <combatant AI="Off" charName="" id="11"/>
+      <combatant AI="Off" charName="" id="12"/>
+      <combatant AI="Off" charName="" id="13"/>
+      <combatant AI="Off" charName="" id="14"/>
+    </team>
+    <team id="3">
+      <combatant AI="Off" charName="" id="0"/>
+      <combatant AI="Off" charName="" id="1"/>
+      <combatant AI="Off" charName="" id="2"/>
+      <combatant AI="Off" charName="" id="3"/>
+      <combatant AI="Off" charName="" id="4"/>
+      <combatant AI="Off" charName="" id="5"/>
+      <combatant AI="Off" charName="" id="6"/>
+      <combatant AI="Off" charName="" id="7"/>
+      <combatant AI="Off" charName="" id="8"/>
+      <combatant AI="Off" charName="" id="9"/>
+      <combatant AI="Off" charName="" id="10"/>
+      <combatant AI="Off" charName="" id="11"/>
+      <combatant AI="Off" charName="" id="12"/>
+      <combatant AI="Off" charName="" id="13"/>
+      <combatant AI="Off" charName="" id="14"/>
+    </team>
+  </teams>
+
+  <triggers>
+  </triggers>
+
+  <items>
+  </items>
+</Arena>

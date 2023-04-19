@@ -1254,7 +1254,7 @@ public class Arena implements Enums, IMapListener
                   if (targetHeadCoord != null) {
                      // Once we found the destination, stop looking
                      // Are we close enough that we could attack the target?
-                     // First consider only the base ranges that could exclude an attack
+                     // First consider only the range bases that could exclude an attack
                      // If the ranges are OK, then look more closely by calling 'canAttack',
                      // which is a little expensive to call for each orientation.
                      ArenaCoordinates destHeadCoords = destOrientation.getHeadCoordinates();

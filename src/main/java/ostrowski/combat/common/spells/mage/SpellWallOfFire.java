@@ -204,7 +204,7 @@ public class SpellWallOfFire extends ExpiringMageSpell implements IAreaSpell, IC
 
    @Override
    public String getImageResourceName() {
-      return "/res/spell_fire.png";
+      return "/spell_fire.png";
    }
 
    @Override

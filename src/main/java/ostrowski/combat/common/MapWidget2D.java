@@ -127,21 +127,23 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
    private static final BackgroundImageInfo BACKGROUND_IMAGE_INFO = new BackgroundImageInfo();
 
    static {
-      ZOOM_CONTROL_IMAGE_DATA = getImageData("/res/zoomControl.png");
+      ZOOM_CONTROL_IMAGE_DATA = getImageData("/zoomControl.png");
    }
 
    private static ImageData getImageData(String resourceName) {
       try (InputStream stream = MapWidget2D.class.getResourceAsStream(resourceName))
       {
-         if (stream == null) {
-            DebugBreak.debugBreak("can't find resource " + resourceName);
-            return null;
+         if (stream != null) {
+            return new ImageData(stream);
          }
-         return new ImageData(stream);
       } catch (IOException e) {
-         DebugBreak.debugBreak("can't load resource " + resourceName);
-         return null;
       }
+      DebugBreak.debugBreak("can't find resource " + resourceName);
+      if (resourceName.startsWith("/res")) {
+         // try removing the /res
+         return getImageData(resourceName.substring(4));
+      }
+      return null;
    }
 
    public MapWidget2D(Composite parent) {
@@ -149,11 +151,11 @@ public class MapWidget2D extends MapWidget implements Listener, SelectionListene
 
       ZOOM_CONTROL_IMAGE    = new Image(parent.getDisplay(), ZOOM_CONTROL_IMAGE_DATA);
 
-      fillCursor = new Cursor(parent.getDisplay(), getImageData("/res/paintBucket.png"), 0, 28);
-      brushCursor = new Cursor(parent.getDisplay(), getImageData("/res/paintBrush.png"), 0, 19);
-      wallCursor = new Cursor(parent.getDisplay(), getImageData("/res/paintBrushWall.png"), 0, 19);
-      handOpenCursor = new Cursor(parent.getDisplay(), getImageData("/res/handOpen.png"), 10, 10);
-      handClosedCursor = new Cursor(parent.getDisplay(), getImageData("/res/handClosed.png"), 10, 10);
+      fillCursor = new Cursor(parent.getDisplay(), getImageData("/paintBucket.png"), 0, 28);
+      brushCursor = new Cursor(parent.getDisplay(), getImageData("/paintBrush.png"), 0, 19);
+      wallCursor = new Cursor(parent.getDisplay(), getImageData("/paintBrushWall.png"), 0, 19);
+      handOpenCursor = new Cursor(parent.getDisplay(), getImageData("/handOpen.png"), 10, 10);
+      handClosedCursor = new Cursor(parent.getDisplay(), getImageData("/handClosed.png"), 10, 10);
 
       canvas.addListener(SWT.Paint, this);
       canvas.addListener(SWT.MouseDown, this);

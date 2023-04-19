@@ -10,6 +10,7 @@ import ostrowski.combat.common.enums.SkillType;
 import ostrowski.combat.common.spells.mage.MageSpell;
 import ostrowski.combat.common.spells.mage.MageSpells;
 import ostrowski.combat.common.things.*;
+import ostrowski.combat.common.weaponStyles.WeaponStyle;
 import ostrowski.combat.common.weaponStyles.WeaponStyleAttack;
 import ostrowski.combat.server.Arena;
 import ostrowski.combat.server.CombatServer;
@@ -654,9 +655,9 @@ public class CharacterGenerator implements Enums
          }
          if ((oneHandedSwing != null) && (twoHandedSwing != null)) {
             byte str = character.getAttributeLevel(Attribute.Strength);
-            // If we are strong enough to use this one handed, do it
-            // If we are not strong enough to use this quickly one handed, but are not strong enough to use
-            // it two handed quickly either, then use it one handed, as long as we are strong enough to not be slow:
+            // If we are strong enough to use this one-handed, do it
+            // If we are not strong enough to use this quickly one-handed, but are not strong enough to use
+            // it two-handed quickly either, then use it one-handed, as long as we are strong enough to not be slow:
             if (str >= oneHandedSwing.getFastStr()) {
                usingAsOneHanded = true;
             }
@@ -698,12 +699,12 @@ public class CharacterGenerator implements Enums
       }
       if (!requiredProfs.isEmpty()) {
          Set<SkillType> primaryWeaponSkills = Arrays.stream(primaryWeapon.attackStyles)
-                                                    .map(wsa -> wsa.getSkillType())
+                                                    .map(WeaponStyle::getSkillType)
                                                     .collect(Collectors.toSet());
          List<ProfessionType> primaryProfs = requiredProfs.keySet()
                                                           .stream()
                                                           .filter(pt -> pt.skillList.stream()
-                                                                                    .anyMatch(st -> primaryWeaponSkills.contains(st)))
+                                                                                    .anyMatch(primaryWeaponSkills::contains))
                                                           .collect(Collectors.toList());
          if (!primaryProfs.isEmpty()) {
             primaryProfs.sort(Comparator.comparingInt(requiredProfs::get));
@@ -713,7 +714,12 @@ public class CharacterGenerator implements Enums
             weaponLevel = requiredProfs.get(primaryProfessionType);
          }
       }
-      character.setSkillLevel(primaryProfessionType, weaponSkill.getType(), weaponLevel);
+      SkillType weaponSkillType = weaponSkill.getType();
+      if (weaponSkillType == SkillType.Throwing && primaryProfessionType != ProfessionType.Athlete) {
+         character.setSkillLevel(ProfessionType.Athlete, weaponSkillType, weaponLevel);
+      } else {
+         character.setSkillLevel(primaryProfessionType, weaponSkillType, weaponLevel);
+      }
 
       pointsLeft = points - character.getPointTotal();
 
@@ -737,8 +743,10 @@ public class CharacterGenerator implements Enums
          character.setSkillLevel(ProfessionType.Fighter, SkillType.Shield, shieldLevel);
          pointsLeft = points - character.getPointTotal();
       }
-      boolean hasTwoHandedOption = Arrays.stream(primaryWeapon.getAttackStyles()).anyMatch(wsa -> wsa.getAttackType() == AttackType.SWING && wsa.isTwoHanded());
-      boolean hasOneHandedOption = Arrays.stream(primaryWeapon.getAttackStyles()).anyMatch(wsa -> wsa.getAttackType() == AttackType.SWING && !wsa.isTwoHanded());
+      boolean hasTwoHandedOption = Arrays.stream(primaryWeapon.getAttackStyles())
+                                         .anyMatch(wsa -> wsa.getAttackType() == AttackType.SWING && wsa.isTwoHanded());
+      boolean hasOneHandedOption = Arrays.stream(primaryWeapon.getAttackStyles())
+                                         .anyMatch(wsa -> wsa.getAttackType() == AttackType.SWING && !wsa.isTwoHanded());
       // If we are using a two-handed weapon, and it has a 1-handed skill, we should learn that too:
       if (primaryWeapon.isReal() && hasTwoHandedOption && hasOneHandedOption) {
          // We should be able to use this weapon in all of its secondary attack styles (at a lower skill level):
@@ -747,6 +755,16 @@ public class CharacterGenerator implements Enums
             if (character.getSkillLevel(attackStyleSkillType, null/*useHand*/, false/*sizeAdjust*/,
                                         false/*adjustForEncumbrance*/, false/*adjustForHolds*/) == 0) {
                byte desiredSecondaryLevel = getSkillLevel(points / 4, pointsLeft / 4);
+               if (primaryProfessionType.skillList.contains(attackStyleSkillType)) {
+                  // if we already have this profession, use its level (or the familiar proficiency level of it)
+                  int pointsForSecondaryLevel = (int) ((pointsLeft / 3.0) * CombatServer.random());
+                  if (pointsForSecondaryLevel >= 4) {
+                     desiredSecondaryLevel = weaponLevel;
+                     if (pointsForSecondaryLevel < 10) {
+                        desiredSecondaryLevel -= 2;
+                     }
+                  }
+               }
                Byte requiredSecondaryLevel = requiredSkills.get(attackStyleSkillType);
                if (requiredSecondaryLevel != null) {
                   desiredSecondaryLevel = requiredSecondaryLevel;
@@ -771,6 +789,9 @@ public class CharacterGenerator implements Enums
       }
       byte desiredBrawlingLevel = getSkillLevel(points / 3, pointsLeft / 3);
       SkillType unarmedCombatType = null;
+      boolean naturalWeapons = race.hasProperty(Race.PROPERTIES_HORNS) ||
+                               race.hasProperty(Race.PROPERTIES_CLAWS) ||
+                               race.hasProperty(Race.PROPERTIES_FANGS);
       if (requiredSkills.get(SkillType.Karate) != null) {
          unarmedCombatType = SkillType.Karate;
          desiredBrawlingLevel = requiredSkills.get(SkillType.Karate);
@@ -791,16 +812,12 @@ public class CharacterGenerator implements Enums
          unarmedCombatType = SkillType.Wrestling;
          desiredBrawlingLevel = requiredSkills.get(SkillType.Wrestling);
       }
-      else if (race.hasProperty(Race.PROPERTIES_HORNS) ||
-               race.hasProperty(Race.PROPERTIES_CLAWS) ||
-               race.hasProperty(Race.PROPERTIES_FANGS)) {
+      else if (naturalWeapons) {
          // If they have any natural weapons, be sure to get brawling:
          unarmedCombatType = SkillType.Brawling;
       }
       double unarmedCombatChance = Math.max(0d, Math.min(95d, points));
-      if (race.hasProperty(Race.PROPERTIES_HORNS) ||
-          race.hasProperty(Race.PROPERTIES_CLAWS) ||
-          race.hasProperty(Race.PROPERTIES_FANGS)) {
+      if (naturalWeapons) {
          unarmedCombatChance = 100d;
       }
       if (primaryWeapon.isUnarmedStyle()) {
@@ -854,7 +871,7 @@ public class CharacterGenerator implements Enums
          if ((unarmedCombatType != null) && (desiredBrawlingLevel > 0)) {
             SkillRank desiredRank = SkillRank.FAMILIAR;
             double excessPoints = pointsLeft - SkillRank.PROFICIENT.getCost();
-            if (excessPoints > CombatServer.random() * 20) {
+            if (excessPoints > CombatServer.random() * 20 || naturalWeapons) {
                desiredRank = SkillRank.PROFICIENT;
             }
 
@@ -868,21 +885,20 @@ public class CharacterGenerator implements Enums
                primaryProfession.setRank(unarmedCombatType, desiredRank);
             }
             else {
-               if (primaryProfessionType == ProfessionType.MartialArtist &&
-                   (primaryProfession.getProficientSkills().contains(SkillType.Karate) ||
-                    primaryProfession.getFamiliarSkills().contains(SkillType.Karate))
-                   && (unarmedCombatType == SkillType.Brawling || unarmedCombatType == SkillType.Boxing)) {
-                  // don't learn 'Brawling' or 'Boxing' if we already know Karate
-               }
-               else {
-                  for (ProfessionType pt : new ProfessionType[] {primaryProfessionType,
-                                                                 ProfessionType.Fighter,
-                                                                 ProfessionType.MartialArtist}) {
-                     if (pt.skillList.contains(unarmedCombatType)) {
-                        character.setSkillLevel(pt, unarmedCombatType, desiredBrawlingLevel);
-                        break;
-                     }
-                  }
+               // don't learn 'Brawling' or 'Boxing' if we already know Karate
+               if (primaryProfessionType != ProfessionType.MartialArtist ||
+                   (!primaryProfession.getProficientSkills().contains(SkillType.Karate) &&
+                    !primaryProfession.getFamiliarSkills().contains(SkillType.Karate)) ||
+                   (unarmedCombatType != SkillType.Brawling &&
+                    unarmedCombatType != SkillType.Boxing)) {
+                   for (ProfessionType pt : new ProfessionType[] {primaryProfessionType,
+                                                                  ProfessionType.Fighter,
+                                                                  ProfessionType.MartialArtist}) {
+                      if (pt.skillList.contains(unarmedCombatType)) {
+                         character.setSkillLevel(pt, unarmedCombatType, desiredBrawlingLevel);
+                         break;
+                      }
+                   }
                }
             }
             pointsLeft = points - character.getPointTotal();
@@ -1038,7 +1054,8 @@ public class CharacterGenerator implements Enums
                   if (knifeProfession == null) {
                      List<Profession> profs = character.getProfessionsList();
                      byte desiredLevel = getSkillLevel(points, pointsLeft);
-                     profs.add(new Profession(knifeProfessionType, knifeSkill, desiredLevel));
+                     knifeProfession = new Profession(knifeProfessionType, knifeSkill, desiredLevel);
+                     profs.add(knifeProfession);
                      character.setProfessionsList(profs);
                   }
                   knifeProfession.setRank(knifeSkill, desiredRank);
@@ -1458,7 +1475,7 @@ public class CharacterGenerator implements Enums
          // Remove any existing armor, so we can recompute from ground zero
          character.setArmor(Armor.NAME_NoArmor);
       }
-      // If we has four arms, the shields go in the second pair
+      // If we have four arms, the shields go in the second pair
       if (requiredShield == null) {
          // Remove any existing shields, in all of our Hands
          for (Limb limb : character.getLimbs()) {

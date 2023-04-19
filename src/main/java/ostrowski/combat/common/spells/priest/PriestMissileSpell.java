@@ -61,7 +61,7 @@ public abstract class PriestMissileSpell extends PriestSpell implements IMissile
       StringBuilder sb = new StringBuilder();
       sb.append(describeSpellPreamble());
       sb.append(" Anyone standing in the line of fire may dodge or block the attack.");
-      sb.append(" The attack has a base range of ").append(getRangeBase()).append(", so the defender's TN will be modified by range adjustment.");
+      sb.append(" The attack has a range base of ").append(getRangeBase()).append(", so the defender's TN will be modified by range adjustment.");
       sb.append(" The caster rolls a d10± to attack each and every target in the line of fire.");
       sb.append(" To each d10± (one for each target in the line), the caster adds their Divine Affinity level and their DEX attribute, then subtracts their combined pain and wound penalties to yield the to-hit roll.");
       sb.append(" Each to-hit roll is then compared against the defender's TN.");
@@ -75,11 +75,11 @@ public abstract class PriestMissileSpell extends PriestSpell implements IMissile
       sb.append(" So a target in Point-Blank range will suffer the full power of the spell, a target at short range (");
       sb.append(getRangeBase()/2).append(" to ").append(getRangeBase()).append(" hexes away) will take 1 less die damage.");
       sb.append(" So this spell cast with 3 power points does no damage beyond medium range (2 times range base, ").append(getRangeBase()*2).append(" hexes.)");
-      sb.append(" As with all ranged attack, the maximum range of the spell is still 4 times the adjusted base range, for a maximum of ");
+      sb.append(" As with all ranged attack, the maximum range of the spell is still 4 times the adjusted range base, for a maximum of ");
       sb.append(getRangeBase() * 4).append(" hexes, regardless of the effective power of the spell.");
       sb.append(" If using the optional spell range rule, spell range may be affected by the SOC attribute and racial size adjuster of the caster.");
-      sb.append(" If the optional range adjustment rule is not used, the GM should still adjust the base range for extreme race sizes.");
-      sb.append(" So, with the optional rule, a size -29 fairy with a SOC of 4 would lookup -25 on the range adjustment chart, resulting in an adjusted base range of ");
+      sb.append(" If the optional range adjustment rule is not used, the GM should still adjust the range base for extreme race sizes.");
+      sb.append(" So, with the optional rule, a size -29 fairy with a SOC of 4 would lookup -25 on the range adjustment chart, resulting in an adjusted range base of ");
       sb.append(Math.round(Rules.getRangeAdjusterForAdjustedStr((byte) -25) * getRangeBase())).append(".");
       sb.append(" A size 8 ");
       if (this instanceof SpellBreatheFire) {
@@ -88,7 +88,7 @@ public abstract class PriestMissileSpell extends PriestSpell implements IMissile
       else {
          sb.append("Water");
       }
-      sb.append(" Elemental with a SOC of 2 would lookup +10 on the range adjustment chart, resulting in an adjusted base range of ");
+      sb.append(" Elemental with a SOC of 2 would lookup +10 on the range adjustment chart, resulting in an adjusted range base of ");
       sb.append(Math.round(Rules.getRangeAdjusterForAdjustedStr((byte) 10) * getRangeBase())).append(".");
       return sb.toString();
    }

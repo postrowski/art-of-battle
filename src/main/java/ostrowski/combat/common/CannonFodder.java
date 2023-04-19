@@ -6,9 +6,7 @@ import ostrowski.combat.common.html.TableData;
 import ostrowski.combat.common.html.TableHeader;
 import ostrowski.combat.common.html.TableRow;
 import ostrowski.combat.common.things.*;
-import ostrowski.combat.common.weaponStyles.WeaponStyle;
-import ostrowski.combat.common.weaponStyles.WeaponStyleAttack;
-import ostrowski.combat.common.weaponStyles.WeaponStyleAttackMelee;
+import ostrowski.combat.common.weaponStyles.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -618,4 +616,679 @@ public class CannonFodder {
       }
       return tr;
    }
+
+   public static class HtmlCharWriter {
+      private static final Map<String, String> advantageNamesMap = new HashMap<>() {{
+         put(Advantage.ALERTNESS, "");
+         put(Advantage.APPEARANCE, "");
+         put(Advantage.DISFIGURED_ARMS, "");
+         put(Advantage.DISFIGURED_FACE, "Face");
+         put(Advantage.DISFIGURED_HANDS, "");
+         put(Advantage.DISFIGURED_LEGS, "");
+         put(Advantage.HEARING, "");
+         put(Advantage.VISION, "");
+         put(Advantage.WEALTH, "");
+         put(Advantage.RANK_MILITARY_ENLISTED, "Rank");
+         put(Advantage.RANK_MILITARY_OFFICER, "Officer");
+         put(Advantage.RANK_SOCIAL_MALE, "Title");
+         put(Advantage.RANK_SOCIAL_FEMALE, "Title");
+      }};
+
+      public static String convertCharacterToRow(Character character, boolean returnHeaderNames, int rowsToUse) {
+         List<String> advantages = character.getAdvantagesList()
+                                            .stream()
+                                            .filter(o -> !o.getName().equals(Advantage.WEALTH))
+                                            .map(adv -> {
+                                               String mappedName = advantageNamesMap.get(adv.getName());
+                                               if (mappedName == null) {
+                                                  mappedName = adv.getName();
+                                               }
+                                               if (adv.hasLevels()) {
+                                                  if (!mappedName.isBlank()) {
+                                                     mappedName += ":";
+                                                  }
+                                                  mappedName += adv.getLevelName();
+                                               }
+                                               return mappedName;
+                                            })
+                                            .sorted(Comparator.comparingInt(String::length))
+                                            .collect(Collectors.toList());
+         Optional<Integer> maxLength = advantages.stream().map(String::length).max(Integer::compareTo);
+         if (maxLength.isPresent()) {
+            Integer maxLen = Math.max(maxLength.get(), 25);
+            for (int i = 0; i < advantages.size() - 1; i++) {
+               if (advantages.get(i).length() + advantages.get(i + 1).length() < maxLen) {
+                  String adv1 = advantages.remove(i);
+                  String adv2 = advantages.remove(i);
+                  if (adv2.compareTo(adv1) < 1) {
+                     advantages.add(i, adv2 + ", " + adv1);
+                  } else {
+                     advantages.add(i, adv1 + ", " + adv2);
+                  }
+                  i--;
+               }
+            }
+         }
+         advantages.sort(String::compareTo);
+         WeaponDesc weaponDescPrime = null;
+         WeaponDesc weaponDescAlt = null;
+         @SuppressWarnings("unused")
+         StringBuilder equipment = new StringBuilder();
+         Shield shield = null;
+         Weapon weaponPrime = null;
+         Weapon weaponAlt = null;
+         for (Limb limb : character.getLimbs()) {
+            Thing thing = limb.getHeldThing();
+            if (thing != null) {
+               if (thing instanceof Shield) {
+                  shield = (Shield) thing;
+               }
+               else if (thing instanceof Weapon) {
+                  weaponPrime = (Weapon) thing;
+                  weaponDescPrime = new WeaponDesc(character, weaponPrime, limb.limbType);
+               }
+               else if (thing.isReal()) {
+                  if (equipment.length() > 0) {
+                     equipment.append(", ");
+                  }
+                  equipment.append(thing.getName());
+               }
+            }
+         }
+         if ((weaponPrime == null) || (weaponAlt == null)) {
+            for (LimbType limbType : Arrays.asList(LimbType.HAND_RIGHT, LimbType.LEG_RIGHT, LimbType.HEAD, LimbType.TAIL)) {
+               Limb limb = character.getLimb(limbType);
+               if (limb == null) {
+                  continue;
+               }
+               Weapon weapon = limb.getWeapon(character);
+               if (weapon != null) {
+                  if (weaponPrime == null) {
+                     weaponPrime = weapon;
+                     weaponDescPrime = new WeaponDesc(character, weapon, limb.limbType);
+                     break;
+                  }
+                  else if ((weaponAlt == null) && (weapon != weaponPrime)) {
+                     if (weaponPrime.isReal()) {
+                        // Show the 'punch' option for the alt weapon.
+                        limb = character.getLimb(LimbType.HAND_RIGHT);
+                        Thing oldWeap = limb.dropThing();
+                        weapon = limb.getWeapon(character);
+                        limb.setHeldThing(oldWeap, character);
+                     }
+                     weaponDescAlt = new WeaponDesc(character, weapon, limb.limbType);
+//                  if ((weaponStrAlt != null) && (!weaponStrAlt.isEmpty()) && (!weaponStrPrime.equals(weaponStrAlt))) {
+//                     weaponAlt = weapon;
+//                  }
+//                  else {
+//                     weaponStrAlt = null;
+//                  }
+                     break;
+                  }
+               }
+            }
+         }
+
+         for (Thing thing : character.getEquipment()) {
+            if ((thing == weaponPrime) || (thing == shield)) {
+               continue;
+            }
+            if (thing instanceof Weapon) {
+               if (weaponPrime == null) {
+                  weaponPrime = (Weapon) thing;
+                  weaponDescPrime = new WeaponDesc(character, weaponPrime, LimbType.HAND_RIGHT);
+                  continue;
+               }
+               else if ((weaponAlt == null) && (thing != weaponPrime)) {
+                  weaponAlt = (Weapon) thing;
+                  weaponDescAlt = new WeaponDesc(character, (Weapon) thing, LimbType.HAND_RIGHT);
+                  continue;
+               }
+            }
+            if (thing instanceof Potion) {
+               continue;
+            }
+            if (equipment.length() > 0) {
+               equipment.append(", ");
+            }
+            equipment.append(thing.getName());
+         }
+
+         List<Profession> professionsList = character.getProfessionsList();
+         // Sort the professions by highest level.
+         professionsList.sort((o1, o2) -> Byte.compare(o2.getLevel(), o1.getLevel()));
+
+         List<List<String>> profs = new ArrayList<>();
+
+         for (Profession profession : professionsList) {
+            List<String> prof = new ArrayList<>();
+
+            prof.add("<span class='professions'>" + profession.getType().getName() +
+                     ": " + profession.getLevel() + "</span>");
+
+            ArrayList<SkillType> proficientSkills = new ArrayList<>(profession.getProficientSkills());
+            ArrayList<SkillType> familiarSkills = new ArrayList<>(profession.getFamiliarSkills());
+            for (List<SkillType> skillTypeList : new ArrayList[]{proficientSkills, familiarSkills}) {
+               if (skillTypeList.isEmpty()) {
+                  continue;
+               }
+               skillTypeList.sort(Comparator.comparingInt((SkillType a) -> character.getAdjustedSkillLevel(a, null, true, true, false))
+                                            .reversed()
+                                            .thenComparing(a -> a.name));
+               boolean firstFamiliarSkill  = (skillTypeList == familiarSkills);
+
+               for (SkillType skill : skillTypeList) {
+                  String thisSkillDesc = skill.getName();
+                  thisSkillDesc = thisSkillDesc.replace("2-Handed ", "2-Hand ");
+                  byte skillLevel = character.getAdjustedSkillLevel(skill, null/*useLimb*/, true/*sizeAdjust*/, true/*adjustForEncumbrance*/, false/*adjustForHolds*/);
+                  if (skillLevel != profession.getLevel(skill)) {
+                     thisSkillDesc += " [" + skillLevel + "]";
+                  }
+
+                  if (skillTypeList == proficientSkills) {
+                     prof.add("<span class='proficient_skill'>&nbsp; " + thisSkillDesc + "</span>");
+                  } else {
+//                  if (firstFamiliarSkill) {
+//                     prof.add("<span class='familiar_skill'>familiar: " + thisSkillDesc + "</span>");
+//                     firstFamiliarSkill = false;
+//                  } else {
+                     prof.add("<span class='familiar_skill'>&nbsp; &nbsp; " + thisSkillDesc + "</span>");
+//                  }
+                  }
+               }
+            }
+            profs.add(prof);
+         }
+         Armor armor = character.getArmor();
+         String strStr = String.valueOf(character.getAttributeLevel(Attribute.Strength));
+         String htStr = String.valueOf(character.getAttributeLevel(Attribute.Health));
+         if (character.getRace().getBuildModifier() != 0) {
+            strStr += "(" + character.getAdjustedStrength() + ")";
+            htStr += "(" + character.getBuildBase() + ")";
+         }
+         short distance = 1;
+         HashMap<Enums.RANGE, HashMap<DefenseOption, Byte>> defMap =
+                 character.getDefenseOptionsBase(DamageType.GENERAL,
+                                                 false/*isGrappleAttack*/,
+                                                 false /*includeWoundPenalty*/,
+                                                 false /*includePosition*/,
+                                                 false /*computePdOnly*/, distance);
+
+         DiceSet painDice = Rules.getPainReductionDice(character.getAttributeLevel(Attribute.Toughness));
+         byte collapsePainLevel = Rules.getCollapsePainLevel(character.getAttributeLevel(Attribute.Toughness));
+
+         @SuppressWarnings("unused")
+         StringBuilder attributes = new StringBuilder();
+         for (Attribute attr : Attribute.values()) {
+            StringBuilder attrStr = new StringBuilder(String.valueOf(character.getAttributeLevel(attr)));
+            int maxLen = 4;
+            if (attr == Attribute.Strength) {
+               attrStr = new StringBuilder(strStr);
+               maxLen = 6;
+            }
+            else if (attr == Attribute.Health) {
+               attrStr = new StringBuilder(htStr);
+               maxLen = 6;
+            }
+            while (attrStr.length() < maxLen) {
+               attrStr.insert(0, " ");
+            }
+            attributes.append(attrStr);
+         }
+         byte enc = Rules.getEncumbranceLevel(character);
+         byte move = character.getMovementRate();
+         byte actions = character.getActionsPerTurn();
+         weaponDescPrime.describeWeapon();
+         if (weaponDescAlt != null) {
+            weaponDescAlt.describeWeapon();
+         }
+
+         if (returnHeaderNames) {
+            rowsToUse = 3;
+         }
+
+         TableRow[] rows = new TableRow[rowsToUse];
+         for (int r = 0 ; r < rowsToUse ; r++) {
+            rows[r] = new TableRow();
+         }
+         if (returnHeaderNames) {
+            //rows[0].addTD(new TableData("gen").setRowSpan(rowsUsed));
+            rows[0].addTD(new TableData("Points").setRowSpan(3).setClassName("points header"));
+            rows[0].addTD(new TableData("Race<br/><br/>Gender").setRowSpan(3).setClassName("race_gender header"));
+            rows[0].addTD(new TableData("Attributes").setColSpan(Attribute.values().length)
+                                                     .setClassName("attr_HEADER"));
+            for (Attribute attr : Attribute.values()) {
+               rows[1].addTD(new TableData(attr.name()).setRowSpan(2)
+                                                       .setClassName("header attr attr_" + attr.shortName.toUpperCase()));
+            }
+            rows[0].addTD(new TableData("Encumbrance").setRowSpan(3).setClassName("header encumbrance"));
+            rows[0].addTD(new TableData("Move / Action").setRowSpan(3).setClassName("header movement"));
+            rows[0].addTD(new TableData("Actions / Turn").setRowSpan(3).setClassName("header actions"));
+            rows[0].addTD(new TableData("Dice for Pain Recovery").setRowSpan(2).setClassName("header pain_recovery_top"));
+            rows[2].addTD(new TableData("max pain<br/>/ wounds").setClassName("pain_recovery_bottom"));
+            String profHeader = "<span class='professions'>Professions: Level</span><br/>" +
+                                "<span class='proficient_skill'>Prof. Skill [adj lvl]</span><br/>" +
+                                "<span class='familiar_skill'>Fam. Skill [adj lvl]</span><br/><br/>" +
+                                "<span class='advantages'>Advantages</span>";
+            rows[0].addTD(new TableData(profHeader).setRowSpan(3).setColSpan(12));
+            rows[0].addTD(new TableData("Armor<br/>Shield<br/>Weapons").setRowSpan(3));
+            rows[0].addTD(new TableData("PD").setRowSpan(3).setClassName("header def_pd"));
+            rows[0].addTD(new TableData("Base<br/>Defenses").setColSpan(4).setClassName("def_HEADER"));
+            rows[1].addTD(new TableData("Retreat").setRowSpan(2).setClassName("header def_Retreat"));
+            rows[1].addTD(new TableData("Dodge").setRowSpan(2).setClassName("header def_Dodge"));
+            rows[1].addTD(new TableData("Block").setRowSpan(2).setClassName("header def_Block"));
+            rows[1].addTD(new TableData("Parry").setRowSpan(2).setClassName("header def_Parry"));
+            rows[0].addTD(new TableData("Build<br/>vs.").setColSpan(3).setClassName("deff_HEADER"));
+            rows[1].addTD(new TableData("Blunt").setRowSpan(2).setClassName("header deff_Blunt"));
+            rows[1].addTD(new TableData("Cut").setRowSpan(2).setClassName("header deff_Cut"));
+            rows[1].addTD(new TableData("Impale").setRowSpan(2).setClassName("header deff_Impale"));
+            rows[0].addTD(new TableData("Primary Weapon").setColSpan(4).setClassName("weapon_name header"));
+            rows[1].addTD(new TableData("Style Name").setRowSpan(2));
+            rows[1].addTD(new TableData("Re-ready Actions").setRowSpan(2).setColSpan(2).setClassName("reready_actions_HEADER"));
+            rows[1].addTD(new TableData("Damage").setRowSpan(2));
+            rows[0].addTD(new TableData("Alternate Weapon").setColSpan(4).setClassName("weapon_name header"));
+            rows[1].addTD(new TableData("Style Name").setRowSpan(2));
+            rows[1].addTD(new TableData("Re-ready Actions").setRowSpan(2).setColSpan(2).setClassName("reready_actions_HEADER"));
+            rows[1].addTD(new TableData("Damage").setRowSpan(2));
+         } else {
+            //rows[0].addTD(new TableData(character.getName()).setRowSpan(rowsUsed));
+            rows[0].addTD(new TableData(String.valueOf(character.getPointTotal())).setRowSpan(rowsToUse));
+            String gender = character.getRace().getGender().toString();
+            gender = gender.charAt(0) + gender.substring(1).toLowerCase();
+            rows[0].addTD(new TableData(character.getRace().getName() + "<br/>" + gender).setRowSpan(rowsToUse)
+                                                                                         .setClassName("race_gender"));
+            for (Attribute attr : Attribute.values()) {
+               String attrVal = String.valueOf(character.getAttributeLevel(attr));
+               if (attr == Attribute.Strength) {
+                  if (character.getAttributeLevel(attr) != character.getAdjustedStrength()) {
+                     attrVal += "<br/><b>" + character.getAdjustedStrength() + "</b>";
+                  }
+                  else {
+                     attrVal = "<b>" + attrVal + "</b>";
+                  }
+               }
+               else if (attr == Attribute.Health) {
+                  if (character.getAttributeLevel(attr) != character.getBuildBase()) {
+                     attrVal += "<br/><b>" + character.getBuildBase() + "</b>";
+                  }
+                  else {
+                     attrVal = "<b>" + attrVal + "</b>";
+                  }
+               }
+               rows[0].addTD(new TableData(attrVal).setRowSpan(rowsToUse)
+                                                   .setClassName("attr_" + attr.shortName.toUpperCase()));
+            }
+            rows[0].addTD(new TableData(enc).setRowSpan(rowsToUse).setClassName("encumbrance"));
+            rows[0].addTD(new TableData(move).setRowSpan(rowsToUse).setClassName("movement"));
+            rows[0].addTD(new TableData(actions).setRowSpan(rowsToUse).setClassName("actions"));
+            rows[0].addTD(new TableData(painDice.toString()).setRowSpan(rowsToUse-1));
+            rows[rowsToUse-1].addTD(new TableData(collapsePainLevel));
+            int profRows = rowsToUse;
+            String profsClass = "profession";
+            if (!advantages.isEmpty()) {
+               profRows--;
+               profsClass += " noBottomBorder";
+            }
+
+            // can we combine professions into a single column?
+            for (int p=0 ; p<profs.size() ; p++) {
+               List<String> prof = profs.get(p);
+               if ((p < (profs.size() - 1)) && (prof.size() + profs.get(p + 1).size()) <= 5) {
+                  // combine this prof with the next one:
+                  List<String> nextProfs = profs.remove(p + 1);
+                  prof.addAll(nextProfs);
+               }
+            }
+            int spansUsed = 0;
+            int columnsPerProfession = 12 / profs.size();
+            int profIndex = 0;
+            for (List<String> prof : profs) {
+               String profClass = profsClass;
+               if (++profIndex == profs.size()) {
+                  // This is the list profession block. Used all the remaining columns
+                  columnsPerProfession = 12 - spansUsed;
+               } else {
+                  profClass += " noRightBorder";
+               }
+               String content = String.join("<br/>", prof);
+               rows[0].addTD(new TableData(content).setRowSpan(profRows)
+                                                   .setColSpan(columnsPerProfession)
+                                                   .setClassName(profClass.trim()));
+               spansUsed += columnsPerProfession;
+            }
+            if (!advantages.isEmpty()) {
+               String advantagesStr = String.join("<br/>", advantages);
+               rows[rowsToUse - 1].addTD(new TableData(advantagesStr).setColSpan(12)
+                                                                     .setClassName("advantages"));
+            }
+            StringBuilder equip = new StringBuilder(armor.getName() + ((shield == null) ? "" : "<br/>" + shield.getName()) + "<br/>");
+            List<Thing> things = new ArrayList<>();
+            Limb rightHand = character.getLimb(LimbType.HAND_RIGHT);
+            Limb leftHand = character.getLimb(LimbType.HAND_LEFT);
+            Thing thingR = (rightHand == null) ? null : rightHand.getHeldThing();
+            Thing thingL = ( leftHand == null) ? null :  leftHand.getHeldThing();
+            if ((thingR != null) && (thingR.isReal())) {
+               things.add(thingR);
+            }
+            if ((thingL != null) && (thingL.isReal())) {
+               if (!(thingL instanceof Shield)) {
+                  // We've already listed our shield above, don't print it twice.
+                  things.add(thingL);
+               }
+            }
+            things.addAll(character.getEquipment());
+            boolean first = true;
+            for (Thing thing : things) {
+               if (thing instanceof Potion) {
+                  // Don't list potions in the cannon fodder list.
+                  // When created, they did not impact the characters enc. level or money spent.
+                  continue;
+               }
+               if (!first) {
+                  equip.append(", ");
+               }
+               first = false;
+               equip.append(thing.name);
+            }
+            HashMap<DefenseOption, Byte> defOptMap = defMap.get(Enums.RANGE.OUT_OF_RANGE);
+            rows[0].addTD(new TableData(equip.toString()).setRowSpan(rowsToUse));
+            rows[0].addTD(new TableData(String.valueOf(character.getPassiveDefense(Enums.RANGE.OUT_OF_RANGE, false, distance))).setRowSpan(rowsToUse).setClassName("def_pd"));
+            rows[0].addTD(new TableData(String.valueOf(defOptMap.get(DefenseOption.DEF_RETREAT))).setRowSpan(rowsToUse).setClassName("def_Retreat"));
+            rows[0].addTD(new TableData(String.valueOf(defOptMap.get(DefenseOption.DEF_DODGE))).setRowSpan(rowsToUse).setClassName("def_Dodge"));
+            Byte block = defOptMap.get(DefenseOption.DEF_LEFT);
+            if ((shield == null) || (block == null)) {
+               block = 0;
+            }
+            rows[0].addTD(new TableData(block < 1 ? "-" : String.valueOf(block)).setRowSpan(rowsToUse).setClassName("def_Block"));
+            rows[0].addTD(new TableData(String.valueOf(defMap.get(Enums.RANGE.OUT_OF_RANGE).get(DefenseOption.DEF_RIGHT))).setRowSpan(rowsToUse).setClassName("def_Parry"));
+            rows[0].addTD(new TableData(String.valueOf(character.getBuild(DamageType.BLUNT))).setRowSpan(rowsToUse).setClassName("deff_Blunt"));
+            rows[0].addTD(new TableData(String.valueOf(character.getBuild(DamageType.CUT))).setRowSpan(rowsToUse).setClassName("deff_Cut"));
+            rows[0].addTD(new TableData(String.valueOf(character.getBuild(DamageType.IMP))).setRowSpan(rowsToUse).setClassName("deff_Impale"));
+            if (weaponDescPrime.weapon.isUnarmedStyle()) {
+               SkillType primeSkill = character.getBestSkillType(weaponDescPrime.weapon);
+               rows[0].addTD(new TableData(primeSkill.getName()).setColSpan(2).setClassName("weapon_name"));
+            } else {
+               rows[0].addTD(new TableData(weaponDescPrime.weapon.getName()).setColSpan(2).setClassName("weapon_name"));
+            }
+            rows[0].addTD(new TableData("Adjusted skill: " + weaponDescPrime.adjustedSkill).setColSpan(2).setClassName("weapon_skill"));
+            int s = 1;
+            for (WeaponStyleDesc styleDesc : weaponDescPrime.styleList) {
+               rows[s++].addTD(new TableData(styleDesc.getAlteredName(weaponDescPrime)).setColSpan(2))
+                        .addTD(new TableData(styleDesc.actionsRequired).setClassName("reready_actions"))
+                        .addTD(new TableData(styleDesc.damageStr));
+            }
+            while (s < rowsToUse) {
+               rows[s++].addTD(new TableData("&nbsp;").setColSpan(2))
+                        .addTD(new TableData("&nbsp;").setClassName("reready_actions"))
+                        .addTD(new TableData("&nbsp;"));
+            }
+            s = 1;
+            boolean altWeaponAvailable = false;
+            if ((weaponDescAlt != null) && (!weaponDescAlt.weapon.getName().equals(weaponDescPrime.weapon.getName()))) {
+               altWeaponAvailable = true;
+               if (weaponDescAlt.weapon.isUnarmedStyle()) {
+                  SkillType altSkill = character.getBestSkillType(weaponDescAlt.weapon);
+                  if (altSkill == null) {
+                     altWeaponAvailable = false;
+                  }
+                  else {
+                     rows[0].addTD(new TableData(altSkill.getName()).setColSpan(2).setClassName("weapon_name"));
+                  }
+               } else {
+                  rows[0].addTD(new TableData(String.valueOf(weaponDescAlt.weapon.getName())).setColSpan(2)
+                                                                                             .setClassName("weapon_name"));
+               }
+               if (altWeaponAvailable) {
+                  rows[0].addTD(new TableData("Adjusted skill: " + weaponDescAlt.adjustedSkill).setColSpan(2)
+                                                                                               .setClassName("weapon_skill"));
+                  for (WeaponStyleDesc styleDesc : weaponDescAlt.styleList) {
+                     rows[s++].addTD(new TableData(styleDesc.getAlteredName(weaponDescAlt)).setColSpan(2))
+                              .addTD(new TableData(styleDesc.actionsRequired).setClassName("reready_actions"))
+                              .addTD(new TableData(styleDesc.damageStr));
+                  }
+               }
+            }
+            if (!altWeaponAvailable) {
+               rows[0].addTD(new TableData("&nbsp;").setColSpan(2));
+               rows[0].addTD(new TableData("&nbsp;").setClassName("reready_actions"));
+               rows[0].addTD(new TableData("&nbsp;"));
+            }
+            while (s < rowsToUse) {
+               rows[s++].addTD(new TableData("&nbsp;").setColSpan(2))
+                        .addTD(new TableData("&nbsp;").setClassName("reready_actions"))
+                        .addTD(new TableData("&nbsp;"));
+            }
+         }
+         int maxStyles = 1;
+         if (weaponDescPrime != null) {
+            maxStyles = Math.max(maxStyles, weaponDescPrime.styleList.size());
+         }
+         if (weaponDescAlt != null) {
+            maxStyles = Math.max(maxStyles, weaponDescAlt.styleList.size());
+         }
+         maxStyles++;
+         character.setName("" + maxStyles);
+         StringBuilder sb = new StringBuilder();
+         for (TableRow row : rows) {
+            sb.append(row);
+         }
+         return sb.toString().replace("<br/></", "</");//.replaceAll("<br/>", "%");
+      }
+
+   }
+
+   static class WeaponStyleDesc {
+      private final WeaponStyleAttack style;
+      private final SkillType skillType;
+      public byte baseSkill;
+      public       byte    adjustedSkill = (byte)0;
+      public final byte    actionsRequired;
+      public final String  damageStr;
+      public final String  styleName;
+      public       boolean isShowable = false;
+      public WeaponStyleDesc(WeaponStyleAttack style, Character character) {
+         this.style           = style;
+         if (this.style.isRanged() && (this.style instanceof WeaponStyleAttackMissile)) {
+            this.actionsRequired = ((WeaponStyleAttackMissile)this.style).getNumberOfPreparationSteps();
+         }
+         else {
+            this.actionsRequired = style.getSpeed(character.getAttributeLevel(Attribute.Strength));
+         }
+         if (style.canCharge(false, character.getLegCount() > 3)) {
+            this.styleName    = style.getName() + " (may charge)";
+         } else {
+            this.styleName    = style.getName();
+         }
+         this.damageStr       = style.getDamageString(character.getPhysicalDamageBase());
+         this.skillType       = style.getSkillType();
+         this.baseSkill       = character.getSkillLevel(style.getSkillType(), null, false, false, false);
+         if (this.baseSkill > 0 ) {
+            this.adjustedSkill = character.getSkillLevel(this.skillType, null,
+                                                         true/*sizeAdjust*/, true/*adjustForEncumbrance*/, false/*adjustForHolds*/);
+            this.adjustedSkill += character.getAttributeLevel(Attribute.Dexterity);
+            this.adjustedSkill -= this.style.getSkillPenalty();
+            byte baseSkillLevel = character.getSkillLevel(this.skillType, null, false, true, false);
+            this.isShowable = (baseSkillLevel > this.style.getSkillPenalty());
+         }
+      }
+
+      public String getAlteredName(WeaponDesc weaponDesc) {
+         String alteredName = this.styleName;
+         boolean diffSkill = weaponDesc.singleSkillType != skillType;
+         if (weaponDesc.weapon.getName().equals(Weapon.NAME_BastardSword) ||
+             weaponDesc.weapon.getName().equals(Weapon.NAME_BastardSword_Fine)) {
+            diffSkill = false;
+         }
+         if (diffSkill) {
+            String skillName = skillType.name;
+            if (skillType == SkillType.TwoHanded_Sword) {
+               skillName = "2h Sword";
+            } else if (skillType == SkillType.TwoHanded_AxeMace) {
+               skillName = "2h Axe";
+            }
+            if ((!skillName.equals(skillType.name) && (alteredName.endsWith(" (2h)")))) {
+               alteredName = alteredName.substring(0, alteredName.length() - 5);
+            }
+
+            alteredName += " (" + skillName;
+         }
+         if (weaponDesc.adjustedSkill != adjustedSkill) {
+            alteredName += " [" + adjustedSkill + "]";
+         }
+         if (diffSkill) {
+            alteredName += ")";
+         }
+         if (this.style.isRanged()) {
+            short maxDistance = ((WeaponStyleAttackRanged)this.style).getMaxDistance(weaponDesc.character.getAdjustedStrength());
+            if (this.style.isMissile()) {
+               alteredName = "Ranges: " + getRanges(maxDistance, this.style.isThrown());
+            } else {
+               alteredName += "<br/>Ranges: " + getRanges(maxDistance, this.style.isThrown());
+            }
+         }
+         return alteredName;
+      }
+      private String getRanges(float maxDistance, boolean thrown) {
+         List<Float> ranges = new ArrayList<>();
+         if (thrown) {
+            // Thrown weapons have no PB range
+            ranges.add(0f);
+         } else {
+            ranges.add(maxDistance / 8.0f);
+         }
+         ranges.add(maxDistance / 4.0f);
+         ranges.add(maxDistance / 2.0f);
+         ranges.add(maxDistance);
+         return ranges.stream()
+                      .map(Math::round)
+                      .map(Object::toString)
+                      .collect(Collectors.joining(", "));
+      }
+
+      private void describeStyle(boolean isOnlySkill, Byte singleSkillBaseLevel, StringBuilder description) {
+         if (description.length() > 0) {
+            description.append("\n");
+            if (isOnlySkill) {
+               description.append("    ");
+            }
+         }
+         description.append(this.styleName).append(", ");
+         if (isOnlySkill) {
+            description.append(" skill ").append(this.skillType.getName()).append(": ").append(this.baseSkill);
+         }
+         if (((singleSkillBaseLevel != null) ? singleSkillBaseLevel : this.baseSkill) != this.adjustedSkill) {
+            description.append(" (adj. ").append(this.adjustedSkill).append(")");
+         }
+         description.append(" ").append(this.actionsRequired).append(" actions: ");
+         description.append(this.damageStr);
+      }
+   }
+
+   static class WeaponDesc {
+      private final Character character;
+      private final Weapon weapon;
+      private final LimbType limbType;
+      private      SkillType             singleSkillType = null;
+      public final List<WeaponStyleDesc> styleList       = new ArrayList<>();
+      public       int                   baseSkill;
+      public int adjustedSkill;
+      public Byte singleSkillBaseLevel = null;
+
+      public WeaponDesc(Character character, Weapon weapon, LimbType limbType) {
+         this.character = character;
+         this.weapon = weapon;
+         this.limbType = limbType;
+      }
+
+      public String describeWeapon() {
+         // See if there is a single skill that governs all the possible attack styles:
+         for (WeaponStyleAttack style : this.weapon.attackStyles) {
+            byte skillLevel = this.character.getSkillLevel(style.getSkillType(), null, false, true, true);
+            if (skillLevel < 1 ) {
+               continue;
+            }
+
+            if (this.singleSkillType == null) {
+               this.singleSkillType = style.getSkillType();
+            }
+            else if (this.singleSkillType != style.getSkillType()) {
+               if (this.singleSkillType.getName().equals(SkillType.Knife.getName()) && style.getSkillType().getName().equals(SkillType.Throwing.getName())) {
+                  continue;
+               }
+               if (this.singleSkillType.getName().equals(SkillType.Throwing.getName()) && style.getSkillType().getName().equals(SkillType.Knife.getName())) {
+                  this.singleSkillType = style.getSkillType();
+                  continue;
+               }
+               this.singleSkillType = null;
+               break;
+            }
+         }
+         StringBuilder description = new StringBuilder();
+         if (this.weapon.isReal()) {
+            description.append(this.weapon.getName()).append(": ");
+         }
+         if (this.singleSkillType != null) {
+            this.singleSkillBaseLevel = this.character.getSkillLevel(this.singleSkillType, null, false, true, true);
+            byte skillLevel = this.character.getSkillLevel(this.singleSkillType, null, true/*sizeAdjust*/, true/*adjustForEncumbrance*/, false/*adjustForHolds*/);
+            skillLevel += this.character.getAttributeLevel(Attribute.Dexterity);
+            if (this.weapon.isReal()) {
+               description.append(" skill ");
+            }
+            this.baseSkill = this.singleSkillBaseLevel;
+            this.adjustedSkill = skillLevel;
+            description.append(this.singleSkillType.getName()).append(": ").append(this.singleSkillBaseLevel);
+            if (this.singleSkillBaseLevel != skillLevel) {
+               description.append(" (adj. ").append(skillLevel).append(")");
+            }
+            this.singleSkillBaseLevel = skillLevel;
+         }
+
+         for (WeaponStyleAttack style : this.weapon.attackStyles) {
+            WeaponStyleDesc styleDesc = new WeaponStyleDesc(style, this.character);
+            if (styleDesc.isShowable) {
+               styleDesc.describeStyle((this.singleSkillType != null), this.singleSkillBaseLevel, description);
+               this.styleList.add(styleDesc);
+            }
+         }
+         // list the attack types corresponding to the higher skill level first:
+         this.styleList.sort((o1, o2) -> {
+            if (o1.style.skillType.getName().equals(o2.style.skillType.getName())) {
+               return 0;
+            }
+            byte l1 = character.getSkillLevel(o1.style.skillType, null, false, false, false);
+            byte l2 = character.getSkillLevel(o2.style.skillType, null, false, false, false);
+            if (l1 == l2) {
+               return 0;
+            }
+            return l1 > l2 ? -1 : 1;
+         });
+         // unarmed skills need to also list the damage from kicks:
+         if (!(this.weapon.isReal() || (this.limbType != LimbType.HAND_RIGHT))) {
+            Limb leg = this.character.getLimb(LimbType.LEG_RIGHT);
+            if (leg != null) {
+               Weapon legWeapon = leg.getWeapon(this.character);
+               for (WeaponStyleAttack style : legWeapon.attackStyles) {
+                  WeaponStyleDesc styleDesc = new WeaponStyleDesc(style, this.character);
+                  if (styleDesc.isShowable) {
+                     styleDesc.describeStyle((this.singleSkillType != null), this.singleSkillBaseLevel, description);
+                     this.styleList.add(styleDesc);
+                  }
+               }
+            }
+            Limb head = this.character.getLimb(LimbType.HEAD);
+            if (head != null) {
+               Weapon headWeapon = head.getWeapon(this.character);
+               for (WeaponStyleAttack style : headWeapon.attackStyles) {
+                  WeaponStyleDesc styleDesc = new WeaponStyleDesc(style, this.character);
+                  if (styleDesc.isShowable) {
+                     styleDesc.describeStyle((this.singleSkillType != null), this.singleSkillBaseLevel, description);
+                     this.styleList.add(styleDesc);
+                  }
+               }
+            }
+         }
+         return description.toString();
+      }
+   }
+
 }

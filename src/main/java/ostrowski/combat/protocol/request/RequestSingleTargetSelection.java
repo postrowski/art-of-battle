@@ -50,7 +50,7 @@ public class RequestSingleTargetSelection extends SyncRequest implements Enums
                short rangeBase = rangedStyle.getRangeBase();
                short adjustedRangeBase = (short) Math.round(rangeBase * Rules.getRangeAdjusterForAdjustedStr(adjustedStr));
 
-               messageBuffer.append(" for your ").append(rangedWeapon.getName()).append(" which has a base range of ").append(rangeBase).append(" hexes");
+               messageBuffer.append(" for your ").append(rangedWeapon.getName()).append(" which has a range base of ").append(rangeBase).append(" hexes");
                if (adjustedRangeBase != rangeBase) {
                   messageBuffer.append(" (").append(Attribute.Strength.shortName);
                   messageBuffer.append(" adjusted to ").append(adjustedRangeBase).append(")");
@@ -90,7 +90,7 @@ public class RequestSingleTargetSelection extends SyncRequest implements Enums
             short rangeBase = rangedSpell.getRangeBase();
             short adjustedRangeBase = castingSpell.getAdjustedRangeBase();
 
-            messageBuffer.append(", which has a base range of ").append(rangeBase).append(" hexes");
+            messageBuffer.append(", which has a range base of ").append(rangeBase).append(" hexes");
             if (adjustedRangeBase != rangeBase) {
                messageBuffer.append(" (").append(attr.shortName);
                if (requestor.getRace().getBuildModifier() != 0) {

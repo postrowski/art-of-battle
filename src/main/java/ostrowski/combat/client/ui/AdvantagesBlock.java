@@ -21,7 +21,7 @@ public class AdvantagesBlock extends Helper implements Enums, IUIBlock, ModifyLi
 {
    private final        CharacterWidget display;
    private              Group           advGroup;
-   private static final int             ADV_COUNT               = 9;
+   private static final int             ADV_COUNT               = 8;
    private final        Combo[]         advCombo                = new Combo[ADV_COUNT];
    private final        Combo[]         advLevel                = new Combo[ADV_COUNT];
    private final        Text[]          advCost                 = new Text[advCombo.length];

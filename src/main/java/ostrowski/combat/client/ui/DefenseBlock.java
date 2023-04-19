@@ -159,7 +159,7 @@ public class DefenseBlock extends Helper implements IUIBlock
          boolean rightDefense = (rightArm != null) && (rightArm.canDefend(character, false/*rangedAttack*/,
                                                                           (short) 0/*distance*/, false/*attackIsCharge*/,
                                                                           false/*grappleAttack*/, DamageType.NONE, false));
-         // If we are holding a two handed weapon, we can't use the left defense:
+         // If we are holding a two-handed weapon, we can't use the left defense:
          if ((rightArm != null) && leftDefense) {
             Thing rightThing = rightArm.getHeldThing();
             if ((rightThing instanceof Weapon) &&
