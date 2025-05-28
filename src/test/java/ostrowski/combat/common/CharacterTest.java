@@ -1,6 +1,7 @@
 package ostrowski.combat.common;
 
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -8,8 +9,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
-import org.junit.Test;
 
 import ostrowski.combat.common.Race.Gender;
 import ostrowski.combat.common.spells.priest.PriestSpell;
@@ -21,8 +20,8 @@ public class CharacterTest
    @Test
    public void testAnglePairs() {
       AnglePair pair = new AnglePair((30 * 2*Math.PI)/360, (50 * 2*Math.PI)/360);
-      assertTrue(Math.abs(pair.width() - ((20 * 2*Math.PI)/360)) < 0.00000000001);
-      assertTrue(Math.abs(pair.startAngle - ((30 * 2 * Math.PI) / 360)) < 0.00000000001);
+      Assertions.assertTrue(Math.abs(pair.width() - ((20 * 2*Math.PI)/360)) < 0.00000000001);
+      Assertions.assertTrue(Math.abs(pair.startAngle - ((30 * 2 * Math.PI) / 360)) < 0.00000000001);
    }
 
    @Test
@@ -73,16 +72,11 @@ public class CharacterTest
             inChar.serializeFromStream(dis );
             String inStr = inChar.toString();
 
-            assertTrue("serialization worked", inStr.equals(sourceStr));
+            Assertions.assertTrue(inStr.equals(sourceStr), "serialization worked");
          }
       } catch (IOException e3) {
          e3.printStackTrace();
       }
-   }
-
-   @Test
-   public void testSerializeFromStream() {
-      //fail("Not yet implemented");
    }
 
 }

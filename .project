@@ -3,6 +3,7 @@
 	<name>xcmbt</name>
 	<comment></comment>
 	<projects>
+		<project>DieRoller</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

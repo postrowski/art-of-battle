@@ -14,6 +14,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+
 import ostrowski.DebugBreak;
 import ostrowski.combat.client.CombatClient;
 import ostrowski.combat.client.MessageDialog;
@@ -140,7 +141,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
    }
 
    static void probabilityTest() {
-      DiceSet dice = new DiceSet("1d10±");
+      DiceSet dice = new DiceSet("1d10ï¿½");
       double odds = dice.getOddsForTN(-31);
       //noinspection MismatchedReadAndWriteOfArray
       @SuppressWarnings("unused")
@@ -1433,7 +1434,7 @@ public class CombatServer extends Helper implements SelectionListener, Enums, IM
       }
       pseudoRandomNumberSeed = clippedValue;
       if (!inModify) {
-         if (_this != null) {
+         if (_this != null && _this.pseudoRandomBlock != null) {
             _this.pseudoRandomBlock.setSeedText(pseudoRandomNumberSeed);
          }
       }

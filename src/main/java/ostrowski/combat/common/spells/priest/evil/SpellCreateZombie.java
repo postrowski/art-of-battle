@@ -3,7 +3,6 @@ package ostrowski.combat.common.spells.priest.evil;
 import ostrowski.combat.common.Advantage;
 import ostrowski.combat.common.Character;
 import ostrowski.combat.common.Profession;
-import ostrowski.combat.common.Skill;
 import ostrowski.combat.common.enums.Attribute;
 import ostrowski.combat.common.html.Table;
 import ostrowski.combat.common.html.TableData;
@@ -13,8 +12,6 @@ import ostrowski.combat.common.spells.priest.IPriestGroup;
 import ostrowski.combat.common.spells.priest.PriestSpell;
 import ostrowski.combat.common.wounds.Wound;
 import ostrowski.combat.server.Arena;
-
-import java.util.List;
 
 public class SpellCreateZombie extends PriestSpell implements ICastInBattle
 {
@@ -57,7 +54,7 @@ public class SpellCreateZombie extends PriestSpell implements ICastInBattle
              " The same caster could instead spend two of its effective power points on duration, raising the zombie with a STR and DEX of 1 and fighter level of 2 for 1 day." +
              " When animating large creatures, such as Ogres, Trolls, Giants, etc., the caster must spend 1 extra power point for every full 4 points of size " +
              "over the caster's size. For example, to raise an Ogre (racial size adjuster of +10), a priest must spend 2 points to allow for the size." +
-             " So if a priest with 3 levels of divine power raised an Ogre, the spell’s effective power would only be 1 point, " +
+             " So if a priest with 3 levels of divine power raised an Ogre, the spellï¿½s effective power would only be 1 point, " +
              "giving it a maximum attribute level of 1, and a maximum profession level of 2, and could only stay around for 1 hour.<br/>" +
              " <b>Note</b>: While the maximum STR of this Ogre zombie is 1, its ASTR could still be as high as 11, due to its large size." +
              " Similarly, the Ogre zombie's BLD will still be 10 points higher than its HT attribute." +

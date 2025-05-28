@@ -80,7 +80,8 @@ th.points {
 .attr.header, .points.header, .actions.header, .encumbrance.header, .movement.header, .pain_recovery_top.header,
 .def_pd.header, .def_Retreat.header, .def_Dodge.header, .def_Block.header, .def_Parry.header,
 .deff_Blunt.header, .deff_Cut.header, .deff_Impale.header {
-    writing-mode: vertical-rl;
+    writing-mode: tb-rl;
+    transform: rotate(-180deg);
     -ms-writing-mode: tb-rl;
     font-size: medium;
 }
@@ -215,7 +216,8 @@ th.points {
 }
 
 .vertical-text {
-    writing-mode: vertical-lr;
+    writing-mode: tb-rl;
+    transform: rotate(-180deg);
     -ms-writing-mode: tb-rl;
     font-size: smaller;
 }

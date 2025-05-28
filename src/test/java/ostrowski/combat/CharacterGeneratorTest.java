@@ -7,18 +7,12 @@ import ostrowski.combat.common.Character;
 import ostrowski.combat.common.*;
 import ostrowski.combat.common.Race.Gender;
 import ostrowski.combat.common.enums.*;
-import ostrowski.combat.common.html.TableData;
-import ostrowski.combat.common.html.TableRow;
 import ostrowski.combat.common.spells.priest.evil.SpellFear;
 import ostrowski.combat.common.things.*;
-import ostrowski.combat.common.weaponStyles.WeaponStyleAttack;
-import ostrowski.combat.common.weaponStyles.WeaponStyleAttackMissile;
-import ostrowski.combat.common.weaponStyles.WeaponStyleAttackRanged;
 import ostrowski.combat.server.ArenaLocation;
 import ostrowski.combat.server.CombatServer;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertTrue;
 
@@ -73,7 +67,7 @@ public class CharacterGeneratorTest implements Enums {
       String charStr = "40 rnd:794 Kobold missile";
       Character character = CharacterGenerator.generateRandomCharacter(charStr, null, false);
       System.out.println(CannonFodder.HtmlCharWriter.convertCharacterToRow(character, false, 8));
-      for (int rnd = 100 ; rnd < 1000 ; rnd++){
+      for (int rnd = 100 ; rnd < 1000 ; rnd++) {
          charStr = rnd + " rnd:" + rnd + " Minotaur";
          character = CharacterGenerator.generateRandomCharacter(charStr, null, false);
          byte brawlingLevel = character.getSkillLevel(SkillType.Brawling, null, false, false, false);

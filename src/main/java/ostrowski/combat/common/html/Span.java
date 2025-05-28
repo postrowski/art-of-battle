@@ -1,8 +1,5 @@
 package ostrowski.combat.common.html;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Span extends HtmlElement
 {
    private String contents;

@@ -1,7 +1,6 @@
 package ostrowski.combat.common.spells;
 
 import ostrowski.combat.common.Character;
-import ostrowski.combat.common.enums.Enums.TargetType;
 import ostrowski.combat.server.Arena;
 import ostrowski.combat.server.ArenaLocation;
 

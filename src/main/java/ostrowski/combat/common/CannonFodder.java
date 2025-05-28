@@ -10,7 +10,6 @@ import ostrowski.combat.common.weaponStyles.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class CannonFodder {
    private static class FodderColumn {
@@ -635,6 +634,7 @@ public class CannonFodder {
       }};
 
       public static String convertCharacterToRow(Character character, boolean returnHeaderNames, int rowsToUse) {
+         
          List<String> advantages = character.getAdvantagesList()
                                             .stream()
                                             .filter(o -> !o.getName().equals(Advantage.WEALTH))

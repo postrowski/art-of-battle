@@ -92,7 +92,9 @@ public class PseudoRandomBlock extends Helper implements IUIBlock, ModifyListene
 
 
    public void setSeedText(int pseudoRandomNumberSeed) {
-      pseudoRandomNumberSeedText.setText(String.valueOf(pseudoRandomNumberSeed));
+     if (pseudoRandomNumberSeedText != null) {
+       pseudoRandomNumberSeedText.setText(String.valueOf(pseudoRandomNumberSeed));
+     }
    }
    public String getSeedText() {
       return pseudoRandomNumberSeedText.getText();

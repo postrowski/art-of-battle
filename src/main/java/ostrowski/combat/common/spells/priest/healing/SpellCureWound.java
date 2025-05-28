@@ -4,7 +4,6 @@
  */
 package ostrowski.combat.common.spells.priest.healing;
 
-import java.util.Comparator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 

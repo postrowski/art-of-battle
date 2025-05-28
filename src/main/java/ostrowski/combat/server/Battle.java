@@ -1067,9 +1067,11 @@ public class Battle extends Thread implements Enums {
             byte holdModifier = (byte) (sizeDifference / 2);
             byte newHoldLevel = (byte) (holdLevel + holdModifier);
             if (holdModifier != 0) {
-               sb.append(" Due to the size difference between the attacker (").append(attacker.getRace().getBuildModifier()).append(") and defender (").append(
-                       defender.getRace().getBuildModifier()).append(
-                       ") the hold is modified by ");
+               sb.append(" Due to the size difference between the attacker (")
+                 .append(attacker.getRace().getBuildModifier())
+                 .append(") and defender (")
+                 .append(defender.getRace().getBuildModifier())
+               .append(") the hold is modified by ");
                if (holdModifier > 0) {
                   sb.append("+");
                }
@@ -1182,13 +1184,13 @@ public class Battle extends Thread implements Enums {
              *   the opponent may defend against the throw, using any unspent actions for this round,
              *   however, defense against a throw is handled in a different manner:
              *   The assailant (who is being thrown) declares the number of actions he is allocating to the defense,
-             *   and rolls a battle die (d10±) to which he or she adds their NIM attribute,
+             *   and rolls a battle die (d10ï¿½) to which he or she adds their NIM attribute,
              *   minus their current encumbrance level.
              *   If the assailant defended using 1 action, they subtract 5 from this roll. If they used 3 actions,
              *   they add 5 to this roll. Note that since the assailant attacked this round, it will be impossible
              *   for them to still have 3 actions available for defense, unless they are under the influence of
-             *   some type of magic giving them more than 3 actions per round. If the assailant’s total roll results
-             *   a number equal to or higher than the difference between the Aikido practitioner’s counter-attack roll
+             *   some type of magic giving them more than 3 actions per round. If the assailantï¿½s total roll results
+             *   a number equal to or higher than the difference between the Aikido practitionerï¿½s counter-attack roll
              *   and his counter-attack TN (of 7), the defense is successful. If the assailant has no actions left to
              *   be spent on the defense, and the counter-attack is successful, the assailant is thrown automatically.
              *   If the assailant makes his/her NIM roll, they are moved, but only half the distance (rounded down).

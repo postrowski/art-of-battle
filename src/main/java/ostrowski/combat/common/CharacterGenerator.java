@@ -1,6 +1,5 @@
 package ostrowski.combat.common;
 
-import org.eclipse.swt.custom.CCombo;
 import ostrowski.DebugBreak;
 import ostrowski.combat.common.Race.Gender;
 import ostrowski.combat.common.enums.AttackType;
@@ -97,7 +96,9 @@ public class CharacterGenerator implements Enums
          } catch (NumberFormatException e) {
          }
       }
-      return CharacterGenerator.generateRandomCharacter(points, raceName, tokens, false/*genNewPseudoRndNumber*/, arena, printCharacter);
+      Character character = CharacterGenerator.generateRandomCharacter(points, raceName, tokens, true/*genNewPseudoRndNumber*/, arena, printCharacter);
+      character.generationKey = fullSource + " " + character.generationKey;
+      return character;
    }
 
    static public Character generateRandomCharacter(int points, String raceName, String extraData, boolean genNewPseudoRndNumber, boolean printCharacter) {
@@ -1237,6 +1238,9 @@ public class CharacterGenerator implements Enums
       }
       if (printCharacter) {
          Rules.diag("Character generated: " + character);
+      }
+      if (pseudoRndNumberToUse != null) {
+        character.generationKey = seedKey + pseudoRndNumberToUse;
       }
       return character;
    }

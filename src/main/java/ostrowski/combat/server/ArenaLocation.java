@@ -1025,7 +1025,7 @@ public class ArenaLocation extends ArenaCoordinates implements IMonitorableObjec
             if ((label != null) && (otherLoc.label != null)) {
                return label.equals(otherLoc.label);
             }
-            else return (label == null) && (otherLoc.label == null);
+            return (label == null) && (otherLoc.label == null);
          }
       }
    }

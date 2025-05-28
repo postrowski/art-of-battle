@@ -71,6 +71,8 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
    private          AI_Type                             aiType                    = null;
    public           RequestAction                       lastAction;
 
+   public           String                              generationKey             = null;
+
    final Semaphore lock_equipment = new Semaphore("equipment", CombatSemaphore.CLASS_CHARACTER_EQUIPMENT);
 
    // computed values:
@@ -4802,7 +4804,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
             DiceSet berserkSaveDice = Rules.getDice(iq, (byte) 2/*action*/, Attribute.Intelligence, RollType.BERSERK_RESISTANCE);
             berserkSaveDice = adjustDieRoll(berserkSaveDice, RollType.BERSERK_RESISTANCE, null/*target*/);
             String rollMessage = getName() + ", because of your new pain level (" + newPain +
-                                 "), you must roll your IQ (" + iq + ") + d10± against a TN of " +
+                                 "), you must roll your IQ (" + iq + ") + d10ï¿½ against a TN of " +
                                  newPain + " to avoid going berserk!";
             int diceRoll = berserkSaveDice.roll(true/*allowExplodes*/, this,
                                                 RollType.BERSERK_RESISTANCE, rollMessage);
@@ -4847,7 +4849,7 @@ public class Character extends SerializableObject implements IHolder, Enums, IMo
             DiceSet magicSaveDice = Rules.getDice(toughness, (byte) 2/*action*/, Attribute.Toughness, RollType.PAIN_CONCENTRATION);
             magicSaveDice = adjustDieRoll(magicSaveDice, RollType.PAIN_CONCENTRATION, null/*target*/);
             String rollMessage = getName() + ", because of your new pain level (" + currentPain +
-                                 "), you must roll your TOU (" + toughness + ") + d10± against a TN of " +
+                                 "), you must roll your TOU (" + toughness + ") + d10ï¿½ against a TN of " +
                                  currentPain + " to avoid losing your " +
                                  currentSpell.getName() + " spell.";
             int diceRoll = magicSaveDice.roll(true/*allowExplodes*/, this,

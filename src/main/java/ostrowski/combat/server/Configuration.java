@@ -148,7 +148,7 @@ public class Configuration implements SelectionListener
       if (middleGroup != null) {
          diceExtendedButton = Helper.createRadioButton(middleGroup, "Complex set", null, this);
          diceSimpleButton = Helper.createRadioButton(middleGroup, "Simple set (d10)", null, this);
-         diceBellCurveButton = Helper.createRadioButton(middleGroup, "Bell curve (d10±)", null, this);
+         diceBellCurveButton = Helper.createRadioButton(middleGroup, "Battle Dice (d10Â±)", null, this);
          diceExtendedButton.setSelection(useExtendedDice);
          diceSimpleButton.setSelection(useSimpleDice);
          diceBellCurveButton.setSelection(useBellCurveDice);
